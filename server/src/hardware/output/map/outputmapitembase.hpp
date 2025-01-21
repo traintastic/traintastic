@@ -40,7 +40,6 @@ class OutputMapItemBase : public OutputMapItem
 
   public:
     Property<Key> key;
-    Property<bool> use;
     Method<std::shared_ptr<OutputMapOutputAction> (uint32_t)> getOutputAction;
 
     OutputMapItemBase(Object& map, Key _key);

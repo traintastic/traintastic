@@ -189,6 +189,7 @@ PropertyLuaCodeEdit::Highlighter::Highlighter(QTextDocument* parent) :
     QStringLiteral("\\bworld(?=\\.)"),
     QStringLiteral("\\bset(?=\\.)"),
     QStringLiteral("\\benum(?=\\.)"),
+    QStringLiteral("\\bpv(?=\\.)"),
   };
   for(const auto& regex : globals)
     m_rules.append(Rule(regex, QColor(0xFF, 0x8C, 0x00)));

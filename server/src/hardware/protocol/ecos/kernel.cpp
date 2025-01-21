@@ -184,7 +184,7 @@ void Kernel::stop(Simulation* simulation)
 
   m_thread.join();
 
-  if(simulation) // get simulation data
+  if(simulation && !m_objects.empty()) // get simulation data
   {
     simulation->clear();
 
@@ -625,7 +625,7 @@ void Kernel::objectChanged(Object& object)
   }
 
   std::string objectName;
-  if(auto* sw = dynamic_cast<const Switch*>(&object))
+  if(const auto* sw = dynamic_cast<const Switch*>(&object))
   {
     objectName = sw->nameUI();
   }

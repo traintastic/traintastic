@@ -559,7 +559,7 @@
     },
     {
         "term": "clock:freeze",
-        "definition": "Geler",
+        "definition": "Figer",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -640,7 +640,7 @@
     },
     {
         "term": "color:fuchsia",
-        "definition": "Fuchia",
+        "definition": "Fuschia",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -856,7 +856,7 @@
     },
     {
         "term": "decoder_function_type:always_off",
-        "definition": "Toujours off",
+        "definition": "Toujours Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -865,7 +865,7 @@
     },
     {
         "term": "decoder_function_type:always_on",
-        "definition": "Toujours on",
+        "definition": "Toujours On",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3484,7 +3484,7 @@
     },
     {
         "term": "qtapp.object_select_list_dialog:cancel",
-        "definition": "Abandonner",
+        "definition": "Annuler",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3556,7 +3556,7 @@
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings_dir",
-        "definition": "R\u00e9pertoire de journalisation des traductions manquantes non trouv\u00e9",
+        "definition": "R\u00e9pertoire de journalisation des traductions manquantes",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3628,7 +3628,7 @@
     },
     {
         "term": "qtapp.world_list_dialog:cancel",
-        "definition": "Abandonner",
+        "definition": "Annuler",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3691,7 +3691,7 @@
     },
     {
         "term": "qtapp:grid_line",
-        "definition": "Ligne",
+        "definition": "Lignes",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3925,7 +3925,7 @@
     },
     {
         "term": "settings:auto_save_world_on_exit",
-        "definition": "Enregistrer automatique le monde \u00e0 la sortie",
+        "definition": "Enregistrer automatiquement le monde en quittant",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -3979,7 +3979,7 @@
     },
     {
         "term": "settings:save_world_uncompressed",
-        "definition": "Sauvegarder non compress\u00e9",
+        "definition": "Sauvegarder le monde non compress\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4213,7 +4213,7 @@
     },
     {
         "term": "vehicle.rail:power",
-        "definition": "Alimentation",
+        "definition": "Puissance",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4267,7 +4267,7 @@
     },
     {
         "term": "world:clock",
-        "definition": "Horlogie",
+        "definition": "Horloge",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4366,7 +4366,7 @@
     },
     {
         "term": "world:power_off",
-        "definition": "Alimentation off",
+        "definition": "Alimentation Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4375,7 +4375,7 @@
     },
     {
         "term": "world:power_on",
-        "definition": "Alimentation on",
+        "definition": "Alimentation On",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5149,7 +5149,7 @@
     },
     {
         "term": "language:sv-se",
-        "definition": "",
+        "definition": "Su\u00e9dois",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5158,7 +5158,7 @@
     },
     {
         "term": "dccex_channel:dcc_accessory",
-        "definition": "",
+        "definition": "Accessoire DCC",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5167,7 +5167,7 @@
     },
     {
         "term": "dccex_channel:output",
-        "definition": "",
+        "definition": "Sortie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5176,7 +5176,7 @@
     },
     {
         "term": "dccex_channel:turnout",
-        "definition": "",
+        "definition": "Aiguillage",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5185,7 +5185,7 @@
     },
     {
         "term": "dccex_settings:startup_delay",
-        "definition": "",
+        "definition": "D\u00e9lai d'allumage",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5194,7 +5194,7 @@
     },
     {
         "term": "message:W2020",
-        "definition": "",
+        "definition": "DCCext (RCN-213) n'est pas support\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5221,7 +5221,7 @@
     },
     {
         "term": "qtapp.connect_dialog:authenticating",
-        "definition": "",
+        "definition": "Authentification",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5230,7 +5230,7 @@
     },
     {
         "term": "qtapp.connect_dialog:creating_session",
-        "definition": "",
+        "definition": "Cr\u00e9ation de la session",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5239,7 +5239,7 @@
     },
     {
         "term": "qtapp.connect_dialog:fetching_world",
-        "definition": "",
+        "definition": "R\u00e9cup\u00e9ration du monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5248,7 +5248,7 @@
     },
     {
         "term": "pair_output_action:none",
-        "definition": "",
+        "definition": "Aucun",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5257,7 +5257,7 @@
     },
     {
         "term": "pair_output_action:first",
-        "definition": "",
+        "definition": "Premier (Rouge)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5266,7 +5266,7 @@
     },
     {
         "term": "pair_output_action:second",
-        "definition": "",
+        "definition": "Second (Vert)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5275,7 +5275,7 @@
     },
     {
         "term": "hardware:addresses",
-        "definition": "",
+        "definition": "Adresses",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5284,7 +5284,7 @@
     },
     {
         "term": "output_channel:accessory",
-        "definition": "",
+        "definition": "Accessoire",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5293,7 +5293,7 @@
     },
     {
         "term": "output_channel:accessory_dcc",
-        "definition": "",
+        "definition": "Accessoire (DCC)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5302,7 +5302,7 @@
     },
     {
         "term": "output_channel:accessory_motorola",
-        "definition": "",
+        "definition": "Accessoire (Motorola)",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5311,7 +5311,7 @@
     },
     {
         "term": "output_channel:ecos_object",
-        "definition": "",
+        "definition": "Objet ECoS",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5320,7 +5320,7 @@
     },
     {
         "term": "output_map:add_address",
-        "definition": "",
+        "definition": "Ajouter adresse",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5329,7 +5329,7 @@
     },
     {
         "term": "output_map:remove_address",
-        "definition": "",
+        "definition": "Supprimer adresse",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5338,7 +5338,7 @@
     },
     {
         "term": "output_map:ecos_object",
-        "definition": "",
+        "definition": "Objet ECoS",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5347,7 +5347,7 @@
     },
     {
         "term": "output.ecos_object:state",
-        "definition": "",
+        "definition": "Etat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5356,7 +5356,7 @@
     },
     {
         "term": "wizard.new_world:title",
-        "definition": "",
+        "definition": "Cr\u00e9er nouveau monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5365,7 +5365,7 @@
     },
     {
         "term": "wizard.new_world.introduction:title",
-        "definition": "",
+        "definition": "Nouveau monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5374,7 +5374,7 @@
     },
     {
         "term": "wizard.new_world.introduction:text",
-        "definition": "",
+        "definition": "Cet assistant vous guidera dans les r\u00e9glages de base du monde.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5383,7 +5383,7 @@
     },
     {
         "term": "wizard.new_world.name:title",
-        "definition": "",
+        "definition": "Nom du monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5392,7 +5392,7 @@
     },
     {
         "term": "wizard.new_world.name:text",
-        "definition": "",
+        "definition": "Donnez un nom au monde, il sera visible lors du chargement.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5401,7 +5401,7 @@
     },
     {
         "term": "wizard.new_world.scale:title",
-        "definition": "",
+        "definition": "Echelle du monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5410,16 +5410,16 @@
     },
     {
         "term": "wizard.new_world.scale:text",
-        "definition": "",
+        "definition": "Choisir l'\u00e9chelle du monde, Traintastic l'utilisera pour les calculs de distance et de vitesse.",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": "",
+        "comment": "Error in english \"calcualtions\" -> calculations",
         "fuzzy": 0
     },
     {
         "term": "wizard.new_world.finalization:title",
-        "definition": "",
+        "definition": "Monde pr\u00eat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5428,7 +5428,7 @@
     },
     {
         "term": "wizard.new_world.finalization:text",
-        "definition": "",
+        "definition": "Les param\u00e8tres de base du monde sont maintenant d\u00e9finis, vous pourrez les modifier via le menu: Monde -> Propri\u00e9t\u00e9s du monde.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5437,7 +5437,7 @@
     },
     {
         "term": "qtapp.mainmenu:wizards",
-        "definition": "",
+        "definition": "Assistants",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5446,7 +5446,7 @@
     },
     {
         "term": "wizard.introduction:title",
-        "definition": "",
+        "definition": "Introduction \u00e0 Traintastic",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5455,7 +5455,7 @@
     },
     {
         "term": "wizard.introduction.welcome:title",
-        "definition": "",
+        "definition": "Bienvenue !",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5464,7 +5464,7 @@
     },
     {
         "term": "wizard.introduction.welcome:text",
-        "definition": "",
+        "definition": "Cet assistant vous explique les bases de Traintastic. Les pages suivantes vous aideront \u00e0 d\u00e9marrer. Pour revoir cet assistant, lancez-le via Aide \u2192 Assistants \u2192 Introduction \u00e0 Traintastic.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5473,7 +5473,7 @@
     },
     {
         "term": "wizard.introduction.world:title",
-        "definition": "",
+        "definition": "Le monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5482,7 +5482,7 @@
     },
     {
         "term": "wizard.introduction.world:text",
-        "definition": "",
+        "definition": "Le monde contient tout ce qui est sur le plan, comme les stations de commande, les trains, les signaux, les aiguillages, etc... Plusieurs mondes peuvent \u00eatre cr\u00e9\u00e9s, mais un seul peut \u00eatre utilis\u00e9 \u00e0 la fois.\n\nLes mondes sont enregistr\u00e9s sur l'ordinateur h\u00e9bergeant le serveur Traintastic. Lors de l'enregistrement, une sauvegarde est cr\u00e9\u00e9e automatiquement. Le menu Fichier \u2192 Exporter le monde permet de cr\u00e9er une sauvegarde suppl\u00e9mentaire, ou de transf\u00e9rer le monde vers un autre serveur.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5491,7 +5491,7 @@
     },
     {
         "term": "wizard.introduction.edit_mode:title",
-        "definition": "",
+        "definition": "Mode \u00e9dition",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5500,7 +5500,7 @@
     },
     {
         "term": "wizard.introduction.edit_mode:text",
-        "definition": "",
+        "definition": "Traintastic poss\u00e8de deux modes de fonctionnement:\n\u2022 Edition\n\u2022 Op\u00e9ration\n\nEn mode Op\u00e9ration, il n'est possible que d'activer le circuit. Pour \u00e9viter tout changement accidentel, il est n\u00e9cessaire d'entrer en mode \u00e9dition pour effectuer une modification.\n\nLa bascule entre les modes s'effectue via l'ic\u00f4ne Crayon \u00e0 droit de la barre d'outils, ou via le menu Monde \u2192 Editer le monde",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5509,7 +5509,7 @@
     },
     {
         "term": "wizard.introduction.forum:title",
-        "definition": "",
+        "definition": "Forum Traintastic",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5518,7 +5518,7 @@
     },
     {
         "term": "wizard.introduction.forum:text",
-        "definition": "",
+        "definition": "Pour toute question ou suggestion, retrouvez-nous sur le  <a href=\"https://forum.traintastic.org\">Forum Traintastic</a>.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5527,7 +5527,7 @@
     },
     {
         "term": "wizard.add_interface.welcome:title",
-        "definition": "",
+        "definition": "Ajouter une interface",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5536,7 +5536,7 @@
     },
     {
         "term": "wizard.add_interface.welcome:text",
-        "definition": "",
+        "definition": "Cet assistant va vous guider dans le param\u00e9trage de l'interface.\n\nSi vous ex\u00e9cutez le serveur et le client Traintastic sur des ordinateurs diff\u00e9rents, assurez-vous que le station de contr\u00f4le soit connect\u00e9e sur l'ordinateur h\u00e9bergeant le serveur Traintastic.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5545,7 +5545,7 @@
     },
     {
         "term": "wizard.add_interface.command_station:title",
-        "definition": "",
+        "definition": "Station de commande",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5554,7 +5554,7 @@
     },
     {
         "term": "wizard.add_interface.command_station:text",
-        "definition": "",
+        "definition": "S\u00e9lectionnez votre station de commande:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5563,7 +5563,7 @@
     },
     {
         "term": "wizard.add_interface.connection:title",
-        "definition": "",
+        "definition": "Connexion",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5572,7 +5572,7 @@
     },
     {
         "term": "wizard.add_interface.connection:text",
-        "definition": "",
+        "definition": "Comment est connect\u00e9 %command_station% ?",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5581,7 +5581,7 @@
     },
     {
         "term": "wizard.add_interface.connection:command_station_serial_port",
-        "definition": "",
+        "definition": "Port s\u00e9rie %command_station%",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5590,7 +5590,7 @@
     },
     {
         "term": "wizard.add_interface.connection:command_station_usb_port",
-        "definition": "",
+        "definition": "Port USB %command_station%",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5599,7 +5599,7 @@
     },
     {
         "term": "wizard.add_interface.connection:network",
-        "definition": "",
+        "definition": "R\u00e9seau",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5608,7 +5608,7 @@
     },
     {
         "term": "wizard.add_interface.connection:not_yet_supported",
-        "definition": "",
+        "definition": "Pas encore support\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5617,7 +5617,7 @@
     },
     {
         "term": "wizard.add_interface.connection:can_interface",
-        "definition": "",
+        "definition": "Interface CAN bus suppl\u00e9mentaire",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5626,7 +5626,7 @@
     },
     {
         "term": "wizard.add_interface.connection:loconet_interface",
-        "definition": "",
+        "definition": "Interface Loconet suppl\u00e9mentaire",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5635,7 +5635,7 @@
     },
     {
         "term": "wizard.add_interface.connection:xpressnet_interface",
-        "definition": "",
+        "definition": "Interface XpressNet suppl\u00e9mentaire",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5644,7 +5644,7 @@
     },
     {
         "term": "wizard.add_interface.protocol:title",
-        "definition": "",
+        "definition": "Protocole",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5653,7 +5653,7 @@
     },
     {
         "term": "wizard.add_interface.protocol:text",
-        "definition": "",
+        "definition": "S\u00e9lectionnez le protocole de communication pour la connexion:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5662,7 +5662,7 @@
     },
     {
         "term": "wizard.add_interface.interface_loconet:title",
-        "definition": "",
+        "definition": "Interface Loconet",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5671,7 +5671,7 @@
     },
     {
         "term": "wizard.add_interface.interface_loconet:text",
-        "definition": "",
+        "definition": "S\u00e9lectionnez l'interface LocoNet \u00e0 laquelle est connect\u00e9e la %command_station%:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5680,7 +5680,7 @@
     },
     {
         "term": "wizard.add_interface.interface_xpressnet:title",
-        "definition": "",
+        "definition": "Interface XpressNet",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5689,7 +5689,7 @@
     },
     {
         "term": "wizard.add_interface.interface_xpressnet:text",
-        "definition": "",
+        "definition": "S\u00e9lectionnez l'interface XpressNet \u00e0 laquelle est connect\u00e9e la %command_station%:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5698,7 +5698,7 @@
     },
     {
         "term": "wizard.add_interface.hostname:title",
-        "definition": "",
+        "definition": "Adresse IP",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5707,7 +5707,7 @@
     },
     {
         "term": "wizard.add_interface.hostname:text",
-        "definition": "",
+        "definition": "Indiquez l'adresse IP pour se connecter \u00e0 %command_station%:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5716,7 +5716,7 @@
     },
     {
         "term": "wizard.add_interface.hostname_port:title",
-        "definition": "",
+        "definition": "Adresse IP et port",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5725,7 +5725,7 @@
     },
     {
         "term": "wizard.add_interface.hostname_port:text",
-        "definition": "",
+        "definition": "Indiquez l'adresse IP et le port pour se connecter \u00e0 %command_station%:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5734,7 +5734,7 @@
     },
     {
         "term": "wizard.add_interface.serial_port:title",
-        "definition": "",
+        "definition": "Port s\u00e9rie",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5743,7 +5743,7 @@
     },
     {
         "term": "wizard.add_interface.serial_port:text",
-        "definition": "",
+        "definition": "S\u00e9lectionnez le port s\u00e9rie auquel est connect\u00e9e la %command_station%:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5752,7 +5752,7 @@
     },
     {
         "term": "wizard.add_interface.serial_port_interface:text",
-        "definition": "",
+        "definition": "S\u00e9lectionnez le port s\u00e9rie auquel est connect\u00e9 %interface%:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5761,7 +5761,7 @@
     },
     {
         "term": "wizard.add_interface.name:title",
-        "definition": "",
+        "definition": "Nom",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5770,7 +5770,7 @@
     },
     {
         "term": "wizard.add_interface.name:text",
-        "definition": "",
+        "definition": "Entrez un nom pour la connexion:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5779,7 +5779,7 @@
     },
     {
         "term": "wizard.add_interface.finalization:title",
-        "definition": "",
+        "definition": "Pr\u00eat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5788,7 +5788,7 @@
     },
     {
         "term": "wizard.add_interface.finalization:text",
-        "definition": "",
+        "definition": "La configuration de %command_station% est termin\u00e9e, vous pouvez la connecter via le bouton Connexion\n\nVous pouvez effectuer des changements plus tard via le menu: Objets \u2192 Mat\u00e9riel \u2192 Interfaces.\n",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5797,7 +5797,7 @@
     },
     {
         "term": "wizard.page.list:search",
-        "definition": "",
+        "definition": "Recherche",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5806,7 +5806,7 @@
     },
     {
         "term": "wizard.button:back",
-        "definition": "",
+        "definition": "Pr\u00e9c\u00e9dent",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5815,7 +5815,7 @@
     },
     {
         "term": "wizard.button:next",
-        "definition": "",
+        "definition": "Suivant",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5824,7 +5824,7 @@
     },
     {
         "term": "wizard.button:finish",
-        "definition": "",
+        "definition": "Terminer",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5833,7 +5833,7 @@
     },
     {
         "term": "wizard.button:cancel",
-        "definition": "",
+        "definition": "Annuler",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5842,7 +5842,7 @@
     },
     {
         "term": "output_map:address_x",
-        "definition": "",
+        "definition": "Adresse %1",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5851,7 +5851,7 @@
     },
     {
         "term": "class_id:board_tile.rail.nx_button",
-        "definition": "",
+        "definition": "Bouton NX",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5860,7 +5860,7 @@
     },
     {
         "term": "class_id:board_tile.misc.label",
-        "definition": "",
+        "definition": "Label",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5896,7 +5896,7 @@
     },
     {
         "term": "color:none",
-        "definition": "",
+        "definition": "Aucune",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5914,7 +5914,7 @@
     },
     {
         "term": "text_align:top_left",
-        "definition": "",
+        "definition": "En haut \u00e0 gauche",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5923,7 +5923,7 @@
     },
     {
         "term": "text_align:top_center",
-        "definition": "",
+        "definition": "En haut au centre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5932,7 +5932,7 @@
     },
     {
         "term": "text_align:top_right",
-        "definition": "",
+        "definition": "En haut \u00e0 droite",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5941,7 +5941,7 @@
     },
     {
         "term": "text_align:center_left",
-        "definition": "",
+        "definition": "Au centre \u00e0 gauche",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5950,7 +5950,7 @@
     },
     {
         "term": "text_align:center",
-        "definition": "",
+        "definition": "Au centre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5959,7 +5959,7 @@
     },
     {
         "term": "text_align:center_right",
-        "definition": "",
+        "definition": "Au centre \u00e0 droite",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5968,7 +5968,7 @@
     },
     {
         "term": "text_align:bottom_left",
-        "definition": "",
+        "definition": "En bas \u00e0 gauche",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5977,7 +5977,7 @@
     },
     {
         "term": "text_align:bottom_center",
-        "definition": "",
+        "definition": "En bas au centre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5986,7 +5986,7 @@
     },
     {
         "term": "text_align:bottom_right",
-        "definition": "",
+        "definition": "En bas \u00e0 droite",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -5995,7 +5995,7 @@
     },
     {
         "term": "wizard.new_board:title",
-        "definition": "",
+        "definition": "Nouveau circuit",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6004,7 +6004,7 @@
     },
     {
         "term": "wizard.new_board.introduction:title",
-        "definition": "",
+        "definition": "Nouveau circuit",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6013,7 +6013,7 @@
     },
     {
         "term": "wizard.new_board.introduction.short:text",
-        "definition": "",
+        "definition": "Cet assistant vous guidera dans la configuration de base du circuit.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6022,7 +6022,7 @@
     },
     {
         "term": "wizard.new_board.introduction.long:text",
-        "definition": "",
+        "definition": "Cet assistant vous explique les bases du circuit.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6031,7 +6031,7 @@
     },
     {
         "term": "wizard.new_board.editing:title",
-        "definition": "",
+        "definition": "Edition",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6040,7 +6040,7 @@
     },
     {
         "term": "wizard.new_board.editing:text",
-        "definition": "",
+        "definition": "Le circuit ne peut \u00eatre modifi\u00e9 que si le monde est en mode \u00e9dition et est arr\u00eat\u00e9. La barre d'outils \u00e9dition appara\u00eet automatiquement quand cela est possible.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6049,7 +6049,7 @@
     },
     {
         "term": "wizard.new_board.adding:title",
-        "definition": "",
+        "definition": "Ajout d'\u00e9l\u00e9ments",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6058,7 +6058,7 @@
     },
     {
         "term": "wizard.new_board.adding:text",
-        "definition": "",
+        "definition": "L'ajout des \u00e9l\u00e9ments au circuit se fait en utilisant les \u00e9l\u00e9ments disponibles dans les menus. Utilisez le clic-gauche pour placer un \u00e9l\u00e9ment et le clic-droit pour le faire tourner.\n\nPour remplacer un \u00e9l\u00e9ment par un autre, maintenez CTRL enfonc\u00e9 pendant le clic-gauche, sinon l'ancien \u00e9l\u00e9ment doit d'abord \u00eatre supprim\u00e9.",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6067,7 +6067,7 @@
     },
     {
         "term": "wizard.new_board.name:title",
-        "definition": "",
+        "definition": "Nom du circuit",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6076,7 +6076,7 @@
     },
     {
         "term": "wizard.new_board.name:text",
-        "definition": "",
+        "definition": "Choisissez un nom, par exemple Traintastic, Gare g\u00e9niale ou Circuit:",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6085,7 +6085,7 @@
     },
     {
         "term": "wizard.new_board.finalization:title",
-        "definition": "",
+        "definition": "Termin\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6094,7 +6094,7 @@
     },
     {
         "term": "wizard.new_board.finalization:text",
-        "definition": "",
+        "definition": "Construisons le circuit!",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6103,7 +6103,7 @@
     },
     {
         "term": "class_id:board_tile.misc.switch",
-        "definition": "",
+        "definition": "Interrupteur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6112,7 +6112,7 @@
     },
     {
         "term": "board_tile.misc.switch:color_on",
-        "definition": "Couleur en position ON",
+        "definition": "Couleur en position On",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6121,7 +6121,7 @@
     },
     {
         "term": "board_tile.misc.switch:color_off",
-        "definition": "Couleur en position OFF",
+        "definition": "Couleur en position Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6130,7 +6130,7 @@
     },
     {
         "term": "output_map.switch:key",
-        "definition": "",
+        "definition": "Valeur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6139,7 +6139,7 @@
     },
     {
         "term": "output_map_item.switch.key:off",
-        "definition": "",
+        "definition": "Off",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6148,7 +6148,7 @@
     },
     {
         "term": "output_map_item.switch.key:on",
-        "definition": "",
+        "definition": "On",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6157,7 +6157,7 @@
     },
     {
         "term": "board_tile.turnout:position",
-        "definition": "",
+        "definition": "Position",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6166,7 +6166,7 @@
     },
     {
         "term": "board_tile.rail.sensor:state",
-        "definition": "",
+        "definition": "Etat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6175,7 +6175,7 @@
     },
     {
         "term": "sensor_state:free",
-        "definition": "",
+        "definition": "Libre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6184,7 +6184,7 @@
     },
     {
         "term": "sensor_state:occupied",
-        "definition": "",
+        "definition": "Occup\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6193,7 +6193,7 @@
     },
     {
         "term": "sensor_state:unknown",
-        "definition": "",
+        "definition": "Inconnu",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6202,7 +6202,7 @@
     },
     {
         "term": "board_tile.rail.block:state",
-        "definition": "",
+        "definition": "Etat",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6211,7 +6211,7 @@
     },
     {
         "term": "block_state:occupied",
-        "definition": "",
+        "definition": "Occup\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6220,7 +6220,7 @@
     },
     {
         "term": "block_state:reserved",
-        "definition": "",
+        "definition": "Reserv\u00e9",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6229,7 +6229,7 @@
     },
     {
         "term": "block_state:free",
-        "definition": "",
+        "definition": "Libre",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6238,7 +6238,7 @@
     },
     {
         "term": "board_tile.misc.switch:value",
-        "definition": "",
+        "definition": "Valeur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6247,7 +6247,7 @@
     },
     {
         "term": "list:setup_using_wizard",
-        "definition": "",
+        "definition": "Assistant de configuration",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6256,7 +6256,7 @@
     },
     {
         "term": "language:es-es",
-        "definition": "",
+        "definition": "Espagnol",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6283,7 +6283,7 @@
     },
     {
         "term": "turnout_position:crossed",
-        "definition": "Position croisement",
+        "definition": "Croisement",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6302,6 +6302,456 @@
     {
         "term": "turnout_position:double_slip_straight_b",
         "definition": "Tout droit B",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "luadoc:index:title",
+        "definition": "Script Traintastic Lua",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "luadoc:index:nav",
+        "definition": "Index",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "category:trains",
+        "definition": "Trains",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:do_nothing",
+        "definition": "Ne rien faire",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:estop_train",
+        "definition": "Arr\u00eat d'urgence des trains sur l'itin\u00e9raire",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:estop_world",
+        "definition": "Arr\u00eat d'urgence du monde",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:poweroff_world",
+        "definition": "Eteindre le monde",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:N3003",
+        "definition": "La position de l'aiguillage a \u00e9t\u00e9 r\u00e9initialis\u00e9e \u00e0 une valeur r\u00e9serv\u00e9e",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:N3004",
+        "definition": "Le signal a \u00e9t\u00e9 r\u00e9initialis\u00e9 \u00e0 une valeur r\u00e9serv\u00e9e",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:correct_output_pos_when_locked",
+        "definition": "Essayer de corriger l'\u00e9tat de sortie si modifi\u00e9 externe en \u00e9tat verrouill\u00e9",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:ext_output_change_action",
+        "definition": "Action externe de changement de la sortie",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:path_release_delay",
+        "definition": "D\u00e9lai de lib\u00e9ration de l'itin\u00e9raire",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3003",
+        "definition": "Le train a \u00e9t\u00e9 arr\u00eat\u00e9 d'urgence en raison d'un changement externe de la position de l'aiguillage %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3004",
+        "definition": "Le train a \u00e9t\u00e9 arr\u00eat\u00e9 d'urgence en raison d'un changement externe de l'aspect du signal %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3007",
+        "definition": "Le monde a \u00e9t\u00e9 arr\u00eat\u00e9 d'urgence en raison d'un changement externe de la position de l'aiguillage %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3008",
+        "definition": "Le monde a \u00e9t\u00e9 arr\u00eat\u00e9 d'urgence en raison d'un changement externe de l'aspect du signal %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3009",
+        "definition": "L'alimentation du monde a \u00e9t\u00e9 coup\u00e9e d'urgence en raison d'un changement externe de la position de l'aiguillage %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3010",
+        "definition": "L'alimentation du monde a \u00e9t\u00e9 coup\u00e9e d'urgence en raison d'un changement externe de l'aspect du signal %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W3003",
+        "definition": "La position de l'aiguillage a \u00e9t\u00e9 modifi\u00e9e de fa\u00e7on externe alors qu'il \u00e9tait verrouill\u00e9 dans un itin\u00e9raire",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W3004",
+        "definition": "Le signal a \u00e9t\u00e9 modifi\u00e9 de fa\u00e7on externe alors qu'il \u00e9tait verrouill\u00e9 dans un itin\u00e9raire",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.signal:require_reservation",
+        "definition": "R\u00e9servation requise",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3005",
+        "definition": "Impossible de supprimer le train, il doit \u00eatre \u00e0 l'arr\u00eat.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3006",
+        "definition": "Impossible de supprimer le train, il ne peut \u00eatre supprim\u00e9 que par le wagon de t\u00eate ou de queue.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.turnout_slip:dual_motor",
+        "definition": "Double moteur/bobine",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:diverged",
+        "definition": "D\u00e9vi\u00e9",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "settings:load_last_world_on_startup",
+        "definition": "Charger le dernier monde au d\u00e9marrage",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:I9003",
+        "definition": "Variables persistantes effac\u00e9es",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "lua.script:clear_persistent_variables",
+        "definition": "Effacer les variables persistantes",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "speed_limit_property:no_limit",
+        "definition": "Pas de limite",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "weight_unit:ton",
+        "definition": "tonne",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:turnout",
+        "definition": "Aiguillage",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:output",
+        "definition": "Sortie",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:none",
+        "definition": "Aucune",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:off",
+        "definition": "Off",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:on",
+        "definition": "On",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "single_output_action:pulse",
+        "definition": "Impulsion",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:show_hide_console",
+        "definition": "Afficher/masquer la console",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:settings",
+        "definition": "Param\u00e8tres",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:language",
+        "definition": "Langue",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:allow_client_to_restart_server",
+        "definition": "Autoriser le client \u00e0 red\u00e9marrer le serveur",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:allow_client_to_shutdown_server",
+        "definition": "Autoriser le client \u00e0 arr\u00eater le serveur",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:start_automatically_at_logon",
+        "definition": "D\u00e9marrer \u00e0 l'ouverture de session",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:advanced",
+        "definition": "Avanc\u00e9",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:open_data_directory",
+        "definition": "Ouvrir le r\u00e9pertoire de donn\u00e9es",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:restart",
+        "definition": "Red\u00e9marrer",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.menu:shutdown",
+        "definition": "Arr\u00eater",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.notify:message_running",
+        "definition": "Le serveur Traintastic fonctionne en t\u00e2che de fond.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.notify:message_restarting",
+        "definition": "Le serveur Traintastic a red\u00e9marr\u00e9",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:caption",
+        "definition": "Langue modifi\u00e9e",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:text",
+        "definition": "Le serveur Traintastic doit \u00eatre red\u00e9marr\u00e9 pour prendre en compte la nouvelle langue. Red\u00e9marrer maintenant ?",
         "context": "",
         "term_plural": "",
         "reference": "",

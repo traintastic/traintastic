@@ -155,7 +155,7 @@ void LocoNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-std::pair<uint32_t, uint32_t> LocoNetInterface::inputAddressMinMax(uint32_t) const
+std::pair<uint32_t, uint32_t> LocoNetInterface::inputAddressMinMax(uint32_t /*channel*/) const
 {
   return {LocoNet::Kernel::inputAddressMin, LocoNet::Kernel::inputAddressMax};
 }
@@ -189,7 +189,7 @@ bool LocoNetInterface::setOutputValue(OutputChannel channel, uint32_t address, O
       m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
 }
 
-std::pair<uint32_t, uint32_t> LocoNetInterface::identificationAddressMinMax(uint32_t) const
+std::pair<uint32_t, uint32_t> LocoNetInterface::identificationAddressMinMax(uint32_t /*channel*/) const
 {
   return {LocoNet::Kernel::identificationAddressMin, LocoNet::Kernel::identificationAddressMax};
 }

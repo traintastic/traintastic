@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 #include "../core/event.hpp"
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
+#include <traintastic/enum/externaloutputchangeaction.hpp>
 #include <traintastic/enum/worldevent.hpp>
 #include "../enum/worldscale.hpp"
 #include "../status/status.hpp"
@@ -54,6 +55,7 @@ class NXManager;
 class Clock;
 class TrainList;
 class RailVehicleList;
+class SimulationStatus;
 
 template <typename T>
 class ControllerList;
@@ -103,6 +105,10 @@ class World : public Object
     Property<bool> powerOnWhenLoaded;
     Property<bool> runWhenLoaded;
 
+    Property<bool> correctOutputPosWhenLocked;
+    Property<ExternalOutputChangeAction> extOutputChangeAction;
+    Property<uint16_t> pathReleaseDelay;
+
     ObjectProperty<ControllerList<DecoderController>> decoderControllers;
     ObjectProperty<ControllerList<InputController>> inputControllers;
     ObjectProperty<ControllerList<OutputController>> outputControllers;
@@ -137,6 +143,7 @@ class World : public Object
     Property<bool> mute;
     Property<bool> noSmoke;
     Property<bool> simulation;
+    ObjectProperty<SimulationStatus> simulationStatus;
 
     Method<void()> save;
 

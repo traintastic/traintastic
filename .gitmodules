@@ -1,3 +1,6 @@
 [submodule "shared/data/lncv"]
 	path = shared/data/lncv
 	url = ../lncv.git
+[submodule "server/thirdparty/catch2"]
+	path = server/thirdparty/catch2
+	url = https://github.com/catchorg/Catch2.git

@@ -23,12 +23,15 @@
 #ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTRAILTILE_HPP
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTRAILTILE_HPP
 
+#include <chrono>
 #include "../railtile.hpp"
 #include "../../../map/node.hpp"
 #include "../../../../core/objectproperty.hpp"
 #include "../../../../core/method.hpp"
-#include "../../../../enum/turnoutposition.hpp"
+#include <traintastic/enum/turnoutposition.hpp>
 #include "../../../../hardware/output/map/turnoutoutputmap.hpp"
+
+class BlockPath;
 
 class TurnoutRailTile : public RailTile
 {
@@ -36,10 +39,18 @@ class TurnoutRailTile : public RailTile
 
   private:
     Node m_node;
+    std::weak_ptr<BlockPath> m_reservedPath;
+
+    std::chrono::steady_clock::time_point m_lastRetryStart;
+    uint8_t m_retryCount;
+    static constexpr uint8_t MAX_RETRYCOUNT = 3;
+    static constexpr std::chrono::steady_clock::duration RETRY_DURATION = std::chrono::minutes(1);
 
   protected:
-    TurnoutRailTile(World& world, std::string_view _id, TileId tileId, size_t connectors);
+    TurnoutRailTile(World& world, std::string_view _id, TileId tileId_, size_t connectors);
 
+    void destroying() override;
+    void addToWorld() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
     bool isValidPosition(TurnoutPosition value);
@@ -58,8 +69,10 @@ class TurnoutRailTile : public RailTile
     std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
 
-    virtual bool reserve(TurnoutPosition turnoutPosition, bool dryRun = false);
+    virtual bool reserve(const std::shared_ptr<BlockPath>& blockPath, TurnoutPosition turnoutPosition, bool dryRun = false);
     bool release(bool dryRun = false);
+
+    TurnoutPosition getReservedPosition() const;
 };
 
 #endif

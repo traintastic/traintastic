@@ -41,7 +41,7 @@ PairOutputKeyboard::PairOutputKeyboard(OutputController& controller, OutputChann
 std::vector<OutputKeyboard::OutputInfo> PairOutputKeyboard::getOutputInfo() const
 {
   std::vector<OutputInfo> states;
-  for(auto& it : m_controller.outputMap())
+  for(const auto& it : m_controller.outputMap())
   {
     if(it.second->channel == channel)
     {

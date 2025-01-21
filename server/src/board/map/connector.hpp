@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -70,6 +70,17 @@ constexpr Connector::Direction operator ~(Connector::Direction value)
 {
   const auto n = static_cast<std::underlying_type_t<Connector::Direction>>(value);
   return static_cast<Connector::Direction>(n <= 4 ? n + 4 : n - 4);
+}
+
+constexpr Connector::Direction rotate90cw(Connector::Direction value)
+{
+  const auto n = static_cast<std::underlying_type_t<Connector::Direction>>(value);
+  return static_cast<Connector::Direction>(n <= 6 ? n + 2 : n - 6);
+}
+
+constexpr bool isIntercardinal(Connector::Direction value)
+{
+  return (static_cast<std::underlying_type_t<Connector::Direction>>(value) & 1) == 0;
 }
 
 constexpr Connector::Direction toConnectorDirection(TileRotate value)

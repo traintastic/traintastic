@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,12 +23,26 @@
 #ifndef TRAINTASTIC_SERVER_UTILS_CONTAINS_HPP
 #define TRAINTASTIC_SERVER_UTILS_CONTAINS_HPP
 
+#include <array>
 #include <vector>
+#include <tcb/span.hpp>
+
+template<class T, std::size_t N>
+inline bool contains(const std::array<T, N>& array, T value)
+{
+  return std::find(array.begin(), array.end(), value) != array.end();
+}
 
 template<class T>
 inline bool contains(const std::vector<T>& vector, T value)
 {
   return std::find(vector.begin(), vector.end(), value) != vector.end();
+}
+
+template<class T>
+inline bool contains(tcb::span<const T> span, T value)
+{
+  return std::find(span.begin(), span.end(), value) != span.end();
 }
 
 #endif

@@ -38,7 +38,7 @@
 #include "../network/abstractproperty.hpp"
 #include "../network/objectptr.hpp"
 
-class BoardWidget;
+class Board;
 
 class BoardAreaWidget : public QWidget
 {
@@ -66,7 +66,7 @@ class BoardAreaWidget : public QWidget
   protected:
     static constexpr int boardMargin = 1; // tile
 
-    BoardWidget& m_board;
+    std::shared_ptr<Board> m_board;
     AbstractProperty* m_boardLeft;
     AbstractProperty* m_boardTop;
     AbstractProperty* m_boardRight;
@@ -88,6 +88,8 @@ class BoardAreaWidget : public QWidget
     TileLocation m_mouseMoveHideTileLocation;
     uint8_t m_mouseMoveTileWidthMax;
     uint8_t m_mouseMoveTileHeightMax;
+
+    TileLocation m_dragMoveTileLocation;
 
     inline int boardLeft() const { return Q_LIKELY(m_boardLeft) ? m_boardLeft->toInt() - boardMargin : 0; }
     inline int boardTop() const { return Q_LIKELY(m_boardTop) ? m_boardTop->toInt() - boardMargin: 0; }
@@ -115,6 +117,9 @@ class BoardAreaWidget : public QWidget
     void mouseMoveEvent(QMouseEvent* event) final;
     void wheelEvent(QWheelEvent* event) final;
     void paintEvent(QPaintEvent* event) final;
+    void dragEnterEvent(QDragEnterEvent* event) final;
+    void dragMoveEvent(QDragMoveEvent* event) final;
+    void dropEvent(QDropEvent* event) final;
 
   protected slots:
     void settingsChanged();
@@ -124,7 +129,7 @@ class BoardAreaWidget : public QWidget
     static constexpr int zoomLevelMin = -2;
     static constexpr int zoomLevelMax = 15;
 
-    BoardAreaWidget(BoardWidget& board, QWidget* parent = nullptr);
+    BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent = nullptr);
 
     Grid grid() const { return m_grid; }
     void nextGrid();

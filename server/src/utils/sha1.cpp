@@ -29,7 +29,9 @@ Sha1::Digest Sha1::of(const std::string& value)
   boost::uuids::detail::sha1 sha1;
 	sha1.process_bytes(value.c_str(), value.size());
   Digest digest;
-	sha1.get_digest(digest.m_hash);
+  boost::uuids::detail::sha1::digest_type tmp;
+	sha1.get_digest(tmp);
+  std::memcpy(digest.m_hash, tmp, sizeof(tmp)); // FIXME: get rid of this copy
   return digest;
 }
 
@@ -51,6 +53,8 @@ Sha1::Digest Sha1::of(const std::filesystem::path& filename)
     return Digest::null();
 
   Digest digest;
-	sha1.get_digest(digest.m_hash);
+  boost::uuids::detail::sha1::digest_type tmp;
+	sha1.get_digest(tmp);
+  std::memcpy(digest.m_hash, tmp, sizeof(tmp)); // FIXME: get rid of this copy
   return digest;
 }

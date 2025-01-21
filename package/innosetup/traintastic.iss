@@ -54,7 +54,7 @@ Name: "firewall_wlanmaus"; Description: "{cm:firewall_allow_wlanmaus_z21}"; Grou
 [Files]
 ; Server
 Source: "..\..\server\build\{#ServerExeName}"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
-Source: "..\..\server\thirdparty\lua5.3\bin\win64\lua53.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
+Source: "..\..\server\thirdparty\lua5.4\bin\win64\lua54.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
 Source: "..\..\server\thirdparty\libarchive\bin\archive.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
 Source: "..\..\server\thirdparty\zlib\bin\zlib1.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
 ; Client
@@ -107,7 +107,7 @@ Root: HKLM; Subkey: "{#CompanySubKey}"; Flags: uninsdeletekeyifempty
 Root: HKLM; Subkey: "{#AppSubKey}"; Flags: uninsdeletekey
 
 [INI]
-Filename: {commonappdata}\traintastic\traintastic-client.ini; Section: general_; Key: language; String: {code:GetTraintasticClientLanguage}; Flags: uninsdeleteentry uninsdeletesectionifempty;
+Filename: {commonappdata}\traintastic\traintastic-client.ini; Section: general_; Key: language; String: {code:GetTraintasticLanguage}; Flags: uninsdeleteentry uninsdeletesectionifempty;
 
 [Code]
 const
@@ -179,6 +179,7 @@ begin
   ClientAndServerRadioButton.Checked := (Components = 'ClientAndServer');
   ClientAndServerRadioButton.Font.Style := [fsBold];
   ClientAndServerRadioButton.Height := ScaleY(23);
+  ClientAndServerRadioButton.Width := ComponentsPage.SurfaceWidth;
   ClientAndServerRadioButton.Parent := ComponentsPage.Surface;
   ClientAndServerRadioButton.OnClick := @ComponentRadioButtonClick;
 
@@ -195,6 +196,7 @@ begin
   ClientOnlyRadioButton.Font.Style := [fsBold];
   ClientOnlyRadioButton.Top := Lbl.Top + Lbl.Height + ScaleY(10);
   ClientOnlyRadioButton.Height := ScaleY(23);
+  ClientOnlyRadioButton.Width := ComponentsPage.SurfaceWidth;
   ClientOnlyRadioButton.Parent := ComponentsPage.Surface;
   ClientOnlyRadioButton.OnClick := @ComponentRadioButtonClick;
 
@@ -206,7 +208,7 @@ begin
   Lbl.Parent := ComponentsPage.Surface;
 end;
 
-function GetTraintasticClientLanguage(Param: String) : String;
+function GetTraintasticLanguage(Param: String) : String;
 begin
   case ActiveLanguage of
     'nl': Result := 'nl-nl';
@@ -217,6 +219,19 @@ begin
   else
     Result := 'en-us';
   end;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  ServerSettingsFile: String;
+begin
+  if CurStep = ssPostInstall then begin
+    // Server: only write language if there is no setting file yet:
+    ServerSettingsFile := ExpandConstant('{localappdata}\traintastic\server\settings.json');
+    if not FileExists(ServerSettingsFile) then begin
+      SaveStringToFile(ServerSettingsFile, '{"language":"' + GetTraintasticLanguage('') + '"}', False);
+    end;
+  end
 end;
 
 function VC2019RedistNeedsInstall: Boolean;

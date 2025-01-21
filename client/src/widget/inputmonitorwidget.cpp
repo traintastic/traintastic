@@ -160,7 +160,7 @@ void InputMonitorWidget::keyReleaseEvent(QKeyEvent* event)
 
 uint32_t InputMonitorWidget::pageCount() const
 {
-  return static_cast<uint32_t>(m_addressMax->toInt64() - m_addressMin->toInt64() + m_leds.size()) / m_leds.size();
+  return static_cast<uint32_t>(m_addressMax->toInt64() - m_addressMin->toInt64() + m_leds.size()) / static_cast<uint32_t>(m_leds.size());
 }
 
 void InputMonitorWidget::setPage(uint32_t value)
@@ -184,7 +184,7 @@ void InputMonitorWidget::setGroupBy(uint32_t value)
 
 LEDWidget* InputMonitorWidget::getLED(uint32_t address)
 {
-  const uint32_t first = static_cast<uint32_t>(m_addressMin->toInt64()) + m_page * m_leds.size();
+  const uint32_t first = static_cast<uint32_t>(m_addressMin->toInt64()) + m_page * static_cast<uint32_t>(m_leds.size());
 
   if(address >= first && (address - first) < m_leds.size())
     return m_leds[address - first];
@@ -199,7 +199,7 @@ void InputMonitorWidget::updateLEDs()
 
   const uint32_t addressMin = static_cast<uint32_t>(m_addressMin->toInt64());
   const uint32_t addressMax = static_cast<uint32_t>(m_addressMax->toInt64());
-  uint32_t address = addressMin + m_page * m_leds.size();
+  uint32_t address = addressMin + m_page * static_cast<uint32_t>(m_leds.size());
 
   for(auto* led : m_leds)
   {

@@ -74,13 +74,21 @@ struct Attributes
     property.setAttribute(AttributeName::AliasValues, values);
   }
 
+  template<class T, typename Unit>
+  static inline void addAliases(UnitProperty<T, Unit>& property, tcb::span<const T> keys, tcb::span<const std::string> values)
+  {
+    assert(keys.size() == values.size());
+    property.addAttribute(AttributeName::AliasKeys, keys);
+    property.addAttribute(AttributeName::AliasValues, values);
+  }
+
   static inline void addCategory(InterfaceItem& item, std::string_view value)
   {
     item.addAttribute(AttributeName::Category, value);
   }
 
   template<size_t N>
-  static inline void addClassList(InterfaceItem& item, const std::array<std::string_view, N>& classList)
+  static inline void addClassList(InterfaceItem& item, tcb::span<const std::string_view, N> classList)
   {
     item.addAttribute(AttributeName::ClassList, classList);
   }
@@ -136,6 +144,20 @@ struct Attributes
     static_assert(std::is_floating_point_v<T>);
     property.addAttribute(AttributeName::Min, convertUnit(min, unit, property.unit()));
     property.addAttribute(AttributeName::Max, convertUnit(max, unit, property.unit()));
+  }
+
+  template<class T, class Unit>
+  static inline void addMin(UnitProperty<T, Unit>& property, T value)
+  {
+    static_assert(std::is_floating_point_v<T>);
+    property.addAttribute(AttributeName::Min, value);
+  }
+
+  template<class T, class Unit>
+  static inline void setMin(UnitProperty<T, Unit>& property, T value)
+  {
+    static_assert(std::is_floating_point_v<T>);
+    property.setAttribute(AttributeName::Min, value);
   }
 
   template<typename T>
@@ -255,6 +277,12 @@ struct Attributes
     item.addAttribute(AttributeName::ObjectList, id);
   }
 
+  template<class T>
+  static inline void addUnit(Property<T>& property, std::string_view unit)
+  {
+    property.addAttribute(AttributeName::Unit, unit);
+  }
+
   template<class R, class T, size_t N>
   static inline void addValues(Method<R(T)>& method, const std::array<T, N>& values)
   {
@@ -269,6 +297,12 @@ struct Attributes
 
   template<typename T, size_t N>
   static inline void addValues(Property<T>& property, tcb::span<const T, N> values)
+  {
+    property.addAttribute(AttributeName::Values, values);
+  }
+
+  template<typename T, typename Unit, size_t N>
+  static inline void addValues(UnitProperty<T, Unit>& property, tcb::span<const T, N> values)
   {
     property.addAttribute(AttributeName::Values, values);
   }
@@ -315,6 +349,12 @@ struct Attributes
     property.setAttribute(AttributeName::Values, values);
   }
 
+  template<typename T, typename Unit, size_t N>
+  static inline void setValues(UnitProperty<T, Unit>& property, tcb::span<const T, N> values)
+  {
+    property.setAttribute(AttributeName::Values, values);
+  }
+
   template<typename T>
   static inline void setValues(Property<T>& property, const std::vector<T>* values)
   {
@@ -331,6 +371,12 @@ struct Attributes
   static inline void setValues(Method<R(T)>& method, std::vector<T> values)
   {
     method.setAttribute(AttributeName::Values, std::move(values));
+  }
+
+  template<class R, class T, size_t N>
+  static inline void setValues(Method<R(T)>& method, tcb::span<const T, N> values)
+  {
+    method.setAttribute(AttributeName::Values, values);
   }
 };
 

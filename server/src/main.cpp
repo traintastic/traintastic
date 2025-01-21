@@ -87,17 +87,6 @@ int main(int argc, char* argv[])
   }
 #endif
 
-  const auto localePath = getLocalePath();
-  try
-  {
-    Locale::instance = std::make_unique<Locale>(localePath / "en-us.lang", std::make_unique<Locale>(localePath / "neutral.lang"));
-  }
-  catch(const std::exception& e)
-  {
-    std::cerr << e.what() << std::endl;
-    exit(EXIT_FAILURE);
-  }
-
   if(enableConsoleLogger)
     Log::enableConsoleLogger();
 
@@ -108,6 +97,21 @@ int main(int argc, char* argv[])
   {
     {
       const auto settings = Settings::getPreStartSettings(dataDir);
+
+      const auto localePath = getLocalePath();
+      try
+      {
+        Locale::instance = std::make_unique<Locale>(localePath / "en-us.lang", std::make_unique<Locale>(localePath / "neutral.lang"));
+        if(settings.language != "en-us")
+        {
+          Locale::instance = std::make_unique<Locale>((localePath / settings.language) += ".lang", std::move(Locale::instance));
+        }
+      }
+      catch(const std::exception& e)
+      {
+        std::cerr << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+      }
 
       if(settings.memoryLoggerSize > 0)
         Log::enableMemoryLogger(settings.memoryLoggerSize);

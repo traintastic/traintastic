@@ -200,7 +200,7 @@ void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFla
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(uint32_t) const
+std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(uint32_t /*channel*/) const
 {
   return {XpressNet::Kernel::inputAddressMin, XpressNet::Kernel::inputAddressMax};
 }

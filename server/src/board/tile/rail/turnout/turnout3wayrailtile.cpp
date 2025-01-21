@@ -29,10 +29,33 @@ static const std::array<TurnoutPosition, 4> positionValues = {TurnoutPosition::U
 
 static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
 {
-  // FIXME: implement defaults
-  (void)turnoutPosition;
-  (void)outputType;
-  (void)outputIndex;
+  // FIXME: implement more defaults
+  switch(outputType)
+  {
+    case OutputType::Aspect:
+      if(outputIndex == 0)
+      {
+        // There is no official/defacto standard yet, until there is use values used by YaMoRC YD8116.
+        switch(turnoutPosition)
+        {
+          case TurnoutPosition::Left:
+            return static_cast<int16_t>(0);
+
+          case TurnoutPosition::Right:
+            return static_cast<int16_t>(1);
+
+          case TurnoutPosition::Straight:
+            return static_cast<int16_t>(16);
+
+          default:
+            break;
+        }
+      }
+      break;
+
+    default:
+      break;
+  }
   return {};
 }
 

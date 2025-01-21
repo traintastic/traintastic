@@ -79,7 +79,7 @@ OutputMapItem::MatchResult OutputMapItem::matchesCurrentOutputState() const
 void OutputMapItem::worldEvent(WorldState state, WorldEvent event)
 {
   Object::worldEvent(state, event);
-  for(auto& action : outputActions)
+  for(const auto& action : outputActions)
   {
     action->worldEvent(state, event);
   }

@@ -320,7 +320,8 @@ ul.index-az-nav li a
 
 /** Lua **********************************************************************/
 
-pre[lang="lua"]
+pre[lang="lua"],
+pre[lang="bash"]
 {
   border: solid 1px darkgray;
   background-color: #f8f8f8;
@@ -423,7 +424,8 @@ pre[lang="lua"] code span.function
     border-left-color: blue;
   }
 
-  pre[lang="lua"]
+  pre[lang="lua"],
+  pre[lang="bash"]
   {
     border-color: gray;
     background-color: #222;

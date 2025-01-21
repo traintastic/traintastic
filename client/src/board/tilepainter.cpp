@@ -177,6 +177,7 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate, bool isRes
       break;
 
     case TileId::None:
+    case TileId::HiddenRailCrossOver:
     case TileId::ReservedForFutureExpension:
       break;
   }
@@ -774,7 +775,7 @@ void TilePainter::drawTriangle(const QRectF& r)
     {r.right(), r.bottom()},
     {r.left(), r.bottom()}}};
 
-  m_painter.drawConvexPolygon(points.data(), points.size());
+  m_painter.drawConvexPolygon(points.data(), static_cast<int>(points.size()));
 }
 
 void TilePainter::drawLED(const QRectF& r, const QColor& color, const QColor& borderColor)

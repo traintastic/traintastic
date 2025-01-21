@@ -264,7 +264,7 @@ bool SimulationIOHandler::send(const Message& message)
             break;
 
           // prepend uncompressed size (big endian):
-          uint32_t uncompressedSize = host_to_be<uint32_t>(emptyLoks.size());
+          auto uncompressedSize = host_to_be<uint32_t>(emptyLoks.size());
           for(int i = sizeof(uncompressedSize) - 1; i >= 0; i--)
             data.insert(data.begin(), reinterpret_cast<const std::byte*>(&uncompressedSize)[i]);
 

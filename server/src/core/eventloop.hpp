@@ -48,6 +48,10 @@ class EventLoop
 #ifdef TRAINTASTIC_TEST
       threadId = std::this_thread::get_id();
 #endif
+      if(ioContext.stopped())
+      {
+        ioContext.restart();
+      }
       auto work = std::make_shared<boost::asio::io_context::work>(ioContext);
       ioContext.run();
     }

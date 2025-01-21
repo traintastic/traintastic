@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 #include "protect.hpp"
 #include "../../src/lua/check.hpp"
 #include <string_view>
@@ -28,7 +28,7 @@
 TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t)
 {
   {
-    INFO("nil")
+    INFO("nil");
 
     lua_State* L = newStateWithProtect();
 
@@ -40,7 +40,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("false")
+    INFO("false");
 
     lua_State* L = newStateWithProtect();
 
@@ -52,7 +52,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("true")
+    INFO("true");
 
     lua_State* L = newStateWithProtect();
 
@@ -64,7 +64,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("123")
+    INFO("123");
 
     lua_State* L = newStateWithProtect();
 
@@ -77,7 +77,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("1000")
+    INFO("1000");
 
     lua_State* L = newStateWithProtect();
 
@@ -97,7 +97,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("-1000")
+    INFO("-1000");
 
     lua_State* L = newStateWithProtect();
 
@@ -121,7 +121,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("4.2")
+    INFO("4.2");
 
     lua_State* L = newStateWithProtect();
 
@@ -133,7 +133,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("\"123\"")
+    INFO("\"123\"");
 
     lua_State* L = newStateWithProtect();
 
@@ -146,7 +146,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("\"1000\"")
+    INFO("\"1000\"");
 
     lua_State* L = newStateWithProtect();
 
@@ -166,7 +166,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("\"-1000\"")
+    INFO("\"-1000\"");
 
     lua_State* L = newStateWithProtect();
 
@@ -190,7 +190,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("\"4.2\"")
+    INFO("\"4.2\"");
 
     lua_State* L = newStateWithProtect();
 
@@ -202,7 +202,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("\"test\"")
+    INFO("\"test\"");
 
     lua_State* L = newStateWithProtect();
 
@@ -214,7 +214,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("table")
+    INFO("table");
 
     lua_State* L = newStateWithProtect();
 
@@ -226,7 +226,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("userdata")
+    INFO("userdata");
 
     lua_State* L = newStateWithProtect();
 
@@ -238,7 +238,7 @@ TEMPLATE_TEST_CASE("Lua::check<>", "[lua][lua-check]", int8_t, int16_t, int32_t,
   }
 
   {
-    INFO("lightuserdata")
+    INFO("lightuserdata");
 
     lua_State* L = newStateWithProtect();
 

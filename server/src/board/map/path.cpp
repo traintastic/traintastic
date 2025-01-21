@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,7 +45,7 @@ tcb::span<const Path::TurnoutPositionLink> Path::getTurnoutLinks(TurnoutRailTile
 
   const auto& node = turnout.node()->get();
 
-  switch(turnout.tileId())
+  switch(turnout.tileId.value())
   {
     case TileId::RailTurnoutLeft45:
     case TileId::RailTurnoutLeft90:

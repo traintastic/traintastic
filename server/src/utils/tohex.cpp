@@ -27,7 +27,7 @@ std::string toHex(const void* buffer, const size_t size, const bool addSpaceSepe
 {
   std::string s;
   s.reserve(size * (addSpaceSeperator ? 3 : 2));
-  const uint8_t* p = reinterpret_cast<const uint8_t*>(buffer);
+  const auto* p = reinterpret_cast<const uint8_t*>(buffer);
   for(size_t i = 0; i < size; i++, p++)
   {
     if(addSpaceSeperator && i != 0)

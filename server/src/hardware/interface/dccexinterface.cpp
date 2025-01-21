@@ -146,7 +146,7 @@ tcb::span<const uint8_t> DCCEXInterface::decoderSpeedSteps(DecoderProtocol proto
   assert(protocol == DecoderProtocol::DCCShort || protocol == DecoderProtocol::DCCLong);
   const auto& speedStepValues = DCCEX::Settings::speedStepValues;
   // find value in array so we can create a span, using a span of a variable won't work due to the compare with prevous value in the attribute setter
-  if(auto it = std::find(speedStepValues.begin(), speedStepValues.end(), dccex->speedSteps); it != speedStepValues.end()) /*[[likely]]/*/
+  if(const auto it = std::find(speedStepValues.begin(), speedStepValues.end(), dccex->speedSteps); it != speedStepValues.end()) /*[[likely]]/*/ // NOLINT(readability-qualified-auto) windows requires const auto
     return {&(*it), 1};
   assert(false);
   return {};
@@ -158,7 +158,7 @@ void DCCEXInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags c
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-std::pair<uint32_t, uint32_t> DCCEXInterface::inputAddressMinMax(uint32_t) const
+std::pair<uint32_t, uint32_t> DCCEXInterface::inputAddressMinMax(uint32_t /*channel*/) const
 {
   return {DCCEX::Kernel::idMin, DCCEX::Kernel::idMax};
 }
@@ -373,7 +373,7 @@ void DCCEXInterface::check() const
     checkDecoder(*decoder);
 }
 
-void DCCEXInterface::checkDecoder(const Decoder& decoder) const
+void DCCEXInterface::checkDecoder(const Decoder& decoder)
 {
   for(const auto& function : *decoder.functions)
     if(function->number > DCCEX::Config::functionNumberMax)

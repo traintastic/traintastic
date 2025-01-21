@@ -25,6 +25,7 @@
 
 #include "iohandler.hpp"
 #include <array>
+#include <unordered_map>
 #include "../messages.hpp"
 
 namespace Z21 {
@@ -41,6 +42,8 @@ class SimulationIOHandler final : public IOHandler
     bool m_emergencyStop = false;
     bool m_trackPowerOn = false;
     BroadcastFlags m_broadcastFlags = BroadcastFlags::None;
+
+    std::unordered_map<uint16_t, LanXLocoInfo> m_decoderCache;
 
     void reply(const Message& message);
     void replyLanSystemStateDataChanged();

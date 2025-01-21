@@ -41,9 +41,10 @@ Settings::PreStart Settings::getPreStartSettings(const std::filesystem::path& pa
     PreStart preStart;
     preStart.memoryLoggerSize = settings.value(Name::memoryLoggerSize, Default::memoryLoggerSize);
     preStart.enableFileLogger = settings.value(Name::enableFileLogger, Default::enableFileLogger);
+    preStart.language = settings.value(Name::language, Default::language);
     return preStart;
   }
-  return PreStart();
+  return {};
 }
 
 Settings::Settings(const std::filesystem::path& path)
@@ -53,6 +54,7 @@ Settings::Settings(const std::filesystem::path& path)
 #endif
   , port{this, "port", Server::defaultPort, PropertyFlags::ReadWrite, [this](const uint16_t& /*value*/){ saveToFile(); }}
   , discoverable{this, "discoverable", true, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
+  , language{this, "language", std::string{Default::language}, PropertyFlags::ReadWrite | PropertyFlags::Internal, [this](const std::string& /*value*/){ saveToFile(); }}
   , lastWorld{this, "last_world", "", PropertyFlags::ReadWrite | PropertyFlags::Internal, [this](const std::string& /*value*/){ saveToFile(); }}
   , loadLastWorldOnStartup{this, "load_last_world_on_startup", true, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
   , autoSaveWorldOnExit{this, "auto_save_world_on_exit", false, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
@@ -62,6 +64,7 @@ Settings::Settings(const std::filesystem::path& path)
   , memoryLoggerSize{this, Name::memoryLoggerSize, Default::memoryLoggerSize, PropertyFlags::ReadWrite, [this](const uint32_t& /*value*/){ saveToFile(); }}
   , enableFileLogger{this, Name::enableFileLogger, Default::enableFileLogger, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
 {
+  m_interfaceItems.add(language);
   m_interfaceItems.add(lastWorld);
   m_interfaceItems.add(loadLastWorldOnStartup);
   m_interfaceItems.add(autoSaveWorldOnExit);
@@ -148,7 +151,7 @@ void Settings::saveToFile()
 
   json settings = json::object();
   for(const auto& it : m_interfaceItems)
-    if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&it.second))
+    if(auto* property = dynamic_cast<AbstractProperty*>(&it.second))
       settings[std::string{property->name()}] = property->toJSON();
 
   std::ofstream file(m_filename);

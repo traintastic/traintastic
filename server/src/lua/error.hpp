@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,6 +39,12 @@ namespace Lua {
 [[noreturn]] inline void errorCantSetNonExistingProperty(lua_State* L) { luaL_error(L, "can't set non existing property"); abort(); }
 [[noreturn]] inline void errorCantSetReadOnlyProperty(lua_State* L) { luaL_error(L, "can't set read only property"); abort(); }
 
+[[noreturn]] inline void errorCantStoreValueAsPersistentVariableUnsupportedType(lua_State* L)
+{
+  luaL_error(L, "can't store value as persistent variable, unsupported type");
+  abort();
+}
+
 [[noreturn]] inline void errorDeadObject(lua_State* L) { luaL_error(L, "dead object"); abort(); }
 
 [[noreturn]] inline void errorExpectedNArgumentsGotN(lua_State* L, int expected, int got) { luaL_error(L, "expected %d arguments, got %d", expected, got); abort(); }
@@ -49,6 +55,12 @@ namespace Lua {
 [[noreturn]] inline void errorGlobalNIsReadOnly(lua_State* L, const char* name) { luaL_error(L, "global %s is readonly", name); abort(); }
 
 [[noreturn]] inline void errorInternal(lua_State* L) { luaL_error(L, "internal error"); abort(); }
+
+[[noreturn]] inline void errorTableContainsRecursion(lua_State* L)
+{
+  luaL_error(L, "table contains recursion");
+  abort();
+}
 
 [[noreturn]] inline void errorTableIsReadOnly(lua_State* L) { luaL_error(L, "table is readonly"); abort(); }
 

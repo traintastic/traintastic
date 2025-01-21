@@ -134,6 +134,8 @@ class Object : public std::enable_shared_from_this<Object>
     AbstractObjectProperty* getObjectProperty(std::string_view name);
     const AbstractVectorProperty* getVectorProperty(std::string_view name) const;
     AbstractVectorProperty* getVectorProperty(std::string_view name);
+    const AbstractEvent* getEvent(std::string_view name) const;
+    AbstractEvent* getEvent(std::string_view name);
 };
 
 #endif
