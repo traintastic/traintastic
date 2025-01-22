@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/data">
+        <file>wizard/add_interface.json</file>
+    </qresource>
+</RCC>

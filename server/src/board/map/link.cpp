@@ -24,9 +24,7 @@
 #include <cassert>
 #include "node.hpp"
 
-Link::Link()
-{
-}
+Link::Link() = default;
 
 Link::Link(std::vector<std::shared_ptr<Tile>> tiles)
   : m_tiles{std::move(tiles)}

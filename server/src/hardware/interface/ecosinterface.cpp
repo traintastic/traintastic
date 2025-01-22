@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,21 +27,26 @@
 #include "../output/list/outputlist.hpp"
 #include "../protocol/ecos/kernel.hpp"
 #include "../protocol/ecos/settings.hpp"
+#include "../protocol/ecos/messages.hpp"
 #include "../protocol/ecos/iohandler/tcpiohandler.hpp"
 #include "../protocol/ecos/iohandler/simulationiohandler.hpp"
+#include "../protocol/ecos/object/switch.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/eventloop.hpp"
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
+#include "../../utils/makearray.hpp"
 #include "../../world/world.hpp"
 #include "../../world/worldloader.hpp"
+#include "../../world/worldsaver.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
-constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 CREATE_IMPL(ECoSInterface)
 
@@ -110,43 +115,40 @@ std::pair<uint32_t, uint32_t> ECoSInterface::inputAddressMinMax(uint32_t channel
 
 void ECoSInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
-  if(m_kernel && inRange(address, outputAddressMinMax(channel)))
+  if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(channel, address, action);
 }
 
-const std::vector<uint32_t> *ECoSInterface::outputChannels() const
+tcb::span<const OutputChannel> ECoSInterface::outputChannels() const
 {
-  return &ECoS::Kernel::outputChannels;
+  static const auto values = makeArray(OutputChannel::AccessoryDCC, OutputChannel::AccessoryMotorola, OutputChannel::ECoSObject);
+  return values;
 }
 
-const std::vector<std::string_view> *ECoSInterface::outputChannelNames() const
+std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> ECoSInterface::getOutputECoSObjects(OutputChannel channel) const
 {
-  return &ECoS::Kernel::outputChannelNames;
-}
-
-std::pair<uint32_t, uint32_t> ECoSInterface::outputAddressMinMax(uint32_t channel) const
-{
-  using namespace ECoS;
-
-  switch(channel)
+  if(channel == OutputChannel::ECoSObject) /*[[likely]]*/
   {
-    case Kernel::OutputChannel::dcc:
-      return {Kernel::outputDCCAddressMin, Kernel::outputDCCAddressMax};
-
-    case Kernel::OutputChannel::motorola:
-      return {Kernel::outputMotorolaAddressMin, Kernel::outputMotorolaAddressMax};
+    return {m_outputECoSObjectIds, m_outputECoSObjectNames};
   }
-
-  assert(false);
-  return {0, 0};
+  return OutputController::getOutputECoSObjects(channel);
 }
 
-bool ECoSInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
+bool ECoSInterface::isOutputId(OutputChannel channel, uint32_t outputId) const
+{
+  if(channel == OutputChannel::ECoSObject)
+  {
+    return inRange<uint32_t>(outputId, ECoS::ObjectId::switchMin, ECoS::ObjectId::switchMax);
+  }
+  return OutputController::isOutputId(channel, outputId);
+}
+
+bool ECoSInterface::setOutputValue(OutputChannel channel, uint32_t outputId, OutputValue value)
 {
   return
     m_kernel &&
-    inRange(address, outputAddressMinMax(channel)) &&
-    m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
+    isOutputId(channel, outputId) &&
+    m_kernel->setOutput(channel, outputId, value);
 }
 
 bool ECoSInterface::setOnline(bool& value, bool simulation)
@@ -166,6 +168,15 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
         [this]()
         {
           setState(InterfaceState::Online);
+
+          if(contains(m_world.state.value(), WorldState::Run))
+          {
+            m_kernel->go();
+          }
+          else
+          {
+            m_kernel->emergencyStop();
+          }
         });
       m_kernel->setOnError(
         [this]()
@@ -185,6 +196,38 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
           if(!contains(m_world.state.value(), WorldState::Run))
             m_world.run();
         });
+      m_kernel->setOnObjectChanged(
+        [this](std::size_t typeHash, uint16_t objectId, const std::string& objectName)
+        {
+          if(typeHash == typeid(ECoS::Switch).hash_code())
+          {
+            if(auto it = std::find(m_outputECoSObjectIds.begin(), m_outputECoSObjectIds.end(), objectId); it != m_outputECoSObjectIds.end())
+            {
+              const std::size_t index = std::distance(m_outputECoSObjectIds.begin(), it);
+              m_outputECoSObjectNames[index] = objectName;
+            }
+            else
+            {
+              m_outputECoSObjectIds.emplace_back(objectId);
+              m_outputECoSObjectNames.emplace_back(objectName);
+            }
+            assert(m_outputECoSObjectIds.size() == m_outputECoSObjectNames.size());
+            outputECoSObjectsChanged();
+          }
+        });
+      m_kernel->setOnObjectRemoved(
+        [this](uint16_t objectId)
+        {
+          assert(objectId == 0);
+          if(auto it = std::find(m_outputECoSObjectIds.begin(), m_outputECoSObjectIds.end(), objectId); it != m_outputECoSObjectIds.end())
+          {
+            const std::size_t index = std::distance(m_outputECoSObjectIds.begin(), it);
+            m_outputECoSObjectIds.erase(it);
+            m_outputECoSObjectNames.erase(std::next(m_outputECoSObjectNames.begin(), index));
+            assert(m_outputECoSObjectIds.size() == m_outputECoSObjectNames.size());
+            outputECoSObjectsChanged();
+          }
+        });
       m_kernel->setDecoderController(this);
       m_kernel->setInputController(this);
       m_kernel->setOutputController(this);
@@ -196,10 +239,9 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
           m_kernel->setConfig(ecos->config());
         });
 
-      if(contains(m_world.state.value(), WorldState::Run))
-        m_kernel->go();
-      else
-        m_kernel->emergencyStop();
+      // Reset output object list:
+      m_outputECoSObjectIds.assign({0});
+      m_outputECoSObjectNames.assign({{}});
 
       Attributes::setEnabled(hostname, false);
     }
@@ -217,7 +259,7 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
     m_ecosPropertyChanged.disconnect();
 
     m_kernel->stop(simulation ? nullptr : &m_simulation);
-    m_kernel.reset();
+    EventLoop::deleteLater(m_kernel.release());
 
     setState(InterfaceState::Offline);
   }
@@ -244,36 +286,78 @@ void ECoSInterface::load(WorldLoader& loader, const nlohmann::json& data)
 {
   Interface::load(loader, data);
 
-  using nlohmann::json;
-
-  json state = loader.getState(getObjectId());
   // load simulation data:
-  if(json simulation = state.value("simulation", json::object()); !simulation.empty())
   {
-    using namespace ECoS;
+    using namespace nlohmann;
 
-    if(json locomotives = simulation.value("locomotives", json::array()); !locomotives.empty())
+    json simulation;
+    if(loader.readFile(simulationDataFilename(), simulation))
     {
-      for(const json& object : locomotives)
+      using namespace ECoS;
+
+      // ECoS:
+      if(json object = simulation.value("ecos", json::object()); !object.empty())
       {
-        const uint16_t objectId = object.value("id", 0U);
-        LocomotiveProtocol protocol;
-        const uint16_t address = object.value("address", 0U);
-        if(objectId != 0 && fromString(object.value("protocol", ""), protocol) && address != 0)
-          m_simulation.locomotives.emplace_back(Simulation::Locomotive{{objectId}, protocol, address});
+        m_simulation.ecos.commandStationType = object.value("command_station_type", "");
+        m_simulation.ecos.applicationVersion = object.value("application_version", "");
+        m_simulation.ecos.applicationVersionSuffix = object.value("application_version_suffix", "");
+        m_simulation.ecos.hardwareVersion = object.value("hardware_version", "");
+        m_simulation.ecos.protocolVersion = object.value("protocol_version", "");
+        m_simulation.ecos.railcom = object.value("railcom", false);
+        m_simulation.ecos.railcomPlus = object.value("railcom_plus", false);
       }
-    }
 
-    if(json s88 = simulation.value("s88", json::array()); !s88.empty())
-    {
-      for(const json& object : s88)
+      if(json locomotives = simulation.value("locomotives", json::array()); !locomotives.empty())
       {
-        const uint16_t objectId = object.value("id", 0U);
-        const uint8_t ports = object.value("ports", 0U);
-        if(objectId != 0 && (ports == 8 || ports == 16))
-          m_simulation.s88.emplace_back(Simulation::S88{{objectId}, ports});
-        else
-          break;
+        for(const json& object : locomotives)
+        {
+          const uint16_t objectId = object.value("id", 0U);
+          LocomotiveProtocol protocol;
+          const uint16_t address = object.value("address", 0U);
+          if(objectId != 0 && fromString(object.value("protocol", ""), protocol) && address != 0)
+            m_simulation.locomotives.emplace_back(Simulation::Locomotive{{objectId}, protocol, address});
+        }
+      }
+
+      if(json switches = simulation.value("switches", json::array()); !switches.empty())
+      {
+        for(const json& object : switches)
+        {
+          const uint16_t objectId = object.value("id", 0U);
+          const uint16_t address = object.value("address", 0U);
+          if(objectId != 0 && address != 0)
+          {
+            m_simulation.switches.emplace_back(
+              Simulation::Switch{
+                {objectId},
+                object.value("name1", ""),
+                object.value("name2", ""),
+                object.value("name3", ""),
+                address,
+                object.value("addrext", ""),
+                object.value("type", ""),
+                object.value("symbol", -1),
+                object.value("protocol", ""),
+                object.value<uint8_t>("state", 0U),
+                object.value("mode", ""),
+                object.value<uint16_t>("duration", 0U),
+                object.value<uint8_t>("variant", 0U)
+                });
+          }
+        }
+      }
+
+      if(json s88 = simulation.value("s88", json::array()); !s88.empty())
+      {
+        for(const json& object : s88)
+        {
+          const uint16_t objectId = object.value("id", 0U);
+          const uint8_t ports = object.value("ports", 0U);
+          if(objectId != 0 && (ports == 8 || ports == 16))
+            m_simulation.s88.emplace_back(Simulation::S88{{objectId}, ports});
+          else
+            break;
+        }
       }
     }
   }
@@ -288,12 +372,50 @@ void ECoSInterface::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json
   // save data for simulation:
   json simulation = json::object();
 
+  // ECoS:
+  {
+    simulation["ecos"] = {
+      {"command_station_type", m_simulation.ecos.commandStationType},
+      {"application_version", m_simulation.ecos.applicationVersion},
+      {"application_version_suffix", m_simulation.ecos.applicationVersionSuffix},
+      {"hardware_version", m_simulation.ecos.hardwareVersion},
+      {"protocol_version", m_simulation.ecos.protocolVersion},
+      {"railcom", m_simulation.ecos.railcom},
+      {"railcom_plus", m_simulation.ecos.railcomPlus},
+      };
+  }
+
   if(!m_simulation.locomotives.empty())
   {
     json objects = json::array();
     for(const auto& locomotive : m_simulation.locomotives)
       objects.emplace_back(json::object({{"id", locomotive.id}, {"protocol", toString(locomotive.protocol)}, {"address", locomotive.address}}));
     simulation["locomotives"] = objects;
+  }
+
+  if(!m_simulation.switches.empty())
+  {
+    json objects = json::array();
+    for(const auto& sw : m_simulation.switches)
+    {
+      objects.emplace_back(
+        json::object({
+          {"id", sw.id},
+          {"name1", sw.name1},
+          {"name2", sw.name2},
+          {"name3", sw.name3},
+          {"address", sw.address},
+          {"addrext", sw.addrext},
+          {"type", sw.type},
+          {"symbol", sw.symbol},
+          {"protocol", sw.protocol},
+          {"state", sw.state},
+          {"mode", sw.mode},
+          {"duration", sw.duration},
+          {"variant", sw.variant}
+          }));
+    }
+    simulation["switches"] = objects;
   }
 
   if(!m_simulation.s88.empty())
@@ -305,7 +427,9 @@ void ECoSInterface::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json
   }
 
   if(!simulation.empty())
-    state["simulation"] = simulation;
+  {
+    saver.writeFile(simulationDataFilename(), simulation.dump(2));
+  }
 }
 
 void ECoSInterface::worldEvent(WorldState state, WorldEvent event)
@@ -331,4 +455,9 @@ void ECoSInterface::worldEvent(WorldState state, WorldEvent event)
         break;
     }
   }
+}
+
+std::filesystem::path ECoSInterface::simulationDataFilename() const
+{
+  return (std::filesystem::path("simulation") / id.value()) += ".json";
 }

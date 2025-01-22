@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 #include <charconv>
 #include "../../../utils/startswith.hpp"
 #include "../../../utils/fromchars.hpp"
+#include "../../../utils/rtrim.hpp"
 
 namespace ECoS {
 
@@ -130,7 +131,7 @@ bool parseReply(std::string_view message, Reply& reply)
   {
     while((pos = message.find('\n', n)) < end)
     {
-      reply.lines.emplace_back(&message[n], pos - n);
+      reply.lines.emplace_back(rtrim({&message[n], pos - n}, '\r'));
       n = pos + 1;
     }
   }
@@ -176,7 +177,7 @@ bool parseEvent(std::string_view message, Event& event)
     return false;
 
   // advance to next line
-  n = r.ptr - message.data();
+  n = r.ptr - message.data() + 1;
   while((message[n] == '\n' || message[n] == '\r') && n < message.size())
     n++;
   if(n >= message.size())
@@ -192,7 +193,7 @@ bool parseEvent(std::string_view message, Event& event)
   {
     while((pos = message.find('\n', n)) < end)
     {
-      event.lines.emplace_back(&message[n], pos - n);
+      event.lines.emplace_back(rtrim({&message[n], pos - n}, '\r'));
       n = pos + 1;
     }
   }

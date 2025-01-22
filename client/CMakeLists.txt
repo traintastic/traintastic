@@ -20,6 +20,7 @@ else()
 endif()
 
 add_executable(traintastic-client
+  data/data.qrc
   gfx/common.qrc
   gfx/dark/dark.qrc
   gfx/light/light.qrc
@@ -52,6 +53,8 @@ file(GLOB SOURCES
   "src/misc/*.cpp"
   "src/network/*.hpp"
   "src/network/*.cpp"
+  "src/network/create/*.hpp"
+  "src/network/create/*.cpp"
   "src/network/object/*.hpp"
   "src/network/object/*.cpp"
   "src/programming/lncv/*.hpp"
@@ -78,22 +81,26 @@ file(GLOB SOURCES
   "src/widget/status/*.cpp"
   "src/widget/throttle/*.hpp"
   "src/widget/throttle/*.cpp"
+  "src/wizard/*.hpp"
+  "src/wizard/*.cpp"
+  "src/wizard/page/*.hpp"
+  "src/wizard/page/*.cpp"
   "../shared/src/traintastic/locale/locale.cpp"
   "../shared/src/traintastic/utils/standardpaths.cpp"
   "thirdparty/QtWaitingSpinner/*.hpp"
   "thirdparty/QtWaitingSpinner/*.cpp")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets Network Svg Xml)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets Network Svg Xml WebSockets)
 if(QT_VERSION_MAJOR EQUAL 5)
-  find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Network Svg Xml)
+  find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Network Svg Xml WebSockets)
 else()
-  find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Network Svg Xml SvgWidgets)
+  find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Network Svg Xml SvgWidgets WebSockets)
 endif()
 message(STATUS "Found Qt ${QT_VERSION}")
 
 target_sources(traintastic-client PRIVATE ${SOURCES})
 
-target_link_libraries(traintastic-client PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network Qt${QT_VERSION_MAJOR}::Svg Qt${QT_VERSION_MAJOR}::Xml)
+target_link_libraries(traintastic-client PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network Qt${QT_VERSION_MAJOR}::Svg Qt${QT_VERSION_MAJOR}::Xml Qt${QT_VERSION_MAJOR}::WebSockets)
 if(QT_VERSION_MAJOR GREATER 5)
   target_link_libraries(traintastic-client PRIVATE Qt${QT_VERSION_MAJOR}::SvgWidgets)
 endif()
@@ -122,6 +129,11 @@ install(TARGETS traintastic-client
     COMPONENT traintastic-client
     RUNTIME DESTINATION "/opt/traintastic/bin/"
 )
+
+if(LINUX)
+  install(FILES ${CMAKE_SOURCE_DIR}/debian/traintastic-client.desktop DESTINATION share/applications)
+  install(FILES ${CMAKE_SOURCE_DIR}/debian/traintastic_256.png DESTINATION "/opt/traintastic/icons/")
+endif()
 
 ### BUILD TYPE ###
 

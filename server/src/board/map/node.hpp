@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,6 +50,7 @@ class Node
     const std::vector<std::shared_ptr<Link>>& links() const { return m_links; }
 
     size_t getIndex(const Connector& connector) const;
+    size_t getIndex(const Link& link) const;
     std::shared_ptr<const Link> getLink(size_t index) const;
     std::shared_ptr<Link> getLink(size_t index);
 

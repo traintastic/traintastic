@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 #include "../protocol/z21/iohandler/simulationiohandler.hpp"
 #include "../protocol/z21/iohandler/udpclientiohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/eventloop.hpp"
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
@@ -38,11 +39,12 @@
 #include "../../utils/category.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
+#include "../../utils/makearray.hpp"
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
-constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 CREATE_IMPL(Z21Interface)
 
@@ -138,21 +140,31 @@ std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(uint32_t channel)
 
 void Z21Interface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
-  if(m_kernel && inRange(address, outputAddressMinMax(channel)))
+  if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(channel, address, action);
 }
 
-std::pair<uint32_t, uint32_t> Z21Interface::outputAddressMinMax(uint32_t) const
+tcb::span<const OutputChannel> Z21Interface::outputChannels() const
 {
-  return {Z21::ClientKernel::outputAddressMin, Z21::ClientKernel::outputAddressMax};
+  static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::DCCext);
+  return values;
 }
 
-bool Z21Interface::setOutputValue(uint32_t channel, uint32_t address, bool value)
+std::pair<uint32_t, uint32_t> Z21Interface::outputAddressMinMax(OutputChannel channel) const
+{
+  if(channel == OutputChannel::Accessory)
+  {
+    return {Z21::ClientKernel::outputAddressMin, Z21::ClientKernel::outputAddressMax};
+  }
+  return OutputController::outputAddressMinMax(channel);
+}
+
+bool Z21Interface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
 {
   return
       m_kernel &&
       inRange(address, outputAddressMinMax(channel)) &&
-      m_kernel->setOutput(static_cast<uint16_t>(address), value);
+      m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
 }
 
 bool Z21Interface::setOnline(bool& value, bool simulation)
@@ -198,22 +210,41 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
           else
             firmwareVersion.setValueInternal("");
         });
-      m_kernel->setOnTrackPowerOnChanged(
-        [this](bool powerOn)
+      m_kernel->setOnTrackPowerChanged(
+        [this](bool powerOn, bool isStopped)
         {
-          if(powerOn == contains(m_world.state.value(), WorldState::PowerOn))
-            return;
-
           if(powerOn)
-            m_world.powerOn();
+          {
+              /* NOTE:
+               * Setting stop and powerOn together is not an atomic operation,
+               * so it would trigger 2 state changes with in the middle state.
+               * Fortunately this does not happen because at least one of the state is already set.
+               * Because if we are in Run state we go to PowerOn,
+               * and if we are on PowerOff then we go to PowerOn.
+               */
+
+              // First of all, stop if we have to, otherwhise we might inappropiately run trains
+              if(isStopped && contains(m_world.state.value(), WorldState::Run))
+              {
+                m_world.stop();
+              }
+              else if(!contains(m_world.state.value(), WorldState::Run) && !isStopped)
+              {
+                m_world.run(); // Run trains yay!
+              }
+
+              // EmergencyStop in Z21 also means power is still on
+              if(!contains(m_world.state.value(), WorldState::PowerOn) && isStopped)
+              {
+                m_world.powerOn(); // Just power on but keep stopped
+              }
+          }
           else
-            m_world.powerOff();
-        });
-      m_kernel->setOnEmergencyStop(
-        [this]()
-        {
-          if(contains(m_world.state.value(), WorldState::Run))
-            m_world.stop();
+          {
+              // Power off regardless of stop state
+              if(contains(m_world.state.value(), WorldState::PowerOn))
+                  m_world.powerOff();
+          }
         });
 
       m_kernel->setDecoderController(this);
@@ -228,13 +259,18 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
           m_kernel->setConfig(z21->config());
         });
 
+      // Avoid to set multiple power states in rapid succession
       if(contains(m_world.state.value(), WorldState::PowerOn))
-        m_kernel->trackPowerOn();
+      {
+        if(contains(m_world.state.value(), WorldState::Run))
+          m_kernel->trackPowerOn(); // Run trains
+        else
+          m_kernel->emergencyStop(); // Emergency stop with power on
+      }
       else
-        m_kernel->trackPowerOff();
-
-      if(!contains(m_world.state.value(), WorldState::Run))
-        m_kernel->emergencyStop();
+      {
+        m_kernel->trackPowerOff(); // Stop by powering off
+      }
 
       Attributes::setEnabled({hostname, port}, false);
     }
@@ -252,7 +288,7 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
     m_z21PropertyChanged.disconnect();
 
     m_kernel->stop();
-    m_kernel.reset();
+    EventLoop::deleteLater(m_kernel.release());
 
     setState(InterfaceState::Offline);
     hardwareType.setValueInternal("");
@@ -284,27 +320,42 @@ void Z21Interface::worldEvent(WorldState state, WorldEvent event)
 
   if(m_kernel)
   {
+    // Avoid to set multiple power states in rapid succession
     switch(event)
     {
       case WorldEvent::PowerOff:
+      {
         m_kernel->trackPowerOff();
         break;
-
+      }
       case WorldEvent::PowerOn:
-        m_kernel->trackPowerOn();
-        if(!contains(state, WorldState::Run))
-          m_kernel->emergencyStop();
+      {
+        if(contains(state, WorldState::Run))
+          m_kernel->trackPowerOn();
+        else
+          m_kernel->emergencyStop(); // In Z21 E-Stop means power on but not running
         break;
-
+      }
       case WorldEvent::Stop:
-        m_kernel->emergencyStop();
+      {
+        if(contains(state, WorldState::PowerOn))
+        {
+          // In Z21 E-Stop means power is on but trains are not running
+          m_kernel->emergencyStop();
+        }
+        else
+        {
+          // This Stops everything by removing power
+          m_kernel->trackPowerOff();
+        }
         break;
-
+      }
       case WorldEvent::Run:
+      {
         if(contains(state, WorldState::PowerOn))
           m_kernel->trackPowerOn();
         break;
-
+      }
       default:
         break;
     }

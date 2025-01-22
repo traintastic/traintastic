@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,6 +42,7 @@ void SimulationIOHandler::start()
   auto expireAfter = std::chrono::milliseconds(Random::value<int>(0, bootstrapCANInterval.count()));
   startBootloaderCANTimer(expireAfter);
   startPingTimer(expireAfter + 1s);
+  m_kernel.started();
 }
 
 void SimulationIOHandler::startBootloaderCANTimer(std::chrono::milliseconds expireAfter)
@@ -263,7 +264,7 @@ bool SimulationIOHandler::send(const Message& message)
             break;
 
           // prepend uncompressed size (big endian):
-          uint32_t uncompressedSize = host_to_be<uint32_t>(emptyLoks.size());
+          auto uncompressedSize = host_to_be<uint32_t>(emptyLoks.size());
           for(int i = sizeof(uncompressedSize) - 1; i >= 0; i--)
             data.insert(data.begin(), reinterpret_cast<const std::byte*>(&uncompressedSize)[i]);
 

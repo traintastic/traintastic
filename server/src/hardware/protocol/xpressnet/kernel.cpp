@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,8 +86,6 @@ void Kernel::start()
           });
         return;
       }
-
-      started();
     });
 
 #ifndef NDEBUG
@@ -112,6 +110,13 @@ void Kernel::stop()
 #endif
 }
 
+void Kernel::started()
+{
+  assert(isKernelThread());
+
+  KernelBase::started();
+}
+
 void Kernel::receive(const Message& message)
 {
   if(m_config.debugLogRXTX)
@@ -125,7 +130,7 @@ void Kernel::receive(const Message& message)
   {
     case idFeedbackBroadcast:
     {
-      const FeedbackBroadcast* feedback = static_cast<const FeedbackBroadcast*>(&message);
+      const auto* feedback = static_cast<const FeedbackBroadcast*>(&message);
 
       for(uint8_t i = 0; i < feedback->pairCount(); i++)
       {
@@ -379,9 +384,20 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
 }
 
-bool Kernel::setOutput(uint16_t address, bool value)
+bool Kernel::setOutput(uint16_t address, OutputPairValue value)
 {
-  postSend(AccessoryDecoderOperationRequest(address - 1, value));
+  assert(isEventLoopThread());
+  assert(address >= accessoryOutputAddressMin && address <= accessoryOutputAddressMax);
+  assert(value == OutputPairValue::First || value == OutputPairValue::First);
+  m_ioContext.post(
+    [this, address, value]()
+    {
+      send(
+        AccessoryDecoderOperationRequest(
+          m_config.useRocoAccessoryAddressing ? address + 4 : address,
+          value == OutputPairValue::Second,
+          true));
+    });
   return true;
 }
 
@@ -396,9 +412,10 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
           return; // no change
 
         const uint16_t groupAddress = (address - 1) >> 2;
-        const uint8_t index = static_cast<uint8_t>((address - 1) & 0x0003);
+        const auto index = static_cast<uint8_t>((address - 1) & 0x0003);
 
         std::byte message[sizeof(FeedbackBroadcast) + sizeof(FeedbackBroadcast::Pair) + 1];
+        memset(message, 0, sizeof(message));
         auto* feedbackBroadcast = reinterpret_cast<FeedbackBroadcast*>(&message);
         feedbackBroadcast->header = idFeedbackBroadcast;
         feedbackBroadcast->setPairCount(1);

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +33,15 @@ ECoS::ECoS(Kernel& kernel)
   : Object(kernel, ObjectId::ecos)
 {
   requestView();
-  send(get(m_id, {Option::info}));
+  send(get(m_id, {
+    Option::commandstationtype,
+    Option::protocolversion,
+    Option::hardwareversion,
+    Option::applicationversion,
+    Option::applicationversionsuffix,
+    Option::railcom,
+    Option::railcomplus,
+    }));
 }
 
 bool ECoS::receiveReply(const Reply& reply)
@@ -62,33 +70,6 @@ bool ECoS::receiveReply(const Reply& reply)
       }
     }
   }
-  else if(reply.command == Command::get)
-  {
-    if(reply.options.size() == 1)
-    {
-      if(reply.options[0] == Option::info)
-      {
-        // read model:
-        for(auto line : reply.lines)
-        {
-          line = stripPrefix(rtrim(line, '\r'), "1 ");
-          if(line == "ECoS")
-          {
-            m_model = Model::ECoS;
-            break;
-          }
-          if(line == "ECoS2")
-          {
-            m_model = Model::ECoS2;
-            break;
-          }
-        }
-
-        // other values are read by update()
-      }
-    }
-  }
-
   return Object::receiveReply(reply);
 }
 
@@ -132,17 +113,36 @@ void ECoS::update(std::string_view option, std::string_view value)
       }
     }
   }
-  else if(option == Option::applicationVersion)
+  else if(option == Option::applicationversion)
   {
     Version::fromChars(value, m_applicationVersion);
   }
-  else if(option == Option::hardwareVersion)
+  else if(option == Option::applicationversionsuffix)
+  {
+    m_applicationVersionSuffix = std::string{value};
+  }
+  else if(option == Option::commandstationtype)
+  {
+    if(!fromString(value, m_model))
+    {
+      m_model = Model::Unknown;
+    }
+  }
+  else if(option == Option::hardwareversion)
   {
     Version::fromChars(value, m_hardwareVersion);
   }
-  else if(option == Option::protocolVersion)
+  else if(option == Option::protocolversion)
   {
     Version::fromChars(value, m_protocolVersion);
+  }
+  else if(option == Option::railcom)
+  {
+    m_railcom = (value == "1");
+  }
+  else if(option == Option::railcomplus)
+  {
+    m_railcomPlus = (value == "1");
   }
 }
 

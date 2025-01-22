@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +22,7 @@
 
 #include "signaloutputmap.hpp"
 
-SignalOutputMap::SignalOutputMap(Object& _parent, std::string_view parentPropertyName, std::initializer_list<SignalAspect> aspects) :
-  OutputMapBase(_parent, parentPropertyName, aspects)
+SignalOutputMap::SignalOutputMap(Object& _parent, std::string_view parentPropertyName, std::initializer_list<SignalAspect> aspects, DefaultOutputActionGetter defaultOutputActionGetter) :
+  OutputMapBase(_parent, parentPropertyName, aspects, defaultOutputActionGetter)
 {
 }

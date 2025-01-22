@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include "../../src/core/objectproperty.tpp"
 #include "../../src/core/method.tpp"
 #include "../../src/world/world.hpp"
@@ -80,6 +80,37 @@ TEST_CASE("Delete active train", "[train]")
   REQUIRE(worldWeak.expired());
 }
 
+TEST_CASE("Delete inactive train", "[train]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(world->trains->length == 0);
+
+  std::weak_ptr<RailVehicle> locomotiveWeak = world->railVehicles->create(Locomotive::classId);
+  REQUIRE_FALSE(locomotiveWeak.expired());
+  REQUIRE(world->railVehicles->length == 1);
+
+  std::weak_ptr<Train> trainWeak = world->trains->create();
+  REQUIRE_FALSE(trainWeak.expired());
+  REQUIRE(world->trains->length == 1);
+
+  REQUIRE(trainWeak.lock()->vehicles->length == 0);
+  REQUIRE(locomotiveWeak.lock()->trains.size() == 0);
+  trainWeak.lock()->vehicles->add(locomotiveWeak.lock());
+  REQUIRE(trainWeak.lock()->vehicles->length == 1);
+  REQUIRE(locomotiveWeak.lock()->trains.size() == 1);
+
+  CHECK_NOTHROW(world->trains->delete_(trainWeak.lock()));
+  REQUIRE(world->trains->length == 0);
+  REQUIRE(trainWeak.expired());
+  REQUIRE(locomotiveWeak.lock()->trains.size() == 0);
+
+  world.reset();
+  REQUIRE(locomotiveWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
 TEST_CASE("Delete rail vehicle in active train", "[train]")
 {
   auto world = World::create();
@@ -96,8 +127,10 @@ TEST_CASE("Delete rail vehicle in active train", "[train]")
   REQUIRE(world->trains->length == 1);
 
   REQUIRE(trainWeak.lock()->vehicles->length == 0);
+  REQUIRE(locomotiveWeak.lock()->trains.size() == 0);
   trainWeak.lock()->vehicles->add(locomotiveWeak.lock());
   REQUIRE(trainWeak.lock()->vehicles->length == 1);
+  REQUIRE(locomotiveWeak.lock()->trains.size() == 1);
 
   REQUIRE_FALSE(trainWeak.lock()->active.value());
   trainWeak.lock()->active = true;
@@ -105,6 +138,37 @@ TEST_CASE("Delete rail vehicle in active train", "[train]")
 
   CHECK_THROWS_AS(world->railVehicles->delete_(locomotiveWeak.lock()), LogMessageException);
   REQUIRE(world->railVehicles->length == 1);
+
+  world.reset();
+  REQUIRE(locomotiveWeak.expired());
+  REQUIRE(trainWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Delete rail vehicle in inactive train", "[train]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(world->trains->length == 0);
+
+  std::weak_ptr<RailVehicle> locomotiveWeak = world->railVehicles->create(Locomotive::classId);
+  REQUIRE_FALSE(locomotiveWeak.expired());
+  REQUIRE(world->railVehicles->length == 1);
+
+  std::weak_ptr<Train> trainWeak = world->trains->create();
+  REQUIRE_FALSE(trainWeak.expired());
+  REQUIRE(world->trains->length == 1);
+
+  REQUIRE(trainWeak.lock()->vehicles->length == 0);
+  REQUIRE(locomotiveWeak.lock()->trains.size() == 0);
+  trainWeak.lock()->vehicles->add(locomotiveWeak.lock());
+  REQUIRE(trainWeak.lock()->vehicles->length == 1);
+  REQUIRE(locomotiveWeak.lock()->trains.size() == 1);
+
+  CHECK_NOTHROW(world->railVehicles->delete_(locomotiveWeak.lock()));
+  REQUIRE(world->railVehicles->length == 0);
+  REQUIRE(trainWeak.lock()->vehicles->length == 0);
 
   world.reset();
   REQUIRE(locomotiveWeak.expired());

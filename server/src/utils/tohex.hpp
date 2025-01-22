@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022-2023 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,7 +38,7 @@ std::string toHex(T value, size_t length = sizeof(T) * 2)
   return s;
 }
 
-std::string toHex(const void* buffer, size_t size);
+std::string toHex(const void* buffer, size_t size, const bool addSpaceSeperator = false);
 
 inline std::string toHex(std::string_view value)
 {

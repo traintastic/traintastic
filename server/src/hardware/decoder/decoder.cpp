@@ -193,10 +193,15 @@ void Decoder::loaded()
 
 bool Decoder::hasFunction(uint32_t number) const
 {
-  for(const auto& f : *functions)
-    if(f->number == number)
-      return true;
-  return false;
+  return std::any_of(functions->begin(), functions->end(),
+    [number](const auto& f)
+    {
+      return f->number == number;
+    });
+  //for(const auto& f : *functions)
+  //  if(f->number == number)
+  //    return true;
+  //return false;
 }
 
 std::shared_ptr<const DecoderFunction> Decoder::getFunction(uint32_t number) const
@@ -390,7 +395,7 @@ bool Decoder::checkProtocol()
 {
   const auto protocols = protocol.getSpanAttribute<DecoderProtocol>(AttributeName::Values).values();
   assert(!protocols.empty());
-  if(auto it = std::find(protocols.begin(), protocols.end(), protocol); it == protocols.end())
+  if(const auto* it = std::find(protocols.begin(), protocols.end(), protocol); it == protocols.end())
   {
     protocol = protocols.front();
     return true;
@@ -413,7 +418,7 @@ bool Decoder::checkAddress()
 bool Decoder::checkSpeedSteps()
 {
   const auto values = speedSteps.getSpanAttribute<uint8_t>(AttributeName::Values).values();
-  if(auto it = std::find(values.begin(), values.end(), speedSteps); it == values.end())
+  if(const auto* it = std::find(values.begin(), values.end(), speedSteps); it == values.end())
   {
     speedSteps = values.back();
     return true;

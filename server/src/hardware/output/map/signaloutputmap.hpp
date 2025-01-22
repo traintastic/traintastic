@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ class SignalOutputMap : public OutputMapBase<SignalAspect, SignalOutputMapItem>
   CLASS_ID("output_map.signal")
 
   public:
-    SignalOutputMap(Object& _parent, std::string_view parentPropertyName, std::initializer_list<SignalAspect> aspects);
+    SignalOutputMap(Object& _parent, std::string_view parentPropertyName, std::initializer_list<SignalAspect> aspects, DefaultOutputActionGetter defaultOutputActionGetter);
 };
 
 #endif

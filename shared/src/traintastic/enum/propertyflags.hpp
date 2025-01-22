@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019 Reinder Feenstra
+ * Copyright (C) 2019,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,6 +46,9 @@ enum class PropertyFlags : uint16_t
 
   // bit 7
   Internal = 1 << 7,
+
+  // aliases
+  Constant = ReadOnly,
 };
 
 constexpr PropertyFlags operator| (const PropertyFlags& lhs, const PropertyFlags& rhs)

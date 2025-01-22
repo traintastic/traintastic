@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022-2023 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,8 @@
 #include "../core/object.hpp"
 
 namespace Lua {
+
+constexpr char const* methodsGlobal = "methods";
 
 struct MethodData
 {
@@ -64,9 +66,18 @@ AbstractMethod* Method::test(lua_State* L, int index)
 
 void Method::push(lua_State* L, AbstractMethod& value)
 {
-  new(lua_newuserdata(L, sizeof(MethodData))) MethodData(value);
-  luaL_getmetatable(L, metaTableName);
-  lua_setmetatable(L, -2);
+  lua_getglobal(L, methodsGlobal);
+  lua_rawgetp(L, -1, &value);
+  if(lua_isnil(L, -1)) // method not in table
+  {
+    lua_pop(L, 1); // remove nil
+    new(lua_newuserdata(L, sizeof(MethodData))) MethodData(value);
+    luaL_setmetatable(L, metaTableName);
+    lua_pushvalue(L, -1); // copy userdata on stack
+    lua_rawsetp(L, -3, &value); // add method to table
+  }
+  lua_insert(L, lua_gettop(L) - 1); // swap table and userdata
+  lua_pop(L, 1); // remove table
 }
 
 void Method::registerType(lua_State* L)
@@ -77,6 +88,15 @@ void Method::registerType(lua_State* L)
   lua_pushcfunction(L, __call);
   lua_setfield(L, -2, "__call");
   lua_pop(L, 1);
+
+  // weak table for method userdata:
+  lua_newtable(L);
+  lua_newtable(L); // metatable
+  lua_pushliteral(L, "__mode");
+  lua_pushliteral(L, "v");
+  lua_rawset(L, -3);
+  lua_setmetatable(L, -2);
+  lua_setglobal(L, methodsGlobal);
 }
 
 int Method::__gc(lua_State* L)

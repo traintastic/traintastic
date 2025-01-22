@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,32 +24,33 @@
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_OUTPUTMAPOUTPUTACTION_HPP
 
 #include "../../../core/object.hpp"
-#include "../../../enum/outputaction.hpp"
 #include "../output.hpp"
+#include "traintastic/enum/tristate.hpp"
+
+class OutputMap;
+class World;
 
 class OutputMapOutputAction : public Object
 {
-  CLASS_ID("output_map_output_action")
-
   friend class OutputMapItem;
 
-  protected:
-    Object& m_parent;
-    std::shared_ptr<Output> m_output;
+  private:
+    OutputMap& m_parent;
+    const size_t m_outputIndex;
 
-    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
-    void worldEvent(WorldState state, WorldEvent event) override;
+  protected:
+    World& world();
+    Output& output();
+    const Output& output() const;
 
   public:
-    Property<OutputAction> action;
-
-    OutputMapOutputAction(Object& _parent, std::shared_ptr<Output> _output);
+    OutputMapOutputAction(OutputMap& _parent, size_t outputIndex);
 
     std::string getObjectId() const final;
 
-    const std::shared_ptr<Output>& output() const { return m_output; }
+    virtual void execute() = 0;
 
-    void execute();
+    virtual TriState matchesCurrentOutputState() const = 0;
 };
 
 #endif

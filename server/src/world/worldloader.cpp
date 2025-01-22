@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,10 +36,12 @@
 #include "../board/board.hpp"
 #include "../board/tile/tiles.hpp"
 #include "../hardware/interface/interfaces.hpp"
+#include "../hardware/interface/dccexinterface.hpp" //! \todo Remove in v0.4
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunction.hpp"
 #include "../hardware/identification/identification.hpp"
 #include "../vehicle/rail/railvehicles.hpp"
+#include "../vehicle/rail/freightwagon.hpp" //! \todo Remove in v0.4
 #include "../train/train.hpp"
 #include "../train/trainblockstatus.hpp"
 #include "../lua/script.hpp"
@@ -171,6 +173,12 @@ void WorldLoader::load()
   m_objects.insert({m_world->getObjectId(), {data, m_world, false}});
   for(json object : data["objects"])
   {
+    //! \todo Remove in v0.4
+    if(object["class_id"].get<std::string_view>() == "output") // don't create Output objects, no longer stored in file.
+    {
+      continue;
+    }
+
     if(auto it = object.find("id"); it != object.end())
     {
       auto id = it.value().get<std::string>();
@@ -205,7 +213,16 @@ void WorldLoader::createObject(ObjectData& objectData)
   std::string_view id = objectData.json["id"].get<std::string_view>();
 
   if(startsWith(classId, Interfaces::classIdPrefix))
+  {
+    if(classId == "interface.dccplusplus") //! \todo Remove in v0.4
+    {
+      objectData.json["dccex"] = objectData.json["dccplusplus"];
+      objectData.json["dccex"]["class_id"] = "dccex_settings";
+      objectData.json.erase("dccplusplus");
+      classId = DCCEXInterface::classId;
+    }
     objectData.object = Interfaces::create(*m_world, classId, id);
+  }
   else if(classId == Decoder::classId)
   {
     if(objectData.json["protocol"].get<std::string_view>() == "dcc") //! \todo Remove in v0.4
@@ -219,8 +236,6 @@ void WorldLoader::createObject(ObjectData& objectData)
   }
   else if(classId == Input::classId)
     objectData.object = Input::create(*m_world, id);
-  else if(classId == Output::classId)
-    objectData.object = Output::create(*m_world, id);
   else if(classId == Identification::classId)
     objectData.object = Identification::create(*m_world, id);
   else if(classId == Board::classId)
@@ -294,4 +309,21 @@ bool WorldLoader::readFile(const std::filesystem::path& filename, std::string& d
     file.read(data.data(), size);
   }
   return true;
+}
+
+bool WorldLoader::readFile(const std::filesystem::path& filename, nlohmann::json& data)
+{
+  std::string text;
+  if(readFile(filename, text))
+  {
+    try
+    {
+      data = nlohmann::json::parse(text);
+      return true;
+    }
+    catch(...)
+    {
+    }
+  }
+  return false;
 }

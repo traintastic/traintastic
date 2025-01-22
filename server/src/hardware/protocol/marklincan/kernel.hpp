@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,10 +32,14 @@
 #include <queue>
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/tristate.hpp>
+#include <traintastic/enum/outputchannel.hpp>
 #include "config.hpp"
 #include "node.hpp"
 #include "iohandler/iohandler.hpp"
 #include "configdatastreamcollector.hpp"
+#include "../dcc/dcc.hpp"
+#include "../motorola/motorola.hpp"
+#include "../../output/outputvalue.hpp"
 
 class Decoder;
 enum class DecoderChangeFlags;
@@ -56,32 +60,6 @@ class Kernel : public ::KernelBase
 
     static constexpr uint16_t s88AddressMin = 1;
     static constexpr uint16_t s88AddressMax = 16384;
-
-    static constexpr uint16_t outputMotorolaAddressMin = 1;
-    static constexpr uint16_t outputMotorolaAddressMax = 1024 * 2;
-    static constexpr uint16_t outputDCCAddressMin = 1;
-    static constexpr uint16_t outputDCCAddressMax = 2048 * 2;
-    static constexpr uint16_t outputSX1AddressMin = 1;
-    static constexpr uint16_t outputSX1AddressMax = 1024 * 2;
-
-    struct OutputChannel
-    {
-      static constexpr uint32_t motorola = 1;
-      static constexpr uint32_t dcc = 2;
-      static constexpr uint32_t sx1 = 3;
-    };
-
-    inline static const std::vector<uint32_t> outputChannels = {
-      OutputChannel::motorola,
-      OutputChannel::dcc,
-      OutputChannel::sx1,
-    };
-
-    inline static const std::vector<std::string_view> outputChannelNames = {
-      "$hardware:motorola$",
-      "$hardware:dcc$",
-      "SX1",
-    };
 
   private:
     //! Startup states, executed in order.
@@ -127,9 +105,8 @@ class Kernel : public ::KernelBase
     std::array<TriState, s88AddressMax - s88AddressMin + 1> m_inputValues;
 
     OutputController* m_outputController = nullptr;
-    std::array<TriState, outputMotorolaAddressMax - outputMotorolaAddressMin + 1> m_outputValuesMotorola;
-    std::array<TriState, outputDCCAddressMax - outputDCCAddressMin + 1> m_outputValuesDCC;
-    std::array<TriState, outputSX1AddressMax - outputSX1AddressMin + 1> m_outputValuesSX1;
+    std::array<OutputPairValue, Motorola::Accessory::addressMax - Motorola::Accessory::addressMin + 1> m_outputValuesMotorola;
+    std::array<OutputPairValue, DCC::Accessory::addressMax - DCC::Accessory::addressMin + 1> m_outputValuesDCC;
 
     std::vector<std::byte> m_statusConfigData;
     std::unique_ptr<ConfigDataStreamCollector> m_configDataStreamCollector;
@@ -250,6 +227,12 @@ class Kernel : public ::KernelBase
     void stop();
 
     /**
+     * \brief Notify kernel the IO handler is started.
+     * \note This function must run in the kernel's IO context
+     */
+    void started() final;
+
+    /**
      * \brief ...
      *
      * This must be called by the IO handler whenever a Marklin CAN message is received.
@@ -271,10 +254,10 @@ class Kernel : public ::KernelBase
      * \brief ...
      * \param[in] channel Channel
      * \param[in] address Output address
-     * \param[in] value Output value: \c true is on, \c false is off.
+     * \param[in] value Output value
      * \return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint32_t channel, uint16_t address, bool value);
+    bool setOutput(OutputChannel channel, uint16_t address, OutputPairValue value);
 };
 
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,24 +26,34 @@
 #include <lua.hpp>
 #include "enum.hpp"
 #include <traintastic/enum/blocktraindirection.hpp>
+#include <traintastic/enum/color.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
 #include "../../src/enum/direction.hpp"
 #include "../../src/enum/directioncontrolstate.hpp"
 #include <traintastic/enum/identificationeventtype.hpp>
 #include <traintastic/enum/interfacestate.hpp>
+#include <traintastic/enum/outputchannel.hpp>
+#include <traintastic/enum/outputtype.hpp>
+#include <traintastic/enum/outputpairvalue.hpp>
+#include <traintastic/enum/textalign.hpp>
 #include "../../src/enum/tristate.hpp"
-#include "../../src/enum/turnoutposition.hpp"
+#include <traintastic/enum/turnoutposition.hpp>
 #include "../../src/enum/signalaspect.hpp"
-#include "../../src/enum/worldevent.hpp"
+#include <traintastic/enum/worldevent.hpp>
 #include "../../src/enum/worldscale.hpp"
 
 #define LUA_ENUMS \
   BlockTrainDirection, \
+  Color, \
   DecoderProtocol, \
   Direction, \
   DirectionControlState, \
   IdentificationEventType, \
   InterfaceState, \
+  OutputChannel, \
+  OutputType, \
+  OutputPairValue, \
+  TextAlign, \
   TriState, \
   TurnoutPosition, \
   SignalAspect, \
@@ -69,6 +79,14 @@ struct Enums
     if constexpr(sizeof...(Ts) != 0)
       registerValues<Ts...>(L);
   }
+
+  template<class... Ts>
+  inline static const std::array<std::string_view, sizeof...(Ts)> getMetaTableNames()
+  {
+    return std::array<std::string_view, sizeof...(Ts)>{EnumName<Ts>::value...};
+  }
+
+  inline static const auto metaTableNames = getMetaTableNames<LUA_ENUMS>();
 };
 
 }

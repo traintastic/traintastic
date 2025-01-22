@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 #include "../../../core/objectproperty.tpp"
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../hardware/output/outputcontroller.hpp"
 #include "../../../utils/displayname.hpp"
 
 CREATE_IMPL(DecouplerRailTile)
@@ -66,6 +67,23 @@ DecouplerRailTile::DecouplerRailTile(World& world, std::string_view _id)
 
   Attributes::addObjectEditor(deactivate, false);
   m_interfaceItems.add(deactivate);
+
+  outputMap->onOutputStateMatchFound.connect([this](DecouplerState value)
+    {
+      setState(value, true);
+    });
+}
+
+void DecouplerRailTile::destroying()
+{
+  outputMap->parentObject.setValueInternal(nullptr);
+  StraightRailTile::destroying();
+}
+
+void DecouplerRailTile::addToWorld()
+{
+  outputMap->parentObject.setValueInternal(shared_from_this());
+  StraightRailTile::addToWorld();
 }
 
 void DecouplerRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
@@ -77,11 +95,12 @@ void DecouplerRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
   Attributes::setEnabled(name, editable);
 }
 
-void DecouplerRailTile::setState(DecouplerState value)
+void DecouplerRailTile::setState(DecouplerState value, bool skipAction)
 {
   if(state != value)
   {
-    (*outputMap)[value]->execute();
+    if(!skipAction)
+      (*outputMap)[value]->execute();
     state.setValueInternal(value);
   }
 }

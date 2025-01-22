@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,11 +24,10 @@
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_OUTPUTMAPITEMBASE_HPP
 
 #include "outputmapitem.hpp"
-#include <vector>
-#include "../../../core/attributes.hpp"
 #include "../../../core/method.hpp"
-#include "../output.hpp"
-#include "outputmapoutputaction.hpp"
+#include "../../../core/property.hpp"
+
+class OutputMapOutputAction;
 
 template<class Key>
 class OutputMapItemBase : public OutputMapItem
@@ -41,39 +40,11 @@ class OutputMapItemBase : public OutputMapItem
 
   public:
     Property<Key> key;
-    Property<bool> use;
-    Method<std::shared_ptr<OutputMapOutputAction> (const std::shared_ptr<Output>&)> getOutputAction;
+    Method<std::shared_ptr<OutputMapOutputAction> (uint32_t)> getOutputAction;
 
-    OutputMapItemBase(Object& map, Key _key) :
-      OutputMapItem(map),
-      m_keyValues{{_key}},
-      key{this, "key", _key, PropertyFlags::ReadOnly | PropertyFlags::Store},
-      use{this, "use", true, PropertyFlags::ReadWrite | PropertyFlags::Store},
-      getOutputAction{*this, "get_output_action",
-        [this](const std::shared_ptr<Output>& output)
-        {
-          auto it = std::find_if(m_outputActions.begin(), m_outputActions.end(),
-            [output](const auto& item)
-            {
-              return item->output() == output;
-            });
-          return it != m_outputActions.end() ? *it : std::shared_ptr<OutputMapOutputAction>();
-        }}
-    {
-      Attributes::addValues(key, m_keyValues);
-      m_interfaceItems.add(key);
-      Attributes::addEnabled(use, false);
-      m_interfaceItems.add(use);
-      m_interfaceItems.add(getOutputAction);
-    }
+    OutputMapItemBase(Object& map, Key _key);
 
-    std::string getObjectId() const final
-    {
-      std::string id{m_map.getObjectId()};
-      id.append(".");
-      id.append(EnumValues<Key>::value.find(key)->second);
-      return id;
-    }
+    std::string getObjectId() const final;
 };
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -76,6 +76,7 @@ class AbstractProperty : public BaseProperty
     }
 
     [[nodiscard]] virtual int setValueBool(bool value, std::function<void(std::optional<Error>)> /*callback*/) { Q_ASSERT(value != value); return -1; }
+    [[nodiscard]] virtual int setValueInt(int value, std::function<void(std::optional<Error>)> /*callback*/) { Q_ASSERT(value != value); return -1; }
     [[nodiscard]] virtual int setValueInt64(int64_t value, std::function<void(std::optional<Error>)> /*callback*/) { Q_ASSERT(value != value); return -1; }
     [[nodiscard]] virtual int setValueDouble(double value, std::function<void(std::optional<Error>)> /*callback*/) { Q_ASSERT(value != value); return -1; }
     [[nodiscard]] virtual int setValueString(const QString& value, std::function<void(std::optional<Error>)> /*callback*/) { Q_ASSERT(value != value); return -1; }
@@ -93,6 +94,64 @@ class AbstractProperty : public BaseProperty
     virtual void setValueInt64(int64_t value)          { Q_ASSERT(value != value); }
     virtual void setValueDouble(double value)              { Q_ASSERT(value != value); }
     virtual void setValueString(const QString& value)  { Q_ASSERT(value != value); }
+
+    void setValueVariant(const QVariant& value)
+    {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+      switch(value.typeId())
+#else
+      switch(value.type())
+#endif
+      {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        case QMetaType::Bool:
+#else
+        case QVariant::Bool:
+#endif
+          setValueBool(value.toBool());
+          break;
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        case QMetaType::Int:
+#else
+        case QVariant::Int:
+#endif
+          setValueInt(value.toInt());
+          break;
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        case QMetaType::UInt:
+        case QMetaType::LongLong:
+        case QMetaType::ULongLong:
+#else
+        case QVariant::UInt:
+        case QVariant::LongLong:
+        case QVariant::ULongLong:
+#endif
+          setValueInt64(value.toLongLong());
+          break;
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        case QMetaType::Double:
+#else
+        case QVariant::Double:
+#endif
+          setValueDouble(value.toDouble());
+          break;
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        case QMetaType::QString:
+#else
+        case QVariant::String:
+#endif
+          setValueString(value.toString());
+          break;
+
+        default: /*[[unlikely]]*/
+          assert(false);
+          break;
+      }
+    }
 };
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,10 @@
 #include "../board/board.hpp"
 #include "../board/boardlist.hpp"
 
+#include "../board/tile/misc/labeltile.hpp"
+#include "../board/tile/misc/pushbuttontile.hpp"
+#include "../board/tile/misc/switchtile.hpp"
+#include "../board/tile/rail/nxbuttonrailtile.hpp"
 #include "../board/tile/rail/sensorrailtile.hpp"
 #include "../board/tile/rail/straightrailtile.hpp"
 #include "../board/tile/rail/cross45railtile.hpp"
@@ -56,7 +60,7 @@
 
 #include "../clock/clock.hpp"
 
-#include "../hardware/interface/dccplusplusinterface.hpp"
+#include "../hardware/interface/dccexinterface.hpp"
 #include "../hardware/interface/ecosinterface.hpp"
 #include "../hardware/interface/hsi88.hpp"
 #include "../hardware/interface/loconetinterface.hpp"
@@ -77,7 +81,9 @@
 #include "../hardware/input/map/blockinputmap.hpp"
 #include "../hardware/input/map/blockinputmapitem.hpp"
 
-#include "../hardware/output/output.hpp"
+#include "../hardware/output/singleoutput.hpp"
+#include "../hardware/output/pairoutput.hpp"
+#include "../hardware/output/aspectoutput.hpp"
 #include "../hardware/output/list/outputlist.hpp"
 #include "../hardware/output/map/outputmapoutputaction.hpp"
 #include "../hardware/output/map/signaloutputmap.hpp"
@@ -146,6 +152,10 @@ void Class::registerValues(lua_State* L)
   registerValue<Board>(L, "BOARD");
   registerValue<BoardList>(L, "BOARD_LIST");
 
+  registerValue<LabelTile>(L, "LABEL_TILE");
+  registerValue<PushButtonTile>(L, "PUSH_BUTTON_TILE");
+  registerValue<SwitchTile>(L, "SWITCH_TILE");
+  registerValue<NXButtonRailTile>(L, "NX_BUTTON_RAIL_TILE");
   registerValue<StraightRailTile>(L, "STRAIGHT_RAIL_TILE");
   registerValue<TunnelRailTile>(L, "TUNNEL_RAIL_TILE");
   registerValue<BufferStopRailTile>(L, "BUFFER_STOP_RAIL_TILE");
@@ -174,7 +184,7 @@ void Class::registerValues(lua_State* L)
   registerValue<Clock>(L, "CLOCK");
 
   // hardware - interface:
-  registerValue<DCCPlusPlusInterface>(L, "DCCPLUSPLUS_INTERFACE");
+  registerValue<DCCEXInterface>(L, "DCCEX_INTERFACE");
   registerValue<ECoSInterface>(L, "ECOS_INTERFACE");
   registerValue<HSI88Interface>(L, "HSI88_INTERFACE");
   registerValue<LocoNetInterface>(L, "LOCONET_INTERFACE");
@@ -194,7 +204,9 @@ void Class::registerValues(lua_State* L)
   registerValue<Input>(L, "INPUT");
   registerValue<InputList>(L, "INPUT_LIST");
 
-  registerValue<Output>(L, "OUTPUT");
+  registerValue<SingleOutput>(L, "SINGLE_OUTPUT");
+  registerValue<PairOutput>(L, "PAIR_OUTPUT");
+  registerValue<AspectOutput>(L, "ASPECT_OUTPUT");
   registerValue<OutputList>(L, "OUTPUT_LIST");
 
   // hardware - identification:

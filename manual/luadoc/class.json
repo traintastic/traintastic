@@ -11,7 +11,8 @@
       {
         "code": "class.get(world) -- returns: class.WORLD"
       }
-    ]
+    ],
+    "since": "0.1"
   },
   "BOARD": {
     "type": "constant"
@@ -94,13 +95,19 @@
   "CLOCK": {
     "type": "constant"
   },
-  "DCCPLUSPLUS_INTERFACE": {
+  "DCCEX_INTERFACE": {
     "type": "constant"
   },
   "ECOS_INTERFACE": {
     "type": "constant"
   },
   "HSI88_INTERFACE": {
+    "type": "constant"
+  },
+  "LABEL_TILE": {
+    "type": "constant"
+  },
+  "SWITCH_TILE": {
     "type": "constant"
   },
   "LOCONET_INTERFACE": {
@@ -145,8 +152,17 @@
   "INPUT_LIST": {
     "type": "constant"
   },
-  "OUTPUT": {
-    "type": "constant"
+  "SINGLE_OUTPUT": {
+    "type": "constant",
+    "since": "0.3"
+  },
+  "PAIR_OUTPUT": {
+    "type": "constant",
+    "since": "0.3"
+  },
+  "ASPECT_OUTPUT": {
+    "type": "constant",
+    "since": "0.3"
   },
   "OUTPUT_LIST": {
     "type": "constant"
@@ -173,6 +189,14 @@
     "type": "constant"
   },
   "WORLD": {
+    "type": "constant",
+    "since": "0.1"
+  },
+  "PUSH_BUTTON_TILE": {
     "type": "constant"
+  },
+  "NX_BUTTON_RAIL_TILE": {
+    "type": "constant",
+    "since": "0.3"
   }
 }

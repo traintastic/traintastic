@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -168,7 +168,16 @@ void TilePainter::draw(TileId id, const QRectF& r, TileRotate rotate, bool isRes
       drawRailNX(r, rotate, isReserved);
       break;
 
+    case TileId::Label:
+      drawLabel(r, rotate);
+      break;
+
+    case TileId::Switch:
+      drawSwitch(r);
+      break;
+
     case TileId::None:
+    case TileId::HiddenRailCrossOver:
     case TileId::ReservedForFutureExpension:
       break;
   }
@@ -435,6 +444,15 @@ void TilePainter::drawPushButton(const QRectF& r, Color color)
   m_painter.setBrush(toQColor(color));
   const qreal radius = r.width() * 0.4;
   m_painter.drawEllipse(r.center(), radius, radius);
+}
+
+void TilePainter::drawSwitch(const QRectF& r, bool value, Color colorOn, Color colorOff)
+{
+  m_painter.setPen(QPen(Qt::gray, r.width() / 10));
+  m_painter.setBrush(toQColor(value ? colorOn : colorOff));
+  const qreal margin = r.width() * 0.1;
+  const qreal radius = r.width() * 0.15;
+  m_painter.drawRoundedRect(r.adjusted(margin, margin, -margin, -margin), radius, radius);
 }
 
 //=============================================================================
@@ -757,7 +775,7 @@ void TilePainter::drawTriangle(const QRectF& r)
     {r.right(), r.bottom()},
     {r.left(), r.bottom()}}};
 
-  m_painter.drawConvexPolygon(points.data(), points.size());
+  m_painter.drawConvexPolygon(points.data(), static_cast<int>(points.size()));
 }
 
 void TilePainter::drawLED(const QRectF& r, const QColor& color, const QColor& borderColor)
@@ -1294,4 +1312,29 @@ void TilePainter::drawRailNX(const QRectF& r, TileRotate rotate, bool isReserved
   setTrackPen(isReserved);
   drawStraight(r, rotate);
   drawPushButton(r, pressed ? Color::White : (isEnabled ? Color::Blue : Color::Gray));
+}
+
+void TilePainter::drawLabel(const QRectF& r, TileRotate rotate, const QString& text, TextAlign textAlign, Color textColor, Color backgroundColor)
+{
+  m_painter.save();
+
+  m_painter.setPen(Qt::NoPen);
+  m_painter.setBrush(backgroundColor == Color::None ? m_colorScheme.background : toQColor(backgroundColor));
+  m_painter.drawRect(r.adjusted(1, 1, -1, -1));
+
+  if(!text.isEmpty())
+  {
+    m_painter.translate(r.center());
+    m_painter.rotate(toDeg(rotate));
+    m_painter.setPen(textColor == Color::None ? m_colorScheme.foreground : toQColor(textColor));
+    QRectF textRect{r};
+    if(rotate == TileRotate::Deg90 || rotate == TileRotate::Deg270)
+    {
+      textRect = textRect.transposed();
+    }
+    textRect.moveCenter({0., 0.});
+    m_painter.drawText(textRect, text, QTextOption(toAlignment(textAlign)));
+  }
+
+  m_painter.restore();
 }

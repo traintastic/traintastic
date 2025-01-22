@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,10 @@ namespace DisplayName
   namespace BoardTile
   {
     constexpr std::string_view outputMap = "board_tile:output_map";
+    namespace Turnout
+    {
+      constexpr std::string_view position = "board_tile.turnout:position";
+    }
   }
   namespace Controller
   {
@@ -39,9 +43,10 @@ namespace DisplayName
   namespace Hardware
   {
     constexpr std::string_view address = "hardware:address";
+    constexpr std::string_view addresses = "hardware:addresses";
     constexpr std::string_view channel = "hardware:channel";
     constexpr std::string_view commandStation = "hardware:command_station";
-    constexpr std::string_view dccplusplus = "hardware:dccplusplus";
+    constexpr std::string_view dccex = "hardware:dccex";
     constexpr std::string_view debugLogInput = "hardware:debug_log_input";
     constexpr std::string_view debugLogOutput = "hardware:debug_log_output";
     constexpr std::string_view debugLogRXTX = "hardware:debug_log_rx_tx";

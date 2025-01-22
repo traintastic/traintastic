@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include "../messages.hpp"
 #include "../../../../utils/fromchars.hpp"
 #include "../../../../utils/startswith.hpp"
+#include "../../../../utils/endswith.hpp"
 
 namespace ECoS {
 
@@ -34,13 +35,13 @@ SwitchManager::SwitchManager(Kernel& kernel)
   : Object(kernel, ObjectId::switchManager)
 {
   requestView();
-  send(queryObjects(m_id, Switch::options));
+  send(queryObjects(m_id, {Option::type}));
 }
 
-void SwitchManager::setSwitch(SwitchProtocol protocol, uint16_t address)
+void SwitchManager::setSwitch(SwitchProtocol protocol, uint16_t address, bool port)
 {
-  if(protocol == SwitchProtocol::DCC || protocol == SwitchProtocol::Motorola)
-    send(set(m_id, Option::switch_, std::string((protocol == SwitchProtocol::Motorola) ? "MOT" : "DCC").append(std::to_string(1 + ((address - 1) >> 1))).append(((address - 1) & 1) ? "g" : "r")));
+  if(protocol == SwitchProtocol::DCC || protocol == SwitchProtocol::Motorola) /*[[likely]]*/
+    send(set(m_id, Option::switch_, std::string((protocol == SwitchProtocol::Motorola) ? "MOT" : "DCC").append(std::to_string(address)).append(port ? "g" : "r")));
 }
 
 bool SwitchManager::receiveReply(const Reply& reply)
@@ -53,7 +54,25 @@ bool SwitchManager::receiveReply(const Reply& reply)
     {
       Line data;
       if(parseLine(line, data) && !objectExists(data.objectId))
-        addObject(std::make_unique<Switch>(m_kernel, data));
+      {
+        SwitchType type = SwitchType::Unknown;
+        if(auto it = data.values.find(Option::type); it != data.values.end() && fromString(it->second, type))
+        {
+          switch(type)
+          {
+            case SwitchType::Accessory:
+              addObject(std::make_unique<Switch>(m_kernel, data.objectId));
+              break;
+
+            case SwitchType::Turntable:
+              break; // not yet supported
+
+            case SwitchType::Unknown:
+              assert(false);
+              break;
+          }
+        }
+      }
     }
     return true;
   }
@@ -65,6 +84,37 @@ bool SwitchManager::receiveEvent(const Event& event)
 {
   assert(event.objectId == m_id);
 
+  if(!event.lines.empty())
+  {
+    Line firstLine;
+    if(parseLine(event.lines.front(), firstLine))
+    {
+      if(firstLine.objectId == m_id) // TODO: msg[LIST_CHANGED]
+      {
+        if(auto msg = firstLine.values.find("msg"); msg != firstLine.values.end() && msg->second == "LIST_CHANGED")
+        {
+          auto it = event.lines.begin();
+          it++; // skip first line
+          for(; it != event.lines.end(); it++)
+          {
+            Line line;
+            if(parseLine(*it, line) && line.objectId != m_id)
+            {
+              if(endsWith(*it, "appended") && !objectExists(line.objectId))
+              {
+                // FIXME: check type for accessory/turntable
+                addObject(std::make_unique<Switch>(m_kernel, line.objectId));
+              }
+              else if(endsWith(*it, "removed"))
+              {
+                removeObject(line.objectId);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   return Object::receiveEvent(event);
 }
@@ -87,8 +137,7 @@ void SwitchManager::update(std::string_view option, std::string_view value)
       uint16_t address;
       if(auto r = fromChars(value, address); r.ec == std::errc() && r.ptr < value.data() + value.size())
       {
-        address = (address << 1) - ((*r.ptr == 'r') ? 1 : 0);
-        m_kernel.switchManagerSwitched(protocol, address);
+        m_kernel.switchManagerSwitched(protocol, address, (*r.ptr == 'r') ? OutputPairValue::First : OutputPairValue::Second);
       }
     }
   }

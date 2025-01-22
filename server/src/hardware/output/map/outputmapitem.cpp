@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,73 +22,65 @@
 
 #include "outputmapitem.hpp"
 #include "outputmapoutputaction.hpp"
+#include "../../../core/objectvectorproperty.tpp"
 #include "../../../world/worldloader.hpp"
 #include "../../../world/worldsaver.hpp"
 
 OutputMapItem::OutputMapItem(Object& map) :
   m_map{map}
+  , outputActions{*this, "output_actions", {}, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::Store | PropertyFlags::NoScript}
 {
-}
-
-const OutputMapItem::OutputActions& OutputMapItem::outputActions() const
-{
-  return m_outputActions;
+  m_interfaceItems.add(outputActions);
 }
 
 void OutputMapItem::execute()
 {
-  for(const auto& action : m_outputActions)
-    action->execute();
-}
-
-void OutputMapItem::load(WorldLoader& loader, const nlohmann::json& data)
-{
-  Object::load(loader, data);
-
-  nlohmann::json actions = data.value("output_actions", nlohmann::json::array());
-  for(auto& [_, action] : actions.items())
+  for(const auto& action : outputActions)
   {
-    static_cast<void>(_); // silence unused warning
-    auto output = std::dynamic_pointer_cast<Output>(loader.getObject(action.value("output", "")));
-    auto it = std::find_if(m_outputActions.begin(), m_outputActions.end(),
-      [&output](const auto& item)
-      {
-        return output == item->output();
-      });
-
-    if(it != m_outputActions.end())
-      (**it).load(loader, action);
+    action->execute();
   }
 }
 
-void OutputMapItem::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const
+OutputMapItem::MatchResult OutputMapItem::matchesCurrentOutputState() const
 {
-  Object::save(saver, data, state);
+  bool atLeastOneMatch = false;
+  bool atLeastOneDifference = false;
+  bool atLeastOneWildcard = false;
 
-  nlohmann::json outputActions = nlohmann::json::array();
-  for(const auto& outputAction : m_outputActions)
-    outputActions.emplace_back(saver.saveObject(outputAction));
-  data["output_actions"] = outputActions;
+  for(const auto& action : outputActions)
+  {
+    TriState match = action->matchesCurrentOutputState();
+    switch (match)
+    {
+    case TriState::Undefined:
+      atLeastOneWildcard = true;
+      break;
+    case TriState::False:
+      atLeastOneDifference = true;
+      break;
+    case TriState::True:
+      atLeastOneMatch = true;
+      break;
+    }
+
+    // This state could be the coorect one but output feedback is not yet arrived
+    // We will re-check when we receive output feedback from command station
+    if(atLeastOneDifference && (atLeastOneMatch || atLeastOneWildcard))
+      return MatchResult::PartialMatch;
+  }
+
+  if(atLeastOneWildcard)
+    return MatchResult::WildcardMatch;
+  if(atLeastOneMatch)
+    return MatchResult::FullMatch;
+  return MatchResult::NoMatch;
 }
 
 void OutputMapItem::worldEvent(WorldState state, WorldEvent event)
 {
   Object::worldEvent(state, event);
-  for(auto& action : m_outputActions)
-    action->worldEvent(state, event);
-}
-
-void OutputMapItem::addOutput(const std::shared_ptr<Output>& output)
-{
-  m_outputActions.emplace_back(new OutputMapOutputAction(m_map, output));
-}
-
-void OutputMapItem::removeOutput(const std::shared_ptr<Output>& output)
-{
-  auto it = std::find_if(m_outputActions.begin(), m_outputActions.end(), [output](const auto& item){ return item->output() == output; });
-  if(it != m_outputActions.end())
+  for(const auto& action : outputActions)
   {
-    (*it)->destroy();
-    m_outputActions.erase(it);
+    action->worldEvent(state, event);
   }
 }

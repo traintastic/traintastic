@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,8 +25,8 @@
 #include "scriptlisttablemodel.hpp"
 #include "push.hpp"
 #include "../world/world.hpp"
-#include "../enum/worldevent.hpp"
-#include "../set/worldstate.hpp"
+#include <traintastic/enum/worldevent.hpp>
+#include <traintastic/set/worldstate.hpp>
 #include "../core/attributes.hpp"
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
@@ -65,6 +65,13 @@ Script::Script(World& world, std::string_view _id) :
       if(state == LuaScriptState::Running)
         stopSandbox();
     }}
+  , clearPersistentVariables{*this, "clear_persistent_variables",
+      [this]()
+      {
+        m_persistentVariables = nullptr;
+        Log::log(*this, LogMessage::I9003_CLEARED_PERSISTENT_VARIABLES);
+        updateEnabled();
+      }}
 {
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, false);
@@ -80,6 +87,8 @@ Script::Script(World& world, std::string_view _id) :
   m_interfaceItems.add(start);
   Attributes::addEnabled(stop, false);
   m_interfaceItems.add(stop);
+  Attributes::addEnabled(clearPersistentVariables, false);
+  m_interfaceItems.add(clearPersistentVariables);
 
   updateEnabled();
 }
@@ -92,6 +101,11 @@ void Script::load(WorldLoader& loader, const nlohmann::json& data)
   std::string s;
   if(loader.readFile(std::filesystem::path(scripts) / m_basename += dotLua, s))
     code.loadJSON(s);
+
+  if(const auto stateData = loader.getState(id); stateData.contains("persistent_variables"))
+  {
+    m_persistentVariables = stateData["persistent_variables"];
+  }
 }
 
 void Script::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& stateData) const
@@ -103,6 +117,15 @@ void Script::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state
 
   m_basename = id;
   saver.writeFile(std::filesystem::path(scripts) / m_basename += dotLua, code);
+
+  if(m_sandbox)
+  {
+    Sandbox::syncPersistentVariables(m_sandbox.get());
+  }
+  if(!m_persistentVariables.empty())
+  {
+    stateData["persistent_variables"] = m_persistentVariables;
+  }
 }
 
 void Script::addToWorld()
@@ -121,16 +144,28 @@ void Script::loaded()
 {
   IdObject::loaded();
 
-  if(state == LuaScriptState::Disabled)
-    disabled.setValueInternal(true);
-  else if(state == LuaScriptState::Running)
+  switch(state)
   {
-    startSandbox();
-    if(state == LuaScriptState::Running)
-    {
-      auto& running = m_world.luaScripts->status->running;
-      running.setValueInternal(running + 1); // setState doesn't increment because the state is already running
-    }
+    case LuaScriptState::Error:
+      state.setValueInternal(LuaScriptState::Stopped);
+      break;
+
+    case LuaScriptState::Disabled:
+      disabled.setValueInternal(true);
+      break;
+
+    case LuaScriptState::Running:
+      startSandbox();
+      if(state == LuaScriptState::Running)
+      {
+        updateEnabled(); // setState doesn't updateEnabled() because the state is already running
+        auto& running = m_world.luaScripts->status->running;
+        running.setValueInternal(running + 1); // setState doesn't increment because the state is already running
+      }
+      break;
+
+    case LuaScriptState::Stopped:
+      break; // nothing to do
   }
 }
 
@@ -144,14 +179,18 @@ void Script::worldEvent(WorldState worldState, WorldEvent worldEvent)
 void Script::updateEnabled()
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit) && state != LuaScriptState::Running;
+  const bool stoppedOrError = (state == LuaScriptState::Stopped) || (state == LuaScriptState::Error);
 
   Attributes::setEnabled(id, editable);
   Attributes::setEnabled(name, editable);
   Attributes::setEnabled(disabled, editable);
   Attributes::setEnabled(code, editable);
 
-  Attributes::setEnabled(start, state == LuaScriptState::Stopped || state == LuaScriptState::Error);
+  Attributes::setEnabled(start, stoppedOrError);
   Attributes::setEnabled(stop, state == LuaScriptState::Running);
+  Attributes::setEnabled(clearPersistentVariables, stoppedOrError && !m_persistentVariables.empty());
+
+  m_world.luaScripts->updateEnabled();
 }
 
 void Script::setState(LuaScriptState value)

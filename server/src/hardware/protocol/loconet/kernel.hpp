@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,8 +32,10 @@
 #include <tcb/span.hpp>
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/tristate.hpp>
+#include <traintastic/enum/outputchannel.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
+#include "../../output/outputvalue.hpp"
 
 class Clock;
 class Decoder;
@@ -53,6 +55,9 @@ class Kernel : public ::KernelBase
 {
   public:
     using OnLNCVReadResponse = std::function<void(bool, uint16_t, uint16_t)>;
+
+    static constexpr uint16_t accessoryOutputAddressMin = 1;
+    static constexpr uint16_t accessoryOutputAddressMax = 2048;
 
   private:
     enum Priority
@@ -173,7 +178,7 @@ class Kernel : public ::KernelBase
     std::array<TriState, 4096> m_inputValues;
 
     OutputController* m_outputController;
-    std::array<TriState, 4096> m_outputValues;
+    std::array<OutputPairValue, accessoryOutputAddressMax - accessoryOutputAddressMin + 1> m_outputValues;
 
     IdentificationController* m_identificationController;
 
@@ -255,8 +260,6 @@ class Kernel : public ::KernelBase
   public:
     static constexpr uint16_t inputAddressMin = 1;
     static constexpr uint16_t inputAddressMax = 4096;
-    static constexpr uint16_t outputAddressMin = 1;
-    static constexpr uint16_t outputAddressMax = 4096;
     static constexpr uint16_t identificationAddressMin = 1;
     static constexpr uint16_t identificationAddressMax = 4096;
 
@@ -374,6 +377,15 @@ class Kernel : public ::KernelBase
     void stop();
 
     /**
+     * \brief ...
+     *
+     * This must be called by the IO handler when the connection is ready.
+     *
+     * \note This function must run in the kernel's IO context
+     */
+    void started() final;
+
+    /**
      * @brief ...
      *
      * This must be called by the IO handler whenever a LocoNet message is received.
@@ -410,7 +422,13 @@ class Kernel : public ::KernelBase
     //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 5.
     //! \param[in] repeat DCC packet repeat count 0..7
     //! \return \c true if send to command station, \c false otherwise.
-    bool immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat);
+    bool immPacket(tcb::span<const uint8_t> dccPacket, uint8_t repeat);
+
+    template<class T, std::enable_if_t<std::is_trivially_copyable_v<T> && sizeof(T) <= 5, bool> = true>
+    bool immPacket(const T& dccPacket, uint8_t repeat)
+    {
+      return immPacket(tcb::span<const uint8_t>(reinterpret_cast<const uint8_t*>(&dccPacket), sizeof(T)), repeat);
+    }
 
     /**
      *
@@ -420,11 +438,12 @@ class Kernel : public ::KernelBase
 
     /**
      *
-     * @param[in] address Output address, 1..4096
-     * @param[in] value Output value: \c true is on, \c false is off.
+     * \param[in] channel Output channel
+     * @param[in] address Output address
+     * @param[in] value Output value
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint16_t address, bool value);
+    bool setOutput(OutputChannel channel, uint16_t address, OutputValue value);
 
     /**
      * \brief Simulate input change

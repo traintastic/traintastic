@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,46 +25,40 @@
 
 #include "../../../core/object.hpp"
 #include <vector>
+#include <traintastic/enum/outputchannel.hpp>
+#include <traintastic/enum/outputtype.hpp>
+#include "../outputvalue.hpp"
 #include "../../../core/property.hpp"
-#include "../../../enum/tristate.hpp"
+#include "../../../core/event.hpp"
 
 class OutputController;
 
 class OutputKeyboard : public Object
 {
-  CLASS_ID("output_keyboard")
-
-  private:
+  protected:
     OutputController& m_controller;
-    const uint32_t m_channel;
+
+    OutputKeyboard(OutputController& controller, OutputChannel channel_, OutputType outputType_);
 
   public:
-    boost::signals2::signal<void(OutputKeyboard&, uint32_t, std::string_view)> outputIdChanged;
-    boost::signals2::signal<void(OutputKeyboard&, uint32_t, TriState)> outputValueChanged;
-
     struct OutputInfo
     {
       uint32_t address;
-      std::string id;
-      TriState value;
-
-      OutputInfo(uint32_t _address, std::string _id, TriState _value) :
-        address{_address},
-        id{std::move(_id)},
-        value{_value}
-      {
-      }
+      bool used;
+      OutputValue value;
     };
 
+    Property<OutputChannel> channel;
+    Property<OutputType> outputType;
     Property<uint32_t> addressMin;
     Property<uint32_t> addressMax;
-
-    OutputKeyboard(OutputController& controller, uint32_t channel);
+    Event<uint32_t, bool> outputUsedChanged;
 
     std::string getObjectId() const final;
 
-    std::vector<OutputInfo> getOutputInfo() const;
-    bool setOutputValue(uint32_t address, bool value);
+    virtual std::vector<OutputInfo> getOutputInfo() const = 0;
+    void fireOutputUsedChanged(uint32_t id, bool used);
+    virtual void fireOutputValueChanged(uint32_t address, OutputValue value) = 0;
 };
 
 #endif

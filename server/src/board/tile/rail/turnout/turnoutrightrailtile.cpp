@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,18 +23,59 @@
 #include "turnoutrightrailtile.hpp"
 #include "../../../../core/attributes.hpp"
 #include "../../../../core/objectproperty.tpp"
+#include "../../../../hardware/output/outputcontroller.hpp"
 
-static const std::array<TurnoutPosition, 3> positionValues = {TurnoutPosition::Straight, TurnoutPosition::Right, TurnoutPosition::Unknown};
-static const std::array<TurnoutPosition, 2> setPositionValues = {TurnoutPosition::Straight, TurnoutPosition::Right};
+static const std::array<TurnoutPosition, 3> positionValues = {TurnoutPosition::Unknown, TurnoutPosition::Straight, TurnoutPosition::Right};
 
-TurnoutRightRailTile::TurnoutRightRailTile(World& world, std::string_view _id, TileId tileId)
-  : TurnoutRailTile(world, _id, tileId, 3)
+static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
 {
-  outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Right}));
+  if(outputIndex == 0)
+  {
+    switch(outputType)
+    {
+      case OutputType::Pair:
+        if(turnoutPosition == TurnoutPosition::Straight)
+        {
+          return PairOutputAction::Second;
+        }
+        else if(turnoutPosition == TurnoutPosition::Right)
+        {
+          return PairOutputAction::First;
+        }
+        break;
+
+      case OutputType::Aspect:
+        // YaMoRC YD8116 defaults aspects:
+        if(turnoutPosition == TurnoutPosition::Straight)
+        {
+          return static_cast<int16_t>(0);
+        }
+        else if(turnoutPosition == TurnoutPosition::Right)
+        {
+          return static_cast<int16_t>(16);
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+  return {};
+}
+
+TurnoutRightRailTile::TurnoutRightRailTile(World& world, std::string_view _id, TileId tileId_)
+  : TurnoutRailTile(world, _id, tileId_, 3)
+{
+  // Skip Unknown position
+  tcb::span<const TurnoutPosition, 2> setPositionValues = tcb::make_span(positionValues).subspan<1>();
+
+  outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Right}, getDefaultActionValue));
 
   Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);
 
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);
+
+  connectOutputMap();
 }

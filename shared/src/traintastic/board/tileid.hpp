@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_BOARD_TILEID_HPP
 
 #include <cstdint>
+#include "../enum/enum.hpp"
 
 enum class TileId : uint16_t // 10 bit
 {
@@ -58,7 +59,10 @@ enum class TileId : uint16_t // 10 bit
   RailLink = 28,
   RailDecoupler = 29,
   RailNXButton = 30,
+  Label = 31,
+  Switch = 32,
 
+  HiddenRailCrossOver = 1022,
   ReservedForFutureExpension = 1023
 };
 
@@ -191,6 +195,8 @@ constexpr bool isActive(TileId id)
     case TileId::RailLink:
     case TileId::RailDecoupler:
     case TileId::RailNXButton:
+    case TileId::Label:
+    case TileId::Switch:
       return true;
 
     default:
@@ -198,5 +204,7 @@ constexpr bool isActive(TileId id)
   }
   return false;
 }
+
+TRAINTASTIC_ENUM(TileId, "tile_id", 0, {}); // no values defined as we don't need them (at the moment).
 
 #endif

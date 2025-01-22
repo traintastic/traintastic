@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -189,6 +189,7 @@ PropertyLuaCodeEdit::Highlighter::Highlighter(QTextDocument* parent) :
     QStringLiteral("\\bworld(?=\\.)"),
     QStringLiteral("\\bset(?=\\.)"),
     QStringLiteral("\\benum(?=\\.)"),
+    QStringLiteral("\\bpv(?=\\.)"),
   };
   for(const auto& regex : globals)
     m_rules.append(Rule(regex, QColor(0xFF, 0x8C, 0x00)));
@@ -198,6 +199,9 @@ PropertyLuaCodeEdit::Highlighter::Highlighter(QTextDocument* parent) :
 
   // string
   m_rules.append(Rule("(\".*?[^\\\\]\"|\"\")", Qt::darkGreen));
+
+  // single line comment
+  m_rules.append(Rule("--+.*", Qt::gray));
 
   /*
     HighlightingRule rule;
@@ -265,7 +269,7 @@ PropertyLuaCodeEdit::Highlighter::Highlighter(QTextDocument* parent) :
 //! [7]
 void PropertyLuaCodeEdit::Highlighter::highlightBlock(const QString &text)
 {
-    for (const Rule &rule : qAsConst(m_rules)) {
+    for (const Rule &rule : std::as_const(m_rules)) {
         QRegularExpressionMatchIterator matchIterator = rule.regex.globalMatch(text);
         while (matchIterator.hasNext()) {
             QRegularExpressionMatch match = matchIterator.next();

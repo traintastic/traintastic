@@ -26,9 +26,9 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <archive.h>
-//#define ZLIB_WINAPI 
 #include <zlib.h>
 #include <version.hpp>
+#include <traintastic/copyright.hpp>
 #include <traintastic/utils/str.hpp>
 #include "../core/eventloop.hpp"
 #include "../network/server.hpp"
@@ -44,12 +44,33 @@
 
 using nlohmann::json;
 
+constexpr std::string_view versionCopyrightAndLicense{
+  "<h2>Traintastic v" TRAINTASTIC_VERSION " <small>"
+#ifdef TRAINTASTIC_VERSION_EXTRA_NODASH
+  TRAINTASTIC_VERSION_EXTRA_NODASH
+#else
+  TRAINTASTIC_CODENAME
+#endif
+  "</small></h2>"
+  "<p>" TRAINTASTIC_COPYRIGHT "</p>"
+  "<p>This program is free software; you can redistribute it and/or"
+  " modify it under the terms of the GNU General Public License"
+  " as published by the Free Software Foundation; either version 2"
+  " of the License, or (at your option) any later version.</p>"
+  "<p>This program is distributed in the hope that it will be useful,"
+  " but WITHOUT ANY WARRANTY; without even the implied warranty of"
+  " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the"
+  " GNU General Public License for more details.</p>"
+  "<p><a href=\"https://traintastic.org\">traintastic.org</a></p>"
+};
+
 std::shared_ptr<Traintastic> Traintastic::instance;
 
 Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_restart{false},
   m_dataDir{std::filesystem::absolute(dataDir)},
   m_signalSet(EventLoop::ioContext),
+  about{this, "about", std::string(versionCopyrightAndLicense), PropertyFlags::ReadOnly},
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   version{this, "version", TRAINTASTIC_VERSION_FULL, PropertyFlags::ReadOnly},
   world{this, "world", nullptr, PropertyFlags::ReadWrite,
@@ -132,6 +153,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
 
   m_signalSet.async_wait(&Traintastic::signalHandler);
 
+  m_interfaceItems.add(about);
   m_interfaceItems.add(settings);
   m_interfaceItems.add(version);
   m_interfaceItems.add(world);
@@ -175,9 +197,7 @@ Traintastic::RunStatus Traintastic::run(const std::string& worldUUID, bool simul
   Log::log(*this, LogMessage::I1006_X, boostVersion);
   Log::log(*this, LogMessage::I1007_X, std::string_view{"nlohmann::json " STR(NLOHMANN_JSON_VERSION_MAJOR) "." STR(NLOHMANN_JSON_VERSION_MINOR) "." STR(NLOHMANN_JSON_VERSION_PATCH)});
   Log::log(*this, LogMessage::I1008_X, std::string_view{archive_version_details()});
-#ifndef WIN32
-  Log::log(*this, LogMessage::I1009_ZLIB_X, std::string_view{zlibVersion()}); // FIXME: this crashes on windows, why?
-#endif
+  Log::log(*this, LogMessage::I1009_ZLIB_X, std::string_view{zlibVersion()});
   //! \todo Add tcb::span version when available, see https://github.com/tcbrindle/span/issues/33
   Log::log(*this, LogMessage::I9002_X, Lua::getVersion());
 
@@ -198,7 +218,13 @@ Traintastic::RunStatus Traintastic::run(const std::string& worldUUID, bool simul
 
   try
   {
-    m_server = std::make_shared<Server>(settings->localhostOnly, settings->port, settings->discoverable);
+    m_server = std::make_shared<Server>(
+#ifndef NO_LOCALHOST_ONLY_SETTING
+      settings->localhostOnly,
+#else
+      false,
+#endif
+      settings->port, settings->discoverable);
   }
   catch(const LogMessageException& e)
   {
@@ -267,6 +293,24 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
 #endif
     settings->lastWorld = world->uuid.value();
     Log::log(*this, LogMessage::N1027_LOADED_WORLD_X, world->name.value());
+
+    if(world->onlineWhenLoaded)
+    {
+      world->online();
+    }
+
+    if(world->powerOnWhenLoaded)
+    {
+      if(world->runWhenLoaded)
+      {
+        world->run();
+      }
+      else
+      {
+        world->powerOn();
+      }
+    }
+
   }
   catch(const LogMessageException& e)
   {

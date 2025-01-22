@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -75,6 +75,7 @@ Kernel::Kernel(std::string logId_, World& world, const Config& config, bool simu
   : KernelBase(std::move(logId_))
   , m_world{world}
   , m_simulation{simulation}
+  , m_startupDelayTimer{m_ioContext}
   , m_heartbeatTimeout{m_ioContext}
   , m_inputController{nullptr}
   , m_outputController{nullptr}
@@ -131,13 +132,6 @@ void Kernel::start()
           });
         return;
       }
-
-      send(GetInfo());
-      send(GetFeatures());
-
-      restartHeartbeatTimeout();
-
-      started();
     });
 
 #ifndef NDEBUG
@@ -169,6 +163,14 @@ void Kernel::stop()
 #ifndef NDEBUG
   m_started = false;
 #endif
+}
+
+void Kernel::started()
+{
+  assert(isKernelThread());
+
+  m_startupDelayTimer.expires_after(boost::asio::chrono::milliseconds(m_config.startupDelay));
+  m_startupDelayTimer.async_wait(std::bind(&Kernel::startupDelayExpired, this, std::placeholders::_1));
 }
 
 void Kernel::receive(const Message& message)
@@ -235,11 +237,11 @@ void Kernel::receive(const Message& message)
             {
               if(state == OutputState::Invalid)
               {
-                if(m_outputController->outputMap().count({OutputController::defaultOutputChannel, address}) != 0)
+                if(m_outputController->outputMap().count({OutputChannel::Output, address}) != 0)
                   Log::log(logId, LogMessage::W2005_OUTPUT_ADDRESS_X_IS_INVALID, address);
               }
               else
-                m_outputController->updateOutputValue(OutputController::defaultOutputChannel, address, toTriState(state));
+                m_outputController->updateOutputValue(OutputChannel::Output, address, toTriState(state));
             });
         }
       }
@@ -376,7 +378,7 @@ void Kernel::receive(const Message& message)
           [this]()
           {
             for(const auto& it : m_outputController->outputMap())
-              postSend(GetOutputState(static_cast<uint16_t>(it.first.address)));
+              postSend(GetOutputState(static_cast<uint16_t>(it.first.id)));
           });
       break;
     }
@@ -459,6 +461,19 @@ void Kernel::send(const Message& message)
   }
   else
   {} // log message and go to error state
+}
+
+void Kernel::startupDelayExpired(const boost::system::error_code& ec)
+{
+  if(ec)
+    return;
+
+  send(GetInfo());
+  send(GetFeatures());
+
+  restartHeartbeatTimeout();
+
+  KernelBase::started();
 }
 
 void Kernel::restartHeartbeatTimeout()

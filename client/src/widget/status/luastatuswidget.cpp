@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 #include "../../network/object.hpp"
 #include "../../network/property.hpp"
 #include "../../theme/theme.hpp"
+#include "../../mainwindow.hpp"
 
 LuaStatusWidget::LuaStatusWidget(const ObjectPtr& object, QWidget* parent)
   : QWidget(parent)
@@ -97,6 +98,27 @@ void LuaStatusWidget::errorChanged()
   if(m_errorLabel->isVisible())
     m_errorLabel->setText(QString("(%1)").arg(error));
   labelChanged();
+}
+
+void LuaStatusWidget::mousePressEvent(QMouseEvent* event)
+{
+  if(event->button() == Qt::LeftButton)
+  {
+    m_mouseLeftButtonPressed = true;
+  }
+}
+
+void LuaStatusWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+  if(m_mouseLeftButtonPressed && event->button() == Qt::LeftButton)
+  {
+    m_mouseLeftButtonPressed = false;
+
+    if(rect().contains(event->pos()))
+    {
+      MainWindow::instance->showLuaScriptsList();
+    }
+  }
 }
 
 void LuaStatusWidget::resizeEvent(QResizeEvent* event)

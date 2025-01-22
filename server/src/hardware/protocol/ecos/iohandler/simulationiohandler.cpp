@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,10 +27,110 @@
 
 namespace ECoS {
 
+static bool appendOption(std::string& response, const Simulation::ECoS& ecos, std::string_view option)
+{
+  if(option == Option::commandstationtype)
+  {
+    response.append("\"").append(ecos.commandStationType).append("\"");
+  }
+  else if(option == Option::protocolversion)
+  {
+    response.append(ecos.protocolVersion);
+  }
+  else if(option == Option::hardwareversion)
+  {
+    response.append(ecos.hardwareVersion);
+  }
+  else if(option == Option::applicationversion)
+  {
+    response.append(ecos.applicationVersion);
+  }
+  else if(option == Option::applicationversionsuffix)
+  {
+    response.append("\"").append(ecos.applicationVersionSuffix).append("\"");
+  }
+  else if(option == Option::railcom)
+  {
+    response.append(ecos.railcom ? "1" : "0");
+  }
+  else if(option == Option::railcomplus)
+  {
+    response.append(ecos.railcomPlus ? "1" : "0");
+  }
+  else
+  {
+    return false;
+  }
+  return true;
+}
+
+static bool appendOption(std::string& response, const Simulation::Switch& sw, std::string_view option)
+{
+  if(option == Option::name1)
+  {
+    response.append("\"").append(sw.name1).append("\"");
+  }
+  else if(option == Option::name2)
+  {
+    response.append("\"").append(sw.name2).append("\"");
+  }
+  else if(option == Option::name3)
+  {
+    response.append("\"").append(sw.name3).append("\"");
+  }
+  else if(option == Option::addr)
+  {
+    response.append(std::to_string(sw.address));
+  }
+  else if(option == Option::addrext)
+  {
+    response.append(sw.addrext);
+  }
+  else if(option == Option::symbol)
+  {
+    response.append(std::to_string(sw.symbol));
+  }
+  else if(option == Option::type)
+  {
+    response.append(sw.type);
+  }
+  else if(option == Option::protocol)
+  {
+    response.append(sw.protocol);
+  }
+  else if(option == Option::state)
+  {
+    response.append(std::to_string(sw.state));
+  }
+  else if(option == Option::mode)
+  {
+    response.append(sw.mode);
+  }
+  else if(option == Option::duration)
+  {
+    response.append(std::to_string(sw.duration));
+  }
+  else if(option == Option::variant)
+  {
+    response.append(std::to_string(sw.variant));
+  }
+  else
+  {
+    return false;
+  }
+  return true;
+}
+
+
 SimulationIOHandler::SimulationIOHandler(Kernel& kernel, const Simulation& simulation)
   : IOHandler(kernel)
   , m_simulation{simulation}
 {
+}
+
+void SimulationIOHandler::start()
+{
+  m_kernel.started();
 }
 
 bool SimulationIOHandler::send(std::string_view message)
@@ -46,15 +146,21 @@ bool SimulationIOHandler::send(std::string_view message)
 
   if(request.objectId == ObjectId::ecos)
   {
-    if(request.command == Command::get && request.options.size() == 1 && request.options[0] == Option::info)
+    if(request.command == Command::get)
     {
-      return reply(
-        "<REPLY get(1, info)>\r\n"
-        "1 ECoS2\r\n"
-        "1 ProtocolVersion[0.5]\r\n"
-        "1 ApplicationVersion[4.2.6]\r\n"
-        "1 HardwareVersion[2.0]\r\n"
-        "<END 0 (OK)>\r\n");
+      std::string response{replyHeader(message)};
+      for(auto option : request.options)
+      {
+        response.append(std::to_string(request.objectId)).append(" ").append(option).append("[");
+        if(!appendOption(response, m_simulation.ecos, option))
+        {
+          return replyErrorUnknownOption(message, option);
+        }
+        response.append("]\r\n");
+      }
+      response.append("<END 0 (OK)>\r\n");
+
+      return reply(response);
     }
     if(request.command == Command::set && request.options.size() == 1 && (request.options[0] == Option::stop || request.options[0] == Option::go))
     {
@@ -96,7 +202,23 @@ bool SimulationIOHandler::send(std::string_view message)
     }
     else if(request.command == Command::queryObjects)
     {
-      return replyOk(message); // empty list for now
+      std::string response{replyHeader(message)};
+      for(const auto& sw : m_simulation.switches)
+      {
+        response.append(std::to_string(sw.id));
+        for(auto option : request.options)
+        {
+          response.append(" ").append(option).append("[");
+          if(!appendOption(response, sw, option))
+          {
+            assert(false); // FIXME: add error response
+          }
+          response.append("]");
+        }
+        response.append("\r\n");
+      }
+      response.append("<END 0 (OK)>\r\n");
+      return reply(response);
     }
   }
   else if(request.objectId == ObjectId::feedbackManager)
@@ -146,6 +268,31 @@ bool SimulationIOHandler::send(std::string_view message)
       return reply(response);
     }
   }
+  else if(auto itSwitch = std::find_if(m_simulation.switches.begin(), m_simulation.switches.end(),
+    [id=request.objectId](const auto& v)
+    {
+      return v.id == id;
+    }); itSwitch != m_simulation.switches.end())
+  {
+    const auto& sw = *itSwitch;
+
+    if(request.command == Command::get)
+    {
+      std::string response{replyHeader(message)};
+      for(auto option : request.options)
+      {
+        response.append(std::to_string(request.objectId)).append(" ").append(option).append("[");
+        if(!appendOption(response, sw, option))
+        {
+          return replyErrorUnknownOption(message, option);
+        }
+        response.append("]\r\n");
+      }
+      response.append("<END 0 (OK)>\r\n");
+
+      return reply(response);
+    }
+  }
   else if(auto it = std::find_if(m_simulation.s88.begin(), m_simulation.s88.end(),
     [id=request.objectId](const auto& v)
     {
@@ -189,6 +336,13 @@ bool SimulationIOHandler::replyOk(std::string_view request)
 std::string SimulationIOHandler::replyHeader(std::string_view request)
 {
   return std::string("<REPLY ").append(rtrim(request, {'\r', '\n'})).append(">\r\n");
+}
+
+bool SimulationIOHandler::replyErrorUnknownOption(std::string_view request, std::string_view option)
+{
+  assert(option.data() >= request.data() && (option.data() + option.size()) <= (request.data() + request.size())); // option view must be within request view
+  const auto pos = option.data() - request.data();
+  return reply(replyHeader(request).append("<END 11 (unknown option at ").append(std::to_string(1 + pos)).append(")>\r\n"));
 }
 
 }

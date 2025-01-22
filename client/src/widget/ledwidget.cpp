@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,7 +74,11 @@ void LEDWidget::mouseReleaseEvent(QMouseEvent* event)
   if(m_mouseLeftButtonPressed && event->button() == Qt::LeftButton)
   {
     m_mouseLeftButtonPressed = false;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     if(rect().contains(event->localPos().toPoint())) // test if mouse release in widget
+#else
+    if(rect().contains(event->position().toPoint())) // test if mouse release in widget
+#endif
       emit clicked();
   }
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,6 @@
 #include "createobject.hpp"
 #include "inputmonitor.hpp"
 #include "outputkeyboard.hpp"
-#include "outputmap.hpp"
 #include "board.hpp"
 #include "object/blockrailtile.hpp"
 #include "object/nxbuttonrailtile.hpp"
@@ -33,10 +32,8 @@ Object* createObject(std::shared_ptr<Connection> connection, Handle handle, cons
 {
   if(classId == InputMonitor::classId)
     return new InputMonitor(std::move(connection), handle, classId);
-  if(classId == OutputKeyboard::classId)
+  if(classId.startsWith(OutputKeyboard::classIdPrefix))
     return new OutputKeyboard(std::move(connection), handle, classId);
-  if(classId.startsWith(OutputMap::classIdPrefix))
-    return new OutputMap(std::move(connection), handle, classId);
   if(classId == Board::classId)
     return new Board(std::move(connection), handle);
   if(classId == BlockRailTile::classId)

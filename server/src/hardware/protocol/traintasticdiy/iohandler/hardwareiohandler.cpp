@@ -25,6 +25,7 @@
 #include "../messages.hpp"
 #include "../../../../core/eventloop.hpp"
 #include "../../../../log/log.hpp"
+#include "../../../../utils/tohex.hpp"
 
 namespace TraintasticDIY {
 
@@ -64,7 +65,7 @@ void HardwareIOHandler::processRead(size_t bytesTransferred)
     while(drop < bytesTransferred)
     {
       message = reinterpret_cast<const Message*>(pos);
-      if(message->size() <= bytesTransferred && isChecksumValid(*message))
+      if(message->size() > bytesTransferred || isChecksumValid(*message))
         break;
 
       drop++;
@@ -75,9 +76,9 @@ void HardwareIOHandler::processRead(size_t bytesTransferred)
     if(drop != 0)
     {
       EventLoop::call(
-        [this, drop]()
+        [this, drop, bytes=toHex(pos - drop, drop, true)]()
         {
-          Log::log(m_kernel.logId, LogMessage::W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES, drop);
+          Log::log(m_kernel.logId, LogMessage::W2003_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES_X, drop, bytes);
         });
     }
 

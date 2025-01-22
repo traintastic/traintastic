@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,9 @@
 #define TRAINTASTIC_SERVER_LUA_SETS_HPP
 
 #include "set.hpp"
-#include "../../src/set/worldstate.hpp"
+#include <array>
+#include <string_view>
+#include <traintastic/set/worldstate.hpp>
 
 #define LUA_SETS \
   WorldState
@@ -48,6 +50,14 @@ struct Sets
     if constexpr(sizeof...(Ts) != 0)
       registerValues<Ts...>(L);
   }
+
+  template<class... Ts>
+  inline static const std::array<std::string_view, sizeof...(Ts)> getMetaTableNames()
+  {
+    return std::array<std::string_view, sizeof...(Ts)>{set_name_v<Ts>...};
+  }
+
+  inline static const auto metaTableNames = getMetaTableNames<LUA_SETS>();
 };
 
 }

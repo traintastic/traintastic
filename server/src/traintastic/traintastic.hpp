@@ -70,6 +70,7 @@ class Traintastic final : public Object
 
     static std::shared_ptr<Traintastic> instance;
 
+    Property<std::string> about;
     ObjectProperty<Settings> settings;
     Property<std::string> version;
     ObjectProperty<World> world;

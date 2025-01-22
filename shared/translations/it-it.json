@@ -5,7 +5,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board:move_tile",
@@ -13,7 +14,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board:resize_tile",
@@ -21,7 +23,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board:resize_to_contents",
@@ -29,7 +32,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_settings.color_scheme:dark",
@@ -37,7 +41,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_settings.color_scheme:light",
@@ -45,7 +50,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.misc.push_button:color",
@@ -53,23 +59,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.block:assign_train",
-        "definition": "Assegnazione del treno",
+        "definition": "Assegna un treno",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.block:flip_train",
-        "definition": "Treno a scorrimento",
+        "definition": "Inverti treno",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.block:input_map",
@@ -77,15 +86,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.block:remove_train",
-        "definition": "Rimuovere il treno",
+        "definition": "Rimuovi il treno",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.direction_control:state",
@@ -93,7 +104,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.direction_control:use_a_to_b",
@@ -101,7 +113,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.direction_control:use_b_to_a",
@@ -109,7 +122,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.direction_control:use_both",
@@ -117,7 +131,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.direction_control:use_none",
@@ -125,7 +140,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.link:link",
@@ -133,7 +149,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.sensor:input",
@@ -141,7 +158,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.sensor:invert",
@@ -149,7 +167,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile.rail.sensor:type",
@@ -157,7 +176,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "board_tile:output_map",
@@ -165,15 +185,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "category:cargo",
-        "definition": "Cargo",
+        "definition": "Carico",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "category:developer",
@@ -181,7 +203,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "category:general",
@@ -189,7 +212,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "category:info",
@@ -197,7 +221,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "category:log",
@@ -205,7 +230,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "category:network",
@@ -213,7 +239,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.misc.push_button",
@@ -221,7 +248,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.block",
@@ -229,7 +257,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.bridge_45_left",
@@ -237,7 +266,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.bridge_45_right",
@@ -245,7 +275,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.bridge_90",
@@ -253,7 +284,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.buffer_stop",
@@ -261,7 +293,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.cross_45",
@@ -269,7 +302,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.cross_90",
@@ -277,7 +311,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.curve_45",
@@ -285,7 +320,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.curve_90",
@@ -293,7 +329,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.decoupler",
@@ -301,7 +338,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.direction_control",
@@ -309,7 +347,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.link",
@@ -317,7 +356,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.one_way",
@@ -325,7 +365,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.sensor",
@@ -333,7 +374,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.signal_2_aspect",
@@ -341,7 +383,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.signal_3_aspect",
@@ -349,7 +392,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.straight",
@@ -357,7 +401,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.tunnel",
@@ -365,7 +410,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_3way",
@@ -373,7 +419,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_doubleslip",
@@ -381,7 +428,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_45",
@@ -389,7 +437,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_90",
@@ -397,7 +446,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_curved",
@@ -405,7 +455,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_45",
@@ -413,7 +464,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_90",
@@ -421,7 +473,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_curved",
@@ -429,7 +482,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_singleslip",
@@ -437,7 +491,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:board_tile.rail.turnout_wye",
@@ -445,7 +500,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:vehicle.rail.freight_wagon",
@@ -453,7 +509,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:vehicle.rail.locomotive",
@@ -461,7 +518,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:vehicle.rail.multiple_unit",
@@ -469,15 +527,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "class_id:vehicle.rail.tank_wagon",
-        "definition": "Carro armato",
+        "definition": "Carro cisterna",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:day",
@@ -485,7 +545,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:debug_log",
@@ -493,7 +554,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:freeze",
@@ -501,7 +563,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:hour",
@@ -509,7 +572,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:minute",
@@ -517,7 +581,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:month",
@@ -525,7 +590,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:multiplier",
@@ -533,7 +599,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "clock:year",
@@ -541,7 +608,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:aqua",
@@ -549,7 +617,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:black",
@@ -557,7 +626,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:blue",
@@ -565,7 +635,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:fuchsia",
@@ -573,7 +644,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:gray",
@@ -581,7 +653,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:green",
@@ -589,7 +662,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:lime",
@@ -597,7 +671,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:maroon",
@@ -605,7 +680,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:navy",
@@ -613,7 +689,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:olive",
@@ -621,7 +698,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:purple",
@@ -629,7 +707,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:red",
@@ -637,7 +716,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:silver",
@@ -645,7 +725,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:teal",
@@ -653,7 +734,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:white",
@@ -661,7 +743,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "color:yellow",
@@ -669,47 +752,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "dccplusplus_channel:dcc_accessory",
-        "definition": "DCC accessorio",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "dccplusplus_channel:output",
-        "definition": "Output",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "dccplusplus_channel:turnout",
-        "definition": "Deviatoio",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "dccplusplus_settings:startup_delay",
-        "definition": "Ritardo accensione",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "dccplusplus_settings:use_ex",
-        "definition": "Usa comandi DCC++EX",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder:functions",
@@ -717,7 +761,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder:long_address",
@@ -725,7 +770,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder:protocol",
@@ -733,7 +779,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function:function",
@@ -741,7 +788,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function:number",
@@ -749,7 +797,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function:type",
@@ -757,7 +806,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_function:generic",
@@ -765,7 +815,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_function:light",
@@ -773,7 +824,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_function:mute",
@@ -781,7 +833,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_function:smoke",
@@ -789,7 +842,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_function:sound",
@@ -797,7 +851,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_type:always_off",
@@ -805,7 +860,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_type:always_on",
@@ -813,7 +869,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_type:hold",
@@ -821,7 +878,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_type:momentary",
@@ -829,15 +887,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_function_type:on_off",
-        "definition": "On\/Of",
+        "definition": "Accesa/Spenta",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_protocol:auto",
@@ -845,7 +905,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoder_protocol:custom",
@@ -853,7 +914,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoupler_state:activated",
@@ -861,7 +923,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "decoupler_state:deactivated",
@@ -869,7 +932,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "direction:forward",
@@ -877,7 +941,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "direction:reverse",
@@ -885,7 +950,24 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "ext_output_change_action:do_nothing",
+        "definition": "Non fare niente"
+    },
+    {
+        "term": "ext_output_change_action:estop_train",
+        "definition": "Stop di emergenza per i treni nell'itinerario"
+    },
+    {
+        "term": "ext_output_change_action:estop_world",
+        "definition": "Stop di emergenza Mondo"
+    },
+    {
+        "term": "ext_output_change_action:poweroff_world",
+        "definition": "Spegni Mondo"
     },
     {
         "term": "ecos_channel:ecos_detector",
@@ -893,7 +975,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:address",
@@ -901,7 +984,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:channel",
@@ -909,7 +993,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:command_station",
@@ -917,7 +1002,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:debug_log_input",
@@ -925,7 +1011,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:debug_log_output",
@@ -933,7 +1020,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:debug_log_rx_tx",
@@ -941,7 +1029,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:decoders",
@@ -949,7 +1038,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:identifications",
@@ -957,7 +1047,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:input_monitor",
@@ -965,7 +1056,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:inputs",
@@ -973,7 +1065,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:interface",
@@ -981,7 +1074,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:output_keyboard",
@@ -989,7 +1083,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:outputs",
@@ -997,7 +1092,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:speed_steps",
@@ -1005,7 +1101,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hardware:throttles",
@@ -1013,7 +1110,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hsi88:s88_left",
@@ -1021,7 +1119,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hsi88:s88_middle",
@@ -1029,7 +1128,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "hsi88:s88_right",
@@ -1037,7 +1137,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "identification:opc_multi_sense_direction",
@@ -1045,7 +1146,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "input_list:bus",
@@ -1053,7 +1155,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "input_map_item.block:input",
@@ -1061,7 +1164,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "input_map_item.block:invert",
@@ -1069,7 +1173,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "input_map_item.block:type",
@@ -1077,7 +1182,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.ecos:ecos_detector",
@@ -1085,7 +1191,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.hsi88:modules_left",
@@ -1093,7 +1200,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.hsi88:modules_middle",
@@ -1101,7 +1209,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.hsi88:modules_right",
@@ -1109,7 +1218,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.loconet:interface",
@@ -1117,7 +1227,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.xpressnet:interface",
@@ -1125,7 +1236,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.xpressnet:s88_module_count",
@@ -1133,7 +1245,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.xpressnet:s88_start_address",
@@ -1141,7 +1254,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.z21:firmware_version",
@@ -1149,7 +1263,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.z21:hardware_type",
@@ -1157,7 +1272,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface.z21:serial_number",
@@ -1165,7 +1281,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface:online",
@@ -1173,7 +1290,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface:status",
@@ -1181,7 +1299,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface:type",
@@ -1189,7 +1308,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface_state:error",
@@ -1197,7 +1317,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface_state:initializing",
@@ -1205,7 +1326,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface_state:offline",
@@ -1213,7 +1335,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "interface_state:online",
@@ -1221,7 +1344,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "ip:hostname",
@@ -1229,7 +1353,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "ip:port",
@@ -1237,7 +1362,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "language:de-de",
@@ -1245,7 +1371,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "language:en-us",
@@ -1253,7 +1380,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "language:it-it",
@@ -1261,7 +1389,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "language:nl-nl",
@@ -1269,7 +1398,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list.train_vehicle:reverse",
@@ -1277,7 +1407,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:add",
@@ -1285,23 +1416,26 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:create",
-        "definition": "Creare",
+        "definition": "Crea",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:delete",
-        "definition": "Cancellare",
+        "definition": "Elimina",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:edit",
@@ -1309,7 +1443,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:move_down",
@@ -1317,7 +1452,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:move_up",
@@ -1325,7 +1461,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list:remove",
@@ -1333,7 +1470,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:description",
@@ -1341,7 +1479,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:lncv_programmer",
@@ -1349,7 +1488,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:module",
@@ -1357,7 +1497,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:other_module",
@@ -1365,7 +1506,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:read",
@@ -1373,7 +1515,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:reading_lncv_x",
@@ -1381,7 +1524,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:reading_lncv_x_failed",
@@ -1389,7 +1533,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:sending_start",
@@ -1397,7 +1542,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:start",
@@ -1405,7 +1551,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:stop",
@@ -1413,7 +1560,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:use_broadcast_address",
@@ -1421,7 +1569,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:value",
@@ -1429,7 +1578,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:waiting_for_module_to_respond",
@@ -1437,7 +1587,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:write",
@@ -1445,7 +1596,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lncv_programmer:writing_lncv_x",
@@ -1453,7 +1605,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_command_station:custom",
@@ -1461,7 +1614,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_f9_f28:imm_packet",
@@ -1469,7 +1623,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_f9_f28:uhlenbrock_extended",
@@ -1477,7 +1632,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_fastclock:master",
@@ -1485,7 +1641,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_fastclock:off",
@@ -1493,7 +1650,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_interface_type:serial",
@@ -1501,7 +1659,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_interface_type:tcp_binary",
@@ -1509,7 +1668,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_serial_interface:custom",
@@ -1517,7 +1677,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:command_station",
@@ -1525,7 +1686,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:echo_timeout",
@@ -1533,7 +1695,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:fast_clock",
@@ -1541,7 +1704,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:fast_clock_sync_enabled",
@@ -1549,7 +1713,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:fast_clock_sync_interval",
@@ -1557,7 +1722,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:locomotive_slots",
@@ -1565,7 +1731,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:pcap_output",
@@ -1573,7 +1740,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:response_timeout",
@@ -1581,7 +1749,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua.script:disabled",
@@ -1589,7 +1758,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua.script:start",
@@ -1597,7 +1767,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua.script:stop",
@@ -1605,7 +1776,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua.script_list:start_all",
@@ -1613,7 +1785,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua.script_list:stop_all",
@@ -1621,7 +1794,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua_script:state",
@@ -1629,7 +1803,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua_script_state:disabled",
@@ -1637,7 +1812,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua_script_state:error",
@@ -1645,7 +1821,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua_script_state:running",
@@ -1653,7 +1830,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "lua_script_state:stopped",
@@ -1661,7 +1839,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1001",
@@ -1669,7 +1848,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1002",
@@ -1677,7 +1857,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1003",
@@ -1685,7 +1866,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1004",
@@ -1693,7 +1875,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1005",
@@ -1701,7 +1884,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1006",
@@ -1709,7 +1893,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1007",
@@ -1717,7 +1902,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1008",
@@ -1725,7 +1911,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1009",
@@ -1733,7 +1920,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1010",
@@ -1741,7 +1929,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1011",
@@ -1749,7 +1938,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1012",
@@ -1757,7 +1947,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C1013",
@@ -1765,7 +1956,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C2001",
@@ -1773,7 +1965,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:C2004",
@@ -1781,7 +1974,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D1001",
@@ -1789,7 +1983,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D1002",
@@ -1797,7 +1992,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D1003",
@@ -1805,7 +2001,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2001",
@@ -1813,7 +2010,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2002",
@@ -1821,7 +2019,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2003",
@@ -1829,7 +2028,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2004",
@@ -1837,7 +2037,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2005",
@@ -1845,7 +2046,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2006",
@@ -1853,7 +2055,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2007",
@@ -1861,7 +2064,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2008",
@@ -1869,7 +2073,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2009",
@@ -1877,7 +2082,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:D2010",
@@ -1885,7 +2091,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1001",
@@ -1893,7 +2100,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1002",
@@ -1901,7 +2109,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1003",
@@ -1909,7 +2118,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1004",
@@ -1917,7 +2127,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1005",
@@ -1925,7 +2136,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1006",
@@ -1933,7 +2145,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1007",
@@ -1941,7 +2154,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E1008",
@@ -1949,7 +2163,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2001",
@@ -1957,7 +2172,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2002",
@@ -1965,7 +2181,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2003",
@@ -1973,7 +2190,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2004",
@@ -1981,7 +2199,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2005",
@@ -1989,7 +2208,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2006",
@@ -1997,7 +2217,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2007",
@@ -2005,7 +2226,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2008",
@@ -2013,7 +2235,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2009",
@@ -2021,7 +2244,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2010",
@@ -2029,7 +2253,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2011",
@@ -2037,7 +2262,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2012",
@@ -2045,7 +2271,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2013",
@@ -2053,7 +2280,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2014",
@@ -2061,7 +2289,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2015",
@@ -2069,7 +2298,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2016",
@@ -2077,7 +2307,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2017",
@@ -2085,7 +2316,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2018",
@@ -2093,7 +2325,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2019",
@@ -2101,7 +2334,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2020",
@@ -2109,7 +2343,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E2021",
@@ -2117,7 +2352,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:E9001",
@@ -2125,7 +2361,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1001",
@@ -2133,7 +2370,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1002",
@@ -2141,7 +2379,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1003",
@@ -2149,7 +2388,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1004",
@@ -2157,7 +2397,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1005",
@@ -2165,7 +2406,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1006",
@@ -2173,7 +2415,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1007",
@@ -2181,7 +2424,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F9001",
@@ -2189,7 +2433,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F9002",
@@ -2197,7 +2442,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F9003",
@@ -2205,7 +2451,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I1002",
@@ -2213,7 +2460,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I1003",
@@ -2221,7 +2469,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I1004",
@@ -2229,7 +2478,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I1005",
@@ -2237,7 +2487,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I2001",
@@ -2245,7 +2496,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I2002",
@@ -2253,7 +2505,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I2003",
@@ -2261,7 +2514,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:I9001",
@@ -2269,7 +2523,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1001",
@@ -2277,7 +2532,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1002",
@@ -2285,7 +2541,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1003",
@@ -2293,7 +2550,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1004",
@@ -2301,7 +2559,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1005",
@@ -2309,7 +2568,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1006",
@@ -2317,7 +2577,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1007",
@@ -2325,7 +2586,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1008",
@@ -2333,7 +2595,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1009",
@@ -2341,7 +2604,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1010",
@@ -2349,7 +2613,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1011",
@@ -2357,7 +2622,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1012",
@@ -2365,7 +2631,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1013",
@@ -2373,7 +2640,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1014",
@@ -2381,7 +2649,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1015",
@@ -2389,7 +2658,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1016",
@@ -2397,7 +2667,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1017",
@@ -2405,7 +2676,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1018",
@@ -2413,7 +2685,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1019",
@@ -2421,7 +2694,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1020",
@@ -2429,7 +2703,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1021",
@@ -2437,7 +2712,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1022",
@@ -2445,7 +2721,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1023",
@@ -2453,7 +2730,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1024",
@@ -2461,7 +2739,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1025",
@@ -2469,7 +2748,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1026",
@@ -2477,7 +2757,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1027",
@@ -2485,7 +2766,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N1028",
@@ -2493,7 +2775,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2001",
@@ -2501,7 +2784,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2002",
@@ -2509,7 +2793,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2003",
@@ -2517,7 +2802,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2004",
@@ -2525,7 +2811,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2005",
@@ -2533,7 +2820,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N3001",
@@ -2541,7 +2829,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N3002",
@@ -2549,7 +2838,16 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:N3003",
+        "definition": "La posizione del deviatoio è stata riportata a quella riservata"
+    },
+    {
+        "term": "message:N3004",
+        "definition": "L'aspetto del segnale è stato riportato a quello riservato"
     },
     {
         "term": "message:N9001",
@@ -2557,7 +2855,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W1001",
@@ -2565,7 +2864,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W1002",
@@ -2573,7 +2873,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W1003",
@@ -2581,7 +2882,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2001",
@@ -2589,7 +2891,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2002",
@@ -2597,7 +2900,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W2003",
+        "definition": "Ricevuti dati non validi, ignorati %1 bytes [%2]",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2004",
@@ -2605,7 +2918,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2005",
@@ -2613,7 +2927,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2006",
@@ -2621,7 +2936,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2007",
@@ -2629,7 +2945,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2018",
@@ -2637,7 +2954,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:W2019",
@@ -2645,7 +2963,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "object:id",
@@ -2653,7 +2972,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "object:name",
@@ -2661,7 +2981,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "object:notes",
@@ -2669,7 +2990,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "opc_multi_sense_direction:in_sensor_address",
@@ -2677,7 +2999,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "opc_multi_sense_direction:in_transponder_address",
@@ -2685,7 +3008,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "opc_multi_sense_direction:none",
@@ -2693,7 +3017,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_action:none",
@@ -2701,7 +3026,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_action:off",
@@ -2709,7 +3035,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_action:on",
@@ -2717,15 +3044,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_action:pulse",
-        "definition": "Impulsa",
+        "definition": "Impulso",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_list:bus",
@@ -2733,7 +3062,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_map.decoupler:key",
@@ -2741,7 +3071,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_map.signal:key",
@@ -2749,7 +3080,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_map.turnout:key",
@@ -2757,7 +3089,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "output_map:use",
@@ -2765,7 +3098,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "pcap_output:file",
@@ -2773,7 +3107,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "pcap_output:pipe",
@@ -2781,7 +3116,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:connect",
@@ -2789,7 +3125,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:connect_to_server",
@@ -2797,7 +3134,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:connected",
@@ -2805,7 +3143,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:connecting",
@@ -2813,7 +3152,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:password",
@@ -2821,7 +3161,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:server",
@@ -2829,7 +3170,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.connect_dialog:username",
@@ -2837,7 +3179,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.error:cant_read_from_file_x",
@@ -2845,7 +3188,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.error:cant_write_to_file_x",
@@ -2853,7 +3197,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.error:server_error_x",
@@ -2861,7 +3206,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:about",
@@ -2869,7 +3215,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:close_world",
@@ -2877,7 +3224,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:connect_to_server",
@@ -2885,7 +3233,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:connection",
@@ -2893,7 +3242,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
@@ -2901,7 +3251,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:export_world",
@@ -2909,7 +3260,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:file",
@@ -2917,7 +3269,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:fullscreen",
@@ -2925,7 +3278,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:hardware",
@@ -2933,7 +3287,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:help",
@@ -2941,7 +3296,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:import_world",
@@ -2949,7 +3305,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:load_world",
@@ -2957,7 +3314,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:new_world",
@@ -2965,7 +3323,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:objects",
@@ -2973,7 +3332,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:power",
@@ -2981,7 +3341,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:programming",
@@ -2989,7 +3350,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:quit",
@@ -2997,7 +3359,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:restart_server",
@@ -3005,7 +3368,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:restart_server_question",
@@ -3013,7 +3377,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:save_world",
@@ -3021,7 +3386,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:server",
@@ -3029,7 +3395,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:server_log",
@@ -3037,7 +3404,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:server_settings",
@@ -3045,7 +3413,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:settings",
@@ -3053,7 +3422,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:shutdown_server",
@@ -3061,7 +3431,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:shutdown_server_question",
@@ -3069,7 +3440,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:toolbar",
@@ -3077,7 +3449,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:tools",
@@ -3085,7 +3458,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:view",
@@ -3093,7 +3467,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:world",
@@ -3101,7 +3476,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.mainmenu:world_properties",
@@ -3109,7 +3485,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.message_box:no",
@@ -3117,7 +3494,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.message_box:yes",
@@ -3125,7 +3503,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.object_select_list_dialog:cancel",
@@ -3133,7 +3512,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.object_select_list_dialog:ok",
@@ -3141,7 +3521,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.object_select_list_dialog:select_object",
@@ -3149,7 +3530,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.board:color_scheme",
@@ -3157,7 +3539,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.board:show_block_sensor_states",
@@ -3165,7 +3548,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.board:turnout_draw_state",
@@ -3173,7 +3557,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.developer:dont_load_fallback_language",
@@ -3181,7 +3566,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings",
@@ -3189,7 +3575,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings_dir",
@@ -3197,7 +3584,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.general:language",
@@ -3205,7 +3593,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.statusbar:show_clock",
@@ -3213,7 +3602,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.statusbar:show_statuses",
@@ -3221,7 +3611,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings:board",
@@ -3229,7 +3620,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings:developer",
@@ -3237,7 +3629,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings:general",
@@ -3245,7 +3638,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings:statusbar",
@@ -3253,7 +3647,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.world_list_dialog:cancel",
@@ -3261,7 +3656,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.world_list_dialog:load",
@@ -3269,7 +3665,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.world_list_dialog:world_list",
@@ -3277,7 +3674,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:board_properties",
@@ -3285,7 +3683,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:export_world_failed",
@@ -3293,7 +3692,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:grid",
@@ -3301,7 +3701,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:grid_dot",
@@ -3309,7 +3710,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:grid_line",
@@ -3317,7 +3719,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:grid_none",
@@ -3325,7 +3728,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:import_world_failed",
@@ -3333,7 +3737,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:next",
@@ -3341,7 +3746,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:previous",
@@ -3349,39 +3755,44 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:toggle_mute",
-        "definition": "Mute\/Unmute",
+        "definition": "Mute/Unmute",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:toggle_offline_online",
-        "definition": "Abilita\/Disabilita connessione",
+        "definition": "Abilita/Disabilita connessione",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:toggle_power",
-        "definition": "On\/Off power",
+        "definition": "On/Off power",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:toggle_smoke",
-        "definition": "Abilita\/Disabilita fumo",
+        "definition": "Abilita/Disabilita fumo",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:traintastic_world",
@@ -3389,7 +3800,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:zoom_in",
@@ -3397,7 +3809,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp:zoom_out",
@@ -3405,7 +3818,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "rail_vehicle_list:type",
@@ -3413,15 +3827,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
-    },
-    {
-        "term": "sensor_type:occupy_detector",
-        "definition": "Rilevatore occupazione",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "sensor_type:reed_switch",
@@ -3429,7 +3836,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "serial:baudrate",
@@ -3437,7 +3845,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "serial:device",
@@ -3445,7 +3854,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "serial:flow_control",
@@ -3453,7 +3863,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "serial:port",
@@ -3461,7 +3872,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "serial_flow_control:hardware",
@@ -3469,7 +3881,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "serial_flow_control:none",
@@ -3477,7 +3890,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "server_log:code",
@@ -3485,7 +3899,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "server_log:message",
@@ -3493,7 +3908,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "server_log:object",
@@ -3501,7 +3917,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "server_log:time",
@@ -3509,7 +3926,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:allow_client_server_restart",
@@ -3517,7 +3935,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:allow_client_server_shutdown",
@@ -3525,7 +3944,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:auto_save_world_on_exit",
@@ -3533,7 +3953,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:discoverable",
@@ -3541,7 +3962,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:enable_file_logger",
@@ -3549,7 +3971,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:localhost_only",
@@ -3557,7 +3980,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:memory_logger_size",
@@ -3565,7 +3989,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:port",
@@ -3573,7 +3998,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:save_world_uncompressed",
@@ -3581,7 +4007,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "signal_aspect:proceed",
@@ -3589,7 +4016,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "signal_aspect:proceed_reduced_speed",
@@ -3597,7 +4025,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "signal_aspect:stop",
@@ -3605,7 +4034,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "throttle_object_list:throttle",
@@ -3613,7 +4043,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:active",
@@ -3621,7 +4052,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:block",
@@ -3629,7 +4061,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:lob",
@@ -3637,7 +4070,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:mode",
@@ -3645,7 +4079,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:override_length",
@@ -3653,7 +4088,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:override_weight",
@@ -3661,7 +4097,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:speed_max",
@@ -3669,7 +4106,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:vehicles",
@@ -3677,7 +4115,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train:weight",
@@ -3685,7 +4124,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "traintastic_diy_interface_type:serial",
@@ -3693,7 +4133,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "traintastic_diy_settings:debug_log_heartbeat",
@@ -3701,7 +4142,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "traintastic_diy_settings:heartbeat_timeout",
@@ -3709,7 +4151,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "turnout_position:left",
@@ -3717,7 +4160,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "turnout_position:right",
@@ -3725,7 +4169,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "turnout_position:straight",
@@ -3733,7 +4178,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail.freight_wagon:cargo_weight",
@@ -3741,7 +4187,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail.tank_wagon:cargo_volume",
@@ -3749,7 +4196,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:cargo_capacity",
@@ -3757,7 +4205,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:cargo_loaded",
@@ -3765,7 +4214,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:decoder",
@@ -3773,7 +4223,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:lob",
@@ -3781,7 +4232,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:power",
@@ -3789,7 +4241,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:speed_max",
@@ -3797,7 +4250,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:total_weight",
@@ -3805,7 +4259,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:train",
@@ -3813,7 +4268,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "vehicle.rail:weight",
@@ -3821,7 +4277,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:boards",
@@ -3829,7 +4286,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:clock",
@@ -3837,7 +4295,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:decoders",
@@ -3845,7 +4304,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:edit",
@@ -3853,7 +4313,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:inputs",
@@ -3861,7 +4322,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:interfaces",
@@ -3869,7 +4331,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:lua_scripts",
@@ -3877,7 +4340,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:mute",
@@ -3885,7 +4349,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:no_smoke",
@@ -3893,7 +4358,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:offline",
@@ -3901,7 +4367,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:online",
@@ -3909,7 +4376,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:outputs",
@@ -3917,7 +4385,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:power_off",
@@ -3925,7 +4394,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:power_on",
@@ -3933,7 +4403,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:rail_vehicles",
@@ -3941,7 +4412,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:run",
@@ -3949,7 +4421,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:scale",
@@ -3957,7 +4430,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:scale_ratio",
@@ -3965,7 +4439,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:simulation",
@@ -3973,7 +4448,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:stop",
@@ -3981,7 +4457,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:trains",
@@ -3989,11 +4466,37 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "world:uuid",
         "definition": "UUID",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:correct_output_pos_when_locked",
+        "definition": "Prova a correggere lo stato di un output modificato esternamente mentre bloccato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:ext_output_change_action",
+        "definition": "Azione per Modifica Esterna di un Output",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "world:path_release_delay",
+        "definition": "Ritardo nella liberazione dell'itinerario",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4005,7 +4508,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "xpressnet_command_station:custom",
@@ -4013,7 +4517,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "xpressnet_interface_type:network",
@@ -4021,7 +4526,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "xpressnet_interface_type:serial",
@@ -4029,7 +4535,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "xpressnet_serial_interface_type:custom",
@@ -4037,7 +4544,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "xpressnet_settings:use_emergency_stop_locomotive_command",
@@ -4045,7 +4553,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "xpressnet_settings:use_roco_f13_f20_command",
@@ -4053,7 +4562,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "z21_channel:rbus",
@@ -4061,7 +4571,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "z21_settings.server:allow_emergency_stop",
@@ -4069,7 +4580,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "z21_settings.server:allow_track_power_off",
@@ -4077,15 +4589,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
-        "definition": "Permetti accensione\/rilascio stop di emergenza",
+        "definition": "Permetti accensione/rilascio stop di emergenza",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train_mode:manual_protected",
@@ -4093,7 +4607,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train_mode:manual_unprotected",
@@ -4101,7 +4616,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "train_mode:automatic",
@@ -4109,7 +4625,8 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "list.train_vehicle:move",
@@ -4117,15 +4634,17 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "protocol.loconet:command_station",
-        "definition": "",
+        "definition": "Centralina di comando",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "settings:select_folder",
@@ -4133,78 +4652,1740 @@
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "loconet_settings:listen_only",
-        "definition": "",
+        "definition": "Solo ascolto",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2006",
-        "definition": "",
+        "definition": "Modalit\u00e0 solo ascolto: attivata",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:N2007",
-        "definition": "",
+        "definition": "Modalit\u00e0 solo ascolto: disattivata",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "status.lua:x_running",
-        "definition": "",
+        "definition": "Esecuzione di %1",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "status.lua:x_in_error",
-        "definition": "",
+        "definition": "%1 in errore",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "message:F1008",
-        "definition": "",
+        "definition": "Crash Eventloop (%1)",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings:restart_required",
-        "definition": "",
+        "definition": "Riavvio necessario",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "qtapp.settings.general:language_changed_restart_required",
-        "definition": "",
+        "definition": "Traintastic client deve essere riavviato affinch\u00e9 il cambio di lingua abbia effetto.",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
     },
     {
         "term": "traintastic_diy_interface_type:network_tcp",
+        "definition": "Rete (TCP)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_protocol:dcc_short",
+        "definition": "DCC (Indirizzo corto)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_protocol:dcc_long",
+        "definition": "DCC (Indirizzo esteso)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_protocol:motorola",
+        "definition": "Motorola",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "decoder_protocol:selectrix",
+        "definition": "Selectrix",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklin_can_interface_type:network_tcp",
+        "definition": "Rete (TCP)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklin_can_interface_type:network_udp",
+        "definition": "Rete (UDP)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E2022",
+        "definition": "Creazione Socket fallita (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E2023",
+        "definition": "ioctl Socket fallito (%1)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:C2005",
+        "definition": "SocketCAN \u00e8 disponibile solo su Linux",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklin_can_interface_type:socket_can",
+        "definition": "SocketCAN (Solo su Linux)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_locomotive_list",
+        "definition": "M\u00e4rklin CAN: Lista locomotive",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklincan_settings:default_switch_time",
+        "definition": "Tempo di commutazione predefinito",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklincan_settings:debug_config_stream",
+        "definition": "Debug: Config stream",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklincan_settings:node_uid",
+        "definition": "UID nodo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklincan_settings:node_serial_number",
+        "definition": "Numero Seriale nodo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklin_can_locomotive_list:import_or_sync",
+        "definition": "Importa/sync",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklin_can_locomotive_list:import_or_sync_all",
+        "definition": "Importa/sync tutti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklin_can_locomotive_list:reload",
+        "definition": "Ricarica",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_node_list",
+        "definition": "M\u00e4rklin CAN: Lista Nodi",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_name",
+        "definition": "Nome Dispositivo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "table_model.marklin_can_node_list:article_number",
+        "definition": "Numero Articolo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "table_model.marklin_can_node_list:serial_number",
+        "definition": "Numero Seriale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "table_model.marklin_can_node_list:software_version",
+        "definition": "Versione Software",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_id",
+        "definition": "Id Dispositivo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "marklincan_settings:debug_status_data_config",
+        "definition": "Debug: Status data config",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E2024",
+        "definition": "Locomotiva sconosciuta MFX UID: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W9001",
+        "definition": "Durata esecuzione %1 us",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3001",
+        "definition": "Impossibile eliminare un rotabile quando \u00e8 in un treno attivo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "input_map_item.block:identification",
+        "definition": "Identificazione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3002",
+        "definition": "Impossibile eliminare un treno attivo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:E3003",
+        "definition": "Il treno \u00e8 stato stoppato d'emergenza per la modifica esterna della posizione del deviatoio %1"
+    },
+    {
+        "term": "message:E3004",
+        "definition": "Il treno \u00e8 stato stoppato d'emergenza per la modifica esterna dell'aspetto del segnale %1"
+    },
+    {
+        "term": "message:E3007",
+        "definition": "Il mondo \u00e8 stato stoppato d'emergenza per la modifica esterna della posizione del deviatoio %1"
+    },
+    {
+        "term": "message:E3008",
+        "definition": "Il mondo \u00e8 stato stoppato d'emergenza per la modifica esterna dell'aspetto del segnale %1"
+    },
+    {
+        "term": "message:E3009",
+        "definition": "Il mondo \u00e8 stato spento per la modifica esterna della posizione del deviatoio %1"
+    },
+    {
+        "term": "message:E3010",
+        "definition": "Il mondo \u00e8 stato spento per la modifica esterna dell'aspetto del segnale %1"
+    },
+    {
+        "term": "message:C1014",
+        "definition": "Comando non valido",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:C1015",
+        "definition": "Oggetto sconosciuto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:C1016",
+        "definition": "Propriet\u00e0 sconosciuta",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:C1017",
+        "definition": "Indici non validi",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:C1018",
+        "definition": "Eccezione: %1",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:C1019",
+        "definition": "L'Oggetto non \u00e8 una tabella",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W3001",
+        "definition": "Bottone NX connesso a due blocchi",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W3002",
+        "definition": "Bottone NX non connesso ad alcun blocco",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W3003",
+        "definition": "Posizione del deviatoio modificata dall'esterno mentre era bloccato in un itinerario"
+    },
+    {
+        "term": "message:W3004",
+        "definition": "Aspetto del segnale modificato dall'esterno mentre era bloccato in un itinerario"
+    },
+    {
+        "term": "auto_yes_no:auto",
+        "definition": "Auto rileva",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "auto_yes_no:yes",
+        "definition": "S\u00ec",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "auto_yes_no:no",
+        "definition": "No",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.signal:require_reservation",
+        "definition": "Richiedi prenotazione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "traintastic_diy_settings:startup_delay",
+        "definition": "Ritardo accensione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.settings.general:connect_automatically_to_discovered_server",
+        "definition": "Connetti automaticamente al server individuato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:about_server",
+        "definition": "Informazioni sul server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.about:traintastic_server",
+        "definition": "Informazioni su Traintastic server",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:online_when_loaded",
+        "definition": "Vai online quando caricato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:power_on_when_loaded",
+        "definition": "Accendi quando caricato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "world:run_when_loaded",
+        "definition": "Esegui quando caricato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:fr-fr",
+        "definition": "Francese",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_type:occupancy_detector",
+        "definition": "Rilevatore occupazione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:sv-se",
+        "definition": "Svedese",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_channel:dcc_accessory",
+        "definition": "Accessorio DCC",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_channel:output",
+        "definition": "Output",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_channel:turnout",
+        "definition": "Deviatoio",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_settings:startup_delay",
+        "definition": "Ritardo accensione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "message:W2020",
+        "definition": "DCCext (RCN-213) non \u00e8 supportato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_interface_type:serial",
         "definition": "",
         "context": "",
         "term_plural": "",
         "reference": "",
-        "comment": ""
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "dccex_interface_type:network_tcp",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:authenticating",
+        "definition": "Autenticazione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:creating_session",
+        "definition": "Creazione sessione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.connect_dialog:fetching_world",
+        "definition": "Recupero mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "pair_output_action:none",
+        "definition": "Nessuna",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "pair_output_action:first",
+        "definition": "Prima (Rosso)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "pair_output_action:second",
+        "definition": "Seconda (Verde)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "hardware:addresses",
+        "definition": "Indirizzi",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:accessory",
+        "definition": "Accessorio",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:accessory_dcc",
+        "definition": "Accessorio (DCC)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:accessory_motorola",
+        "definition": "Accessorio (Motorola)",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_channel:ecos_object",
+        "definition": "ECoS object",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map:add_address",
+        "definition": "Aggiungi indirizzo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map:remove_address",
+        "definition": "Rimuovi indirizzo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map:ecos_object",
+        "definition": "ECoS object",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output.ecos_object:state",
+        "definition": "Stato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world:title",
+        "definition": "Setup nuovo mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.introduction:title",
+        "definition": "Nuovo mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.introduction:text",
+        "definition": "Questa wizard ti guider\u00e0 nell'impostazione delle propriet\u00e0 base del mondo.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.name:title",
+        "definition": "Nome mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.name:text",
+        "definition": "Dai un nome al mondo, questo nome sar\u00e0 visibile durante il caricamento del mondo.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.scale:title",
+        "definition": "Scala mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.scale:text",
+        "definition": "Seleziona la scala del mondo, Traintastic la user\u00e0 per il calcolo di distanze e velocit\u00e0.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.finalization:title",
+        "definition": "Mondo pronto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_world.finalization:text",
+        "definition": "Le propriet\u00e0 base del mondo sono ora impostate, puoi sempre cambiarle in futuro dal men\u00f9: Mondo -> Propriet\u00e0.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "qtapp.mainmenu:wizards",
+        "definition": "Wizards",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction:title",
+        "definition": "Introduzione di Traintastic",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.welcome:title",
+        "definition": "Benvenuti!",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.welcome:text",
+        "definition": "Questa wizard illustrer\u00e0 le basi di Traintastic. La pagina successiva ti aiuter\u00e0 a cominciare. Se vuoi vedere ancora questa wizard, puoi aprirla dal men\u00f9 principale: Aiuto -> Wizard -> Introduzione di Traintastic.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.world:title",
+        "definition": "Il Mondo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.world:text",
+        "definition": "Il Mondo contiene tutto ci\u00f2 che \u00e8 presente nel layout, come la centralina di comando, treni, segnali, deviatoi ecc. Se necessario diversi mondi possono essere creati ma se ne pu\u00f2 usare uno solo alla volta.\n\nI Mondi sono salvati nel PC che esegue il server di Traintastic. Quando il mondo viene salvato, un backup viene creato automaticamente. Dal men\u00f9 principale: File -> Esporta mondo \u00e8 possibile ottenere una copia del mondo come backup aggiuntivo o per trasferirlo ad un altro server Traintastic.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.edit_mode:title",
+        "definition": "Modalit\u00e0 modifica",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.edit_mode:text",
+        "definition": "Traintastic ha due modi di operare\n\u2022 Modalit\u00e0 modifica\n\u2022 Modalit\u00e0 Operativa\n\nNella modalit\u00e0 operativa \u00e8 solamente possibile operare il layout per impedire modifiche accidentali e.s. per cambiare l'indirizzo di un deviatoio o modificare il layout bisogna attivare la modalit\u00e0 modifica.\n\nPuoi passare dalla modalit\u00e0 operativa a quella di modifica tramite l'icona della matita nella barra degli strumenti principale o dal men\u00f9 principale: Mondo \u2192 Modifica mondo.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.forum:title",
+        "definition": "Forum Traintastic",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.introduction.forum:text",
+        "definition": "Se hai domande o consigli per favore unisciti al <a href=\"https://forum.traintastic.org\">Forum Traintastic</a>.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.welcome:title",
+        "definition": "Aggiungi interfaccia",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.welcome:text",
+        "definition": "Questa wizard illustrer\u00e0 il settaggio delle interfacce.\n\nSe stai eseguendo Traintastic server e Traintastic client in PC separati, assicurati che la centralina di comando sia connessa al PC che esegue Traintastic server.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.command_station:title",
+        "definition": "Centralina di comando",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.command_station:text",
+        "definition": "Per favore seleziona la tua centralina di comando:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:title",
+        "definition": "Connessione",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:text",
+        "definition": "Com'\u00e8 connessa la %command_station%?",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_serial_port",
+        "definition": "Porta seriale %command_station%",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_usb_port",
+        "definition": "Porta USB %command_station%",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:network",
+        "definition": "Rete",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:not_yet_supported",
+        "definition": "Ancora non supportato",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:can_interface",
+        "definition": "Interfaccia aggiuntiva CAN bus",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:loconet_interface",
+        "definition": "Interfaccia aggiuntiva LocoNet",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.connection:xpressnet_interface",
+        "definition": "Interfaccia aggiuntiva XpressNet",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.protocol:title",
+        "definition": "Protocollo",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.protocol:text",
+        "definition": "Per favore seleziona il protocollo di comunicazione per la connessione:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:title",
+        "definition": "Interfaccia LocoNet",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:text",
+        "definition": "Per favore seleziona l'interfaccia LocoNet connessa alla %command_station%:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:title",
+        "definition": "Interfaccia XpressNet",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:text",
+        "definition": "Per favore seleziona l'interfaccia XpressNet connessa alla %command_station%:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.hostname:title",
+        "definition": "Indirizzo IP",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.hostname:text",
+        "definition": "Inserisci l'indirizzo IP della %command_station% a cui connettersi:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:title",
+        "definition": "Indirizzo IP e porta",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:text",
+        "definition": "Inserisci l'indirizzo IP e il numero della porta della %command_station% a cui connettersi:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.serial_port:title",
+        "definition": "Porta Seriale",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.serial_port:text",
+        "definition": "Seleziona la porta seriale a cui \u00e8 connessa la %command_station%:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.serial_port_interface:text",
+        "definition": "Seleziona la porta seriale a cui \u00e8 connessa la %interface%:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.name:title",
+        "definition": "Nome",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.name:text",
+        "definition": "Inserisci un nome per la connessione:",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.finalization:title",
+        "definition": "Pronto",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.add_interface.finalization:text",
+        "definition": "Il settaggio della %command_station% \u00e8 pronto, puoi portarla online usando l'opzione connetti nella barra degli strumenti.\n\nSe devi fare altre modifiche puoi trovare l'interfaccia tramite il men\u00f9: Oggetto \u2192 Hardware \u2192 Interfacce.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.page.list:search",
+        "definition": "Cerca",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.button:back",
+        "definition": "Indietro",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.button:next",
+        "definition": "Avanti",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.button:finish",
+        "definition": "Fine",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.button:cancel",
+        "definition": "Annulla",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map:address_x",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.misc.label",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.label:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.label:text_align",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.label:text_color",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "color:none",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.label:background_color",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:top_left",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:top_center",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:top_right",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:center_left",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:center",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:center_right",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:bottom_left",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:bottom_center",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "text_align:bottom_right",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.introduction:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.introduction.short:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.introduction.long:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.editing:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.editing:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.adding:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.adding:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.name:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.name:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.finalization:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "wizard.new_board.finalization:text",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.misc.switch",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:color_on",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:color_off",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map.switch:key",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map_item.switch.key:off",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "output_map_item.switch.key:on",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.turnout:position",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.sensor:state",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_state:free",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_state:occupied",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "sensor_state:unknown",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.rail.block:state",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:occupied",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:reserved",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "block_state:free",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "board_tile.misc.switch:value",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "list:setup_using_wizard",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "language:es-es",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button:block",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button:input",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:crossed",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:double_slip_straight_a",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "turnout_position:double_slip_straight_b",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
     }
 ]

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,9 @@
 
 #include "../core/idobject.hpp"
 #include <boost/asio/steady_timer.hpp>
+#include <traintastic/enum/blocktraindirection.hpp>
 #include <traintastic/enum/trainmode.hpp>
+#include "../core/event.hpp"
 #include "../core/method.hpp"
 #include "../core/objectproperty.hpp"
 #include "../core/objectvectorproperty.hpp"
@@ -36,11 +38,13 @@
 
 class TrainVehicleList;
 class TrainBlockStatus;
+class BlockRailTile;
 class PoweredRailVehicle;
 
 class Train : public IdObject
 {
   friend class TrainVehicleList;
+  friend class TrainTracking;
 
   private:
     enum class SpeedState
@@ -65,6 +69,10 @@ class Train : public IdObject
     void updateSpeedMax();
     void updateEnabled();
     bool setTrainActive(bool val);
+
+    void fireBlockReserved(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
+    void fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
+    void fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
 
   protected:
     void addToWorld() override;
@@ -98,8 +106,16 @@ class Train : public IdObject
     //! If the train changes direction this list will be reversed.
     ObjectVectorProperty<TrainBlockStatus> blocks;
     Property<std::string> notes;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onBlockAssigned;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockReserved;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockEntered;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockLeft;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onBlockRemoved;
 
     Train(World& world, std::string_view _id);
+
+    void fireBlockAssigned(const std::shared_ptr<BlockRailTile>& block);
+    void fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block);
 };
 
 #endif

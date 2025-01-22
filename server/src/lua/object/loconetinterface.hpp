@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@ private:
   static int imm_packet(lua_State* L);
 
 public:
-  static constexpr char const* metaTableName = "object.loconet_interface";
+  static constexpr char const* metaTableName = "object.interface.loconet";
 
   static void registerType(lua_State* L);
 

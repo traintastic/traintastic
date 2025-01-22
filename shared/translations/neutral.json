@@ -1,7 +1,7 @@
 [
     {
-        "term": "class_id:interface.dccplusplus",
-        "definition": "DCC++"
+        "term": "class_id:interface.dccex",
+        "definition": "DCC-EX"
     },
     {
         "term": "class_id:interface.ecos",
@@ -56,8 +56,8 @@
         "definition": "DCC"
     },
     {
-        "term": "hardware:dccplusplus",
-        "definition": "DCC++"
+        "term": "hardware:dccex",
+        "definition": "DCC-EX"
     },
     {
         "term": "hardware:ecos",
@@ -280,10 +280,6 @@
         "definition": "Short tons"
     },
     {
-        "term": "weight_unit:ton",
-        "definition": "ton"
-    },
-    {
         "term": "world_scale:h0",
         "definition": "H0 (1:87)"
     },
@@ -374,6 +370,22 @@
     {
         "term": "table_model.marklin_can_node_list:uid",
         "definition": "UID"
+    },
+    {
+        "term": "output_channel:dcc_ext",
+        "definition": "DCCext (RCN-213)"
+    },
+    {
+        "term": "loconet_command_station:uhlenbrock_intellibox_ir",
+        "definition": "Uhlenbrock Intellibox IR"
+    },
+    {
+        "term": "loconet_command_station:uhlenbrock_intellibox_basic",
+        "definition": "Uhlenbrock Intellibox Basic"
+    },
+    {
+        "term": "loconet_command_station:uhlenbrock_intellibox_2",
+        "definition": "Uhlenbrock Intellibox II"
     },
     {
         "term": "message:D2011",

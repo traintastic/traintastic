@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
 #include "../enum/color.hpp"
+#include "../enum/textalign.hpp"
 #include "../network/objectptr.hpp"
 
 struct BoardColorScheme;
@@ -107,10 +108,13 @@ class TilePainter
     void drawBlock(TileId id, const QRectF& r, TileRotate rotate, bool isReservedA = false, bool isReservedB = false, const ObjectPtr& blockTile = {});
 
     void drawPushButton(const QRectF& r, Color color = Color::Yellow);
+    void drawSwitch(const QRectF& r, bool value = false, Color colorOn = Color::Yellow, Color colorOff = Color::Gray);
 
     void drawRailDecoupler(const QRectF& r, TileRotate rotate, bool isReserved = false, DecouplerState active = DecouplerState::Deactivated);
 
     void drawRailNX(const QRectF& r, TileRotate rotate, bool isReserved = false, bool isEnabled = false, bool pressed = false);
+
+    void drawLabel(const QRectF& r, TileRotate rotate, const QString& text = "txt", TextAlign textAlign = TextAlign::Center, Color textColor = Color::None, Color backgroundColor = Color::None);
 };
 
 #endif

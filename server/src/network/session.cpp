@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,12 +24,13 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include "../traintastic/traintastic.hpp"
-#include "connection.hpp"
+#include "clientconnection.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
 #ifndef NDEBUG
   #include "../core/eventloop.hpp" // for: isEventLoopThread()
 #endif
+#include "../core/abstractunitproperty.hpp"
 #include "../core/objectproperty.tpp"
 #include "../core/tablemodel.hpp"
 #include "../log/log.hpp"
@@ -44,7 +45,7 @@
   #undef GetObject // GetObject is defined by a winapi header
 #endif
 
-Session::Session(const std::shared_ptr<Connection>& connection) :
+Session::Session(const std::shared_ptr<ClientConnection>& connection) :
   m_connection{connection},
   m_uuid{boost::uuids::random_generator()()}
 {
@@ -118,8 +119,8 @@ bool Session::processMessage(const Message& message)
       // client counter value must match server counter value,
       // to make sure no handles are "on the wire"
       //
-      const Handle handle = message.read<Handle>();
-      const uint32_t counter = message.read<uint32_t>();
+      const auto handle = message.read<Handle>();
+      const auto counter = message.read<uint32_t>();
       if(counter == m_handles.getCounter(handle))
       {
         m_handles.removeHandle(handle);
@@ -164,6 +165,65 @@ bool Session::processMessage(const Message& message)
 
                 case ValueType::String:
                   property->fromString(message.read<std::string>());
+                  break;
+
+                default:
+                  throw std::runtime_error("invalid value type");
+              }
+            }
+            catch(const std::exception& e) // set property failed
+            {
+              if(message.isRequest()) // send error response
+              {
+                m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1018_EXCEPTION_X, e.what()));
+              }
+              else // send changed event with current value:
+                objectPropertyChanged(*property);
+            }
+
+            if(message.isRequest()) // send success response
+              m_connection->sendMessage(Message::newResponse(message.command(), message.requestId()));
+          }
+          else if(message.isRequest()) // send error response
+          {
+            m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1016_UNKNOWN_PROPERTY));
+          }
+        }
+        else if(message.isRequest()) // send error response
+        {
+          m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1015_UNKNOWN_OBJECT));
+        }
+      }
+      return true;
+    }
+    case Message::Command::ObjectSetVectorProperty:
+    {
+      if(message.isRequest() || message.isEvent())
+      {
+        if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
+        {
+          if(AbstractVectorProperty* property = object->getVectorProperty(message.read<std::string>()); property && !property->isInternal())
+          {
+            try
+            {
+              const size_t index = message.read<uint32_t>();
+
+              switch(message.read<ValueType>())
+              {
+                case ValueType::Boolean:
+                  property->setBool(index, message.read<bool>());
+                  break;
+
+                case ValueType::Integer:
+                  property->setInt64(index, message.read<int64_t>());
+                  break;
+
+                case ValueType::Float:
+                  property->setDouble(index, message.read<double>());
+                  break;
+
+                case ValueType::String:
+                  property->setString(index, message.read<std::string>());
                   break;
 
                 default:
@@ -278,7 +338,7 @@ bool Session::processMessage(const Message& message)
         {
           try
           {
-            const std::string id = message.read<std::string>();
+            const auto id = message.read<std::string>();
             if(!id.empty())
             {
               if(ObjectPtr obj = Traintastic::instance->world->getObjectByPath(id))
@@ -304,8 +364,8 @@ bool Session::processMessage(const Message& message)
       {
         if(AbstractMethod* method = object->getMethod(message.read<std::string>()); method && !method->isInternal())
         {
-          const ValueType resultType = message.read<ValueType>();
-          const uint8_t argumentCount = message.read<uint8_t>();
+          const auto resultType = message.read<ValueType>();
+          const auto argumentCount = message.read<uint8_t>();
 
           Arguments args;
           for(uint8_t i = 0; i < argumentCount; i++)
@@ -328,7 +388,7 @@ bool Session::processMessage(const Message& message)
 
               case ValueType::String:
               {
-                std::string arg = message.read<std::string>();
+                auto arg = message.read<std::string>();
                 if(i < method->argumentTypeInfo().size() && method->argumentTypeInfo()[i].type == ValueType::Object)
                 {
                   if(arg.empty())
@@ -385,7 +445,6 @@ bool Session::processMessage(const Message& message)
                   break;
 
                 case ValueType::Invalid:
-                  assert(false);
                   break;
               }
 
@@ -400,11 +459,8 @@ bool Session::processMessage(const Message& message)
               m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), e.message(), e.args()));
               return true;
             }
-            else
-            {
-              // we can't report it back to the caller, so just log it.
-              Log::log(*object, e.message(), e.args());
-            }
+            // we can't report it back to the caller, so just log it.
+            Log::log(*object, e.message(), e.args());
           }
           catch(const std::exception& e)
           {
@@ -422,7 +478,7 @@ bool Session::processMessage(const Message& message)
     {
       if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
       {
-        if(Table* table = dynamic_cast<Table*>(object.get()))
+        if(auto* table = dynamic_cast<Table*>(object.get()))
         {
           TableModelPtr model = table->getModel();
           assert(model);
@@ -512,28 +568,32 @@ bool Session::processMessage(const Message& message)
       auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(m_handles.getItem(message.read<Handle>()));
       if(outputKeyboard)
       {
+        const auto outputType = outputKeyboard->outputType.value();
         auto outputInfo = outputKeyboard->getOutputInfo();
         auto response = Message::newResponse(message.command(), message.requestId());
         response->write<uint32_t>(outputInfo.size());
         for(auto& info : outputInfo)
         {
           response->write(info.address);
-          response->write(info.id);
-          response->write(info.value);
+          response->write(info.used);
+          switch(outputType)
+          {
+            case OutputType::Single:
+              response->write(std::get<TriState>(info.value));
+              break;
+
+            case OutputType::Pair:
+              response->write(std::get<OutputPairValue>(info.value));
+              break;
+
+            case OutputType::Aspect: /*[[unlikely]]*/
+            case OutputType::ECoSState: /*[[unlikely]]*/
+              assert(false);
+              break;
+          }
         }
         m_connection->sendMessage(std::move(response));
         return true;
-      }
-      break;
-    }
-    case Message::Command::OutputKeyboardSetOutputValue:
-    {
-      auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(m_handles.getItem(message.read<Handle>()));
-      if(outputKeyboard)
-      {
-        const uint32_t address = message.read<uint32_t>();
-        const bool value = message.read<bool>();
-        outputKeyboard->setOutputValue(address, value);
       }
       break;
     }
@@ -575,30 +635,6 @@ bool Session::processMessage(const Message& message)
       }
       m_connection->sendMessage(std::move(response));
       return true;
-    }
-    case Message::Command::OutputMapGetItems:
-    {
-      if(auto outputMap = std::dynamic_pointer_cast<OutputMap>(m_handles.getItem(message.read<Handle>())))
-      {
-        auto response = Message::newResponse(message.command(), message.requestId());
-        for(auto& item : outputMap->items())
-          writeObject(*response, item);
-        m_connection->sendMessage(std::move(response));
-        return true;
-      }
-      break;
-    }
-    case Message::Command::OutputMapGetOutputs:
-    {
-      if(auto outputMap = std::dynamic_pointer_cast<OutputMap>(m_handles.getItem(message.read<Handle>())))
-      {
-        auto response = Message::newResponse(message.command(), message.requestId());
-        for(const auto& item : outputMap->outputs())
-          writeObject(*response, item);
-        m_connection->sendMessage(std::move(response));
-        return true;
-      }
-      break;
     }
     case Message::Command::ServerLog:
       if(message.read<bool>())
@@ -682,18 +718,9 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
       m_objectSignals.emplace(handle, inputMonitor->inputIdChanged.connect(std::bind(&Session::inputMonitorInputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
       m_objectSignals.emplace(handle, inputMonitor->inputValueChanged.connect(std::bind(&Session::inputMonitorInputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
     }
-    else if(auto* outputKeyboard = dynamic_cast<OutputKeyboard*>(object.get()))
-    {
-      m_objectSignals.emplace(handle, outputKeyboard->outputIdChanged.connect(std::bind(&Session::outputKeyboardOutputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-      m_objectSignals.emplace(handle, outputKeyboard->outputValueChanged.connect(std::bind(&Session::outputKeyboardOutputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-    }
     else if(auto* board = dynamic_cast<Board*>(object.get()))
     {
       m_objectSignals.emplace(handle, board->tileDataChanged.connect(std::bind(&Session::boardTileDataChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-    }
-    else if(auto* outputMap = dynamic_cast<OutputMap*>(object.get()))
-    {
-      m_objectSignals.emplace(handle, outputMap->outputsChanged.connect(std::bind(&Session::outputMapOutputsChanged, this, std::placeholders::_1)));
     }
 
     bool hasPublicEvents = false;
@@ -713,7 +740,7 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
       message.writeBlock(); // item
       message.write(name);
 
-      if(BaseProperty* baseProperty = dynamic_cast<BaseProperty*>(&item))
+      if(auto* baseProperty = dynamic_cast<BaseProperty*>(&item))
       {
         AbstractProperty* property = nullptr;
         AbstractUnitProperty* unitProperty = nullptr;
@@ -757,7 +784,7 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
         else
           assert(false);
       }
-      else if(const AbstractMethod* method = dynamic_cast<const AbstractMethod*>(&item))
+      else if(const auto* method = dynamic_cast<const AbstractMethod*>(&item))
       {
         message.write(InterfaceItemType::Method);
         message.write(method->resultTypeInfo().type);
@@ -857,14 +884,14 @@ void Session::objectPropertyChanged(BaseProperty& baseProperty)
   event->write(m_handles.getHandle(baseProperty.object().shared_from_this()));
   event->write(baseProperty.name());
   event->write(baseProperty.type());
-  if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&baseProperty))
+  if(auto* property = dynamic_cast<AbstractProperty*>(&baseProperty))
   {
     writePropertyValue(*event, *property);
 
-    if(AbstractUnitProperty* unitProperty = dynamic_cast<AbstractUnitProperty*>(property))
+    if(auto* unitProperty = dynamic_cast<AbstractUnitProperty*>(property))
       event->write(unitProperty->unitValue());
   }
-  else if(AbstractVectorProperty* vectorProperty = dynamic_cast<AbstractVectorProperty*>(&baseProperty))
+  else if(auto* vectorProperty = dynamic_cast<AbstractVectorProperty*>(&baseProperty))
     writeVectorPropertyValue(*event, *vectorProperty);
   else
     assert(false);
@@ -1008,7 +1035,7 @@ void Session::writeAttribute(Message& message , const AbstractAttribute& attribu
 {
   message.write(attribute.name());
   message.write(attribute.type());
-  if(const AbstractValueAttribute* valueAttribute = dynamic_cast<const AbstractValueAttribute*>(&attribute))
+  if(const auto* valueAttribute = dynamic_cast<const AbstractValueAttribute*>(&attribute))
   {
     message.write(AttributeType::Value);
     switch(attribute.type())
@@ -1035,7 +1062,7 @@ void Session::writeAttribute(Message& message , const AbstractAttribute& attribu
         break;
     }
   }
-  else if(const AbstractValuesAttribute* valuesAttributes = dynamic_cast<const AbstractValuesAttribute*>(&attribute))
+  else if(const auto* valuesAttributes = dynamic_cast<const AbstractValuesAttribute*>(&attribute))
   {
     const uint32_t length = valuesAttributes->length();
     message.write(AttributeType::Values);
@@ -1102,24 +1129,6 @@ void Session::inputMonitorInputValueChanged(InputMonitor& inputMonitor, const ui
   m_connection->sendMessage(std::move(event));
 }
 
-void Session::outputKeyboardOutputIdChanged(OutputKeyboard& outputKeyboard, const uint32_t address, std::string_view id)
-{
-  auto event = Message::newEvent(Message::Command::OutputKeyboardOutputIdChanged);
-  event->write(m_handles.getHandle(outputKeyboard.shared_from_this()));
-  event->write(address);
-  event->write(id);
-  m_connection->sendMessage(std::move(event));
-}
-
-void Session::outputKeyboardOutputValueChanged(OutputKeyboard& outputKeyboard, const uint32_t address, const TriState value)
-{
-  auto event = Message::newEvent(Message::Command::OutputKeyboardOutputValueChanged);
-  event->write(m_handles.getHandle(outputKeyboard.shared_from_this()));
-  event->write(address);
-  event->write(value);
-  m_connection->sendMessage(std::move(event));
-}
-
 void Session::boardTileDataChanged(Board& board, const TileLocation& location, const TileData& data)
 {
   auto event = Message::newEvent(Message::Command::BoardTileDataChanged);
@@ -1133,14 +1142,5 @@ void Session::boardTileDataChanged(Board& board, const TileLocation& location, c
     assert(tile);
     writeObject(*event, tile);
   }
-  m_connection->sendMessage(std::move(event));
-}
-
-void Session::outputMapOutputsChanged(OutputMap& outputMap)
-{
-  auto event = Message::newEvent(Message::Command::OutputMapOutputsChanged);
-  event->write(m_handles.getHandle(outputMap.shared_from_this()));
-  for(const auto& item : outputMap.outputs())
-    writeObject(*event, item);
   m_connection->sendMessage(std::move(event));
 }

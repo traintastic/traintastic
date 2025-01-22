@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,33 +24,38 @@
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_OUTPUTMAPITEM_HPP
 
 #include "../../../core/object.hpp"
-#include <vector>
+#include "../../../core/objectvectorproperty.hpp"
+#include "traintastic/enum/tristate.hpp"
 
 class Output;
+class OutputMap;
 class OutputMapOutputAction;
 
 class OutputMapItem : public Object
 {
-  public:
-    using OutputActions = std::vector<std::shared_ptr<OutputMapOutputAction>>;
+  friend class OutputMap;
 
   protected:
     Object& m_map;
-    OutputActions m_outputActions;
 
-    void load(WorldLoader& loader, const nlohmann::json& data) override;
-    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
-    void addOutput(const std::shared_ptr<Output>& output);
-    void removeOutput(const std::shared_ptr<Output>& output);
-
   public:
+    enum class MatchResult
+    {
+      FullMatch = 0,     // Every action matches
+      PartialMatch = 1,  // Some actions do not match, probably switch operation is not completed yet
+      WildcardMatch = 2, // Some action are set to "None", they match any state but are ranked below others
+      NoMatch = 3        // None of the actions matches
+    };
+
+    ObjectVectorProperty<OutputMapOutputAction> outputActions;
+
     OutputMapItem(Object& map);
 
-    const OutputActions& outputActions() const;
-
     void execute();
+
+    MatchResult matchesCurrentOutputState() const;
 };
 
 #endif

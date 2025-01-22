@@ -1,0 +1,583 @@
+{
+  "wizard": {
+    "title": "$wizard.add_interface.welcome:title$",
+    "pages": {
+      "start": {
+        "title": "$wizard.add_interface.welcome:title$",
+        "text": "$wizard.add_interface.welcome:text$",
+        "type": "text",
+        "next": "command_station"
+      },
+      "command_station": {
+        "title": "$wizard.add_interface.command_station:title$",
+        "text": "$wizard.add_interface.command_station:text$",
+        "type": "list",
+        "options": [
+          {
+            "name": "DCC-EX",
+            "next": "connection_dccex",
+            "actions": {
+              "set_variables": {
+                "command_station": "DCC-EX"
+              }
+            }
+          },
+          {
+            "name": "Digikeijs DR5000",
+            "next": "connection_dr5000",
+            "actions": {
+              "set_variables": {
+                "command_station": "Digikeijs DR5000",
+                "loconet_command_station": "digikeijs_dr5000",
+                "xpressnet_command_station": "digikeijs_dr5000"
+              }
+            }
+          },
+          {
+            "name": "ESU ECoS",
+            "next": "hostname",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.ecos"
+              },
+              "set_variables": {
+                "command_station": "ESU ECoS"
+              }
+            }
+          },
+          {
+            "name": "ESU ECoS 2",
+            "next": "hostname",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.ecos"
+              },
+              "set_variables": {
+                "command_station": "ESU ECoS 2"
+              }
+            }
+          },
+          {
+            "name": "Märklin CS2",
+            "next": "connection_cs",
+            "actions": {
+              "set_variables": {
+                "command_station": "Märklin CS2"
+              }
+            }
+          },
+          {
+            "name": "Märklin CS3",
+            "next": "connection_cs",
+            "actions": {
+              "set_variables": {
+                "command_station": "Märklin CS3"
+              }
+            }
+          },
+          {
+            "name": "Märklin CS3+",
+            "next": "connection_cs",
+            "actions": {
+              "set_variables": {
+                "command_station": "Märklin CS3+"
+              }
+            }
+          },
+          {
+            "name": "Uhlenbrock IB-COM",
+            "next": "connection_ibusb",
+            "actions": {
+              "set_variables": {
+                "command_station": "Uhlenbrock IB-COM",
+                "loconet_command_station": "uhlenbrock_ibcom"
+              }
+            }
+          },
+          {
+            "name": "Uhlenbrock Intellibox",
+            "next": "connection_ib",
+            "actions": {
+              "set_variables": {
+                "command_station": "Uhlenbrock Intellibox",
+                "loconet_command_station": "uhlenbrock_intellibox"
+              }
+            }
+          },
+          {
+            "name": "Uhlenbrock Intellibox Basic",
+            "next": "connection_ibusb",
+            "actions": {
+              "set_variables": {
+                "command_station": "Uhlenbrock Intellibox Basic",
+                "loconet_command_station": "uhlenbrock_intellibox_basic"
+              }
+            }
+          },
+          {
+            "name": "Uhlenbrock Intellibox II",
+            "next": "connection_ibusb",
+            "actions": {
+              "set_variables": {
+                "command_station": "Uhlenbrock Intellibox II",
+                "loconet_command_station": "uhlenbrock_intellibox_2"
+              }
+            }
+          },
+          {
+            "name": "Uhlenbrock Intellibox IR",
+            "next": "connection_ib",
+            "actions": {
+              "set_variables": {
+                "command_station": "Uhlenbrock Intellibox IR",
+                "loconet_command_station": "uhlenbrock_intellibox_ir"
+              }
+            }
+          },
+          {
+            "name": "z21 Start",
+            "next": "connection_z21",
+            "actions": {
+              "set_variables": {
+                "command_station": "z21 Start",
+                "xpressnet_command_station": "z21"
+              }
+            }
+          },
+          {
+            "name": "z21 ($color:white$)",
+            "next": "connection_z21",
+            "actions": {
+              "set_variables": {
+                "command_station": "z21 ($color:white$)",
+                "xpressnet_command_station": "z21"
+              }
+            }
+          },
+          {
+            "name": "Z21 ($color:black$)",
+            "next": "connection_z21black",
+            "actions": {
+              "set_variables": {
+                "command_station": "Z21 ($color:black$)",
+                "loconet_command_station": "z21",
+                "xpressnet_command_station": "z21"
+              }
+            }
+          }
+        ]
+      },
+      "connection_dccex": {
+        "title": "$wizard.add_interface.connection:title$",
+        "text": "$wizard.add_interface.connection:text$",
+        "type": "radio",
+        "options": [
+          {
+            "name": "$wizard.add_interface.connection:command_station_usb_port$",
+            "next": "serial_port",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.dccex",
+                "properties": {
+                  "type": "serial"
+                }
+              }
+            }
+          },
+          {
+            "name": "$wizard.add_interface.connection:network$",
+            "next": "hostname_port",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.dccex",
+                "properties": {
+                  "type": "network_tcp"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "connection_dr5000": {
+        "title": "$wizard.add_interface.connection:title$",
+        "text": "$wizard.add_interface.connection:text$",
+        "type": "radio",
+        "options": [
+          {
+            "name": "$wizard.add_interface.connection:command_station_usb_port$",
+            "next": "protocol_dr5000_usb"
+          },
+          {
+            "name": "$wizard.add_interface.connection:network$",
+            "next": "protocol_dr5000_network"
+          },
+          {
+            "name": "$wizard.add_interface.connection:loconet_interface$",
+            "next": "interface_loconet"
+          },
+          {
+            "name": "$wizard.add_interface.connection:xpressnet_interface$",
+            "next": "interface_xpressnet"
+          }
+        ]
+      },
+      "connection_cs": {
+        "title": "$wizard.add_interface.connection:title$",
+        "text": "$wizard.add_interface.connection:text$",
+        "type": "radio",
+        "options": [
+          {
+            "name": "Network",
+            "next": "hostname",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.marklin_can",
+                "properties": {
+                  "name": "%command_station%"
+                }
+              }
+            }
+          },
+          {
+            "name": "$wizard.add_interface.connection:can_interface$ ($wizard.add_interface.connection:not_yet_supported$)",
+            "disabled": true
+          }
+        ]
+      },
+      "connection_ib": {
+        "title": "$wizard.add_interface.connection:title$",
+        "text": "$wizard.add_interface.connection:text$",
+        "type": "radio",
+        "options": [
+          {
+            "name": "$wizard.add_interface.connection:command_station_serial_port$ ($wizard.add_interface.connection:not_yet_supported$)",
+            "disabled": true
+          },
+          {
+            "name": "$wizard.add_interface.connection:loconet_interface$",
+            "next": "interface_loconet"
+          }
+        ]
+      },
+      "connection_ibusb": {
+        "title": "$wizard.add_interface.connection:title$",
+        "text": "$wizard.add_interface.connection:text$",
+        "type": "radio",
+        "options": [
+          {
+            "name": "$wizard.add_interface.connection:command_station_usb_port$",
+            "next": "serial_port",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.loconet",
+                "properties": {
+                  "name": "%command_station%",
+                  "type": "serial",
+                  "baudrate": 115200,
+                  "flow_control": "hardware",
+                  "loconet.command_station": "%loconet_command_station%"
+                }
+              }
+            }
+          },
+          {
+            "name": "$wizard.add_interface.connection:loconet_interface$",
+            "next": "interface_loconet"
+          }
+        ]
+      },
+      "connection_z21": {
+        "title": "$wizard.add_interface.connection:title$",
+        "text": "$wizard.add_interface.connection:text$",
+        "type": "radio",
+        "options": [
+          {
+            "name": "Network",
+            "next": "hostname",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.z21"
+              }
+            }
+          },
+          {
+            "name": "$wizard.add_interface.connection:xpressnet_interface$",
+            "next": "interface_xpressnet"
+          }
+        ]
+      },
+      "connection_z21black": {
+        "title": "$wizard.add_interface.connection:title$",
+        "text": "$wizard.add_interface.connection:text$",
+        "type": "radio",
+        "options": [
+          {
+            "name": "Network",
+            "next": "hostname",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.z21"
+              }
+            }
+          },
+          {
+            "name": "$wizard.add_interface.connection:loconet_interface$",
+            "next": "interface_loconet"
+          },
+          {
+            "name": "$wizard.add_interface.connection:xpressnet_interface$",
+            "next": "interface_xpressnet"
+          }
+        ]
+      },
+      "protocol_dr5000_usb": {
+        "title": "$wizard.add_interface.protocol:title$",
+        "text": "$wizard.add_interface.protocol:text$",
+        "bottom_text": "$wizard.add_interface.protocol_dr5000_usb:bottom_text$",
+        "type": "radio",
+        "options": [
+          {
+            "name": "LocoNet ($wizard.add_interface:recommended$)",
+            "next": "serial_port",
+            "checked": true,
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.loconet",
+                "properties": {
+                  "name": "%command_station%",
+                  "type": "serial",
+                  "baudrate": 115200,
+                  "flow_control": "none",
+                  "loconet.command_station": "digikeijs_dr5000"
+                }
+              }
+            }
+          },
+          {
+            "name": "XpressNet",
+            "next": "serial_port",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.xpressnet",
+                "properties": {
+                  "name": "%command_station%",
+                  "type": "serial",
+                  "baudrate": 115200,
+                  "flow_control": "none",
+                  "xpressnet.command_station": "digikeijs_dr5000"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "protocol_dr5000_network": {
+        "title": "$wizard.add_interface.protocol:title$",
+        "text": "$wizard.add_interface.protocol:text$",
+        "type": "radio",
+        "options": [
+          {
+            "name": "LocoNet Binary",
+            "next": "hostname_port",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.loconet",
+                "properties": {
+                  "name": "%command_station%",
+                  "type": "tcp_binary",
+                  "loconet.command_station": "digikeijs_dr5000"
+                }
+              }
+            }
+          },
+          {
+            "name": "LB-server",
+            "next": "hostname_port",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.loconet",
+                "properties": {
+                  "name": "%command_station%",
+                  "type": "lbserver",
+                  "loconet.command_station": "digikeijs_dr5000"
+                }
+              }
+            }
+          },
+          {
+            "name": "XpressNet",
+            "next": "hostname_port",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.xpressnet",
+                "properties": {
+                  "name": "%command_station%",
+                  "type": "network",
+                  "xpressnet.command_station": "digikeijs_dr5000"
+                }
+              }
+            }
+          },
+          {
+            "name": "Z21",
+            "next": "hostname",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.z21",
+                "properties": {
+                  "name": "%command_station%"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "interface_loconet": {
+        "title": "$wizard.add_interface.interface_loconet:title$",
+        "text": "$wizard.add_interface.interface_loconet:text$",
+        "type": "list",
+        "options": [
+          {
+            "name": "RoSoft LocoNet-Interface",
+            "next": "serial_port_interface",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.loconet",
+                "properties": {
+                  "name": "%command_station%",
+                  "type": "serial",
+                  "baudrate": 19200,
+                  "flowcontrol": "hardware",
+                  "loconet.command_station": "%loconet_command_station%"
+                }
+              },
+              "set_variables": {
+                "interface": "RoSoft LocoNet-Interface"
+              }
+            }
+          },
+          {
+            "name": "Uhlenbrock LocoNet interface 63120",
+            "next": "serial_port_interface",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.loconet",
+                "properties": {
+                  "name": "%command_station%",
+                  "type": "serial",
+                  "baudrate": 115200,
+                  "flowcontrol": "none",
+                  "loconet.command_station": "%loconet_command_station%"
+                }
+              },
+              "set_variables": {
+                "interface": "Uhlenbrock LocoNet interface"
+              }
+            }
+          }
+        ]
+      },
+      "interface_xpressnet": {
+        "title": "$wizard.add_interface.interface_xpressnet:title$",
+        "text": "$wizard.add_interface.interface_xpressnet:text$",
+        "type": "list",
+        "options": [
+          {
+            "name": "Lenz LI100",
+            "next": "serial_port_interface",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.xpressnet",
+                "properties": {
+                  "name": "%command_station%",
+                  "type": "serial",
+                  "baudrate": 9600,
+                  "flowcontrol": "hardware",
+                  "xpressnet.command_station": "%xpressnet_command_station%"
+                }
+              },
+              "set_variables": {
+                "interface": "Lenz LI100"
+              }
+            }
+          },
+          {
+            "name": "RoSoft s88xPressNetLI",
+            "next": "serial_port_interface",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.xpressnet",
+                "properties": {
+                  "name": "%command_station%",
+                  "type": "serial",
+                  "baudrate": 19200,
+                  "flowcontrol": "hardware",
+                  "xpressnet.command_station": "%xpressnet_command_station%"
+                }
+              },
+              "set_variables": {
+                "interface": "RoSoft s88xPressNetLI"
+              }
+            }
+          }
+        ]
+      },
+      "hostname": {
+        "title": "$wizard.add_interface.hostname:title$",
+        "text": "$wizard.add_interface.hostname:text$",
+        "type": "property",
+        "object": "interface",
+        "properties": [
+          "hostname"
+        ],
+        "next": "name"
+      },
+      "hostname_port": {
+        "title": "$wizard.add_interface.hostname_port:title$",
+        "text": "$wizard.add_interface.hostname_port:text$",
+        "type": "property",
+        "object": "interface",
+        "properties": [
+          "hostname",
+          "port"
+        ],
+        "next": "name"
+      },
+      "serial_port": {
+        "title": "$wizard.add_interface.serial_port:title$",
+        "text": "$wizard.add_interface.serial_port:text$",
+        "type": "property",
+        "object": "interface",
+        "properties": [
+          "device"
+        ],
+        "next": "name"
+      },
+      "serial_port_interface": {
+        "title": "$wizard.add_interface.serial_port:title$",
+        "text": "$wizard.add_interface.serial_port_interface:text$",
+        "type": "property",
+        "object": "interface",
+        "properties": [
+          "device"
+        ],
+        "next": "name"
+      },
+      "name": {
+        "title": "$wizard.add_interface.name:title$",
+        "text": "$wizard.add_interface.name:text$",
+        "type": "property",
+        "object": "interface",
+        "properties": [
+          "name"
+        ],
+        "next": "finalization"
+      },
+      "finalization": {
+        "title": "$wizard.add_interface.finalization:title$",
+        "text": "$wizard.add_interface.finalization:text$",
+        "type": "text"
+      }
+    }
+  }
+}

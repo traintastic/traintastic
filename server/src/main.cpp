@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
  */
 
 #include <iostream>
+#include <functional>
 #include "options.hpp"
 #include "traintastic/traintastic.hpp"
 #include "log/log.hpp"
@@ -86,9 +87,6 @@ int main(int argc, char* argv[])
   }
 #endif
 
-  const auto localePath = getLocalePath();
-  Locale::instance = std::make_unique<Locale>(localePath / "en-us.lang", std::make_unique<Locale>(localePath / "neutral.lang"));
-
   if(enableConsoleLogger)
     Log::enableConsoleLogger();
 
@@ -99,6 +97,21 @@ int main(int argc, char* argv[])
   {
     {
       const auto settings = Settings::getPreStartSettings(dataDir);
+
+      const auto localePath = getLocalePath();
+      try
+      {
+        Locale::instance = std::make_unique<Locale>(localePath / "en-us.lang", std::make_unique<Locale>(localePath / "neutral.lang"));
+        if(settings.language != "en-us")
+        {
+          Locale::instance = std::make_unique<Locale>((localePath / settings.language) += ".lang", std::move(Locale::instance));
+        }
+      }
+      catch(const std::exception& e)
+      {
+        std::cerr << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+      }
 
       if(settings.memoryLoggerSize > 0)
         Log::enableMemoryLogger(settings.memoryLoggerSize);

@@ -22,6 +22,12 @@
 
 #include "bridgerailtile.hpp"
 
+constexpr uint8_t toMask(BridgePath path)
+{
+  return 1 << static_cast<uint8_t>(path);
+}
+
+
 BridgeRailTile::BridgeRailTile(World& world, std::string_view _id, TileId tileId_)
   : RailTile(world, _id, tileId_)
   , m_node{*this, 4}
@@ -31,7 +37,7 @@ BridgeRailTile::BridgeRailTile(World& world, std::string_view _id, TileId tileId
 
 bool BridgeRailTile::reserve(BridgePath path, bool dryRun)
 {
-  const uint8_t mask = 1 << static_cast<uint8_t>(path);
+  const uint8_t mask = toMask(path);
 
   if((reservedState() & mask))
   {
@@ -40,8 +46,13 @@ bool BridgeRailTile::reserve(BridgePath path, bool dryRun)
 
   if(!dryRun)
   {
-    RailTile::reserve(reservedState() | mask);
+    RailTile::setReservedState(reservedState() | mask);
   }
 
   return true;
+}
+
+void BridgeRailTile::release(BridgePath path)
+{
+  RailTile::setReservedState(reservedState() & ~toMask(path));
 }

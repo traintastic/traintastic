@@ -68,6 +68,10 @@
     "definition": "Return values"
   },
   {
+    "term": "see_also",
+    "definition": "See also"
+  },
+  {
     "term": "enum:title",
     "definition": "Enum library"
   },
@@ -877,91 +881,91 @@
   },
   {
     "term": "log:description",
-    "definition": ""
+    "definition": "The log library provides 7 functions, each function takes all its arguments, concatenates them into a string then sends it to the Traintastic server log."
   },
   {
     "term": "log.critical:description",
-    "definition": ""
+    "definition": "Log a critical message."
   },
   {
     "term": "log.critical.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.critical.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "log.debug:description",
-    "definition": ""
+    "definition": "Log a debug message, useful when developing or testing a script."
   },
   {
     "term": "log.debug.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.debug.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "log.error:description",
-    "definition": ""
+    "definition": "Log an error message."
   },
   {
     "term": "log.error.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.error.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "log.fatal:description",
-    "definition": ""
+    "definition": "Log a fatal message, use this for unrecoverble errors only."
   },
   {
     "term": "log.fatal.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.fatal.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "log.info:description",
-    "definition": ""
+    "definition": "Log a info message."
   },
   {
     "term": "log.info.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.info.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "log.notice:description",
-    "definition": ""
+    "definition": "Log a notice message."
   },
   {
     "term": "log.notice.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.notice.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "log.warning:description",
-    "definition": ""
+    "definition": "Log a warning message."
   },
   {
     "term": "log.warning.parameter.message:description",
-    "definition": ""
+    "definition": "The message."
   },
   {
     "term": "log.warning.parameter....:description",
-    "definition": ""
+    "definition": "Additional values, all values are concatenated and seperated by a space."
   },
   {
     "term": "class:description",
@@ -1157,7 +1161,7 @@
   },
   {
     "term": "object:description",
-    "definition": ""
+    "definition": "List of all object that are available in Traintastic Lua scripting."
   },
   {
     "term": "object.board:title",
@@ -1220,8 +1224,8 @@
     "definition": "The clock object represents the time of the world. There is only one clock object, it can be accessed using {ref:object.world#clock|`world.clock`}."
   },
   {
-    "term": "object.dccplusplusinterface:title",
-    "definition": "DCC++ interface"
+    "term": "object.dccexinterface:title",
+    "definition": "DCC-EX interface"
   },
   {
     "term": "object.ecosinterface:title",
@@ -1682,5 +1686,397 @@
   {
     "term": "object.blockrailtile.on_train_reserved.parameter.direction:description",
     "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "object.blockrailtile.on_train_entered:description",
+    "definition": "Fired when a {ref:object.train} enters the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_entered.parameter.train:description",
+    "definition": "{ref:object.train} that entered the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_entered.parameter.block:description",
+    "definition": "The block that is entered."
+  },
+  {
+    "term": "object.blockrailtile.on_train_entered.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "object.blockrailtile.on_train_left:description",
+    "definition": "Fired when a {ref:object.train} has left the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_left.parameter.train:description",
+    "definition": "{ref:object.train} that entered the block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_left.parameter.block:description",
+    "definition": "The block that the train left."
+  },
+  {
+    "term": "object.blockrailtile.on_train_left.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "object.curve45railtile:title",
+    "definition": "Curve 45° rail tile"
+  },
+  {
+    "term": "object.curve90railtile:title",
+    "definition": "Curve 90° rail tile"
+  },
+  {
+    "term": "object.bridge45leftrailtile:title",
+    "definition": "Bridge 45° left rail tile"
+  },
+  {
+    "term": "object.bridge45rightrailtile:title",
+    "definition": "Bridge 45° right rail tile"
+  },
+  {
+    "term": "object.bridge90railtile:title",
+    "definition": "Bridge 90° rail tile"
+  },
+  {
+    "term": "object.cross45railtile:title",
+    "definition": "Cross 45° rail tile"
+  },
+  {
+    "term": "object.cross90railtile:title",
+    "definition": "Cross 90° rail tile"
+  },
+  {
+    "term": "object.hsi88interface:title",
+    "definition": "HSI88 interface"
+  },
+  {
+    "term": "object.signal2aspectrailtile:title",
+    "definition": "Signal 2 aspect rail tile"
+  },
+  {
+    "term": "object.signal3aspectrailtile:title",
+    "definition": "Signal 3 aspect rail tile"
+  },
+  {
+    "term": "object.turnout3wayrailtile:title",
+    "definition": "Turnout 3 way rail tile"
+  },
+  {
+    "term": "object.turnoutleft45railtile:title",
+    "definition": "Turnout left 45° rail tile"
+  },
+  {
+    "term": "object.turnoutleft90railtile:title",
+    "definition": "Turnout left 90° rail tile"
+  },
+  {
+    "term": "object.turnoutright45railtile:title",
+    "definition": "Turnout right 45° rail tile"
+  },
+  {
+    "term": "object.turnoutright90railtile:title",
+    "definition": "Turnout right 90° rail tile"
+  },
+  {
+    "term": "object.z21interface:title",
+    "definition": "Z21 interface"
+  },
+  {
+    "term": "object.nxbuttonrailtile:title",
+    "definition": "NX button rail tile"
+  },
+  {
+    "term": "object.pushbuttontile:title",
+    "definition": "Push button tile"
+  },
+  {
+    "term": "example.dccextsignalloconet:title",
+    "definition": "DCCext signal control (LocoNet)"
+  },
+  {
+    "term": "example.dccextsignalloconet:description",
+    "definition": "This examples shows how a signal can be controlled with DCCext commands (via LocoNet) as demonstration how custom control can be implemented. Traintastic will offcourse support DCCext natively in the future."
+  },
+  {
+    "term": "object.category.interfaces:title",
+    "definition": "Interfaces"
+  },
+  {
+    "term": "object.category.other:title",
+    "definition": "Other"
+  },
+  {
+    "term": "object.singleoutput:title",
+    "definition": "Single output"
+  },
+  {
+    "term": "object.singleoutput:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput:title",
+    "definition": "Pair output"
+  },
+  {
+    "term": "object.pairoutput:description",
+    "definition": ""
+  },
+  {
+    "term": "object.output.type:description",
+    "definition": "{ref:enum.output_type}."
+  },
+  {
+    "term": "object.pairoutput.value:description",
+    "definition": "Current output value, a {ref:enum.output_type} value."
+  },
+  {
+    "term": "object.pairoutput.set_value:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.set_value.parameter.value:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.set_value:return_values",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.on_value_changed:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.on_value_changed.parameter.value:description",
+    "definition": ""
+  },
+  {
+    "term": "object.pairoutput.on_value_changed.parameter.output:description",
+    "definition": ""
+  },
+  {
+    "term": "object.aspectoutput:title",
+    "definition": "Aspect output"
+  },
+  {
+    "term": "object.aspectoutput:description",
+    "definition": ""
+  },
+  {
+    "term": "enum.output_type:title",
+    "definition": "Output type"
+  },
+  {
+    "term": "enum.output_channel:title",
+    "definition": "Output channel"
+  },
+  {
+    "term": "object.interface.get_output:description",
+    "definition": "Get an output object."
+  },
+  {
+    "term": "object.interface.get_output.parameter.channel:description",
+    "definition": "Output channel, a {ref:enum.output_channel} value."
+  },
+  {
+    "term": "object.interface.get_output.parameter.address:description",
+    "definition": "Output address, valid range depends on `channel`."
+  },
+  {
+    "term": "object.interface.get_output:return_values",
+    "definition": "{ref:object.singleoutput}, {ref:object.pairoutput} or {ref:object.aspectoutput} object depending on `channel` or `nil` if `channel`/`address` combination is invalid."
+  },
+  {
+    "term": "object.labeltile:title",
+    "definition": "Label tile"
+  },
+  {
+    "term": "object.switchtile:title",
+    "definition": "Switch tile"
+  },
+  {
+    "term": "object.train.on_block_entered:description",
+    "definition": "Fired when the train enters a {ref:object.blockrailtile|block}."
+  },
+  {
+    "term": "object.train.on_block_entered.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_block_entered.parameter.block:description",
+    "definition": "The {ref:object.blockrailtile|block} that is entered."
+  },
+  {
+    "term": "object.train.on_block_entered.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "object.train.on_block_left:description",
+    "definition": "Fired when the train has left a {ref:object.blockrailtile|block}."
+  },
+  {
+    "term": "object.train.on_block_left.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_block_left.parameter.block:description",
+    "definition": "The {ref:object.blockrailtile|block} that the train left."
+  },
+  {
+    "term": "object.train.on_block_left.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "example:description",
+    "definition": "A collection of examples to help getting started with Traintastic Lua scripting."
+  },
+  {
+    "term": "object.ecosinterface:description",
+    "definition": "Interface for communicating with an ESU ECoS or ECoS 2."
+  },
+  {
+    "term": "object.interface.output_channels:description",
+    "definition": "Supported output channels, a table containing {ref:enum.output_channel|output channel} values."
+  },
+  {
+    "term": "object.hsi88interface:description",
+    "definition": "Interface for communicating with a LDT HSI-88."
+  },
+  {
+    "term": "object.marklincaninterface:description",
+    "definition": "Interface for communicating with a Märklin CS2/CS3."
+  },
+  {
+    "term": "object.traintasticdiyinterface:description",
+    "definition": "Interface for communicating with a Traintastic DIY compatible device."
+  },
+  {
+    "term": "object.xpressnetinterface:description",
+    "definition": "Interface for communicating with a XpressNet network."
+  },
+  {
+    "term": "object.z21interface:description",
+    "definition": "Interface for communicating with a Z21, z21 or z21 start."
+  },
+  {
+    "term": "object.signal2aspectrailtile.on_aspect_changed:description",
+    "definition": "Fired when the signal aspect changes."
+  },
+  {
+    "term": "object.signal3aspectrailtile.on_aspect_changed:description",
+    "definition": "Fired when the signal aspect changes."
+  },
+  {
+    "term": "object.train.on_block_assigned:description",
+    "definition": "Fired when the train is assigned to a block."
+  },
+  {
+    "term": "object.train.on_block_assigned.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_block_assigned.parameter.block:description",
+    "definition": "The {ref:object.blockrailtile|block} the train is assigned to."
+  },
+  {
+    "term": "object.train.on_block_removed:description",
+    "definition": "Fired when the train is removed from a block."
+  },
+  {
+    "term": "object.train.on_block_removed.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_block_removed.parameter.block:description",
+    "definition": "The {ref:object.blockrailtile|block} the train is removed from."
+  },
+  {
+    "term": "object.train.on_block_reserved:description",
+    "definition": "Fired when the train reserves a block."
+  },
+  {
+    "term": "object.train.on_block_reserved.parameter.train:description",
+    "definition": "The train."
+  },
+  {
+    "term": "object.train.on_block_reserved.parameter.block:description",
+    "definition": "The {ref:object.blockrailtile|block} that is reserved by the train."
+  },
+  {
+    "term": "object.train.on_block_reserved.parameter.direction:description",
+    "definition": "Train direction from the block perspective, a {ref:enum.block_train_direction} value."
+  },
+  {
+    "term": "object.turnoutsliprailtile.dual_motor:description",
+    "definition": "`true` if the slip turnout has two motors/coils, `false` if it has one motor/coil."
+  },
+  {
+    "term": "object.turnoutrailtile.name:description",
+    "definition": "Turnout name."
+  },
+  {
+    "term": "object.turnoutrailtile.position:description",
+    "definition": "Current turnout position, a {ref:enum.turnout_position} value. To change the turnout position call [`set_position`](#set_position)."
+  },
+  {
+    "term": "object.turnoutrailtile.set_position:description",
+    "definition": "Change turnout position."
+  },
+  {
+    "term": "object.turnoutrailtile.set_position.parameter.position:description",
+    "definition": "Requested turnout position, a {ref:enum.turnout_position} value."
+  },
+  {
+    "term": "object.turnoutrailtile.set_position:return_values",
+    "definition": "`true` if the position is changed, `false` if position value is invalid or turnout is locked e.g. due to a reserved path."
+  },
+  {
+    "term": "globals.pv:description",
+    "definition": "The {ref:pv|persistent variable} table."
+  },
+  {
+    "term": "pv:title",
+    "definition": "Persistent variables"
+  },
+  {
+    "term": "pv:paragraph_1",
+    "definition": "Persistent variables allow you to store and retrieve data that remains available across multiple executions of the Lua script. This can be particularly useful for maintaining state information that needs to be retained beyond the current script's lifetime."
+  },
+  {
+    "term": "pv:paragraph_2",
+    "definition": "The {ref:globals#pv|`pv`} global provides a simple and efficient interface for interacting with persistent data. Any values stored in {ref:globals#pv|`pv`} are saved across script executions and world save and loads. Below is a detailed breakdown of how to use the {ref:globals#pv|`pv`} global."
+  },
+  {
+    "term": "pv.storing:title",
+    "definition": "Storing persistent data"
+  },
+  {
+    "term": "pv.storing:paragraph_1",
+    "definition": "You can store data in {ref:globals#pv|`pv`} just like you would with a regular Lua table. Supported data types are numbers, strings, booleans, tables, {ref:enum|enums}, {ref:set|sets}, {ref:object|objects} and object methods."
+  },
+  {
+    "term": "pv.retrieving:title",
+    "definition": "Retrieving persistent data"
+  },
+  {
+    "term": "pv.retrieving:paragraph_1",
+    "definition": "To retrieve a previously stored value, including tables, access the corresponding key in the {ref:globals#pv|`pv`} global:"
+  },
+  {
+    "term": "pv.deleting:title",
+    "definition": "Deleting persistent data"
+  },
+  {
+    "term": "pv.deleting:paragraph_1",
+    "definition": "To delete a stored persistent value, including tables, simply assign `nil` to the desired key:"
+  },
+  {
+    "term": "pv.checking:title",
+    "definition": "Checking for persistent data"
+  },
+  {
+    "term": "pv.checking:paragraph_1",
+    "definition": "To determine if a persistent variable has been set, use an `if` statement with `nil` checks. Variables in {ref:globals#pv|`pv`} that haven't been initialized or have been deleted will return `nil`. This pattern is useful for initializing default values or handling cases where the persistent variables are cleared."
   }
 ]

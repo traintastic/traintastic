@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +22,10 @@
 
 #include "tilemenu.hpp"
 #include <QMenu>
+#include "../network/callmethod.hpp"
 #include "../network/object.hpp"
+#include "../network/object/blockrailtile.hpp"
+#include "../network/object/trainblockstatus.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
 #include "../misc/methodaction.hpp"
 
@@ -36,10 +39,62 @@ std::unique_ptr<QMenu> TileMenu::getBlockRailTileMenu(const ObjectPtr& tile, QWi
     menu->addAction(new MethodAction(*assignTrain,
       [parent, assignTrain]()
       {
-        std::make_unique<ObjectSelectListDialog>(*assignTrain, parent)->exec();
+        std::make_unique<ObjectSelectListDialog>(*assignTrain, false, parent)->exec();
       }));
   if(auto* removeTrain = tile->getMethod("remove_train"))
-    menu->addAction(new MethodAction(*removeTrain));
+  {
+    const auto& block = dynamic_cast<BlockRailTile&>(*tile);
+    const auto& trains = block.trains();
+
+    if(trains.size() == 1)
+    {
+      if(auto* trainBlockStatus = dynamic_cast<TrainBlockStatus*>(trains.front().get())) /*[[likely]]*/
+      {
+        menu->addAction(new MethodAction(*removeTrain,
+          [removeTrain, train=trainBlockStatus->train()]()
+          {
+            callMethod(*removeTrain,
+              [](std::optional<const Error> error)
+              {
+                if(error)
+                {
+                  error->show();
+                }
+              }, train);
+          }));
+      }
+    }
+    else if(trains.size() > 1)
+    {
+      auto* subMenu = menu->addMenu(removeTrain->displayName());
+
+      for(const auto& item : trains)
+      {
+        if(auto* trainBlockStatus = dynamic_cast<TrainBlockStatus*>(item.get())) /*[[likely]]*/
+        {
+          subMenu->addAction(trainBlockStatus->train()->getPropertyValueString("name"),
+            [removeTrain, train=trainBlockStatus->train()]()
+            {
+              callMethod(*removeTrain,
+                [](std::optional<const Error> error)
+                {
+                  if(error)
+                  {
+                    error->show();
+                  }
+                }, train);
+            });
+        }
+      }
+    }
+    else
+    {
+      auto* act = new MethodAction(*removeTrain);
+      act->setForceDisabled(true);
+      menu->addAction(act);
+    }
+  }
+
   if(auto* flipTrain = tile->getMethod("flip_train"))
     menu->addAction(new MethodAction(*flipTrain));
 

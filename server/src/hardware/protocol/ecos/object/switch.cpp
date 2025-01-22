@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,11 +23,11 @@
 #include "switch.hpp"
 #include <cassert>
 #include "../messages.hpp"
+#include "../kernel.hpp"
 #include "../../../../utils/fromchars.hpp"
+#include "../../../../utils/inrange.hpp"
 
 namespace ECoS {
-
-const std::initializer_list<std::string_view> Switch::options = {Option::addr, Option::protocol};
 
 static bool fromString(std::string_view text, Switch::Mode& mode)
 {
@@ -44,17 +44,21 @@ Switch::Switch(Kernel& kernel, uint16_t id)
   : Object(kernel, id)
 {
   requestView();
-  send(get(m_id, {Option::state, Option::mode, Option::duration}));
-}
 
-Switch::Switch(Kernel& kernel, const Line& data)
-  : Switch(kernel, data.objectId)
-{
-  const auto values = data.values;
-  if(auto addr = values.find(Option::addr); addr != values.end())
-    fromChars(addr->second, m_address);
-  if(auto protocol = values.find(Option::protocol); protocol != values.end())
-    fromString(protocol->second, m_protocol);
+  send(get(m_id, {
+    Option::name1,
+    Option::name2,
+    Option::name3,
+    Option::type,
+    Option::symbol,
+    Option::addr,
+    Option::addrext,
+    Option::protocol,
+    Option::state,
+    Option::mode,
+    Option::duration,
+    Option::variant,
+    }));
 }
 
 bool Switch::receiveReply(const Reply& reply)
@@ -75,11 +79,94 @@ bool Switch::receiveEvent(const Event& event)
   return Object::receiveEvent(event);
 }
 
+std::string Switch::nameUI() const
+{
+  return
+    std::string(m_name1)
+      .append(" (")
+      .append(toString(m_protocol))
+      .append(" ")
+      .append(std::to_string(m_address))
+      .append(")");
+}
+
+void Switch::setState(uint8_t value)
+{
+  send(set(m_id, Option::state, value));
+}
+
 void Switch::update(std::string_view option, std::string_view value)
 {
-  if(option == Option::state)
+  if(option == Option::name1)
   {
-    (void)value; //! \todo implement
+    m_name1 = value;
+    nameChanged();
+  }
+  else if(option == Option::name2)
+  {
+    m_name2 = value;
+  }
+  else if(option == Option::name3)
+  {
+    m_name3 = value;
+  }
+  else if(option == Option::addr)
+  {
+    fromChars(value, m_address);
+    nameChanged();
+  }
+  else if(option == Option::addrext)
+  {
+    m_addrext.clear();
+    while(!value.empty())
+    {
+      decltype(m_addrext)::value_type port;
+      auto r = fromChars(value, port.first);
+      if(r.ec != std::errc())
+      {
+        break;
+      }
+      value.remove_prefix(r.ptr - value.data());
+      if(value.empty() || (value[0] != 'r' && value[0] != 'g'))
+      {
+        break;
+      }
+      port.second = (value[0] == 'r') ? OutputPairValue::First : OutputPairValue::Second;
+      value.remove_prefix(sizeof(char)); // remove: r/g
+      m_addrext.emplace_back(port);
+      if(value.empty() || value[0] != ',')
+      {
+        break;
+      }
+      value.remove_prefix(sizeof(char)); // remove: ,
+    }
+  }
+  else if(option == Option::symbol)
+  {
+    std::underlying_type_t<Symbol> n = 0;
+    fromChars(value, n);
+    m_symbol = static_cast<Symbol>(n);
+  }
+  else if(option == Option::type)
+  {
+    fromString(value, m_type);
+  }
+  else if(option == Option::protocol)
+  {
+    fromString(value, m_protocol);
+    nameChanged();
+  }
+  else if(option == Option::state)
+  {
+    fromChars(value, m_state);
+
+    m_kernel.switchStateChanged(m_id, m_state);
+
+    if(m_state < m_addrext.size())
+    {
+      const auto& port = m_addrext[m_state];
+      m_kernel.switchManagerSwitched(m_protocol, port.first, port.second);
+    }
   }
   else if(option == Option::mode)
   {
@@ -87,8 +174,27 @@ void Switch::update(std::string_view option, std::string_view value)
   }
   else if(option == Option::duration)
   {
-    (void)value; //! \todo implement
+    fromChars(value, m_duration);
   }
+  else if(option == Option::variant)
+  {
+    fromChars(value, m_variant);
+  }
+}
+
+std::string toString(const Switch::AddrExt& values)
+{
+  std::string s;
+  for(const auto& value : values)
+  {
+    if(!s.empty())
+    {
+      s.append(",");
+    }
+    s.append(std::to_string(value.first));
+    s.append(value.second == OutputPairValue::First ? "r" : "g");
+  }
+  return s;
 }
 
 }

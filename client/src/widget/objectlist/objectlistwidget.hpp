@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,19 +39,20 @@ class ObjectListWidget : public ListWidget
     int m_requestIdInputMonitor;
     int m_requestIdOutputKeyboard;
     QToolBar* m_toolbar;
-    QToolButton* m_buttonCreate;
-    QAction* m_actionCreate;
+    QToolButton* m_buttonCreate = nullptr;
+    QAction* m_actionCreate = nullptr;
     QAction* m_actionAdd = nullptr;
-    QAction* m_actionEdit;
+    QAction* m_actionEdit = nullptr;
     MethodAction* m_actionRemove = nullptr;
-    MethodAction* m_actionDelete;
+    MethodAction* m_actionDelete = nullptr;
     MethodAction* m_actionMoveUp = nullptr;
     MethodAction* m_actionMoveDown = nullptr;
     MethodAction* m_actionReverse = nullptr;
-    MethodAction* m_actionInputMonitor;
-    MethodAction* m_actionInputMonitorChannel;
-    MethodAction* m_actionOutputKeyboard;
-    MethodAction* m_actionOutputKeyboardChannel;
+    MethodAction* m_actionInputMonitor = nullptr;
+    MethodAction* m_actionInputMonitorChannel = nullptr;
+    MethodAction* m_actionOutputKeyboard = nullptr;
+
+    bool hasEdit() const;
 
   protected:
     QToolBar* toolbar() { return m_toolbar; }
@@ -62,6 +63,8 @@ class ObjectListWidget : public ListWidget
     virtual void tableSelectionChanged(bool hasSelection);
     virtual void objectDoubleClicked(const QString& id);
     QStringList getSelectedObjectIds() const;
+
+    virtual void objectCreated(const ObjectPtr &object);
 
   public:
     explicit ObjectListWidget(const ObjectPtr& object, QWidget* parent = nullptr);

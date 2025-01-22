@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,35 +25,42 @@
 
 #include "object.hpp"
 #include <unordered_map>
+#include <variant>
 #include <traintastic/enum/tristate.hpp>
+#include <traintastic/enum/outputpairvalue.hpp>
+#include <traintastic/enum/outputtype.hpp>
 
 class OutputKeyboard final : public Object
 {
   Q_OBJECT
 
+  public:
+    struct OutputState
+    {
+      bool used = false;
+      std::variant<std::monostate, TriState, OutputPairValue> value;
+    };
+
   private:
     int m_requestId;
-    std::unordered_map<uint32_t, QString> m_outputIds;
-    std::unordered_map<uint32_t, TriState> m_outputValues;
+    std::unordered_map<uint32_t, OutputState> m_outputStates;
+    OutputType m_outputType = static_cast<OutputType>(0);
+    Event* m_outputUsedChanged = nullptr;
+    Event* m_outputValueChanged = nullptr;
 
-  protected:
-    void processMessage(const Message& message) final;
+    void created() final;
 
   public:
-    inline static const QString classId = QStringLiteral("output_keyboard");
+    inline static const QString classIdPrefix = QStringLiteral("output_keyboard.");
 
     OutputKeyboard(std::shared_ptr<Connection> connection, Handle handle, const QString& classId_);
     ~OutputKeyboard() final;
 
-    TriState getOutputState(uint32_t address) const;
-    QString getOutputId(uint32_t address) const;
-
-  public slots:
-    void outputSetValue(uint32_t address, bool value);
+    OutputType outputType() const { return m_outputType; }
+    const OutputState& getOutputState(uint32_t address) const;
 
   signals:
-    void outputIdChanged(uint32_t address, QString id);
-    void outputValueChanged(uint32_t address, TriState value);
+    void outputStateChanged(uint32_t address);
 };
 
 #endif

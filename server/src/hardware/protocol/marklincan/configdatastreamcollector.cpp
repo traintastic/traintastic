@@ -51,7 +51,7 @@ ConfigDataStreamCollector::Status ConfigDataStreamCollector::process(const Confi
     m_offset += 8;
     return Collecting;
   }
-  else if(message.isStart() && m_crc == 0x0000)
+  if(message.isStart() && m_crc == 0x0000)
   {
     m_data.resize(message.length());
     m_crc = message.crc();

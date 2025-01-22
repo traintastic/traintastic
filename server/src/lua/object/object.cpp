@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@ int Object::index(lua_State* L, ::Object& object)
 
   if(InterfaceItem* item = object.getItem(key))
   {
-    if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(item))
+    if(auto* property = dynamic_cast<AbstractProperty*>(item))
     {
       if(property->isScriptReadable())
       {
@@ -109,7 +109,7 @@ int Object::index(lua_State* L, ::Object& object)
       else
         lua_pushnil(L);
     }
-    else if(AbstractMethod* method = dynamic_cast<AbstractMethod*>(item))
+    else if(auto* method = dynamic_cast<AbstractMethod*>(item))
     {
       if(method->isScriptCallable())
         Method::push(L, *method);
@@ -149,23 +149,30 @@ int Object::newindex(lua_State* L, ::Object& object)
       switch(property->type())
       {
         case ValueType::Boolean:
-          property->fromBool(Lua::check<bool>(L, 2));
+          property->fromBool(Lua::check<bool>(L, 3));
+          break;
+
+        case ValueType::Enum:
+          // EnumName<T>::value assigned to the std::string_view is NUL terminated,
+          // so it can be used as const char* however it is a bit tricky :)
+          assert(*(property->enumName().data() + property->enumName().size()) == '\0');
+          property->fromInt64(checkEnum(L, 3, property->enumName().data()));
           break;
 
         case ValueType::Integer:
-          property->fromInt64(Lua::check<int64_t>(L, 2));
+          property->fromInt64(Lua::check<int64_t>(L, 3));
           break;
 
         case ValueType::Float:
-          property->fromDouble(Lua::check<double>(L, 2));
+          property->fromDouble(Lua::check<double>(L, 3));
           break;
 
         case ValueType::String:
-          property->fromString(Lua::check<std::string>(L, 2));
+          property->fromString(Lua::check<std::string>(L, 3));
           break;
 
         case ValueType::Object:
-          property->fromObject(check<::Object>(L, 2));
+          property->fromObject(check<::Object>(L, 3));
           break;
 
         default:

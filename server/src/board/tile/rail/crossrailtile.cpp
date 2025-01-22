@@ -41,8 +41,20 @@ bool CrossRailTile::reserve(CrossState crossState, bool dryRun)
   if(!dryRun)
   {
     m_crossState = crossState;
-    RailTile::reserve(static_cast<uint8_t>(m_crossState));
+    RailTile::setReservedState(static_cast<uint8_t>(m_crossState));
   }
 
+  return true;
+}
+
+bool CrossRailTile::release(bool dryRun)
+{
+  //! \todo check occupancy sensor, once supported
+
+  if(!dryRun)
+  {
+    m_crossState = CrossState::Unset;
+    RailTile::release();
+  }
   return true;
 }

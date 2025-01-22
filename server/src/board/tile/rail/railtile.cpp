@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020,2023 Reinder Feenstra
+ * Copyright (C) 2020,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,15 +23,9 @@
 #include "railtile.hpp"
 #include "../../board.hpp"
 
-RailTile::RailTile(World& world, std::string_view _id, TileId tileId) :
-  Tile(world, _id, tileId)
+RailTile::RailTile(World& world, std::string_view _id, TileId tileId_) :
+  Tile(world, _id, tileId_)
 {
-}
-
-void RailTile::reserve(uint8_t state)
-{
-  assert(state != 0);
-  setReservedState(state);
 }
 
 void RailTile::setReservedState(uint8_t value)

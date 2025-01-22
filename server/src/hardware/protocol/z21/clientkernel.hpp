@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,10 +24,13 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_CLIENTKERNEL_HPP
 
 #include <unordered_map>
+#include <optional>
 
 #include "kernel.hpp"
 #include <boost/asio/steady_timer.hpp>
+#include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/tristate.hpp>
+#include "../../output/outputvalue.hpp"
 
 enum class SimulateInputAction;
 class InputController;
@@ -65,6 +68,7 @@ class ClientKernel final : public Kernel
     const bool m_simulation;
     boost::asio::steady_timer m_keepAliveTimer;
     boost::asio::steady_timer m_inactiveDecoderPurgeTimer;
+    boost::asio::steady_timer m_schedulePendingRequestTimer;
     BroadcastFlags m_broadcastFlags;
     int m_broadcastFlagsRetryCount;
     static constexpr int maxBroadcastFlagsRetryCount = 10;
@@ -92,7 +96,7 @@ class ClientKernel final : public Kernel
      *
      * \sa EventLoop
      */
-    TriState m_trackPowerOn;
+    TriState m_trackPowerOn = TriState::Undefined;
 
     /*!
      * \brief m_emergencyStop caches command station emergency stop state.
@@ -102,33 +106,61 @@ class ClientKernel final : public Kernel
      *
      * \sa EventLoop
      */
-    TriState m_emergencyStop;
-    std::function<void(bool)> m_onTrackPowerOnChanged;
-    std::function<void()> m_onEmergencyStop;
+    TriState m_emergencyStop = TriState::Undefined;
+
+    /*!
+     * \brief m_onTrackPowerChanged callback is called when Z21 power state changes.
+     *
+     * \note It is always called from event loop thread
+     * \note First argument is powerOn, second argument is isStopped
+     * In Z21 EmergencyStop is really PowerOn + EmergencyStop and
+     * PowerOn implicitly means Run so we cannot call \sa trackPowerOn() if world must be stopped
+     *
+     * \sa EventLoop
+     */
+    std::function<void(bool, bool)> m_onTrackPowerChanged;
 
     DecoderController* m_decoderController = nullptr;
 
     struct LocoCache
     {
-      enum class Trend : bool
-      {
-          Ascending = 0,
-          Descending
-      };
-
       uint16_t dccAddress = 0;
       bool isEStop = false;
       uint8_t speedStep = 0;
       uint8_t speedSteps = 0;
       uint8_t lastReceivedSpeedStep = 0; //Always in 126 steps
-      Trend speedTrend = Trend::Ascending;
-      bool speedTrendExplicitlySet = false;
       Direction direction = Direction::Unknown;
       std::chrono::steady_clock::time_point lastSetTime;
     };
 
+    /*!
+     * \brief m_locoCache stores last decoder states
+     *
+     * \note It must be accessed only from kernel thread or from
+     * Z21::ClientKernel::onStart().
+     */
     std::unordered_map<uint16_t, LocoCache> m_locoCache;
+
+    /*!
+     * \brief m_isUpdatingDecoderFromKernel prevents mirroring changes to Z21
+     *
+     * \note It must be accessed only from event loop thread or from
+     * Z21::ClientKernel::onStart().
+     *
+     * \sa EventLoop
+     */
     bool m_isUpdatingDecoderFromKernel = false;
+
+    struct PendingRequest
+    {
+      std::vector<uint8_t> messageBytes;
+      Z21::MessageReplyType reply;
+      std::chrono::steady_clock::time_point sendTime;
+
+      //! Decrease at each re-send, remove request when reaches 0
+      uint8_t retryCount = 0;
+    };
+    std::vector<PendingRequest> m_pendingRequests;
 
     InputController* m_inputController = nullptr;
     std::array<TriState, rbusAddressMax - rbusAddressMin + 1> m_rbusFeedbackStatus;
@@ -144,16 +176,16 @@ class ClientKernel final : public Kernel
     void onStop() final;
 
     template<class T>
-    void postSend(const T& message)
+    void postSend(const T& message, bool wantReply = true, uint8_t customRetryCount = 0)
     {
       m_ioContext.post(
-        [this, message]()
+        [this, message, wantReply, customRetryCount]()
         {
-          send(message);
+          send(message, wantReply, customRetryCount);
         });
     }
 
-    void send(const Message& message);
+    void send(const Message& message, bool wantReply = true, uint8_t customRetryCount = 0);
 
     void startKeepAliveTimer();
     void keepAliveTimerExpired(const boost::system::error_code& ec);
@@ -162,6 +194,12 @@ class ClientKernel final : public Kernel
     void inactiveDecoderPurgeTimerExpired(const boost::system::error_code &ec);
 
     LocoCache &getLocoCache(uint16_t dccAddr);
+
+    void addPendingRequest(const PendingRequest& request);
+    std::optional<PendingRequest> matchPendingReplyAndRemove(const Message& message);
+    void startSchedulePendingRequestTimer();
+    void schedulePendingRequestTimerExpired(const boost::system::error_code &ec);
+    void rescheduleTimedoutRequests();
 
 public:
     /**
@@ -220,10 +258,10 @@ public:
      * @param[in] callback ...
      * @note This function may not be called when the kernel is running.
      */
-    inline void setOnTrackPowerOnChanged(std::function<void(bool)> callback)
+    inline void setOnTrackPowerChanged(std::function<void(bool, bool)> callback)
     {
       assert(!m_started);
-      m_onTrackPowerOnChanged = std::move(callback);
+      m_onTrackPowerChanged = std::move(callback);
     }
 
     /**
@@ -237,17 +275,6 @@ public:
     /**
      */
     void emergencyStop();
-
-    /**
-     * @brief ...
-     * @param[in] callback ...
-     * @note This function may not be called when the kernel is running.
-     */
-    inline void setOnEmergencyStop(std::function<void()> callback)
-    {
-      assert(!m_started);
-      m_onEmergencyStop = std::move(callback);
-    }
 
     /**
      * @brief Set the decoder controller
@@ -294,7 +321,7 @@ public:
      * @param[in] value Output value: \c true is on, \c false is off.
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint16_t address, bool value);
+    bool setOutput(OutputChannel channel, uint16_t address, OutputValue value);
 
     void simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action);
 };

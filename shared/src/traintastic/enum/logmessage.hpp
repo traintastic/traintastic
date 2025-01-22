@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -92,6 +92,7 @@ enum class LogMessage : uint32_t
   I2005_X = LogMessageOffset::info + 2005,
   I9001_STOPPED_SCRIPT = LogMessageOffset::info + 9001,
   I9002_X = LogMessageOffset::info + 9002, //!< Lua version
+  I9003_CLEARED_PERSISTENT_VARIABLES = LogMessageOffset::info + 9003,
   I9999_X = LogMessageOffset::info + 9999,
 
   // Notice:
@@ -132,6 +133,8 @@ enum class LogMessage : uint32_t
   N2007_LISTEN_ONLY_MODE_DEACTIVATED = LogMessageOffset::notice + 2007,
   N3001_ASSIGNED_TRAIN_X_TO_BLOCK_X = LogMessageOffset::notice + 3001,
   N3002_REMOVED_TRAIN_X_FROM_BLOCK_X = LogMessageOffset::notice + 3002,
+  N3003_TURNOUT_RESET_TO_RESERVED_POSITION = LogMessageOffset::notice + 3003,
+  N3004_SIGNAL_RESET_TO_RESERVED_ASPECT = LogMessageOffset::notice + 3004,
   N9001_STARTING_SCRIPT = LogMessageOffset::notice + 9001,
   N9999_X = LogMessageOffset::notice + 9999,
 
@@ -141,14 +144,18 @@ enum class LogMessage : uint32_t
   W1003_READING_WORLD_X_FAILED_LIBARCHIVE_ERROR_X_X = LogMessageOffset::warning + 1003,
   W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES = LogMessageOffset::warning + 2001,
   W2002_COMMAND_STATION_DOESNT_SUPPORT_FUNCTIONS_ABOVE_FX = LogMessageOffset::warning + 2002,
+  W2003_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES_X = LogMessageOffset::warning + 2003,
   W2004_INPUT_ADDRESS_X_IS_INVALID = LogMessageOffset::warning + 2004,
   W2005_OUTPUT_ADDRESS_X_IS_INVALID = LogMessageOffset::warning + 2005,
   W2006_COMMAND_STATION_DOES_NOT_SUPPORT_LOCO_SLOT_X = LogMessageOffset::warning + 2006,
   W2007_COMMAND_STATION_DOES_NOT_SUPPORT_THE_FAST_CLOCK_SLOT = LogMessageOffset::warning + 2007,
   W2018_TIMEOUT_NO_ECHO_WITHIN_X_MS = LogMessageOffset::warning + 2018,
   W2019_Z21_BROADCAST_FLAG_MISMATCH = LogMessageOffset::warning + 2019,
+  W2020_DCCEXT_RCN213_IS_NOT_SUPPORTED = LogMessageOffset::warning + 2020,
   W3001_NX_BUTTON_CONNECTED_TO_TWO_BLOCKS = LogMessageOffset::warning + 3001,
   W3002_NX_BUTTON_NOT_CONNECTED_TO_ANY_BLOCK = LogMessageOffset::warning + 3002,
+  W3003_LOCKED_TURNOUT_CHANGED = LogMessageOffset::warning + 3003,
+  W3004_LOCKED_SIGNAL_CHANGED = LogMessageOffset::warning + 3004,
   W9001_EXECUTION_TOOK_X_US = LogMessageOffset::warning + 9001,
   W9999_X = LogMessageOffset::warning + 9999,
 
@@ -187,6 +194,14 @@ enum class LogMessage : uint32_t
   E2024_UNKNOWN_LOCOMOTIVE_MFX_UID_X = LogMessageOffset::error + 2024,
   E3001_CANT_DELETE_RAIL_VEHICLE_WHEN_IN_ACTIVE_TRAIN = LogMessageOffset::error + 3001,
   E3002_CANT_DELETE_ACTIVE_TRAIN = LogMessageOffset::error + 3002,
+  E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED = LogMessageOffset::error + 3003,
+  E3004_TRAIN_STOPPED_ON_SIGNAL_X_CHANGED = LogMessageOffset::error + 3004,
+  E3005_CANT_REMOVE_TRAIN_TRAIN_MUST_BE_STOPPED_FIRST = LogMessageOffset::error + 3005,
+  E3006_CANT_REMOVE_TRAIN_TRAIN_CAN_ONLY_BE_REMOVED_FROM_HEAD_OR_TAIL_BLOCK = LogMessageOffset::error + 3006,
+  E3007_WORLD_STOPPED_ON_TURNOUT_X_CHANGED = LogMessageOffset::error + 3007,
+  E3008_WORLD_STOPPED_ON_SIGNAL_X_CHANGED = LogMessageOffset::error + 3008,
+  E3009_WORLD_POWER_OFF_ON_TURNOUT_X_CHANGED = LogMessageOffset::error + 3009,
+  E3010_WORLD_POWER_OFF_ON_SIGNAL_X_CHANGED = LogMessageOffset::error + 3010,
   E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER = LogMessageOffset::error + 9001,
   E9999_X = LogMessageOffset::error + 9999,
 

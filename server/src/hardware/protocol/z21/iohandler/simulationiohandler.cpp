@@ -49,6 +49,7 @@ bool SimulationIOHandler::send(const Message& message)
       switch(lanX.xheader)
       {
         case 0x21:
+        {
           if(message == LanXGetVersion())
           {
             reply(LanXGetVersionReply(xBusVersion, CommandStationId::Z21));
@@ -85,8 +86,9 @@ bool SimulationIOHandler::send(const Message& message)
             }
           }
           break;
-
+        }
         case LAN_X_SET_STOP:
+        {
           if(message == LanXSetStop())
           {
             const bool changed = !m_emergencyStop;
@@ -98,35 +100,150 @@ bool SimulationIOHandler::send(const Message& message)
             }
           }
           break;
-
+        }
         case LAN_X_GET_LOCO_INFO:
+        {
           if(const auto& getLocoInfo = static_cast<const LanXGetLocoInfo&>(message);
               getLocoInfo.db0 == 0xF0)
           {
-            // not (yet) supported
+            auto it = m_decoderCache.find(getLocoInfo.address());
+            if(it != m_decoderCache.cend())
+              reply(it->second);
+            else
+            {
+              LanXLocoInfo empty;
+              empty.setAddress(getLocoInfo.address(), getLocoInfo.isLongAddress());
+              empty.setSpeedSteps(126);
+              empty.setEmergencyStop();
+              empty.updateChecksum();
+              reply(empty);
+            }
           }
           break;
-
+        }
         case LAN_X_SET_LOCO:
+        {
           if(const auto& setLocoDrive = static_cast<const LanXSetLocoDrive&>(message);
               setLocoDrive.db0 >= 0x10 && setLocoDrive.db0 <= 0x13)
           {
-            // not (yet) supported
+            auto it = m_decoderCache.find(setLocoDrive.address());
+            if(it == m_decoderCache.cend())
+            {
+              // Insert in cache
+              LanXLocoInfo empty;
+              empty.setAddress(setLocoDrive.address(), setLocoDrive.isLongAddress());
+              empty.setSpeedSteps(126);
+              empty.setEmergencyStop();
+              it = m_decoderCache.insert({setLocoDrive.address(), empty}).first;
+            }
+
+            LanXLocoInfo &info = it->second;
+            info.setSpeedSteps(setLocoDrive.speedSteps());
+            info.setDirection(setLocoDrive.direction());
+            if(setLocoDrive.isEmergencyStop())
+              info.setEmergencyStop();
+            else
+              info.setSpeedStep(setLocoDrive.speedStep());
+
+            info.setBusy(true);
+            info.updateChecksum();
+
+            reply(info);
           }
           else if(const auto& setLocoFunction = static_cast<const LanXSetLocoFunction&>(message);
                   setLocoFunction.db0 == 0xF8 &&
                   setLocoFunction.switchType() != LanXSetLocoFunction::SwitchType::Invalid)
           {
-            // not (yet) supported
+            auto it = m_decoderCache.find(setLocoDrive.address());
+            if(it == m_decoderCache.cend())
+            {
+              // Insert in cache
+                LanXLocoInfo empty;
+                empty.setAddress(setLocoFunction.address(), setLocoFunction.isLongAddress());
+                empty.setSpeedSteps(126);
+                empty.setEmergencyStop();
+                it = m_decoderCache.insert({setLocoFunction.address(), empty}).first;
+            }
+
+            LanXLocoInfo &info = it->second;
+            bool val = info.getFunction(setLocoFunction.functionIndex());
+            switch (setLocoFunction.switchType())
+            {
+            case LanXSetLocoFunction::SwitchType::Off:
+              val = false;
+              break;
+            case LanXSetLocoFunction::SwitchType::On:
+              val = true;
+              break;
+            case LanXSetLocoFunction::SwitchType::Toggle:
+              val = !val;
+              break;
+            default:
+              break;
+            }
+            info.setFunction(setLocoFunction.functionIndex(), val);
+
+            info.setBusy(true);
+            info.updateChecksum();
+
+            reply(info);
           }
           break;
-
+        }
         case LAN_X_GET_FIRMWARE_VERSION:
+        {
           if(message == LanXGetFirmwareVersion())
           {
             reply(LanXGetFirmwareVersionReply(firmwareVersionMajor, ServerConfig::firmwareVersionMinor));
           }
           break;
+        }
+        case LAN_X_SET_TURNOUT:
+        {
+          if(message.dataLen() == sizeof(LanXSetTurnout))
+          {
+            const auto& setTurnout = static_cast<const LanXSetTurnout&>(message);
+            if((m_broadcastFlags & BroadcastFlags::PowerLocoTurnoutChanges) == BroadcastFlags::PowerLocoTurnoutChanges)
+            {
+              // Client has subscribed to turnout changes
+              reply(LanXTurnoutInfo(setTurnout.address(), setTurnout.port(), false));
+            }
+          }
+          break;
+        }
+        case LAN_X_TURNOUT_INFO:
+        {
+          if(message.dataLen() == sizeof(LanXGetTurnoutInfo))
+          {
+            const auto& getTurnout = static_cast<const LanXGetTurnoutInfo&>(message);
+            //We do not keep a record of turnout states so send "Unknown Position"
+            reply(LanXTurnoutInfo(getTurnout.address(), false, true));
+          }
+          break;
+        }
+        case LAN_X_SET_EXT_ACCESSORY:
+        {
+          if(message.dataLen() == sizeof(LanXSetExtAccessory))
+          {
+            const auto& setAccessory = static_cast<const LanXSetExtAccessory&>(message);
+            if((m_broadcastFlags & BroadcastFlags::PowerLocoTurnoutChanges) == BroadcastFlags::PowerLocoTurnoutChanges)
+            {
+              // Client has subscribed to turnout changes
+              reply(LanXExtAccessoryInfo(setAccessory.address(), setAccessory.aspect(), false));
+            }
+          }
+          break;
+        }
+        case LAN_X_EXT_ACCESSORY_INFO:
+        {
+          if(message.dataLen() == sizeof(LanXGetExtAccessoryInfo))
+          {
+            const auto& getAccessory = static_cast<const LanXGetExtAccessoryInfo&>(message);
+            //We do not keep a record of accessory states so send "Unknown Position"
+            reply(LanXExtAccessoryInfo(getAccessory.address(), 0, true));
+          }
+          break;
+        }
       }
       break;
     }
@@ -147,7 +264,7 @@ bool SimulationIOHandler::send(const Message& message)
     case LAN_GET_BROADCASTFLAGS:
       if(message == LanGetBroadcastFlags())
       {
-        reply(LanSetBroadcastFlags(m_broadcastFlags));
+        reply(LanGetBroadcastFlagsReply(m_broadcastFlags));
       }
       break;
 

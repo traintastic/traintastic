@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,6 +40,7 @@
 #include "../propertydirectioncontrol.hpp"
 #include "../propertyvaluelabel.hpp"
 #include "../methodpushbutton.hpp"
+#include "../unitpropertycombobox.hpp"
 #include "../unitpropertyedit.hpp"
 #include "../createwidget.hpp"
 #include "../../theme/theme.hpp"
@@ -64,7 +65,7 @@ ObjectEditWidget::ObjectEditWidget(ObjectProperty& property, QWidget* parent)
 
 void ObjectEditWidget::buildForm()
 {
-  setIdAsWindowTitle();
+  setObjectWindowTitle();
   setWindowIcon(Theme::getIconForClassId(m_object->classId()));
 
   if(QWidget* widget = createWidgetIfCustom(m_object))
@@ -107,20 +108,26 @@ void ObjectEditWidget::buildForm()
           {
             Property* property = static_cast<Property*>(baseProperty);
             if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
-              w = new UnitPropertyEdit(*unitProperty, this);
+            {
+              if(unitProperty->hasAttribute(AttributeName::Values))
+              {
+                w = new UnitPropertyComboBox(*unitProperty, this);
+              }
+              else
+              {
+                w = new UnitPropertyEdit(*unitProperty, this);
+              }
+            }
             else if(!property->isWritable())
               w = new PropertyValueLabel(*property, this);
             else if(property->type() == ValueType::Boolean)
               w = new PropertyCheckBox(*property, this);
             else if(property->type() == ValueType::Integer)
             {
-              if(property->hasAttribute(AttributeName::Values) && !property->hasAttribute(AttributeName::Min) && !property->hasAttribute(AttributeName::Max))
-                w = new PropertyComboBox(*property, this);
-              else
-                w = new PropertySpinBox(*property, this);
+              w = createWidget(*property, this);
             }
             else if(property->type() == ValueType::Float)
-              w = new PropertyDoubleSpinBox(*property, this);
+              w = createWidget(*property, this);
             else if(property->type() == ValueType::String)
             {
               if(property->name() == "notes")
@@ -139,17 +146,15 @@ void ObjectEditWidget::buildForm()
                 tabs.append(edit);
                 continue;
               }
-              else if(property->hasAttribute(AttributeName::Values))
-                w = new PropertyComboBox(*property, this);
               else
-                w = new PropertyLineEdit(*property, this);
+                w = createWidget(*property, this);
             }
             else if(property->type() == ValueType::Enum)
             {
               if(property->enumName() == EnumName<Direction>::value)
                 w = new PropertyDirectionControl(*property, this);
               else
-                w = new PropertyComboBox(*property, this);
+                w = createWidget(*property, this);
             }
           }
         }

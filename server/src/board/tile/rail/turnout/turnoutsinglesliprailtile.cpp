@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,26 +23,42 @@
 #include "turnoutsinglesliprailtile.hpp"
 #include "../../../../core/attributes.hpp"
 #include "../../../../core/objectproperty.tpp"
+#include "../../../../hardware/output/outputcontroller.hpp"
 
-static const std::array<TurnoutPosition, 5> positionValues = {TurnoutPosition::Crossed, TurnoutPosition::Diverged,
-                                                              TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB,
-                                                              TurnoutPosition::Unknown};
-static const std::array<TurnoutPosition, 4> setPositionValues = {TurnoutPosition::Crossed, TurnoutPosition::Diverged,
-                                                                 TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB};
+namespace PositionValues
+{
+  static const std::array<TurnoutPosition, 3> singleMotor = {
+    TurnoutPosition::Unknown,
+    TurnoutPosition::Crossed, TurnoutPosition::Diverged
+  };
+  static const std::array<TurnoutPosition, 4> dualMotor = {
+    TurnoutPosition::Unknown,
+    TurnoutPosition::Diverged, TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB
+  };
+}
+
+static constexpr tcb::span<const TurnoutPosition> positionValuesSingleMotor = tcb::make_span(PositionValues::singleMotor);
+static constexpr tcb::span<const TurnoutPosition> positionValuesDualMotor = tcb::make_span(PositionValues::dualMotor);
+static constexpr tcb::span<const TurnoutPosition> setPositionValuesSingleMotor = tcb::make_span(PositionValues::singleMotor).subspan<1>();
+static constexpr tcb::span<const TurnoutPosition> setPositionValuesDualMotor = tcb::make_span(PositionValues::dualMotor).subspan<1>();
 
 TurnoutSingleSlipRailTile::TurnoutSingleSlipRailTile(World& world, std::string_view _id)
-  : TurnoutRailTile(world, _id, TileId::RailTurnoutSingleSlip, 4)
+  : TurnoutSlipRailTile(world, _id, TileId::RailTurnoutSingleSlip)
 {
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(),
                                                                   std::initializer_list<TurnoutPosition>{
                                                                     TurnoutPosition::Crossed, TurnoutPosition::Diverged,
-                                                                    TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB}));
+                                                                    TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB},
+                                                                  getDefaultActionValue));
 
-  Attributes::addValues(position, positionValues);
+  Attributes::addValues(position, positionValuesSingleMotor);
   m_interfaceItems.add(position);
 
-  Attributes::addValues(setPosition, setPositionValues);
+  Attributes::addValues(setPosition, setPositionValuesSingleMotor);
   m_interfaceItems.add(setPosition);
+
+  connectOutputMap();
+  dualMotorChanged();
 }
 
 void TurnoutSingleSlipRailTile::getConnectors(std::vector<Connector>& connectors) const
@@ -51,4 +67,22 @@ void TurnoutSingleSlipRailTile::getConnectors(std::vector<Connector>& connectors
   connectors.emplace_back(location(), rotate + TileRotate::Deg135, Connector::Type::Rail);
   connectors.emplace_back(location(), rotate + TileRotate::Deg180, Connector::Type::Rail);
   connectors.emplace_back(location(), rotate + TileRotate::Deg315, Connector::Type::Rail);
+}
+
+void TurnoutSingleSlipRailTile::dualMotorChanged()
+{
+  (*outputMap)[TurnoutPosition::Crossed]->visible.setValueInternal(!dualMotor);
+  (*outputMap)[TurnoutPosition::DoubleSlipStraightA]->visible.setValueInternal(dualMotor);
+  (*outputMap)[TurnoutPosition::DoubleSlipStraightB]->visible.setValueInternal(dualMotor);
+
+  if(dualMotor)
+  {
+    Attributes::setValues(position, positionValuesDualMotor);
+    Attributes::setValues(setPosition, setPositionValuesDualMotor);
+  }
+  else
+  {
+    Attributes::setValues(position, positionValuesSingleMotor);
+    Attributes::setValues(setPosition, setPositionValuesSingleMotor);
+  }
 }

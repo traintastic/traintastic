@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,6 +48,8 @@ class Object
 
     bool objectExists(uint16_t objectId) const;
     void addObject(std::unique_ptr<Object> object);
+    void nameChanged();
+    void removeObject(uint16_t objectId);
 
     virtual void update(std::string_view /*option*/, std::string_view /*value*/){}// = 0;
 

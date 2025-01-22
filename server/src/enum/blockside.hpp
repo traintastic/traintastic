@@ -31,4 +31,9 @@ enum class BlockSide : uint8_t
   B = 1,
 };
 
+constexpr BlockSide operator ~(const BlockSide value)
+{
+  return (value == BlockSide::B) ? BlockSide::A : BlockSide::B;
+}
+
 #endif

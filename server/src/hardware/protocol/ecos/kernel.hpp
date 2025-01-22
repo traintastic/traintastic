@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,10 +27,12 @@
 #include <unordered_map>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
+#include <traintastic/enum/outputchannel.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
 #include "object/object.hpp"
 #include "object/switchprotocol.hpp"
+#include "../../output/outputvalue.hpp"
 
 class Decoder;
 enum class DecoderChangeFlags;
@@ -53,6 +55,9 @@ class Kernel : public ::KernelBase
   friend class ECoS;
 
   public:
+    using OnObjectChanged = std::function<void(std::size_t, uint16_t, const std::string&)>;
+    using OnObjectRemoved = std::function<void(uint16_t)>;
+
     static constexpr uint16_t s88AddressMin = 1;
     static constexpr uint16_t s88AddressMax = 1000; //!< \todo what is the maximum
     static constexpr uint16_t ecosDetectorAddressMin = 1;
@@ -74,27 +79,6 @@ class Kernel : public ::KernelBase
       "$ecos_channel:ecos_detector$",
     };
 
-    static constexpr uint16_t outputDCCAddressMin = 1;
-    static constexpr uint16_t outputDCCAddressMax = 1000; //!< \todo what is the maximum
-    static constexpr uint16_t outputMotorolaAddressMin = 1;
-    static constexpr uint16_t outputMotorolaAddressMax = 1000; //!< \todo what is the maximum
-
-    struct OutputChannel
-    {
-      static constexpr uint32_t dcc = 1;
-      static constexpr uint32_t motorola = 2;
-    };
-
-    inline static const std::vector<uint32_t> outputChannels = {
-      OutputChannel::dcc,
-      OutputChannel::motorola,
-    };
-
-    inline static const std::vector<std::string_view> outputChannelNames = {
-      "$hardware:dcc$",
-      "$hardware:motorola$",
-    };
-
   private:
     class Objects : public std::unordered_map<uint16_t, std::unique_ptr<Object>>
     {
@@ -114,6 +98,8 @@ class Kernel : public ::KernelBase
 
     std::function<void()> m_onGo;
     std::function<void()> m_onEmergencyStop;
+    OnObjectChanged m_onObjectChanged;
+    OnObjectRemoved m_onObjectRemoved;
 
     DecoderController* m_decoderController;
     InputController* m_inputController;
@@ -125,6 +111,12 @@ class Kernel : public ::KernelBase
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
+    bool objectExists(uint16_t objectId) const;
+    void addObject(std::unique_ptr<Object> object);
+    void objectChanged(Object& object);
+    void removeObject(uint16_t objectId);
+
+    //const std::unique_ptr<ECoS&> ecos();
     ECoS& ecos();
     void ecosGoChanged(TriState value);
 
@@ -147,6 +139,13 @@ class Kernel : public ::KernelBase
   public:
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
+
+#ifndef NDEBUG
+    bool isKernelThread() const
+    {
+      return std::this_thread::get_id() == m_thread.get_id();
+    }
+#endif
 
     /**
      * @brief Create kernel and IO handler
@@ -195,6 +194,9 @@ class Kernel : public ::KernelBase
      */
     void setOnGo(std::function<void()> callback);
 
+    void setOnObjectChanged(OnObjectChanged callback);
+    void setOnObjectRemoved(OnObjectRemoved callback);
+
     /**
      * @brief Set the decoder controller
      * @param[in] decoderController The decoder controller
@@ -228,6 +230,12 @@ class Kernel : public ::KernelBase
     void stop(Simulation* simulation);
 
     /**
+     * \brief Notify kernel the IO handler is started.
+     * \note This function must run in the kernel's IO context
+     */
+    void started() final;
+
+    /**
      * @brief ...
      *
      * This must be called by the IO handler whenever a ECoS message is received.
@@ -258,15 +266,16 @@ class Kernel : public ::KernelBase
     /**
      * @brief ...
      * @param[in] channel Channel
-     * @param[in] address Output address
-     * @param[in] value Output value: \c true is on, \c false is off.
+     * @param[in] id Output id/address
+     * @param[in] value Output value
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint32_t channel, uint16_t address, bool value);
+    bool setOutput(OutputChannel channel, uint32_t id, OutputValue value);
 
     void simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action);
 
-    void switchManagerSwitched(SwitchProtocol protocol, uint16_t address);
+    void switchManagerSwitched(SwitchProtocol protocol, uint16_t address, OutputPairValue value);
+    void switchStateChanged(uint16_t objectId, uint8_t state);
 
     void feedbackStateChanged(Feedback& object, uint8_t port, TriState value);
 };

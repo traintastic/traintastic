@@ -26,19 +26,9 @@
 #include "abstractmethod.hpp"
 #include <functional>
 #include <tuple>
-#include <limits>
-#include <utility>
-#include <traintastic/utils/valuetypetraits.hpp>
-#include "../utils/is_shared_ptr.hpp"
 
 template<class T>
 class Method;
-
-template<std::size_t N, class... A>
-using getArgumentType = typename std::tuple_element<N, std::tuple<A...>>::type;
-
-template<class T>
-inline AbstractMethod::Result toResult(const T& value);
 
 template<class R, class... A>
 class Method<R(A...)> : public AbstractMethod

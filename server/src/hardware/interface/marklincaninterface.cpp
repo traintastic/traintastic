@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,15 +36,17 @@
 #include "../protocol/marklincan/kernel.hpp"
 #include "../protocol/marklincan/settings.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/eventloop.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
+#include "../../utils/makearray.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
-constexpr auto outputListColumns = OutputListColumn::Id | OutputListColumn::Name | OutputListColumn::Channel | OutputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -124,7 +126,7 @@ tcb::span<const DecoderProtocol> MarklinCANInterface::decoderProtocols() const
 
 tcb::span<const uint8_t> MarklinCANInterface::decoderSpeedSteps(DecoderProtocol protocol) const
 {
-  static constexpr std::array<uint8_t, 4> dccLongSpeedSteps{{28, 128}}; // 14 not supported for long addresses
+  static constexpr std::array<uint8_t, 2> dccLongSpeedSteps{{28, 128}}; // 14 not supported for long addresses
 
   switch(protocol)
   {
@@ -147,42 +149,18 @@ std::pair<uint32_t, uint32_t> MarklinCANInterface::inputAddressMinMax(uint32_t /
   return {MarklinCAN::Kernel::s88AddressMin, MarklinCAN::Kernel::s88AddressMax};
 }
 
-const std::vector<uint32_t>* MarklinCANInterface::outputChannels() const
+tcb::span<const OutputChannel> MarklinCANInterface::outputChannels() const
 {
-  return &MarklinCAN::Kernel::outputChannels;
+  static const auto values = makeArray(OutputChannel::AccessoryMotorola, OutputChannel::AccessoryDCC);
+  return values;
 }
 
-const std::vector<std::string_view>* MarklinCANInterface::outputChannelNames() const
-{
-  return &MarklinCAN::Kernel::outputChannelNames;
-}
-
-std::pair<uint32_t, uint32_t> MarklinCANInterface::outputAddressMinMax(uint32_t channel) const
-{
-  using namespace MarklinCAN;
-
-  switch(channel)
-  {
-    case Kernel::OutputChannel::motorola:
-      return {Kernel::outputMotorolaAddressMin, Kernel::outputMotorolaAddressMax};
-
-    case Kernel::OutputChannel::dcc:
-      return {Kernel::outputDCCAddressMin, Kernel::outputDCCAddressMax};
-
-    case Kernel::OutputChannel::sx1:
-      return {Kernel::outputSX1AddressMin, Kernel::outputSX1AddressMax};
-  }
-
-  assert(false);
-  return {0, 0};
-}
-
-bool MarklinCANInterface::setOutputValue(uint32_t channel, uint32_t address, bool value)
+bool MarklinCANInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
 {
   return
     m_kernel &&
     inRange(address, outputAddressMinMax(channel)) &&
-    m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
+    m_kernel->setOutput(channel, static_cast<uint16_t>(address), std::get<OutputPairValue>(value));
 }
 
 bool MarklinCANInterface::setOnline(bool& value, bool simulation)
@@ -280,7 +258,7 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
     m_marklinCANPropertyChanged.disconnect();
 
     m_kernel->stop();
-    m_kernel.reset();
+    EventLoop::deleteLater(m_kernel.release());
 
     if(status->state != InterfaceState::Error)
       setState(InterfaceState::Offline);

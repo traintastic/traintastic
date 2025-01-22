@@ -1,0 +1,16 @@
+{
+  "interfaces": {
+    "objects": [
+      "dccplusplusinterface",
+      "ecosinterface",
+      "hsi88interface",
+      "loconetinterface",
+      "marklincaninterface",
+      "traintasticdiyinterface",
+      "wlanmausinterface",
+      "withrottleinterface",
+      "xpressnetinterface",
+      "z21interface"
+    ]
+  }
+}

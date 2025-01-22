@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "object.hpp"
 #include "object/object.hpp"
 #include "object/objectlist.hpp"
+#include "object/interface.hpp"
 #include "object/loconetinterface.hpp"
 
 namespace Lua::Object {
@@ -33,6 +34,7 @@ void registerTypes(lua_State* L)
 {
   Object::registerType(L);
   ObjectList::registerType(L);
+  Interface::registerType(L);
   LocoNetInterface::registerType(L);
 
   // weak table for object userdata:

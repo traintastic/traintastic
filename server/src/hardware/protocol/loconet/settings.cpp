@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,7 +42,6 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
       }}
   , fastClockSyncInterval{this, "fast_clock_sync_interval", 60, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogInput{this, "debug_log_input", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , debugLogOutput{this, "debug_log_output", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , pcap{this, "pcap", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](bool value)
@@ -87,10 +86,6 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   //Attributes::addGroup(debugLogInput, Group::debug);
   m_interfaceItems.add(debugLogInput);
 
-  Attributes::addDisplayName(debugLogOutput, DisplayName::Hardware::debugLogOutput);
-  //Attributes::addGroup(debugLogOuput, Group::debug);
-  m_interfaceItems.add(debugLogOutput);
-
   Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
   //Attributes::addGroup(debugLogRXTX, Group::debug);
   m_interfaceItems.add(debugLogRXTX);
@@ -122,7 +117,6 @@ Config Settings::config() const
   config.fastClockSyncInterval = fastClockSyncInterval;
 
   config.debugLogInput = debugLogInput;
-  config.debugLogOutput = debugLogOutput;
   config.debugLogRXTX = debugLogRXTX;
   config.pcap = pcap;
   config.pcapOutput = pcapOutput;
@@ -152,12 +146,15 @@ void Settings::commandStationChanged(LocoNetCommandStation value)
       break;
 
     case LocoNetCommandStation::DigikeijsDR5000:
+    case LocoNetCommandStation::UhlenbrockIntelliboxII:
       locomotiveSlots = SLOT_LOCO_MAX;
       f9f28 = LocoNetF9F28::UhlenbrockExtended;
       break;
 
     case LocoNetCommandStation::UhlenbrockIntellibox:
     case LocoNetCommandStation::UhlenbrockIBCOM:
+    case LocoNetCommandStation::UhlenbrockIntelliboxIR:
+    case LocoNetCommandStation::UhlenbrockIntelliboxBasic:
       locomotiveSlots = 32;
       f9f28 = LocoNetF9F28::UhlenbrockExtended;
       break;
@@ -169,11 +166,14 @@ void Settings::commandStationChanged(LocoNetCommandStation value)
   {
     case LocoNetCommandStation::Custom:
     case LocoNetCommandStation::DigikeijsDR5000:
+    case LocoNetCommandStation::UhlenbrockIntelliboxII:
       Attributes::setEnabled(fastClockSyncEnabled, true);
       break;
 
     case LocoNetCommandStation::UhlenbrockIntellibox:
     case LocoNetCommandStation::UhlenbrockIBCOM:
+    case LocoNetCommandStation::UhlenbrockIntelliboxIR:
+    case LocoNetCommandStation::UhlenbrockIntelliboxBasic:
       fastClockSyncEnabled = false;
       Attributes::setEnabled(fastClockSyncEnabled, false);
       break;

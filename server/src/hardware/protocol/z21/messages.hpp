@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 #include "utils.hpp"
 #include "../../../utils/packed.hpp"
 #include "../../../utils/endian.hpp"
+#include "../../../utils/byte.hpp"
 
 class Decoder;
 
@@ -145,6 +146,9 @@ enum LocoMode : uint8_t
 static constexpr uint8_t LAN_X_TURNOUT_INFO = 0x43;
 static constexpr uint8_t LAN_X_SET_TURNOUT = 0x53;
 
+static constexpr uint8_t LAN_X_EXT_ACCESSORY_INFO = 0x44;
+static constexpr uint8_t LAN_X_SET_EXT_ACCESSORY = 0x54;
+
 static constexpr uint8_t LAN_X_BC = 0x61;
 
 static constexpr uint8_t LAN_X_STATUS_CHANGED = 0x62;
@@ -173,6 +177,7 @@ static constexpr uint8_t LAN_X_BC_TRACK_POWER_OFF = 0x00;
 static constexpr uint8_t LAN_X_BC_TRACK_POWER_ON = 0x01;
 //static constexpr uint8_t LAN_X_BC_PROGRAMMING_MODE = 0x02;
 static constexpr uint8_t LAN_X_BC_TRACK_SHORT_CIRCUIT = 0x08;
+static constexpr uint8_t LAN_X_UNKNOWN_COMMAND = 0x82;
 
 enum HardwareType : uint32_t
 {
@@ -386,7 +391,7 @@ static_assert(sizeof(LanXSetTrackPowerOff) == 7);
 // LAN_X_SET_TRACK_POWER_ON
 struct LanXSetTrackPowerOn : LanX
 {
-  uint8_t db0 = LAN_X_SET_TRACK_POWER_OFF;
+  uint8_t db0 = LAN_X_SET_TRACK_POWER_ON;
   uint8_t checksum = 0xa0;
 
   LanXSetTrackPowerOn() :
@@ -409,21 +414,33 @@ static_assert(sizeof(LanXSetTrackPowerOn) == 7);
 // LAN_X_GET_TURNOUT_INFO
 struct LanXGetTurnoutInfo : LanX
 {
-  uint8_t db0;
-  uint8_t db1;
+  uint8_t addressLSB;
+  uint8_t addressMSB;
   uint8_t checksum;
 
   LanXGetTurnoutInfo(uint16_t address)
     : LanX(sizeof(LanXGetTurnoutInfo), LAN_X_TURNOUT_INFO)
-    , db0(address >> 8)
-    , db1(address & 0xFF)
   {
+    setAddress(address);
     updateChecksum();
   }
 
-  uint16_t address() const
+  inline uint16_t rawAddress() const
   {
-    return (static_cast<uint16_t>(db0) << 8) | db1;
+    return to16(addressLSB, addressMSB);
+  }
+
+  inline uint16_t address() const
+  {
+    return 1 + rawAddress();
+  }
+
+  void setAddress(uint16_t value)
+  {
+    assert(value >= 1 && value <= 2048);
+    value--;
+    addressMSB = high8(value);
+    addressLSB = low8(value);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetTurnoutInfo) == 8);
@@ -435,52 +452,207 @@ struct LanXSetTurnout : LanX
   static constexpr uint8_t db2Activate = 0x08;
   static constexpr uint8_t db2Queue = 0x20;
 
-  uint8_t db0;
-  uint8_t db1;
+  uint8_t addressMSB;
+  uint8_t addressLSB;
   uint8_t db2 = 0x80;
   uint8_t checksum;
 
-  LanXSetTurnout(uint16_t linearAddress, bool activate, bool queue = false)
+  LanXSetTurnout(uint16_t address, bool port, bool activate, bool queue = false)
     : LanX(sizeof(LanXSetTurnout), LAN_X_SET_TURNOUT)
-    , db0(linearAddress >> 9)
-    , db1((linearAddress >> 1) & 0xFF)
   {
+    setAddress(address);
+
     if(queue)
       db2 |= db2Queue;
     if(activate)
       db2 |= db2Activate;
-    if(linearAddress & 0x0001)
+    if(port)
       db2 |= db2Port;
 
     updateChecksum();
   }
 
-  uint16_t address() const
+  inline uint16_t rawAddress() const
   {
-    return (static_cast<uint16_t>(db0) << 8) | db1;
+    return to16(addressLSB, addressMSB);
   }
 
-  uint16_t linearAddress() const
+  inline uint16_t address() const
   {
-    return (address() << 1) | port();
+    return 1 + rawAddress();
   }
 
-  bool activate() const
+  void setAddress(uint16_t value)
+  {
+    assert(value >= 1 && value <= 2048);
+    value--;
+    addressMSB = high8(value);
+    addressLSB = low8(value);
+  }
+
+  inline bool activate() const
   {
     return db2 & db2Queue;
   }
 
-  bool queue() const
+  inline bool queue() const
   {
     return db2 & db2Queue;
   }
 
-  uint8_t port() const
+  inline bool port() const
   {
     return db2 & db2Port;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXSetTurnout) == 9);
+
+// LAN_X_SET_EXT_ACCESSORY
+struct LanXSetExtAccessory : LanX
+{
+  uint8_t addressMSB;
+  uint8_t addressLSB;
+  uint8_t db2;
+  uint8_t db3 = 0x00; // must be 0x00
+  uint8_t checksum;
+
+  LanXSetExtAccessory(uint16_t address)
+    : LanX(sizeof(LanXSetExtAccessory), LAN_X_SET_EXT_ACCESSORY)
+    , addressMSB(high8(address + 3))
+    , addressLSB(low8(address + 3))
+  {
+  }
+
+  LanXSetExtAccessory(uint16_t address, uint8_t aspect)
+    : LanXSetExtAccessory(address)
+  {
+    db2 = aspect;
+    updateChecksum();
+  }
+
+  LanXSetExtAccessory(uint16_t address, bool dir, uint8_t powerOnTime)
+    : LanXSetExtAccessory(address)
+  {
+    assert(powerOnTime <= 127);
+    db2 = powerOnTime & 0x7F;
+    if(dir)
+    {
+      db2 |= 0x80;
+    }
+    updateChecksum();
+  }
+
+  inline uint16_t rawAddress() const
+  {
+    return to16(addressLSB, addressMSB);
+  }
+
+  inline uint16_t address() const
+  {
+    return rawAddress() + 3;
+  }
+
+  inline uint8_t aspect() const
+  {
+    return db2;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXSetExtAccessory) == 10);
+
+// LAN_X_GET_EXT_ACCESSORY_INFO
+struct LanXGetExtAccessoryInfo : LanX
+{
+  uint8_t addressMSB;
+  uint8_t addressLSB;
+  uint8_t db2 = 0x00; // Reserved for future extension, must be 0x00
+  uint8_t checksum;
+
+  LanXGetExtAccessoryInfo(uint16_t address)
+    : LanX(sizeof(LanXGetExtAccessoryInfo), LAN_X_EXT_ACCESSORY_INFO)
+    , addressMSB(high8(address + 3))
+    , addressLSB(low8(address + 3))
+  {
+  }
+
+  inline uint16_t rawAddress() const
+  {
+    return to16(addressLSB, addressMSB);
+  }
+
+  inline uint16_t address() const
+  {
+    return rawAddress() + 3;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXGetExtAccessoryInfo) == 9);
+
+// LAN_X_EXT_ACCESSORY_INFO
+struct LanXExtAccessoryInfo : LanX
+{
+  uint8_t addressMSB;
+  uint8_t addressLSB;
+  uint8_t db2;
+  uint8_t db3 = 0x00;
+  uint8_t checksum;
+
+  LanXExtAccessoryInfo(uint16_t address)
+    : LanX(sizeof(LanXExtAccessoryInfo), LAN_X_EXT_ACCESSORY_INFO)
+    , addressMSB(high8(address + 3))
+    , addressLSB(low8(address + 3))
+  {
+  }
+
+  LanXExtAccessoryInfo(uint16_t address, uint8_t aspect, bool isUnknown)
+    : LanXExtAccessoryInfo(address)
+  {
+    db2 = aspect;
+    db3 = isUnknown ? 0xFF : 0x00; // 0xFF represent Unknown Data
+    updateChecksum();
+  }
+
+  LanXExtAccessoryInfo(uint16_t address, bool dir, uint8_t powerOnTime)
+    : LanXExtAccessoryInfo(address)
+  {
+    assert(powerOnTime <= 127);
+    db2 = powerOnTime & 0x7F;
+    if(dir)
+    {
+      db2 |= 0x80;
+    }
+    updateChecksum();
+  }
+
+  inline uint16_t rawAddress() const
+  {
+    return to16(addressLSB, addressMSB);
+  }
+
+  inline uint16_t address() const
+  {
+    return rawAddress() + 3;
+  }
+
+  inline bool isDataValid() const
+  {
+    return db3 == 0x00;
+  }
+
+  inline uint8_t aspect() const
+  {
+    return db2;
+  }
+
+  inline bool direction() const
+  {
+    return db2 & 0x80;
+  }
+
+  inline bool powerOnTime() const
+  {
+    return db2 & 0x7F;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXExtAccessoryInfo) == 10);
 
 // LAN_X_SET_STOP
 struct LanXSetStop : LanX
@@ -1031,6 +1203,55 @@ struct LanGetHardwareInfoReply : Message
 static_assert(sizeof(LanGetHardwareInfoReply) == 12);
 
 // LAN_X_TURNOUT_INFO
+struct LanXTurnoutInfo : LanX
+{
+  uint8_t addressMSB;
+  uint8_t addressLSB;
+  uint8_t db2;
+  uint8_t checksum;
+
+  LanXTurnoutInfo(uint16_t address, bool port, bool isUnknown)
+    : LanX(sizeof(LanXTurnoutInfo), LAN_X_TURNOUT_INFO)
+  {
+    setAddress(address);
+
+    if(isUnknown)
+      db2 = 0;
+    else
+      db2 = port ? 0x02 : 0x01;
+
+    updateChecksum();
+  }
+
+  inline uint16_t rawAddress() const
+  {
+    return to16(addressLSB, addressMSB);
+  }
+
+  inline uint16_t address() const
+  {
+    return 1 + rawAddress();
+  }
+
+  inline bool positionUnknown() const
+  {
+    return db2 == 0;
+  }
+
+  inline bool state() const
+  {
+    return db2 == 0x02;
+  }
+
+  void setAddress(uint16_t value)
+  {
+    assert(value >= 1 && value <= 2048);
+    value--;
+    addressMSB = high8(value);
+    addressLSB = low8(value);
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXTurnoutInfo) == 9);
 
 // LAN_X_BC_TRACK_POWER_OFF
 struct LanXBCTrackPowerOff : LanX
@@ -1078,6 +1299,17 @@ static_assert(sizeof(LanXBCTrackShortCircuit) == 7);
 // LAN_X_CV_NACK
 
 // LAN_X_UNKNOWN_COMMAND
+struct LanXUnknownCommand : LanX
+{
+  uint8_t db0 = LAN_X_UNKNOWN_COMMAND;
+  uint8_t checksum = xheader ^ db0;
+
+  LanXUnknownCommand() :
+      LanX(sizeof(LanXUnknownCommand), LAN_X_BC)
+  {
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXUnknownCommand) == 7);
 
 // LAN_X_STATUS_CHANGED
 struct LanXStatusChanged : LanX
@@ -1408,7 +1640,7 @@ struct LanRMBusDataChanged : Message
     else
       feedbackStatus[index >> 3] &= ~static_cast<uint8_t>(1 << (index & 0x7));
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LanRMBusDataChanged) == 15);
 
 // LAN_SYSTEMSTATE_DATACHANGED
@@ -1465,6 +1697,96 @@ constexpr std::string_view toString(LanXSetLocoFunction::SwitchType value)
   }
   return {};
 }
+
+struct MessageReplyType
+{
+  enum class Priority : uint8_t
+  {
+    Low = 0,
+    Normal = 1,
+    Urgent = 2
+  };
+
+  enum class Flags : uint8_t
+  {
+    CheckDb0       = 1 << 0,
+    CheckSpeedStep = 1 << 1,
+    CheckAddress   = 1 << 2
+  };
+
+  inline Priority priority() const
+  {
+    return Priority(m_flags & 0xF);
+  }
+
+  inline void setPriority(Priority value)
+  {
+    m_flags = uint8_t(getFlags()) << 4 | (uint8_t(value) & 0xF);
+  }
+
+  inline Flags getFlags() const
+  {
+    return Flags((m_flags >> 4) & 0xF);
+  }
+
+  inline bool hasFlag(Flags flag) const
+  {
+    return uint8_t(getFlags()) & uint8_t(flag);
+  }
+
+  inline void setFlag(Flags flag, bool on = true)
+  {
+    uint8_t flags = uint8_t(getFlags());
+    if(on)
+      flags |= uint8_t(flag);
+    else
+      flags &= ~uint8_t(flag);
+    setFlags(Flags(flags));
+  }
+
+  inline void setFlags(Flags flags)
+  {
+    m_flags = uint8_t(flags) << 4 | (uint8_t(priority()) & 0xF);
+  }
+
+  inline uint8_t speedSteps() const
+  {
+    switch(speedStepsEncoded & LanXLocoInfo::db2_speed_steps_mask)
+    {
+      case LanXLocoInfo::db2_speed_steps_14:  return 14;
+      case LanXLocoInfo::db2_speed_steps_28:  return 28;
+      case LanXLocoInfo::db2_speed_steps_128: return 126;
+    }
+    return 0;
+  }
+
+  inline void setSpeedSteps(uint8_t value)
+  {
+    speedStepsEncoded &= ~LanXLocoInfo::db2_speed_steps_mask;
+    switch(value)
+    {
+      case 14:  speedStepsEncoded |= LanXLocoInfo::db2_speed_steps_14;  break;
+      case 28:  speedStepsEncoded |= LanXLocoInfo::db2_speed_steps_28;  break;
+      case 126:
+      case 128:
+      default:  speedStepsEncoded |= LanXLocoInfo::db2_speed_steps_128; break;
+    }
+  }
+
+  static constexpr Header noReply = Header(0);
+
+  Header header = noReply;
+  uint8_t xHeader = 0;
+  uint8_t db0 = 0;
+  uint16_t address = 0;
+  uint8_t m_flags = uint8_t(Priority::Normal);
+
+  // Encoded as LAN_X_
+  uint8_t speedAndDirection = 0;
+  uint8_t speedStepsEncoded = 0;
+};
+
+MessageReplyType getReplyType(const Message &message);
 
 }
 

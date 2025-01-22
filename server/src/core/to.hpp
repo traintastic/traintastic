@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <limits>
 #include <stdexcept>
 #include <cmath>
+#include <traintastic/set/set.hpp>
 #include "../utils/json.hpp"
 
 #ifdef WIN32
@@ -78,10 +79,23 @@ To to(const From& value)
     return value;
   else if constexpr(std::is_integral_v<To> && std::is_enum_v<From>)
     return static_cast<To>(value);
-  else if constexpr(std::is_enum_v<To> && std::is_integral_v<From>)
+  else if constexpr(std::is_enum_v<To> && std::is_integral_v<From>) // int -> enum/set
   {
     // TODO: test if enum value is valid !!
     return static_cast<To>(value);
+  }
+  else if constexpr(std::is_enum_v<To> && !is_set_v<To> && std::is_same_v<From, std::string>) // string -> enum
+  {
+    auto it = std::find_if(EnumValues<To>::value.begin(), EnumValues<To>::value.end(),
+      [&value](const auto& n)
+      {
+        return n.second == value;
+      });
+
+    if(it != EnumValues<To>::value.end())
+    {
+      return it->first;
+    }
   }
   else if constexpr(!std::is_same_v<To, bool> && std::is_integral_v<To> && !std::is_same_v<From, bool> && std::is_integral_v<From>)
   {
@@ -126,6 +140,22 @@ To to(const From& value)
       from_json(value, e);
       return e;
     }
+    else if constexpr(std::is_floating_point_v<To>)
+    {
+      if(value == "Inf")
+      {
+        return std::numeric_limits<To>::infinity();
+      }
+      else if(value == "-Inf")
+      {
+        return -std::numeric_limits<To>::infinity();
+      }
+      else if(value == "NaN")
+      {
+        return std::numeric_limits<To>::quiet_NaN();;
+      }
+      return value;
+    }
     else
       return value;
   }
@@ -141,6 +171,18 @@ To to(const From& value)
       To json;
       to_json(json, value);
       return json;
+    }
+    else if constexpr(std::is_floating_point_v<From>)
+    {
+      if(std::isinf(value))
+      {
+        return (value > 0) ? "Inf" : "-Inf";
+      }
+      else if(std::isnan(value))
+      {
+        return "NaN";
+      }
+      return value;
     }
     else
       return value;

@@ -61,6 +61,10 @@ Locale::Locale(std::filesystem::path _filename, std::unique_ptr<const Locale> fa
         p += 4 - (len % 4);
     }
   }
+  else
+  {
+    throw std::runtime_error(std::string("Failed loading language file: ").append(filename.string()));
+  }
 }
 
 void Locale::enableMissingLogging()
@@ -88,12 +92,16 @@ QString Locale::translate(const QString& id) const
 
 QString Locale::parse(const QString& text) const
 {
-  static QRegularExpression re("\\$([a-z0-9:\\._]+)\\$");
-  QRegularExpressionMatch m = re.match(text);
-  if(m.hasMatch())
-    return QString(text).replace(m.capturedStart(), m.capturedLength(), translate(m.captured(1)));
-  else
-    return text;
+  QString result{text};
+  static const QRegularExpression re("\\$([a-z0-9:\\._]+?)\\$");
+  QRegularExpressionMatch m = re.match(result);
+  while(m.hasMatch())
+  {
+    const auto s = translate(m.captured(1));
+    result.replace(m.capturedStart(), m.capturedLength(), s);
+    m = re.match(result, m.capturedStart() + s.size());
+  }
+  return result;
 }
 #else
 std::string_view Locale::translate(std::string_view id) const

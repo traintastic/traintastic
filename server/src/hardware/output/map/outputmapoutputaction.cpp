@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,71 +21,35 @@
  */
 
 #include "outputmapoutputaction.hpp"
-#include "../../../core/attributes.hpp"
-#include "../../../core/method.tpp"
+#include "outputmap.hpp"
 #include "../../../world/getworld.hpp"
+#include "../../../utils/tohex.hpp"
 
-#include <thread> //! @todo remove
-
-OutputMapOutputAction::OutputMapOutputAction(Object& _parent, std::shared_ptr<Output> _output) :
+OutputMapOutputAction::OutputMapOutputAction(OutputMap& _parent, size_t outputIndex) :
   m_parent{_parent},
-  m_output{_output},
-  action{this, "action", OutputAction::None, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  m_outputIndex{outputIndex}
 {
-  const bool editable = contains(getWorld(m_parent).state.value(), WorldState::Edit);
-
-  Attributes::addEnabled(action, editable);
-  Attributes::addValues(action, OutputActionValues);
-  m_interfaceItems.add(action);
 }
 
 std::string OutputMapOutputAction::getObjectId() const
 {
   std::string id{m_parent.getObjectId()};
-  id.append(".");
-  id.append(m_output->getObjectId());
+  id.append(".action_");
+  id.append(toHex(reinterpret_cast<uintptr_t>(this)));
   return id;
 }
 
-void OutputMapOutputAction::execute()
+World& OutputMapOutputAction::world()
 {
-  switch(action.value())
-  {
-    case OutputAction::None:
-      break;
-
-    case OutputAction::Off:
-      m_output->setValue(false);
-      break;
-
-    case OutputAction::On:
-      m_output->setValue(true);
-      break;
-
-    case OutputAction::Pulse:
-    {
-      //! @todo quick hack, add method pulse to output
-      using namespace std::chrono_literals;
-      m_output->setValue(true);
-      std::this_thread::sleep_for(100ms);
-      m_output->setValue(false);
-      break;
-    }
-  }
+  return getWorld(m_parent);
 }
 
-void OutputMapOutputAction::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const
+Output& OutputMapOutputAction::output()
 {
-  Object::save(saver, data, state);
-
-  data["output"] = m_output->id.toJSON();
+  return *m_parent.output(m_outputIndex);
 }
 
-void OutputMapOutputAction::worldEvent(WorldState state, WorldEvent event)
+const Output& OutputMapOutputAction::output() const
 {
-  Object::worldEvent(state, event);
-
-  const bool editable = contains(state, WorldState::Edit);
-
-  Attributes::setEnabled(action, editable);
+    return *m_parent.output(m_outputIndex);
 }

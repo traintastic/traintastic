@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +29,6 @@ UnitProperty::UnitProperty(Object& object, const QString& name, ValueType type, 
   m_unitName{unitName},
   m_unitValue{unitValue}
 {
-  m_unitValue = m_unitValue;
 }
 
 void UnitProperty::setUnitValue(qint64 value)

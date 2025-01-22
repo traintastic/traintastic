@@ -8,6 +8,11 @@
 
 #main
 {
+  margin-left: 16em;
+}
+
+#main.luadoc
+{
   margin-right: 16em;
 }
 
@@ -19,25 +24,36 @@ img.img-float-right
 
 /** TOC **********************************************************************/
 
-#toc
+.toc
 {
-  border-left: solid 2px #bbb;
-  padding-left: 1.5em;
   color: #444;
+  padding-left: 1.5em;
+  padding-right: 1.5em;
   position: fixed;
-  right: 0;
   top: 1.5em;
-  width: 15em;
+  width: 14em;
 }
 
-#toc span.title
+.toc.toc-right
+{
+  border-left: solid 2px #bbb;
+  right: 0;
+}
+
+.toc.toc-left
+{
+  border-right: solid 2px #bbb;
+  left: 0;
+}
+
+.toc span.title
 {
   font-size: 110%;
   font-weight: bold;
   display: inline-block;
 }
 
-#toc ul
+.toc ul
 {
   margin: 1em 0;
   padding: 0;
@@ -45,31 +61,31 @@ img.img-float-right
   font-size: 90%;
 }
 
-#toc ul:last-child
+.toc ul:last-child
 {
   margin-bottom: 0;
 }
 
-#toc ul ul
+.toc ul ul
 {
   margin: 0;
   padding-left: 1em;
   font-size: 90%;
 }
 
-#toc a
+.toc a
 {
   color: #888;
   text-decoration: none;
 }
 
-#toc a:hover
+.toc a:hover
 {
   text-decoration: underline;
 }
 
-#toc a:hover,
-#toc a.selected
+.toc a:hover,
+.toc a.selected
 {
   color: #000;
 }
@@ -304,13 +320,14 @@ ul.index-az-nav li a
 
 /** Lua **********************************************************************/
 
-pre[lang="lua"]
+pre[lang="lua"],
+pre[lang="bash"]
 {
   border: solid 1px darkgray;
   background-color: #f8f8f8;
   font-size: 80%;
   line-height: normal;
-  padding: 0.2em 0.3em 0.2em 0.3em;
+  padding: 0.4em;
 }
 
 pre[lang="lua"] code span.const
@@ -323,6 +340,11 @@ pre[lang="lua"] code span.keyword
   color: blue;
 }
 
+pre[lang="lua"] code span.number
+{
+  color: magenta;
+}
+
 pre[lang="lua"] code span.global
 {
   color: chocolate;
@@ -333,14 +355,15 @@ pre[lang="lua"] code span.text
   color: darkgreen;
 }
 
-pre[lang="lua"] code span.comment
+pre[lang="lua"] code span.comment,
+pre[lang="lua"] code span.comment a
 {
-  color: darkslategray;
+  color: gray;
 }
 
-code.lua span.keyword
+pre[lang="lua"] code span.function
 {
-  color: #000080;
+  color: teal;
 }
 
 /** MEDIA BREAKPOINTS ********************************************************/
@@ -350,10 +373,86 @@ code.lua span.keyword
   #main
   {
     margin-right: 0;
+    margin-left: 0;
   }
 
-  #toc
+  .toc
   {
     display: none;
+  }
+}
+
+/** Dark mode **/
+
+@media (prefers-color-scheme: dark)
+{
+  body
+  {
+      background-color: #111;
+      color: #eee;
+  }
+
+  a
+  {
+    color: rgb(47, 129, 247)
+  }
+
+  .toc
+  {
+    border-color: #555;
+    color: #ccc;
+  }
+
+  .toc a:hover,
+  .toc a.selected
+  {
+    color: #fff;
+  }
+
+  .content table thead tr
+  {
+    background: #222;
+  }
+
+  .content table tbody tr:nth-child(even)
+  {
+    background: #222;
+  }
+
+  p.note
+  {
+    border-left-color: blue;
+  }
+
+  pre[lang="lua"],
+  pre[lang="bash"]
+  {
+    border-color: gray;
+    background-color: #222;
+  }
+
+  pre[lang="lua"] code span.const
+  {
+    color: violet;
+  }
+
+  pre[lang="lua"] code span.text
+  {
+    color: lawngreen;
+  }
+
+  pre[lang="lua"] code span.keyword
+  {
+    color: cyan;
+  }
+
+  pre[lang="lua"] code span.global
+  {
+    color: orange;
+  }
+
+  pre[lang="lua"] code span.function
+  {
+    color: #66CDAA;
   }
 }

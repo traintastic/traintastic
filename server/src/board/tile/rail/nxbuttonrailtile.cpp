@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,12 +37,27 @@ static std::shared_ptr<BlockRailTile> findBlock(Node& node, uint8_t linkIndex)
   {
     return {};
   }
-  auto& tile = link->getNext(node).tile();
-  if(tile.tileId() != TileId::RailBlock)
+  auto* tile = &link->getNext(node).tile();
+  while(tile->tileId != TileId::RailBlock)
   {
-    return {};
+    if(isRailBridge(tile->tileId))
+    {
+      auto& bridgeNode = (*tile->node()).get();
+      size_t index = bridgeNode.getIndex(*link);
+      if(index >= bridgeNode.links().size()) /*[[unlikely]]*/
+      {
+        assert(false);
+        return {};
+      }
+      link = bridgeNode.getLink((index + 2) % 4);
+      tile = &link->getNext(bridgeNode).tile();
+    }
+    else
+    {
+      return {};
+    }
   }
-  return tile.shared_ptr<BlockRailTile>();
+  return tile->shared_ptr<BlockRailTile>();
 }
 
 NXButtonRailTile::NXButtonRailTile(World& world, std::string_view id_)

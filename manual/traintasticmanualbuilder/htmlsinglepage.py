@@ -86,7 +86,7 @@ class HTMLSinglePageBuilder(HTMLBuilder):
 </head>
 <body>
   <div id="layout">
-    <div id="toc">
+    <div id="toc" class="toc toc-left">
       <span class="title" href="#">Index</span>
       <ul>
 '''

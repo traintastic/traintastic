@@ -106,6 +106,12 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
       changed();
     }
 
+    void insertInternal(size_t index, std::shared_ptr<T> value)
+    {
+      m_values.emplace(m_values.begin() + std::min(index, m_values.size()), std::move(value));
+      changed();
+    }
+
     void removeInternal(const std::shared_ptr<T>& value)
     {
       auto it = std::find(m_values.begin(), m_values.end(), value);

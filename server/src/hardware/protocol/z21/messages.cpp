@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -91,18 +91,61 @@ std::string toString(const Message& message, bool raw)
             raw = true;
           break;
 
+        case LAN_X_TURNOUT_INFO:
+        {
+          if(message.dataLen() == sizeof(LanXTurnoutInfo))
+          {
+            const auto& reply = static_cast<const LanXTurnoutInfo&>(message);
+            s = "LAN_X_TURNOUT_INFO";
+            s.append(" address=").append(std::to_string(reply.address()));
+            s.append(" port=").append(std::to_string(reply.state()));
+            s.append(" unknown=").append(std::to_string(reply.positionUnknown()));
+          }
+          else
+          {
+            const auto& getTurnoutInfo = static_cast<const LanXGetTurnoutInfo&>(message);
+            s = "LAN_X_GET_TURNOUT_INFO";
+            s.append(" address=").append(std::to_string(getTurnoutInfo.address()));
+          }
+          break;
+        }
+
         case LAN_X_SET_TURNOUT:
         {
           const auto& setTurnout = static_cast<const LanXSetTurnout&>(message);
           s = "LAN_X_SET_TURNOUT";
-          s.append(" linear_address=").append(std::to_string(setTurnout.linearAddress()));
           s.append(" address=").append(std::to_string(setTurnout.address()));
-          s.append(" port=").append(std::to_string(setTurnout.port()));
+          s.append(" port=").append(setTurnout.port() ? "1" : "2");
           s.append(" activate=").append(setTurnout.activate() ? "yes" : "no");
           s.append(" queue=").append(setTurnout.queue() ? "yes" : "no");
           break;
         }
-
+        case LAN_X_EXT_ACCESSORY_INFO:
+        {
+          if(message.dataLen() == sizeof(LanXExtAccessoryInfo))
+          {
+            const auto& reply = static_cast<const LanXExtAccessoryInfo&>(message);
+            s = "LAN_X_EXT_ACCESSORY_INFO";
+            s.append(" address=").append(std::to_string(reply.address()));
+            s.append(" db2=").append(std::to_string(reply.aspect()));
+            s.append(" unknown=").append(std::to_string(!reply.isDataValid()));
+          }
+          else
+          {
+            const auto& getAccessoryInfo = static_cast<const LanXGetExtAccessoryInfo&>(message);
+            s = "LAN_X_GET_EXT_ACCESSORY_INFO";
+            s.append(" address=").append(std::to_string(getAccessoryInfo.address()));
+          }
+          break;
+        }
+        case LAN_X_SET_EXT_ACCESSORY:
+        {
+          const auto& setExtAccessory = static_cast<const LanXSetExtAccessory&>(message);
+          s = "LAN_X_SET_EXT_ACCESSORY";
+          s.append(" address=").append(std::to_string(setExtAccessory.address()));
+          s.append(" db2=").append(std::to_string(setExtAccessory.db2));
+          break;
+        }
         case LAN_X_BC:
           if(message == LanXBCTrackPowerOff())
             s = "LAN_X_BC_TRACK_POWER_OFF";
@@ -110,12 +153,14 @@ std::string toString(const Message& message, bool raw)
             s = "LAN_X_BC_TRACK_POWER_ON";
           else if(message == LanXBCTrackShortCircuit())
             s = "LAN_X_BC_TRACK_SHORT_CIRCUIT";
+          else if(message == LanXUnknownCommand())
+            s = "LAN_X_UNKNOWN_COMMAND";
           else
             raw = true;
           break;
 
         case LAN_X_STATUS_CHANGED:
-          if(const LanXStatusChanged& statusChanged = static_cast<const LanXStatusChanged&>(message); statusChanged.db0 == 0x22)
+          if(const auto& statusChanged = static_cast<const LanXStatusChanged&>(message); statusChanged.db0 == 0x22)
           {
             s = "LAN_X_STATUS_CHANGED";
             s.append(" emergency_stop=").append(statusChanged.db1 & Z21_CENTRALSTATE_EMERGENCYSTOP ? "yes" : "no");
@@ -270,7 +315,7 @@ std::string toString(const Message& message, bool raw)
   if(raw)
   {
     s.append(" [");
-    const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&message);
+    const auto* bytes = reinterpret_cast<const uint8_t*>(&message);
     for(uint16_t i = sizeof(Message); i < message.dataLen(); i++)
     {
       if(i != sizeof(Message))
@@ -300,16 +345,7 @@ LanXLocoInfo::LanXLocoInfo(const Decoder& decoder) :
 
 void LanX::updateChecksum(uint8_t len)
 {
-  uint8_t val = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&xheader), len);
-  uint8_t* checksum = &xheader + len + 1;
-#ifdef __MINGW32__
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wstringop-overflow"
-#endif
-  *checksum = val;
-#ifdef __MINGW32__
-  #pragma GCC diagnostic pop  
-#endif
+  *(reinterpret_cast<uint8_t*>(this) + sizeof(LanX) + len) = XpressNet::calcChecksum(*reinterpret_cast<const XpressNet::Message*>(&xheader), len);
 }
 
 bool LanX::isChecksumValid(const LanX &lanX)
@@ -323,6 +359,193 @@ bool LanX::isChecksumValid(const LanX &lanX)
   }
 
   return XpressNet::isChecksumValid(msg, dataSize);
+}
+
+MessageReplyType getReplyType(const Message &message)
+{
+  switch (message.header())
+  {
+    //Messages whose replies have same header
+    case LAN_GET_SERIAL_NUMBER:
+    case LAN_GET_CODE:
+    case LAN_GET_HWINFO:
+    {
+      MessageReplyType reply;
+      reply.header = message.header();
+      reply.setPriority(MessageReplyType::Priority::Low);
+      return reply;
+    }
+
+    case LAN_GET_BROADCASTFLAGS:
+    case LAN_LOCONET_DETECTOR:
+    case LAN_CAN_DETECTOR:
+      return {message.header()};
+
+    case LAN_GET_LOCO_MODE:
+    case LAN_GET_TURNOUTMODE:
+    {
+      MessageReplyType reply;
+      reply.header = message.header();
+      reply.setFlag(MessageReplyType::Flags::CheckAddress);
+
+      if(message.header() == LAN_GET_LOCO_MODE)
+        reply.address = static_cast<const LanGetLocoMode&>(message).address();
+
+      // NOTE: not (yet) supported
+      //else
+      //  reply.address = static_cast<const LanGetTurnoutMode&>(message).address();
+
+      return reply;
+    }
+
+    // NOTE: This message has no reply for Z21 firmware < 1.22
+    // NOTE: not (yet) supported
+    case LAN_LOCONET_DISPATCH_ADDR:
+      return {LAN_LOCONET_DISPATCH_ADDR};
+
+    case LAN_X:
+    {
+      const LanX& lanX = static_cast<const LanX&>(message);
+      switch (lanX.xheader)
+      {
+        case 0x21:
+        {
+          MessageReplyType reply;
+          reply.header = LAN_X;
+          reply.setPriority(MessageReplyType::Priority::Low);
+          reply.setFlag(MessageReplyType::Flags::CheckDb0);
+
+          // Cast to any LanX message with a db0 to check its value
+          const auto& hack = static_cast<const LanXGetStatus&>(lanX);
+          switch (hack.db0)
+          {
+            case 0x21: // LAN_X_GET_VERSION
+            {
+              reply.xHeader = LAN_X_GET_VERSION_REPLY;
+              break;
+            }
+
+            case 0x24: // LAN_X_GET_STATUS
+            {
+              reply.xHeader = LAN_X_STATUS_CHANGED;
+              break;
+            }
+
+            case LAN_X_SET_TRACK_POWER_OFF:
+            {
+              reply.xHeader = LAN_X_BC;
+              reply.db0 = LAN_X_BC_TRACK_POWER_OFF;
+              reply.setPriority(MessageReplyType::Priority::Urgent);
+              break;
+            }
+
+            case LAN_X_SET_TRACK_POWER_ON:
+            {
+              //LAN_X_SET_TRACK_POWER_ON
+              reply.xHeader = LAN_X_BC;
+              reply.db0 = LAN_X_BC_TRACK_POWER_ON;
+              reply.setPriority(MessageReplyType::Priority::Urgent);
+              break;
+            }
+
+            default:
+              return {MessageReplyType::noReply};
+          }
+          return reply;
+        }
+
+        case LAN_X_TURNOUT_INFO:
+        case LAN_X_SET_TURNOUT:
+        {
+          MessageReplyType reply;
+          reply.header = LAN_X;
+          reply.xHeader = LAN_X_TURNOUT_INFO;
+          reply.setFlag(MessageReplyType::Flags::CheckAddress);
+
+          if(lanX.xheader == LAN_X_TURNOUT_INFO)
+            reply.address = static_cast<const LanXGetTurnoutInfo&>(lanX).address();
+          else
+            reply.address = static_cast<const LanXSetTurnout&>(lanX).address();
+
+          return reply;
+        }
+
+        case LAN_X_SET_STOP:
+        {
+          MessageReplyType reply;
+          reply.header = LAN_X;
+          reply.xHeader = LAN_X_BC_STOPPED;
+          reply.setPriority(MessageReplyType::Priority::Urgent);
+          return reply;
+        }
+
+        case LAN_X_GET_LOCO_INFO:
+        case LAN_X_SET_LOCO:
+        {
+          MessageReplyType reply;
+          reply.header = LAN_X;
+          reply.xHeader = LAN_X_LOCO_INFO;
+          reply.setFlag(MessageReplyType::Flags::CheckAddress);
+
+          if(lanX.xheader == LAN_X_GET_LOCO_INFO)
+          {
+            reply.address = static_cast<const LanXGetLocoInfo&>(lanX).address();
+          }
+          else
+          {
+            if(const auto& setLocoDrive = static_cast<const LanXSetLocoDrive&>(message);
+                setLocoDrive.db0 >= 0x10 && setLocoDrive.db0 <= 0x13)
+            {
+              reply.address = setLocoDrive.address();
+              reply.speedAndDirection = setLocoDrive.speedAndDirection;
+              reply.setSpeedSteps(setLocoDrive.speedSteps());
+              reply.setFlag(MessageReplyType::Flags::CheckSpeedStep);
+            }
+            else if(const auto& setLocoFunction = static_cast<const LanXSetLocoFunction&>(message);
+                     setLocoFunction.db0 == 0xF8)
+            {
+              reply.address = setLocoFunction.address();
+            }
+            else
+            {
+              //Other loco function messages do not have standard reply
+              return {MessageReplyType::noReply};
+            }
+          }
+
+          return reply;
+        }
+
+        case LAN_X_GET_FIRMWARE_VERSION:
+        {
+          MessageReplyType reply;
+          reply.header = LAN_X;
+          reply.xHeader = LAN_X_GET_FIRMWARE_VERSION_REPLY;
+          reply.setPriority(MessageReplyType::Priority::Low);
+          return reply;
+        }
+
+        default:
+          break;
+      }
+      break;
+    }
+
+    case LAN_RMBUS_GETDATA:
+      return {LAN_RMBUS_DATACHANGED};
+
+    case LAN_SYSTEMSTATE_GETDATA:
+      return {LAN_SYSTEMSTATE_DATACHANGED};
+
+    case LAN_RAILCOM_GETDATA:
+      return {LAN_RAILCOM_DATACHANGED};
+
+    default:
+      break;
+  }
+
+  //Message has no reply or it's no supported by Traintastic
+  return {MessageReplyType::noReply};
 }
 
 }

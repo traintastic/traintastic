@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_MAP_TURNOUTOUTPUTMAPITEM_HPP
 
 #include "outputmapitembase.hpp"
-#include "../../../enum/turnoutposition.hpp"
+#include <traintastic/enum/turnoutposition.hpp>
 
 class TurnoutOutputMapItem : public OutputMapItemBase<TurnoutPosition>
 {
@@ -32,6 +32,8 @@ class TurnoutOutputMapItem : public OutputMapItemBase<TurnoutPosition>
 
   public:
     TurnoutOutputMapItem(Object& map, TurnoutPosition position);
+
+    Property<bool> visible;
 };
 
 #endif

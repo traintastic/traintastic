@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,54 +33,31 @@
 OutputList::OutputList(Object& _parent, std::string_view parentPropertyName, OutputListColumn _columns)
   : ObjectList<Output>(_parent, parentPropertyName)
   , columns{_columns}
-  , create{*this, "create",
-      [this]()
-      {
-        auto& world = getWorld(parent());
-        auto output = Output::create(world, world.getUniqueId(Output::defaultId));
-        if(const auto controller = std::dynamic_pointer_cast<OutputController>(parent().shared_from_this()))
-          output->interface = controller;
-        return output;
-      }}
-  , delete_{*this, "delete", std::bind(&OutputList::deleteMethodHandler, this, std::placeholders::_1)}
   , outputKeyboard{*this, "output_keyboard",
-      [this]()
+      [this](OutputChannel channel)
       {
         if(const auto controller = std::dynamic_pointer_cast<OutputController>(parent().shared_from_this()))
-          return controller->outputKeyboard(OutputController::defaultOutputChannel);
-        return std::shared_ptr<OutputKeyboard>();
-      }}
-  , outputKeyboardChannel{*this, "output_keyboard_channel",
-      [this](uint32_t channel)
-      {
-        if(const auto controller = std::dynamic_pointer_cast<OutputController>(parent().shared_from_this()))
+        {
           return controller->outputKeyboard(channel);
+        }
         return std::shared_ptr<OutputKeyboard>();
       }}
 {
-  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
-
-  Attributes::addDisplayName(create, DisplayName::List::create);
-  Attributes::addEnabled(create, editable);
-  m_interfaceItems.add(create);
-
-  Attributes::addDisplayName(delete_, DisplayName::List::delete_);
-  Attributes::addEnabled(delete_, editable);
-  m_interfaceItems.add(delete_);
-
   if(auto* controller = dynamic_cast<OutputController*>(&_parent))
   {
-    const auto* channels = controller->outputChannels();
-    if(channels && !channels->empty())
+    std::vector<OutputChannel> channels;
+    for(auto channel : controller->outputChannels())
     {
-      Attributes::addDisplayName(outputKeyboardChannel, DisplayName::Hardware::outputKeyboard);
-      Attributes::addValues(outputKeyboardChannel, channels);
-      Attributes::addAliases(outputKeyboardChannel, channels, controller->outputChannelNames());
-      m_interfaceItems.add(outputKeyboardChannel);
+      if(controller->hasOutputKeyboard(channel))
+      {
+        channels.emplace_back(channel);
+      }
     }
-    else
+
+    if(!channels.empty()) /*[[likely]]*/
     {
       Attributes::addDisplayName(outputKeyboard, DisplayName::Hardware::outputKeyboard);
+      Attributes::addValues(outputKeyboard, std::move(channels));
       m_interfaceItems.add(outputKeyboard);
     }
   }
@@ -89,16 +66,6 @@ OutputList::OutputList(Object& _parent, std::string_view parentPropertyName, Out
 TableModelPtr OutputList::getModel()
 {
   return std::make_shared<OutputListTableModel>(*this);
-}
-
-void OutputList::worldEvent(WorldState state, WorldEvent event)
-{
-  ObjectList<Output>::worldEvent(state, event);
-
-  const bool editable = contains(state, WorldState::Edit);
-
-  Attributes::setEnabled(create, editable);
-  Attributes::setEnabled(delete_, editable);
 }
 
 bool OutputList::isListedProperty(std::string_view name)

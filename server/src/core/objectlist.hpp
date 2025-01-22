@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -118,7 +118,7 @@ class ObjectList : public AbstractObjectList
     ObjectList(Object& _parent, std::string_view parentPropertyName) :
       AbstractObjectList{_parent, parentPropertyName}
     {
-      static_assert(std::is_base_of_v<IdObject, T> || std::is_base_of_v<SubObject, T>);
+      static_assert(std::is_base_of_v<Object, T>);
     }
 
     ~ObjectList()

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,9 +26,13 @@
 #include "../../../../core/attributes.hpp"
 #include "../../../../core/method.tpp"
 #include "../../../../core/objectproperty.tpp"
+#include "../../../../hardware/output/outputcontroller.hpp"
 
-static const std::array<SignalAspect, 3> aspectValues = {SignalAspect::Stop, SignalAspect::Proceed, SignalAspect::Unknown};
-static const std::array<SignalAspect, 2> setAspectValues = {SignalAspect::Stop, SignalAspect::Proceed};
+static constexpr std::array<SignalAspect, 3> aspectValues = {
+    SignalAspect::Unknown,
+    SignalAspect::Stop,
+    SignalAspect::Proceed
+};
 
 namespace
 {
@@ -66,13 +70,18 @@ namespace
 Signal2AspectRailTile::Signal2AspectRailTile(World& world, std::string_view _id) :
   SignalRailTile(world, _id, TileId::RailSignal2Aspect)
 {
-  outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::Proceed}));
+  // Skip Unknown aspect
+  tcb::span<const SignalAspect, 2> setAspectValues = tcb::make_span(aspectValues).subspan<1>();
+
+  outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::Proceed}, getDefaultActionValue));
 
   Attributes::addValues(aspect, aspectValues);
   m_interfaceItems.add(aspect);
 
   Attributes::addValues(setAspect, setAspectValues);
   m_interfaceItems.add(setAspect);
+
+  connectOutputMap();
 }
 
 void Signal2AspectRailTile::boardModified()

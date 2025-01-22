@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021,2023 Reinder Feenstra
+ * Copyright (C) 2020-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SENSORRAILTILE_HPP
 
 #include "straightrailtile.hpp"
+#include "../../../core/method.hpp"
 #include "../../../core/objectproperty.hpp"
 #include "../../../hardware/input/input.hpp"
 #include "../../../enum/sensortype.hpp"
@@ -42,8 +43,10 @@ class SensorRailTile : public StraightRailTile
     void connectInput(Input& object);
     void disconnectInput(Input& object);
     void inputPropertyChanged(BaseProperty& property);
+    void updateSimulateTriggerEnabled();
 
   protected:
+    void load(WorldLoader& loader, const nlohmann::json& data) override;
     void loaded() override;
     void destroying() override;
     void worldEvent(WorldState worldState, WorldEvent worldEvent) override;
@@ -54,6 +57,7 @@ class SensorRailTile : public StraightRailTile
     Property<SensorType> type;
     Property<bool> invert;
     Property<SensorState> state;
+    Method<void()> simulateTrigger;
 
     SensorRailTile(World& world, std::string_view _id);
     ~SensorRailTile() override;

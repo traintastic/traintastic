@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,10 +86,8 @@ class MarklinCANInterface final
     std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final;
 
     // OutputController:
-    const std::vector<uint32_t>* outputChannels() const final;
-    const std::vector<std::string_view>* outputChannelNames() const final;
-    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t channel) const final;
-    [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
+    tcb::span<const OutputChannel> outputChannels() const final;
+    [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t address, OutputValue value) final;
 };
 
 #endif

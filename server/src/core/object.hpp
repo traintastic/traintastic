@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,6 +68,24 @@ class Object : public std::enable_shared_from_this<Object>
       event.fire(std::forward<Args>(args)...);
     }
 
+    template<class T, class... Args>
+    inline void fireEvent(Event<const std::shared_ptr<T>&, Args...>& event, const std::shared_ptr<T>& object, Args... args)
+    {
+      event.fire(object, std::forward<Args>(args)...);
+    }
+
+    template<class T1, class T2, class... Args>
+    inline void fireEvent(Event<T1, const std::shared_ptr<T2>&, Args...>& event, T1 value1, const std::shared_ptr<T2>& object2, Args... args)
+    {
+      event.fire(value1, object2, std::forward<Args>(args)...);
+    }
+
+    template<class T1, class T2, class... Args>
+    inline void fireEvent(Event<const std::shared_ptr<T1>&, const std::shared_ptr<T2>&, Args...>& event, const std::shared_ptr<T1>& object1, const std::shared_ptr<T2>& object2, Args... args)
+    {
+      event.fire(object1, object2, std::forward<Args>(args)...);
+    }
+
     virtual void destroying() {}
     virtual void load(WorldLoader& loader, const nlohmann::json& data);
     virtual void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const;
@@ -116,6 +134,8 @@ class Object : public std::enable_shared_from_this<Object>
     AbstractObjectProperty* getObjectProperty(std::string_view name);
     const AbstractVectorProperty* getVectorProperty(std::string_view name) const;
     AbstractVectorProperty* getVectorProperty(std::string_view name);
+    const AbstractEvent* getEvent(std::string_view name) const;
+    AbstractEvent* getEvent(std::string_view name);
 };
 
 #endif

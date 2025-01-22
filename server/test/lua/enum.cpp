@@ -20,7 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_template_test_macros.hpp>
+#include <algorithm>
 #include "protect.hpp"
 #include "run.hpp"
 #include "../../src/lua/enums.hpp"
@@ -48,7 +49,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   const TestType lastKey = EnumValues<TestType>::value.rbegin()->first;
 
   {
-    INFO("write to enum.*")
+    INFO("write to enum.*");
 
     lua_State* L = createState<TestType>();
 
@@ -79,7 +80,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("iterate over enum.*")
+    INFO("iterate over enum.*");
 
     lua_State* L = createState<TestType>();
 
@@ -141,7 +142,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("single value")
+    INFO("single value");
 
     lua_State* L = createState<TestType>();
 
@@ -160,7 +161,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("tostring")
+    INFO("tostring");
 
     lua_State* L = createState<TestType>();
 
@@ -182,7 +183,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("add")
+    INFO("add");
 
     lua_State* L = createState<TestType>();
 
@@ -194,7 +195,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("subtract")
+    INFO("subtract");
 
     lua_State* L = createState<TestType>();
 
@@ -206,7 +207,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("multiply")
+    INFO("multiply");
 
     lua_State* L = createState<TestType>();
 
@@ -218,7 +219,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("modulo")
+    INFO("modulo");
 
     lua_State* L = createState<TestType>();
 
@@ -230,7 +231,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("power")
+    INFO("power");
 
     lua_State* L = createState<TestType>();
 
@@ -242,7 +243,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("divide")
+    INFO("divide");
 
     lua_State* L = createState<TestType>();
 
@@ -254,7 +255,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("divide (integer)")
+    INFO("divide (integer)");
 
     lua_State* L = createState<TestType>();
 
@@ -266,7 +267,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("binary and")
+    INFO("binary and");
 
     lua_State* L = createState<TestType>();
 
@@ -278,7 +279,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("binary or")
+    INFO("binary or");
 
     lua_State* L = createState<TestType>();
 
@@ -290,7 +291,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("binary xor")
+    INFO("binary xor");
 
     lua_State* L = createState<TestType>();
 
@@ -302,7 +303,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("shift left")
+    INFO("shift left");
 
     lua_State* L = createState<TestType>();
 
@@ -314,7 +315,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("shift right")
+    INFO("shift right");
 
     lua_State* L = createState<TestType>();
 
@@ -326,7 +327,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("unary minus")
+    INFO("unary minus");
 
     lua_State* L = createState<TestType>();
 
@@ -337,7 +338,7 @@ TEMPLATE_TEST_CASE("Lua::Enum<>", "[lua][lua-enum]", LUA_ENUMS)
   }
 
   {
-    INFO("binary not")
+    INFO("binary not");
 
     lua_State* L = createState<TestType>();
 

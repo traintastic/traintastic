@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,10 +23,12 @@
 #ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SIGNAL_SIGNALRAILTILE_HPP
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_SIGNAL_SIGNALRAILTILE_HPP
 
+#include <chrono>
 #include "../straightrailtile.hpp"
 #include <traintastic/enum/autoyesno.hpp>
 #include "../../../map/node.hpp"
 #include "../../../../core/method.hpp"
+#include "../../../../core/event.hpp"
 #include "../../../../enum/signalaspect.hpp"
 #include "../../../../core/objectproperty.hpp"
 #include "../../../../hardware/output/map/signaloutputmap.hpp"
@@ -42,23 +44,36 @@ class SignalRailTile : public StraightRailTile
     Node m_node;
     std::unique_ptr<AbstractSignalPath> m_signalPath;
     std::weak_ptr<BlockPath> m_blockPath;
+    std::chrono::steady_clock::time_point m_lastRetryStart;
+    uint8_t m_retryCount;
+    static constexpr uint8_t MAX_RETRYCOUNT = 3;
+    static constexpr std::chrono::steady_clock::duration RETRY_DURATION = std::chrono::minutes(1);
 
-    SignalRailTile(World& world, std::string_view _id, TileId tileId);
+    SignalRailTile(World& world, std::string_view _id, TileId tileId_);
 
+    void destroying() override;
+    void addToWorld() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
     void boardModified() override;
 
-    virtual bool doSetAspect(SignalAspect value);
+    virtual bool doSetAspect(SignalAspect value, bool skipAction = false);
 
     void evaluate();
 
+    void connectOutputMap();
+
   public:
+    static std::optional<OutputActionValue> getDefaultActionValue(SignalAspect signalAspect, OutputType outputType, size_t outputIndex);
+
+    boost::signals2::signal<void (const SignalRailTile&, SignalAspect)> aspectChanged;
+
     Property<std::string> name;
     Property<AutoYesNo> requireReservation;
     Property<SignalAspect> aspect;
     ObjectProperty<SignalOutputMap> outputMap;
     Method<bool(SignalAspect)> setAspect;
+    Event<const std::shared_ptr<SignalRailTile>&, SignalAspect> onAspectChanged;
 
     ~SignalRailTile() override;
 

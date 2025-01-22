@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,8 @@
 #include "rail/decouplerrailtile.hpp"
 #include "rail/linkrailtile.hpp"
 #include "rail/nxbuttonrailtile.hpp"
+#include "misc/labeltile.hpp"
+#include "misc/switchtile.hpp"
 #include "../../utils/ifclassidcreate.hpp"
 #include "../../world/world.hpp"
 
@@ -59,6 +61,8 @@ std::shared_ptr<Tile> Tiles::create(World& world, std::string_view classId, std:
   IF_CLASSID_CREATE(PushButtonTile)
   IF_CLASSID_CREATE(DecouplerRailTile)
   IF_CLASSID_CREATE(NXButtonRailTile)
+  IF_CLASSID_CREATE(LabelTile)
+  IF_CLASSID_CREATE(SwitchTile)
   return std::shared_ptr<Tile>();
 }
 
@@ -69,6 +73,7 @@ const std::vector<Tiles::Info>& Tiles::getInfo()
   static constexpr uint8_t rotate0and90 = 0x05; //!< only 0 or 90 deg
   static constexpr uint8_t rotateHalf = 0x0F; //!< only 0, 45, 90 or 135 deg
   static constexpr uint8_t rotateFull = 0xFF;
+  static constexpr uint8_t rotateFull90 = 0x55; //!< only 0, 90, 180, 270 deg
 
   static constexpr std::string_view straight = "tile_menu:straight";
   static constexpr std::string_view curve = "tile_menu:curve";
@@ -115,6 +120,8 @@ const std::vector<Tiles::Info>& Tiles::getInfo()
     Info{Signal3AspectRailTile::classId, TileId::RailSignal3Aspect, rotateFull, {signal}},
 
     Info{PushButtonTile::classId, TileId::PushButton, rotateNone, {miscellaneous}},
+    Info{LabelTile::classId, TileId::Label, rotateFull90, {miscellaneous}},
+    Info{SwitchTile::classId, TileId::Switch, rotateNone, {miscellaneous}},
   }};
 
   return info;

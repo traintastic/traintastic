@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,12 +23,13 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUT_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUT_HPP
 
-#include "../../core/idobject.hpp"
+#include "../../core/object.hpp"
+#include <set>
+#include <traintastic/enum/outputchannel.hpp>
+#include <traintastic/enum/outputtype.hpp>
+#include "../../core/property.hpp"
 #include "../../core/objectproperty.hpp"
-#include "../../core/objectvectorproperty.hpp"
-#include "../../core/method.hpp"
 #include "../../core/event.hpp"
-#include "../../enum/tristate.hpp"
 
 #ifdef interface
   #undef interface // interface is defined in combaseapi.h
@@ -36,41 +37,32 @@
 
 class OutputController;
 
-class Output final : public IdObject
+class Output : public Object
 {
-  CLASS_ID("output")
-  DEFAULT_ID("output")
-  CREATE_DEF(Output)
-
   friend class OutputController;
 
   private:
-    static constexpr uint32_t addressMinDefault = 0;
-    static constexpr uint32_t addressMaxDefault = 1'000'000;
-
-    void interfaceChanged();
-    void channelChanged();
+    std::set<std::shared_ptr<Object>> m_usedBy; //!< Objects that use the output.
 
   protected:
-    void addToWorld() final;
-    void loaded() final;
-    void destroying() final;
-    void worldEvent(WorldState state, WorldEvent event) final;
-    void updateValue(TriState _value);
+    Output(std::shared_ptr<OutputController> outputController, OutputChannel channel_, OutputType type_);
 
   public:
     static constexpr uint32_t invalidAddress = std::numeric_limits<uint32_t>::max();
 
-    Property<std::string> name;
     ObjectProperty<OutputController> interface;
-    Property<uint32_t> channel;
-    Property<uint32_t> address;
-    Property<TriState> value;
-    ObjectVectorProperty<Object> controllers;
-    Method<bool(bool)> setValue;
-    Event<bool, const std::shared_ptr<Output>&> onValueChanged;
+    Property<OutputChannel> channel;
+    Property<OutputType> type;
+    Event<const std::shared_ptr<Output>&> onValueChangedGeneric;
 
-    Output(World& world, std::string_view _id);
+    /**
+     * \brief Unique identifier for the output within the channel.
+     *
+     * \return Unique identifier, can be any number/mask.
+     */
+    virtual uint32_t id() const = 0;
+
+    std::string getObjectId() const final;
 };
 
 #endif

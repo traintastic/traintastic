@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,6 +49,19 @@ size_t Node::getIndex(const Connector& connector) const
       return i;
 
   return noIndex;
+}
+
+size_t Node::getIndex(const Link& link) const
+{
+  const size_t size = m_links.size();
+  for(size_t i = 0; i < size; ++i)
+  {
+    if(m_links[i].get() == &link)
+    {
+      return i;
+    }
+  }
+  return std::numeric_limits<size_t>::max();
 }
 
 std::shared_ptr<const Link> Node::getLink(size_t index) const

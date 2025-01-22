@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
  */
 
 #include "abstracteditwidget.hpp"
+#include <array>
 #include <QtWaitingSpinner/waitingspinnerwidget.h>
 #include "../../network/connection.hpp"
 #include "../../network/object.hpp"
@@ -88,11 +89,20 @@ AbstractEditWidget::~AbstractEditWidget()
       connection->cancelRequest(m_requestId);
 }
 
-void AbstractEditWidget::setIdAsWindowTitle()
+void AbstractEditWidget::setObjectWindowTitle()
 {
-  if(AbstractProperty* id = m_object->getProperty("id"))
+  static const std::array<QLatin1String ,2> propertyNames = {
+    QLatin1String{"name"},
+    QLatin1String{"id"},
+  };
+
+  for(const auto& propertyName : propertyNames)
   {
-    connect(id, &AbstractProperty::valueChangedString, this, &AbstractEditWidget::setWindowTitle);
-    setWindowTitle(id->toString());
+    if(AbstractProperty* property = m_object->getProperty(propertyName))
+    {
+      connect(property, &AbstractProperty::valueChangedString, this, &AbstractEditWidget::setWindowTitle);
+      setWindowTitle(property->toString());
+      break;
+    }
   }
 }

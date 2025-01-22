@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <array>
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/tristate.hpp>
+#include <traintastic/enum/outputpairvalue.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
 
@@ -43,6 +44,12 @@ struct Message;
 
 class Kernel : public ::KernelBase
 {
+  public:
+    static constexpr uint16_t inputAddressMin = 1;
+    static constexpr uint16_t inputAddressMax = 2048;
+    static constexpr uint16_t accessoryOutputAddressMin = 1;
+    static constexpr uint16_t accessoryOutputAddressMax = 1024;
+
   private:
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
@@ -56,10 +63,10 @@ class Kernel : public ::KernelBase
     DecoderController* m_decoderController;
 
     InputController* m_inputController;
-    std::array<TriState, 2048> m_inputValues;
+    std::array<TriState, inputAddressMax - inputAddressMin + 1> m_inputValues;
 
     OutputController* m_outputController;
-    //std::array<TriState, 2048> m_outputValues;
+    //std::array<OutputPairValue, accessoryOutputAddressMax - accessoryOutputAddressMin + 1> m_outputValues;
 
     Config m_config;
 
@@ -80,11 +87,15 @@ class Kernel : public ::KernelBase
     void send(const Message& message);
 
   public:
-    static constexpr uint16_t ioAddressMin = 1;
-    static constexpr uint16_t ioAddressMax = 2048;
-
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
+
+#ifndef NDEBUG
+    bool isKernelThread() const
+    {
+      return std::this_thread::get_id() == m_thread.get_id();
+    }
+#endif
 
     /**
      * @brief Create kernel and IO handler
@@ -205,6 +216,12 @@ class Kernel : public ::KernelBase
     void stop();
 
     /**
+     * \brief Notify kernel the IO handler is started.
+     * \note This function must run in the kernel's IO context
+     */
+    void started() final;
+
+    /**
      * @brief ...
      *
      * This must be called by the IO handler whenever a XpressNet message is received.
@@ -240,15 +257,15 @@ class Kernel : public ::KernelBase
 
     /**
      *
-     * @param[in] address Output address, #ioAddressMin..#ioAddressMax
-     * @param[in] value Output value: \c true is on, \c false is off.
+     * @param[in] address Output address, #accessoryOutputAddressMin..#accessoryOutputAddressMax
+     * @param[in] value Output value: \c First or \c Second .
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(uint16_t address, bool value);
+    bool setOutput(uint16_t address, OutputPairValue value);
 
     /**
      * \brief Simulate input change
-     * \param[in] address Input address, #ioAddressMin..#ioAddressMax
+     * \param[in] address Input address, #inputAddressMin..#inputAddressMax
      * \param[in] action Simulation action to perform
      */
     void simulateInputChange(uint16_t address, SimulateInputAction action);

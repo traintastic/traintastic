@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 #include "event.hpp"
 #include "eventhandler.hpp"
 #include "log.hpp"
+#include "persistentvariables.hpp"
 #include "class.hpp"
 #include "to.hpp"
 #include "type.hpp"
@@ -38,11 +39,12 @@
 #include <version.hpp>
 #include <traintastic/utils/str.hpp>
 #include "../world/world.hpp"
+#include "../hardware/output/outputcontroller.hpp"
 
 #define LUA_SANDBOX "_sandbox"
 #define LUA_SANDBOX_GLOBALS "_sandbox_globals"
 
-constexpr std::array<std::string_view, 23> readOnlyGlobals = {{
+constexpr std::array<std::string_view, 24> readOnlyGlobals = {{
   // Lua baselib:
   "assert",
   "type",
@@ -66,6 +68,7 @@ constexpr std::array<std::string_view, 23> readOnlyGlobals = {{
   // Objects:
   "world",
   "log",
+  "pv",
   // Functions:
   "is_instance",
   // Type info:
@@ -126,6 +129,7 @@ namespace Lua {
 
 void Sandbox::close(lua_State* L)
 {
+  syncPersistentVariables(L);
   delete *static_cast<StateData**>(lua_getextraspace(L)); // free state data
   lua_close(L);
 }
@@ -161,6 +165,7 @@ SandboxPtr Sandbox::create(Script& script)
   *static_cast<StateData**>(lua_getextraspace(L)) = new StateData(script);
 
   // register types:
+  PersistentVariables::registerType(L);
   Enums::registerTypes<LUA_ENUMS>(L);
   Sets::registerTypes<LUA_SETS>(L);
   Object::registerTypes(L);
@@ -225,6 +230,17 @@ SandboxPtr Sandbox::create(Script& script)
   Log::push(L);
   lua_setfield(L, -2, "log");
 
+  // add persistent variables:
+  if(script.m_persistentVariables.empty())
+  {
+    PersistentVariables::push(L);
+  }
+  else
+  {
+    PersistentVariables::push(L, script.m_persistentVariables);
+  }
+  lua_setfield(L, -2, "pv");
+
   // add class types:
   lua_newtable(L);
   Class::registerValues(L);
@@ -265,6 +281,13 @@ int Sandbox::getGlobal(lua_State* L, const char* name)
   lua_insert(L, lua_gettop(L) - 1); // swap item and sandbox on the stack
   lua_pop(L, 1); // remove sandbox from the stack
   return type;
+}
+
+void Sandbox::syncPersistentVariables(lua_State* L)
+{
+  getGlobal(L, "pv");
+  getStateData(L).script().m_persistentVariables = PersistentVariables::toJSON(L, -1);
+  lua_pop(L, 1);
 }
 
 int Sandbox::pcall(lua_State* L, int nargs, int nresults, int errfunc)
@@ -334,6 +357,21 @@ Sandbox::StateData::~StateData()
     auto handler = m_eventHandlers.begin()->second;
     m_eventHandlers.erase(m_eventHandlers.begin());
     handler->disconnect();
+  }
+
+  // Release outputs:
+  for(auto& it : m_outputs)
+  {
+    if(auto outputController = it.first.lock())
+    {
+      for(const auto& outputWeak : it.second)
+      {
+        if(auto output = outputWeak.lock())
+        {
+          outputController->releaseOutput(*output, m_script);
+        }
+      }
+    }
   }
 }
 

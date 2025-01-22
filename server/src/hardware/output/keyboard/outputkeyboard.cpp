@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,16 +23,27 @@
 #include "outputkeyboard.hpp"
 #include "../output.hpp"
 #include "../outputcontroller.hpp"
+#include "../../../core/attributes.hpp"
 #include "../../../utils/inrange.hpp"
 
-OutputKeyboard::OutputKeyboard(OutputController& controller, uint32_t channel)
+OutputKeyboard::OutputKeyboard(OutputController& controller, OutputChannel channel_, OutputType outputType_)
   : m_controller{controller}
-  , m_channel{channel}
+  , channel{this, "channel", channel_, PropertyFlags::Constant | PropertyFlags::NoStore}
+  , outputType{this, "output_type", outputType_, PropertyFlags::Constant | PropertyFlags::NoStore}
   , addressMin{this, "address_min", m_controller.outputAddressMinMax(channel).first, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , addressMax{this, "address_max", m_controller.outputAddressMinMax(channel).second, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , outputUsedChanged(*this, "output_used_changed", EventFlags::Public)
 {
+  Attributes::addValues(channel, outputChannelValues);
+  m_interfaceItems.add(channel);
+
+  Attributes::addValues(outputType, outputTypeValues);
+  m_interfaceItems.add(outputType);
+
   m_interfaceItems.add(addressMin);
   m_interfaceItems.add(addressMax);
+
+  m_interfaceItems.add(outputUsedChanged);
 }
 
 std::string OutputKeyboard::getObjectId() const
@@ -40,19 +51,7 @@ std::string OutputKeyboard::getObjectId() const
   return "";
 }
 
-std::vector<OutputKeyboard::OutputInfo> OutputKeyboard::getOutputInfo() const
+void OutputKeyboard::fireOutputUsedChanged(uint32_t id, bool used)
 {
-  std::vector<OutputInfo> outputInfo;
-  for(auto it : m_controller.outputMap())
-  {
-    const auto& output = *(it.second);
-    if(output.channel == m_channel)
-      outputInfo.emplace_back(OutputInfo{output.address, output.id, output.value});
-  }
-  return outputInfo;
-}
-
-bool OutputKeyboard::setOutputValue(uint32_t address, bool value)
-{
-  return m_controller.setOutputValue(m_channel, address, value);
+  fireEvent(outputUsedChanged, id, used);
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -51,7 +51,7 @@ BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
 
       return true;
     }},
-  type{this, "type", SensorType::OccupyDetector, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  type{this, "type", SensorType::OccupancyDetector, PropertyFlags::ReadWrite | PropertyFlags::Store},
   invert{this, "invert", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool /*value*/)
     {
@@ -103,6 +103,21 @@ BlockInputMapItem::~BlockInputMapItem()
 std::string BlockInputMapItem::getObjectId() const
 {
   return m_parent.getObjectId().append(".").append(m_parent.items.name()).append(".item").append(std::to_string(m_itemId));
+}
+
+//! \todo Remove in v0.4
+void BlockInputMapItem::load(WorldLoader& loader, const nlohmann::json& data)
+{
+  if(data["type"] == "occupy_detector")
+  {
+    nlohmann::json dataCopy = data;
+    dataCopy["type"] = "occupancy_detector";
+    InputMapItem::load(loader, dataCopy);
+  }
+  else
+  {
+    InputMapItem::load(loader, data);
+  }
 }
 
 void BlockInputMapItem::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const

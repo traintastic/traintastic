@@ -53,17 +53,17 @@ class InterfaceItem
       m_attributes.emplace(name, std::make_unique<Attribute<T>>(*this, name, value));
     }
 
-    template<typename T>
-    void addAttribute(AttributeName name, tcb::span<const T> values)
+    template<typename T, size_t N>
+    void addAttribute(AttributeName name, tcb::span<const T, N> values)
     {
       assert(m_attributes.find(name) == m_attributes.end());
-      m_attributes.emplace(name, std::make_unique<SpanAttribute<T>>(*this, name, values));
+      m_attributes.emplace(name, std::make_unique<SpanAttribute<T, N>>(*this, name, values));
     }
 
     template<typename T, size_t N>
     void addAttribute(AttributeName name, const std::array<T, N>& values)
     {
-      addAttribute(name, tcb::span<const T>{values.data(), values.size()});
+      addAttribute(name, tcb::span<const T, N>{values.data(), values.size()});
     }
 
     template<typename T>
@@ -87,11 +87,11 @@ class InterfaceItem
       static_cast<Attribute<T>*>(m_attributes[name].get())->setValue(value);
     }
 
-    template<typename T>
-    void setAttribute(AttributeName name, tcb::span<const T> values)
+    template<typename T, size_t N>
+    void setAttribute(AttributeName name, tcb::span<const T, N> values)
     {
       assert(m_attributes.find(name) != m_attributes.end());
-      static_cast<SpanAttribute<T>*>(m_attributes[name].get())->setValues(values);
+      static_cast<SpanAttribute<T, N>*>(m_attributes[name].get())->setValues(values);
     }
 
     template<typename T>

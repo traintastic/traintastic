@@ -24,6 +24,10 @@
 #define TRAINTASTIC_SERVER_CORE_METHOD_TPP
 
 #include "method.hpp"
+#include <limits>
+#include <utility>
+#include <traintastic/utils/valuetypetraits.hpp>
+#include "../utils/is_shared_ptr.hpp"
 
 template<std::size_t N, class... A>
 using getArgumentType = typename std::tuple_element<N, std::tuple<A...>>::type;

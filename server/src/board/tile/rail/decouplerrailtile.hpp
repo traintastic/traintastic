@@ -37,9 +37,11 @@ class DecouplerRailTile final : public StraightRailTile
   private:
     Node m_node;
 
-    void setState(DecouplerState value);
+    void setState(DecouplerState value, bool skipAction = false);
 
   protected:
+    void destroying() override;
+    void addToWorld() final;
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
 
   public:

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOSINTERFACE_HPP
 
 #include "interface.hpp"
+#include <filesystem>
 #include "../protocol/ecos/simulation.hpp"
 #include "../decoder/decodercontroller.hpp"
 #include "../input/inputcontroller.hpp"
@@ -52,6 +53,8 @@ class ECoSInterface final
     std::unique_ptr<ECoS::Kernel> m_kernel;
     boost::signals2::connection m_ecosPropertyChanged;
     ECoS::Simulation m_simulation;
+    std::vector<uint16_t> m_outputECoSObjectIds;
+    std::vector<std::string> m_outputECoSObjectNames;
 
     void addToWorld() final;
     void destroying() final;
@@ -60,6 +63,8 @@ class ECoSInterface final
     void worldEvent(WorldState state, WorldEvent event) final;
 
     void typeChanged();
+
+    std::filesystem::path simulationDataFilename() const;
 
   protected:
     bool setOnline(bool& value, bool simulation) final;
@@ -81,10 +86,10 @@ class ECoSInterface final
     void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
-    const std::vector<uint32_t>* outputChannels() const final;
-    const std::vector<std::string_view>* outputChannelNames() const final;
-    std::pair<uint32_t, uint32_t> outputAddressMinMax(uint32_t channel) const final;
-    [[nodiscard]] bool setOutputValue(uint32_t channel, uint32_t address, bool value) final;
+    tcb::span<const OutputChannel> outputChannels() const final;
+    std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const final;
+    bool isOutputId(OutputChannel channel, uint32_t id) const final;
+    [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t outputId, OutputValue value) final;
 };
 
 #endif

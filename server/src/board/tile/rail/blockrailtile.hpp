@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_BLOCKRAILTILE_HPP
 
 #include "railtile.hpp"
+#include <array>
 #include <traintastic/enum/blocktraindirection.hpp>
 #include "../../map/node.hpp"
 #include "../../../core/method.hpp"
@@ -40,15 +41,28 @@ class BlockPath;
 
 class BlockRailTile : public RailTile
 {
+  friend class TrainTracking;
+
   CLASS_ID("board_tile.rail.block")
   DEFAULT_ID("block")
   CREATE_DEF(BlockRailTile)
 
   private:
-    Node m_node;
-    std::vector<std::shared_ptr<BlockPath>> m_paths;
+    using Paths = std::vector<std::shared_ptr<BlockPath>>;
 
+    Node m_node;
+    Paths m_paths; //!< Paths from this block to other block
+    Paths m_pathsIn; //!< Paths from other blocks to this block
+    std::array<std::weak_ptr<BlockPath>, 2> m_reservedPaths; // index is BlockSide
+
+    std::shared_ptr<TrainBlockStatus> getBlockTrainStatus(const std::shared_ptr<Train>& train);
+
+    void updatePaths();
     void updateHeightWidthMax();
+
+    void fireTrainReserved(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection);
+    void fireTrainEntered(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection);
+    void fireTrainLeft(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection);
 
   protected:
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
@@ -70,10 +84,13 @@ class BlockRailTile : public RailTile
     VectorProperty<SensorState> sensorStates;
     ObjectVectorProperty<TrainBlockStatus> trains;
     Method<void(std::shared_ptr<Train>)> assignTrain;
-    Method<void()> removeTrain;
+    Method<void(std::shared_ptr<Train>)> removeTrain;
     Method<void()> flipTrain;
+    Method<bool()> setStateFree;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onTrainAssigned;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onTrainReserved;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onTrainEntered;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onTrainLeft;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onTrainRemoved;
 
     BlockRailTile(World& world, std::string_view _id);
@@ -90,7 +107,11 @@ class BlockRailTile : public RailTile
     void inputItemValueChanged(BlockInputMapItem& item);
     void identificationEvent(BlockInputMapItem& item, IdentificationEventType eventType, uint16_t identifier, Direction direction, uint8_t category);
 
-    bool reserve(const std::shared_ptr<Train>& train, BlockSide side, bool dryRun = false);
+    std::shared_ptr<BlockPath> getReservedPath(BlockSide side) const;
+    bool reserve(const std::shared_ptr<BlockPath>& blockPath, const std::shared_ptr<Train>& train, BlockSide side, bool dryRun = false);
+    bool release(BlockSide side, bool dryRun = false);
+
+    bool removeTrainInternal(const std::shared_ptr<TrainBlockStatus>& status);
 };
 
 #endif
