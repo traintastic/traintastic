@@ -54,9 +54,6 @@ Name: "firewall_wlanmaus"; Description: "{cm:firewall_allow_wlanmaus_z21}"; Grou
 [Files]
 ; Server
 Source: "..\..\server\build\{#ServerExeName}"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
-Source: "..\..\server\thirdparty\lua5.4\bin\win64\lua54.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
-Source: "..\..\server\thirdparty\libarchive\bin\archive.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
-Source: "..\..\server\thirdparty\zlib\bin\zlib1.dll"; DestDir: "{app}\server"; Flags: ignoreversion; Check: InstallServer
 ; Client
 Source: "..\..\client\build\Release\{#ClientExeName}"; DestDir: "{app}\client"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\*.dll"; DestDir: "{app}\client"; Flags: ignoreversion; Check: InstallClient
@@ -88,6 +85,11 @@ Type: files; Name: "{commonappdata}\traintastic\translations\en-us.txt"
 Type: files; Name: "{commonappdata}\traintastic\translations\nl-nl.txt"
 Type: files; Name: "{commonappdata}\traintastic\translations\de-de.txt"
 Type: files; Name: "{commonappdata}\traintastic\translations\it-it.txt"
+; Delete unused DLLs, now statically linked (TODO: remove in 0.4)
+Type: files; Name: "{app}\server\lua53.dll"
+Type: files; Name: "{app}\server\lua54.dll"
+Type: files; Name: "{app}\server\archive.dll"
+Type: files; Name: "{app}\server\zlib1.dll"
 
 [UninstallRun]
 Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic server (TCP)"""; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
