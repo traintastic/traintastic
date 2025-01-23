@@ -37,7 +37,9 @@ if(BUILD_TESTING)
     CXX_STANDARD 20
     CXX_CLANG_TIDY ""
   )
-  target_compile_options(Catch2 PRIVATE -Wno-restrict) # workaround GCC bug
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(Catch2 PRIVATE -Wno-restrict) # workaround GCC bug
+  endif()
   add_executable(traintastic-server-test test/main.cpp)
   add_dependencies(traintastic-server-test traintastic-lang)
   target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
