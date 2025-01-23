@@ -185,6 +185,21 @@ button.square
   width: 5rem;
 }
 
+fieldset
+{
+  border: none;
+  margin: 0.25rem 0;
+  padding: 0;
+}
+
+fieldset legend
+{
+  background-color: #444;
+  width: 100%;
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+}
+
 label
 {
   font-weight: bold;

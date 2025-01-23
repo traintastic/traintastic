@@ -121,7 +121,7 @@ function Throttle(parent, id)
     return value + ' ' + unit;
   }
 
-  var functions = createDiv('flex-column', []);
+  var functions = createDiv('flex-column flex-resize', []);
 
   var throttle = createDiv('p1 stretch', [
     createTrainSelect('control stretch'),
@@ -230,6 +230,7 @@ function Throttle(parent, id)
       train.functions.forEach(function (group)
       {
         var groupbox = document.createElement('fieldset');
+        groupbox.className = 'flex-resize';
         var legend = document.createElement('legend');
         legend.innerText = group.name;
         groupbox.appendChild(legend);
