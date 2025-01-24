@@ -63,18 +63,15 @@ SelectrixInterface::SelectrixInterface(World& world, std::string_view _id)
   selectrix.setValueInternal(std::make_shared<Selectrix::Settings>(*this, selectrix.name()));
 
   Attributes::addEnabled(device, !online);
-  Attributes::addVisible(device, false);
   m_interfaceItems.insertBefore(device, notes);
 
   Attributes::addDisplayName(baudrate, DisplayName::Serial::baudrate);
   Attributes::addEnabled(baudrate, !online);
-  Attributes::addVisible(baudrate, false);
   m_interfaceItems.insertBefore(baudrate, notes);
 
   Attributes::addDisplayName(flowControl, DisplayName::Serial::flowControl);
   Attributes::addEnabled(flowControl, !online);
   Attributes::addValues(flowControl, SerialFlowControlValues);
-  Attributes::addVisible(flowControl, false);
   m_interfaceItems.insertBefore(flowControl, notes);
 
   Attributes::addDisplayName(selectrix, DisplayName::Hardware::selectrix);
