@@ -57,12 +57,25 @@ void SerialIOHandler::stop()
 
 bool SerialIOHandler::read(uint8_t address, uint8_t& value)
 {
-  if(!write(address, 0x00))
+  assert(address <= Address::max);
+
+  boost::system::error_code ec;
+
+  // write read command:
+  const std::array<uint8_t, 2> data{address, 0x00};
+  boost::asio::write(m_serialPort, boost::asio::buffer(data), ec);
+  if(ec)
   {
+    EventLoop::call(
+      [this, ec]()
+      {
+        Log::log(m_kernel.logId, LogMessage::E2001_SERIAL_WRITE_FAILED_X, ec);
+        m_kernel.error();
+      });
     return false;
   }
 
-  boost::system::error_code ec;
+  // read response:
   boost::asio::read(m_serialPort, boost::asio::buffer(&value, sizeof(value)), ec);
   if(ec)
   {
@@ -82,11 +95,10 @@ bool SerialIOHandler::write(uint8_t address, uint8_t value)
 {
   assert(address <= Address::max);
 
-  address |= Address::writeFlag;
-
   boost::system::error_code ec;
 
-  const std::array<uint8_t, 2> data{address, value};
+  // write command:
+  const std::array<uint8_t, 2> data{address |= Address::writeFlag, value};
   boost::asio::write(m_serialPort, boost::asio::buffer(data));
   if(ec)
   {
