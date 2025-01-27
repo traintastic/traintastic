@@ -90,6 +90,9 @@ class SelectrixInterface final
     boost::signals2::connection m_selectrixPropertyChanged;
     std::map<BusAddress, BusAddressUsage> m_usedBusAddresses;
 
+    void useFeedbackAddress(uint32_t channel, uint32_t address);
+    void unuseFeedbackAddress(uint32_t channel, uint32_t address);
+
   protected:
     void addToWorld() final;
     void loaded() final;
@@ -119,6 +122,7 @@ class SelectrixInterface final
     const std::vector<std::string_view>* inputChannelNames() const final { return &channelNames; }
     std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
     [[nodiscard]] bool isInputAddressAvailable(uint32_t channel, uint32_t address) const final;
+    [[nodiscard]] bool changeInputChannelAddress(Input& input, uint32_t newChannel, uint32_t newAddress) final;
     void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 };
 

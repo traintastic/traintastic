@@ -128,6 +128,17 @@ bool SelectrixInterface::isInputAddressAvailable(uint32_t channel, uint32_t addr
   return true;
 }
 
+bool SelectrixInterface::changeInputChannelAddress(Input& input, uint32_t newChannel, uint32_t newAddress)
+{
+  if(InputController::changeInputChannelAddress(input, newChannel, newAddress))
+  {
+    useFeedbackAddress(newChannel, newAddress);
+    unuseFeedbackAddress(input.channel, input.address);
+    return true;
+  }
+  return false;
+}
+
 void SelectrixInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
@@ -215,42 +226,12 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
 
 void SelectrixInterface::inputAdded(Input& input)
 {
-  const BusAddress key{Selectrix::toBus(input.channel), Selectrix::toBusAddress(input.address)};
-  const uint8_t portBit = 1 << Selectrix::toPort(input.address);
-
-  if(auto it = m_usedBusAddresses.find(key); it != m_usedBusAddresses.end())
-  {
-    assert(it->second.type == Selectrix::AddressType::Feedback);
-    it->second.mask |= portBit;
-  }
-  else
-  {
-    m_usedBusAddresses.insert({key, {Selectrix::AddressType::Feedback, portBit}});
-    if(m_kernel)
-    {
-      m_kernel->addPollAddress(key.bus, key.address, Selectrix::AddressType::Feedback);
-    }
-  }
+  useFeedbackAddress(input.channel, input.address);
 }
 
 void SelectrixInterface::inputRemoved(Input& input)
 {
-  const BusAddress key{Selectrix::toBus(input.channel), Selectrix::toBusAddress(input.address)};
-  const uint8_t portBit = 1 << Selectrix::toPort(input.address);
-
-  if(auto it = m_usedBusAddresses.find(key); it != m_usedBusAddresses.end()) /*[[likely]]*/
-  {
-    assert(it->second.type == Selectrix::AddressType::Feedback);
-    it->second.mask &= ~portBit;
-    if(it->second.mask == 0x00)
-    {
-      m_usedBusAddresses.erase(it);
-      if(m_kernel)
-      {
-        m_kernel->removePollAddress(key.bus, key.address);
-      }
-    }
-  }
+  unuseFeedbackAddress(input.channel, input.address);
 }
 
 void SelectrixInterface::addToWorld()
@@ -290,6 +271,46 @@ void SelectrixInterface::worldEvent(WorldState state, WorldEvent event)
 
       default:
         break;
+    }
+  }
+}
+
+void SelectrixInterface::useFeedbackAddress(uint32_t channel, uint32_t address)
+{
+  const BusAddress key{Selectrix::toBus(channel), Selectrix::toBusAddress(address)};
+  const uint8_t portBit = 1 << Selectrix::toPort(address);
+
+  if(auto it = m_usedBusAddresses.find(key); it != m_usedBusAddresses.end())
+  {
+    assert(it->second.type == Selectrix::AddressType::Feedback);
+    it->second.mask |= portBit;
+  }
+  else
+  {
+    m_usedBusAddresses.insert({key, {Selectrix::AddressType::Feedback, portBit}});
+    if(m_kernel)
+    {
+      m_kernel->addPollAddress(key.bus, key.address, Selectrix::AddressType::Feedback);
+    }
+  }
+}
+
+void SelectrixInterface::unuseFeedbackAddress(uint32_t channel, uint32_t address)
+{
+  const BusAddress key{Selectrix::toBus(channel), Selectrix::toBusAddress(address)};
+  const uint8_t portBit = 1 << Selectrix::toPort(address);
+
+  if(auto it = m_usedBusAddresses.find(key); it != m_usedBusAddresses.end()) /*[[likely]]*/
+  {
+    assert(it->second.type == Selectrix::AddressType::Feedback);
+    it->second.mask &= ~portBit;
+    if(it->second.mask == 0x00)
+    {
+      m_usedBusAddresses.erase(it);
+      if(m_kernel)
+      {
+        m_kernel->removePollAddress(key.bus, key.address);
+      }
     }
   }
 }
