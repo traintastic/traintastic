@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,14 +24,32 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_CONFIG_HPP
 
 #include <chrono>
+#include "addresstype.hpp"
 
 namespace Selectrix {
 
 struct Config
 {
-  static constexpr auto pollInterval = std::chrono::milliseconds(100);
-
   bool debugLogRXTX;
+
+  std::chrono::milliseconds pollInterval(AddressType addressType)
+  {
+    using namespace std::chrono_literals;
+
+    switch(addressType)
+    {
+      case AddressType::TrackPower:
+        return 250ms;
+
+      case AddressType::Locomotive:
+        return 500ms;
+
+      case AddressType::Feedback:
+        return 100ms;
+    }
+    assert(false);
+    return 1s;
+  }
 };
 
 }

@@ -58,8 +58,8 @@ class Kernel : public ::KernelBase
     TriState m_trackPower;
     std::function<void(bool)> m_onTrackPowerChanged;
 
-    boost::asio::steady_timer m_pollTimer;
-    std::chrono::time_point<std::chrono::steady_clock> m_nextPoll;
+    std::array<boost::asio::steady_timer, addressTypes.size()> m_pollTimer;
+    std::array<std::chrono::time_point<std::chrono::steady_clock>, addressTypes.size()> m_nextPoll;
     std::vector<PollInfo> m_pollAddresses;
 
     DecoderController* m_decoderController = nullptr;
@@ -86,8 +86,8 @@ class Kernel : public ::KernelBase
         });
     }
 
-    void startPollTimer();
-    void poll(const boost::system::error_code& ec);
+    void startPollTimer(AddressType addressType);
+    void poll(const boost::system::error_code& ec, AddressType addressType);
 
   public:
     Kernel(const Kernel&) = delete;

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,14 +24,22 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_ADDRESSTYPE_HPP
 
 #include <cstdint>
+#include <array>
 
 namespace Selectrix {
 
 enum class AddressType : uint8_t
 {
-  Locomotive,
-  Input,
+  TrackPower = 0,
+  Locomotive = 1,
+  Feedback = 2,
 };
+
+constexpr std::array<AddressType, 3> addressTypes{{
+  AddressType::TrackPower,
+  AddressType::Locomotive,
+  AddressType::Feedback
+}};
 
 }
 

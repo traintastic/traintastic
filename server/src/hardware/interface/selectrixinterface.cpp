@@ -122,7 +122,7 @@ bool SelectrixInterface::isInputAddressAvailable(uint32_t channel, uint32_t addr
 
   if(auto it = m_usedBusAddresses.find({Selectrix::toBus(channel), Selectrix::toBusAddress(address)}); it != m_usedBusAddresses.end())
   {
-    return it->second.type == Selectrix::AddressType::Input;
+    return it->second.type == Selectrix::AddressType::Feedback;
   }
 
   return true;
@@ -220,15 +220,15 @@ void SelectrixInterface::inputAdded(Input& input)
 
   if(auto it = m_usedBusAddresses.find(key); it != m_usedBusAddresses.end())
   {
-    assert(it->second.type == Selectrix::AddressType::Input);
+    assert(it->second.type == Selectrix::AddressType::Feedback);
     it->second.mask |= portBit;
   }
   else
   {
-    m_usedBusAddresses.insert({key, {Selectrix::AddressType::Input, portBit}});
+    m_usedBusAddresses.insert({key, {Selectrix::AddressType::Feedback, portBit}});
     if(m_kernel)
     {
-      m_kernel->addPollAddress(key.bus, key.address, Selectrix::AddressType::Input);
+      m_kernel->addPollAddress(key.bus, key.address, Selectrix::AddressType::Feedback);
     }
   }
 }
@@ -240,7 +240,7 @@ void SelectrixInterface::inputRemoved(Input& input)
 
   if(auto it = m_usedBusAddresses.find(key); it != m_usedBusAddresses.end()) /*[[likely]]*/
   {
-    assert(it->second.type == Selectrix::AddressType::Input);
+    assert(it->second.type == Selectrix::AddressType::Feedback);
     it->second.mask &= ~portBit;
     if(it->second.mask == 0x00)
     {

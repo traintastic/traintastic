@@ -38,10 +38,15 @@ namespace Selectrix {
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
   , m_simulation{simulation}
-  , m_pollTimer{ioContext()}
+  , m_pollTimer{{
+    decltype(m_pollTimer)::value_type{ioContext()},
+    decltype(m_pollTimer)::value_type{ioContext()},
+    decltype(m_pollTimer)::value_type{ioContext()}}}
   , m_config{config}
 {
   assert(isEventLoopThread());
+
+  m_pollAddresses.emplace_back(PollInfo{Bus::SX0, Address::trackPower, AddressType::TrackPower, 0, false});
 }
 
 Kernel::~Kernel() = default;
@@ -104,8 +109,13 @@ void Kernel::start()
 
         write(Address::selectSXBus, static_cast<uint8_t>(m_bus));
 
-        m_nextPoll = std::chrono::steady_clock::now();
-        startPollTimer();
+        auto nextPoll = std::chrono::steady_clock::now();
+        for(auto addressType : addressTypes)
+        {
+          m_nextPoll[static_cast<size_t>(addressType)] = nextPoll;
+          startPollTimer(addressType);
+          nextPoll += std::chrono::milliseconds(100) / addressTypes.size();
+        }
       }
       catch(const LogMessageException& e)
       {
@@ -133,7 +143,10 @@ void Kernel::stop()
   m_ioContext.post(
     [this]()
     {
-      m_pollTimer.cancel();
+      for(auto addressType : addressTypes)
+      {
+        m_pollTimer[static_cast<size_t>(addressType)].cancel();
+      }
       m_ioHandler->stop();
     });
 
@@ -228,7 +241,7 @@ void Kernel::simulateInputChange(Bus bus, uint16_t address, SimulateInputAction 
             return bus == info.bus && busAddress == info.address;
           });
 
-        if(it != m_pollAddresses.end() && it->type == AddressType::Input) // check if bus/address is for input
+        if(it != m_pollAddresses.end() && it->type == AddressType::Feedback) // check if bus/address is for input
         {
           static_cast<SimulationIOHandler&>(*m_ioHandler).simulateInputChange(bus, address, action);
         }
@@ -346,15 +359,17 @@ bool Kernel::write(uint8_t address, uint8_t value)
   return m_ioHandler->write(address, value);
 }
 
-void Kernel::startPollTimer()
+void Kernel::startPollTimer(AddressType addressType)
 {
   assert(isKernelThread());
-  m_nextPoll += m_config.pollInterval;
-  m_pollTimer.expires_after(m_nextPoll - std::chrono::steady_clock::now());
-  m_pollTimer.async_wait(std::bind(&Kernel::poll, this, std::placeholders::_1));
+  auto& nextPoll = m_nextPoll[static_cast<size_t>(addressType)];
+  auto& pollTimer = m_pollTimer[static_cast<size_t>(addressType)];
+  nextPoll += m_config.pollInterval(addressType);
+  pollTimer.expires_after(nextPoll - std::chrono::steady_clock::now());
+  pollTimer.async_wait(std::bind(&Kernel::poll, this, std::placeholders::_1, addressType));
 }
 
-void Kernel::poll(const boost::system::error_code& ec)
+void Kernel::poll(const boost::system::error_code& ec, AddressType addressType)
 {
   assert(isKernelThread());
 
@@ -363,34 +378,33 @@ void Kernel::poll(const boost::system::error_code& ec)
 
   uint8_t value;
 
-  // read track power status:
-  if(read(Bus::SX0, Address::trackPower, value))
-  {
-    const bool trackPower = value == TrackPower::on;
-    if(m_trackPower != trackPower)
-    {
-      m_trackPower = toTriState(trackPower);
-      if(m_onTrackPowerChanged) /*[[likely]]*/
-      {
-        EventLoop::call(
-          [this, trackPower]()
-          {
-            m_onTrackPowerChanged(trackPower);
-          });
-      }
-    }
-  }
-
   for(auto& pollInfo : m_pollAddresses)
   {
-    if(read(pollInfo.bus, pollInfo.address, value) && (pollInfo.lastValue != value || !pollInfo.lastValueValid))
+    if(pollInfo.type == addressType && read(pollInfo.bus, pollInfo.address, value) && (pollInfo.lastValue != value || !pollInfo.lastValueValid))
     {
       switch(pollInfo.type)
       {
+        case AddressType::TrackPower:
+        {
+          const bool trackPower = value == TrackPower::on;
+          if(m_trackPower != trackPower)
+          {
+            m_trackPower = toTriState(trackPower);
+            if(m_onTrackPowerChanged) /*[[likely]]*/
+            {
+              EventLoop::call(
+                [this, trackPower]()
+                {
+                  m_onTrackPowerChanged(trackPower);
+                });
+            }
+          }
+          break;
+        }
         case AddressType::Locomotive:
           break;
 
-        case AddressType::Input:
+        case AddressType::Feedback:
           EventLoop::call(
             [this, bus=pollInfo.bus, address=pollInfo.address, value]()
             {
@@ -412,7 +426,7 @@ void Kernel::poll(const boost::system::error_code& ec)
     }
   }
 
-  startPollTimer();
+  startPollTimer(addressType);
 }
 
 }
