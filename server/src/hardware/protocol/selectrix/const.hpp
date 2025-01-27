@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,8 +48,8 @@ namespace Locomotive
   constexpr uint8_t speedStepMax = 31;
   constexpr uint8_t speedMask = 0x1F;
   constexpr uint8_t directionMask = 0x20;
-  constexpr uint8_t directionForward = 0x20;
-  constexpr uint8_t directionReverse = 0x00;
+  constexpr uint8_t directionReverse = 0x20;
+  constexpr uint8_t directionForward = 0x00;
   constexpr uint8_t f0 = 0x40;
   constexpr uint8_t f1 = 0x80;
 }
