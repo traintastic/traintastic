@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/selectrix/iohandler/serialiohandler.hpp
+ * shared/src/traintastic/enum/selectrixinterfacetype.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023,2025 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,33 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_IOHANDLER_SERIALIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_IOHANDLER_SERIALIOHANDLER_HPP
+#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_SELECTRIXINTERFACETYPE_HPP
+#define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_SELECTRIXINTERFACETYPE_HPP
 
-#include "iohandler.hpp"
-#include <boost/asio/serial_port.hpp>
+#include <cstdint>
+#include <array>
+#include "enum.hpp"
 
-namespace Selectrix {
-
-class SerialIOHandler final : public IOHandler
+enum class SelectrixInterfaceType : uint8_t
 {
-  private:
-    static constexpr uint8_t writeFlag = 0x80;
-
-    boost::asio::serial_port m_serialPort;
-
-  public:
-    SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate);
-    ~SerialIOHandler() final;
-
-    void start() final;
-    void stop() final;
-
-    bool read(uint8_t address, uint8_t& value) final;
-    bool write(uint8_t address, uint8_t value) final;
+  RautenhausSLX825 = 0,
 };
 
-}
+TRAINTASTIC_ENUM(SelectrixInterfaceType, "selectrix_interface_type", 1,
+{
+  {SelectrixInterfaceType::RautenhausSLX825, "rautenhaus_slx825"},
+});
+
+inline constexpr std::array<SelectrixInterfaceType, 1> selectrixInterfaceTypeValues{{
+  SelectrixInterfaceType::RautenhausSLX825,
+}};
 
 #endif
-

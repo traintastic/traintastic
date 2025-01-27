@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,31 +48,34 @@ constexpr bool operator <(const SelectrixInterface::BusAddress& lhs, const Selec
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
 
+constexpr std::array<uint32_t, 4> baudratesRautenhausSLX825 = {2400, 4800, 9600, 19200};
+
 CREATE_IMPL(SelectrixInterface)
 
 SelectrixInterface::SelectrixInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
+  , type{this, "type", SelectrixInterfaceType::RautenhausSLX825, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 9600, PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , flowControl{this, "flow_control", SerialFlowControl::None, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , selectrix{this, "selectrix", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "Selectrix";
   selectrix.setValueInternal(std::make_shared<Selectrix::Settings>(*this, selectrix.name()));
+
+  Attributes::addDisplayName(type, DisplayName::Interface::type);
+  Attributes::addEnabled(type, !online);
+  Attributes::addValues(type, selectrixInterfaceTypeValues);
+  m_interfaceItems.insertBefore(type, notes);
 
   Attributes::addEnabled(device, !online);
   m_interfaceItems.insertBefore(device, notes);
 
   Attributes::addDisplayName(baudrate, DisplayName::Serial::baudrate);
   Attributes::addEnabled(baudrate, !online);
+  Attributes::addValues(baudrate, baudratesRautenhausSLX825);
   m_interfaceItems.insertBefore(baudrate, notes);
-
-  Attributes::addDisplayName(flowControl, DisplayName::Serial::flowControl);
-  Attributes::addEnabled(flowControl, !online);
-  Attributes::addValues(flowControl, SerialFlowControlValues);
-  m_interfaceItems.insertBefore(flowControl, notes);
 
   Attributes::addDisplayName(selectrix, DisplayName::Hardware::selectrix);
   m_interfaceItems.insertBefore(selectrix, notes);
@@ -145,7 +148,7 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
       }
       else
       {
-        m_kernel = Selectrix::Kernel::create<Selectrix::SerialIOHandler>(id.value(), selectrix->config(), device.value(), baudrate.value(), flowControl.value());
+        m_kernel = Selectrix::Kernel::create<Selectrix::SerialIOHandler>(id.value(), selectrix->config(), device.value(), baudrate.value());
       }
 
       setState(InterfaceState::Initializing);
@@ -186,7 +189,7 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
         });
 
       m_kernel->setTrackPower(contains(m_world.state.value(), WorldState::PowerOn));
-      Attributes::setEnabled({device, baudrate, flowControl}, false);
+      Attributes::setEnabled({type, device, baudrate}, false);
     }
     catch(const LogMessageException& e)
     {
@@ -197,7 +200,7 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
   }
   else if(m_kernel && !value)
   {
-    Attributes::setEnabled({device, baudrate, flowControl}, true);
+    Attributes::setEnabled({type, device, baudrate}, true);
 
     m_selectrixPropertyChanged.disconnect();
 

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,11 +31,11 @@
 
 namespace Selectrix {
 
-SerialIOHandler::SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl)
+SerialIOHandler::SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate)
   : IOHandler(kernel)
   , m_serialPort{kernel.ioContext()}
 {
-  SerialPort::open(m_serialPort, device, baudrate, 8, SerialParity::None, SerialStopBits::One, flowControl);
+  SerialPort::open(m_serialPort, device, baudrate, 8, SerialParity::None, SerialStopBits::One, SerialFlowControl::None);
 }
 
 SerialIOHandler::~SerialIOHandler()

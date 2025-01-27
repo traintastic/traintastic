@@ -29,7 +29,7 @@
 #include "../output/outputcontroller.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../core/objectproperty.hpp"
-#include "../../enum/serialflowcontrol.hpp"
+#include <traintastic/enum/selectrixinterfacetype.hpp>
 #include <tcb/span.hpp>
 
 namespace Selectrix {
@@ -103,9 +103,9 @@ class SelectrixInterface final
     void inputRemoved(Input& input) final;
 
   public:
+    Property<SelectrixInterfaceType> type;
     SerialDeviceProperty device;
     Property<uint32_t> baudrate;
-    Property<SerialFlowControl> flowControl;
     ObjectProperty<Selectrix::Settings> selectrix;
 
     SelectrixInterface(World& world, std::string_view _id);
