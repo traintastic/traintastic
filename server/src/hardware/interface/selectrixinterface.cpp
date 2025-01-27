@@ -98,8 +98,7 @@ std::pair<uint32_t, uint32_t> SelectrixInterface::inputAddressMinMax(uint32_t ch
 {
   assert(
     channel == InputChannel::sx0 ||
-    channel == InputChannel::sx1 ||
-    channel == InputChannel::sx2);
+    channel == InputChannel::sx1);
 
   if(Selectrix::toBus(channel) == Selectrix::Bus::SX0)
   {

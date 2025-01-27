@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,19 +74,16 @@ class SelectrixInterface final
       // zero is reserved for the defaultChannel
       static constexpr uint32_t sx0 = 1;
       static constexpr uint32_t sx1 = 2;
-      static constexpr uint32_t sx2 = 3;
     };
 
     inline static const std::vector<uint32_t> channels = {
       InputChannel::sx0,
       InputChannel::sx1,
-      InputChannel::sx2,
     };
 
     inline static const std::vector<std::string_view> channelNames = {
       "SX0",
       "SX1",
-      "SX2",
     };
 
     std::unique_ptr<Selectrix::Kernel> m_kernel;
