@@ -44,7 +44,7 @@ DecoderFunctions::DecoderFunctions(Object& _parent, std::string_view parentPrope
         }
 
         auto function = std::make_shared<DecoderFunction>(decoder, number);
-        function->name = "F" + std::to_string(number);
+        function->name = std::to_string(number).insert(0, 1, 'F');
         function->number = number;
         if(number == 0) // F0 is (almost) always the light function
           function->function = DecoderFunctionFunction::Light;
