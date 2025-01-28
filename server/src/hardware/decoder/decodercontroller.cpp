@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -65,6 +65,24 @@ std::pair<uint16_t, uint16_t> DecoderController::decoderAddressMinMax(DecoderPro
   return noAddressMinMax;
 }
 
+bool DecoderController::isDecoderAddressAvailable(DecoderProtocol protocol, uint16_t address) const
+{
+  return
+    inRange(address, decoderAddressMinMax(protocol)) &&
+    std::find_if(m_decoders.begin(), m_decoders.end(),
+      [protocol, address](const auto& item)
+      {
+        return item->protocol == protocol && item->address == address;
+      }) == m_decoders.end();
+}
+
+bool DecoderController::changeDecoderProtocolAddress(Decoder& decoder, DecoderProtocol newProtocol, uint16_t newAddress)
+{
+  assert(decoder.interface.value().get() == this);
+
+  return isDecoderAddressAvailable(newProtocol, newAddress);
+}
+
 tcb::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol protocol) const
 {
   static constexpr std::array<uint8_t, 3> dccSpeedSteps{{14, 28, 128}};
@@ -101,6 +119,7 @@ bool DecoderController::addDecoder(Decoder& decoder)
 
   m_decoders.emplace_back(decoder.shared_ptr<Decoder>());
   decoders->addObject(decoder.shared_ptr<Decoder>());
+  decoderAdded(decoder);
   return true;
 }
 
@@ -111,6 +130,7 @@ bool DecoderController::removeDecoder(Decoder& decoder)
   {
     m_decoders.erase(it);
     decoders->removeObject(decoder.shared_ptr<Decoder>());
+    decoderRemoved(decoder);
     return true;
   }
   return false;

@@ -376,6 +376,13 @@ void Kernel::poll(const boost::system::error_code& ec, AddressType addressType)
   if(ec)
     return;
 
+  switch(addressType)
+  {
+    case AddressType::TrackPower: LOG_DEBUG("poll TrackPower"); break;
+    case AddressType::Locomotive: LOG_DEBUG("poll Locomotive"); break;
+    case AddressType::Feedback: LOG_DEBUG("poll Feedback"); break;
+  }
+
   uint8_t value;
 
   for(auto& pollInfo : m_pollAddresses)
@@ -402,6 +409,28 @@ void Kernel::poll(const boost::system::error_code& ec, AddressType addressType)
           break;
         }
         case AddressType::Locomotive:
+          assert(pollInfo.bus == Bus::SX0);
+          EventLoop::call(
+            [this, address=pollInfo.address, value]()
+            {
+              if(m_decoderController) /*[[likelyy]]*/
+              {
+                if(auto decoder = m_decoderController->getDecoder(DecoderProtocol::Selectrix, address))
+                {
+                  decoder->direction.setValueInternal((value & Locomotive::directionMask) == Locomotive::directionReverse ? Direction::Reverse : Direction::Forward);
+
+                  const uint8_t speed = value & Locomotive::speedMask;
+                  const auto currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), Locomotive::speedStepMax);
+                  if(currentStep != speed) // only update trottle if it is a different step
+                  {
+                    decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed, Locomotive::speedStepMax));
+                  }
+
+                  decoder->setFunctionValue(0, (value & Locomotive::f0));
+                  decoder->setFunctionValue(1, (value & Locomotive::f1));
+                }
+              }
+            });
           break;
 
         case AddressType::Feedback:

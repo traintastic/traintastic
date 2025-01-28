@@ -91,6 +91,27 @@ tcb::span<const DecoderProtocol> SelectrixInterface::decoderProtocols() const
   return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
+bool SelectrixInterface::isDecoderAddressAvailable(DecoderProtocol protocol, uint16_t address) const
+{
+  if(!DecoderController::isDecoderAddressAvailable(protocol, address))
+  {
+    return false;
+  }
+
+  return m_usedBusAddresses.find({Selectrix::Bus::SX0, static_cast<uint8_t>(address)}) == m_usedBusAddresses.end();
+}
+
+bool SelectrixInterface::changeDecoderProtocolAddress(Decoder& decoder, DecoderProtocol newProtocol, uint16_t newAddress)
+{
+  if(DecoderController::changeDecoderProtocolAddress(decoder, newProtocol, newAddress))
+  {
+    useLocomotiveAddress(newAddress);
+    unuseLocomotiveAddress(decoder.address);
+    return true;
+  }
+  return false;
+}
+
 void SelectrixInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(m_kernel)
@@ -224,6 +245,16 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
   return true;
 }
 
+void SelectrixInterface::decoderAdded(Decoder& decoder)
+{
+  useLocomotiveAddress(decoder.address);
+}
+
+void SelectrixInterface::decoderRemoved(Decoder& decoder)
+{
+  unuseLocomotiveAddress(decoder.address);
+}
+
 void SelectrixInterface::inputAdded(Input& input)
 {
   useFeedbackAddress(input.channel, input.address);
@@ -271,6 +302,33 @@ void SelectrixInterface::worldEvent(WorldState state, WorldEvent event)
 
       default:
         break;
+    }
+  }
+}
+
+void SelectrixInterface::useLocomotiveAddress(uint32_t address)
+{
+  const BusAddress key{Selectrix::Bus::SX0, static_cast<uint8_t>(address)};
+
+  assert(m_usedBusAddresses.find(key) == m_usedBusAddresses.end());
+  m_usedBusAddresses.insert({key, {Selectrix::AddressType::Locomotive, 0}});
+  if(m_kernel)
+  {
+    m_kernel->addPollAddress(key.bus, key.address, Selectrix::AddressType::Locomotive);
+  }
+}
+
+void SelectrixInterface::unuseLocomotiveAddress(uint32_t address)
+{
+  const BusAddress key{Selectrix::Bus::SX0, static_cast<uint8_t>(address)};
+
+  if(auto it = m_usedBusAddresses.find(key); it != m_usedBusAddresses.end()) /*[[likely]]*/
+  {
+    assert(it->second.type == Selectrix::AddressType::Locomotive);
+    m_usedBusAddresses.erase(it);
+    if(m_kernel)
+    {
+      m_kernel->removePollAddress(key.bus, key.address);
     }
   }
 }

@@ -90,6 +90,9 @@ class SelectrixInterface final
     boost::signals2::connection m_selectrixPropertyChanged;
     std::map<BusAddress, BusAddressUsage> m_usedBusAddresses;
 
+    void useLocomotiveAddress(uint32_t address);
+    void unuseLocomotiveAddress(uint32_t address);
+
     void useFeedbackAddress(uint32_t channel, uint32_t address);
     void unuseFeedbackAddress(uint32_t channel, uint32_t address);
 
@@ -100,6 +103,10 @@ class SelectrixInterface final
     void worldEvent(WorldState state, WorldEvent event) final;
 
     bool setOnline(bool& value, bool simulation) final;
+
+    // DecoderController:
+    void decoderAdded(Decoder& decoder) final;
+    void decoderRemoved(Decoder& decoder) final;
 
     // InputController:
     void inputAdded(Input& input) final;
@@ -115,6 +122,8 @@ class SelectrixInterface final
 
     // DecoderController:
     tcb::span<const DecoderProtocol> decoderProtocols() const final;
+    [[nodiscard]] bool isDecoderAddressAvailable(DecoderProtocol protocol, uint16_t address) const final;
+    [[nodiscard]] bool changeDecoderProtocolAddress(Decoder& decoder, DecoderProtocol newProtocol, uint16_t newAddress) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:

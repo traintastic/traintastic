@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -73,8 +73,16 @@ Decoder::Decoder(World& world, std::string_view _id) :
     {
       protocolChanged();
       updateEditable();
+    },
+    [this](const DecoderProtocol& newValue)
+    {
+      return !interface || interface->changeDecoderProtocolAddress(*this, newValue, address);
     }},
-  address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
+    [this](const uint32_t& newValue)
+    {
+      return !interface || interface->changeDecoderProtocolAddress(*this, protocol, newValue);
+    }},
   mfxUID{this, "mfx_uid", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
   emergencyStop{this, "emergency_stop", false, PropertyFlags::ReadWrite,
     [this](const bool& /*value*/)

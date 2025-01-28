@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -60,6 +60,9 @@ class DecoderController
     DecoderVector::iterator findDecoder(DecoderProtocol protocol, uint16_t address);
     DecoderVector::iterator findDecoderMFX(uint32_t mfxUID);
 
+    virtual void decoderAdded(Decoder& /*decoder*/) {}
+    virtual void decoderRemoved(Decoder& /*decoder*/) {}
+
     /// \brief restore speed of all decoders that are not (emergency) stopped
     void restoreDecoderSpeed();
 
@@ -76,6 +79,10 @@ class DecoderController
     //! \param[in] protocol The decoder protocol
     //! \return Address range or \c noAddressMinMax if address isn't supported for the given protocol
     virtual std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const;
+
+    [[nodiscard]] virtual bool isDecoderAddressAvailable(DecoderProtocol protocol, uint16_t address) const;
+
+    [[nodiscard]] virtual bool changeDecoderProtocolAddress(Decoder& decoder, DecoderProtocol newProtocol, uint16_t newAddress);
 
     //! \brief Get speed step options for given protocol
     //! \param[in] protocol The decoder protocol
