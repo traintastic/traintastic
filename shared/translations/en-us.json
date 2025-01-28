@@ -6713,5 +6713,13 @@
     {
         "term": "output_map:swap_outputs",
         "definition": "Swap outputs"
+    },
+    {
+        "term": "wizard.add_interface.interface_selectrix:title",
+        "definition": "Selectrix interface"
+    },
+    {
+        "term": "wizard.add_interface.interface_selectrix:text",
+        "definition": "Please select the Selectrix interface that is connected to the %command_station%:"
     }
 ]

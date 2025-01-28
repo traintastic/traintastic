@@ -85,6 +85,15 @@
             }
           },
           {
+            "name": "Rautenhaus SLX850",
+            "next": "interface_selectrix",
+            "actions": {
+              "set_variables": {
+                "command_station": "Rautenhaus SLX850"
+              }
+            }
+          },
+          {
             "name": "Uhlenbrock IB-COM",
             "next": "connection_ibusb",
             "actions": {
@@ -522,6 +531,30 @@
           }
         ]
       },
+      "interface_selectrix": {
+        "title": "$wizard.add_interface.interface_selectrix:title$",
+        "text": "$wizard.add_interface.interface_selectrix:text$",
+        "type": "radio",
+        "options": [
+          {
+            "name": "Rautenhaus SLX825",
+            "next": "serial_port_baudrate_interface",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.selectrix",
+                "properties": {
+                  "name": "%command_station%",
+                  "type": "rautenhaus_slx825",
+                  "baudrate": 9600
+                }
+              },
+              "set_variables": {
+                "interface": "Rautenhaus SLX825"
+              }
+            }
+          }
+        ]
+      },
       "hostname": {
         "title": "$wizard.add_interface.hostname:title$",
         "text": "$wizard.add_interface.hostname:text$",
@@ -560,6 +593,17 @@
         "object": "interface",
         "properties": [
           "device"
+        ],
+        "next": "name"
+      },
+      "serial_port_baudrate_interface": {
+        "title": "$wizard.add_interface.serial_port:title$",
+        "text": "$wizard.add_interface.serial_port_interface:text$",
+        "type": "property",
+        "object": "interface",
+        "properties": [
+          "device",
+          "baudrate"
         ],
         "next": "name"
       },

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,6 +47,7 @@
 #include <traintastic/enum/pcapoutput.hpp>
 #include <traintastic/enum/powerunit.hpp>
 #include <traintastic/enum/ratiounit.hpp>
+#include <traintastic/enum/selectrixinterfacetype.hpp>
 #include <traintastic/enum/sensorstate.hpp>
 #include <traintastic/enum/sensortype.hpp>
 #include <traintastic/enum/serialflowcontrol.hpp>
@@ -120,6 +121,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(PCAPOutput)
   TRANSLATE_ENUM(PowerUnit)
   TRANSLATE_ENUM(RatioUnit)
+  TRANSLATE_ENUM(SelectrixInterfaceType)
   TRANSLATE_ENUM(SensorState)
   TRANSLATE_ENUM(SensorType)
   TRANSLATE_ENUM(SerialFlowControl)

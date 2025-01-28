@@ -402,5 +402,9 @@
     {
         "term": "hardware:selectrix",
         "definition": "Selectrix"
+    },
+    {
+        "term": "selectrix_interface_type:rautenhaus_slx825",
+        "definition": "Rautenhaus SLX825"
     }
 ]
