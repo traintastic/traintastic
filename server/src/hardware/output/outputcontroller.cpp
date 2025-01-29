@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022,2024 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -93,7 +93,7 @@ std::pair<uint32_t, uint32_t> OutputController::outputAddressMinMax(OutputChanne
   return {0, 0};
 }
 
-std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> OutputController::getOutputECoSObjects(OutputChannel /*channel*/) const
+std::pair<std::span<const uint16_t>, std::span<const std::string>> OutputController::getOutputECoSObjects(OutputChannel /*channel*/) const
 {
   assert(false);
   return {{}, {}};

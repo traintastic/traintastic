@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -940,7 +940,7 @@ void Kernel::resume()
     });
 }
 
-bool Kernel::send(tcb::span<uint8_t> packet)
+bool Kernel::send(std::span<uint8_t> packet)
 {
   assert(isEventLoopThread());
 
@@ -962,7 +962,7 @@ bool Kernel::send(tcb::span<uint8_t> packet)
   return true;
 }
 
-bool Kernel::immPacket(tcb::span<const uint8_t> dccPacket, uint8_t repeat)
+bool Kernel::immPacket(std::span<const uint8_t> dccPacket, uint8_t repeat)
 {
   assert(isEventLoopThread());
 
