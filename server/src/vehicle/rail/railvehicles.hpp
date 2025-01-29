@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +29,7 @@ struct RailVehicles
 {
   static constexpr std::string_view classIdPrefix = "vehicle.rail.";
 
-  static tcb::span<const std::string_view> classList();
+  static std::span<const std::string_view> classList();
   static std::shared_ptr<RailVehicle> create(World& world, std::string_view classId, std::string_view id);
 };
 

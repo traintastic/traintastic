@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@
 #include <cstdint>
 #include <vector>
 #include <memory>
-#include <tcb/span.hpp>
+#include <span>
 #include "../../core/objectproperty.hpp"
 
 #ifdef interface
@@ -70,7 +70,7 @@ class DecoderController
 
     //! \brief Get supported protocols
     //! \return Supported protocols, may not be empty and must be constant for the instance!
-    virtual tcb::span<const DecoderProtocol> decoderProtocols() const = 0;
+    virtual std::span<const DecoderProtocol> decoderProtocols() const = 0;
 
     //! \brief Get address range for given protocol
     //! \param[in] protocol The decoder protocol
@@ -80,7 +80,7 @@ class DecoderController
     //! \brief Get speed step options for given protocol
     //! \param[in] protocol The decoder protocol
     //! \return Speed step options for the given protocol
-    virtual tcb::span<const uint8_t> decoderSpeedSteps(DecoderProtocol protocol) const;
+    virtual std::span<const uint8_t> decoderSpeedSteps(DecoderProtocol protocol) const;
 
     [[nodiscard]] bool addDecoder(Decoder& decoder);
     [[nodiscard]] bool removeDecoder(Decoder& decoder);

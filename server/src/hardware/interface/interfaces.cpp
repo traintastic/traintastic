@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,7 +36,7 @@
 #include "xpressnetinterface.hpp"
 #include "z21interface.hpp"
 
-tcb::span<const std::string_view> Interfaces::classList()
+std::span<const std::string_view> Interfaces::classList()
 {
   static constexpr auto classes = makeArray(
     DCCEXInterface::classId,
