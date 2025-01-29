@@ -78,6 +78,7 @@ bool DecoderController::isDecoderAddressAvailable(DecoderProtocol protocol, uint
 
 bool DecoderController::changeDecoderProtocolAddress(Decoder& decoder, DecoderProtocol newProtocol, uint16_t newAddress)
 {
+  (void)decoder; // silence unused warning
   assert(decoder.interface.value().get() == this);
 
   return isDecoderAddressAvailable(newProtocol, newAddress);
