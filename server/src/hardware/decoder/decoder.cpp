@@ -35,6 +35,7 @@
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/almostzero.hpp"
+#include "../../utils/contains.hpp"
 
 CREATE_IMPL(Decoder)
 
@@ -60,13 +61,30 @@ Decoder::Decoder(World& world, std::string_view _id) :
     },
     [this](const std::shared_ptr<DecoderController>& newValue)
     {
-      if(!newValue || newValue->addDecoder(*this))
+      if(interface.value() && !interface->removeDecoder(*this))
       {
-        if(interface.value())
-          return interface->removeDecoder(*this);
-        return true;
+        return false;
       }
-      return false;
+
+      if(newValue)
+      {
+        if(checkProtocol(newValue->decoderProtocols()))
+        {
+          protocolChanged();
+        }
+        if(!newValue->isDecoderAddressAvailable(protocol, address))
+        {
+          const uint16_t newAddress = newValue->getUnusedDecoderAddress(protocol);
+          if(newAddress == Decoder::invalidAddress)
+          {
+            return false; // no free address available
+          }
+          address.setValueInternal(newAddress);
+        }
+        return newValue->addDecoder(*this);
+      }
+
+      return true;
     }},
   protocol{this, "protocol", DecoderProtocol::None, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const DecoderProtocol& /*value*/)
@@ -401,11 +419,14 @@ void Decoder::protocolChanged()
 
 bool Decoder::checkProtocol()
 {
-  const auto protocols = protocol.getSpanAttribute<DecoderProtocol>(AttributeName::Values).values();
-  assert(!protocols.empty());
-  if(const auto* it = std::find(protocols.begin(), protocols.end(), protocol); it == protocols.end())
+  return interface && checkProtocol(interface->decoderProtocols());
+}
+
+bool Decoder::checkProtocol(tcb::span<const DecoderProtocol> protocols)
+{
+  if(!protocols.empty() && !contains(protocols, protocol.value()))
   {
-    protocol = protocols.front();
+    protocol.setValueInternal(protocols.front());
     return true;
   }
   return false;

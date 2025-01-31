@@ -82,6 +82,8 @@ class DecoderController
 
     [[nodiscard]] virtual bool isDecoderAddressAvailable(DecoderProtocol protocol, uint16_t address) const;
 
+    uint16_t getUnusedDecoderAddress(DecoderProtocol protocol) const;
+
     [[nodiscard]] virtual bool changeDecoderProtocolAddress(Decoder& decoder, DecoderProtocol newProtocol, uint16_t newAddress);
 
     //! \brief Get speed step options for given protocol

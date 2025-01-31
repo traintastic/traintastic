@@ -31,6 +31,7 @@
 #include "../../core/controllerlist.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/almostzero.hpp"
+#include "../../utils/contains.hpp"
 #include "../../world/world.hpp"
 
 DecoderController::DecoderController(IdObject& interface, DecoderListColumn columns)
@@ -74,6 +75,20 @@ bool DecoderController::isDecoderAddressAvailable(DecoderProtocol protocol, uint
       {
         return item->protocol == protocol && item->address == address;
       }) == m_decoders.end();
+}
+
+uint16_t DecoderController::getUnusedDecoderAddress(DecoderProtocol protocol) const
+{
+  assert(contains(decoderProtocols(), protocol));
+  const auto range = decoderAddressMinMax(protocol);
+  for(uint32_t address = range.first; address < range.second; address++)
+  {
+    if(isDecoderAddressAvailable(protocol, address))
+    {
+      return address;
+    }
+  }
+  return Decoder::invalidAddress;
 }
 
 bool DecoderController::changeDecoderProtocolAddress(Decoder& decoder, DecoderProtocol newProtocol, uint16_t newAddress)

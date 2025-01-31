@@ -60,6 +60,12 @@ class Decoder : public IdObject
     //! \return \c true if adjusted, \c false if unchanged
     bool checkProtocol();
 
+    //! \brief Check and correct protocol
+    //! If the current value isn't in the list of valid protocols the protocol is set the the first valid one.
+    //! \param[in] protocols Valid protocols
+    //! \return \c true if adjusted, \c false if unchanged
+    bool checkProtocol(tcb::span<const DecoderProtocol> protocols);
+
     //! \brief Check and correct address
     //! If the current value isn't within the protocol address range, the value is set to the nearest valid one.
     //! \return \c true if adjusted, \c false if unchanged
@@ -78,6 +84,7 @@ class Decoder : public IdObject
     CLASS_ID("decoder")
     CREATE_DEF(Decoder)
 
+    static constexpr uint16_t invalidAddress = std::numeric_limits<uint16_t>::max();
     static constexpr uint8_t speedStepsAuto = 0;
     static constexpr float throttleMin = 0;
     static constexpr float throttleStop = throttleMin;
