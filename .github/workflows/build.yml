@@ -117,6 +117,10 @@ jobs:
       if: matrix.config.sccache
       uses: mozilla-actions/sccache-action@v0.0.4
 
+    - name: Setup developer prompt
+      if: startswith(matrix.config.os, 'windows')
+      uses: ilammy/msvc-dev-cmd@v1
+
     # All:
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/client/build
@@ -303,6 +307,10 @@ jobs:
     - name: Run sccache-cache
       if: matrix.config.sccache
       uses: mozilla-actions/sccache-action@v0.0.4
+
+    - name: Setup developer prompt
+      if: startswith(matrix.config.os, 'windows')
+      uses: ilammy/msvc-dev-cmd@v1
 
     # All:
     - name: Create Build Environment
