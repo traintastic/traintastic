@@ -181,7 +181,7 @@ jobs:
           os: windows-2019
           generator: "Ninja"
           arch: ""
-          toolset: "-T ClangCL"
+          toolset: ""
           target: ALL_BUILD
           jobs: 4
           build_type: Release
