@@ -143,7 +143,7 @@ jobs:
       shell: cmd
       run: |
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{github.workspace}}/client/build/${{matrix.config.build_type}}/traintastic-client.exe
+        windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{github.workspace}}/client/build/traintastic-client.exe
 
     # Linux only:
     - name: Build debian package
@@ -157,7 +157,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: traintastic-client-windows
-        path: ${{github.workspace}}/client/build/${{matrix.config.build_type}}
+        path: ${{github.workspace}}/client/build/traintastic-client.exe
 
     # Linux only:
     - name: Upload debian package artifact
