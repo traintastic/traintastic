@@ -18,7 +18,11 @@ else()
 endif()
 
 if(ENABLE_CLANG_TIDY)
-  set(CMAKE_CXX_CLANG_TIDY clang-tidy)
+  if(MSVC)
+    set(CMAKE_CXX_CLANG_TIDY clang-tidy --extra-arg=/EHsc)
+  else()
+    set(CMAKE_CXX_CLANG_TIDY clang-tidy)
+  endif()
 endif()
 
 add_executable(traintastic-server src/main.cpp src/options.hpp)
