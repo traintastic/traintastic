@@ -182,7 +182,7 @@ jobs:
           generator: "Ninja"
           arch: ""
           toolset: ""
-          target: ALL_BUILD
+          target: all
           jobs: 4
           build_type: Release
           build_deb: false
