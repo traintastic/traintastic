@@ -107,7 +107,7 @@ jobs:
     # Ubuntu only:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
-      run: sudo apt install qtbase5-dev qtbase5-dev-tools libqt5svg5-dev libqt5websockets5-dev
+      run: sudo apt install qtbase5-dev qtbase5-dev-tools libqt5svg5-dev libqt5websockets5-dev ninja-build
 
     - name: Run sccache-cache
       if: matrix.config.sccache
@@ -285,7 +285,7 @@ jobs:
     # Ubuntu only:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
-      run: sudo apt install libboost-program-options-dev liblua5.4-dev lcov libarchive-dev clang-tidy libsystemd-dev
+      run: sudo apt install libboost-program-options-dev liblua5.4-dev lcov libarchive-dev clang-tidy libsystemd-dev ninja-build
 
     # MacOS only:
     - name: Install brew packages
