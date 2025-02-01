@@ -109,6 +109,10 @@ jobs:
       if: startswith(matrix.config.os, 'ubuntu')
       run: sudo apt install qtbase5-dev qtbase5-dev-tools libqt5svg5-dev libqt5websockets5-dev ninja-build
 
+    - name: Install ninja
+      if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
+      uses: seanmiddleditch/gha-setup-ninja@v5
+
     - name: Run sccache-cache
       if: matrix.config.sccache
       uses: mozilla-actions/sccache-action@v0.0.4
@@ -286,6 +290,10 @@ jobs:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
       run: sudo apt install libboost-program-options-dev liblua5.4-dev lcov libarchive-dev clang-tidy libsystemd-dev ninja-build
+
+    - name: Install ninja
+      if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
+      uses: seanmiddleditch/gha-setup-ninja@v5
 
     # MacOS only:
     - name: Install brew packages
