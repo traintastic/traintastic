@@ -1579,7 +1579,7 @@ void Kernel::startPCAP(PCAPOutput pcapOutput)
       case PCAPOutput::Pipe:
       {
         std::filesystem::path pipe;
-#ifdef WIN32
+#ifdef _WIN32
         return; //! \todo Implement
 #else // unix
         pipe = std::filesystem::temp_directory_path() / "traintastic-server" / logId;

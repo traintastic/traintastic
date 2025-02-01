@@ -28,7 +28,7 @@
   #include "linux/serialportlistimplsystemd.hpp"
 #elif defined(__linux__)
   #include "linux/serialportlistimplinotify.hpp"
-#elif defined(WIN32)
+#elif defined(_WIN32)
   #include "windows/serialportlistimplwin32.hpp"
 #else
   #include "serialportlistimpl.hpp"

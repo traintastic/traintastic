@@ -32,7 +32,7 @@
   #include "os/unix/writepidfile.hpp"
   #include "os/unix/setgroupid.hpp"
   #include "os/unix/setuserid.hpp"
-#elif defined(WIN32)
+#elif defined(_WIN32)
   #include "os/windows/consolewindow.hpp"
   #include "os/windows/trayicon.hpp"
 #endif
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 #ifdef __unix__
     if(const char* home = getenv("HOME"))
       dataDir += std::filesystem::path(home) / ".config" / "traintastic-server";
-#elif defined(WIN32)
+#elif defined(_WIN32)
     dataDir = getLocalAppDataPath() / "traintastic" / "server";
 #endif
   }
@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
       std::cerr << e.what() << std::endl;
     exit(EXIT_FAILURE);
   }
-#elif defined(WIN32)
+#elif defined(_WIN32)
   if(options.tray)
   {
     Windows::setConsoleWindowVisible(false);
@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
         Log::disableFileLogger();
     }
 
-#ifdef WIN32
+#ifdef _WIN32
     if(options.tray)
       Windows::TrayIcon::add(restart);
 #endif
@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
       status = EXIT_FAILURE;
     }
 
-#ifdef WIN32
+#ifdef _WIN32
     if(options.tray)
       Windows::TrayIcon::remove();
 #endif

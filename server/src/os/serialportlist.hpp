@@ -37,7 +37,7 @@ namespace Linux {
 namespace Linux {
   class SerialPortListImplInotify;
 }
-#elif defined(WIN32)
+#elif defined(_WIN32)
 namespace Windows {
   class SerialPortListImplWin32;
 }
@@ -52,7 +52,7 @@ class SerialPortList
     using Impl = Linux::SerialPortListImplSystemD;
 #elif defined(__linux__)
     using Impl = Linux::SerialPortListImplInotify;
-#elif defined(WIN32)
+#elif defined(_WIN32)
     using Impl = Windows::SerialPortListImplWin32;
 #else
     using Impl = SerialPortListImpl;

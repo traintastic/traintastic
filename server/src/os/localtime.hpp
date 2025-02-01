@@ -28,7 +28,7 @@
 
 inline tm* localTime(const time_t* time, struct tm* result)
 {
-#ifdef WIN32
+#ifdef _WIN32
   if(localtime_s(result, time) != 0)
     memset(result, 0, sizeof(*result));
   return result;

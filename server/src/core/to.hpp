@@ -30,7 +30,7 @@
 #include <traintastic/set/set.hpp>
 #include "../utils/json.hpp"
 
-#ifdef WIN32
+#ifdef _WIN32
   // undef min/max macro's
   #undef min
   #undef max

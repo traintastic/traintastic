@@ -28,7 +28,7 @@
 
 struct Options
 {
-#ifdef WIN32
+#ifdef _WIN32
   bool tray;
 #endif
 #ifdef __unix__
@@ -50,7 +50,7 @@ struct Options
     desc.add_options()
       ("help,h", "display this help text and exit")
       ("version,v", "output version information and exit")
-#ifdef WIN32
+#ifdef _WIN32
       ("tray", "run as system tray application")
 #endif
 #ifdef __unix__
@@ -91,7 +91,7 @@ struct Options
         exit(EXIT_SUCCESS);
       }
 
-#ifdef WIN32
+#ifdef _WIN32
       tray = vm.count("tray");
 #endif
 

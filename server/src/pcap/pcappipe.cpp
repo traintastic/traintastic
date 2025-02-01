@@ -21,7 +21,7 @@
  */
 
 #include "pcappipe.hpp"
-#ifdef WIN32
+#ifdef _WIN32
 
 #else // unix
   #include <sys/types.h>
@@ -36,7 +36,7 @@ PCAPPipe::PCAPPipe(std::filesystem::path filename, uint32_t network)
   if(!std::filesystem::is_directory(path))
     std::filesystem::create_directories(path);
 
-#ifdef WIN32
+#ifdef _WIN32
 
 #else
   if(std::filesystem::exists(m_filename))
