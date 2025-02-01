@@ -31,14 +31,17 @@ class RadioPage : public TextPage
 {
   protected:
     QButtonGroup* m_group;
+    QLabel* m_bottomText;
 
   public:
     explicit RadioPage(QWidget* parent = nullptr);
 
     int currentIndex() const;
 
-    void addItem(const QString& label, bool disabled = false);
+    void addItem(const QString& label, bool checked = false, bool disabled = false);
     void clear();
+
+    void setBottomText(const QString& text);
 };
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +22,10 @@
 
 #include "trayicon.hpp"
 #include <cassert>
+#include <regex>
 #include <version.hpp>
+#include <traintastic/locale/locale.hpp>
+#include <traintastic/utils/standardpaths.hpp>
 #include "consolewindow.hpp"
 #include "registry.hpp"
 #include "../../core/eventloop.hpp"
@@ -31,12 +34,31 @@
 #include "../../traintastic/traintastic.hpp"
 #include "../../utils/setthreadname.hpp"
 
+namespace {
+  
+std::wstring utf8ToWString(std::string_view text)
+{
+  std::wstring out;
+  out.resize(text.size() * 2);
+  const int r = MultiByteToWideChar(CP_THREAD_ACP, 0, text.data(), text.size(), out.data(), out.size());
+  if(r >= 0)
+  {
+    out.resize(static_cast<size_t>(r));
+    return out;
+  }
+  return {};
+}
+
+}
+
 namespace Windows {
 
 std::unique_ptr<std::thread> TrayIcon::s_thread;
 HWND TrayIcon::s_window = nullptr;
 HMENU TrayIcon::s_menu = nullptr;
 HMENU TrayIcon::s_menuSettings = nullptr;
+HMENU TrayIcon::s_menuLanguage = nullptr;
+std::vector<std::string> TrayIcon::s_languages;
 
 void TrayIcon::add(bool isRestart)
 {
@@ -80,21 +102,41 @@ void TrayIcon::run(bool isRestart)
 
   // create menu:
   s_menu = CreatePopupMenu();
-  menuAddItem(s_menu, MenuItem::ShowHideConsole, "Show/hide console", hasConsoleWindow());
+  menuAddItem(s_menu, MenuItem::ShowHideConsole, Locale::tr("tray_icon.menu:show_hide_console"), hasConsoleWindow());
   menuAddSeperator(s_menu);
   
-  s_menuSettings = menuAddSubMenu(s_menu, "Settings");
-  menuAddItem(s_menuSettings, MenuItem::AllowClientServerRestart, "Allow client to restart server");
-  menuAddItem(s_menuSettings, MenuItem::AllowClientServerShutdown, "Allow client to shutdown server");
+  s_menuSettings = menuAddSubMenu(s_menu, Locale::tr("tray_icon.menu:settings"));
+  s_menuLanguage = menuAddSubMenu(s_menuSettings, Locale::tr("tray_icon.menu:language"));
+  {
+    s_languages.clear();
+    std::regex re("^[a-z]{2}-[a-z]{2}\\.lang$");
+    const auto localePath = getLocalePath();
+    for (auto const& dir_entry : std::filesystem::directory_iterator{localePath}) 
+    {
+      auto filename = dir_entry.path().filename().string();
+      if (std::regex_match(filename, re))
+      {
+        filename.resize(filename.size() - 5); // remove .lang
+        const auto id = menuItemLanguage(s_languages.size());        
+        Locale locale{dir_entry.path()};
+        const std::string language{locale.translate("language:" + filename)};
+        menuAddItem(s_menuLanguage, id, language.c_str());
+        s_languages.emplace_back(std::move(filename));
+      }
+    }
+  }
   menuAddSeperator(s_menuSettings);
-  menuAddItem(s_menuSettings, MenuItem::StartAutomaticallyAtLogon, "Start automatically at logon");  
+  menuAddItem(s_menuSettings, MenuItem::AllowClientServerRestart, Locale::tr("tray_icon.menu:allow_client_to_restart_server"));
+  menuAddItem(s_menuSettings, MenuItem::AllowClientServerShutdown, Locale::tr("tray_icon.menu:allow_client_to_shutdown_server"));
+  menuAddSeperator(s_menuSettings);
+  menuAddItem(s_menuSettings, MenuItem::StartAutomaticallyAtLogon, Locale::tr("tray_icon.menu:start_automatically_at_logon"));  
   
-  HMENU menuAdvanced = menuAddSubMenu(s_menu, "Advanced");
-  menuAddItem(menuAdvanced, MenuItem::OpenDataDirectory, "Open data directory");
+  HMENU menuAdvanced = menuAddSubMenu(s_menu, Locale::tr("tray_icon.menu:advanced"));
+  menuAddItem(menuAdvanced, MenuItem::OpenDataDirectory, Locale::tr("tray_icon.menu:open_data_directory"));
 
   menuAddSeperator(s_menu);
-  menuAddItem(s_menu, MenuItem::Restart, "Restart");
-  menuAddItem(s_menu, MenuItem::Shutdown, "Shutdown");
+  menuAddItem(s_menu, MenuItem::Restart, Locale::tr("tray_icon.menu:restart"));
+  menuAddItem(s_menu, MenuItem::Shutdown, Locale::tr("tray_icon.menu:shutdown"));
 
   bool startUpApproved = false;
   Registry::getStartUpApproved(startUpApproved);
@@ -113,8 +155,8 @@ void TrayIcon::run(bool isRestart)
   std::memcpy(notifyIconData.szTip, toolTip.data(), std::min(toolTip.size(), sizeof(notifyIconData.szTip) - 1));
 
   const std::string_view infoTitle{"Traintastic server"};
-  const std::string_view infoMessage{"Traintastic server is running in the system tray."};
-  const std::string_view infoMessageRestarted{"Traintastic server restarted"};
+  const std::string_view infoMessage = Locale::tr("tray_icon.notify:message_running");
+  const std::string_view infoMessageRestarted = Locale::tr("tray_icon.notify:message_restarting");
   std::memcpy(notifyIconData.szInfoTitle, infoTitle.data(), std::min(infoTitle.size(), sizeof(notifyIconData.szInfoTitle) - 1));
   if(isRestart)
     std::memcpy(notifyIconData.szInfo, infoMessageRestarted.data(), std::min(infoMessageRestarted.size(), sizeof(notifyIconData.szInfo) - 1));
@@ -174,7 +216,7 @@ LRESULT CALLBACK TrayIcon::windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARA
       break;
 
   case WM_COMMAND:
-    switch(static_cast<MenuItem>(wParam))
+    switch(static_cast<MenuItem>(wParam & 0xFF))
     {
       case MenuItem::Shutdown:
         EventLoop::call(
@@ -242,6 +284,25 @@ LRESULT CALLBACK TrayIcon::windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARA
         ShellExecuteA(nullptr, "open", dataDir.c_str(), nullptr, nullptr, SW_SHOWDEFAULT);
         break;
       }
+      case MenuItem::Language:
+      {
+        const auto index = (wParam >> 8) & 0xFF;
+        std::string value = s_languages[index];
+        {
+          std::lock_guard lock{s_settings.mutex};
+          if(value == s_settings.language)
+          {
+            break;
+          }
+        }
+        EventLoop::call(
+          [value]()
+          {
+            Traintastic::instance->settings->language = value;
+            PostMessage(s_window, WM_TRAINTASTIC_LANGUAGE_CHANGED, 0, 0);
+          });
+        break;
+      }
     }
     break;
 
@@ -250,25 +311,45 @@ LRESULT CALLBACK TrayIcon::windowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARA
       std::lock_guard lock{s_settings.mutex};
       menuSetItemChecked(s_menuSettings, MenuItem::AllowClientServerRestart, s_settings.allowClientServerRestart);
       menuSetItemChecked(s_menuSettings, MenuItem::AllowClientServerShutdown, s_settings.allowClientServerShutdown);
+      for(size_t i = 0; i < s_languages.size(); ++i)
+      {
+        menuSetItemChecked(s_menuLanguage, menuItemLanguage(i), s_languages[i] == s_settings.language);
+      }
+      break;
+    }
+    case WM_TRAINTASTIC_LANGUAGE_CHANGED:
+    {
+      const auto text = utf8ToWString(Locale::tr("tray_icon.language_changed_message_box:text"));
+      const auto caption = utf8ToWString(Locale::tr("tray_icon.language_changed_message_box:caption"));
+      const int button = MessageBoxExW(hWnd, text.c_str(), caption.c_str(), MB_YESNO | MB_ICONINFORMATION, 0);
+      if(button == IDYES)
+      {
+        EventLoop::call(
+          []()
+          {
+            Traintastic::instance->restart();
+          });
+      }
       break;
     }
   }
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-void TrayIcon::menuAddItem(HMENU menu, MenuItem id, const LPCSTR text, bool enabled)
+void TrayIcon::menuAddItem(HMENU menu, MenuItem id, std::string_view text, bool enabled)
 {
   assert(menu);
-  MENUITEMINFO item;
+  const auto textW = utf8ToWString(text);
+  MENUITEMINFOW item;
   memset(&item, 0, sizeof(item));
   item.cbSize = sizeof(item);
   item.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
   item.fType = MFT_STRING;
   item.fState = enabled ? MFS_ENABLED : MFS_DISABLED;
   item.wID = static_cast<UINT>(id);
-  item.dwTypeData = const_cast<LPSTR>(text);
+  item.dwTypeData = const_cast<LPWSTR>(textW.c_str());
   int n = GetMenuItemCount(menu);
-  InsertMenuItem(menu, n, TRUE, &item);
+  InsertMenuItemW(menu, n, TRUE, &item);
 }
 
 void TrayIcon::menuAddSeperator(HMENU menu)
@@ -282,19 +363,20 @@ void TrayIcon::menuAddSeperator(HMENU menu)
   InsertMenuItem(menu, GetMenuItemCount(menu), TRUE, &item);
 }
 
-HMENU TrayIcon::menuAddSubMenu(HMENU menu, const LPCSTR text)
+HMENU TrayIcon::menuAddSubMenu(HMENU menu, std::string_view text)
 {
   assert(menu);
+  const auto textW = utf8ToWString(text);
   HMENU subMenu = CreatePopupMenu();
-  MENUITEMINFO item;
+  MENUITEMINFOW item;
   memset(&item, 0, sizeof(item));
   item.cbSize = sizeof(item);
   item.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE | MIIM_SUBMENU;
   item.fType = MFT_STRING;
   item.fState = MFS_ENABLED;
   item.hSubMenu = subMenu;
-  item.dwTypeData = const_cast<LPSTR>(text);
-  InsertMenuItem(menu, GetMenuItemCount(menu), TRUE, &item);
+  item.dwTypeData = const_cast<LPWSTR>(textW.c_str());
+  InsertMenuItemW(menu, GetMenuItemCount(menu), TRUE, &item);
   return subMenu;
 }
 
@@ -318,6 +400,7 @@ void TrayIcon::getSettings()
     std::lock_guard lock{s_settings.mutex};
     s_settings.allowClientServerRestart = settings.allowClientServerRestart;
     s_settings.allowClientServerShutdown = settings.allowClientServerShutdown;
+    s_settings.language = settings.language;
   }
   PostMessage(s_window, WM_TRAINTASTIC_SETTINGS, 0, 0);
 }

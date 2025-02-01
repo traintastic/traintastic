@@ -45,8 +45,8 @@ bool Object::receiveReply(const Reply& reply)
   {
     std::string_view key;
     std::string_view value;
-    for(auto option : reply.options)
-      if(parseOptionValue(option, key, value))
+    for(auto text : reply.options)
+      if(parseOptionValue(text, key, value))
         update(key, value);
   }
 

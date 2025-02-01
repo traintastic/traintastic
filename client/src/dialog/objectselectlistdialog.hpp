@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_CLIENT_DIALOG_OBJECTSELECTLISTDIALOG_HPP
 
 #include <QDialog>
+#include <QModelIndexList>
 #include "../network/objectptr.hpp"
 
 class QDialogButtonBox;
@@ -39,17 +40,19 @@ class ObjectSelectListDialog : public QDialog
 
   protected:
     InterfaceItem& m_item;
+    const bool m_multiSelect;
     ObjectPtr m_object;
     int m_requestId;
     QDialogButtonBox* m_buttons;
     TableWidget* m_tableWidget;
 
-    ObjectSelectListDialog(InterfaceItem& item, QWidget* parent);
+    ObjectSelectListDialog(InterfaceItem& item, bool multiSelect, QWidget* parent);
 
     void acceptRow(int row);
+    void acceptRows(const QModelIndexList& indexes);
 
   public:
-    ObjectSelectListDialog(Method& method, QWidget* parent);
+    ObjectSelectListDialog(Method& method, bool multiSelect, QWidget* parent);
     ObjectSelectListDialog(ObjectProperty& property, QWidget* parent);
 };
 

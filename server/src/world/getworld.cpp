@@ -27,11 +27,11 @@
 World& getWorld(Object* object)
 {
   assert(object);
-  if(IdObject* idObject = dynamic_cast<IdObject*>(object))
+  if(auto* idObject = dynamic_cast<IdObject*>(object))
     return idObject->world();
-  if(SubObject* subObject = dynamic_cast<SubObject*>(object))
+  if(auto* subObject = dynamic_cast<SubObject*>(object))
     return getWorld(&subObject->parent());
-  if(World* world = dynamic_cast<World*>(object))
+  if(auto* world = dynamic_cast<World*>(object))
     return *world;
   assert(false);
   abort();

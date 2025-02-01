@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -90,10 +90,10 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(firmwareVersion, notes);
 }
 
-tcb::span<const DecoderProtocol> Z21Interface::decoderProtocols() const
+std::span<const DecoderProtocol> Z21Interface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 3> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong, DecoderProtocol::Motorola};
-  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
 std::pair<uint16_t, uint16_t> Z21Interface::decoderAddressMinMax(DecoderProtocol protocol) const
@@ -144,7 +144,7 @@ void Z21Interface::inputSimulateChange(uint32_t channel, uint32_t address, Simul
     m_kernel->simulateInputChange(channel, address, action);
 }
 
-tcb::span<const OutputChannel> Z21Interface::outputChannels() const
+std::span<const OutputChannel> Z21Interface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::DCCext);
   return values;

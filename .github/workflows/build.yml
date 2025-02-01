@@ -23,17 +23,6 @@ jobs:
           defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded -DCMAKE_POLICY_CMP0141=NEW"
           sccache: true
 
-        - name: "ubuntu_22.04"
-          os: ubuntu-22.04
-          generator: "Unix Makefiles"
-          arch: ""
-          target: traintastic-client
-          jobs: 4
-          build_type: Release
-          build_deb: true
-          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
-          sccache: true
-
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
           generator: "Unix Makefiles"
@@ -67,34 +56,12 @@ jobs:
           defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
           sccache: false
 
-        - name: "macos-12"
-          os: "macos-12"
-          generator: "Unix Makefiles"
-          arch: ""
-          target: traintastic-client
-          jobs: 3
-          build_type: Release
-          build_deb: false
-          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
-          sccache: true
-
         - name: "macos-13"
           os: "macos-13"
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
           jobs: 4
-          build_type: Release
-          build_deb: false
-          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
-          sccache: true
-
-        - name: "macos-14"
-          os: "macos-14"
-          generator: "Unix Makefiles"
-          arch: ""
-          target: traintastic-client
-          jobs: 3
           build_type: Release
           build_deb: false
           defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
@@ -122,7 +89,15 @@ jobs:
       uses: jurplel/install-qt-action@v4
       with:
         cache: true
+        modules: qtwebsockets
         version: 6.5.*
+
+    - name: Set CMAKE_OSX_ARCHITECTURES
+      if: startswith(matrix.config.os, 'macos')
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('CMAKE_OSX_ARCHITECTURES', 'x86_64');
 
     # Ubuntu only:
     - name: apt update
@@ -132,7 +107,7 @@ jobs:
     # Ubuntu only:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
-      run: sudo apt install qtbase5-dev qtbase5-dev-tools libqt5svg5-dev
+      run: sudo apt install qtbase5-dev qtbase5-dev-tools libqt5svg5-dev libqt5websockets5-dev
 
     - name: Run sccache-cache
       if: matrix.config.sccache
@@ -171,17 +146,17 @@ jobs:
     # Windows only:
     - name: Upload artifact
       if: startswith(matrix.config.os, 'windows')
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: traintastic-client
+        name: traintastic-client-windows
         path: ${{github.workspace}}/client/build/${{matrix.config.build_type}}
 
     # Linux only:
     - name: Upload debian package artifact
       if: matrix.config.build_deb
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: traintastic-client-deb
+        name: traintastic-client-deb-${{matrix.config.name}}
         path: ${{github.workspace}}/client/build/*.deb
 
   build-server:
@@ -189,6 +164,7 @@ jobs:
     runs-on: ${{matrix.config.os}}
     env:
       SCCACHE_GHA_ENABLED: "true"
+      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
     strategy:
       fail-fast: false
       matrix:
@@ -206,32 +182,6 @@ jobs:
           ccov: false
           sccache: true
 
-        - name: "windows_x64_mingw"
-          os: windows-2022
-          generator: "MinGW Makefiles"
-          arch: ""
-          toolset: ""
-          target: all
-          jobs: 4
-          build_type: Release
-          build_deb: false
-          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
-          ccov: false
-          sccache: true
-
-        - name: "ubuntu_22.04"
-          os: ubuntu-22.04
-          generator: "Unix Makefiles"
-          arch: ""
-          toolset: ""
-          target: all
-          jobs: 4
-          build_type: Release
-          build_deb: true
-          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON -DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
-          ccov: false
-          sccache: true
-
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
           generator: "Unix Makefiles"
@@ -245,8 +195,8 @@ jobs:
           ccov: false
           sccache: true
 
-        - name: "ubuntu_latest (debug+ccov)"
-          os: ubuntu-latest
+        - name: "ubuntu_24.04 (debug+ccov)"
+          os: ubuntu-24.04
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
@@ -284,19 +234,6 @@ jobs:
           ccov: false
           sccache: false
 
-        - name: "macos-12"
-          os: "macos-12"
-          generator: "Unix Makefiles"
-          arch: ""
-          toolset: ""
-          target: all
-          jobs: 3
-          build_type: Release
-          build_deb: false
-          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
-          ccov: false
-          sccache: true
-
         - name: "macos-13"
           os: "macos-13"
           generator: "Unix Makefiles"
@@ -304,19 +241,6 @@ jobs:
           toolset: ""
           target: all
           jobs: 4
-          build_type: Release
-          build_deb: false
-          defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
-          ccov: false
-          sccache: true
-
-        - name: "macos-14"
-          os: "macos-14"
-          generator: "Unix Makefiles"
-          arch: ""
-          toolset: ""
-          target: all
-          jobs: 3
           build_type: Release
           build_deb: false
           defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=sccache"
@@ -332,6 +256,27 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Export GitHub Actions cache environment variables
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    - name: Set VCPKG_ROOT
+      if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('VCPKG_ROOT', process.env.VCPKG_INSTALLATION_ROOT || '');
+
+    - name: Set CMAKE_OSX_ARCHITECTURES
+      if: startswith(matrix.config.os, 'macos')
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('CMAKE_OSX_ARCHITECTURES', 'x86_64');
+
     # Ubuntu only:
     - name: apt update
       if: startswith(matrix.config.os, 'ubuntu')
@@ -340,12 +285,12 @@ jobs:
     # Ubuntu only:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
-      run: sudo apt install libboost-program-options-dev liblua5.3-dev lcov libarchive-dev clang-tidy libsystemd-dev
+      run: sudo apt install libboost-program-options-dev liblua5.4-dev lcov libarchive-dev clang-tidy libsystemd-dev
 
     # MacOS only:
     - name: Install brew packages
       if: startswith(matrix.config.os, 'macos')
-      run: brew install libarchive lua@5.3
+      run: brew install libarchive lua@5.4
 
     - name: Run sccache-cache
       if: matrix.config.sccache
@@ -396,17 +341,17 @@ jobs:
     # Windows only:
     - name: Upload artifact
       if: matrix.config.name == 'windows_x64_clang'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: traintastic-server
+        name: traintastic-server-windows
         path: ${{github.workspace}}/server/build/Release/traintastic-server.exe
 
     # Linux only:
     - name: Upload debian package artifact
       if: matrix.config.build_deb
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: traintastic-server-deb
+        name: traintastic-server-deb-${{matrix.config.name}}
         path: ${{github.workspace}}/server/build/*.deb
 
     # Code coverage:
@@ -425,7 +370,7 @@ jobs:
 
     - name: "Code coverage: upload artifact"
       if: matrix.config.ccov
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: traintastic-server-test-code-coverage
         path: ${{github.workspace}}/server/build/ccov/*
@@ -438,10 +383,6 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - name: "ubuntu_22.04"
-          os: ubuntu-22.04
-          defines: ""
-
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
           defines: ""
@@ -459,7 +400,7 @@ jobs:
         submodules: recursive
 
     - name: "Download artifact: lang"
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: traintastic-lang
         path: ${{github.workspace}}/shared/translations
@@ -477,9 +418,9 @@ jobs:
       run: cpack
 
     - name: Upload debian package artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: traintastic-data-deb
+        name: traintastic-data-deb-${{matrix.config.name}}
         path: ${{github.workspace}}/shared/build/*.deb
 
   build-lang:
@@ -499,7 +440,7 @@ jobs:
       run: python3 json2lang.py
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: traintastic-lang
         path: ${{github.workspace}}/shared/translations/*.lang
@@ -524,7 +465,7 @@ jobs:
       run: ./builddoc.py html-single-page --output-dir build
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: traintastic-manual
         path: ${{github.workspace}}/manual/build/*
@@ -546,7 +487,7 @@ jobs:
       run: ./buildluadoc.py
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: traintastic-manual-lua
         path: ${{github.workspace}}/manual/build.luadoc/*
@@ -565,31 +506,31 @@ jobs:
         submodules: recursive
 
     - name: Download artifacts 1/2
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
-        name: traintastic-client
+        name: traintastic-client-windows
         path: ${{github.workspace}}/client/build/Release
 
     - name: Download artifacts 2/2
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
-        name: traintastic-server
+        name: traintastic-server-windows
         path: ${{github.workspace}}/server/build
 
     - name: "Download artifact: lang"
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: traintastic-lang
         path: ${{github.workspace}}/shared/translations
 
     - name: "Download artifact: manual"
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: traintastic-manual
         path: ${{github.workspace}}/manual/build
 
     - name: "Download artifact: manual-lua"
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: traintastic-manual-lua
         path: ${{github.workspace}}/manual/build.luadoc
@@ -600,7 +541,7 @@ jobs:
         "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: package-innosetup
         path: ${{github.workspace}}/package/innosetup/output
@@ -615,43 +556,46 @@ jobs:
     - uses: FranzDiebold/github-env-vars-action@v2
 
     - name: Download artifacts 1/6
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: package-innosetup
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - name: Download artifacts 2/6
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
-        name: traintastic-client-deb
+        pattern: traintastic-client-deb-*
+        merge-multiple: true
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - name: Download artifacts 3/6
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
-        name: traintastic-server-deb
+        pattern: traintastic-server-deb-*
+        merge-multiple: true
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - name: Download artifacts 4/6
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: traintastic-server-test-code-coverage
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/ccov
 
     - name: Download artifacts 5/6
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: traintastic-manual
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/manual
 
     - name: Download artifacts 6/6
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
-        name: traintastic-data-deb
+        pattern: traintastic-data-deb-*
+        merge-multiple: true
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - name: "Download artifact: manual-lua"
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: traintastic-manual-lua
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/manual-lua

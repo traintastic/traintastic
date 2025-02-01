@@ -96,7 +96,7 @@ std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
         break;
 
       case OutputListColumn::Address:
-        if(auto* addressOutput = dynamic_cast<const AddressOutput*>(&output))
+        if(const auto* addressOutput = dynamic_cast<const AddressOutput*>(&output))
         {
           return std::to_string(addressOutput->address.value());
         }

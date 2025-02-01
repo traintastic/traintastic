@@ -119,7 +119,7 @@ void LBServerIOHandler::read()
           if(startsWith(line, "RECEIVE "))
           {
             std::vector<std::byte> bytes = readHexBytes(line.substr(8));
-            const Message* message = reinterpret_cast<const Message*>(bytes.data());
+            const auto* message = reinterpret_cast<const Message*>(bytes.data());
             if(isValid(*message))
               m_kernel.receive(*message);
           }

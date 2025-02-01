@@ -249,7 +249,7 @@ void ServerKernel::receiveFrom(const Message& message, IOHandler::ClientId clien
 
     case LAN_GET_BROADCASTFLAGS:
       if(message == LanGetBroadcastFlags())
-        sendTo(LanSetBroadcastFlags(m_clients[clientId].broadcastFlags), clientId);
+        sendTo(LanGetBroadcastFlagsReply(m_clients[clientId].broadcastFlags), clientId);
       break;
 
     case LAN_SET_BROADCASTFLAGS:

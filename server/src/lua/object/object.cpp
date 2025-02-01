@@ -53,7 +53,7 @@ int Object::index(lua_State* L, ::Object& object)
 
   if(InterfaceItem* item = object.getItem(key))
   {
-    if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(item))
+    if(auto* property = dynamic_cast<AbstractProperty*>(item))
     {
       if(property->isScriptReadable())
       {
@@ -109,7 +109,7 @@ int Object::index(lua_State* L, ::Object& object)
       else
         lua_pushnil(L);
     }
-    else if(AbstractMethod* method = dynamic_cast<AbstractMethod*>(item))
+    else if(auto* method = dynamic_cast<AbstractMethod*>(item))
     {
       if(method->isScriptCallable())
         Method::push(L, *method);

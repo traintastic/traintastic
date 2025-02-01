@@ -5058,7 +5058,7 @@
         "fuzzy": 0
     },
     {
-        "term": "board_tile.rail.signal_3_aspect:require_reservation",
+        "term": "board_tile.rail.signal:require_reservation",
         "definition": "Reservierung erforderlich",
         "context": "",
         "term_plural": "",
@@ -6139,7 +6139,7 @@
     },
     {
         "term": "output_map_item.switch.key:off",
-        "definition": "",
+        "definition": "Aus",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6175,7 +6175,7 @@
     },
     {
         "term": "sensor_state:free",
-        "definition": "",
+        "definition": "Frei",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6229,7 +6229,7 @@
     },
     {
         "term": "block_state:free",
-        "definition": "",
+        "definition": "Frei",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -6301,6 +6301,24 @@
     },
     {
         "term": "turnout_position:double_slip_straight_b",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "luadoc:index:title",
+        "definition": "",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": "",
+        "fuzzy": 0
+    },
+    {
+        "term": "luadoc:index:nav",
         "definition": "",
         "context": "",
         "term_plural": "",

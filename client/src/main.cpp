@@ -26,6 +26,9 @@
 #endif
 #include <QCommandLineParser>
 #include <QMessageBox>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+  #include <QStyleHints>
+#endif
 #include <version.hpp>
 #include "mainwindow.hpp"
 #include "settings/generalsettings.hpp"
@@ -124,9 +127,15 @@ int main(int argc, char* argv[])
   if(logMissingStrings)
     const_cast<Locale*>(Locale::instance.get())->enableMissingLogging();
 
-  // Auto select icon set based on background color lightness:
-  const qreal backgroundLightness = QApplication::style()->standardPalette().window().color().lightnessF();
-  Theme::setIconSet(backgroundLightness < 0.5 ? Theme::IconSet::Dark : Theme::IconSet::Light);
+  // Detect light/dark:
+#if QT_VERSION < QT_VERSION_CHECK(6, 5, 0)
+    const QPalette defaultPalette;
+    const auto text = defaultPalette.color(QPalette::WindowText);
+    const auto window = defaultPalette.color(QPalette::Window);
+    Theme::setDark(text.lightness() > window.lightness());
+#else
+    Theme::setDark(QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark);
+#endif
 
   MainWindow mw;
   if(options.fullscreen)

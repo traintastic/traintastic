@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
+ * Copyright (C) 2019-2020,2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,15 +23,15 @@
 #ifndef TRAINTASTIC_SERVER_CORE_SPANATTRIBUTE_HPP
 #define TRAINTASTIC_SERVER_CORE_SPANATTRIBUTE_HPP
 
-#include <tcb/span.hpp>
+#include <span>
 #include "abstractvaluesattribute.hpp"
 #include "to.hpp"
 
-template<typename T, size_t N = tcb::dynamic_extent>
+template<typename T, size_t N = std::dynamic_extent>
 class SpanAttribute : public AbstractValuesAttribute
 {
   public:
-    typedef tcb::span<const T, N> Span;
+    typedef std::span<const T, N> Span;
 
   protected:
     Span m_values;

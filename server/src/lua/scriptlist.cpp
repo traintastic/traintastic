@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,6 +54,17 @@ ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName)
           if(!script->disabled)
             script->stop();
       }}
+  , clearPersistentVariables{*this, "clear_persistent_variables",
+    [this]()
+    {
+      for(const auto& script : m_items)
+      {
+        if(Attributes::getEnabled(script->clearPersistentVariables))
+        {
+          script->clearPersistentVariables();
+        }
+      }
+    }}
 {
   status.setValueInternal(std::make_shared<LuaStatus>(*this, status.name()));
 
@@ -74,6 +85,9 @@ ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName)
 
   Attributes::addEnabled(stopAll, false);
   m_interfaceItems.add(stopAll);
+
+  Attributes::addEnabled(clearPersistentVariables, false);
+  m_interfaceItems.add(clearPersistentVariables);
 }
 
 ScriptList::~ScriptList()
@@ -100,25 +114,41 @@ void ScriptList::objectAdded(const std::shared_ptr<Script>& /*object*/)
 {
   if(m_items.size() == 1)
   {
-    Attributes::setEnabled(startAll, true);
-    Attributes::setEnabled(stopAll, true);
     getWorld(parent()).statuses.appendInternal(status.value());
   }
+  updateEnabled();
 }
 
 void ScriptList::objectRemoved(const std::shared_ptr<Script>& /*object*/)
 {
   if(empty())
   {
-    Attributes::setEnabled(startAll, false);
-    Attributes::setEnabled(stopAll, false);
     getWorld(parent()).statuses.removeInternal(status.value());
   }
+  updateEnabled();
 }
 
 bool ScriptList::isListedProperty(std::string_view name)
 {
   return ScriptListTableModel::isListedProperty(name);
+}
+
+void ScriptList::updateEnabled()
+{
+  bool canStart = false;
+  bool canStop = false;
+  bool canClearPersistentVariables = false;
+
+  for(const auto& script : m_items)
+  {
+    canStart |= Attributes::getEnabled(script->start);
+    canStop |= Attributes::getEnabled(script->stop);
+    canClearPersistentVariables |= Attributes::getEnabled(script->clearPersistentVariables);
+  }
+
+  Attributes::setEnabled(startAll, canStart);
+  Attributes::setEnabled(stopAll, canStop);
+  Attributes::setEnabled(clearPersistentVariables, canClearPersistentVariables);
 }
 
 }

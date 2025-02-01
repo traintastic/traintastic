@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,8 @@
 #endif
 #ifdef HAS_LIBSYSTEMD
   #include "linux/serialportlistimplsystemd.hpp"
+#elif defined(__linux__)
+  #include "linux/serialportlistimplinotify.hpp"
 #elif defined(WIN32)
   #include "windows/serialportlistimplwin32.hpp"
 #else

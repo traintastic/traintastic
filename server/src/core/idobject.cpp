@@ -49,10 +49,7 @@ IdObject::IdObject(World& world, std::string_view _id) :
   m_interfaceItems.add(id);
 }
 
-IdObject::~IdObject()
-{
-  //assert(m_world.expired()); // is destroy() called ??
-}
+IdObject::~IdObject() = default;
 
 void IdObject::destroying()
 {

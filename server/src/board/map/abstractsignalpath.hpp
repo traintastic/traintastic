@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -181,19 +181,19 @@ class AbstractSignalPath : public Path
       return m_root.get();
     }
 
-    const BlockItem* nextBlock(const Item* item) const;
+    static const BlockItem* nextBlock(const Item* item);
     inline const BlockItem* nextBlock() const
     {
       return nextBlock(root());
     }
 
-    std::tuple<const BlockItem*, const SignalItem*> nextBlockOrSignal(const Item* item) const;
+    static std::tuple<const BlockItem*, const SignalItem*> nextBlockOrSignal(const Item* item);
     inline std::tuple<const BlockItem*, const SignalItem*> nextBlockOrSignal() const
     {
       return nextBlockOrSignal(root());
     }
 
-    void getBlockStates(tcb::span<BlockState> blockStates) const;
+    void getBlockStates(std::span<BlockState> blockStates) const;
     std::shared_ptr<BlockRailTile> getBlock(size_t index) const;
 
   public:

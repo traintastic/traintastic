@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023-2024 Reinder Feenstra
+ * Copyright (C) 2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -78,15 +78,15 @@ class MarklinCANInterface final
     MarklinCANInterface(World& world, std::string_view _id);
 
     // DecoderController:
-    tcb::span<const DecoderProtocol> decoderProtocols() const final;
-    tcb::span<const uint8_t> decoderSpeedSteps(DecoderProtocol protocol) const final;
+    std::span<const DecoderProtocol> decoderProtocols() const final;
+    std::span<const uint8_t> decoderSpeedSteps(DecoderProtocol protocol) const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
     std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final;
 
     // OutputController:
-    tcb::span<const OutputChannel> outputChannels() const final;
+    std::span<const OutputChannel> outputChannels() const final;
     [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t address, OutputValue value) final;
 };
 

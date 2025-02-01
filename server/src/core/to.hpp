@@ -140,6 +140,22 @@ To to(const From& value)
       from_json(value, e);
       return e;
     }
+    else if constexpr(std::is_floating_point_v<To>)
+    {
+      if(value == "Inf")
+      {
+        return std::numeric_limits<To>::infinity();
+      }
+      else if(value == "-Inf")
+      {
+        return -std::numeric_limits<To>::infinity();
+      }
+      else if(value == "NaN")
+      {
+        return std::numeric_limits<To>::quiet_NaN();;
+      }
+      return value;
+    }
     else
       return value;
   }
@@ -155,6 +171,18 @@ To to(const From& value)
       To json;
       to_json(json, value);
       return json;
+    }
+    else if constexpr(std::is_floating_point_v<From>)
+    {
+      if(std::isinf(value))
+      {
+        return (value > 0) ? "Inf" : "-Inf";
+      }
+      else if(std::isnan(value))
+      {
+        return "NaN";
+      }
+      return value;
     }
     else
       return value;

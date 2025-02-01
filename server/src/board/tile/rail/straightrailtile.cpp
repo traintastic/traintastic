@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020,2022 Reinder Feenstra
+ * Copyright (C) 2020,2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,8 +22,8 @@
 
 #include "straightrailtile.hpp"
 
-StraightRailTile::StraightRailTile(World& world, std::string_view _id, TileId tileId) :
-  RailTile(world, _id, tileId)
+StraightRailTile::StraightRailTile(World& world, std::string_view _id, TileId tileId_) :
+  RailTile(world, _id, tileId_)
 {
 }
 

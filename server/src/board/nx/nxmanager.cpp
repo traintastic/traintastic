@@ -92,11 +92,20 @@ void NXManager::released(NXButtonRailTile& button)
 
 bool NXManager::selectPath(const NXButtonRailTile& from, const NXButtonRailTile& to)
 {
-  for(auto& path : from.block->paths())
+  for(const auto& path : from.block->paths())
   {
     if(path->nxButtonTo().get() == &to && path->nxButtonFrom().get() == &from)
     {
       LOG_DEBUG("Path found:", path->fromBlock().name.value(), "->", path->toBlock()->name.value());
+
+      if(path->isReserved())
+      {
+        // If user clicked an already reserved path we release it.
+        // TODO: make some logic to prevent releasing a path while train is inside it?
+        // Also releasing a path when we already set signal to "Proceed" is dangerous because train might
+        // have already started moving towards out path
+        return path->release();
+      }
 
       if(from.block->trains.empty())
       {

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,8 @@
 
 SignalOutputMapItem::SignalOutputMapItem(Object& map, SignalAspect aspect) :
   OutputMapItemBase(map, aspect)
+  , use{this, "use", true, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  Attributes::setEnabled(use, !isRequiredSignalAspect(aspect));
+  Attributes::addEnabled(use, !isRequiredSignalAspect(aspect));
+  m_interfaceItems.add(use);
 }

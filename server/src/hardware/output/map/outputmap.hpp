@@ -82,6 +82,7 @@ class OutputMap : public SubObject
     virtual void updateStateFromOutput();
 
   public:
+    ObjectProperty<Object> parentObject; // UI needs access to parent object
     ObjectProperty<OutputController> interface;
     Property<OutputChannel> channel;
     VectorProperty<uint32_t> addresses;
@@ -89,6 +90,7 @@ class OutputMap : public SubObject
     ObjectVectorProperty<OutputMapItem> items;
     Method<void()> addAddress;
     Method<void()> removeAddress;
+    Method<void()> swapOutputs;
 
     OutputMap(Object& _parent, std::string_view parentPropertyName);
     ~OutputMap() override;

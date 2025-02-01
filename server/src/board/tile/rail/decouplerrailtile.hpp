@@ -40,6 +40,8 @@ class DecouplerRailTile final : public StraightRailTile
     void setState(DecouplerState value, bool skipAction = false);
 
   protected:
+    void destroying() override;
+    void addToWorld() final;
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
 
   public:

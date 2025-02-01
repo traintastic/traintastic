@@ -21,6 +21,7 @@
  */
 
 #include "serialportlistimplsystemd.hpp"
+#include "isserialdevice.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../utils/startswith.hpp"
 #include "../../utils/setthreadname.hpp"
@@ -42,11 +43,7 @@ static std::string_view getDevPath(sd_device* device)
 
 static bool isSerialDevice(sd_device* device)
 {
-  auto devPath = getDevPath(device);
-  return
-    startsWith(devPath, "/dev/ttyS") ||
-    startsWith(devPath, "/dev/ttyUSB") ||
-    startsWith(devPath, "/dev/ttyACM");
+  return isSerialDevice(getDevPath(device));
 }
 
 

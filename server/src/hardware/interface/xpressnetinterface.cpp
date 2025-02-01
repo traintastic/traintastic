@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -158,10 +158,10 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   updateVisible();
 }
 
-tcb::span<const DecoderProtocol> XpressNetInterface::decoderProtocols() const
+std::span<const DecoderProtocol> XpressNetInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
-  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
 std::pair<uint16_t, uint16_t> XpressNetInterface::decoderAddressMinMax(DecoderProtocol protocol) const
@@ -179,7 +179,7 @@ std::pair<uint16_t, uint16_t> XpressNetInterface::decoderAddressMinMax(DecoderPr
   }
 }
 
-tcb::span<const uint8_t> XpressNetInterface::decoderSpeedSteps(DecoderProtocol protocol) const
+std::span<const uint8_t> XpressNetInterface::decoderSpeedSteps(DecoderProtocol protocol) const
 {
   static constexpr std::array<uint8_t, 4> dccSpeedSteps{{14, 27, 28, 128}}; // XpressNet also support 27 steps
 
@@ -200,7 +200,7 @@ void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFla
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(uint32_t) const
+std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(uint32_t /*channel*/) const
 {
   return {XpressNet::Kernel::inputAddressMin, XpressNet::Kernel::inputAddressMax};
 }
@@ -211,7 +211,7 @@ void XpressNetInterface::inputSimulateChange(uint32_t channel, uint32_t address,
     m_kernel->simulateInputChange(address, action);
 }
 
-tcb::span<const OutputChannel> XpressNetInterface::outputChannels() const
+std::span<const OutputChannel> XpressNetInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory);
   return values;

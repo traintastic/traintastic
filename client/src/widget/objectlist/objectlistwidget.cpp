@@ -146,10 +146,11 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
      method->argumentTypes().size() == 1 &&  method->argumentTypes()[0] == ValueType::Object &&
      method->resultType() == ValueType::Invalid)
   {
+    const bool multiSelect = object_->classId() == "list.train_vehicle";
     m_actionAdd = m_toolbar->addAction(Theme::getIcon("add"), method->displayName(),
-      [this, method]()
+      [this, method, multiSelect]()
       {
-        std::make_unique<ObjectSelectListDialog>(*method, this)->exec();
+        std::make_unique<ObjectSelectListDialog>(*method, multiSelect, this)->exec();
       });
     m_actionAdd->setEnabled(method->getAttributeBool(AttributeName::Enabled, true));
     connect(method, &Method::attributeChanged, this,
@@ -396,6 +397,16 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
       if(stopAll)
         m_toolbar->addAction(stopAll);
     }
+  }
+
+  if(auto* method = object()->getMethod("clear_persistent_variables"))
+  {
+    QWidget* spacer = new QWidget(this);
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    spacer->show();
+    m_toolbar->addWidget(spacer);
+
+    m_toolbar->addAction(new MethodAction(Theme::getIcon("clear_persistent_variables"), *method, this));
   }
 
   if(!m_toolbar->actions().empty())

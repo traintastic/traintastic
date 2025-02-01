@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@
 #include <array>
 #include <vector>
 #include <utility>
+#include <boost/asio/steady_timer.hpp>
 #include "../../enum/blockside.hpp"
 
 class RailTile;
@@ -36,6 +37,7 @@ class BlockRailTile;
 class BridgeRailTile;
 enum class BridgePath : uint8_t;
 class CrossRailTile;
+class HiddenCrossOverRailTile;
 enum class CrossState : uint8_t;
 class DirectionControlRailTile;
 enum class DirectionControlState : uint8_t;
@@ -59,15 +61,21 @@ class BlockPath : public Path, public std::enable_shared_from_this<BlockPath>
     std::vector<std::pair<std::weak_ptr<TurnoutRailTile>, TurnoutPosition>> m_turnouts; //!< required turnout positions for the path
     std::vector<std::pair<std::weak_ptr<DirectionControlRailTile>, DirectionControlState>> m_directionControls; //!< required direction control states for the path
     std::vector<std::pair<std::weak_ptr<CrossRailTile>, CrossState>> m_crossings; //!< required crossing states for the path
+    std::vector<std::pair<std::weak_ptr<HiddenCrossOverRailTile>, CrossState>> m_crossOvers; //!< required crossing states for the path
     std::vector<std::pair<std::weak_ptr<BridgeRailTile>, BridgePath>> m_bridges; //!< bridges to reserve
     std::vector<std::weak_ptr<SignalRailTile>> m_signals; //!< signals in path
     std::weak_ptr<NXButtonRailTile> m_nxButtonFrom;
     std::weak_ptr<NXButtonRailTile> m_nxButtonTo;
 
+    boost::asio::steady_timer m_delayReleaseTimer;
+    bool m_isReserved;
+    bool m_delayedReleaseScheduled;
+
   public:
     static std::vector<std::shared_ptr<BlockPath>> find(BlockRailTile& block);
 
     BlockPath(BlockRailTile& block, BlockSide side);
+    BlockPath(const BlockPath& other);
 
     bool operator ==(const BlockPath& other) const noexcept;
 
@@ -99,11 +107,17 @@ class BlockPath : public Path, public std::enable_shared_from_this<BlockPath>
       return m_toSide;
     }
 
+    inline bool isReserved() const
+    {
+      return m_isReserved;
+    }
+
     std::shared_ptr<NXButtonRailTile> nxButtonFrom() const;
     std::shared_ptr<NXButtonRailTile> nxButtonTo() const;
 
     bool reserve(const std::shared_ptr<Train>& train, bool dryRun = false);
     bool release(bool dryRun = false);
+    bool delayedRelease(uint16_t timeoutMillis);
 };
 
 #endif

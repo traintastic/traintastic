@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Traintastic client
+Comment=Model railroad control and automation software
+Exec=/opt/traintastic/bin/traintastic-client
+Icon=/opt/traintastic/icons/traintastic_256.png
+Terminal=false
+Categories=Science;Engineering;

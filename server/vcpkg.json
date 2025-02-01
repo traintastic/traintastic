@@ -1,0 +1,16 @@
+{
+  "dependencies": [
+    "boost-asio",
+    "boost-beast",
+    "boost-program-options",
+    "boost-signals2",
+    "boost-uuid",
+    {
+      "name": "libarchive",
+      "default-features": false,
+      "features": ["lzma"]
+    },
+    "lua",
+    "zlib"
+  ]
+}

@@ -225,13 +225,17 @@ class RadioPageJSON : public RadioPage, public PageJSON
 
     void initializePage() override
     {
-      setTitleAndText(*static_cast<JSONWizard*>(wizard()), this, m_pageData);
+      auto* jsonWizard = static_cast<JSONWizard*>(wizard());
+
+      setTitleAndText(*jsonWizard, this, m_pageData);
 
       for(const auto& option : m_pageData["options"].toArray())
       {
         auto item = option.toObject();
-        addItem(static_cast<JSONWizard*>(wizard())->translateAndReplaceVariables(item["name"].toString()), item["disabled"].toBool());
+        addItem(jsonWizard->translateAndReplaceVariables(item["name"].toString()), item["checked"].toBool(), item["disabled"].toBool());
       }
+
+      setBottomText(jsonWizard->translateAndReplaceVariables(m_pageData["bottom_text"].toString()));
     }
 
     void cleanupPage() override

@@ -38,6 +38,8 @@ class SwitchTile : public Tile
   CREATE_DEF(SwitchTile)
 
   protected:
+    void destroying() override;
+    void addToWorld() final;
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
 
   public:

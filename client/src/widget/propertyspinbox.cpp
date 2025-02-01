@@ -35,7 +35,11 @@ PropertySpinBox::PropertySpinBox(Property& property, QWidget* parent) :
   Q_ASSERT(m_property.type() == ValueType::Integer);
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
-  setRange(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+  updateRange();
+  if(auto unit = m_property.getAttributeString(AttributeName::Unit, ""); !unit.isEmpty())
+  {
+    setSuffix(unit.prepend(" "));
+  }
   setValue(m_property.toInt());
   connect(&m_property, &AbstractProperty::valueChangedInt, this,
     [this](int value)
@@ -56,6 +60,22 @@ PropertySpinBox::PropertySpinBox(Property& property, QWidget* parent) :
 
         case AttributeName::Visible:
           setVisible(value.toBool());
+          break;
+
+        case AttributeName::Min:
+        case AttributeName::Max:
+          updateRange();
+          break;
+
+        case AttributeName::Unit:
+          if(auto unit = value.toString(); !unit.isEmpty())
+          {
+            setSuffix(unit.prepend(" "));
+          }
+          else
+          {
+            setSuffix("");
+          }
           break;
 
         default:
@@ -104,4 +124,11 @@ void PropertySpinBox::focusOutEvent(QFocusEvent* event)
 {
   QSpinBox::focusOutEvent(event);
   setValue(m_property.toInt());
+}
+
+void PropertySpinBox::updateRange()
+{
+  setRange(
+    m_property.getAttributeInt(AttributeName::Min, std::numeric_limits<int>::min()),
+    m_property.getAttributeInt(AttributeName::Max, std::numeric_limits<int>::max()));
 }

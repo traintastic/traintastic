@@ -36,16 +36,25 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
   , add{*this, "add",
       [this](const std::shared_ptr<RailVehicle>& vehicle)
       {
-        if(!containsObject(vehicle))
-        {
-          addObject(vehicle);
-          train().vehiclesChanged();
-          vehicle->trains.appendInternal(parent().shared_ptr<Train>());
-        }
+        if(train().active && vehicle->activeTrain.value())
+          return; // Cannot add vehicle already in active train to other active train
+
+        if(containsObject(vehicle))
+          return;
+
+        addObject(vehicle);
+        train().vehiclesChanged();
+        vehicle->trains.appendInternal(parent().shared_ptr<Train>());
+
+        if(train().active)
+          vehicle->activeTrain.setValueInternal(parent().shared_ptr<Train>());
       }}
   , remove{*this, "remove",
       [this](const std::shared_ptr<RailVehicle>& vehicle)
       {
+        if(vehicle->activeTrain.value() == train().shared_ptr<Train>())
+          vehicle->activeTrain.setValueInternal(nullptr);
+
         vehicle->trains.removeInternal(parent().shared_ptr<Train>());
         removeObject(vehicle);
         train().vehiclesChanged();
