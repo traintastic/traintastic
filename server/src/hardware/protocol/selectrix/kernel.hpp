@@ -52,7 +52,6 @@ class Kernel : public ::KernelBase
 
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
-    Bus m_bus = Bus::SX0;
 
     TriState m_trackPower;
     std::function<void(bool)> m_onTrackPowerChanged;
