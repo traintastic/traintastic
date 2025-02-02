@@ -48,7 +48,7 @@ constexpr bool operator <(const SelectrixInterface::BusAddress& lhs, const Selec
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
 
-constexpr std::array<uint32_t, 4> baudratesRautenhausSLX825 = {2400, 4800, 9600, 19200};
+constexpr std::array<uint32_t, 6> baudrates = {2400, 4800, 9600, 19200, 38400, 57600};
 
 CREATE_IMPL(SelectrixInterface)
 
@@ -68,7 +68,7 @@ SelectrixInterface::SelectrixInterface(World& world, std::string_view _id)
 
   Attributes::addDisplayName(baudrate, DisplayName::Serial::baudrate);
   Attributes::addEnabled(baudrate, !online);
-  Attributes::addValues(baudrate, baudratesRautenhausSLX825);
+  Attributes::addValues(baudrate, baudrates);
   m_interfaceItems.insertBefore(baudrate, notes);
 
   Attributes::addDisplayName(selectrix, DisplayName::Hardware::selectrix);
