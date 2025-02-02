@@ -6721,5 +6721,29 @@
     {
         "term": "wizard.add_interface.interface_selectrix:text",
         "definition": "Please select the Selectrix interface that is connected to the %command_station%:"
+    },
+    {
+        "term": "selectrix_settings:use_rautenhaus_command_format",
+        "definition": "Use Rautenhaus command format"
+    },
+    {
+        "term": "selectrix_settings:track_power_poll_interval",
+        "definition": "Track power poll interval"
+    },
+    {
+        "term": "selectrix_settings:locomotive_poll_interval",
+        "definition": "Locomotive poll interval"
+    },
+    {
+        "term": "selectrix_settings:feedback_poll_interval",
+        "definition": "Feedback poll interval"
+    },
+    {
+        "term": "message:D2011",
+        "definition": "Write SX%1.%2 = 0x%3 (%4)"
+    },
+    {
+        "term": "message:D2012",
+        "definition": "Modified SX%1.%2 = 0x%3 (%4)"
     }
 ]

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,7 @@
 #include "simulationiohandler.hpp"
 #include <cstddef>
 #include <cassert>
-#include <thread>
+#include "../kernel.hpp"
 #include "../utils.hpp"
 #include "../../../../enum/simulateinputaction.hpp"
 
@@ -40,33 +40,21 @@ SimulationIOHandler::SimulationIOHandler(Kernel& kernel)
   }
 }
 
-bool SimulationIOHandler::read(uint8_t address, uint8_t& value)
+bool SimulationIOHandler::read(Bus bus, uint8_t address)
 {
   assert(address <= Address::max);
-  std::this_thread::sleep_for(ioDelay);
-  if(address == Address::selectSXBus)
-  {
-    value = static_cast<uint8_t>(m_bus);
-  }
-  else
-  {
-    value = busValues()[address];
-  }
+  m_kernel.ioContext().post(
+    [this, bus, address]()
+    {
+      m_kernel.busChanged(bus, address, busValues(bus)[address]);
+    });
   return true;
 }
 
-bool SimulationIOHandler::write(uint8_t address, uint8_t value)
+bool SimulationIOHandler::write(Bus bus, uint8_t address, uint8_t value)
 {
   assert(address <= Address::max);
-  std::this_thread::sleep_for(ioDelay);
-  if(address == Address::selectSXBus)
-  {
-    m_bus = static_cast<Bus>(value);
-  }
-  else
-  {
-    busValues()[address] = value;
-  }
+  busValues(bus)[address] = value;
   return true;
 }
 
@@ -88,6 +76,12 @@ void SimulationIOHandler::simulateInputChange(Bus bus, uint16_t inputAddress, Si
   {
     busValues(bus)[address] &= ~valueMask;
   }
+
+  m_kernel.ioContext().post(
+    [this, bus, address]()
+    {
+      m_kernel.busChanged(bus, address, busValues(bus)[address]);
+    });
 }
 
 }

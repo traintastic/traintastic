@@ -47,7 +47,6 @@
 #include <traintastic/enum/pcapoutput.hpp>
 #include <traintastic/enum/powerunit.hpp>
 #include <traintastic/enum/ratiounit.hpp>
-#include <traintastic/enum/selectrixinterfacetype.hpp>
 #include <traintastic/enum/sensorstate.hpp>
 #include <traintastic/enum/sensortype.hpp>
 #include <traintastic/enum/serialflowcontrol.hpp>
@@ -121,7 +120,6 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(PCAPOutput)
   TRANSLATE_ENUM(PowerUnit)
   TRANSLATE_ENUM(RatioUnit)
-  TRANSLATE_ENUM(SelectrixInterfaceType)
   TRANSLATE_ENUM(SensorState)
   TRANSLATE_ENUM(SensorType)
   TRANSLATE_ENUM(SerialFlowControl)

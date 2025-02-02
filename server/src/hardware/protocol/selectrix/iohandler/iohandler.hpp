@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_IOHANDLER_IOHANDLER_HPP
 
 #include <cstdint>
+#include "../bus.hpp"
 
 namespace Selectrix {
 
@@ -45,11 +46,13 @@ class IOHandler
 
     virtual ~IOHandler() = default;
 
+    virtual bool requiresPolling() const = 0;
+
     virtual void start() = 0;
     virtual void stop() = 0;
 
-    virtual bool read(uint8_t address, uint8_t& value) = 0;
-    virtual bool write(uint8_t address, uint8_t value) = 0;
+    virtual bool read(Bus bus, uint8_t address) = 0;
+    virtual bool write(Bus bus, uint8_t address, uint8_t value) = 0;
 };
 
 template<class T>

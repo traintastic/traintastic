@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,12 +33,24 @@ class Settings final : public SubObject
 {
   CLASS_ID("selectrix_settings")
 
+  private:
+    void updateVisible();
+
+  protected:
+    void loaded() final;
+
   public:
+    Property<bool> useRautenhausCommandFormat;
+    Property<uint16_t> trackPowerPollInterval;
+    Property<uint16_t> locomotivePollInterval;
+    Property<uint16_t> feedbackPollInterval;
     Property<bool> debugLogRXTX;
 
     Settings(Object& _parent, std::string_view parentPropertyName);
 
     Config config() const;
+
+    void updateEnabled(bool worldEdit, bool interfaceOnline);
 };
 
 }

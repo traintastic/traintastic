@@ -537,6 +537,22 @@
         "type": "radio",
         "options": [
           {
+            "name": "Peter Stärz Businterface",
+            "next": "serial_port_baudrate_interface",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.selectrix",
+                "properties": {
+                  "name": "%command_station%",
+                  "baudrate": 19200
+                }
+              },
+              "set_variables": {
+                "interface": "Peter Stärz Businterface"
+              }
+            }
+          },
+          {
             "name": "Rautenhaus SLX825",
             "next": "serial_port_baudrate_interface",
             "actions": {
@@ -544,7 +560,7 @@
                 "class_id": "interface.selectrix",
                 "properties": {
                   "name": "%command_station%",
-                  "type": "rautenhaus_slx825",
+                  "selectrix.use_rautenhaus_command_format": true,
                   "baudrate": 9600
                 }
               },

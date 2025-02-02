@@ -29,7 +29,6 @@
 #include "../output/outputcontroller.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../core/objectproperty.hpp"
-#include <traintastic/enum/selectrixinterfacetype.hpp>
 #include <tcb/span.hpp>
 
 namespace Selectrix {
@@ -102,6 +101,7 @@ class SelectrixInterface final
     void destroying() final;
     void worldEvent(WorldState state, WorldEvent event) final;
 
+    void onlineChanged(bool value) final;
     bool setOnline(bool& value, bool simulation) final;
 
     // DecoderController:
@@ -112,8 +112,9 @@ class SelectrixInterface final
     void inputAdded(Input& input) final;
     void inputRemoved(Input& input) final;
 
+    void updateEnabled();
+
   public:
-    Property<SelectrixInterfaceType> type;
     SerialDeviceProperty device;
     Property<uint32_t> baudrate;
     ObjectProperty<Selectrix::Settings> selectrix;

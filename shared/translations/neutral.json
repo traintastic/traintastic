@@ -388,14 +388,6 @@
         "definition": "Uhlenbrock Intellibox II"
     },
     {
-        "term": "message:D2011",
-        "definition": "Write SX%1.%2 = 0x%3 (%4)"
-    },
-    {
-        "term": "message:D2012",
-        "definition": "Read SX%1.%2 = 0x%3 (%4)"
-    },
-    {
         "term": "class_id:interface.selectrix",
         "definition": "Selectrix"
     },

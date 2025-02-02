@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_IOHANDLER_SERIALIOHANDLER_HPP
 
 #include "iohandler.hpp"
+#include <queue>
 #include <boost/asio/serial_port.hpp>
 
 namespace Selectrix {
@@ -32,18 +33,40 @@ class SerialIOHandler final : public IOHandler
 {
   private:
     static constexpr uint8_t writeFlag = 0x80;
+    static constexpr uint8_t rautenhausConfig = 0x80;
 
     boost::asio::serial_port m_serialPort;
+    std::queue<BusAddress> m_readQueue; // queue of read addresses (!rautenhausCommandFormat)
+    std::array<uint8_t, 1024> m_readBuffer;
+    size_t m_readBufferOffset = 0;
+    std::array<uint8_t, 1024> m_writeBuffer;
+    size_t m_writeBufferOffset = 0;
+    Bus m_bus = static_cast<Bus>(-1);
+
+    void read();
+    void processRead(size_t bytesTransferred);
+
+    void write();
+    bool writeBuffer(uint8_t address, uint8_t value);
+
+    bool selectBus(Bus bus);
 
   public:
-    SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate);
+    const bool rautenhausCommandFormat;
+
+    SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, bool useRautenhausCommandFormat);
     ~SerialIOHandler() final;
+
+    bool requiresPolling() const final
+    {
+      return !rautenhausCommandFormat;
+    }
 
     void start() final;
     void stop() final;
 
-    bool read(uint8_t address, uint8_t& value) final;
-    bool write(uint8_t address, uint8_t value) final;
+    bool read(Bus bus, uint8_t address) final;
+    bool write(Bus bus, uint8_t address, uint8_t value) final;
 };
 
 }

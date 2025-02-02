@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,6 @@
 
 #include "iohandler.hpp"
 #include <array>
-#include "../bus.hpp"
 #include "../const.hpp"
 
 enum class SimulateInputAction;
@@ -36,13 +35,7 @@ class SimulationIOHandler final : public IOHandler
 {
   private:
     using BusValues = std::array<uint8_t, Address::max + 1>;
-    Bus m_bus = Bus::SX0;
     std::array<BusValues, 3> m_busValues;
-
-    inline BusValues& busValues()
-    {
-      return m_busValues[static_cast<uint8_t>(m_bus)];
-    }
 
     inline BusValues& busValues(Bus bus)
     {
@@ -52,11 +45,16 @@ class SimulationIOHandler final : public IOHandler
   public:
     SimulationIOHandler(Kernel& kernel);
 
+    bool requiresPolling() const final
+    {
+      return false;
+    }
+
     void start() final {}
     void stop() final {}
 
-    bool read(uint8_t address, uint8_t& value) final;
-    bool write(uint8_t address, uint8_t value) final;
+    bool read(Bus bus, uint8_t address) final;
+    bool write(Bus bus, uint8_t address, uint8_t value) final;
 
     void simulateInputChange(Bus bus, uint16_t inputAddress, SimulateInputAction action);
 };

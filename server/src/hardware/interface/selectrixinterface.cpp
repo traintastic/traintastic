@@ -56,18 +56,12 @@ SelectrixInterface::SelectrixInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
-  , type{this, "type", SelectrixInterfaceType::RautenhausSLX825, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 9600, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , selectrix{this, "selectrix", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "Selectrix";
   selectrix.setValueInternal(std::make_shared<Selectrix::Settings>(*this, selectrix.name()));
-
-  Attributes::addDisplayName(type, DisplayName::Interface::type);
-  Attributes::addEnabled(type, !online);
-  Attributes::addValues(type, selectrixInterfaceTypeValues);
-  m_interfaceItems.insertBefore(type, notes);
 
   Attributes::addEnabled(device, !online);
   m_interfaceItems.insertBefore(device, notes);
@@ -168,6 +162,11 @@ void SelectrixInterface::inputSimulateChange(uint32_t channel, uint32_t address,
   }
 }
 
+void SelectrixInterface::onlineChanged(bool /*value*/)
+{
+  updateEnabled();
+}
+
 bool SelectrixInterface::setOnline(bool& value, bool simulation)
 {
   if(!m_kernel && value)
@@ -180,7 +179,7 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
       }
       else
       {
-        m_kernel = Selectrix::Kernel::create<Selectrix::SerialIOHandler>(id.value(), selectrix->config(), device.value(), baudrate.value());
+        m_kernel = Selectrix::Kernel::create<Selectrix::SerialIOHandler>(id.value(), selectrix->config(), device.value(), baudrate.value(), selectrix->useRautenhausCommandFormat.value());
       }
 
       setState(InterfaceState::Initializing);
@@ -211,7 +210,7 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
 
       for(const auto& it : m_usedBusAddresses)
       {
-        m_kernel->addPollAddress(it.first.bus, it.first.address, it.second.type);
+        m_kernel->addAddress(it.first.bus, it.first.address, it.second.type);
       }
 
       m_selectrixPropertyChanged = selectrix->propertyChanged.connect(
@@ -221,7 +220,7 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
         });
 
       m_kernel->setTrackPower(contains(m_world.state.value(), WorldState::PowerOn));
-      Attributes::setEnabled({type, device, baudrate}, false);
+      Attributes::setEnabled({device, baudrate}, false);
     }
     catch(const LogMessageException& e)
     {
@@ -232,7 +231,7 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
   }
   else if(m_kernel && !value)
   {
-    Attributes::setEnabled({type, device, baudrate}, true);
+    Attributes::setEnabled({device, baudrate}, true);
 
     m_selectrixPropertyChanged.disconnect();
 
@@ -275,6 +274,7 @@ void SelectrixInterface::addToWorld()
 void SelectrixInterface::loaded()
 {
   Interface::loaded();
+  updateEnabled();
 }
 
 void SelectrixInterface::destroying()
@@ -288,21 +288,29 @@ void SelectrixInterface::worldEvent(WorldState state, WorldEvent event)
 {
   Interface::worldEvent(state, event);
 
-  if(m_kernel)
+  switch(event)
   {
-    switch(event)
-    {
-      case WorldEvent::PowerOff:
+    case WorldEvent::PowerOff:
+      if(m_kernel)
+      {
         m_kernel->setTrackPower(false);
-        break;
+      }
+      break;
 
-      case WorldEvent::PowerOn:
+    case WorldEvent::PowerOn:
+      if(m_kernel)
+      {
         m_kernel->setTrackPower(true);
-        break;
+      }
+      break;
 
-      default:
-        break;
-    }
+    case WorldEvent::EditDisabled:
+    case WorldEvent::EditEnabled:
+      updateEnabled();
+      break;
+
+    default:
+      break;
   }
 }
 
@@ -314,7 +322,7 @@ void SelectrixInterface::useLocomotiveAddress(uint32_t address)
   m_usedBusAddresses.insert({key, {Selectrix::AddressType::Locomotive, 0}});
   if(m_kernel)
   {
-    m_kernel->addPollAddress(key.bus, key.address, Selectrix::AddressType::Locomotive);
+    m_kernel->addAddress(key.bus, key.address, Selectrix::AddressType::Locomotive);
   }
 }
 
@@ -328,7 +336,7 @@ void SelectrixInterface::unuseLocomotiveAddress(uint32_t address)
     m_usedBusAddresses.erase(it);
     if(m_kernel)
     {
-      m_kernel->removePollAddress(key.bus, key.address);
+      m_kernel->removeAddress(key.bus, key.address);
     }
   }
 }
@@ -348,7 +356,7 @@ void SelectrixInterface::useFeedbackAddress(uint32_t channel, uint32_t address)
     m_usedBusAddresses.insert({key, {Selectrix::AddressType::Feedback, portBit}});
     if(m_kernel)
     {
-      m_kernel->addPollAddress(key.bus, key.address, Selectrix::AddressType::Feedback);
+      m_kernel->addAddress(key.bus, key.address, Selectrix::AddressType::Feedback);
     }
   }
 }
@@ -367,8 +375,13 @@ void SelectrixInterface::unuseFeedbackAddress(uint32_t channel, uint32_t address
       m_usedBusAddresses.erase(it);
       if(m_kernel)
       {
-        m_kernel->removePollAddress(key.bus, key.address);
+        m_kernel->removeAddress(key.bus, key.address);
       }
     }
   }
+}
+
+void SelectrixInterface::updateEnabled()
+{
+  selectrix->updateEnabled(contains(m_world.state, WorldState::Edit), online);
 }

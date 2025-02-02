@@ -46,7 +46,7 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
 {
   assert(isEventLoopThread());
 
-  m_pollAddresses.emplace_back(PollInfo{Bus::SX0, Address::trackPower, AddressType::TrackPower, 0, false});
+  m_addresses.emplace(BusAddress{Bus::SX0, Address::trackPower}, BusAddressValue{AddressType::TrackPower, 0, false});
 }
 
 Kernel::~Kernel() = default;
@@ -107,14 +107,15 @@ void Kernel::start()
       {
         m_ioHandler->start();
 
-        write(Address::selectSXBus, static_cast<uint8_t>(m_bus));
-
-        auto nextPoll = std::chrono::steady_clock::now();
-        for(auto addressType : addressTypes)
+        if(m_ioHandler->requiresPolling())
         {
-          m_nextPoll[static_cast<size_t>(addressType)] = nextPoll;
-          startPollTimer(addressType);
-          nextPoll += std::chrono::milliseconds(100) / addressTypes.size();
+          auto nextPoll = std::chrono::steady_clock::now();
+          for(auto addressType : addressTypes)
+          {
+            m_nextPoll[static_cast<size_t>(addressType)] = nextPoll;
+            startPollTimer(addressType);
+            nextPoll += std::chrono::milliseconds(100) / addressTypes.size();
+          }
         }
       }
       catch(const LogMessageException& e)
@@ -159,6 +160,88 @@ void Kernel::stop()
 #endif
 }
 
+void Kernel::busChanged(Bus bus, uint8_t address, uint8_t value)
+{
+  if(auto it = m_addresses.find({bus, address}); it != m_addresses.end())
+  {
+    if((it->second.lastValue != value || !it->second.lastValueValid))
+    {
+      if(m_config.debugLogRXTX)
+      {
+        EventLoop::call(
+          [this, bus, address, value]()
+          {
+            Log::log(logId, LogMessage::D2012_CHANGED_SXX_X_X_X, static_cast<uint8_t>(bus), address, toHex(value), value);
+          });
+      }
+
+      switch(it->second.type)
+      {
+        case AddressType::TrackPower:
+        {
+          const bool trackPower = value == TrackPower::on;
+          if(m_trackPower != trackPower)
+          {
+            m_trackPower = toTriState(trackPower);
+            if(m_onTrackPowerChanged) /*[[likely]]*/
+            {
+              EventLoop::call(
+                [this, trackPower]()
+                {
+                  m_onTrackPowerChanged(trackPower);
+                });
+            }
+          }
+          break;
+        }
+        case AddressType::Locomotive:
+          assert(bus == Bus::SX0);
+          EventLoop::call(
+            [this, address, value]()
+            {
+              if(m_decoderController) /*[[likelyy]]*/
+              {
+                if(auto decoder = m_decoderController->getDecoder(DecoderProtocol::Selectrix, address))
+                {
+                  decoder->direction.setValueInternal((value & Locomotive::directionMask) == Locomotive::directionReverse ? Direction::Reverse : Direction::Forward);
+
+                  const uint8_t speed = value & Locomotive::speedMask;
+                  const auto currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), Locomotive::speedStepMax);
+                  if(currentStep != speed) // only update trottle if it is a different step
+                  {
+                    decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed, Locomotive::speedStepMax));
+                  }
+
+                  decoder->setFunctionValue(0, (value & Locomotive::f0));
+                  decoder->setFunctionValue(1, (value & Locomotive::f1));
+                }
+              }
+            });
+          break;
+
+        case AddressType::Feedback:
+          EventLoop::call(
+            [this, bus, address, value]()
+            {
+              if(m_inputController) /*[[likely]]*/
+              {
+                const uint32_t channel = 1 + static_cast<uint8_t>(bus);
+                const uint32_t baseAddress = 1 + static_cast<uint32_t>(address) * 8;
+
+                for(uint_least8_t i = 0; i < 8; ++i)
+                {
+                  m_inputController->updateInputValue(channel, baseAddress + i, toTriState(value & (1 << i)));
+                }
+              }
+            });
+          break;
+      }
+      it->second.lastValue = value;
+      it->second.lastValueValid = true;
+    }
+  }
+}
+
 void Kernel::setTrackPower(bool enable)
 {
   assert(isEventLoopThread());
@@ -168,23 +251,7 @@ void Kernel::setTrackPower(bool enable)
     {
       if(m_trackPower != toTriState(enable))
       {
-        if(write(Bus::SX0, Address::trackPower, enable ? TrackPower::on : TrackPower::off))
-        {
-          uint8_t value;
-          if(read(Bus::SX0, Address::trackPower, value))
-          {
-            switch(value)
-            {
-              case TrackPower::off:
-                m_trackPower = TriState::False;
-                return;
-
-              case TrackPower::on:
-                m_trackPower = TriState::True;
-                return;
-            }
-          }
-        }
+        write(Bus::SX0, Address::trackPower, enable ? TrackPower::on : TrackPower::off);
         m_trackPower = TriState::Undefined;
       }
     });
@@ -235,13 +302,8 @@ void Kernel::simulateInputChange(Bus bus, uint16_t address, SimulateInputAction 
     m_ioContext.post(
       [this, bus, address, action]()
       {
-        auto it = std::find_if(m_pollAddresses.begin(), m_pollAddresses.end(),
-          [bus, busAddress=toBusAddress(address)](const auto& info)
-          {
-            return bus == info.bus && busAddress == info.address;
-          });
-
-        if(it != m_pollAddresses.end() && it->type == AddressType::Feedback) // check if bus/address is for input
+        const auto it = m_addresses.find({bus, toBusAddress(address)});
+        if(it != m_addresses.end() && it->second.type == AddressType::Feedback) // check if bus/address is for input
         {
           static_cast<SimulationIOHandler&>(*m_ioHandler).simulateInputChange(bus, address, action);
         }
@@ -249,40 +311,25 @@ void Kernel::simulateInputChange(Bus bus, uint16_t address, SimulateInputAction 
   }
 }
 
-void Kernel::addPollAddress(Bus bus, uint8_t address, AddressType type)
+void Kernel::addAddress(Bus bus, uint8_t address, AddressType type)
 {
   assert(isEventLoopThread());
 
   m_ioContext.post(
     [this, bus, address, type]()
     {
-      // insert sorted on bus (minimize number of bus select commands)
-      auto it = std::upper_bound(m_pollAddresses.begin(), m_pollAddresses.end(), bus,
-        [](Bus b, const PollInfo& info)
-        {
-          return b < info.bus;
-        });
-      m_pollAddresses.emplace(it, PollInfo{bus, address, type, 0x00, false});
+      m_addresses.emplace(BusAddress{bus, address}, BusAddressValue{type, 0x00, false});
     });
 }
 
-void Kernel::removePollAddress(Bus bus, uint8_t address)
+void Kernel::removeAddress(Bus bus, uint8_t address)
 {
   assert(isEventLoopThread());
 
   m_ioContext.post(
     [this, bus, address]()
     {
-      auto it = std::find_if(m_pollAddresses.begin(), m_pollAddresses.end(),
-        [bus, address](const auto& info)
-        {
-          return bus == info.bus && address == info.address;
-        });
-
-      if(it != m_pollAddresses.end()) /*[[likely]]*/
-      {
-        m_pollAddresses.erase(it);
-      }
+      m_addresses.erase({bus, address});
     });
 }
 
@@ -294,69 +341,38 @@ void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
   m_ioHandler = std::move(handler);
 }
 
-bool Kernel::selectBus(Bus bus)
+bool Kernel::read(Bus bus, uint8_t address)
 {
   assert(isKernelThread());
 
-  if(m_bus == bus)
+  if(!m_ioHandler->read(bus, address))
   {
-    return true;
-  }
-
-  if(!write(Address::selectSXBus, static_cast<uint8_t>(bus)))
-  {
+    error();
     return false;
   }
-
-  m_bus = bus;
 
   return true;
-}
-
-bool Kernel::read(Bus bus, uint8_t address, uint8_t& value)
-{
-  assert(isKernelThread());
-
-  if(!selectBus(bus))
-  {
-    return false;
-  }
-
-  const bool success = m_ioHandler->read(address, value);
-
-  if(m_config.debugLogRXTX)
-  {
-    EventLoop::call(
-      [this, bus, address, value]()
-      {
-        Log::log(logId, LogMessage::D2012_READ_SXX_X_X_X, static_cast<uint8_t>(bus), address, toHex(value), value);
-      });
-  }
-
-  return success;
 }
 
 bool Kernel::write(Bus bus, uint8_t address, uint8_t value)
 {
   assert(isKernelThread());
 
-  return selectBus(bus) && write(address, value);
-}
-
-bool Kernel::write(uint8_t address, uint8_t value)
-{
-  assert(isKernelThread());
-
   if(m_config.debugLogRXTX)
   {
     EventLoop::call(
-      [this, bus=m_bus, address, value]()
+      [this, bus, address, value]()
       {
         Log::log(logId, LogMessage::D2011_WRITE_SXX_X_X_X, static_cast<uint8_t>(bus), address, toHex(value), value);
       });
   }
 
-  return m_ioHandler->write(address, value);
+  if(!m_ioHandler->write(bus, address, value))
+  {
+    error();
+    return false;
+  }
+  return true;
 }
 
 void Kernel::startPollTimer(AddressType addressType)
@@ -374,84 +390,18 @@ void Kernel::poll(const boost::system::error_code& ec, AddressType addressType)
   assert(isKernelThread());
 
   if(ec)
-    return;
-
-  switch(addressType)
   {
-    case AddressType::TrackPower: LOG_DEBUG("poll TrackPower"); break;
-    case AddressType::Locomotive: LOG_DEBUG("poll Locomotive"); break;
-    case AddressType::Feedback: LOG_DEBUG("poll Feedback"); break;
+    return;
   }
 
-  uint8_t value;
-
-  for(auto& pollInfo : m_pollAddresses)
+  for(const auto& it : m_addresses)
   {
-    if(pollInfo.type == addressType && read(pollInfo.bus, pollInfo.address, value) && (pollInfo.lastValue != value || !pollInfo.lastValueValid))
+    if(it.second.type == addressType)
     {
-      switch(pollInfo.type)
+      if(!read(it.first.bus, it.first.address))
       {
-        case AddressType::TrackPower:
-        {
-          const bool trackPower = value == TrackPower::on;
-          if(m_trackPower != trackPower)
-          {
-            m_trackPower = toTriState(trackPower);
-            if(m_onTrackPowerChanged) /*[[likely]]*/
-            {
-              EventLoop::call(
-                [this, trackPower]()
-                {
-                  m_onTrackPowerChanged(trackPower);
-                });
-            }
-          }
-          break;
-        }
-        case AddressType::Locomotive:
-          assert(pollInfo.bus == Bus::SX0);
-          EventLoop::call(
-            [this, address=pollInfo.address, value]()
-            {
-              if(m_decoderController) /*[[likelyy]]*/
-              {
-                if(auto decoder = m_decoderController->getDecoder(DecoderProtocol::Selectrix, address))
-                {
-                  decoder->direction.setValueInternal((value & Locomotive::directionMask) == Locomotive::directionReverse ? Direction::Reverse : Direction::Forward);
-
-                  const uint8_t speed = value & Locomotive::speedMask;
-                  const auto currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), Locomotive::speedStepMax);
-                  if(currentStep != speed) // only update trottle if it is a different step
-                  {
-                    decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed, Locomotive::speedStepMax));
-                  }
-
-                  decoder->setFunctionValue(0, (value & Locomotive::f0));
-                  decoder->setFunctionValue(1, (value & Locomotive::f1));
-                }
-              }
-            });
-          break;
-
-        case AddressType::Feedback:
-          EventLoop::call(
-            [this, bus=pollInfo.bus, address=pollInfo.address, value]()
-            {
-              if(m_inputController) /*[[likely]]*/
-              {
-                const uint32_t channel = 1 + static_cast<uint8_t>(bus);
-                const uint32_t baseAddress = 1 + static_cast<uint32_t>(address) * 8;
-
-                for(uint_least8_t i = 0; i < 8; ++i)
-                {
-                  m_inputController->updateInputValue(channel, baseAddress + i, toTriState(value & (1 << i)));
-                }
-              }
-            });
-          break;
+        return;
       }
-      pollInfo.lastValue = value;
-      pollInfo.lastValueValid = true;
     }
   }
 

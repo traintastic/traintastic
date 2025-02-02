@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_KERNEL_HPP
 
 #include "../kernelbase.hpp"
+#include <map>
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "addresstype.hpp"
@@ -42,10 +43,8 @@ namespace Selectrix {
 class Kernel : public ::KernelBase
 {
   private:
-    struct PollInfo
+    struct BusAddressValue
     {
-      Bus bus;
-      uint8_t address;
       AddressType type;
       uint8_t lastValue;
       bool lastValueValid;
@@ -60,7 +59,7 @@ class Kernel : public ::KernelBase
 
     std::array<boost::asio::steady_timer, addressTypes.size()> m_pollTimer;
     std::array<std::chrono::time_point<std::chrono::steady_clock>, addressTypes.size()> m_nextPoll;
-    std::vector<PollInfo> m_pollAddresses;
+    std::map<BusAddress, BusAddressValue> m_addresses;
 
     DecoderController* m_decoderController = nullptr;
 
@@ -72,10 +71,8 @@ class Kernel : public ::KernelBase
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
 
-    bool selectBus(Bus bus);
-    bool read(Bus bus, uint8_t address, uint8_t& value);
+    bool read(Bus bus, uint8_t address);
     bool write(Bus bus, uint8_t address, uint8_t value);
-    bool write(uint8_t address, uint8_t value);
 
     inline void postWrite(Bus bus, uint8_t address, uint8_t value)
     {
@@ -159,6 +156,15 @@ class Kernel : public ::KernelBase
     void stop();
 
     /**
+     * \brief ...
+     *
+     * This must be called by the IO handler whenever a bus value changes.
+     *
+     * \note This function must run in the kernel's IO context
+     */
+    void busChanged(Bus bus, uint8_t address, uint8_t value);
+
+    /**
      *
      *
      */
@@ -178,8 +184,8 @@ class Kernel : public ::KernelBase
      */
     void simulateInputChange(Bus bus, uint16_t address, SimulateInputAction action);
 
-    void addPollAddress(Bus bus, uint8_t address, AddressType type);
-    void removePollAddress(Bus bus, uint8_t address);
+    void addAddress(Bus bus, uint8_t address, AddressType type);
+    void removeAddress(Bus bus, uint8_t address);
 };
 
 }

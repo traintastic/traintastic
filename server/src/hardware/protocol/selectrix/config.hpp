@@ -30,6 +30,9 @@ namespace Selectrix {
 
 struct Config
 {
+  std::chrono::milliseconds trackPowerPollInterval;
+  std::chrono::milliseconds locomotivePollInterval;
+  std::chrono::milliseconds feedbackPollInterval;
   bool debugLogRXTX;
 
   std::chrono::milliseconds pollInterval(AddressType addressType)
@@ -39,13 +42,13 @@ struct Config
     switch(addressType)
     {
       case AddressType::TrackPower:
-        return 250ms;
+        return trackPowerPollInterval;
 
       case AddressType::Locomotive:
-        return 500ms;
+        return locomotivePollInterval;
 
       case AddressType::Feedback:
-        return 100ms;
+        return feedbackPollInterval;
     }
     assert(false);
     return 1s;

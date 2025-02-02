@@ -29,11 +29,18 @@
 #include "../../../../core/eventloop.hpp"
 #include "../../../../log/log.hpp"
 
+namespace {
+
+constexpr uint8_t rautenhausConfig = Selectrix::RautenhausConfig::monitoringOn | Selectrix::RautenhausConfig::feedbackOn;
+
+}
+
 namespace Selectrix {
 
-SerialIOHandler::SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate)
+SerialIOHandler::SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, bool useRautenhausCommandFormat)
   : IOHandler(kernel)
   , m_serialPort{kernel.ioContext()}
+  , rautenhausCommandFormat{useRautenhausCommandFormat}
 {
   SerialPort::open(m_serialPort, device, baudrate, 8, SerialParity::None, SerialStopBits::One, SerialFlowControl::None);
 }
@@ -48,6 +55,11 @@ SerialIOHandler::~SerialIOHandler()
 
 void SerialIOHandler::start()
 {
+  read();
+  if(rautenhausCommandFormat)
+  {
+    writeBuffer(Address::selectSXBus, rautenhausConfig);
+  }
 }
 
 void SerialIOHandler::stop()
@@ -55,63 +67,174 @@ void SerialIOHandler::stop()
   m_serialPort.close();
 }
 
-bool SerialIOHandler::read(uint8_t address, uint8_t& value)
+bool SerialIOHandler::read(Bus bus, uint8_t address)
 {
   assert(address <= Address::max);
 
-  boost::system::error_code ec;
-
-  // write read command:
-  const std::array<uint8_t, 2> data{address, 0x00};
-  boost::asio::write(m_serialPort, boost::asio::buffer(data), ec);
-  if(ec)
+  if(!selectBus(bus) || !writeBuffer(address, 0x00))
   {
-    EventLoop::call(
-      [this, ec]()
-      {
-        Log::log(m_kernel.logId, LogMessage::E2001_SERIAL_WRITE_FAILED_X, ec);
-        m_kernel.error();
-      });
     return false;
   }
 
-  // read response:
-  boost::asio::read(m_serialPort, boost::asio::buffer(&value, sizeof(value)), ec);
-  if(ec)
+  if(!rautenhausCommandFormat)
   {
-    EventLoop::call(
-      [this, ec]()
-      {
-        Log::log(m_kernel.logId, LogMessage::E2002_SERIAL_READ_FAILED_X, ec);
-        m_kernel.error();
-      });
-    return false;
+    m_readQueue.emplace(BusAddress{bus, address});
   }
 
   return true;
 }
 
-bool SerialIOHandler::write(uint8_t address, uint8_t value)
+bool SerialIOHandler::write(Bus bus, uint8_t address, uint8_t value)
 {
   assert(address <= Address::max);
 
-  boost::system::error_code ec;
-
-  // write command:
-  const std::array<uint8_t, 2> data{address |= Address::writeFlag, value};
-  boost::asio::write(m_serialPort, boost::asio::buffer(data));
-  if(ec)
+  if(!selectBus(bus))
   {
-    EventLoop::call(
-      [this, ec]()
-      {
-        Log::log(m_kernel.logId, LogMessage::E2001_SERIAL_WRITE_FAILED_X, ec);
-        m_kernel.error();
-      });
     return false;
   }
 
+  return writeBuffer(address |= Address::writeFlag, value);
+}
+
+void SerialIOHandler::read()
+{
+  m_serialPort.async_read_some(boost::asio::buffer(m_readBuffer.data() + m_readBufferOffset, m_readBuffer.size() - m_readBufferOffset),
+    [this](const boost::system::error_code& ec, std::size_t bytesTransferred)
+    {
+      if(!ec)
+      {
+        processRead(bytesTransferred);
+        read();
+      }
+      else if(ec != boost::asio::error::operation_aborted)
+      {
+        EventLoop::call(
+          [this, ec]()
+          {
+            Log::log(m_kernel.logId, LogMessage::E2002_SERIAL_READ_FAILED_X, ec);
+            m_kernel.error();
+          });
+      }
+    });
+}
+
+void SerialIOHandler::processRead(size_t bytesTransferred)
+{
+  const uint8_t* pos = m_readBuffer.data();
+  bytesTransferred += m_readBufferOffset;
+
+  while(bytesTransferred >= (rautenhausCommandFormat ? 2 : 1))
+  {
+    size_t drop = 0;
+
+    if(rautenhausCommandFormat) // each message is [bus+address][value]
+    {
+      const auto bus = (pos[0] & 0x80) ? Bus::SX1 : Bus::SX0;
+      const uint8_t address = (pos[0] & 0x7F);
+      const uint8_t value = pos[1];
+      m_kernel.busChanged(bus, address, value);
+      pos += 2;
+      bytesTransferred -= 2;
+    }
+    else
+    {
+      if(!m_readQueue.empty())
+      {
+        const auto [bus, address] = m_readQueue.front();
+        const uint8_t value = *pos;
+        m_kernel.busChanged(bus, address, value);
+        m_readQueue.pop();
+        pos++;
+        bytesTransferred--;
+      }
+      else
+      {
+        drop += bytesTransferred;
+        pos += bytesTransferred;
+        bytesTransferred = 0;
+      }
+    }
+
+    if(drop != 0)
+    {
+      EventLoop::call(
+        [this, drop]()
+        {
+          Log::log(m_kernel.logId, LogMessage::W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES, drop);
+        });
+    }
+  }
+
+  if(bytesTransferred != 0)
+    memmove(m_readBuffer.data(), pos, bytesTransferred);
+  m_readBufferOffset = bytesTransferred;
+}
+
+void SerialIOHandler::write()
+{
+  m_serialPort.async_write_some(boost::asio::buffer(m_writeBuffer.data(), m_writeBufferOffset),
+    [this](const boost::system::error_code& ec, std::size_t bytesTransferred)
+    {
+      if(!ec)
+      {
+        if(bytesTransferred < m_writeBufferOffset)
+        {
+          m_writeBufferOffset -= bytesTransferred;
+          memmove(m_writeBuffer.data(), m_writeBuffer.data() + bytesTransferred, m_writeBufferOffset);
+          write();
+        }
+        else
+          m_writeBufferOffset = 0;
+      }
+      else if(ec != boost::asio::error::operation_aborted)
+      {
+        EventLoop::call(
+          [this, ec]()
+          {
+            Log::log(m_kernel.logId, LogMessage::E2001_SERIAL_WRITE_FAILED_X, ec);
+            m_kernel.error();
+          });
+      }
+    });
+}
+
+bool SerialIOHandler::writeBuffer(uint8_t address, uint8_t value)
+{
+  if(m_writeBufferOffset + 2 > m_writeBuffer.size())
+  {
+    return false;
+  }
+
+  const bool wasEmpty = m_writeBufferOffset == 0;
+
+  m_writeBuffer[m_writeBufferOffset++] = address;
+  m_writeBuffer[m_writeBufferOffset++] = value;
+
+  if(wasEmpty)
+  {
+    write();
+  }
+
   return true;
+}
+
+bool SerialIOHandler::selectBus(Bus bus)
+{
+  if(m_bus == bus)
+  {
+    return true;
+  }
+  m_bus = bus;
+
+  uint8_t value = static_cast<uint8_t>(bus);
+
+  if(rautenhausConfig)
+  {
+    value &= RautenhausConfig::mask;
+    value |= rautenhausConfig;
+  }
+
+  return writeBuffer(Address::selectSXBus | Address::writeFlag, value);
 }
 
 }

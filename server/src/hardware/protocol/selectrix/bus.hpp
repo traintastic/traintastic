@@ -33,6 +33,17 @@ enum class Bus : uint8_t
   SX1 = 1,
 };
 
+struct BusAddress
+{
+  Bus bus;
+  uint8_t address;
+
+  constexpr bool operator <(const Selectrix::BusAddress other) const
+  {
+    return (bus < other.bus) || (bus == other.bus && address < other.address);
+  }
+};
+
 }
 
 constexpr bool operator <(const Selectrix::Bus lhs, const Selectrix::Bus rhs)

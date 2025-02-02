@@ -37,6 +37,17 @@ namespace Address
   constexpr uint8_t writeFlag = 0x80;
 }
 
+namespace RautenhausConfig
+{
+  constexpr uint8_t clockSX0Off = 0x04;
+  constexpr uint8_t clockSX1Off = 0x08;
+  constexpr uint8_t feedbackOff = 0x10;
+  constexpr uint8_t feedbackOn = 0x20;
+  constexpr uint8_t monitoringOff = 0x40;
+  constexpr uint8_t monitoringOn = 0x80;
+  constexpr uint8_t mask = 0xFC;
+};
+
 namespace TrackPower
 {
   constexpr uint8_t on = 0x80;
