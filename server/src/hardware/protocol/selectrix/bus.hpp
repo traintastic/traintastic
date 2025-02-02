@@ -31,6 +31,7 @@ enum class Bus : uint8_t
 {
   SX0 = 0,
   SX1 = 1,
+  SX2 = 2,
 };
 
 struct BusAddress
