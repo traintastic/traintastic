@@ -553,6 +553,22 @@
             }
           },
           {
+            "name": "Selectrix Computer Interface 66842",
+            "next": "serial_port_baudrate_interface",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.selectrix",
+                "properties": {
+                  "name": "%command_station%",
+                  "baudrate": 9600
+                }
+              },
+              "set_variables": {
+                "interface": "Selectrix Computer Interface 66842"
+              }
+            }
+          },
+          {
             "name": "Rautenhaus SLX825",
             "next": "serial_port_baudrate_interface",
             "actions": {
