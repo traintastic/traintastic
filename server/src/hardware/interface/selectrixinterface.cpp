@@ -122,10 +122,7 @@ std::pair<uint32_t, uint32_t> SelectrixInterface::inputAddressMinMax(uint32_t ch
   {
     return {inputAddressMin, inputAddressMaxSX0};
   }
-  else
-  {
-    return {inputAddressMin, inputAddressMax};
-  }
+  return {inputAddressMin, inputAddressMax};
 }
 
 bool SelectrixInterface::isInputAddressAvailable(uint32_t channel, uint32_t address) const
