@@ -29,8 +29,6 @@
 
 namespace Selectrix {
 
-constexpr auto ioDelay = std::chrono::microseconds(500);
-
 SimulationIOHandler::SimulationIOHandler(Kernel& kernel)
   : IOHandler(kernel)
 {

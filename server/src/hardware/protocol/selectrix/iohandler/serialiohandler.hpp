@@ -33,7 +33,6 @@ class SerialIOHandler final : public IOHandler
 {
   private:
     static constexpr uint8_t writeFlag = 0x80;
-    static constexpr uint8_t rautenhausConfig = 0x80;
 
     boost::asio::serial_port m_serialPort;
     std::queue<BusAddress> m_readQueue; // queue of read addresses (!rautenhausCommandFormat)
