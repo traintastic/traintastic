@@ -983,7 +983,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     if(m_emergencyStop == TriState::False || decoder.emergencyStop || speedStep == SPEED_STOP)
     {
       // only send speed updates if bus estop isn't active, except for speed STOP and ESTOP
-      LocoSpd message{static_cast<uint8_t>(decoder.emergencyStop ? SPEED_ESTOP : (speedStep > 0 ? 1 + speedStep : SPEED_STOP))};
+      LocoSpd message{static_cast<uint8_t>(decoder.emergencyStop ? SPEED_ESTOP : (speedStep > 0 ? 1 + speedStep : SPEED_STOP))}; // NOLINT[readability-avoid-nested-conditional-operator]
       postSend(decoder.address, message);
     }
   }
