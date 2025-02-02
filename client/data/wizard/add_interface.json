@@ -584,6 +584,38 @@
                 "interface": "Rautenhaus SLX825"
               }
             }
+          },
+          {
+            "name": "Uwe Magnus Interface",
+            "next": "serial_port_baudrate_interface",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.selectrix",
+                "properties": {
+                  "name": "%command_station%",
+                  "baudrate": 9600
+                }
+              },
+              "set_variables": {
+                "interface": "Uwe Magnus Interface"
+              }
+            }
+          },
+          {
+            "name": "Uwe Magnus Interface 2",
+            "next": "serial_port_baudrate_interface",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.selectrix",
+                "properties": {
+                  "name": "%command_station%",
+                  "baudrate": 9600
+                }
+              },
+              "set_variables": {
+                "interface": "Uwe Magnus Interface 2"
+              }
+            }
           }
         ]
       },
