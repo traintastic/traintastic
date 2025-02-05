@@ -27,6 +27,7 @@
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../input/inputcontroller.hpp"
+#include "../../output/outputcontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
@@ -39,6 +40,7 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
   , m_simulation{simulation}
   , m_pollTimer{{
+    decltype(m_pollTimer)::value_type{ioContext()},
     decltype(m_pollTimer)::value_type{ioContext()},
     decltype(m_pollTimer)::value_type{ioContext()},
     decltype(m_pollTimer)::value_type{ioContext()}}}
@@ -81,6 +83,13 @@ void Kernel::setInputController(InputController* inputController)
   assert(isEventLoopThread());
   assert(!m_started);
   m_inputController = inputController;
+}
+
+void Kernel::setOutputController(OutputController* outputController)
+{
+  assert(isEventLoopThread());
+  assert(!m_started);
+  m_outputController = outputController;
 }
 
 void Kernel::start()
@@ -235,6 +244,23 @@ void Kernel::busChanged(Bus bus, uint8_t address, uint8_t value)
               }
             });
           break;
+
+        case AddressType::Accessory:
+          EventLoop::call(
+            [this, bus, address, value]()
+            {
+              if(m_outputController) /*[[likely]]*/
+              {
+                const auto channel = Accessory::toChannel(bus);
+                const uint32_t baseAddress = 1 + static_cast<uint32_t>(address) * 4;
+
+                for(uint_least8_t i = 0; i < 4; ++i)
+                {
+                  m_outputController->updateOutputValue(channel, baseAddress + i, static_cast<OutputPairValue>((value >> (i * 2)) & 0x3));
+                }
+              }
+            });
+          break;
       }
       it->second.lastValue = value;
       it->second.lastValueValid = true;
@@ -309,6 +335,27 @@ void Kernel::simulateInputChange(Bus bus, uint16_t address, SimulateInputAction 
         }
       });
   }
+}
+
+bool Kernel::setOutput(Bus bus, uint32_t flatAddress, OutputPairValue value)
+{
+  assert(isEventLoopThread());
+
+  m_ioContext.post(
+    [this, bus, flatAddress, value]()
+    {
+      const uint8_t address = Accessory::toBusAddress(flatAddress);
+      const auto it = m_addresses.find({bus, address});
+      if(it != m_addresses.end() && it->second.type == AddressType::Accessory) // check if bus/address is for output
+      {
+        const uint8_t shift = 2 * Accessory::toPort(flatAddress);
+        const uint8_t mask = 0x3 << shift;
+        const uint8_t bits = (it->second.lastValue & ~mask) | (static_cast<uint8_t>(value) << shift);
+        write(bus, address, bits);
+      }
+    });
+
+  return true;
 }
 
 void Kernel::addAddress(Bus bus, uint8_t address, AddressType type)

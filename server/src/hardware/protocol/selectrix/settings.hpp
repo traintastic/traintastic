@@ -44,6 +44,7 @@ class Settings final : public SubObject
     Property<uint16_t> trackPowerPollInterval;
     Property<uint16_t> locomotivePollInterval;
     Property<uint16_t> feedbackPollInterval;
+    Property<uint16_t> accessoryPollInterval;
     Property<bool> debugLogRXTX;
 
     Settings(Object& _parent, std::string_view parentPropertyName);

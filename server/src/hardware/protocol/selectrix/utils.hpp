@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_UTILS_HPP
 
 #include "bus.hpp"
+#include <traintastic/enum/outputchannel.hpp>
 
 namespace Selectrix {
 
@@ -50,6 +51,58 @@ constexpr uint8_t toPort(uint32_t flatAddress)
 constexpr uint32_t toFlatAddress(uint8_t busAddress, uint8_t port)
 {
   return 1 + static_cast<uint32_t>(busAddress * 8) + port;
+}
+
+namespace Accessory {
+
+constexpr Bus toBus(OutputChannel channel)
+{
+  switch(channel)
+  {
+    case OutputChannel::AccessorySX0:
+      return Bus::SX0;
+
+    case OutputChannel::AccessorySX1:
+      return Bus::SX1;
+
+    case OutputChannel::AccessorySX2:
+      return Bus::SX2;
+
+    default:
+      break;
+  }
+  return static_cast<Bus>(-1);
+}
+
+constexpr OutputChannel toChannel(Bus bus)
+{
+  switch(bus)
+  {
+    case Bus::SX0:
+      return OutputChannel::AccessorySX0;
+
+    case Bus::SX1:
+      return OutputChannel::AccessorySX1;
+
+    case Bus::SX2:
+      return OutputChannel::AccessorySX2;
+
+    default:
+      break;
+  }
+  return static_cast<OutputChannel>(-1);
+}
+
+constexpr uint8_t toBusAddress(uint32_t flatAddress)
+{
+  return (flatAddress - 1) / 4;
+}
+
+constexpr uint8_t toPort(uint32_t flatAddress)
+{
+  return (flatAddress - 1) % 4;
+}
+
 }
 
 }

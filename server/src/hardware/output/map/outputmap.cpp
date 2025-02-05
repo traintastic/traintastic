@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2021,2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -119,6 +119,9 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
               case OutputChannel::AccessoryMotorola:
               case OutputChannel::DCCext:
               case OutputChannel::Turnout:
+              case OutputChannel::AccessorySX0:
+              case OutputChannel::AccessorySX1:
+              case OutputChannel::AccessorySX2:
               {
                 const uint32_t address = newValue->getUnusedOutputAddress(channel);
                 addresses.appendInternal(address);
@@ -173,6 +176,9 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
           case OutputChannel::AccessoryMotorola:
           case OutputChannel::DCCext:
           case OutputChannel::Turnout:
+          case OutputChannel::AccessorySX0:
+          case OutputChannel::AccessorySX1:
+          case OutputChannel::AccessorySX2:
             ecosObject.setValueInternal(0);
             for(uint32_t address : addresses)
             {
@@ -387,6 +393,9 @@ void OutputMap::load(WorldLoader& loader, const nlohmann::json& data)
       case OutputChannel::AccessoryMotorola:
       case OutputChannel::DCCext:
       case OutputChannel::Turnout:
+      case OutputChannel::AccessorySX0:
+      case OutputChannel::AccessorySX1:
+      case OutputChannel::AccessorySX2:
         for(uint32_t address : addresses)
         {
           addOutput(channel, address);
@@ -455,6 +464,9 @@ void OutputMap::channelChanged()
       case OutputChannel::AccessoryMotorola:
       case OutputChannel::DCCext:
       case OutputChannel::Turnout:
+      case OutputChannel::AccessorySX0:
+      case OutputChannel::AccessorySX1:
+      case OutputChannel::AccessorySX2:
       {
         Attributes::setVisible({addresses, addAddress, removeAddress}, true);
         Attributes::setVisible(ecosObject, false);

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <map>
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/tristate.hpp>
+#include <traintastic/enum/outputpairvalue.hpp>
 #include "addresstype.hpp"
 #include "bus.hpp"
 #include "config.hpp"
@@ -37,6 +38,7 @@ enum class DecoderChangeFlags;
 class DecoderController;
 enum class SimulateInputAction;
 class InputController;
+class OutputController;
 
 namespace Selectrix {
 
@@ -63,6 +65,8 @@ class Kernel : public ::KernelBase
     DecoderController* m_decoderController = nullptr;
 
     InputController* m_inputController = nullptr;
+
+    OutputController* m_outputController = nullptr;
 
     Config m_config;
 
@@ -145,6 +149,14 @@ class Kernel : public ::KernelBase
     void setInputController(InputController* inputController);
 
     /**
+     * \brief Set the output controller
+     *
+     * \param[in] outputController The input controller
+     * \note This function may not be called when the kernel is running.
+     */
+    void setOutputController(OutputController* outputController);
+
+    /**
      * \brief Start the kernel and IO handler
      */
     void start();
@@ -182,6 +194,8 @@ class Kernel : public ::KernelBase
      * \param[in] action Simulation action to perform
      */
     void simulateInputChange(Bus bus, uint16_t address, SimulateInputAction action);
+
+    bool setOutput(Bus bus, uint32_t flatAddress, OutputPairValue value);
 
     void addAddress(Bus bus, uint8_t address, AddressType type);
     void removeAddress(Bus bus, uint8_t address);

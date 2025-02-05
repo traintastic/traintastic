@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022,2024 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -83,6 +83,9 @@ class OutputController
 
     void addToWorld(OutputListColumn columns);
     void destroying();
+
+    virtual void outputAdded(Output& /*output*/) {}
+    virtual void outputRemoved(Output& /*output*/) {}
 
   public:
     boost::signals2::signal<void()> outputECoSObjectsChanged;

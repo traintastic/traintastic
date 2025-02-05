@@ -6739,11 +6739,27 @@
         "definition": "Feedback poll interval"
     },
     {
+        "term": "selectrix_settings:accessory_poll_interval",
+        "definition": "Accessory poll interval"
+    },
+    {
         "term": "message:D2011",
         "definition": "Write SX%1.%2 = 0x%3 (%4)"
     },
     {
         "term": "message:D2012",
         "definition": "Modified SX%1.%2 = 0x%3 (%4)"
+    },
+    {
+        "term": "output_channel:accessory_sx0",
+        "definition": "Accessory (SX0)"
+    },
+    {
+        "term": "output_channel:accessory_sx1",
+        "definition": "Accessory (SX1)"
+    },
+    {
+        "term": "output_channel:accessory_sx2",
+        "definition": "Accessory (SX2)"
     }
 ]

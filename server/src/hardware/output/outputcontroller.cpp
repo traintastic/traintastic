@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022,2024 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@
 #include "keyboard/pairoutputkeyboard.hpp"
 #include "../protocol/dcc/dcc.hpp"
 #include "../protocol/motorola/motorola.hpp"
+#include "../protocol/selectrix/const.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/controllerlist.hpp"
 #include "../../core/objectproperty.tpp"
@@ -57,6 +58,9 @@ OutputType OutputController::outputType(OutputChannel channel) const
     case OutputChannel::Accessory:
     case OutputChannel::AccessoryDCC:
     case OutputChannel::AccessoryMotorola:
+    case OutputChannel::AccessorySX0:
+    case OutputChannel::AccessorySX1:
+    case OutputChannel::AccessorySX2:
       return OutputType::Pair;
 
     case OutputChannel::DCCext:
@@ -88,6 +92,11 @@ std::pair<uint32_t, uint32_t> OutputController::outputAddressMinMax(OutputChanne
 
     case OutputChannel::ECoSObject:
       return noAddressMinMax;
+
+    case OutputChannel::AccessorySX0:
+    case OutputChannel::AccessorySX1:
+    case OutputChannel::AccessorySX2:
+      return {Selectrix::Accessory::addressMin, Selectrix::Accessory::addressMax};
   }
   assert(false);
   return {0, 0};
@@ -114,6 +123,9 @@ bool OutputController::isOutputId(OutputChannel channel, uint32_t id) const
     case OutputChannel::Output:
     case OutputChannel::Accessory:
     case OutputChannel::Turnout:
+    case OutputChannel::AccessorySX0:
+    case OutputChannel::AccessorySX1:
+    case OutputChannel::AccessorySX2:
       return inRange(id, outputAddressMinMax(channel)); // id == address
 
     case OutputChannel::ECoSObject:
@@ -180,6 +192,7 @@ std::shared_ptr<Output> OutputController::getOutput(OutputChannel channel, uint3
   output->m_usedBy.emplace(usedBy.shared_from_this());
   m_outputs.emplace(OutputMapKey{channel, id}, output);
   outputs->addObject(output);
+  outputAdded(*output);
   getWorld(outputs.object()).outputs->addObject(output);
 
   if(auto keyboard = m_outputKeyboards[channel].lock())
@@ -201,6 +214,7 @@ void OutputController::releaseOutput(Output& output, Object& usedBy)
 
     m_outputs.erase({channel, id});
     outputs->removeObject(outputShared);
+    outputRemoved(output);
     getWorld(outputs.object()).outputs->removeObject(outputShared);
     outputShared->destroy();
     outputShared.reset();

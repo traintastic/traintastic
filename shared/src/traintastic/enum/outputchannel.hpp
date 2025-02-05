@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,9 +36,12 @@ enum class OutputChannel : uint16_t
   DCCext = 5, //!< DCCext, see RCN-213
   Turnout = 6, //!< DCC-EX turnout
   ECoSObject = 7, //!< ECoS switch object
+  AccessorySX0 = 8,
+  AccessorySX1 = 9,
+  AccessorySX2 = 10,
 };
 
-TRAINTASTIC_ENUM(OutputChannel, "output_channel", 7,
+TRAINTASTIC_ENUM(OutputChannel, "output_channel", 10,
 {
   {OutputChannel::Output, "output"},
   {OutputChannel::Accessory, "accessory"},
@@ -47,9 +50,12 @@ TRAINTASTIC_ENUM(OutputChannel, "output_channel", 7,
   {OutputChannel::DCCext, "dcc_ext"},
   {OutputChannel::Turnout, "turnout"},
   {OutputChannel::ECoSObject, "ecos_object"},
+  {OutputChannel::AccessorySX0, "accessory_sx0"},
+  {OutputChannel::AccessorySX1, "accessory_sx1"},
+  {OutputChannel::AccessorySX2, "accessory_sx2"},
 });
 
-inline constexpr std::array<OutputChannel, 7> outputChannelValues{{
+inline constexpr std::array<OutputChannel, 10> outputChannelValues{{
   OutputChannel::Output,
   OutputChannel::Accessory,
   OutputChannel::AccessoryDCC,
@@ -57,6 +63,9 @@ inline constexpr std::array<OutputChannel, 7> outputChannelValues{{
   OutputChannel::DCCext,
   OutputChannel::Turnout,
   OutputChannel::ECoSObject,
+  OutputChannel::AccessorySX0,
+  OutputChannel::AccessorySX1,
+  OutputChannel::AccessorySX2,
 }};
 
 constexpr bool isAccessory(OutputChannel value)
@@ -64,7 +73,10 @@ constexpr bool isAccessory(OutputChannel value)
   return
     (value == OutputChannel::Accessory) ||
     (value == OutputChannel::AccessoryDCC) ||
-    (value == OutputChannel::AccessoryMotorola);
+    (value == OutputChannel::AccessoryMotorola) ||
+    (value == OutputChannel::AccessorySX0) ||
+    (value == OutputChannel::AccessorySX1) ||
+    (value == OutputChannel::AccessorySX2);
 }
 
 #endif

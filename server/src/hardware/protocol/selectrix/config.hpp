@@ -33,6 +33,7 @@ struct Config
   std::chrono::milliseconds trackPowerPollInterval;
   std::chrono::milliseconds locomotivePollInterval;
   std::chrono::milliseconds feedbackPollInterval;
+  std::chrono::milliseconds accessoryPollInterval;
   bool debugLogRXTX;
 
   std::chrono::milliseconds pollInterval(AddressType addressType)
@@ -49,6 +50,9 @@ struct Config
 
       case AddressType::Feedback:
         return feedbackPollInterval;
+
+      case AddressType::Accessory:
+        return accessoryPollInterval;
     }
     assert(false);
     return 1s;

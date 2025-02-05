@@ -45,6 +45,7 @@ class SelectrixInterface final
   : public Interface
   , public DecoderController
   , public InputController
+  , public OutputController
 {
   CLASS_ID("interface.selectrix")
   DEFAULT_ID("selectrix")
@@ -98,6 +99,9 @@ class SelectrixInterface final
     void useFeedbackAddress(uint32_t channel, uint32_t address);
     void unuseFeedbackAddress(uint32_t channel, uint32_t address);
 
+    void useAccessoryAddress(OutputChannel channel, uint32_t flatAddress);
+    void unuseAccessoryAddress(OutputChannel channel, uint32_t flatAddress);
+
   protected:
     void addToWorld() final;
     void loaded() final;
@@ -114,6 +118,10 @@ class SelectrixInterface final
     // InputController:
     void inputAdded(Input& input) final;
     void inputRemoved(Input& input) final;
+
+    // OutputController:
+    void outputAdded(Output& output) final;
+    void outputRemoved(Output& output) final;
 
     void updateEnabled();
 
@@ -137,6 +145,11 @@ class SelectrixInterface final
     [[nodiscard]] bool isInputAddressAvailable(uint32_t channel, uint32_t address) const final;
     [[nodiscard]] bool changeInputChannelAddress(Input& input, uint32_t newChannel, uint32_t newAddress) final;
     void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
+
+    // OutputController:
+    tcb::span<const OutputChannel> outputChannels() const final;
+    [[nodiscard]] bool isOutputAvailable(OutputChannel channel, uint32_t outputId) const final;
+    [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t outputId, OutputValue value) final;
 };
 
 #endif

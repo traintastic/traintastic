@@ -65,6 +65,12 @@ namespace Locomotive
   constexpr uint8_t f1 = 0x80;
 }
 
+namespace Accessory
+{
+  static constexpr uint16_t addressMin = 1;
+  static constexpr uint16_t addressMax = 104 * 4; // address 0..103, 4 pairs per address
+}
+
 }
 
 #endif

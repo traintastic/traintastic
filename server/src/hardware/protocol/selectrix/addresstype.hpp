@@ -33,12 +33,14 @@ enum class AddressType : uint8_t
   TrackPower = 0,
   Locomotive = 1,
   Feedback = 2,
+  Accessory = 3,
 };
 
-constexpr std::array<AddressType, 3> addressTypes{{
+constexpr std::array<AddressType, 4> addressTypes{{
   AddressType::TrackPower,
   AddressType::Locomotive,
-  AddressType::Feedback
+  AddressType::Feedback,
+  AddressType::Accessory,
 }};
 
 }

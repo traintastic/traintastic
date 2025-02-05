@@ -43,6 +43,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   , trackPowerPollInterval{this, "track_power_poll_interval", 250, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , locomotivePollInterval{this, "locomotive_poll_interval", 500, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , feedbackPollInterval{this, "feedback_poll_interval", 100, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , accessoryPollInterval{this, "accessory_poll_interval", 500, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   Attributes::addEnabled(useRautenhausCommandFormat, false);
@@ -63,6 +64,11 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   Attributes::addVisible(feedbackPollInterval, true);
   m_interfaceItems.add(feedbackPollInterval);
 
+  Attributes::addMinMax(accessoryPollInterval, pollIntervalRange);
+  Attributes::addUnit(accessoryPollInterval, "ms");
+  Attributes::addVisible(accessoryPollInterval, true);
+  m_interfaceItems.add(accessoryPollInterval);
+
   Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
   //Attributes::addGroup(debugLogRXTX, Group::debug);
   m_interfaceItems.add(debugLogRXTX);
@@ -78,6 +84,7 @@ Config Settings::config() const
   config.trackPowerPollInterval = std::chrono::milliseconds(trackPowerPollInterval.value());
   config.locomotivePollInterval = std::chrono::milliseconds(locomotivePollInterval.value());
   config.feedbackPollInterval = std::chrono::milliseconds(feedbackPollInterval.value());
+  config.accessoryPollInterval = std::chrono::milliseconds(accessoryPollInterval.value());
   config.debugLogRXTX = debugLogRXTX;
 
   return config;
