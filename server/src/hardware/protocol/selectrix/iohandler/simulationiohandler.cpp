@@ -52,7 +52,16 @@ bool SimulationIOHandler::read(Bus bus, uint8_t address)
 bool SimulationIOHandler::write(Bus bus, uint8_t address, uint8_t value)
 {
   assert(address <= Address::max);
-  busValues(bus)[address] = value;
+  if(busValues(bus)[address] != value)
+  {
+    busValues(bus)[address] = value;
+
+    m_kernel.ioContext().post(
+      [this, bus, address]()
+      {
+        m_kernel.busChanged(bus, address, busValues(bus)[address]);
+      });
+  }
   return true;
 }
 
@@ -66,20 +75,17 @@ void SimulationIOHandler::simulateInputChange(Bus bus, uint16_t inputAddress, Si
     (action == SimulateInputAction::SetTrue) ||
     (action == SimulateInputAction::Toggle && !(busValues(bus)[address] & valueMask));
 
+  uint8_t value = busValues(bus)[address];
   if(setBit)
   {
-    busValues(bus)[address] |= valueMask;
+    value |= valueMask;
   }
   else // clear bit
   {
-    busValues(bus)[address] &= ~valueMask;
+    value &= ~valueMask;
   }
 
-  m_kernel.ioContext().post(
-    [this, bus, address]()
-    {
-      m_kernel.busChanged(bus, address, busValues(bus)[address]);
-    });
+  write(bus, address, value);
 }
 
 }
