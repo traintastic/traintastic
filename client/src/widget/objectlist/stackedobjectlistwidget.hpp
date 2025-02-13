@@ -32,6 +32,7 @@ class QToolBar;
 class QStackedWidget;
 class QListView;
 class QLabel;
+class QMenu;
 class MethodIcon;
 class MethodAction;
 
