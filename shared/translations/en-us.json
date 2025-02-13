@@ -6713,5 +6713,9 @@
     {
         "term": "output_map:swap_outputs",
         "definition": "Swap outputs"
+    },
+    {
+        "term": "stacked_object_list:back",
+        "definition": "Back"
     }
 ]
