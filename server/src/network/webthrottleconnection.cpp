@@ -170,6 +170,13 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
       response.emplace("list", list);
       sendMessage(response);
     }
+    else if(action == "estop_all")
+    {
+      for(const auto& it : m_throttles)
+      {
+        it.second->emergencyStop();
+      }
+    }
   }
   else
   {

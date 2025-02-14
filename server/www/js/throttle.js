@@ -501,4 +501,17 @@ var tm = new function ()
     console.log('TX', msg);
     return this.ws.send(JSON.stringify(msg));
   };
+
+  this.eStopAll = function ()
+  {
+    this.send({ 'action': 'estop_all' });
+  };
 }();
+
+document.addEventListener("visibilitychange", function ()
+{
+  if(document.hidden)
+  {
+    tm.eStopAll();
+  }
+});
