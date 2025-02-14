@@ -220,13 +220,35 @@ div.message
 {
   z-index: 2;
   position: absolute;
-  bottom: 1rem;
+  bottom: 0.5rem;
   border: none;
   border-radius: 0.5rem;
-  width: 100%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 0.5rem;
+  min-width: 50%;
+  font-size: 125%;
+}
+
+div.message p
+{
+  margin: 0.5rem;
 }
 
 div.message.error
 {
   background-color: #cf6679;
+  text-align: center;
+}
+
+div.message.error button
+{
+  background-color: white;
+  color: #cf6679;
+  border: none;
+  border-radius: 0.5rem;
+  display: inline-block;
+  padding: 0.5rem 1rem;
 }

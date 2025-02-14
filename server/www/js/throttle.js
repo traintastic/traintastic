@@ -173,11 +173,19 @@ function Throttle(parent, id)
   this.showMessage = function (message)
   {
     var layout = [];
+    if(message.tag == 'can_not_activate_train')
+    {
+      throttle.querySelector('select[name=train_select]').value = this.trainId;
+    }
+
+    text = document.createElement('p');
+    text.innerText = message['text'];
+    layout.push(text);
+
     if(message['tag'] == 'already_acquired')
     {
       var e = document.createElement('button');
       e.innerText = 'Steal';
-      e.className = 'right';
       e.setAttribute('throttle-id', id);
       e.setAttribute('train-id', throttle.querySelector('select[name=train_select]').value);
       e.onclick = function ()
@@ -193,13 +201,7 @@ function Throttle(parent, id)
       };
       layout.push(e)
     }
-    else if(message.tag == 'can_not_activate_train')
-    {
-      throttle.querySelector('select[name=train_select]').value = this.trainId;
-    }
-    text = document.createElement('p');
-    text.innerText = message['text'];
-    layout.push(text);
+
     this.clearMessage();
     this.message = createDiv('message ' + message['type'], layout);
     throttle.appendChild(this.message);
