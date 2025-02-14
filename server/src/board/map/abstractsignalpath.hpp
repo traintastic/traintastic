@@ -155,7 +155,7 @@ class AbstractSignalPath : public Path
   private:
     std::unique_ptr<const Item> m_root;
     bool m_requireReservation = false;
-    std::vector<boost::signals2::connection> m_connections;
+    std::vector<boost::signals2::scoped_connection> m_connections;
 
     std::unique_ptr<const Item> findBlocks(const Node& node, const Link& link, size_t blocksAhead);
 
@@ -199,7 +199,7 @@ class AbstractSignalPath : public Path
   public:
     AbstractSignalPath(SignalRailTile& signal);
     AbstractSignalPath(SignalRailTile& signal, size_t blocksAhead);
-    virtual ~AbstractSignalPath();
+    virtual ~AbstractSignalPath() = default;
 
     void evaluate();
 };

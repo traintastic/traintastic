@@ -367,11 +367,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
   updateEnabled();
 }
 
-OutputMap::~OutputMap()
-{
-  m_interfaceDestroying.disconnect();
-  m_outputECoSObjectsChanged.disconnect();
-}
+OutputMap::~OutputMap() = default;
 
 void OutputMap::load(WorldLoader& loader, const nlohmann::json& data)
 {

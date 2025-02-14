@@ -64,14 +64,6 @@ AbstractSignalPath::AbstractSignalPath(SignalRailTile& signal, size_t blocksAhea
   }
 }
 
-AbstractSignalPath::~AbstractSignalPath()
-{
-  for(auto& connection : m_connections)
-  {
-    connection.disconnect();
-  }
-}
-
 void AbstractSignalPath::evaluate()
 {
   const bool stop = !signal().hasReservedPath() && requireReservation();

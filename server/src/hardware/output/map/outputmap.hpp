@@ -50,8 +50,8 @@ class OutputMap : public SubObject
     static constexpr size_t addressesSizeMin = 1;
     static constexpr size_t addressesSizeMax = 8;
 
-    boost::signals2::connection m_interfaceDestroying;
-    boost::signals2::connection m_outputECoSObjectsChanged;
+    boost::signals2::scoped_connection m_interfaceDestroying;
+    boost::signals2::scoped_connection m_outputECoSObjectsChanged;
 
     void addOutput(OutputChannel ch, uint32_t id);
     void addOutput(OutputChannel ch, uint32_t id, OutputController& outputController);
