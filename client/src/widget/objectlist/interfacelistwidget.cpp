@@ -27,6 +27,7 @@
 #include <QListView>
 #include <QMenu>
 #include <QPainter>
+#include <QtMath>
 
 #include <traintastic/enum/interfacestate.hpp>
 #include <traintastic/locale/locale.hpp>
