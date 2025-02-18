@@ -152,7 +152,7 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
 
     [[nodiscard]] int getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, std::optional<const Error>)> callback);
     void releaseTableModel(TableModel* tableModel);
-    void setTableModelRegion(TableModel* tableModel, int columnMin, int columnMax, int rowMin, int rowMax);
+    void setTableModelRegion(TableModel* tableModel, uint32_t columnMin, uint32_t columnMax, uint32_t rowMin, uint32_t rowMax);
 
     [[nodiscard]] int getTileData(Board& object);
 
