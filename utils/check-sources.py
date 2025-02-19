@@ -93,6 +93,7 @@ if __name__ == "__main__":
         os.path.join('client', 'src'),
         os.path.join('server', 'src'),
         os.path.join('server', 'test'),
+        os.path.join('simulator', 'src'),
         os.path.join('shared', 'src')]
 
     fix = True

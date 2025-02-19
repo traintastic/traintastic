@@ -1,0 +1,73 @@
+{
+  "trackplan": [
+    {
+      "type": "straight",
+      "x": 150,
+      "y": 100,
+      "length": 50,
+      "sensor_address": 1
+    },
+    {
+      "id": "top",
+      "type": "straight",
+      "length": 300,
+      "sensor_address": 2
+    },
+    {
+      "type": "straight",
+      "length": 50,
+      "sensor_address": 3
+    },
+    {
+      "type": "curve",
+      "radius": 100,
+      "angle": 180,
+      "sensor_address": 4
+    },
+    {
+      "type": "straight",
+      "length": 50,
+      "sensor_address": 5
+    },
+    {
+      "type": "straight",
+      "length": 300,
+      "sensor_address": 6
+    },
+    {
+      "type": "straight",
+      "length": 50,
+      "sensor_address": 7
+    },
+    {
+      "type": "curve",
+      "radius": 100,
+      "angle": 180,
+      "sensor_address": 8
+    }
+  ],
+  "trains": [
+    {
+      "address": 3,
+      "track_id": "top",
+      "vehicles": [
+        {
+          "length": 40.0,
+          "color": "red"
+        },
+        {
+          "length": 20.0,
+          "color": "green"
+        },
+        {
+          "length": 20.0,
+          "color": "green"
+        },
+        {
+          "length": 30.0,
+          "color": "blue"
+        }
+      ]
+    }
+  ]
+}
