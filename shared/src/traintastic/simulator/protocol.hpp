@@ -24,6 +24,7 @@
 
 #include "../enum/decoderprotocol.hpp"
 #include "../enum/direction.hpp"
+#include "../utils/packed.hpp"
 
 namespace SimulatorProtocol
 {
@@ -80,6 +81,8 @@ struct LocomotiveSpeedDirection : Message
 };
 static_assert(sizeof(LocomotiveSpeedDirection) == 8);
 
+PRAGMA_PACK_PUSH_1
+
 struct SensorChanged : Message
 {
   uint16_t channel;
@@ -93,8 +96,10 @@ struct SensorChanged : Message
     , value(val ? 1 : 0)
   {
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(SensorChanged) == 7);
+
+PRAGMA_PACK_POP
 
 }
 
