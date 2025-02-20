@@ -36,6 +36,10 @@ target_include_directories(traintastic-simulator SYSTEM PRIVATE
   ../shared/thirdparty
 )
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Xml OpenGLWidgets Network)
-message(STATUS "Found Qt ${QT_VERSION}")
-target_link_libraries(traintastic-simulator PRIVATE Qt6::Core Qt6::Widgets Qt6::Xml Qt6::OpenGLWidgets Qt6::Network)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Xml OpenGLWidgets Network OpenGL)
+message(STATUS "Found Qt ${Qt6Core_VERSION}")
+target_link_libraries(traintastic-simulator PRIVATE Qt6::Core Qt6::Widgets Qt6::Xml Qt6::OpenGLWidgets Qt6::Network Qt6::OpenGL)
+
+if(WIN32)
+  target_link_libraries(traintastic-simulator PRIVATE OpenGL32)
+endif()
