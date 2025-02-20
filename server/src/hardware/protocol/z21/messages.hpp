@@ -28,7 +28,7 @@
 #include <string>
 #include <traintastic/enum/direction.hpp>
 #include "utils.hpp"
-#include "../../../utils/packed.hpp"
+#include <traintastic/utils/packed.hpp>
 #include "../../../utils/endian.hpp"
 #include "../../../utils/byte.hpp"
 

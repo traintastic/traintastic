@@ -1,7 +1,6 @@
 /**
- * server/src/utils/packed.hpp
- *
- * This file is part of the traintastic source code.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) 2019-2020 Reinder Feenstra
  *

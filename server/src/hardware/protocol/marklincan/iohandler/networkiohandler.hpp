@@ -26,7 +26,7 @@
 #include "iohandler.hpp"
 #include <array>
 #include "../messages.hpp"
-#include "../../../../utils/packed.hpp"
+#include <traintastic/utils/packed.hpp>
 
 namespace MarklinCAN {
 
