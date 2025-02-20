@@ -138,15 +138,15 @@ void SimulatorView::drawTracks()
       }
       glEnd();
     }
-    else if(segment.type == Simulator::TrackSegment::Turnout)
-    {
+    //else if(segment.type == Simulator::TrackSegment::Turnout)
+    //{
       // glBegin(GL_LINES);
       // glVertex2f(0, 0);
       // glVertex2f(100, 0);
       // glVertex2f(100, 0);
       // glVertex2f(150, 50);
       // glEnd();
-    }
+    //}
 
     glPopMatrix();
   }
