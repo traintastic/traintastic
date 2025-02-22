@@ -12,7 +12,7 @@ set(CMAKE_AUTOUIC ON)
 configure_file(../shared/src/traintastic/version.hpp.in version.hpp)
 
 if(MSVC)
-  add_compile_options(/W4)
+  add_compile_options(/W4 /WX)
 else()
   add_compile_options(-Wall -Wextra -Wpedantic -Wshadow -Werror)
 endif()

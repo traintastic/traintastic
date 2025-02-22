@@ -378,7 +378,7 @@ void Simulator::updateTrainPositions()
       {
         if(vehicle.segmentIndex == 0)
         {
-          vehicle.segmentIndex = m_trackSegments.size() - 1;
+          vehicle.segmentIndex = static_cast<int>(m_trackSegments.size()) - 1;
         }
         else
         {
