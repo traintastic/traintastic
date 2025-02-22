@@ -1,0 +1,42 @@
+#include <winver.h>
+#include <version.hpp>
+#include <traintastic/copyright.hpp>
+
+#ifndef TRAINTASTIC_VERSION_EXTRA
+  #define TRAINTASTIC_VERSION_EXTRA
+#endif
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     TRAINTASTIC_VERSION_MAJOR, TRAINTASTIC_VERSION_MINOR, TRAINTASTIC_VERSION_PATCH, 0
+PRODUCTVERSION  TRAINTASTIC_VERSION_MAJOR, TRAINTASTIC_VERSION_MINOR, TRAINTASTIC_VERSION_PATCH, 0
+FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+#ifdef DEBUG
+  FILEFLAGS        VS_FF_DEBUG
+#else
+  FILEFLAGS        0x0L
+#endif
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName",      "Traintastic"
+            VALUE "FileDescription",  "Traintastic simulator application"
+            VALUE "FileVersion",      TRAINTASTIC_VERSION TRAINTASTIC_VERSION_EXTRA
+            VALUE "InternalName",     "traintastic-simulator"
+            VALUE "LegalCopyright",   TRAINTASTIC_COPYRIGHT
+            VALUE "OriginalFilename", "traintastic-simulator.exe"
+            VALUE "ProductName",      "Traintastic simulator"
+            VALUE "ProductVersion",   TRAINTASTIC_VERSION TRAINTASTIC_VERSION_EXTRA
+            VALUE "Website",          "https://traintastic.org"
+        END
+    END
+
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END

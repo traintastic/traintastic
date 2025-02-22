@@ -42,4 +42,6 @@ target_link_libraries(traintastic-simulator PRIVATE Qt6::Core Qt6::Widgets Qt6::
 
 if(WIN32)
   target_link_libraries(traintastic-simulator PRIVATE OpenGL32)
+  target_sources(traintastic-simulator PRIVATE ../shared/gfx/appicon.rc src/version.rc)
+  set_property(TARGET traintastic-simulator PROPERTY WIN32_EXECUTABLE true)
 endif()
