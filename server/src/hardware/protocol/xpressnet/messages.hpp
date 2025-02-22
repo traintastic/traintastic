@@ -27,7 +27,10 @@
 #include <cassert>
 #include <cstring>
 #include <string>
-#include "../../../enum/direction.hpp"
+#include <traintastic/enum/direction.hpp>
+#include "../../../utils/packed.hpp"
+#include "../../../utils/endian.hpp"
+#include "../../../utils/byte.hpp"
 
 namespace XpressNet {
 
@@ -37,6 +40,7 @@ constexpr uint16_t longAddressMin = 100;
 constexpr uint16_t longAddressMax = 9999;
 
 constexpr uint8_t idFeedbackBroadcast = 0x40;
+constexpr uint8_t idLocomotiveBusy = 0xE4;
 
 struct Message;
 
@@ -48,8 +52,10 @@ void updateChecksum(Message& msg);
 inline bool isChecksumValid(const Message& msg);
 bool isChecksumValid(const Message& msg, const int dataSize);
 
-std::string toString(const Message& message);
+std::string toString(const Message& message, bool raw = true);
 
+// Chapters are based on:
+// Lenz Dokumentation XpressNet Version 4.0 02/2022
 struct Message
 {
   uint8_t header;
@@ -77,9 +83,10 @@ struct Message
   {
     return 2 + dataSize();
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(Message) == 1);
 
+// 2.4.1
 struct NormalOperationResumed : Message
 {
   uint8_t db1 = 0x01;
@@ -89,9 +96,10 @@ struct NormalOperationResumed : Message
   {
     header = 0x61;
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(NormalOperationResumed) == 3);
 
+// 2.4.2
 struct TrackPowerOff : Message
 {
   uint8_t db1 = 0x00;
@@ -101,9 +109,10 @@ struct TrackPowerOff : Message
   {
     header = 0x61;
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(TrackPowerOff) == 3);
 
+// 2.4.3
 struct EmergencyStop : Message
 {
   uint8_t db1 = 0x00;
@@ -113,8 +122,34 @@ struct EmergencyStop : Message
   {
     header = 0x81;
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(EmergencyStop) == 3);
+
+// 2.13
+struct CommandStationBusy : Message
+{
+  uint8_t db1 = 0x81;
+  uint8_t checksum = 0xE0;
+
+  CommandStationBusy()
+  {
+    header = 0x61;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(CommandStationBusy) == 3);
+
+// 2.14
+struct CommandUnknown : Message
+{
+  uint8_t db1 = 0x82;
+  uint8_t checksum = 0xE3;
+
+  CommandUnknown()
+  {
+    header = 0x61;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(CommandUnknown) == 3);
 
 struct FeedbackBroadcast : Message
 {
@@ -180,7 +215,7 @@ struct FeedbackBroadcast : Message
       else
         data &= ~static_cast<uint8_t>(1 << index);
     }
-  };
+  } ATTRIBUTE_PACKED;
   static_assert(sizeof(Pair) == 2);
 
   constexpr uint8_t pairCount() const
@@ -205,8 +240,9 @@ struct FeedbackBroadcast : Message
     assert(index < pairCount());
     return *(reinterpret_cast<Pair*>(&header + sizeof(header)) + index);
   }
-};
+} ATTRIBUTE_PACKED;
 
+// 3.2
 struct ResumeOperationsRequest : Message
 {
   uint8_t db1 = 0x81;
@@ -216,9 +252,10 @@ struct ResumeOperationsRequest : Message
   {
     header = 0x21;
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(ResumeOperationsRequest) == 3);
 
+// 3.3
 struct StopOperationsRequest : Message
 {
   uint8_t db1 = 0x80;
@@ -228,9 +265,10 @@ struct StopOperationsRequest : Message
   {
     header = 0x21;
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(StopOperationsRequest) == 3);
 
+// 3.4
 struct StopAllLocomotivesRequest : Message
 {
   uint8_t checksum = 0x80;
@@ -239,9 +277,10 @@ struct StopAllLocomotivesRequest : Message
   {
     header = 0x80;
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(StopAllLocomotivesRequest) == 2);
 
+// 3.7 Emergency stop locomotive (from Central version 3.0)
 struct EmergencyStopLocomotive : Message
 {
   uint8_t addressHigh;
@@ -264,7 +303,7 @@ struct EmergencyStopLocomotive : Message
       addressLow = address & 0x7f;
     }
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(EmergencyStopLocomotive) == 4);
 
 struct LocomotiveInstruction : Message
@@ -279,17 +318,27 @@ struct LocomotiveInstruction : Message
     if(address >= longAddressMin)
     {
       assert(address >= longAddressMin && address <= longAddressMax);
-      addressHigh = 0xc0 | address >> 8;
-      addressLow = address & 0xff;
+      addressHigh = 0xC0 | address >> 8;
+      addressLow = address & 0xFF;
     }
     else
     {
       assert(address >= shortAddressMin && address <= shortAddressMax);
       addressHigh = 0x00;
-      addressLow = address & 0x7f;
+      addressLow = address & 0x7F;
     }
   }
-};
+
+  inline uint16_t address() const
+  {
+    return (static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow;
+  }
+
+  inline bool isLongAddress() const
+  {
+    return (addressHigh & 0xC0) == 0xC0;
+  }
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(LocomotiveInstruction) == 4);
 
 struct SpeedAndDirectionInstruction : LocomotiveInstruction
@@ -305,7 +354,7 @@ struct SpeedAndDirectionInstruction : LocomotiveInstruction
     if(direction == Direction::Forward)
       speedAndDirection |= 0x80;
   }
-};
+} ATTRIBUTE_PACKED;
 
 struct SpeedAndDirectionInstruction14 : SpeedAndDirectionInstruction
 {
@@ -320,7 +369,7 @@ struct SpeedAndDirectionInstruction14 : SpeedAndDirectionInstruction
       speedAndDirection |= 0x10;
     checksum = calcChecksum(*this);
   }
-};
+} ATTRIBUTE_PACKED;
 
 struct SpeedAndDirectionInstruction27 : SpeedAndDirectionInstruction
 {
@@ -333,7 +382,7 @@ struct SpeedAndDirectionInstruction27 : SpeedAndDirectionInstruction
       speedAndDirection |= (((speedStep + 1) & 0x01) << 4) | ((speedStep + 1) >> 1);
     checksum = calcChecksum(*this);
   }
-};
+} ATTRIBUTE_PACKED;
 
 struct SpeedAndDirectionInstruction28 : SpeedAndDirectionInstruction
 {
@@ -346,7 +395,7 @@ struct SpeedAndDirectionInstruction28 : SpeedAndDirectionInstruction
       speedAndDirection |= (((speedStep + 1) & 0x01) << 4) | ((speedStep + 1) >> 1);
     checksum = calcChecksum(*this);
   }
-};
+} ATTRIBUTE_PACKED;
 
 struct SpeedAndDirectionInstruction128 : SpeedAndDirectionInstruction
 {
@@ -359,7 +408,7 @@ struct SpeedAndDirectionInstruction128 : SpeedAndDirectionInstruction
       speedAndDirection |= speedStep + 1;
     checksum = calcChecksum(*this);
   }
-};
+} ATTRIBUTE_PACKED;
 
 struct FunctionInstructionGroup : LocomotiveInstruction
 {
@@ -372,7 +421,7 @@ struct FunctionInstructionGroup : LocomotiveInstruction
     assert(group >= 1 && group <= 5);
     identification = (group == 5) ? 0x28 : (0x1F + group);
   }
-};
+} ATTRIBUTE_PACKED;
 
 struct FunctionInstructionGroup1 : FunctionInstructionGroup
 {
@@ -392,7 +441,7 @@ struct FunctionInstructionGroup1 : FunctionInstructionGroup
 
     checksum = calcChecksum(*this);
   }
-};
+} ATTRIBUTE_PACKED;
 
 struct FunctionInstructionGroup2 : FunctionInstructionGroup
 {
@@ -410,7 +459,7 @@ struct FunctionInstructionGroup2 : FunctionInstructionGroup
 
     checksum = calcChecksum(*this);
   }
-};
+} ATTRIBUTE_PACKED;
 
 struct FunctionInstructionGroup3 : FunctionInstructionGroup
 {
@@ -428,7 +477,7 @@ struct FunctionInstructionGroup3 : FunctionInstructionGroup
 
     checksum = calcChecksum(*this);
   }
-};
+} ATTRIBUTE_PACKED;
 
 struct FunctionInstructionGroup4 : FunctionInstructionGroup
 {
@@ -454,7 +503,7 @@ struct FunctionInstructionGroup4 : FunctionInstructionGroup
 
     checksum = calcChecksum(*this);
   }
-};
+} ATTRIBUTE_PACKED;
 
 struct FunctionInstructionGroup5 : FunctionInstructionGroup
 {
@@ -480,7 +529,7 @@ struct FunctionInstructionGroup5 : FunctionInstructionGroup
 
     checksum = calcChecksum(*this);
   }
-};
+} ATTRIBUTE_PACKED;
 
 /*
 struct setFunctionStateGroup : LocomotiveInstruction
@@ -495,8 +544,22 @@ struct setFunctionStateGroup : LocomotiveInstruction
     identification = 0x23 + group;
     addressLowHigh(address, addressLow, addressHigh);
   }
-} __attribute__((packed));
+} ATTRIBUTE_PACKED;
 */
+
+// 2.19.7 Locomotive is Occupied (from Central version 3.0)
+struct LocomotiveBusy : LocomotiveInstruction
+{
+  uint8_t checksum;
+
+  LocomotiveBusy(uint16_t address)
+    : LocomotiveInstruction(address)
+  {
+    identification = idLocomotiveBusy;
+    checksum = calcChecksum(*this);
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LocomotiveBusy) == 5);
 
 struct AccessoryDecoderOperationRequest : Message
 {
@@ -539,7 +602,7 @@ struct AccessoryDecoderOperationRequest : Message
   {
     return db2 & db2Activate;
   }
-};
+} ATTRIBUTE_PACKED;
 static_assert(sizeof(AccessoryDecoderOperationRequest) == 4);
 
 namespace RocoMultiMAUS
@@ -573,7 +636,7 @@ namespace RocoMultiMAUS
 
       checksum = calcChecksum(*this);
     }
-  };
+  } ATTRIBUTE_PACKED;
 }
 
 namespace RoSoftS88XpressNetLI
@@ -597,7 +660,7 @@ namespace RoSoftS88XpressNetLI
       assert((startAddress >= startAddressMin && startAddress <= startAddressMax) || startAddress == startAddressGet);
       checksum = calcChecksum(*this);
     }
-  };
+  } ATTRIBUTE_PACKED;
 
   struct S88ModuleCount : Message
   {
@@ -618,7 +681,7 @@ namespace RoSoftS88XpressNetLI
       assert((moduleCount >= moduleCountMin && moduleCount <= moduleCountMax) || moduleCount == moduleCountGet);
       checksum = calcChecksum(*this);
     }
-  };
+  } ATTRIBUTE_PACKED;
 }
 
 inline uint8_t calcChecksum(const Message& msg)
