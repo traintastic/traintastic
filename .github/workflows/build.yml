@@ -618,7 +618,7 @@ jobs:
         path: ${{github.workspace}}/manual/build.luadoc
 
     - name: "Download artifact: traintastic-simulator"
-      user: actions/download-artifact@v4
+      uses: actions/download-artifact@v4
       with:
         name: traintastic-simulator-windows
         path: ${{github.workspace}}/simulator/build/Release
