@@ -443,6 +443,20 @@ jobs:
       shell: bash
       run: cmake --build . --config ${{matrix.config.build_type}} --target ${{matrix.config.target}} --parallel ${{matrix.config.jobs}}
 
+    - name: Run windeployqt
+      if: startswith(matrix.config.os, 'windows')
+      shell: cmd
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        windeployqt --release --no-translations -no-system-d3d-compiler ${{github.workspace}}/simulator/build/${{matrix.config.build_type}}/traintastic-simulator.exe
+
+    - name: Upload artifact
+      if: startswith(matrix.config.os, 'windows')
+      uses: actions/upload-artifact@v4
+      with:
+        name: traintastic-simulator-windows
+        path: ${{github.workspace}}/simulator/build/${{matrix.config.build_type}}
+
   build-data:
     name: shared data ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
@@ -563,7 +577,7 @@ jobs:
   package-innosetup:
     name: package innosetup
     runs-on: windows-2019
-    needs: [build-client, build-server, build-lang, build-manual, build-manual-lua]
+    needs: [build-client, build-server, build-simulator, build-lang, build-manual, build-manual-lua]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -602,6 +616,12 @@ jobs:
       with:
         name: traintastic-manual-lua
         path: ${{github.workspace}}/manual/build.luadoc
+
+    - name: "Download artifact: traintastic-simulator"
+      user: actions/download-artifact@v4
+      with:
+        name: traintastic-simulator-windows
+        path: ${{github.workspace}}/simulator/build/Release
 
     - name: Build installer
       shell: cmd
