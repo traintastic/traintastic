@@ -26,6 +26,7 @@
 #include <list>
 #include <optional>
 #include <traintastic/enum/decoderprotocol.hpp>
+#include "color.hpp"
 
 class QTcpServer;
 class QTcpSocket;
@@ -67,13 +68,6 @@ public:
   {
     float x;
     float y;
-  };
-
-  enum class Color
-  {
-    Red = 0,
-    Blue,
-    Green,
   };
 
   struct RailVehicle

@@ -32,11 +32,154 @@ struct ColorF
   float blue;
 };
 
-inline static const std::array<ColorF, 3> colors{{
-  {1.0f, 0.0f, 0.0f}, // Red
-  {0.0f, 1.0f, 0.0f}, // Green
-  {0.0f, 0.0f, 1.0f}, // Blue
+inline static const std::array<ColorF, 145> colors{{
+  {0.94f, 0.97f, 1.00f}, //	Alice Blue
+  {0.98f, 0.92f, 0.84f}, //	Antique White
+  {0.00f, 1.00f, 1.00f}, //	Aqua
+  {0.50f, 1.00f, 0.83f}, //	Aquamarine
+  {0.94f, 1.00f, 1.00f}, //	Azure
+  {0.96f, 0.96f, 0.86f}, //	Beige
+  {1.00f, 0.89f, 0.77f}, //	Bisque
+  {0.00f, 0.00f, 0.00f}, //	Black
+  {1.00f, 0.92f, 0.80f}, //	Blanched Almond
+  {0.00f, 0.00f, 1.00f}, //	Blue
+  {0.54f, 0.17f, 0.89f}, //	Blue Violet
+  {0.65f, 0.16f, 0.16f}, //	Brown
+  {0.87f, 0.72f, 0.53f}, //	Burlywood
+  {0.37f, 0.62f, 0.63f}, //	Cadet Blue
+  {0.50f, 1.00f, 0.00f}, //	Chartreuse
+  {0.82f, 0.41f, 0.12f}, //	Chocolate
+  {1.00f, 0.50f, 0.31f}, //	Coral
+  {0.39f, 0.58f, 0.93f}, //	Cornflower Blue
+  {1.00f, 0.97f, 0.86f}, //	Cornsilk
+  {0.86f, 0.08f, 0.24f}, //	Crimson
+  {0.00f, 1.00f, 1.00f}, //	Cyan
+  {0.00f, 0.00f, 0.55f}, //	Dark Blue
+  {0.00f, 0.55f, 0.55f}, //	Dark Cyan
+  {0.72f, 0.53f, 0.04f}, //	Dark Goldenrod
+  {0.66f, 0.66f, 0.66f}, //	Dark Gray
+  {0.00f, 0.39f, 0.00f}, //	Dark Green
+  {0.74f, 0.72f, 0.42f}, //	Dark Khaki
+  {0.55f, 0.00f, 0.55f}, //	Dark Magenta
+  {0.33f, 0.42f, 0.18f}, //	Dark Olive Green
+  {1.00f, 0.55f, 0.00f}, //	Dark Orange
+  {0.60f, 0.20f, 0.80f}, //	Dark Orchid
+  {0.55f, 0.00f, 0.00f}, //	Dark Red
+  {0.91f, 0.59f, 0.48f}, //	Dark Salmon
+  {0.56f, 0.74f, 0.56f}, //	Dark Sea Green
+  {0.28f, 0.24f, 0.55f}, //	Dark Slate Blue
+  {0.18f, 0.31f, 0.31f}, //	Dark Slate Gray
+  {0.00f, 0.81f, 0.82f}, //	Dark Turquoise
+  {0.58f, 0.00f, 0.83f}, //	Dark Violet
+  {1.00f, 0.08f, 0.58f}, //	Deep Pink
+  {0.00f, 0.75f, 1.00f}, //	Deep Sky Blue
+  {0.41f, 0.41f, 0.41f}, //	Dim Gray
+  {0.12f, 0.56f, 1.00f}, //	Dodger Blue
+  {0.70f, 0.13f, 0.13f}, //	Firebrick
+  {1.00f, 0.98f, 0.94f}, //	Floral White
+  {0.13f, 0.55f, 0.13f}, //	Forest Green
+  {1.00f, 0.00f, 1.00f}, //	Fuchsia
+  {0.86f, 0.86f, 0.86f}, //	Gainsboro[a]
+  {0.97f, 0.97f, 1.00f}, //	Ghost White
+  {1.00f, 0.84f, 0.00f}, //	Gold
+  {0.85f, 0.65f, 0.13f}, //	Goldenrod
+  {0.75f, 0.75f, 0.75f}, //	Gray
+  {0.50f, 0.50f, 0.50f}, //	Web Gray
+  {0.00f, 1.00f, 0.00f}, //	Green
+  {0.00f, 0.50f, 0.00f}, //	Web Green
+  {0.68f, 1.00f, 0.18f}, //	Green Yellow
+  {0.94f, 1.00f, 0.94f}, //	Honeydew
+  {1.00f, 0.41f, 0.71f}, //	Hot Pink
+  {0.80f, 0.36f, 0.36f}, //	Indian Red
+  {0.29f, 0.00f, 0.51f}, //	Indigo
+  {1.00f, 1.00f, 0.94f}, //	Ivory
+  {0.94f, 0.90f, 0.55f}, //	Khaki
+  {0.90f, 0.90f, 0.98f}, //	Lavender
+  {1.00f, 0.94f, 0.96f}, //	Lavender Blush
+  {0.49f, 0.99f, 0.00f}, //	Lawn Green
+  {1.00f, 0.98f, 0.80f}, //	Lemon Chiffon
+  {0.68f, 0.85f, 0.90f}, //	Light Blue
+  {0.94f, 0.50f, 0.50f}, //	Light Coral
+  {0.88f, 1.00f, 1.00f}, //	Light Cyan
+  {0.98f, 0.98f, 0.82f}, //	Light Goldenrod
+  {0.83f, 0.83f, 0.83f}, //	Light Gray
+  {0.56f, 0.93f, 0.56f}, //	Light Green
+  {1.00f, 0.71f, 0.76f}, //	Light Pink
+  {1.00f, 0.63f, 0.48f}, //	Light Salmon
+  {0.13f, 0.70f, 0.67f}, //	Light Sea Green
+  {0.53f, 0.81f, 0.98f}, //	Light Sky Blue
+  {0.47f, 0.53f, 0.60f}, //	Light Slate Gray
+  {0.69f, 0.77f, 0.87f}, //	Light Steel Blue
+  {1.00f, 1.00f, 0.88f}, //	Light Yellow
+  {0.00f, 1.00f, 0.00f}, //	Lime
+  {0.20f, 0.80f, 0.20f}, //	Lime Green
+  {0.98f, 0.94f, 0.90f}, //	Linen
+  {1.00f, 0.00f, 1.00f}, //	Magenta
+  {0.69f, 0.19f, 0.38f}, //	Maroon
+  {0.50f, 0.00f, 0.00f}, //	Web Maroon
+  {0.40f, 0.80f, 0.67f}, //	Medium Aquamarine
+  {0.00f, 0.00f, 0.80f}, //	Medium Blue
+  {0.73f, 0.33f, 0.83f}, //	Medium Orchid
+  {0.58f, 0.44f, 0.86f}, //	Medium Purple
+  {0.24f, 0.70f, 0.44f}, //	Medium Sea Green
+  {0.48f, 0.41f, 0.93f}, //	Medium Slate Blue
+  {0.00f, 0.98f, 0.60f}, //	Medium Spring Green
+  {0.28f, 0.82f, 0.80f}, //	Medium Turquoise
+  {0.78f, 0.08f, 0.52f}, //	Medium Violet Red
+  {0.10f, 0.10f, 0.44f}, //	Midnight Blue
+  {0.96f, 1.00f, 0.98f}, //	Mint Cream
+  {1.00f, 0.89f, 0.88f}, //	Misty Rose
+  {1.00f, 0.89f, 0.71f}, //	Moccasin
+  {1.00f, 0.87f, 0.68f}, //	Navajo White
+  {0.00f, 0.00f, 0.50f}, //	Navy Blue
+  {0.99f, 0.96f, 0.90f}, //	Old Lace
+  {0.50f, 0.50f, 0.00f}, //	Olive
+  {0.42f, 0.56f, 0.14f}, //	Olive Drab
+  {1.00f, 0.65f, 0.00f}, //	Orange
+  {1.00f, 0.27f, 0.00f}, //	Orange Red
+  {0.85f, 0.44f, 0.84f}, //	Orchid
+  {0.93f, 0.91f, 0.67f}, //	Pale Goldenrod
+  {0.60f, 0.98f, 0.60f}, //	Pale Green
+  {0.69f, 0.93f, 0.93f}, //	Pale Turquoise
+  {0.86f, 0.44f, 0.58f}, //	Pale Violet Red
+  {1.00f, 0.94f, 0.84f}, //	Papaya Whip
+  {1.00f, 0.85f, 0.73f}, //	Peach Puff
+  {0.80f, 0.52f, 0.25f}, //	Peru
+  {1.00f, 0.75f, 0.80f}, //	Pink
+  {0.87f, 0.63f, 0.87f}, //	Plum
+  {0.69f, 0.88f, 0.90f}, //	Powder Blue
+  {0.63f, 0.13f, 0.94f}, //	Purple
+  {0.50f, 0.00f, 0.50f}, //	Web Purple
+  {0.40f, 0.20f, 0.60f}, //	Rebecca Purple
+  {1.00f, 0.00f, 0.00f}, //	Red
+  {0.74f, 0.56f, 0.56f}, //	Rosy Brown
+  {0.25f, 0.41f, 0.88f}, //	Royal Blue
+  {0.55f, 0.27f, 0.07f}, //	Saddle brown
+  {0.98f, 0.50f, 0.45f}, //	Salmon
+  {0.96f, 0.64f, 0.38f}, //	Sandy Brown
+  {0.18f, 0.55f, 0.34f}, //	Sea Green
+  {1.00f, 0.96f, 0.93f}, //	Seashell
+  {0.63f, 0.32f, 0.18f}, //	Sienna
+  {0.75f, 0.75f, 0.75f}, //	Silver
+  {0.53f, 0.81f, 0.92f}, //	Sky Blue
+  {0.42f, 0.35f, 0.80f}, //	Slate Blue
+  {0.44f, 0.50f, 0.56f}, //	Slate Gray
+  {1.00f, 0.98f, 0.98f}, //	Snow
+  {0.00f, 1.00f, 0.50f}, //	Spring Green
+  {0.27f, 0.51f, 0.71f}, //	Steel Blue
+  {0.82f, 0.71f, 0.55f}, //	Tan
+  {0.00f, 0.50f, 0.50f}, //	Teal
+  {0.85f, 0.75f, 0.85f}, //	Thistle
+  {1.00f, 0.39f, 0.28f}, //	Tomato
+  {0.25f, 0.88f, 0.82f}, //	Turquoise
+  {0.93f, 0.51f, 0.93f}, //	Violet
+  {0.96f, 0.87f, 0.70f}, //	Wheat
+  {1.00f, 1.00f, 1.00f}, //	White
+  {0.96f, 0.96f, 0.96f}, //	White Smoke
+  {1.00f, 1.00f, 0.00f}, //	Yellow
+  {0.60f, 0.80f, 0.20f}, //	Yellow Green
 }};
+
 }
 
 SimulatorView::SimulatorView(QWidget* parent)
