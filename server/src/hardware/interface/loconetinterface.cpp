@@ -43,6 +43,7 @@
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
+#include "../../simulator/interfacesimulatorsettings.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
 #include "../../utils/makearray.hpp"
@@ -72,9 +73,11 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 5550, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , loconet{this, "loconet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
+  , simulator{this, "simulator", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "LocoNet";
   loconet.setValueInternal(std::make_shared<LocoNet::Settings>(*this, loconet.name()));
+  simulator.setValueInternal(std::make_shared<InterfaceSimulatorSettings>(*this, simulator.name()));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -117,7 +120,10 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
 
   m_interfaceItems.insertBefore(identifications, notes);
 
+  m_interfaceItems.insertBefore(simulator, notes);
+
   typeChanged();
+  updateEnabled();
 }
 
 bool LocoNetInterface::send(std::span<uint8_t> packet)
@@ -282,6 +288,11 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
       if(simulation)
       {
         m_kernel = LocoNet::Kernel::create<LocoNet::SimulationIOHandler>(id.value(), loconet->config());
+
+        if(simulator->useSimulator)
+        {
+          m_kernel->ioHandler<LocoNet::SimulationIOHandler>().setSimulator(simulator->hostname, simulator->port);
+        }
       }
       else
       {
@@ -363,13 +374,6 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
         {
           m_kernel->setConfig(loconet->config());
         });
-
-      Attributes::setEnabled(type, false);
-      Attributes::setEnabled(device, false);
-      Attributes::setEnabled(baudrate, false);
-      Attributes::setEnabled(flowControl, false);
-      Attributes::setEnabled(hostname, false);
-      Attributes::setEnabled(port, false);
     }
     catch(const LogMessageException& e)
     {
@@ -380,13 +384,6 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
   }
   else if(m_kernel && !value)
   {
-    Attributes::setEnabled(type, true);
-    Attributes::setEnabled(device, true);
-    Attributes::setEnabled(baudrate, true);
-    Attributes::setEnabled(flowControl, true);
-    Attributes::setEnabled(hostname, true);
-    Attributes::setEnabled(port, true);
-
     m_loconetPropertyChanged.disconnect();
 
     m_kernel->stop();
@@ -429,33 +426,53 @@ void LocoNetInterface::worldEvent(WorldState state, WorldEvent event)
 {
   Interface::worldEvent(state, event);
 
-  if(m_kernel)
+  switch(event)
   {
-    switch(event)
-    {
-      case WorldEvent::PowerOff:
+    case WorldEvent::PowerOff:
+      if(m_kernel)
+      {
         m_kernel->setPowerOn(false);
-        break;
+      }
+      break;
 
-      case WorldEvent::PowerOn:
+    case WorldEvent::PowerOn:
+      if(m_kernel)
+      {
         m_kernel->setPowerOn(true);
         if(contains(state, WorldState::Run))
+        {
           m_kernel->resume();
-        break;
+        }
+      }
+      break;
 
-      case WorldEvent::Stop:
+    case WorldEvent::Stop:
+      if(m_kernel)
+      {
         m_kernel->emergencyStop();
-        break;
+      }
+      break;
 
-      case WorldEvent::Run:
-        if(contains(state, WorldState::PowerOn))
-          m_kernel->resume();
-        break;
+    case WorldEvent::Run:
+      if(m_kernel && contains(state, WorldState::PowerOn))
+      {
+        m_kernel->resume();
+      }
+      break;
 
-      default:
-        break;
-    }
+    case WorldEvent::EditEnabled:
+    case WorldEvent::EditDisabled:
+      updateEnabled();
+      break;
+
+    default:
+      break;
   }
+}
+
+void LocoNetInterface::onlineChanged(bool /*value*/)
+{
+  updateEnabled();
 }
 
 void LocoNetInterface::typeChanged()
@@ -468,4 +485,10 @@ void LocoNetInterface::typeChanged()
   const bool networkVisible = isNetwork(type);
   Attributes::setVisible(hostname, networkVisible);
   Attributes::setVisible(port, networkVisible && type != LocoNetInterfaceType::Z21);
+}
+
+void LocoNetInterface::updateEnabled()
+{
+  Attributes::setEnabled({type, device, baudrate, flowControl, hostname, port}, !online);
+  simulator->updateEnabled(contains(m_world.state, WorldState::Edit), online);
 }

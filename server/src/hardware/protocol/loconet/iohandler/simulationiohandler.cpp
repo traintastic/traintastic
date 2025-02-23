@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "simulationiohandler.hpp"
 #include "../kernel.hpp"
 #include "../messages.hpp"
+#include "../../dcc/dcc.hpp"
 
 namespace LocoNet {
 
@@ -70,6 +71,96 @@ SimulationIOHandler::SimulationIOHandler(Kernel& kernel)
     }});
 }
 
+void SimulationIOHandler::setSimulator(std::string hostname, uint16_t port)
+{
+  assert(!m_simulator);
+  m_simulator = std::make_unique<SimulatorIOHandler>(m_kernel.ioContext(), std::move(hostname), port);
+}
+
+void SimulationIOHandler::start()
+{
+  if(m_simulator)
+  {
+    m_simulator->onLocomotiveSpeedDirection =
+      [this](DecoderProtocol protocol, uint16_t address, uint8_t speed, Direction direction, bool emergencyStop)
+      {
+        if((protocol == DecoderProtocol::None || protocol == DecoderProtocol::DCCShort || protocol == DecoderProtocol::DCCLong) &&
+            inRange(address, DCC::addressMin, DCC::addressLongMax))
+        {
+          auto* locoSlot = findSlot(address);
+          if(!locoSlot)
+          {
+            reply(LocoAdr(address));
+
+            locoSlot = getFreeSlot();
+            if(locoSlot)
+            {
+              locoSlot->setBusy(true);
+              locoSlot->setAddress(address);
+              updateChecksum(*locoSlot);
+              reply(*locoSlot);
+            }
+            else
+            {
+              reply(LongAck(OPC_LOCO_ADR, 0));
+            }
+          }
+
+          if(locoSlot)
+          {
+            if(locoSlot->direction() != direction)
+            {
+              locoSlot->setDirection(direction);
+              LocoDirF locoDirF(direction, locoSlot->f0(), locoSlot->f1(), locoSlot->f2(), locoSlot->f3(), locoSlot->f4());
+              locoDirF.slot = locoSlot->slot;
+              updateChecksum(locoDirF);
+              reply(locoDirF);
+            }
+
+            speed = (speed * 126) / std::numeric_limits<uint8_t>::max();
+            if((!locoSlot->isEmergencyStop() && emergencyStop) || speed != locoSlot->speed())
+            {
+              if(emergencyStop)
+              {
+                locoSlot->spd = SPEED_ESTOP;
+              }
+              else if(speed == 0)
+              {
+                locoSlot->spd = 0;
+              }
+              else
+              {
+                locoSlot->spd = 1 + speed;
+              }
+              LocoSpd locoSpd(locoSlot->spd);
+              locoSpd.slot = locoSlot->slot;
+              updateChecksum(locoSpd);
+              reply(locoSpd);
+            }
+          }
+        }
+      };
+    m_simulator->onSensorChanged =
+      [this](uint16_t /*channel*/, uint16_t address, bool value)
+      {
+        if(inRange(address, Kernel::inputAddressMin, Kernel::inputAddressMax))
+        {
+          m_kernel.receive(InputRep(address - 1, value));
+        }
+      };
+    m_simulator->start();
+  }
+  started();
+}
+
+void SimulationIOHandler::stop()
+{
+  if(m_simulator)
+  {
+    m_simulator->stop();
+  }
+}
+
 bool SimulationIOHandler::send(const Message& message)
 {
   reply(message); // echo message back
@@ -106,38 +197,20 @@ bool SimulationIOHandler::send(const Message& message)
     {
       const auto& locoAdr = static_cast<const LocoAdr&>(message);
 
-      // find slot for address
+      if(auto* slot = findSlot(locoAdr.address()))
       {
-        auto it = std::find_if(m_locoSlots.begin(), m_locoSlots.end(), // NOLINT [readability-qualified-auto]
-          [address=locoAdr.address()](const auto& locoSlot)
-          {
-            return locoSlot.address() == address;
-          });
-
-        if(it != m_locoSlots.end())
-        {
-          updateChecksum(*it);
-          reply(*it);
-          return true;
-        }
+        updateChecksum(*slot);
+        reply(*slot);
+        return true;
       }
 
-      // find a free slot
+      if(auto* slot = getFreeSlot())
       {
-        auto it = std::find_if(m_locoSlots.begin(), m_locoSlots.end(), // NOLINT [readability-qualified-auto]
-          [](const auto& locoSlot)
-          {
-            return locoSlot.isFree();
-          });
-
-        if(it != m_locoSlots.end())
-        {
-          it->setBusy(true);
-          it->setAddress(locoAdr.address());
-          updateChecksum(*it);
-          reply(*it);
-          return true;
-        }
+        slot->setBusy(true);
+        slot->setAddress(locoAdr.address());
+        updateChecksum(*slot);
+        reply(*slot);
+        return true;
       }
 
       // no free slot
@@ -222,6 +295,7 @@ bool SimulationIOHandler::send(const Message& message)
         auto& locoSlot = m_locoSlots[locoSpd.slot - SLOT_LOCO_MIN];
         locoSlot.spd = locoSpd.speed;
         updateActive(locoSlot);
+        simulatorSendLocoSlot(locoSlot);
       }
       break;
     }
@@ -231,8 +305,13 @@ bool SimulationIOHandler::send(const Message& message)
       if(isLocoSlot(locoDirF.slot))
       {
         auto& locoSlot = m_locoSlots[locoDirF.slot - SLOT_LOCO_MIN];
+        const auto prevDirection = locoSlot.direction();
         locoSlot.dirf = locoDirF.dirf;
         updateActive(locoSlot);
+        if(prevDirection != locoSlot.direction())
+        {
+          simulatorSendLocoSlot(locoSlot);
+        }
       }
       break;
     }
@@ -281,6 +360,44 @@ void SimulationIOHandler::reply(const Message& message)
     {
       m_kernel.receive(*reinterpret_cast<const Message*>(data.get()));
     });
+}
+
+SlotReadData* SimulationIOHandler::findSlot(uint16_t address)
+{
+  const auto it = std::find_if(m_locoSlots.begin(), m_locoSlots.end(),
+    [address](const auto& locoSlot)
+    {
+      return locoSlot.address() == address;
+    });
+
+  return it != m_locoSlots.end() ? &*it : nullptr;
+}
+
+SlotReadData* SimulationIOHandler::getFreeSlot()
+{
+  const auto it = std::find_if(m_locoSlots.begin(), m_locoSlots.end(),
+    [](const auto& locoSlot)
+    {
+      return locoSlot.isFree();
+    });
+
+  return it != m_locoSlots.end() ? &*it : nullptr;
+}
+
+void SimulationIOHandler::simulatorSendLocoSlot(const SlotReadData& locoSlot)
+{
+  if(!m_simulator)
+  {
+    return;
+  }
+
+  m_simulator->sendLocomotiveSpeedDirection(
+    DCC::getProtocol(locoSlot.address()),
+    locoSlot.address(),
+    (locoSlot.speed() * 255) / 126,
+    locoSlot.direction(),
+    locoSlot.isEmergencyStop()
+  );
 }
 
 }

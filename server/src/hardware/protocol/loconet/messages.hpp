@@ -1121,7 +1121,7 @@ struct SlotReadData : SlotReadDataBase
 
   bool isEmergencyStop() const
   {
-    return spd == 0x01;
+    return spd == SPEED_ESTOP;
   }
 
   uint8_t speed() const

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022,2024 Reinder Feenstra
+ * Copyright (C) 2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,9 +25,11 @@
 
 #include "iohandler.hpp"
 #include <array>
+#include <memory>
 #include <vector>
 #include <unordered_map>
 #include "../messages.hpp"
+#include "../../../../simulator/simulatoriohandler.hpp"
 
 namespace LocoNet {
 
@@ -52,18 +54,22 @@ class SimulationIOHandler final : public IOHandler
 
     std::array<SlotReadData, SLOT_LOCO_MAX - SLOT_LOCO_MIN + 1> m_locoSlots;
     std::vector<LNCVModule> m_lncvModules;
+    std::unique_ptr<SimulatorIOHandler> m_simulator;
 
     void reply(const Message& message);
+
+    SlotReadData* findSlot(uint16_t address);
+    SlotReadData* getFreeSlot();
+
+    void simulatorSendLocoSlot(const SlotReadData& locoSlot);
 
   public:
     SimulationIOHandler(Kernel& kernel);
 
-    void start() final
-    {
-      started();
-    }
+    void setSimulator(std::string hostname, uint16_t port);
 
-    void stop() final {}
+    void start() final;
+    void stop() final;
 
     bool send(const Message& message) final;
 };

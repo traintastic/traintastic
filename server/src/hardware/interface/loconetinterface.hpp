@@ -35,6 +35,8 @@
 #include "../../enum/serialflowcontrol.hpp"
 #include <span>
 
+class InterfaceSimulatorSettings;
+
 namespace LocoNet {
 class Kernel;
 class Settings;
@@ -64,7 +66,9 @@ class LocoNetInterface final
     void destroying() final;
     void worldEvent(WorldState state, WorldEvent event) final;
 
+    void onlineChanged(bool /*value*/) final;
     void typeChanged();
+    void updateEnabled();
 
   protected:
     bool setOnline(bool& value, bool simulation) final;
@@ -77,6 +81,7 @@ class LocoNetInterface final
     Property<std::string> hostname;
     Property<uint16_t> port;
     ObjectProperty<LocoNet::Settings> loconet;
+    ObjectProperty<InterfaceSimulatorSettings> simulator;
 
     LocoNetInterface(World& world, std::string_view _id);
 
