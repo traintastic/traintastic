@@ -169,6 +169,7 @@ file(GLOB SOURCES
   "src/os/*.cpp"
   "src/pcap/*.hpp"
   "src/pcap/*.cpp"
+  "src/simulator/*.cpp"
   "src/status/*.hpp"
   "src/status/*.cpp"
   "src/train/*.hpp"
