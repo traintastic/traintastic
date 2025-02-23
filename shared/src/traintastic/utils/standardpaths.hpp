@@ -30,6 +30,7 @@ std::filesystem::path getProgramDataPath();
 std::filesystem::path getLocalAppDataPath();
 #endif
 
+std::filesystem::path getSimulatorLayoutPath();
 std::filesystem::path getLocalePath();
 std::filesystem::path getManualPath();
 std::filesystem::path getLuaManualPath();

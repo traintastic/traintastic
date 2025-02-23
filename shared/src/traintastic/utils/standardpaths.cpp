@@ -50,6 +50,17 @@ std::filesystem::path getLocalAppDataPath()
 }
 #endif
 
+std::filesystem::path getSimulatorLayoutPath()
+{
+#ifdef WIN32
+  return getProgramDataPath() / "traintastic" / "layout";
+#elif defined(__linux__)
+  return "/opt/traintastic/layout";
+#else
+  return std::filesystem::current_path() / "layout";
+#endif
+}
+
 std::filesystem::path getLocalePath()
 {
 #if defined(WIN32) && !(defined(__MINGW32__) || defined(__MINGW64__))

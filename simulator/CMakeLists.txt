@@ -23,6 +23,7 @@ add_executable(traintastic-simulator
   src/mainwindow.cpp
   src/simulator.cpp
   src/simulatorview.cpp
+  ../shared/src/traintastic/utils/standardpaths.cpp
 )
 
 add_definitions(-DQT_DEPRECATED_WARNINGS)
