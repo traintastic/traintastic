@@ -20,6 +20,9 @@
  */
 
 #include <QApplication>
+#ifdef Q_OS_WINDOWS
+  #include <QSettings>
+#endif
 #include <version.hpp>
 #include "mainwindow.hpp"
 
