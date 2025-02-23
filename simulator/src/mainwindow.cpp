@@ -23,9 +23,12 @@
 #include <QFileDialog>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QSettings>
+#include <QFileInfo>
 #include "simulatorview.hpp"
 #include <version.hpp>
 #include <traintastic/copyright.hpp>
+#include <traintastic/utils/standardpaths.hpp>
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
@@ -49,9 +52,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     menu->addAction("Load",
       [this]()
       {
-        const auto filename = QFileDialog::getOpenFileName(this, "Load simulation", {}, "*.json");
+        QSettings settings;
+        const QString dir = settings.value("LastLoadDir", QString::fromStdString(getSimulatorLayoutPath().string())).toString();
+        const auto filename = QFileDialog::getOpenFileName(this, "Load simulation", dir, "*.json");
         if(QFile::exists(filename))
         {
+          settings.setValue("LastLoadDir", QFileInfo(filename).absoluteFilePath());
           load(filename);
         }
       });
