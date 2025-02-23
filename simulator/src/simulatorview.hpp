@@ -64,6 +64,7 @@ private:
   float m_zoomLevel = 1.0f;
   QPoint m_lastMousePos;
   bool m_showTrackOccupancy = true;
+  size_t m_trainIndex = 0;
 
   void drawTracks();
   void drawTrains();
