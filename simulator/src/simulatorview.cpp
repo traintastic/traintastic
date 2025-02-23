@@ -358,25 +358,29 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
       break;
     }
     case Qt::Key_Up:
-      train.speed += 0.5f;
+      train.setSpeed(train.speed + 0.5f);
       break;
     case Qt::Key_Down:
-      train.speed -= 0.5f;
+      train.setSpeed(train.speed - 0.5f);
+      break;
+    case Qt::Key_Right:
+      train.setDirection(Direction::Forward);
+      break;
+    case Qt::Key_Left:
+      train.setDirection(Direction::Reverse);
       break;
     case Qt::Key_Space:
-      train.speed = 0;
+      train.setSpeed(0.0f);
       break;
     case Qt::Key_Escape: // stop all trains
       for(auto& t : m_simulator->trains())
       {
-        t.speed = 0;
+        t.setSpeed(0.0f);
       }
       break;
     default:
       return QWidget::keyPressEvent(event);
   }
-
-  train.speed = std::clamp(train.speed, -train.speedMax, train.speedMax);
 }
 
 void SimulatorView::mousePressEvent(QMouseEvent* event)

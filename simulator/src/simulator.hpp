@@ -26,6 +26,7 @@
 #include <list>
 #include <optional>
 #include <traintastic/enum/decoderprotocol.hpp>
+#include <traintastic/enum/direction.hpp>
 #include "color.hpp"
 
 class QTcpServer;
@@ -91,8 +92,10 @@ public:
     static constexpr float couplingLength = 4.0f;
 
     std::vector<RailVehicle> vehicles;
+    Direction direction = Direction::Forward;
     float speed = 0.0f;
     float speedMax = 10.0f;
+    bool speedOrDirectionChanged = false;
     std::optional<DecoderProtocol> protocol;
     std::optional<uint16_t> address;
 
@@ -113,6 +116,25 @@ public:
         sum += vehicle.length;
       }
       return sum;
+    }
+
+    void setDirection(Direction value)
+    {
+      if(direction != value)
+      {
+        direction = value;
+        speedOrDirectionChanged = true;
+      }
+    }
+
+    void setSpeed(float value)
+    {
+      value = std::clamp(value, 0.0f, speedMax);
+      if(speed != value)
+      {
+        speed = value;
+        speedOrDirectionChanged = true;
+      }
     }
   };
 

@@ -450,6 +450,19 @@ void Simulator::updateTrainPositions()
 
   for(auto& train : m_trains)
   {
+    if(train.address && train.speedOrDirectionChanged)
+    {
+      send(SimulatorProtocol::LocomotiveSpeedDirection(*train.address,
+        train.protocol ? *train.protocol : DecoderProtocol::None,
+        static_cast<uint8_t>(std::clamp<float>(std::round(std::numeric_limits<uint8_t>::max() * (train.speed / train.speedMax)),
+          std::numeric_limits<uint8_t>::min(),
+          std::numeric_limits<uint8_t>::max())),
+        train.direction,
+        false));
+      train.speedOrDirectionChanged = false;
+    }
+
+    const float speed = (train.direction == Direction::Forward) ? train.speed : -train.speed;
 
     auto getFrontSegment = [this, &train]() -> TrackSegment*
     {
@@ -471,7 +484,7 @@ void Simulator::updateTrainPositions()
 
     for(auto& vehicle : train.vehicles)
     {
-      vehicle.distanceFront += train.speed;
+      vehicle.distanceFront += speed;
 
       auto computePosition = [this, segmentIndex = vehicle.segmentIndex](Point& position, float distance)
       {
@@ -533,7 +546,7 @@ void Simulator::updateTrainPositions()
 
     if(auto* frontSegmentNow = getFrontSegment(); frontSegment != frontSegmentNow)
     {
-      if(train.speed > 0)
+      if(train.direction == Direction::Forward)
       {
         if(frontSegmentNow->occupied == 0 && frontSegmentNow->sensorAddress)
         {
@@ -541,7 +554,7 @@ void Simulator::updateTrainPositions()
         }
         frontSegmentNow->occupied++;
       }
-      else if(train.speed < 0)
+      else if(train.direction == Direction::Reverse)
       {
         if(frontSegment->occupied > 0)
         {
@@ -556,7 +569,7 @@ void Simulator::updateTrainPositions()
 
     if(auto* rearSegmentNow = getRearSegment(); rearSegment != rearSegmentNow)
     {
-      if(train.speed < 0)
+      if(train.direction == Direction::Reverse)
       {
         if(rearSegmentNow->occupied == 0 && rearSegmentNow->sensorAddress)
         {
@@ -564,7 +577,7 @@ void Simulator::updateTrainPositions()
         }
         rearSegmentNow->occupied++;
       }
-      else if(train.speed > 0)
+      else if(train.direction == Direction::Forward)
       {
         if(rearSegment->occupied > 0)
         {
@@ -600,6 +613,7 @@ void Simulator::receive(const SimulatorProtocol::Message& message)
         {
           if(train.address && *train.address == m.address && (!train.protocol || *train.protocol == m.protocol))
           {
+            train.direction = m.direction;
             if(m.emergencyStop)
             {
               train.speed = 0.0f;
@@ -607,10 +621,6 @@ void Simulator::receive(const SimulatorProtocol::Message& message)
             else
             {
               train.speed = (train.speedMax * m.speed) / std::numeric_limits<decltype(m.speed)>::max();
-              if(m.direction == Direction::Reverse)
-              {
-                train.speed = -train.speed;
-              }
             }
             break;
           }
