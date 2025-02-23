@@ -1,0 +1,193 @@
+{
+  "trackplan": [
+    {
+      "id": "top",
+      "x": 200,
+      "y": 200,
+      "type": "curve",
+      "radius": 100,
+      "angle": 270,
+      "rotation": 135,
+      "sensor_address": 2
+    },
+    {
+      "type": "curve",
+      "radius": 180,
+      "angle": -22.5,
+      "sensor_address": 3
+    },
+    {
+      "type": "curve",
+      "radius": 180,
+      "angle": -22.5,
+      "sensor_address": 4
+    },
+    {
+      "type": "straight",
+      "length": 300,
+      "sensor_address": 5
+    },
+    {
+      "type": "curve",
+      "radius": 100,
+      "angle": 45,
+      "sensor_address": 6
+    },
+    {
+      "type": "curve",
+      "radius": 100,
+      "angle": 45,
+      "sensor_address": 7
+    },
+    {
+      "type": "straight",
+      "length": 200,
+      "sensor_address": 8
+    },
+    {
+      "type": "curve",
+      "radius": 100,
+      "angle": 45,
+      "sensor_address": 9
+    },
+    {
+      "type": "curve",
+      "radius": 100,
+      "angle": 45,
+      "sensor_address": 10
+    },
+    {
+      "type": "straight",
+      "length": 300,
+      "sensor_address": 11
+    },
+    {
+      "type": "curve",
+      "radius": 180,
+      "angle": -22.5,
+      "sensor_address": 12
+    },
+    {
+      "type": "curve",
+      "radius": 180,
+      "angle": -22.5,
+      "sensor_address": 13
+    },
+    {
+      "id": "bottom",
+      "type": "curve",
+      "radius": 100,
+      "angle": 270,
+      "sensor_address": 14
+    },
+    {
+      "type": "curve",
+      "radius": 180,
+      "angle": -22.5,
+      "sensor_address": 15
+    },
+    {
+      "type": "curve",
+      "radius": 180,
+      "angle": -22.5,
+      "sensor_address": 16
+    },
+    {
+      "type": "straight",
+      "length": 300,
+      "sensor_address": 17
+    },
+    {
+      "type": "curve",
+      "radius": 70,
+      "angle": -45,
+      "sensor_address": 18
+    },
+    {
+      "type": "curve",
+      "radius": 70,
+      "angle": -45,
+      "sensor_address": 19
+    },
+    {
+      "type": "straight",
+      "length": 188,
+      "sensor_address": 20
+    },
+    {
+      "type": "curve",
+      "radius": 70,
+      "angle": -45,
+      "sensor_address": 21
+    },
+    {
+      "type": "curve",
+      "radius": 70,
+      "angle": -45,
+      "sensor_address": 22
+    },
+    {
+      "type": "straight",
+      "length": 300,
+      "sensor_address": 23
+    },
+    {
+      "type": "curve",
+      "radius": 180,
+      "angle": -22.5,
+      "sensor_address": 24
+    },
+    {
+      "type": "curve",
+      "radius": 180,
+      "angle": -22.5,
+      "sensor_address": 1
+    }
+  ],
+  "trains": [
+    {
+      "address": 3,
+      "track_id": "top",
+      "vehicles": [
+        {
+          "length": 40.0,
+          "color": "dark_green"
+        },
+        {
+          "length": 30.0,
+          "color": "saddle_brown"
+        },
+        {
+          "length": 30.0,
+          "color": "saddle_brown"
+        },
+        {
+          "length": 30.0,
+          "color": "saddle_brown"
+        },
+        {
+          "length": 30.0,
+          "color": "saddle_brown"
+        },
+        {
+          "length": 30.0,
+          "color": "saddle_brown"
+        }
+      ]
+    },
+    {
+      "address": 4,
+      "track_id": "bottom",
+      "vehicles": [
+        {
+          "length": 40.0,
+          "color": "web_maroon"
+        },
+        {
+          "length": 40.0,
+          "color": "web_maroon"
+        }
+      ]
+    }
+  ]
+}
