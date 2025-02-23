@@ -30,6 +30,10 @@ int main(int argc, char* argv[])
   QApplication::setApplicationName("traintastic-simulator");
   QApplication::setApplicationVersion(TRAINTASTIC_VERSION);
 
+#ifdef Q_OS_WINDOWS
+  QSettings::setDefaultFormat(QSettings::IniFormat);
+#endif
+
   QApplication app(argc, argv);
 
   MainWindow mw;
