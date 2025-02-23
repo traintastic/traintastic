@@ -262,8 +262,12 @@ void SimulatorView::drawTracks()
     else if(segment.type == Simulator::TrackSegment::Curve)
     {
       float startAngle = segment.rotation;
+      if(segment.angle < 0)
+      {
+        startAngle += 180;
+      }
       float endAngle = segment.angle;
-      int numSegments = qCeil(segment.angle / 5); // Smooth curve
+      int numSegments = qCeil(std::abs(segment.angle) / 5); // Smooth curve
       float step = endAngle / numSegments;
       float prevX = segment.radius * sinf(qDegreesToRadians(startAngle));
       float prevY = segment.radius * -cosf(qDegreesToRadians(startAngle));

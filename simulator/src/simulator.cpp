@@ -336,14 +336,16 @@ void Simulator::loadTrackPlan(const QJsonArray& trackPlan)
     }
     else if(segment.type == TrackSegment::Curve)
     {
-      float centerX = curX - segment.radius * sinf(qDegreesToRadians(curRotation));
-      float centerY = curY + segment.radius * cosf(qDegreesToRadians(curRotation));
+      const float curAngle = (segment.angle < 0) ? (curRotation + 180) : curRotation;
 
-      segment.x = centerX;
-      segment.y = centerY;
+      // Calc circle center:
+      segment.x = curX - segment.radius * sinf(qDegreesToRadians(curAngle));
+      segment.y = curY + segment.radius * cosf(qDegreesToRadians(curAngle));
 
-      curX = centerX + segment.radius * sinf(qDegreesToRadians(curRotation + segment.angle));
-      curY = centerY - segment.radius * cosf(qDegreesToRadians(curRotation + segment.angle));
+      // Calc end point:
+      curX = segment.x + segment.radius * sinf(qDegreesToRadians(curAngle + segment.angle));
+      curY = segment.y - segment.radius * cosf(qDegreesToRadians(curAngle + segment.angle));
+
       curRotation += segment.angle;
     }
 
@@ -489,12 +491,14 @@ void Simulator::updateTrainPositions()
         else if(segment->type == TrackSegment::Curve)
         {
           // Move along circular path
-          float centerX = segment->x;
-          float centerY = segment->y;
           float angle = segment->rotation + (distance / segment->length) * segment->angle;
+          if(segment->angle < 0)
+          {
+            angle += 180;
+          }
 
-          position.x = centerX + segment->radius * sinf(qDegreesToRadians(angle));
-          position.y = centerY - segment->radius * cosf(qDegreesToRadians(angle));
+          position.x = segment->x + segment->radius * sinf(qDegreesToRadians(angle));
+          position.y = segment->y - segment->radius * cosf(qDegreesToRadians(angle));
         }
       };
 
