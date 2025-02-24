@@ -81,6 +81,18 @@ void SimulationIOHandler::start()
 {
   if(m_simulator)
   {
+    m_simulator->onPower =
+      [this](bool powerOn)
+      {
+        if(powerOn)
+        {
+          reply(GlobalPowerOn());
+        }
+        else
+        {
+          reply(GlobalPowerOff());
+        }
+      };
     m_simulator->onLocomotiveSpeedDirection =
       [this](DecoderProtocol protocol, uint16_t address, uint8_t speed, Direction direction, bool emergencyStop)
       {
@@ -167,6 +179,20 @@ bool SimulationIOHandler::send(const Message& message)
 
   switch(message.opCode)
   {
+    case OPC_GPOFF:
+      if(m_simulator)
+      {
+        m_simulator->sendPower(false);
+      }
+      break;
+
+    case OPC_GPON:
+      if(m_simulator)
+      {
+        m_simulator->sendPower(true);
+      }
+      break;
+
     case OPC_UNLINK_SLOTS:
       break; // unimplemented
 
@@ -328,8 +354,6 @@ bool SimulationIOHandler::send(const Message& message)
     }
 
     case OPC_BUSY:
-    case OPC_GPOFF:
-    case OPC_GPON:
     case OPC_IDLE:
     case OPC_LOCO_F9F12:
     case OPC_SW_REQ:

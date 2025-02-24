@@ -69,6 +69,12 @@ void SimulatorIOHandler::stop()
 {
 }
 
+void SimulatorIOHandler::sendPower(bool on)
+{
+  const SimulatorProtocol::Power message(on);
+  send(message);
+}
+
 void SimulatorIOHandler::sendLocomotiveSpeedDirection(DecoderProtocol protocol, uint16_t address, uint8_t speed, Direction direction, bool emergencyStop)
 {
   const SimulatorProtocol::LocomotiveSpeedDirection message(address, protocol, speed, direction, emergencyStop);
@@ -101,6 +107,10 @@ void SimulatorIOHandler::receive(const SimulatorProtocol::Message& message)
   switch(message.opCode)
   {
     case OpCode::Power:
+      if(onPower)
+      {
+        onPower(static_cast<const Power&>(message).powerOn);
+      }
       break;
 
     case OpCode::LocomotiveSpeedDirection:

@@ -58,8 +58,10 @@ class SimulatorIOHandler
     void start();
     void stop();
 
+    void sendPower(bool on);
     void sendLocomotiveSpeedDirection(DecoderProtocol protocol, uint16_t address, uint8_t speed, Direction direction, bool emergencyStop);
 
+    std::function<void(bool)> onPower;
     std::function<void(DecoderProtocol, uint16_t, uint8_t, Direction, bool)> onLocomotiveSpeedDirection;
     std::function<void(uint16_t, uint16_t, bool)> onSensorChanged;
 };
