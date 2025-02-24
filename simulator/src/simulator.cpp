@@ -248,6 +248,20 @@ Simulator::Simulator(const QString& filename, QObject* parent)
   startTimer(std::chrono::milliseconds(1000) / fps, Qt::PreciseTimer);
 }
 
+bool Simulator::powerOn() const
+{
+  return m_powerOn;
+}
+
+void Simulator::setPowerOn(bool value)
+{
+  if(m_powerOn != value)
+  {
+    m_powerOn = value;
+    send(SimulatorProtocol::Power(m_powerOn));
+  }
+}
+
 void Simulator::timerEvent(QTimerEvent* /*event*/)
 {
   updateTrainPositions();
@@ -462,7 +476,7 @@ void Simulator::updateTrainPositions()
       train.speedOrDirectionChanged = false;
     }
 
-    const float speed = (train.direction == Direction::Forward) ? train.speed : -train.speed;
+    const float speed = m_powerOn ? ((train.direction == Direction::Forward) ? train.speed : -train.speed) : 0.0f;
 
     auto getFrontSegment = [this, &train]() -> TrackSegment*
     {
@@ -606,6 +620,16 @@ void Simulator::receive(const SimulatorProtocol::Message& message)
 
   switch(message.opCode)
   {
+    case OpCode::Power:
+      {
+        const bool powerOn = static_cast<const Power&>(message).powerOn;
+        if(m_powerOn != powerOn)
+        {
+          m_powerOn = powerOn;
+          emit powerOnChanged(m_powerOn);
+        }
+        break;
+      }
     case OpCode::LocomotiveSpeedDirection:
       {
         const auto& m = static_cast<const LocomotiveSpeedDirection&>(message);

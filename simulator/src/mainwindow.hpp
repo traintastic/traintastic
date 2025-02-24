@@ -35,6 +35,7 @@ public:
 
 private:
   SimulatorView* m_view;
+  QAction* m_power;
 
   void showAbout();
 };

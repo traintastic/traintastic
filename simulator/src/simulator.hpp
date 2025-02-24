@@ -150,8 +150,12 @@ public:
     return m_trains;
   }
 
+  bool powerOn() const;
+  void setPowerOn(bool value);
+
 signals:
   void tick();
+  void powerOnChanged(bool value);
 
 protected:
   void timerEvent(QTimerEvent* event) override;
@@ -163,6 +167,7 @@ private:
   QList<Connection*> m_connections;
   std::vector<TrackSegment> m_trackSegments;
   std::vector<Train> m_trains;
+  bool m_powerOn = false;
 
   void load(const QString& filename);
   void loadTrackPlan(const QJsonArray& trackPlan);

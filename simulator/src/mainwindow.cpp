@@ -22,6 +22,7 @@
 #include "mainwindow.hpp"
 #include <QFileDialog>
 #include <QMenuBar>
+#include <QToolBar>
 #include <QMessageBox>
 #include <QSettings>
 #include <QFileInfo>
@@ -72,11 +73,36 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     menu = menuBar()->addMenu("Help");
     menu->addAction("About...", this, &MainWindow::showAbout);
   }
+
+  // Toolbar:
+  {
+    auto* toolbar = new QToolBar();
+    toolbar->setFloatable(false);
+
+    m_power = toolbar->addAction("Power");
+    m_power->setCheckable(true);
+    connect(m_power,
+      &QAction::toggled,
+      [this](bool value)
+      {
+        if(auto* simulator = m_view->simulator())
+        {
+          simulator->setPowerOn(value);
+        }
+      });
+
+    addToolBar(Qt::TopToolBarArea, toolbar);
+  }
 }
 
 void MainWindow::load(const QString& filename)
 {
-  m_view->setSimulator(new Simulator(filename, m_view));
+  auto* simulator = new Simulator(filename, m_view);
+
+  connect(simulator, &Simulator::powerOnChanged, m_power, &QAction::setChecked);
+  m_power->setChecked(simulator->powerOn());
+
+  m_view->setSimulator(simulator);
 }
 
 void MainWindow::showAbout()
