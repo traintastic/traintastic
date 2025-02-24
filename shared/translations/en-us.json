@@ -6717,5 +6717,13 @@
     {
         "term": "stacked_object_list:back",
         "definition": "Back"
+    },
+    {
+        "term": "interface.loconet:simulator",
+        "definition": "Simulator"
+    },
+    {
+        "term": "interface_simulator_settings:use_simulator",
+        "definition": "Use Traintastic simulator"
     }
 ]
