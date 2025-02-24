@@ -38,7 +38,6 @@ class SimulatorIOHandler
   private:
     const std::string m_hostname;
     const uint16_t m_port;
-    boost::asio::io_context& m_ioContext;
     boost::asio::ip::tcp::socket m_socket;
     boost::asio::ip::tcp::endpoint m_endpoint;
     bool m_connected = false;

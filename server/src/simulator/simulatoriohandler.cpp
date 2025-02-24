@@ -25,7 +25,6 @@
 SimulatorIOHandler::SimulatorIOHandler(boost::asio::io_context& ioContext, std::string hostname, uint16_t port)
   : m_hostname{std::move(hostname)}
   , m_port{port}
-  , m_ioContext{ioContext}
   , m_socket{ioContext}
 {
 }
