@@ -385,15 +385,16 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
 
 void SimulatorView::mousePressEvent(QMouseEvent* event)
 {
-  if(event->button() == Qt::LeftButton)
+  if(event->button() == Qt::RightButton)
   {
     m_lastMousePos = event->pos();
+    setCursor(Qt::ClosedHandCursor);
   }
 }
 
 void SimulatorView::mouseMoveEvent(QMouseEvent* event)
 {
-  if(event->buttons() & Qt::LeftButton)
+  if(event->buttons() & Qt::RightButton)
   {
     const auto diff = m_lastMousePos - event->pos();
 
@@ -402,6 +403,14 @@ void SimulatorView::mouseMoveEvent(QMouseEvent* event)
 
     m_lastMousePos = event->pos();
     updateProjection();
+  }
+}
+
+void SimulatorView::mouseReleaseEvent(QMouseEvent* event)
+{
+  if(event->button() == Qt::RightButton)
+  {
+    setCursor(Qt::ArrowCursor);
   }
 }
 
