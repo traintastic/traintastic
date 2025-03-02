@@ -72,7 +72,7 @@ QString TableModel::getValue(int column, int row) const
   return m_texts.value(ColumnRow(column, row));
 }
 
-void TableModel::setRegion(int columnMin, int columnMax, int rowMin, int rowMax)
+void TableModel::setRegion(uint32_t columnMin, uint32_t columnMax, uint32_t rowMin, uint32_t rowMax)
 {
   if(m_region.columnMin != columnMin ||
      m_region.columnMax != columnMax ||
