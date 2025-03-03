@@ -259,6 +259,7 @@ void Simulator::setPowerOn(bool value)
   {
     m_powerOn = value;
     send(SimulatorProtocol::Power(m_powerOn));
+    emit powerOnChanged(m_powerOn);
   }
 }
 

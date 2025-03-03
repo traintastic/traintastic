@@ -378,6 +378,11 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
         t.setSpeed(0.0f);
       }
       break;
+
+    case Qt::Key_P:
+      m_simulator->setPowerOn(!m_simulator->powerOn());
+      break;
+
     default:
       return QWidget::keyPressEvent(event);
   }
