@@ -81,6 +81,12 @@ void SimulatorIOHandler::sendLocomotiveSpeedDirection(DecoderProtocol protocol, 
   send(message);
 }
 
+void SimulatorIOHandler::sendAccessorySetState(uint16_t channel, uint16_t address, uint8_t state)
+{
+  const SimulatorProtocol::AccessorySetState message(channel, address, state);
+  send(message);
+}
+
 bool SimulatorIOHandler::send(const SimulatorProtocol::Message& message)
 {
   if(m_writeBufferOffset + message.size > m_writeBuffer.size())
@@ -126,6 +132,14 @@ void SimulatorIOHandler::receive(const SimulatorProtocol::Message& message)
       {
         const auto& m = static_cast<const SensorChanged&>(message);
         onSensorChanged(m.channel, m.address, m.value);
+      }
+      break;
+
+    case OpCode::AccessorySetState:
+      if(onAccessorySetState)
+      {
+        const auto& m = static_cast<const AccessorySetState&>(message);
+        onAccessorySetState(m.channel, m.address, m.state);
       }
       break;
   }

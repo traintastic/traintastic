@@ -213,6 +213,20 @@ bool SimulationIOHandler::send(const Message& message)
       }
       break;
     }
+    case OPC_SW_REQ:
+    {
+      if(m_simulator)
+      {
+        const auto& switchRequest = static_cast<const SwitchRequest&>(message);
+        uint8_t state = 0;
+        if(switchRequest.on())
+        {
+          state = switchRequest.dir() ? 2 : 1;
+        }
+        m_simulator->sendAccessorySetState(0, switchRequest.address(), state);
+      }
+      break;
+    }
     case OPC_SW_STATE:
       break; // unimplemented
 
@@ -356,7 +370,6 @@ bool SimulationIOHandler::send(const Message& message)
     case OPC_BUSY:
     case OPC_IDLE:
     case OPC_LOCO_F9F12:
-    case OPC_SW_REQ:
     case OPC_SW_REP:
     case OPC_INPUT_REP:
     case OPC_LONG_ACK:
