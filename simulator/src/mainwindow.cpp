@@ -78,6 +78,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
   {
     auto* toolbar = new QToolBar();
     toolbar->setFloatable(false);
+    toolbar->setMovable(false);
 
     m_power = toolbar->addAction("Power");
     m_power->setCheckable(true);
