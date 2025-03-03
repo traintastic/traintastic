@@ -185,6 +185,59 @@ Color colorFromString(const QString& name)
   return Color::Magenta;
 }
 
+Simulator::Point origin(const Simulator::TrackSegment& segment)
+{
+  if(segment.type == Simulator::TrackSegment::Type::Curve)
+  {
+    const float angle = (segment.curve.angle < 0) ? (segment.rotation + 180) : segment.rotation;
+    return {segment.x + segment.curve.radius * sinf(qDegreesToRadians(angle)), segment.y - segment.curve.radius * cosf(qDegreesToRadians(angle))};
+  }
+  return {segment.x, segment.y};
+}
+
+Simulator::Point straightEnd(const Simulator::TrackSegment& segment)
+{
+  assert(segment.type == Simulator::TrackSegment::Type::Straight || segment.type == Simulator::TrackSegment::Type::Turnout);
+  return {segment.x + segment.straight.length * cosf(qDegreesToRadians(segment.rotation)),
+    segment.y + segment.straight.length * sinf(qDegreesToRadians(segment.rotation))};
+}
+
+Simulator::Point curveEnd(const Simulator::TrackSegment& segment)
+{
+  assert(segment.type == Simulator::TrackSegment::Type::Curve || segment.type == Simulator::TrackSegment::Type::Turnout);
+
+  const float angle = (segment.curve.angle < 0) ? (segment.rotation + 180) : segment.rotation;
+  float cx;
+  float cy;
+
+  if(segment.type == Simulator::TrackSegment::Type::Curve)
+  {
+    cx = segment.x;
+    cy = segment.y;
+  }
+  else
+  {
+    cx = segment.x - segment.curve.radius * sinf(qDegreesToRadians(angle));
+    cy = segment.y + segment.curve.radius * cosf(qDegreesToRadians(angle));
+  }
+  return {cx + segment.curve.radius * sinf(qDegreesToRadians(angle + segment.curve.angle)),
+    cy - segment.curve.radius * cosf(qDegreesToRadians(angle + segment.curve.angle))};
+}
+
+Simulator::Point end(const Simulator::TrackSegment& segment)
+{
+  if(segment.type == Simulator::TrackSegment::Type::Curve)
+  {
+    return curveEnd(segment);
+  }
+  return straightEnd(segment);
+}
+
+bool pointsClose(Simulator::Point a, Simulator::Point b)
+{
+  return std::abs(a.x - b.x) <= 1.0f && std::abs(a.y - b.y) <= 1.0f;
+}
+
 }
 
 class Connection
@@ -266,6 +319,7 @@ void Simulator::setPowerOn(bool value)
 void Simulator::timerEvent(QTimerEvent* /*event*/)
 {
   updateTrainPositions();
+  updateSensors();
   emit tick();
 }
 
@@ -298,6 +352,17 @@ void Simulator::load(const QString& filename)
 
 void Simulator::loadTrackPlan(const QJsonArray& trackPlan)
 {
+  enum class Side
+  {
+    Origin = 0,
+    End = 1,
+    TurnoutThrown = 2,
+  };
+
+  m_trackSegments.reserve(trackPlan.size());
+
+  Side lastSide = Side::Origin;
+  size_t lastSegmentIndex = invalidIndex;
   float curX = 0;
   float curY = 0;
   float curRotation = 0;
@@ -310,58 +375,161 @@ void Simulator::loadTrackPlan(const QJsonArray& trackPlan)
     }
     QJsonObject obj = value.toObject();
 
+    Side side = Side::Origin;
     TrackSegment segment;
-    segment.id = obj["id"].toString();
+
+    if(auto id = obj["id"].toString(); !id.isEmpty())
+    {
+      m_trackSegmentId.emplace(std::move(id), m_trackSegments.size());
+    }
 
     QString type = obj["type"].toString();
     if(type == "straight")
     {
       segment.type = TrackSegment::Straight;
-      segment.length = obj["length"].toDouble();
     }
     else if(type == "curve")
     {
       segment.type = TrackSegment::Curve;
-      segment.radius = obj["radius"].toDouble();
-      segment.angle = obj["angle"].toDouble();
-      segment.length = qAbs(segment.radius * qDegreesToRadians(segment.angle));
+    }
+    else if(type == "turnout")
+    {
+      segment.type = TrackSegment::Turnout;
+
+      if(obj.contains("address"))
+      {
+        segment.turnout.address = obj["address"].toInt();
+      }
+
+      const QString sideStr = obj["side"].toString();
+      if(sideStr == "straight")
+      {
+        side = Side::End;
+      }
+      else if(sideStr == "curve")
+      {
+        side = Side::TurnoutThrown;
+      }
     }
 
-    if(obj.contains("x"))
+    if(segment.type == TrackSegment::Straight || segment.type == TrackSegment::Turnout)
     {
-      curX = obj["x"].toDouble();
+      segment.straight.length = obj["length"].toDouble();
     }
-    if(obj.contains("y"))
+    if(segment.type == TrackSegment::Curve || segment.type == TrackSegment::Turnout)
     {
-      curY = obj["y"].toDouble();
-    }
-    if(obj.contains("rotation"))
-    {
-      curRotation = obj["rotation"].toDouble();
+      segment.curve.radius = obj["radius"].toDouble();
+      segment.curve.angle = obj["angle"].toDouble();
+      segment.curve.length = qAbs(segment.curve.radius * qDegreesToRadians(segment.curve.angle));
     }
 
-    segment.x = curX;
-    segment.y = curY;
-    segment.rotation = curRotation;
-
-    if(segment.type == TrackSegment::Straight)
+    if(obj.contains("start"))
     {
-      curX += segment.length * cosf(qDegreesToRadians(curRotation));
-      curY += segment.length * sinf(qDegreesToRadians(curRotation));
+      auto start = obj["start"].toString();
+      if(auto it = m_trackSegmentId.find(start); it != m_trackSegmentId.end())
+      {
+        auto& startSegment = m_trackSegments[it->second];
+        if(startSegment.nextSegmentIndex[0] == invalidIndex)
+        {
+          const auto pt = origin(startSegment);
+          curX = pt.x;
+          curY = pt.y;
+          curRotation = startSegment.rotation;
+
+          lastSide = Side::Origin;
+          lastSegmentIndex = startSegment.index;
+        }
+        else if(startSegment.nextSegmentIndex[1] == invalidIndex)
+        {
+          const auto pt = end(startSegment);
+          curX = pt.x;
+          curY = pt.y;
+          curRotation = startSegment.rotation;
+          if(startSegment.type == TrackSegment::Curve)
+          {
+            curRotation += startSegment.curve.angle;
+          }
+
+          lastSide = Side::Origin;
+          lastSegmentIndex = startSegment.index;
+        }
+        else if(startSegment.type == TrackSegment::Type::Turnout && startSegment.turnout.thrownSegmentIndex == invalidIndex)
+        {
+          const auto pt = curveEnd(startSegment);
+          curX = pt.x;
+          curY = pt.y;
+          curRotation = startSegment.rotation + startSegment.curve.angle;
+
+          lastSide = Side::TurnoutThrown;
+          lastSegmentIndex = startSegment.index;
+        }
+        else
+        {
+          throw std::runtime_error("start track element is already fully connected");
+        }
+      }
+      else
+      {
+        throw std::runtime_error("start contains unknown id");
+      }
     }
-    else if(segment.type == TrackSegment::Curve)
+    else
     {
-      const float curAngle = (segment.angle < 0) ? (curRotation + 180) : curRotation;
+      if(obj.contains("x"))
+      {
+        curX = obj["x"].toDouble();
+      }
+      if(obj.contains("y"))
+      {
+        curY = obj["y"].toDouble();
+      }
+      if(obj.contains("rotation"))
+      {
+        curRotation = obj["rotation"].toDouble();
+      }
+    }
 
-      // Calc circle center:
-      segment.x = curX - segment.radius * sinf(qDegreesToRadians(curAngle));
-      segment.y = curY + segment.radius * cosf(qDegreesToRadians(curAngle));
+    if(segment.type == TrackSegment::Type::Turnout && side == Side::End)
+    {
+      segment.rotation = curRotation + 180.0f;
+      if(segment.rotation >= 360.0f)
+      {
+        segment.rotation -= 360.0f;
+      }
+      segment.x = curX + segment.straight.length * cosf(qDegreesToRadians(curRotation));
+      segment.y = curY + segment.straight.length * sinf(qDegreesToRadians(curRotation));
+      curX = segment.x;
+      curY = segment.y;
+    }
+    else if(segment.type == TrackSegment::Type::Turnout && side == Side::TurnoutThrown)
+    {
+      assert(false); // TODO: implement
+    }
+    else
+    {
+      segment.x = curX;
+      segment.y = curY;
+      segment.rotation = curRotation;
 
-      // Calc end point:
-      curX = segment.x + segment.radius * sinf(qDegreesToRadians(curAngle + segment.angle));
-      curY = segment.y - segment.radius * cosf(qDegreesToRadians(curAngle + segment.angle));
+      if(segment.type == TrackSegment::Straight || segment.type == TrackSegment::Turnout)
+      {
+        curX += segment.straight.length * cosf(qDegreesToRadians(curRotation));
+        curY += segment.straight.length * sinf(qDegreesToRadians(curRotation));
+      }
+      else if(segment.type == TrackSegment::Curve)
+      {
+        const float curAngle = (segment.curve.angle < 0) ? (curRotation + 180) : curRotation;
 
-      curRotation += segment.angle;
+        // Calc circle center:
+        segment.x = curX - segment.curve.radius * sinf(qDegreesToRadians(curAngle));
+        segment.y = curY + segment.curve.radius * cosf(qDegreesToRadians(curAngle));
+
+        // Calc end point:
+        curX = segment.x + segment.curve.radius * sinf(qDegreesToRadians(curAngle + segment.curve.angle));
+        curY = segment.y - segment.curve.radius * cosf(qDegreesToRadians(curAngle + segment.curve.angle));
+
+        curRotation += segment.curve.angle;
+      }
     }
 
     if(obj.contains("sensor_channel"))
@@ -373,7 +541,102 @@ void Simulator::loadTrackPlan(const QJsonArray& trackPlan)
       segment.sensorAddress = obj["sensor_address"].toInt();
     }
 
+    segment.index = m_trackSegments.size();
+    if(lastSegmentIndex != invalidIndex)
+    {
+      switch(side)
+      {
+        case Side::Origin:
+          segment.nextSegmentIndex[0] = lastSegmentIndex;
+          break;
+
+        case Side::End:
+          segment.nextSegmentIndex[1] = lastSegmentIndex;
+          break;
+
+        case Side::TurnoutThrown:
+          assert(segment.type == TrackSegment::Type::Turnout);
+          segment.turnout.thrownSegmentIndex = lastSegmentIndex;
+          break;
+
+        default:
+          assert(false);
+          break;
+      }
+
+      switch(lastSide)
+      {
+        case Side::Origin:
+          m_trackSegments[lastSegmentIndex].nextSegmentIndex[1] = m_trackSegments.size();
+          break;
+
+        case Side::End:
+          m_trackSegments[lastSegmentIndex].nextSegmentIndex[0] = m_trackSegments.size();
+          break;
+
+        case Side::TurnoutThrown:
+          assert(m_trackSegments[lastSegmentIndex].type == TrackSegment::Type::Turnout);
+          m_trackSegments[lastSegmentIndex].turnout.thrownSegmentIndex = m_trackSegments.size();
+          break;
+
+        default:
+          assert(false);
+          break;
+      }
+    }
     m_trackSegments.emplace_back(std::move(segment));
+
+    lastSide = side;
+    lastSegmentIndex = m_trackSegments.size() - 1;
+  }
+
+  // Connect open ends:
+  {
+    auto findSegment = [this](size_t start, Point point, size_t& index)
+    {
+      const size_t count = m_trackSegments.size();
+      for(size_t i = start + 1; i < count; ++i)
+      {
+        auto& segment = m_trackSegments[i];
+        if(segment.nextSegmentIndex[0] == invalidIndex && pointsClose(point, origin(segment)))
+        {
+          segment.nextSegmentIndex[0] = start;
+          index = i;
+          return;
+        }
+        if(segment.nextSegmentIndex[1] == invalidIndex && pointsClose(point, end(segment)))
+        {
+          segment.nextSegmentIndex[1] = start;
+          index = i;
+          return;
+        }
+        if(segment.type == Simulator::TrackSegment::Type::Turnout && segment.turnout.thrownSegmentIndex == invalidIndex &&
+          pointsClose(point, curveEnd(segment)))
+        {
+          segment.turnout.thrownSegmentIndex = start;
+          index = i;
+          return;
+        }
+      }
+    };
+
+    const size_t count = m_trackSegments.size() - 1;
+    for(size_t i = 0; i < count; ++i)
+    {
+      auto& segment = m_trackSegments[i];
+      if(segment.nextSegmentIndex[0] == invalidIndex)
+      {
+        findSegment(segment.index, origin(segment), segment.nextSegmentIndex[0]);
+      }
+      else if(segment.nextSegmentIndex[1] == invalidIndex)
+      {
+        findSegment(segment.index, end(segment), segment.nextSegmentIndex[1]);
+      }
+      else if(segment.type == Simulator::TrackSegment::Type::Turnout && segment.turnout.thrownSegmentIndex == invalidIndex)
+      {
+        findSegment(segment.index, curveEnd(segment), segment.turnout.thrownSegmentIndex);
+      }
+    }
   }
 }
 
@@ -392,22 +655,17 @@ void Simulator::loadTrains(const QJsonArray& array)
     }
 
     Train train;
-    int segmentIndex = -1;
+    size_t segmentIndex = invalidIndex;
 
-    if(object.contains("track_id"))
+    if(const auto trackId = object["track_id"].toString(); !trackId.isEmpty())
     {
-      const auto trackId = object["track_id"].toString();
-      for(size_t i = 0; i < m_trackSegments.size(); ++i)
+      if(auto it = m_trackSegmentId.find(trackId); it != m_trackSegmentId.end())
       {
-        if(m_trackSegments[i].id == trackId)
-        {
-          segmentIndex = static_cast<int>(i);
-          break;
-        }
+        segmentIndex = it->second;
       }
     }
 
-    if(segmentIndex < 0)
+    if(segmentIndex == invalidIndex)
     {
       segmentIndex = 0; // in case there is no free segment
       for(size_t i = 0; i < m_trackSegments.size(); ++i)
@@ -437,19 +695,25 @@ void Simulator::loadTrains(const QJsonArray& array)
       }
       const auto vehicle = v.toObject();
       train.addVehicle(vehicle["length"].toDouble(20.0), colorFromString(vehicle["color"].toString()));
-      train.vehicles.back().segmentIndex = segmentIndex;
+      train.vehicles.back().front.segmentIndex = segmentIndex;
+      train.vehicles.back().rear.segmentIndex = segmentIndex;
     }
 
     if(!train.vehicles.empty())
     {
       // center train in segment and mark it occupied:
-      auto& segment = m_trackSegments[train.vehicles.front().segmentIndex];
-      segment.occupied++;
-      const float segmentLength = segment.length;
+      auto& segment = m_trackSegments[train.vehicles.front().front.segmentIndex];
+      segment.occupied = train.vehicles.size() * 2;
+      if(segment.sensorAddress)
+      {
+        segment.sensorValue = (segment.occupied != 0);
+      }
+      const float segmentLength = segment.length();
       const float move = segmentLength - (segmentLength - train.length()) / 2;
       for(auto& vehicle : train.vehicles)
       {
-        vehicle.distanceFront += move;
+        vehicle.front.distance += move;
+        vehicle.rear.distance += move;
       }
       m_trains.emplace_back(std::move(train));
     }
@@ -479,130 +743,109 @@ void Simulator::updateTrainPositions()
 
     const float speed = m_powerOn ? ((train.direction == Direction::Forward) ? train.speed : -train.speed) : 0.0f;
 
-    auto getFrontSegment = [this, &train]() -> TrackSegment*
-    {
-      return &m_trackSegments[train.vehicles.front().segmentIndex];
-    };
-
-    auto getRearSegment = [this, &train]() -> TrackSegment*
-    {
-      auto& rear = train.vehicles.back();
-      if(rear.distanceRear() >= 0)
-      {
-        return &m_trackSegments[rear.segmentIndex];
-      }
-      return &m_trackSegments[rear.segmentIndex > 0 ? rear.segmentIndex - 1 : m_trackSegments.size() - 1];
-    };
-
-    auto* frontSegment = getFrontSegment();
-    auto* rearSegment = getRearSegment();
-
     for(auto& vehicle : train.vehicles)
     {
-      vehicle.distanceFront += speed;
+      updateVehiclePosition(vehicle.front, speed);
+      updateVehiclePosition(vehicle.rear, speed);
+    }
+  }
+}
 
-      auto computePosition = [this, segmentIndex = vehicle.segmentIndex](Point& position, float distance)
+void Simulator::updateVehiclePosition(RailVehicle::Face& face, const float speed)
+{
+  face.distance += face.segmentDirectionInverted ? -speed : speed;
+
+  // Move to next segment when reaching the end:
+  {
+    auto& segment = m_trackSegments[face.segmentIndex];
+
+    if(face.distance >= segment.length())
+    {
+      assert(segment.occupied != 0);
+      segment.occupied--;
+
+      face.segmentIndex = segment.getNextSegmentIndex(true);
+      auto& nextSegment = m_trackSegments[face.segmentIndex];
+
+      if(nextSegment.nextSegmentIndex[0] == segment.index)
       {
-        TrackSegment* segment = &m_trackSegments[segmentIndex];
-        if(distance < 0)
-        {
-          segment = &m_trackSegments[segmentIndex > 0 ? segmentIndex - 1 : m_trackSegments.size() - 1];
-          distance += segment->length;
-        }
-
-        if(segment->type == TrackSegment::Straight)
-        {
-          // Move forward along the straight track
-          position.x = segment->x + distance * cosf(qDegreesToRadians(segment->rotation));
-          position.y = segment->y + distance * sinf(qDegreesToRadians(segment->rotation));
-        }
-        else if(segment->type == TrackSegment::Curve)
-        {
-          // Move along circular path
-          float angle = segment->rotation + (distance / segment->length) * segment->angle;
-          if(segment->angle < 0)
-          {
-            angle += 180;
-          }
-
-          position.x = segment->x + segment->radius * sinf(qDegreesToRadians(angle));
-          position.y = segment->y - segment->radius * cosf(qDegreesToRadians(angle));
-        }
-      };
-
-      computePosition(vehicle.positionFront, vehicle.distanceFront);
-      computePosition(vehicle.positionRear, vehicle.distanceRear());
-
-      // Move to next segment when reaching the end
-      TrackSegment& segment = m_trackSegments[vehicle.segmentIndex];
-      if(vehicle.distanceFront >= segment.length)
-      {
-        vehicle.distanceFront -= segment.length;
-        vehicle.segmentIndex++;
-        if(vehicle.segmentIndex >= (int)m_trackSegments.size())
-        {
-          vehicle.segmentIndex = 0; // Loop track
-        }
+        face.distance -= segment.length();
+        face.segmentDirectionInverted = (speed < 0);
       }
-      else if(vehicle.distanceFront < 0)
+      else
       {
-        if(vehicle.segmentIndex == 0)
-        {
-          vehicle.segmentIndex = static_cast<int>(m_trackSegments.size()) - 1;
-        }
-        else
-        {
-          vehicle.segmentIndex--;
-        }
-        TrackSegment& prevSegment = m_trackSegments[vehicle.segmentIndex];
-        vehicle.distanceFront += prevSegment.length;
+        face.distance = (nextSegment.length() + segment.length()) - face.distance;
+        face.segmentDirectionInverted = (speed > 0);
+      }
+
+      nextSegment.occupied++;
+    }
+    else if(face.distance < 0)
+    {
+      assert(segment.occupied != 0);
+      segment.occupied--;
+
+      face.segmentIndex = segment.getNextSegmentIndex(false);
+      auto& nextSegment = m_trackSegments[face.segmentIndex];
+
+      if(nextSegment.nextSegmentIndex[0] == segment.index)
+      {
+        face.distance = -face.distance;
+        face.segmentDirectionInverted = (speed < 0);
+      }
+      else
+      {
+        face.distance += nextSegment.length();
+        face.segmentDirectionInverted = (speed > 0);
+      }
+
+      nextSegment.occupied++;
+    }
+  }
+
+  // Calculate position:
+  {
+    auto& segment = m_trackSegments[face.segmentIndex];
+
+    if(segment.type == TrackSegment::Straight || (segment.type == TrackSegment::Turnout && !segment.turnout.thrown))
+    {
+      face.position.x = segment.x + face.distance * cosf(qDegreesToRadians(segment.rotation));
+      face.position.y = segment.y + face.distance * sinf(qDegreesToRadians(segment.rotation));
+    }
+    else if(segment.type == TrackSegment::Curve || (segment.type == TrackSegment::Turnout && segment.turnout.thrown))
+    {
+      float angle = segment.rotation + (face.distance / segment.curve.length) * segment.curve.angle;
+      if(segment.curve.angle < 0)
+      {
+        angle += 180;
+      }
+
+      if(segment.type == TrackSegment::Curve)
+      {
+        face.position.x = segment.x + segment.curve.radius * sinf(qDegreesToRadians(angle));
+        face.position.y = segment.y - segment.curve.radius * cosf(qDegreesToRadians(angle));
+      }
+      else
+      {
+        const float rotation = segment.curve.angle < 0 ? segment.rotation + 180 : segment.rotation;
+        const float cx = segment.x + segment.curve.radius * sinf(qDegreesToRadians(rotation));
+        const float cy = segment.y + segment.curve.radius * cosf(qDegreesToRadians(rotation));
+
+        face.position.x = cx + segment.curve.radius * sinf(qDegreesToRadians(angle));
+        face.position.y = cy - segment.curve.radius * cosf(qDegreesToRadians(angle));
       }
     }
+  }
+}
 
-    if(auto* frontSegmentNow = getFrontSegment(); frontSegment != frontSegmentNow)
+void Simulator::updateSensors()
+{
+  for(auto& segment : m_trackSegments)
+  {
+    if(segment.sensorAddress && segment.sensorValue != (segment.occupied != 0))
     {
-      if(train.direction == Direction::Forward)
-      {
-        if(frontSegmentNow->occupied == 0 && frontSegmentNow->sensorAddress)
-        {
-          send(SimulatorProtocol::SensorChanged(frontSegmentNow->sensorChannel, frontSegmentNow->sensorAddress.value(), true));
-        }
-        frontSegmentNow->occupied++;
-      }
-      else if(train.direction == Direction::Reverse)
-      {
-        if(frontSegment->occupied > 0)
-        {
-          frontSegment->occupied--;
-          if(frontSegment->occupied == 0 && frontSegment->sensorAddress)
-          {
-            send(SimulatorProtocol::SensorChanged(frontSegment->sensorChannel, frontSegment->sensorAddress.value(), false));
-          }
-        }
-      }
-    }
-
-    if(auto* rearSegmentNow = getRearSegment(); rearSegment != rearSegmentNow)
-    {
-      if(train.direction == Direction::Reverse)
-      {
-        if(rearSegmentNow->occupied == 0 && rearSegmentNow->sensorAddress)
-        {
-          send(SimulatorProtocol::SensorChanged(rearSegmentNow->sensorChannel, rearSegmentNow->sensorAddress.value(), true));
-        }
-        rearSegmentNow->occupied++;
-      }
-      else if(train.direction == Direction::Forward)
-      {
-        if(rearSegment->occupied > 0)
-        {
-          rearSegment->occupied--;
-          if(rearSegment->occupied == 0 && rearSegment->sensorAddress)
-          {
-            send(SimulatorProtocol::SensorChanged(rearSegment->sensorChannel, rearSegment->sensorAddress.value(), false));
-          }
-        }
-      }
+      segment.sensorValue = (segment.occupied != 0);
+      send(SimulatorProtocol::SensorChanged(segment.sensorChannel, segment.sensorAddress.value(), segment.sensorValue));
     }
   }
 }
@@ -648,6 +891,29 @@ void Simulator::receive(const SimulatorProtocol::Message& message)
               train.speed = (train.speedMax * m.speed) / std::numeric_limits<decltype(m.speed)>::max();
             }
             break;
+          }
+        }
+        break;
+      }
+    case OpCode::AccessorySetState:
+      {
+        const auto& m = static_cast<const AccessorySetState&>(message);
+        if(m.state == 1 || m.state == 2)
+        {
+          for(auto& segment : m_trackSegments)
+          {
+            if(segment.type == TrackSegment::Type::Turnout && segment.turnout.address && *segment.turnout.address == m.address)
+            {
+              if(m.state == 1)
+              {
+                segment.turnout.thrown = true;
+              }
+              else if(m.state == 2)
+              {
+                segment.turnout.thrown = false;
+              }
+              break;
+            }
           }
         }
         break;

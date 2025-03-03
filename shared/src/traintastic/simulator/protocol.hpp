@@ -34,6 +34,7 @@ enum class OpCode : uint8_t
   Power = 1,
   LocomotiveSpeedDirection = 2,
   SensorChanged = 3,
+  AccessorySetState = 4,
 };
 
 struct Message
@@ -98,6 +99,22 @@ struct SensorChanged : Message
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(SensorChanged) == 7);
+
+struct AccessorySetState : Message
+{
+  uint16_t channel;
+  uint16_t address;
+  uint8_t state;
+
+  AccessorySetState(uint16_t ch, uint16_t addr, uint8_t st)
+    : Message(OpCode::AccessorySetState, sizeof(AccessorySetState))
+    , channel{ch}
+    , address{addr}
+    , state{st}
+  {
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(AccessorySetState) == 7);
 
 PRAGMA_PACK_POP
 

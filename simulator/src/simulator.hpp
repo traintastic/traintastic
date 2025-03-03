@@ -45,24 +45,76 @@ class Simulator : public QObject
   friend class Connection;
 
 public:
+  static constexpr auto invalidIndex = std::numeric_limits<size_t>::max();
+
   struct TrackSegment
   {
     enum Type
     {
       Straight,
       Curve,
+      Turnout,
     } type;
 
-    QString id;
+    size_t index = invalidIndex;
+    size_t nextSegmentIndex[2] = {invalidIndex, invalidIndex};
+
     float x;
     float y;
-    float length;
     float rotation;
-    float radius;
-    float angle;
+
+    struct
+    {
+      float length;
+    } straight;
+
+    struct
+    {
+      float radius;
+      float angle;
+      float length;
+    } curve;
+
+    struct
+    {
+      std::optional<uint16_t> address;
+      bool thrown = false;
+      size_t thrownSegmentIndex = invalidIndex;
+    } turnout;
+
     size_t occupied = 0;
     uint16_t sensorChannel = 0;
     std::optional<uint16_t> sensorAddress;
+    bool sensorValue = false;
+
+    float length() const
+    {
+      switch(type)
+      {
+        case Type::Straight:
+          return straight.length;
+
+        case Type::Curve:
+          return curve.length;
+
+        case Type::Turnout:
+          return turnout.thrown ? curve.length : straight.length;
+      }
+      return std::numeric_limits<float>::signaling_NaN();
+    }
+
+    size_t getNextSegmentIndex(bool directionPositive)
+    {
+      if(!directionPositive)
+      {
+        return nextSegmentIndex[0];
+      }
+      if(type == Type::Turnout && turnout.thrown)
+      {
+        return turnout.thrownSegmentIndex;
+      }
+      return nextSegmentIndex[1];
+    }
   };
 
   struct Point
@@ -73,18 +125,18 @@ public:
 
   struct RailVehicle
   {
-    Color color;
-    Point positionFront;
-    Point positionRear;
-    float length;
-
-    int segmentIndex = 0;
-    float distanceFront = 0.0f;
-
-    float distanceRear() const
+    struct Face
     {
-      return distanceFront - length;
-    }
+      Point position;
+      size_t segmentIndex;
+      bool segmentDirectionInverted = false;
+      float distance;
+    };
+
+    Color color;
+    float length;
+    Face front;
+    Face rear;
   };
 
   struct Train
@@ -101,10 +153,11 @@ public:
 
     void addVehicle(float length, Color color)
     {
-      const float distance = vehicles.empty() ? 0.0 : vehicles.back().distanceRear() - couplingLength;
+      const float distance = vehicles.empty() ? 0.0 : vehicles.back().rear.distance - couplingLength;
       auto& vehicle = vehicles.emplace_back(RailVehicle{});
       vehicle.length = length;
-      vehicle.distanceFront = distance;
+      vehicle.front.distance = distance;
+      vehicle.rear.distance = distance - length;
       vehicle.color = color;
     }
 
@@ -166,6 +219,7 @@ private:
   QTcpServer* m_server;
   QList<Connection*> m_connections;
   std::vector<TrackSegment> m_trackSegments;
+  std::unordered_map<QString, size_t> m_trackSegmentId;
   std::vector<Train> m_trains;
   bool m_powerOn = false;
 
@@ -174,6 +228,8 @@ private:
   void loadTrains(const QJsonArray& trains);
 
   void updateTrainPositions();
+  void updateVehiclePosition(RailVehicle::Face& face, float speed);
+  void updateSensors();
 
   void send(const SimulatorProtocol::Message& message);
   void receive(const SimulatorProtocol::Message& message);
