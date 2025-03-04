@@ -45,6 +45,7 @@ protected:
   QLabel* m_navLabel;
   QStackedWidget* m_stack;
   QListView* m_list;
+  QLabel* m_listEmptyLabel;
   MethodIcon* m_create = nullptr;
   QMenu* m_createMenu = nullptr;
   MethodAction* m_actionRemove = nullptr;

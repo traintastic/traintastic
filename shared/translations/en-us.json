@@ -6721,5 +6721,17 @@
     {
         "term": "stacked_object_list:click_to_edit_ctrl_click_to_open_in_a_new_window",
         "definition": "Click to edit.\nCtrl click to open in a new window."
+    },
+    {
+        "term": "stacked_object_list:list_is_empty",
+        "definition": "List is empty."
+    },
+    {
+        "term": "interface_list:list_is_empty",
+        "definition": "Interface list is empty.\nClick the plus button to create a new interface."
+    },
+    {
+        "term": "interface_list:create",
+        "definition": "Create a new interface."
     }
 ]

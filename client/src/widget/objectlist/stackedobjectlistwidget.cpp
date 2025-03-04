@@ -76,6 +76,7 @@ StackedObjectListWidget::StackedObjectListWidget(const ObjectPtr& object, QWidge
   , m_navBar{new QToolBar(this)}
   , m_stack{new QStackedWidget(this)}
   , m_list{new QListView(this)}
+  , m_listEmptyLabel{new QLabel(Locale::tr("stacked_object_list:list_is_empty"), m_list)}
   , m_requestId{Connection::invalidRequestId}
 {
   m_navBar->hide();
@@ -121,6 +122,7 @@ StackedObjectListWidget::StackedObjectListWidget(const ObjectPtr& object, QWidge
           [this]()
           {
             m_tableModel->setRegion(0, m_tableModel->columnCount(), 0, m_tableModel->rowCount());
+            m_listEmptyLabel->setVisible(m_tableModel->rowCount() == 0);
           });
         m_tableModel->setRegion(0, m_tableModel->columnCount(), 0, m_tableModel->rowCount());
       }
@@ -181,10 +183,10 @@ StackedObjectListWidget::StackedObjectListWidget(const ObjectPtr& object, QWidge
       m_create->hide();
     }
 
-    m_list->installEventFilter(this);
     m_create->installEventFilter(this);
   }
 
+  m_list->installEventFilter(this);
   m_list->setSelectionMode(QListView::NoSelection);
   connect(m_list, &QListView::clicked,
     [this](const QModelIndex &index)
@@ -221,6 +223,9 @@ StackedObjectListWidget::StackedObjectListWidget(const ObjectPtr& object, QWidge
         });
     });
 
+  m_listEmptyLabel->installEventFilter(this);
+  m_listEmptyLabel->setWordWrap(true);
+
   m_stack->addWidget(m_list);
 
   auto* l = new QVBoxLayout();
@@ -237,6 +242,13 @@ StackedObjectListWidget::~StackedObjectListWidget()
 
 bool StackedObjectListWidget::eventFilter(QObject* object, QEvent* event)
 {
+  if(m_listEmptyLabel->isVisible() && ((object == m_list && event->type() == QEvent::Resize) || (object == m_listEmptyLabel && event->type() == QEvent::Show)))
+  {
+    m_listEmptyLabel->setMaximumWidth(qRound(width() * 0.9f));
+    m_listEmptyLabel->adjustSize();
+    m_listEmptyLabel->setFixedHeight(m_listEmptyLabel->heightForWidth(m_listEmptyLabel->maximumWidth()));
+    m_listEmptyLabel->move((rect().bottomRight() - m_listEmptyLabel->rect().bottomRight()) / 2);
+  }
   if(m_create && ((object == m_list && event->type() == QEvent::Resize) || (object == m_create && event->type() == QEvent::Show)))
   {
     auto pnt = m_create->rect().bottomRight();
