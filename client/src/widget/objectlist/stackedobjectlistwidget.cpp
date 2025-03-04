@@ -30,12 +30,15 @@
 #include <QStackedWidget>
 #include <QToolBar>
 #include <QVBoxLayout>
+#include <QIdentityProxyModel>
+#include <QGuiApplication>
 
 #include <traintastic/locale/locale.hpp>
 
 #include "../createwidget.hpp"
 #include "../tablewidget.hpp"
 #include "../methodicon.hpp"
+#include "../../mainwindow.hpp"
 #include "../../network/object.hpp"
 #include "../../network/method.hpp"
 #include "../../network/connection.hpp"
@@ -44,6 +47,28 @@
 #include "../../network/tablemodel.hpp"
 #include "../../theme/theme.hpp"
 #include "../../misc/methodaction.hpp"
+
+namespace
+{
+  class StackedObjectListProxyModel final : public QIdentityProxyModel
+  {
+    public:
+      StackedObjectListProxyModel(QAbstractItemModel* sourceModel)
+        : QIdentityProxyModel()
+      {
+        setSourceModel(sourceModel);
+      }
+
+      QVariant data(const QModelIndex &index, int role) const final
+      {
+        if (role == Qt::ToolTipRole)
+        {
+          return Locale::tr("stacked_object_list:click_to_edit_ctrl_click_to_open_in_a_new_window");
+        }
+        return QIdentityProxyModel::data(index, role);
+      }
+  };
+}
 
 StackedObjectListWidget::StackedObjectListWidget(const ObjectPtr& object, QWidget* parent)
   : QWidget(parent)
@@ -91,7 +116,7 @@ StackedObjectListWidget::StackedObjectListWidget(const ObjectPtr& object, QWidge
       if(tableModel)
       {
         m_tableModel = tableModel;
-        m_list->setModel(m_tableModel.get());
+        m_list->setModel(new StackedObjectListProxyModel(m_tableModel.get()));
         connect(m_tableModel.get(), &TableModel::modelReset,
           [this]()
           {
@@ -169,16 +194,25 @@ StackedObjectListWidget::StackedObjectListWidget(const ObjectPtr& object, QWidge
         return;
       }
 
+      const bool openInSubWindow = (QGuiApplication::queryKeyboardModifiers() & Qt::ControlModifier);
+
       cancelRequest();
 
       m_requestId = m_object->connection()->getObject(m_tableModel->getRowObjectId(index.row()),
-        [this](const ObjectPtr& selectedObject, std::optional<const Error> error)
+        [this, openInSubWindow](const ObjectPtr& selectedObject, std::optional<const Error> error)
         {
            m_requestId = Connection::invalidRequestId;
 
           if(selectedObject)
           {
-            show(selectedObject);
+            if(openInSubWindow)
+            {
+              MainWindow::instance->showObject(selectedObject);
+            }
+            else
+            {
+              show(selectedObject);
+            }
           }
           else if(error)
           {
