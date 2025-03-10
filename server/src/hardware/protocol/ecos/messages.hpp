@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022,2024 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,8 @@
 #include <vector>
 #include <unordered_map>
 #include <cstdint>
+#include "../../../utils/ltrim.hpp"
+#include "../../../utils/tohex.hpp"
 
 namespace ECoS {
 
@@ -220,6 +222,14 @@ inline std::string request(uint16_t objectId, std::initializer_list<std::string_
 inline std::string release(uint16_t objectId, std::initializer_list<std::string_view> options)
 {
   return buildCommand(Command::release, objectId, options);
+}
+
+inline std::string feedbackEvent(uint16_t objectId, uint16_t state)
+{
+  return
+    std::string("<EVENT ").append(std::to_string(objectId)).append(">\r\n")
+      .append(std::to_string(objectId)).append(" state[0x").append(state != 0 ? ltrim(toHex(state), '0') : std::string_view{"0"}).append("]>\r\n")
+      .append("<END 0 (OK)>\r\n");
 }
 
 bool parseRequest(std::string_view message, Request& request);

@@ -37,6 +37,7 @@
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
+#include "../../simulator/interfacesimulatorsettings.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
 #include "../../utils/makearray.hpp"
@@ -57,9 +58,11 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   , OutputController(static_cast<IdObject&>(*this))
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , ecos{this, "ecos", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
+  , simulator{this, "simulator", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "ECoS";
   ecos.setValueInternal(std::make_shared<ECoS::Settings>(*this, ecos.name()));
+  simulator.setValueInternal(std::make_shared<InterfaceSimulatorSettings>(*this, simulator.name()));
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, !online);
@@ -72,6 +75,8 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(inputs, notes);
 
   m_interfaceItems.insertBefore(outputs, notes);
+
+  m_interfaceItems.insertBefore(simulator, notes);
 }
 
 std::span<const DecoderProtocol> ECoSInterface::decoderProtocols() const
@@ -158,7 +163,14 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
     try
     {
       if(simulation)
+      {
         m_kernel = ECoS::Kernel::create<ECoS::SimulationIOHandler>(id.value(), ecos->config(), m_simulation);
+
+        if(simulator->useSimulator)
+        {
+          m_kernel->ioHandler<ECoS::SimulationIOHandler>().setSimulator(simulator->hostname, simulator->port);
+        }
+      }
       else
         m_kernel = ECoS::Kernel::create<ECoS::TCPIOHandler>(id.value(), ecos->config(), hostname.value());
 
@@ -242,8 +254,6 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
       // Reset output object list:
       m_outputECoSObjectIds.assign({0});
       m_outputECoSObjectNames.assign({{}});
-
-      Attributes::setEnabled(hostname, false);
     }
     catch(const LogMessageException& e)
     {
@@ -254,8 +264,6 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
   }
   else if(m_kernel && !value)
   {
-    Attributes::setEnabled(hostname, true);
-
     m_ecosPropertyChanged.disconnect();
 
     m_kernel->stop(simulation ? nullptr : &m_simulation);
@@ -436,28 +444,46 @@ void ECoSInterface::worldEvent(WorldState state, WorldEvent event)
 {
   Interface::worldEvent(state, event);
 
-  if(m_kernel)
+  switch(event)
   {
-    switch(event)
-    {
-      case WorldEvent::PowerOff:
-      case WorldEvent::Stop:
+    case WorldEvent::PowerOff:
+    case WorldEvent::Stop:
+      if(m_kernel)
+      {
         m_kernel->emergencyStop();
-        break;
+      }
+      break;
 
-      case WorldEvent::PowerOn:
-      case WorldEvent::Run:
-        if(contains(state, WorldState::PowerOn | WorldState::Run))
-          m_kernel->go();
-        break;
+    case WorldEvent::PowerOn:
+    case WorldEvent::Run:
+      if(m_kernel && contains(state, WorldState::PowerOn | WorldState::Run))
+      {
+        m_kernel->go();
+      }
+      break;
 
-      default:
-        break;
-    }
+    case WorldEvent::EditEnabled:
+    case WorldEvent::EditDisabled:
+      updateEnabled();
+      break;
+
+    default:
+      break;
   }
+}
+
+void ECoSInterface::onlineChanged(bool /*value*/)
+{
+  updateEnabled();
 }
 
 std::filesystem::path ECoSInterface::simulationDataFilename() const
 {
   return (std::filesystem::path("simulation") / id.value()) += ".json";
+}
+
+void ECoSInterface::updateEnabled()
+{
+  Attributes::setEnabled(hostname, !online);
+  simulator->updateEnabled(contains(m_world.state, WorldState::Edit), online);
 }

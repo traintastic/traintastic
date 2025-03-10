@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,9 +39,7 @@
 #include "../../output/outputcontroller.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../utils/startswith.hpp"
-#include "../../../utils/ltrim.hpp"
 #include "../../../utils/rtrim.hpp"
-#include "../../../utils/tohex.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
@@ -488,11 +486,7 @@ void Kernel::simulateInputChange(uint32_t channel, uint32_t address, SimulateInp
                     mask |= 1 << i;
                 }
 
-                receive(
-                  std::string("<EVENT ").append(std::to_string(feedback->id())).append(">\r\n")
-                    .append(std::to_string(feedback->id())).append(" state[0x").append(mask != 0 ? ltrim(toHex(mask), '0') : std::string_view{"0"}).append("]>\r\n")
-                    .append("<END 0 (OK)>\r\n"));
-
+                receive(feedbackEvent(feedback->id(), mask));
                 break;
               }
               port -= ports;

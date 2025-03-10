@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022,2024 Reinder Feenstra
+ * Copyright (C) 2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,14 +26,18 @@
 #include "iohandler.hpp"
 #include <array>
 #include <cstddef>
+#include <unordered_map>
 #include "../simulation.hpp"
+#include "../../../../simulator/simulatoriohandler.hpp"
 
 namespace ECoS {
 
 class SimulationIOHandler final : public IOHandler
 {
   private:
-    const Simulation m_simulation;
+    Simulation m_simulation;
+    std::unique_ptr<SimulatorIOHandler> m_simulator;
+    std::unordered_map<uint16_t, bool> m_simulatorS88;
 
     bool reply(std::string_view message);
     bool replyOk(std::string_view request);
@@ -43,6 +47,8 @@ class SimulationIOHandler final : public IOHandler
 
   public:
     SimulationIOHandler(Kernel& kernel, const Simulation& simulation);
+
+    void setSimulator(std::string hostname, uint16_t port);
 
     void start() final;
     void stop() final {}

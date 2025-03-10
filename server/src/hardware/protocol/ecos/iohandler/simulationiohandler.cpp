@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022,2024 Reinder Feenstra
+ * Copyright (C) 2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -128,8 +128,62 @@ SimulationIOHandler::SimulationIOHandler(Kernel& kernel, const Simulation& simul
 {
 }
 
+void SimulationIOHandler::setSimulator(std::string hostname, uint16_t port)
+{
+  assert(!m_simulator);
+  m_simulator = std::make_unique<SimulatorIOHandler>(m_kernel.ioContext(), std::move(hostname), port);
+}
+
 void SimulationIOHandler::start()
 {
+  if(m_simulator)
+  {
+    m_simulator->onPower =
+      [this](bool powerOn)
+      {
+        reply(
+          std::string("<EVENT ").append(std::to_string(ObjectId::ecos)).append(">\r\n")
+            .append(std::to_string(ObjectId::ecos)).append(" status[").append(powerOn ? "GO" : "STOP").append("]>\r\n")
+            .append("<END 0 (OK)>\r\n"));
+      };
+    // FIXME: m_simulator->onLocomotiveSpeedDirection
+    m_simulator->onSensorChanged =
+      [this](uint16_t /*channel*/, uint16_t address, bool value)
+      {
+        if(address >= 1)
+        {
+          m_simulatorS88[address] = value;
+
+          uint16_t offset = 0;
+          for(const auto& s88 : m_simulation.s88)
+          {
+            if(address - 1 < offset + s88.ports)
+            {
+              uint16_t mask = 0;
+              for(uint8_t i = 0; i < s88.ports; ++i)
+              {
+                if(auto it = m_simulatorS88.find(1 + offset + i); it != m_simulatorS88.end() && it->second)
+                {
+                  mask |= 1 << i;
+                }
+              }
+              reply(feedbackEvent(s88.id, mask));
+              return;
+            }
+
+            offset += s88.ports;
+
+            if(s88.id == m_simulation.s88.back().id && s88.id < ObjectId::ecosDetector - 1)
+            {
+              // create a new 16 port module:
+              m_simulation.s88.emplace_back(Simulation::S88({s88.id + 1}, 16));
+              // FIXME: reply create event?
+            }
+          }
+        }
+      };
+    m_simulator->start();
+  }
   m_kernel.started();
 }
 
@@ -164,6 +218,10 @@ bool SimulationIOHandler::send(std::string_view message)
     }
     if(request.command == Command::set && request.options.size() == 1 && (request.options[0] == Option::stop || request.options[0] == Option::go))
     {
+      if(m_simulator)
+      {
+        m_simulator->sendPower(request.options[0] == Option::go);
+      }
       return replyOk(message);
     }
   }

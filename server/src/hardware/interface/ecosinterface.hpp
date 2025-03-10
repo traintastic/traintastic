@@ -31,6 +31,8 @@
 #include "../output/outputcontroller.hpp"
 #include "../../core/objectproperty.hpp"
 
+class InterfaceSimulatorSettings;
+
 namespace ECoS {
 class Kernel;
 class Settings;
@@ -62,9 +64,10 @@ class ECoSInterface final
     void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const final;
     void worldEvent(WorldState state, WorldEvent event) final;
 
-    void typeChanged();
+    void onlineChanged(bool value) final;
 
     std::filesystem::path simulationDataFilename() const;
+    void updateEnabled();
 
   protected:
     bool setOnline(bool& value, bool simulation) final;
@@ -72,6 +75,7 @@ class ECoSInterface final
   public:
     Property<std::string> hostname;
     ObjectProperty<ECoS::Settings> ecos;
+    ObjectProperty<InterfaceSimulatorSettings> simulator;
 
     ECoSInterface(World& world, std::string_view _id);
 
