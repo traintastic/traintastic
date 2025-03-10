@@ -45,10 +45,11 @@ class TableModel final : public QAbstractTableModel
     int m_rowCount;
     struct Region
     {
-      int rowMin = 0;
-      int rowMax = -1;
-      int columnMin = 0;
-      int columnMax = -1;
+      // Default to invalid region
+      uint32_t rowMin = 1;
+      uint32_t rowMax = 0;
+      uint32_t columnMin = 1;
+      uint32_t columnMax = 0;
     } m_region;
     QMap<ColumnRow, QString> m_texts;
 
@@ -71,7 +72,7 @@ class TableModel final : public QAbstractTableModel
     QString getRowObjectId(int row) const;
     QString getValue(int column, int row) const;
 
-    void setRegion(int columnMin, int columnMax, int rowMin, int rowMax);
+    void setRegion(uint32_t columnMin, uint32_t columnMax, uint32_t rowMin, uint32_t rowMax);
 };
 
 #endif
