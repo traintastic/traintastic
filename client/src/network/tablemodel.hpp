@@ -45,10 +45,11 @@ class TableModel final : public QAbstractTableModel
     int m_rowCount;
     struct Region
     {
-      uint32_t rowMin = 0;
-      uint32_t rowMax = -1;
-      uint32_t columnMin = 0;
-      uint32_t columnMax = -1;
+      // Default to invalid region
+      uint32_t rowMin = 1;
+      uint32_t rowMax = 0;
+      uint32_t columnMin = 1;
+      uint32_t columnMax = 0;
     } m_region;
     QMap<ColumnRow, QString> m_texts;
 
