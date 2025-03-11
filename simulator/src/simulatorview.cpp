@@ -180,6 +180,23 @@ inline static const std::array<ColorF, 145> colors{{
   {0.60f, 0.80f, 0.20f}, //	Yellow Green
 }};
 
+float crossProduct(Simulator::Point p1, Simulator::Point p2, Simulator::Point p3)
+{
+  return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x);
+}
+
+bool isPointInTriangle(const Simulator::Point triangle[3], const Simulator::Point point)
+{
+  const float cross1 = crossProduct(triangle[0], triangle[1], point);
+  const float cross2 = crossProduct(triangle[1], triangle[2], point);
+  const float cross3 = crossProduct(triangle[2], triangle[0], point);
+
+  const bool hasNeg = (cross1 < 0) || (cross2 < 0) || (cross3 < 0);
+  const bool hasPos = (cross1 > 0) || (cross2 > 0) || (cross3 > 0);
+
+  return !(hasNeg && hasPos);
+}
+
 }
 
 SimulatorView::SimulatorView(QWidget* parent)
@@ -204,7 +221,18 @@ void SimulatorView::setSimulator(Simulator* value)
     value->setParent(this); // take ownership
   }
   m_simulator = value;
-  connect(m_simulator, &Simulator::tick, this, qOverload<>(&SimulatorView::update));
+  m_turnouts.clear();
+  if(m_simulator)
+  {
+    for(const auto& segment : m_simulator->trackSegments())
+    {
+      if(segment.type == Simulator::TrackSegment::Type::Turnout)
+      {
+        m_turnouts.emplace_back(Turnout{segment.index, {origin(segment), straightEnd(segment), curveEnd(segment)}});
+      }
+    }
+    connect(m_simulator, &Simulator::tick, this, qOverload<>(&SimulatorView::update));
+  }
   update();
 }
 
@@ -427,9 +455,13 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
 
 void SimulatorView::mousePressEvent(QMouseEvent* event)
 {
+  if(event->button() == Qt::LeftButton)
+  {
+    m_leftClickMousePos = event->pos();
+  }
   if(event->button() == Qt::RightButton)
   {
-    m_lastMousePos = event->pos();
+    m_rightMousePos = event->pos();
     setCursor(Qt::ClosedHandCursor);
   }
 }
@@ -438,18 +470,26 @@ void SimulatorView::mouseMoveEvent(QMouseEvent* event)
 {
   if(event->buttons() & Qt::RightButton)
   {
-    const auto diff = m_lastMousePos - event->pos();
+    const auto diff = m_rightMousePos - event->pos();
 
     m_cameraX += diff.x() / m_zoomLevel;
     m_cameraY += diff.y() / m_zoomLevel;
 
-    m_lastMousePos = event->pos();
+    m_rightMousePos = event->pos();
     updateProjection();
   }
 }
 
 void SimulatorView::mouseReleaseEvent(QMouseEvent* event)
 {
+  if(event->button() == Qt::LeftButton)
+  {
+    auto diff = m_leftClickMousePos - event->pos();
+    if(qAbs(diff.x()) <= 2 && qAbs(diff.y()) <= 2)
+    {
+      mouseLeftClick({m_cameraX + m_leftClickMousePos.x() / m_zoomLevel, m_cameraY + m_leftClickMousePos.y() / m_zoomLevel});
+    }
+  }
   if(event->button() == Qt::RightButton)
   {
     setCursor(Qt::ArrowCursor);
@@ -461,6 +501,22 @@ void SimulatorView::wheelEvent(QWheelEvent* event)
   const float zoomFactor = (event->angleDelta().y() < 0) ? 0.9f : 1.1f; // Zoom in or out
   m_zoomLevel = std::clamp(m_zoomLevel * zoomFactor, 0.1f, 10.0f);
   updateProjection();
+}
+
+void SimulatorView::mouseLeftClick(QPointF pos)
+{
+  const Simulator::Point point(pos.x(), pos.y());
+  for(const auto& turnout : m_turnouts)
+  {
+    if(isPointInTriangle(turnout.points, point))
+    {
+      auto& segment = m_simulator->trackSegments()[turnout.segmentIndex];
+      assert(segment.type == Simulator::TrackSegment::Type::Turnout);
+      segment.turnout.thrown = !segment.turnout.thrown;
+      update();
+      break;
+    }
+  }
 }
 
 void SimulatorView::updateProjection()

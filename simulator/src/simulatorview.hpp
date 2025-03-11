@@ -59,13 +59,24 @@ protected:
   void wheelEvent(QWheelEvent *event) override;
 
 private:
-  Simulator *m_simulator = nullptr;
+  struct Turnout
+  {
+    size_t segmentIndex;
+    Simulator::Point points[3];
+  };
+  using Turnouts = std::vector<Turnout>;
+
+  Simulator* m_simulator = nullptr;
+  Turnouts m_turnouts;
   float m_cameraX = 0.0f;
   float m_cameraY = 0.0f;
   float m_zoomLevel = 1.0f;
-  QPoint m_lastMousePos;
+  QPoint m_leftClickMousePos;
+  QPoint m_rightMousePos;
   bool m_showTrackOccupancy = true;
   size_t m_trainIndex = 0;
+
+  void mouseLeftClick(QPointF pos);
 
   void drawTracks();
   void drawTrains();

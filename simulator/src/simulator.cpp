@@ -185,6 +185,8 @@ Color colorFromString(const QString& name)
   return Color::Magenta;
 }
 
+}
+
 Simulator::Point origin(const Simulator::TrackSegment& segment)
 {
   if(segment.type == Simulator::TrackSegment::Type::Curve)
@@ -232,6 +234,9 @@ Simulator::Point end(const Simulator::TrackSegment& segment)
   }
   return straightEnd(segment);
 }
+
+namespace
+{
 
 bool pointsClose(Simulator::Point a, Simulator::Point b)
 {
@@ -313,6 +318,19 @@ void Simulator::setPowerOn(bool value)
     m_powerOn = value;
     send(SimulatorProtocol::Power(m_powerOn));
     emit powerOnChanged(m_powerOn);
+  }
+}
+
+void Simulator::setTurnoutThrow(size_t index, bool thrown)
+{
+  auto& turnout = m_trackSegments[index].turnout;
+  if(turnout.thrown != thrown)
+  {
+    turnout.thrown = thrown;
+    if(turnout.address)
+    {
+      send(SimulatorProtocol::AccessorySetState(0, *turnout.address, turnout.thrown ? 1 : 0));
+    }
   }
 }
 

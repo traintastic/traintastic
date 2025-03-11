@@ -206,6 +206,8 @@ public:
   bool powerOn() const;
   void setPowerOn(bool value);
 
+  void setTurnoutThrow(size_t index, bool thrown);
+
 signals:
   void tick();
   void powerOnChanged(bool value);
@@ -249,5 +251,10 @@ constexpr Simulator::Point operator/(const Simulator::Point divided, const int d
 {
   return {divided.x / divisor, divided.y / divisor};
 }
+
+Simulator::Point origin(const Simulator::TrackSegment& segment);
+Simulator::Point straightEnd(const Simulator::TrackSegment& segment);
+Simulator::Point curveEnd(const Simulator::TrackSegment& segment);
+Simulator::Point end(const Simulator::TrackSegment& segment);
 
 #endif
