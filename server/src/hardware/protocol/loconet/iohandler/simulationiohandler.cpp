@@ -152,6 +152,14 @@ void SimulationIOHandler::start()
           }
         }
       };
+    m_simulator->onAccessorySetState =
+      [this](uint16_t /*channel*/, uint16_t address, uint8_t state)
+      {
+        if(inRange(address, Kernel::accessoryOutputAddressMin, Kernel::accessoryOutputAddressMax))
+        {
+          m_kernel.receive(SwitchRequest(address, state == 2, state != 0));
+        }
+      };
     m_simulator->onSensorChanged =
       [this](uint16_t /*channel*/, uint16_t address, bool value)
       {
