@@ -329,7 +329,7 @@ void Simulator::setTurnoutThrow(size_t index, bool thrown)
     turnout.thrown = thrown;
     if(turnout.address)
     {
-      send(SimulatorProtocol::AccessorySetState(0, *turnout.address, turnout.thrown ? 1 : 0));
+      send(SimulatorProtocol::AccessorySetState(0, *turnout.address, turnout.thrown ? 1 : 2));
     }
   }
 }

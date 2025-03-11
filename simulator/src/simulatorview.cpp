@@ -512,7 +512,7 @@ void SimulatorView::mouseLeftClick(QPointF pos)
     {
       auto& segment = m_simulator->trackSegments()[turnout.segmentIndex];
       assert(segment.type == Simulator::TrackSegment::Type::Turnout);
-      segment.turnout.thrown = !segment.turnout.thrown;
+      m_simulator->setTurnoutThrow(segment.index, !segment.turnout.thrown);
       update();
       break;
     }
