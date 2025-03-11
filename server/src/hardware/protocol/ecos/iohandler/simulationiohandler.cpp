@@ -176,7 +176,7 @@ void SimulationIOHandler::start()
             if(s88.id == m_simulation.s88.back().id && s88.id < ObjectId::ecosDetector - 1)
             {
               // create a new 16 port module:
-              m_simulation.s88.emplace_back(Simulation::S88({s88.id + 1}, 16));
+              m_simulation.s88.emplace_back(Simulation::S88{{static_cast<uint16_t>(s88.id + 1)}, 16});
               // FIXME: reply create event?
             }
           }
