@@ -846,7 +846,7 @@ void Simulator::updateVehiclePosition(RailVehicle::Face& face, const float speed
       else
       {
         const float rotation = segment.curve.angle < 0 ? segment.rotation + 180 : segment.rotation;
-        const float cx = segment.x + segment.curve.radius * sinf(qDegreesToRadians(rotation));
+        const float cx = segment.x - segment.curve.radius * sinf(qDegreesToRadians(rotation));
         const float cy = segment.y + segment.curve.radius * cosf(qDegreesToRadians(rotation));
 
         face.position.x = cx + segment.curve.radius * sinf(qDegreesToRadians(angle));
