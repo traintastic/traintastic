@@ -230,7 +230,7 @@ private:
   void loadTrains(const QJsonArray& trains);
 
   void updateTrainPositions();
-  void updateVehiclePosition(RailVehicle::Face& face, float speed);
+  bool updateVehiclePosition(RailVehicle::Face& face, float speed);
   void updateSensors();
 
   void send(const SimulatorProtocol::Message& message);

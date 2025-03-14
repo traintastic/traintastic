@@ -20,6 +20,7 @@
  */
 
 #include "simulator.hpp"
+#include <ranges>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QFile>
@@ -759,61 +760,92 @@ void Simulator::updateTrainPositions()
       train.speedOrDirectionChanged = false;
     }
 
-    const float speed = m_powerOn ? ((train.direction == Direction::Forward) ? train.speed : -train.speed) : 0.0f;
+    const float speed = m_powerOn ? train.speed : 0.0f;
 
-    for(auto& vehicle : train.vehicles)
+    if(train.direction == Direction::Forward)
     {
-      updateVehiclePosition(vehicle.front, speed);
-      updateVehiclePosition(vehicle.rear, speed);
+      for(auto& vehicle : train.vehicles)
+      {
+        if(!updateVehiclePosition(vehicle.front, speed) || !updateVehiclePosition(vehicle.rear, speed))
+        {
+          train.speed = 0.0f;
+          train.speedOrDirectionChanged = true;
+          break;
+        }
+      }
+    }
+    else if(train.direction == Direction::Reverse)
+    {
+      for(auto& vehicle : train.vehicles | std::views::reverse)
+      {
+        if(!updateVehiclePosition(vehicle.rear, -speed) || !updateVehiclePosition(vehicle.front, -speed))
+        {
+          train.speed = 0.0f;
+          train.speedOrDirectionChanged = true;
+          break;
+        }
+      }
     }
   }
 }
 
-void Simulator::updateVehiclePosition(RailVehicle::Face& face, const float speed)
+bool Simulator::updateVehiclePosition(RailVehicle::Face& face, const float speed)
 {
-  face.distance += face.segmentDirectionInverted ? -speed : speed;
+  float distance = face.distance + (face.segmentDirectionInverted ? -speed : speed);
 
   // Move to next segment when reaching the end:
   {
     auto& segment = m_trackSegments[face.segmentIndex];
 
-    if(face.distance >= segment.length())
+    if(distance >= segment.length())
     {
+      const auto nextSegmentIndex = segment.getNextSegmentIndex(true);
+      if(nextSegmentIndex == invalidIndex)
+      {
+        return false; // no next segment
+      }
+
       assert(segment.occupied != 0);
       segment.occupied--;
 
-      face.segmentIndex = segment.getNextSegmentIndex(true);
+      face.segmentIndex = nextSegmentIndex;
       auto& nextSegment = m_trackSegments[face.segmentIndex];
 
       if(nextSegment.nextSegmentIndex[0] == segment.index)
       {
-        face.distance -= segment.length();
+        distance -= segment.length();
         face.segmentDirectionInverted = (speed < 0);
       }
       else
       {
-        face.distance = (nextSegment.length() + segment.length()) - face.distance;
+        distance = (nextSegment.length() + segment.length()) - distance;
         face.segmentDirectionInverted = (speed > 0);
       }
 
       nextSegment.occupied++;
     }
-    else if(face.distance < 0)
+    else if(distance < 0)
     {
+      const auto nextSegmentIndex = segment.getNextSegmentIndex(false);
+      if(nextSegmentIndex == invalidIndex)
+      {
+        return false; // no next segment
+      }
+
       assert(segment.occupied != 0);
       segment.occupied--;
 
-      face.segmentIndex = segment.getNextSegmentIndex(false);
+      face.segmentIndex = nextSegmentIndex;
       auto& nextSegment = m_trackSegments[face.segmentIndex];
 
       if(nextSegment.nextSegmentIndex[0] == segment.index)
       {
-        face.distance = -face.distance;
+        distance = -distance;
         face.segmentDirectionInverted = (speed < 0);
       }
       else
       {
-        face.distance += nextSegment.length();
+        distance += nextSegment.length();
         face.segmentDirectionInverted = (speed > 0);
       }
 
@@ -827,12 +859,12 @@ void Simulator::updateVehiclePosition(RailVehicle::Face& face, const float speed
 
     if(segment.type == TrackSegment::Straight || (segment.type == TrackSegment::Turnout && !segment.turnout.thrown))
     {
-      face.position.x = segment.x + face.distance * cosf(qDegreesToRadians(segment.rotation));
-      face.position.y = segment.y + face.distance * sinf(qDegreesToRadians(segment.rotation));
+      face.position.x = segment.x + distance * cosf(qDegreesToRadians(segment.rotation));
+      face.position.y = segment.y + distance * sinf(qDegreesToRadians(segment.rotation));
     }
     else if(segment.type == TrackSegment::Curve || (segment.type == TrackSegment::Turnout && segment.turnout.thrown))
     {
-      float angle = segment.rotation + (face.distance / segment.curve.length) * segment.curve.angle;
+      float angle = segment.rotation + (distance / segment.curve.length) * segment.curve.angle;
       if(segment.curve.angle < 0)
       {
         angle += 180;
@@ -854,6 +886,10 @@ void Simulator::updateVehiclePosition(RailVehicle::Face& face, const float speed
       }
     }
   }
+
+  face.distance = distance;
+
+  return true;
 }
 
 void Simulator::updateSensors()
