@@ -368,7 +368,7 @@ void SimulatorView::drawTrains()
 {
   assert(m_simulator);
 
-  static constexpr float trainWidth = 10.0f;
+  const float trainWidth = m_simulator->trainWidth();
 
   for(const auto& train : m_simulator->trains())
   {

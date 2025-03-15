@@ -367,6 +367,10 @@ void Simulator::load(const QString& filename)
   {
     loadTrains(root["trains"].toArray({}));
   }
+  if(root.contains("train_width"))
+  {
+    m_trainWidth = root["train_width"].toDouble();
+  }
 }
 
 void Simulator::loadTrackPlan(const QJsonArray& trackPlan)

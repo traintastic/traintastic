@@ -203,6 +203,11 @@ public:
     return m_trains;
   }
 
+  float trainWidth() const
+  {
+    return m_trainWidth;
+  }
+
   bool powerOn() const;
   void setPowerOn(bool value);
 
@@ -223,6 +228,7 @@ private:
   std::vector<TrackSegment> m_trackSegments;
   std::unordered_map<QString, size_t> m_trackSegmentId;
   std::vector<Train> m_trains;
+  float m_trainWidth = 10.0f;
   bool m_powerOn = false;
 
   void load(const QString& filename);
