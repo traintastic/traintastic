@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022,2024 Reinder Feenstra
+ * Copyright (C) 2019-2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -492,7 +492,7 @@ struct LanXSetTurnout : LanX
 
   inline bool activate() const
   {
-    return db2 & db2Queue;
+    return db2 & db2Activate;
   }
 
   inline bool queue() const
