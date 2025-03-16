@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,8 +21,10 @@
  */
 
 #include "simulationiohandler.hpp"
+#include <traintastic/enum/decoderprotocol.hpp>
 #include "../clientkernel.hpp"
 #include "../messages.hpp"
+#include "../../../../utils/inrange.hpp"
 
 namespace Z21 {
 
@@ -36,6 +38,89 @@ static std::shared_ptr<std::byte[]> copy(const Message& message)
 SimulationIOHandler::SimulationIOHandler(Kernel& kernel)
   : IOHandler(kernel)
 {
+}
+
+void SimulationIOHandler::setSimulator(std::string hostname, uint16_t port)
+{
+  assert(!m_simulator);
+  m_simulator = std::make_unique<SimulatorIOHandler>(m_kernel.ioContext(), std::move(hostname), port);
+}
+
+void SimulationIOHandler::start()
+{
+  if(m_simulator)
+  {
+    m_simulator->onPower =
+      [this](bool powerOn)
+      {
+        if(powerOn)
+        {
+          reply(LanXBCTrackPowerOn());
+        }
+        else
+        {
+          reply(LanXBCTrackPowerOff());
+        }
+      };
+    m_simulator->onLocomotiveSpeedDirection =
+      [this](DecoderProtocol protocol, uint16_t address, uint8_t speed, Direction direction, bool emergencyStop)
+      {
+        if(protocol != DecoderProtocol::None && protocol != DecoderProtocol::DCCShort && protocol != DecoderProtocol::DCCLong)
+        {
+          return;
+        }
+
+        if(auto it = m_decoderCache.find(address); it != m_decoderCache.end())
+        {
+          auto& locoInfo = it->second;
+          if(emergencyStop)
+          {
+            locoInfo.setEmergencyStop();
+          }
+          else
+          {
+            locoInfo.setSpeedStep((speed * locoInfo.speedSteps()) / std::numeric_limits<uint8_t>::max());
+          }
+          locoInfo.setDirection(direction);
+          locoInfo.setBusy(true);
+          locoInfo.updateChecksum();
+          reply(locoInfo);
+        }
+      };
+    m_simulator->onAccessorySetState =
+      [this](uint16_t /*channel*/, uint16_t address, uint8_t state)
+      {
+        if(inRange<uint32_t>(address, ClientKernel::outputAddressMin, ClientKernel::outputAddressMax) &&
+            (m_broadcastFlags & BroadcastFlags::PowerLocoTurnoutChanges) == BroadcastFlags::PowerLocoTurnoutChanges)
+        {
+          reply(LanXTurnoutInfo(address, state == 2, state != 1 && state != 2));
+        }
+      };
+    m_simulator->onSensorChanged =
+      [this](uint16_t channel, uint16_t address, bool value)
+      {
+        if(channel == 0 && inRange(address, ClientKernel::rbusAddressMin, ClientKernel::rbusAddressMax) &&
+            (m_broadcastFlags & BroadcastFlags::RBusChanges) == BroadcastFlags::RBusChanges)
+        {
+          m_rbusFeedback[address] = value;
+
+          LanRMBusDataChanged message((address - 1) / LanRMBusDataChanged::feedbackStatusCount);
+          const uint16_t startAddress = 1 + message.groupIndex * LanRMBusDataChanged::feedbackStatusCount;
+          for(uint16_t i = 0; i < LanRMBusDataChanged::feedbackStatusCount; ++i)
+          {
+            auto it = m_rbusFeedback.find(startAddress + i);
+            message.setFeedbackStatus(i, it != m_rbusFeedback.end() && it->second);
+          }
+          reply(message);
+        }
+        else if(channel == 1 && inRange(address, ClientKernel::loconetAddressMin, ClientKernel::loconetAddressMax) &&
+            (m_broadcastFlags & BroadcastFlags::LocoNetDetector) == BroadcastFlags::LocoNetDetector)
+        {
+          reply(LanLocoNetDetectorOccupancyDetector(address, value));
+        }
+      };
+    m_simulator->start();
+  }
 }
 
 bool SimulationIOHandler::send(const Message& message)
@@ -69,6 +154,10 @@ bool SimulationIOHandler::send(const Message& message)
             const bool changed = !m_trackPowerOn || m_emergencyStop;
             m_trackPowerOn = true;
             m_emergencyStop = false;
+            if(m_simulator)
+            {
+              m_simulator->sendPower(m_trackPowerOn);
+            }
             reply(LanXBCTrackPowerOn());
             if(changed && (m_broadcastFlags & BroadcastFlags::SystemStatusChanges) == BroadcastFlags::SystemStatusChanges)
             {
@@ -79,6 +168,10 @@ bool SimulationIOHandler::send(const Message& message)
           {
             const bool changed = m_trackPowerOn;
             m_trackPowerOn = false;
+            if(m_simulator)
+            {
+              m_simulator->sendPower(m_trackPowerOn);
+            }
             reply(LanXBCTrackPowerOff());
             if(changed && (m_broadcastFlags & BroadcastFlags::SystemStatusChanges) == BroadcastFlags::SystemStatusChanges)
             {
@@ -145,8 +238,18 @@ bool SimulationIOHandler::send(const Message& message)
             else
               info.setSpeedStep(setLocoDrive.speedStep());
 
-            info.setBusy(true);
+            info.setBusy(false);
             info.updateChecksum();
+
+            if(m_simulator)
+            {
+              m_simulator->sendLocomotiveSpeedDirection(
+                info.isLongAddress() ? DecoderProtocol::DCCLong : DecoderProtocol::DCCShort,
+                info.address(),
+                info.isEmergencyStop() ? 0 : info.speedStep() * std::numeric_limits<uint8_t>::max() / info.speedSteps(),
+                info.direction(),
+                info.isEmergencyStop());
+            }
 
             reply(info);
           }
@@ -183,7 +286,7 @@ bool SimulationIOHandler::send(const Message& message)
             }
             info.setFunction(setLocoFunction.functionIndex(), val);
 
-            info.setBusy(true);
+            info.setBusy(false);
             info.updateChecksum();
 
             reply(info);
@@ -203,6 +306,12 @@ bool SimulationIOHandler::send(const Message& message)
           if(message.dataLen() == sizeof(LanXSetTurnout))
           {
             const auto& setTurnout = static_cast<const LanXSetTurnout&>(message);
+
+            if(m_simulator)
+            {
+              m_simulator->sendAccessorySetState(0, setTurnout.address(), setTurnout.activate() ? (setTurnout.port() ? 2 : 1) : 0);
+            }
+
             if((m_broadcastFlags & BroadcastFlags::PowerLocoTurnoutChanges) == BroadcastFlags::PowerLocoTurnoutChanges)
             {
               // Client has subscribed to turnout changes

@@ -36,6 +36,7 @@
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
+#include "../../simulator/interfacesimulatorsettings.hpp"
 #include "../../utils/category.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
@@ -59,9 +60,11 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   , hardwareType{this, "hardware_type", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , serialNumber{this, "serial_number", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , firmwareVersion{this, "firmware_version", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , simulator{this, "simulator", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "Z21";
   z21.setValueInternal(std::make_shared<Z21::ClientSettings>(*this, z21.name()));
+  simulator.setValueInternal(std::make_shared<InterfaceSimulatorSettings>(*this, simulator.name()));
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, !online);
@@ -88,6 +91,8 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
 
   Attributes::addCategory(firmwareVersion, Category::info);
   m_interfaceItems.insertBefore(firmwareVersion, notes);
+
+  m_interfaceItems.insertBefore(simulator, notes);
 }
 
 std::span<const DecoderProtocol> Z21Interface::decoderProtocols() const
@@ -174,7 +179,14 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
     try
     {
       if(simulation)
+      {
         m_kernel = Z21::ClientKernel::create<Z21::SimulationIOHandler>(id.value(), z21->config());
+
+        if(simulator->useSimulator)
+        {
+          m_kernel->ioHandler<Z21::SimulationIOHandler>().setSimulator(simulator->hostname, simulator->port);
+        }
+      }
       else
         m_kernel = Z21::ClientKernel::create<Z21::UDPClientIOHandler>(id.value(), z21->config(), hostname.value(), port.value());
 
@@ -271,8 +283,6 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
       {
         m_kernel->trackPowerOff(); // Stop by powering off
       }
-
-      Attributes::setEnabled({hostname, port}, false);
     }
     catch(const LogMessageException& e)
     {
@@ -283,8 +293,6 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
   }
   else if(m_kernel && !value)
   {
-    Attributes::setEnabled({hostname, port}, true);
-
     m_z21PropertyChanged.disconnect();
 
     m_kernel->stop();
@@ -318,25 +326,32 @@ void Z21Interface::worldEvent(WorldState state, WorldEvent event)
 {
   Interface::worldEvent(state, event);
 
-  if(m_kernel)
+  // Avoid to set multiple power states in rapid succession
+  switch(event)
   {
-    // Avoid to set multiple power states in rapid succession
-    switch(event)
-    {
-      case WorldEvent::PowerOff:
+    case WorldEvent::PowerOff:
+      if(m_kernel)
       {
         m_kernel->trackPowerOff();
-        break;
       }
-      case WorldEvent::PowerOn:
+      break;
+
+    case WorldEvent::PowerOn:
+      if(m_kernel)
       {
         if(contains(state, WorldState::Run))
+        {
           m_kernel->trackPowerOn();
+        }
         else
+        {
           m_kernel->emergencyStop(); // In Z21 E-Stop means power on but not running
-        break;
+        }
       }
-      case WorldEvent::Stop:
+      break;
+
+    case WorldEvent::Stop:
+      if(m_kernel)
       {
         if(contains(state, WorldState::PowerOn))
         {
@@ -348,16 +363,33 @@ void Z21Interface::worldEvent(WorldState state, WorldEvent event)
           // This Stops everything by removing power
           m_kernel->trackPowerOff();
         }
-        break;
       }
-      case WorldEvent::Run:
+      break;
+
+    case WorldEvent::Run:
+      if(m_kernel && contains(state, WorldState::PowerOn))
       {
-        if(contains(state, WorldState::PowerOn))
-          m_kernel->trackPowerOn();
-        break;
+        m_kernel->trackPowerOn();
       }
-      default:
-        break;
-    }
+      break;
+
+    case WorldEvent::EditEnabled:
+    case WorldEvent::EditDisabled:
+      updateEnabled();
+      break;
+
+    default:
+      break;
   }
+}
+
+void Z21Interface::onlineChanged(bool /*value*/)
+{
+  updateEnabled();
+}
+
+void Z21Interface::updateEnabled()
+{
+  Attributes::setEnabled({hostname, port}, !online);
+  simulator->updateEnabled(contains(m_world.state, WorldState::Edit), online);
 }

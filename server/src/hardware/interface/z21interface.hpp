@@ -29,6 +29,8 @@
 #include "../output/outputcontroller.hpp"
 #include "../../core/objectproperty.hpp"
 
+class InterfaceSimulatorSettings;
+
 namespace Z21 {
 class ClientKernel;
 class ClientSettings;
@@ -54,8 +56,9 @@ class Z21Interface final
     void addToWorld() final;
     void destroying() final;
     void worldEvent(WorldState state, WorldEvent event) final;
+    void onlineChanged(bool value) final;
 
-    void updateVisible();
+    void updateEnabled();
 
   protected:
     bool setOnline(bool& value, bool simulation) final;
@@ -67,6 +70,7 @@ class Z21Interface final
     Property<std::string> hardwareType;
     Property<std::string> serialNumber;
     Property<std::string> firmwareVersion;
+    ObjectProperty<InterfaceSimulatorSettings> simulator;
 
     Z21Interface(World& world, std::string_view _id);
 

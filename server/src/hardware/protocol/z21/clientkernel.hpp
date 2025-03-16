@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -215,6 +215,19 @@ public:
       std::unique_ptr<ClientKernel> kernel{new ClientKernel(std::move(logId_), config, isSimulation<IOHandlerType>())};
       kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
       return kernel;
+    }
+
+    /**
+     * @brief Access the IO handler
+     *
+     * @return The IO handler
+     * @note The IO handler runs in the kernel's IO context, not all functions can be called safely!
+     */
+    template<class T>
+    T& ioHandler()
+    {
+      assert(dynamic_cast<T*>(m_ioHandler.get()));
+      return static_cast<T&>(*m_ioHandler);
     }
 
     /**

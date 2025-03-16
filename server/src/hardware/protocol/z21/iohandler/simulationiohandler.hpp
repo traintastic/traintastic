@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <array>
 #include <unordered_map>
 #include "../messages.hpp"
+#include "../../../../simulator/simulatoriohandler.hpp"
 
 namespace Z21 {
 
@@ -44,6 +45,8 @@ class SimulationIOHandler final : public IOHandler
     BroadcastFlags m_broadcastFlags = BroadcastFlags::None;
 
     std::unordered_map<uint16_t, LanXLocoInfo> m_decoderCache;
+    std::unordered_map<uint16_t, bool> m_rbusFeedback;
+    std::unique_ptr<SimulatorIOHandler> m_simulator;
 
     void reply(const Message& message);
     void replyLanSystemStateDataChanged();
@@ -51,7 +54,9 @@ class SimulationIOHandler final : public IOHandler
   public:
     SimulationIOHandler(Kernel& kernel);
 
-    void start() final {}
+    void setSimulator(std::string hostname, uint16_t port);
+
+    void start() final;
     void stop() final {}
 
     bool send(const Message& message) final;
