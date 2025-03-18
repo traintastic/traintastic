@@ -92,6 +92,7 @@ void DecoderFunction::updateValue(bool newValue)
 {
     value.setValueInternal(newValue);
     checkTimer();
+    m_decoder.changed(DecoderChangeFlags::FunctionValue, number, true);
 }
 
 void DecoderFunction::loaded()
@@ -147,6 +148,4 @@ void DecoderFunction::checkTimer()
     m_scheduledTimeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeoutMillis.value());
   else
     m_scheduledTimeout = {};
-
-  m_decoder.checkLatchedTimer(number);
 }
