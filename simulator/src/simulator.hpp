@@ -23,6 +23,7 @@
 #define TRAINTASTIC_SIMULATOR_SIMULATOR_HPP
 
 #include <QObject>
+#include <QBasicTimer>
 #include <list>
 #include <optional>
 #include <traintastic/enum/decoderprotocol.hpp>
@@ -218,7 +219,7 @@ signals:
   void powerOnChanged(bool value);
 
 protected:
-  void timerEvent(QTimerEvent* event) override;
+  void timerEvent(QTimerEvent *ev) override;
 
 private:
   static constexpr uint fps = 30;
@@ -228,6 +229,8 @@ private:
   std::vector<TrackSegment> m_trackSegments;
   std::unordered_map<QString, size_t> m_trackSegmentId;
   std::vector<Train> m_trains;
+
+  QBasicTimer m_tickTimer;
   float m_trainWidth = 10.0f;
   bool m_powerOn = false;
 
