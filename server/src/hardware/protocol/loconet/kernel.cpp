@@ -48,16 +48,16 @@ static constexpr uint8_t multiplierFreeze = 0;
 
 static void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t speed)
 {
-  decoder->emergencyStop.setValueInternal(speed == SPEED_ESTOP);
+  decoder->updateEmergencyStop(speed == SPEED_ESTOP);
 
   if(speed == SPEED_STOP || speed == SPEED_ESTOP)
-    decoder->throttle.setValueInternal(Decoder::throttleStop);
+    decoder->updateThrottle(Decoder::throttleStop);
   else
   {
     speed--; // decrement one for ESTOP: 2..127 -> 1..126
     const auto currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), SPEED_MAX - 1);
     if(currentStep != speed) // only update trottle if it is a different step
-      decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed, SPEED_MAX - 1));
+      decoder->updateThrottle(Decoder::speedStepToThrottle<uint8_t>(speed, SPEED_MAX - 1));
   }
 }
 
@@ -420,7 +420,7 @@ void Kernel::receive(const Message& message)
                 [this, address=slot->address, direction=locoDirF.direction()]()
                 {
                   if(auto decoder = getDecoder(address))
-                    decoder->direction.setValueInternal(direction);
+                    decoder->updateDirection(direction);
                 });
             }
 
@@ -550,7 +550,7 @@ void Kernel::receive(const Message& message)
               if(auto decoder = getDecoder(address))
               {
                 updateDecoderSpeed(decoder, speed);
-                decoder->direction.setValueInternal(direction);
+                decoder->updateDirection(direction);
               }
             });
         }
@@ -736,9 +736,9 @@ void Kernel::receive(const Message& message)
                     {
                       if(auto decoder = getDecoder(address))
                       {
-                        decoder->setFunctionValue(12, f12);
-                        decoder->setFunctionValue(20, f20);
-                        decoder->setFunctionValue(28, f28);
+                        decoder->updateFunctionValue(12, f12);
+                        decoder->updateFunctionValue(20, f20);
+                        decoder->updateFunctionValue(28, f28);
                       }
                     });
                 }
@@ -1548,7 +1548,7 @@ bool Kernel::updateFunctions(LocoSlot& slot, const T& message)
     {
       if(auto decoder = getDecoder(address))
         for(uint8_t i = First; i <= Last; ++i)
-          decoder->setFunctionValue(i, message.f(i));
+          decoder->updateFunctionValue(i, message.f(i));
     });
 
   return changed;

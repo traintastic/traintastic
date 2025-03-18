@@ -40,6 +40,7 @@ enum class AttributeName : uint16_t
   DisplayName = 10,
   AliasKeys = 11,
   AliasValues = 12,
+  Step = 13,
   Unit = 14,
 };
 
