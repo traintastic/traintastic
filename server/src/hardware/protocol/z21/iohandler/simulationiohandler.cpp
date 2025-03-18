@@ -53,6 +53,8 @@ void SimulationIOHandler::start()
     m_simulator->onPower =
       [this](bool powerOn)
       {
+        const bool changed = m_trackPowerOn != powerOn;
+        m_trackPowerOn = powerOn;
         if(powerOn)
         {
           reply(LanXBCTrackPowerOn());
@@ -60,6 +62,10 @@ void SimulationIOHandler::start()
         else
         {
           reply(LanXBCTrackPowerOff());
+        }
+        if(changed && (m_broadcastFlags & BroadcastFlags::SystemStatusChanges) == BroadcastFlags::SystemStatusChanges)
+        {
+          replyLanSystemStateDataChanged();
         }
       };
     m_simulator->onLocomotiveSpeedDirection =
