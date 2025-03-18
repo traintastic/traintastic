@@ -257,19 +257,19 @@ void ClientKernel::receive(const Message& message)
                     if(has(changes, DecoderChangeFlags::EmergencyStop))
                     {
                       m_isUpdatingDecoderFromKernel = true;
-                      decoder->emergencyStop = isEStop;
+                      decoder->updateEmergencyStop(isEStop);
                     }
 
                     if(has(changes, DecoderChangeFlags::Direction))
                     {
                       m_isUpdatingDecoderFromKernel = true;
-                      decoder->direction = dir;
+                      decoder->updateDirection(dir);
                     }
 
                     if(has(changes, DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps))
                     {
                       m_isUpdatingDecoderFromKernel = true;
-                      decoder->throttle = throttle;
+                      decoder->updateThrottle(throttle);
                     }
 
                     //Function get always updated because we do not store a copy in cache
@@ -277,7 +277,7 @@ void ClientKernel::receive(const Message& message)
                     for(int i = 0; i <= functionIndexMax; i++)
                     {
                       m_isUpdatingDecoderFromKernel = true;
-                      decoder->setFunctionValue(i, val[i]);
+                      decoder->updateFunctionValue(i, val[i]);
                     }
 
                     //Reset flag guard at end

@@ -272,11 +272,40 @@ bool Decoder::getFunctionValue(const std::shared_ptr<const DecoderFunction>& fun
   return function->value;
 }
 
-void Decoder::setFunctionValue(uint32_t number, bool value)
+void Decoder::updateFunctionValue(uint32_t number, bool value)
 {
   const auto& f = getFunction(number);
   if(f && getFunctionValue(f) != value)
     f->updateValue(value);
+}
+
+void Decoder::updateDirection(Direction newDirection)
+{
+    if(newDirection == direction || newDirection == Direction::Unknown)
+        return;
+
+    direction.setValueInternal(newDirection);
+    changed(DecoderChangeFlags::Direction, 0, true);
+}
+
+void Decoder::updateThrottle(float newThrottle)
+{
+    if(almostZero(newThrottle - throttle))
+        return;
+
+    throttle.setValueInternal(newThrottle);
+    changed(DecoderChangeFlags::Throttle, 0 , true);
+    updateEditable();
+}
+
+void Decoder::updateEmergencyStop(bool newEmergencyStop)
+{
+    if(newEmergencyStop == emergencyStop)
+        return;
+
+    emergencyStop.setValueInternal(newEmergencyStop);
+    changed(DecoderChangeFlags::EmergencyStop, 0, true);
+    updateEditable();
 }
 
 bool Decoder::acquire(Throttle& driver, bool steal)
@@ -444,9 +473,9 @@ void Decoder::updateEditable(bool editable)
   Attributes::setEnabled(speedSteps, stopped && speedSteps.getSpanAttribute<uint8_t>(AttributeName::Values).length() > 1);
 }
 
-void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)
+void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber, bool fromInterface)
 {
-  if(interface)
+  if(interface && !fromInterface)
     interface->decoderChanged(*this, changes, functionNumber);
   decoderChanged(*this, changes, functionNumber);
 

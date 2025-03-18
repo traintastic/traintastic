@@ -238,7 +238,7 @@ void Kernel::receive(const Message& message)
                 [this, protocol=proto, address=addr]()
                 {
                   if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
-                    decoder->emergencyStop.setValueInternal(true);
+                    decoder->updateEmergencyStop(true);
                 });
             }
           }
@@ -281,8 +281,8 @@ void Kernel::receive(const Message& message)
               {
                 if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
                 {
-                  decoder->emergencyStop.setValueInternal(false);
-                  decoder->throttle.setValueInternal(throttle);
+                  decoder->updateEmergencyStop(false);
+                  decoder->updateThrottle(throttle);
                 }
               });
           }
@@ -319,7 +319,7 @@ void Kernel::receive(const Message& message)
               [this, protocol=proto, address=addr, direction]()
               {
                 if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
-                  decoder->direction.setValueInternal(direction);
+                  decoder->updateDirection(direction);
               });
           }
         }
@@ -339,7 +339,7 @@ void Kernel::receive(const Message& message)
               [this, protocol=proto, address=addr, number=locomotiveFunction.number(), value=locomotiveFunction.isOn()]()
               {
                 if(const auto& decoder = m_decoderController->getDecoder(protocol, address))
-                  decoder->setFunctionValue(number, value);
+                  decoder->updateFunctionValue(number, value);
               });
           }
         }

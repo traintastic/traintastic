@@ -77,7 +77,7 @@ class Decoder : public IdObject
 
     void updateEditable();
     void updateEditable(bool editable);
-    void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);
+    void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0, bool fromInterface = false);
 
     void checkLatchedTimer(uint32_t functionNumber);
 
@@ -142,7 +142,12 @@ public:
     const std::shared_ptr<DecoderFunction>& getFunction(DecoderFunctionFunction function);
     bool getFunctionValue(uint32_t number) const;
     bool getFunctionValue(const std::shared_ptr<const DecoderFunction>& function) const;
-    void setFunctionValue(uint32_t number, bool value);
+
+    // Methods for changes coming from interface kernel
+    void updateFunctionValue(uint32_t number, bool value);
+    void updateDirection(Direction newDirection);
+    void updateThrottle(float newThrottle);
+    void updateEmergencyStop(bool newEmergencyStop);
 
     bool acquire(Throttle& driver, bool steal = false);
     void release(Throttle& driver);
