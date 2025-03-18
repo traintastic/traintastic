@@ -46,12 +46,9 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
     }},
   function{this, "function", DecoderFunctionFunction::Generic, PropertyFlags::ReadWrite | PropertyFlags::Store},
   value{this, "value", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
-    [this](bool newValue)
+    [this](bool /*newValue*/)
     {
-      if(hasTimeout() && newValue)
-        m_scheduledTimeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeoutMillis.value());
-      else
-        m_scheduledTimeout = {};
+      checkTimer();
       m_decoder.changed(DecoderChangeFlags::FunctionValue, number);
     }},
   timeoutMillis{this, "timeout_milliseconds", 0, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
@@ -89,6 +86,12 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
 std::string DecoderFunction::getObjectId() const
 {
   return m_decoder.functions->getObjectId().append(".").append(m_decoder.functions->items.name()).append(".f").append(std::to_string(number.value()));
+}
+
+void DecoderFunction::updateValue(bool newValue)
+{
+    value.setValueInternal(newValue);
+    checkTimer();
 }
 
 void DecoderFunction::loaded()
@@ -136,4 +139,14 @@ void DecoderFunction::typeChanged()
   bool momentaryOrHold = (type == DecoderFunctionType::Momentary || type == DecoderFunctionType::Hold);
   Attributes::setEnabled(timeoutMillis, editable);
   Attributes::setVisible(timeoutMillis, momentaryOrHold);
+}
+
+void DecoderFunction::checkTimer()
+{
+  if(hasTimeout() && value)
+    m_scheduledTimeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeoutMillis.value());
+  else
+    m_scheduledTimeout = {};
+
+  m_decoder.checkLatchedTimer(number);
 }

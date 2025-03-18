@@ -276,7 +276,7 @@ void Decoder::setFunctionValue(uint32_t number, bool value)
 {
   const auto& f = getFunction(number);
   if(f && getFunctionValue(f) != value)
-    f->value.setValue(value);
+    f->updateValue(value);
 }
 
 bool Decoder::acquire(Throttle& driver, bool steal)
@@ -452,24 +452,29 @@ void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)
 
   if(has(changes, DecoderChangeFlags::FunctionValue))
   {
-    const auto& f = getFunction(functionNumber);
-    if(m_currentLatchedFunction == functionNumber && (!f || f->value == false))
+    checkLatchedTimer(functionNumber);
+  }
+}
+
+void Decoder::checkLatchedTimer(uint32_t functionNumber)
+{
+  const auto& f = getFunction(functionNumber);
+  if(m_currentLatchedFunction == functionNumber && (!f || f->value == false))
+  {
+    // Stop scheduled unlatch for current function, check other functions
+    rescheduleLatchedFunctionTimer();
+  }
+  else if(f && f->value == true && f->hasTimeout())
+  {
+    if(m_currentLatchedFunction == NO_FUNCTION)
     {
-      // Stop scheduled unlatch for current function, check other functions
+      // Schedule new timer
       rescheduleLatchedFunctionTimer();
     }
-    else if(f && f->value == true && f->hasTimeout())
+    else if(m_currentLatchedFunction != functionNumber && f->getScheduledTimeout() < m_functionLatchTimer.expiry())
     {
-      if(m_currentLatchedFunction == NO_FUNCTION)
-      {
-        // Schedule new timer
-        rescheduleLatchedFunctionTimer();
-      }
-      else if(m_currentLatchedFunction != functionNumber && f->getScheduledTimeout() < m_functionLatchTimer.expiry())
-      {
-        // If we timeout before current scheduled timer to this function
-        rescheduleLatchedFunctionTimer();
-      }
+      // If we timeout before current scheduled timer to this function
+      rescheduleLatchedFunctionTimer();
     }
   }
 }

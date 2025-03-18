@@ -39,6 +39,7 @@ class DecoderFunction : public Object
     static constexpr uint16_t timeoutMillisStep = 100;
 
     void typeChanged();
+    void checkTimer();
 
   protected:
     Decoder& m_decoder;
@@ -81,6 +82,8 @@ class DecoderFunction : public Object
       return (type == DecoderFunctionType::Momentary || type == DecoderFunctionType::Hold)
               && timeoutMillis.value() > 0;
     }
+
+    void updateValue(bool newValue);
 };
 
 #endif

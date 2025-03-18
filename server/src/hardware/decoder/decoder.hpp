@@ -79,6 +79,8 @@ class Decoder : public IdObject
     void updateEditable(bool editable);
     void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);
 
+    void checkLatchedTimer(uint32_t functionNumber);
+
     //! \brief Schedule timer to turn off latched momentary function
     //! This function cancels current active timer and searches for other active
     //! momentary functions. If no momentary function is active no timer is scheduled.
