@@ -900,10 +900,14 @@ void Simulator::updateSensors()
 {
   for(auto& segment : m_trackSegments)
   {
-    if(segment.sensorAddress && segment.sensorValue != (segment.occupied != 0))
+    if(segment.sensorAddress)
     {
-      segment.sensorValue = (segment.occupied != 0);
-      send(SimulatorProtocol::SensorChanged(segment.sensorChannel, segment.sensorAddress.value(), segment.sensorValue));
+      const bool sensorValue = m_powerOn && (segment.occupied != 0);
+      if(segment.sensorValue != sensorValue)
+      {
+        segment.sensorValue = sensorValue;
+        send(SimulatorProtocol::SensorChanged(segment.sensorChannel, segment.sensorAddress.value(), segment.sensorValue));
+      }
     }
   }
 }
