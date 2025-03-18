@@ -20,7 +20,9 @@
  */
 
 #include "simulator.hpp"
+#include <cassert>
 #include <ranges>
+#include <QtMath>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QFile>
