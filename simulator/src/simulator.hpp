@@ -24,7 +24,6 @@
 
 #include <QObject>
 #include <QBasicTimer>
-#include <list>
 #include <optional>
 #include <traintastic/enum/decoderprotocol.hpp>
 #include <traintastic/enum/direction.hpp>
