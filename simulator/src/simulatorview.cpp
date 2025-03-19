@@ -415,13 +415,11 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
     case Qt::Key_7:
     case Qt::Key_8:
     case Qt::Key_9:
-    {
       if(static_cast<size_t>(event->key() - Qt::Key_1) < m_simulator->trains().size())
       {
         m_trainIndex = event->key() - Qt::Key_1;
       }
       break;
-    }
     case Qt::Key_Up:
       train.setSpeed(train.speed + 0.5f);
       break;

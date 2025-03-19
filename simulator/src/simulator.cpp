@@ -236,8 +236,7 @@ Simulator::Point end(const Simulator::TrackSegment& segment)
   return straightEnd(segment);
 }
 
-namespace
-{
+namespace {
 
 bool pointsClose(Simulator::Point a, Simulator::Point b)
 {

@@ -26,15 +26,17 @@
 #include <QOpenGLFunctions>
 #include "simulator.hpp"
 
-class SimulatorView : public QOpenGLWidget, protected QOpenGLFunctions
+class SimulatorView
+  : public QOpenGLWidget
+  , protected QOpenGLFunctions
 {
   Q_OBJECT
 
 public:
-  explicit SimulatorView(QWidget *parent = nullptr);
+  explicit SimulatorView(QWidget* parent = nullptr);
 
-  Simulator *simulator() const;
-  void setSimulator(Simulator *value);
+  Simulator* simulator() const;
+  void setSimulator(Simulator* value);
 
   bool showTrackOccupancy() const
   {
@@ -52,11 +54,11 @@ protected:
   void resizeGL(int w, int h) override;
   void paintGL() override;
 
-  void keyPressEvent(QKeyEvent *event) override;
-  void mousePressEvent(QMouseEvent *event) override;
-  void mouseMoveEvent(QMouseEvent *event) override;
+  void keyPressEvent(QKeyEvent* event) override;
+  void mousePressEvent(QMouseEvent* event) override;
+  void mouseMoveEvent(QMouseEvent* event) override;
   void mouseReleaseEvent(QMouseEvent* event) override;
-  void wheelEvent(QWheelEvent *event) override;
+  void wheelEvent(QWheelEvent* event) override;
 
 private:
   struct Turnout
