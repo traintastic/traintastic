@@ -20,13 +20,16 @@
  */
 
 #include "simulator.hpp"
+#include <cassert>
 #include <ranges>
+#include <QtMath>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QTimerEvent>
 #include <traintastic/simulator/protocol.hpp>
 
 namespace {
@@ -303,7 +306,11 @@ Simulator::Simulator(const QString& filename, QObject* parent)
 
   load(filename);
 
-  startTimer(std::chrono::milliseconds(1000) / fps, Qt::PreciseTimer);
+#if QT_VERSION < QT_VERSION_CHECK(6, 5, 0)
+  m_tickTimer.start(1000 / fps, Qt::PreciseTimer, this);
+#else
+  m_tickTimer.start(std::chrono::milliseconds(1000) / fps, Qt::PreciseTimer, this);
+#endif
 }
 
 bool Simulator::powerOn() const
@@ -334,11 +341,17 @@ void Simulator::setTurnoutThrow(size_t index, bool thrown)
   }
 }
 
-void Simulator::timerEvent(QTimerEvent* /*event*/)
+void Simulator::timerEvent(QTimerEvent *ev)
 {
-  updateTrainPositions();
-  updateSensors();
-  emit tick();
+  if(ev->timerId() == m_tickTimer.timerId())
+  {
+    updateTrainPositions();
+    updateSensors();
+    emit tick();
+    return;
+  }
+
+  QObject::timerEvent(ev);
 }
 
 void Simulator::load(const QString& filename)
