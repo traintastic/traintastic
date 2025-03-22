@@ -124,6 +124,7 @@ class Train : public IdObject
     std::string throttleName() const;
     std::error_code acquire(Throttle& throttle, bool steal = false);
     std::error_code release(Throttle& throttle);
+    std::error_code setSpeed(Throttle& throttle, double value);
     std::error_code setTargetSpeed(Throttle& throttle, double value);
     std::error_code setDirection(Throttle& throttle, Direction value);
 

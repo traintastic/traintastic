@@ -301,15 +301,15 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
       }
       else if(action == "stop")
       {
-        throttle->stop();
+        throttle->stop(message.value("immediate", false));
       }
       else if(action == "faster")
       {
-        throttle->faster();
+        throttle->faster(message.value("immediate", false));
       }
       else if(action == "slower")
       {
-        throttle->slower();
+        throttle->slower(message.value("immediate", false));
       }
       else if(action == "reverse" || action == "forward")
       {

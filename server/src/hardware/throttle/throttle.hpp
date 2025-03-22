@@ -72,9 +72,9 @@ class Throttle : public IdObject
     Property<float> throttle;
     ObjectProperty<Train> train;
     Method<bool()> emergencyStop;
-    Method<bool()> stop;
-    Method<bool()> faster;
-    Method<bool()> slower;
+    Method<bool(bool)> stop;
+    Method<bool(bool)> faster;
+    Method<bool(bool)> slower;
     Method<bool(Direction)> setDirection;
 
 #ifndef NDEBUG

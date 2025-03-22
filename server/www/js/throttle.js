@@ -35,10 +35,15 @@ function Throttle(parent, id)
     e.setAttribute('action', action);
     e.onclick = function ()
     {
-      tm.send({
+      var msg = {
         'throttle_id': parseInt(this.getAttribute('throttle-id')),
         'action': this.getAttribute('action'),
-      });
+      };
+      if(msg.action == 'faster' || msg.action == 'slower' || msg.action == 'stop')
+      {
+        msg.immediate = localStorage.immediateSpeedControl != 'false';
+      }
+      tm.send(msg);
     };
     return e;
   };
@@ -331,6 +336,10 @@ var tm = new function ()
     {
       document.getElementById('stop_train_on_release').value = localStorage.throttleStopOnRelease;
     }
+    if(localStorage.immediateSpeedControl)
+    {
+      document.getElementById('immediate_speed_control').value = localStorage.immediateSpeedControl;
+    }
 
     document.getElementById('open_settings').onclick = function ()
     {
@@ -348,7 +357,8 @@ var tm = new function ()
     document.getElementById('close_settings').onclick = function ()
     {
       localStorage.throttleName = document.getElementById('throttle_name').value;
-      localStorage.throttleStopOnRelease = document.getElementById('stop_train_on_release').value == 'on';
+      localStorage.throttleStopOnRelease = document.getElementById('stop_train_on_release').checked;
+      localStorage.immediateSpeedControl = document.getElementById('immediate_speed_control').checked;
       document.getElementById('settings').classList.add('hide');
       tm.connect();
     };

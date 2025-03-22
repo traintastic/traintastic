@@ -87,14 +87,21 @@ Throttle::Throttle(World& world, std::string_view _id)
         return false;
       }}
   , stop{*this, "stop",
-      [this]()
+      [this](bool immediate)
       {
         if(acquired())
         {
           if(train)
           {
             train->emergencyStop = false;
-            train->stop();
+            if(immediate)
+            {
+              train->setSpeed(*this, 0.0);
+            }
+            else
+            {
+              train->setTargetSpeed(*this, 0.0);
+            }
           }
           if(m_decoder)
           {
@@ -106,32 +113,50 @@ Throttle::Throttle(World& world, std::string_view _id)
         return false;
       }}
   , faster{*this, "faster",
-      [this]()
+      [this](bool immediate)
       {
         if(acquired())
         {
           if(train)
           {
-            const double value = train->throttleSpeed.value();
-            const double step = getValueStep(value, train->throttleSpeed.unit());
             train->emergencyStop = false;
-            train->setTargetSpeed(*this, valueStepUp(value, step));
+            if(immediate)
+            {
+              const double value = train->speed.value();
+              const double step = getValueStep(value, train->speed.unit());
+              train->setSpeed(*this, valueStepUp(value, step));
+            }
+            else
+            {
+              const double value = train->throttleSpeed.value();
+              const double step = getValueStep(value, train->throttleSpeed.unit());
+              train->setTargetSpeed(*this, valueStepUp(value, step));
+            }
           }
           return true;
         }
         return false;
       }}
   , slower{*this, "slower",
-      [this]()
+      [this](bool immediate)
       {
         if(acquired())
         {
           if(train)
           {
-            const double value = train->throttleSpeed.value();
-            const double step = getValueStep(value, train->throttleSpeed.unit());
             train->emergencyStop = false;
-            train->setTargetSpeed(*this, valueStepDown(value, step));
+            if(immediate)
+            {
+              const double value = train->speed.value();
+              const double step = getValueStep(value, train->speed.unit());
+              train->setSpeed(*this, valueStepDown(value, step));
+            }
+            else
+            {
+              const double value = train->throttleSpeed.value();
+              const double step = getValueStep(value, train->throttleSpeed.unit());
+              train->setTargetSpeed(*this, valueStepDown(value, step));
+            }
           }
           return true;
         }

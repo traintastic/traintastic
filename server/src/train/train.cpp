@@ -501,6 +501,30 @@ std::error_code Train::release(Throttle& throttle)
   return {};
 }
 
+std::error_code Train::setSpeed(Throttle& throttle, double value)
+{
+  if(m_throttle.get() != &throttle)
+  {
+    return make_error_code(TrainError::InvalidThrottle);
+  }
+  assert(active);
+
+  value = std::clamp(value, Attributes::getMin(speed), Attributes::getMax(speed));
+
+  setSpeed(convertUnit(value, speed.unit(), SpeedUnit::KiloMeterPerHour));
+  throttleSpeed.setValue(convertUnit(value, speed.unit(), throttleSpeed.unit()));
+  m_speedTimer.cancel();
+  m_speedState = SpeedState::Idle;
+
+  const bool currentValue = isStopped;
+  isStopped.setValueInternal(m_speedState == SpeedState::Idle && almostZero(speed.value()) && almostZero(throttleSpeed.value()));
+  if(currentValue != isStopped)
+  {
+    updateEnabled();
+  }
+  return {};
+}
+
 std::error_code Train::setTargetSpeed(Throttle& throttle, double value)
 {
   if(m_throttle.get() != &throttle)
