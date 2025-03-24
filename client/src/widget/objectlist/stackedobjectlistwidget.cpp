@@ -117,18 +117,11 @@ StackedObjectListWidget::StackedObjectListWidget(const ObjectPtr& object, QWidge
       if(tableModel)
       {
         m_tableModel = tableModel;
+        m_tableModel->setRegionAll(true);
         m_list->setModel(new StackedObjectListProxyModel(m_tableModel.get()));
         connect(m_tableModel.get(), &TableModel::modelReset,
           [this]()
           {
-            if(m_tableModel->rowCount() == 0)
-            {
-              m_tableModel->setRegion(1, 0, 1, 0); // select nothing
-            }
-            else
-            {
-              m_tableModel->setRegion(0, m_tableModel->columnCount() - 1, 0, m_tableModel->rowCount() - 1);
-            }
             m_listEmptyLabel->setVisible(m_tableModel->rowCount() == 0);
           });
       }
