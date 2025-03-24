@@ -6733,5 +6733,9 @@
     {
         "term": "interface_list:create",
         "definition": "Create a new interface."
+    },
+    {
+        "term": "qtapp.world_list_dialog:search",
+        "definition": "Search"
     }
 ]
