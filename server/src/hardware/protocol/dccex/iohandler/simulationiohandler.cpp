@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022,2024 Reinder Feenstra
+ * Copyright (C) 2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,8 +23,10 @@
 #include "simulationiohandler.hpp"
 #include "../kernel.hpp"
 #include "../messages.hpp"
+#include "../../dcc/dcc.hpp"
 #include "../../../../utils/endswith.hpp"
 #include "../../../../utils/fromchars.hpp"
+#include "../../../../utils/inrange.hpp"
 
 namespace DCCEX {
 
@@ -33,8 +35,42 @@ SimulationIOHandler::SimulationIOHandler(Kernel& kernel)
 {
 }
 
+void SimulationIOHandler::setSimulator(std::string hostname, uint16_t port)
+{
+  assert(!m_simulator);
+  m_simulator = std::make_unique<SimulatorIOHandler>(m_kernel.ioContext(), std::move(hostname), port);
+}
+
 void SimulationIOHandler::start()
 {
+  if(m_simulator)
+  {
+    m_simulator->onPower =
+      [this](bool powerOn)
+      {
+        reply(powerOn ? Messages::powerOnResponse() : Messages::powerOffResponse());
+      };
+    m_simulator->onLocomotiveSpeedDirection =
+      [this](DecoderProtocol protocol, uint16_t address, uint8_t speed, Direction direction, bool emergencyStop)
+      {
+        if((protocol == DecoderProtocol::None || protocol == DecoderProtocol::DCCShort || protocol == DecoderProtocol::DCCLong) &&
+            inRange(address, DCC::addressMin, DCC::addressLongMax))
+        {
+          reply(Messages::locoBroadcast(address, -1, speed, emergencyStop, direction, 0));
+        }
+      };
+    // FIXME: m_simulator->onAccessorySetState
+    // DCC-EX does not confirm/broadcast accessory commands (yet).
+    m_simulator->onSensorChanged =
+      [this](uint16_t /*channel*/, uint16_t address, bool value)
+      {
+        if(inRange(address, Messages::sensorIdMin, Messages::sensorIdMax))
+        {
+          reply(Messages::sensorTransition(address, value));
+        }
+      };
+    m_simulator->start();
+  }
   m_kernel.started();
 }
 
@@ -47,7 +83,13 @@ bool SimulationIOHandler::send(std::string_view message)
   {
     case '0': // power off
       if(message == Messages::powerOff())
+      {
+        if(m_simulator)
+        {
+          m_simulator->sendPower(false);
+        }
         reply(Messages::powerOffResponse());
+      }
       else if(message == Messages::powerOff(Messages::Track::Main))
         reply(Messages::powerOffResponse(Messages::Track::Main));
       else if(message == Messages::powerOff(Messages::Track::Programming))
@@ -56,13 +98,74 @@ bool SimulationIOHandler::send(std::string_view message)
 
     case '1': // power on
       if(message == Messages::powerOn())
+      {
+        if(m_simulator)
+        {
+          m_simulator->sendPower(true);
+        }
         reply(Messages::powerOnResponse());
+      }
       else if(message == Messages::powerOn(Messages::Track::Main))
         reply(Messages::powerOnResponse(Messages::Track::Main));
       else if(message == Messages::powerOn(Messages::Track::Programming))
         reply(Messages::powerOnResponse(Messages::Track::Programming));
       else if(message == Messages::powerOnJoin())
         reply(Messages::powerOnJoinResponse());
+      break;
+
+    case 'a': // Accessory
+      if(m_simulator)
+      {
+        uint16_t address;
+        auto r = fromChars(message.substr(3), address);
+        if(r.ec != std::errc())
+        {
+          break;
+        }
+        uint8_t value;
+        r = fromChars(message.substr(r.ptr - message.data() + 1), value);
+        if(r.ec != std::errc())
+        {
+          break;
+        }
+        m_simulator->sendAccessorySetState(0, address, 1 + value);
+      }
+      break;
+
+    case 't': // LocoSpeedAndDirection
+      if(m_simulator)
+      {
+        uint8_t one;
+        auto r = fromChars(message.substr(3), one);
+        if(r.ec != std::errc() || one != 1)
+        {
+          break;
+        }
+        uint16_t address;
+        r = fromChars(message.substr(r.ptr - message.data() + 1), address);
+        if(r.ec != std::errc())
+        {
+          break;
+        }
+        int8_t speed;
+        r = fromChars(message.substr(r.ptr - message.data() + 1), speed);
+        if(r.ec != std::errc())
+        {
+          break;
+        }
+        uint8_t direction;
+        r = fromChars(message.substr(r.ptr - message.data() + 1), direction);
+        if(r.ec != std::errc() || (direction != 0 && direction != 1))
+        {
+          break;
+        }
+        m_simulator->sendLocomotiveSpeedDirection(
+          DCC::getProtocol(address),
+          address,
+          static_cast<uint8_t>(speed > 0 ? speed : 0),
+          direction == 1 ? Direction::Forward : Direction::Reverse,
+          speed == -1);
+      }
       break;
 
     case 'T': // Turnout

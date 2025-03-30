@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -144,6 +144,68 @@ void Kernel::receive(std::string_view message)
   {
     switch(message[1])
     {
+      case 'l': // Loco broadcast
+        if(m_decoderController) [[likely]]
+        {
+          uint16_t address;
+          auto r = fromChars(message.substr(3), address);
+          if(r.ec != std::errc())
+          {
+            break;
+          }
+          int8_t slot;
+          r = fromChars(message.substr(r.ptr - message.data() + 1), slot);
+          if(r.ec != std::errc())
+          {
+            break;
+          }
+          uint8_t speedByte;
+          r = fromChars(message.substr(r.ptr - message.data() + 1), speedByte);
+          if(r.ec != std::errc())
+          {
+            break;
+          }
+          uint64_t functionMask;
+          r = fromChars(message.substr(r.ptr - message.data() + 1), functionMask);
+          if(r.ec != std::errc())
+          {
+            break;
+          }
+          const uint8_t speedSteps = (m_config.speedSteps == 128) ? 126 : m_config.speedSteps;
+
+          EventLoop::call(
+            [this, address, speedByte, speedSteps, functionMask]()
+            {
+              if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(address), address))
+              {
+                const bool emergencyStop = (speedByte & 0x7F) == 0x01;
+                const auto direction = (speedByte & 0x80) ? Direction::Forward : Direction::Reverse;
+
+                decoder->emergencyStop.setValueInternal(emergencyStop);
+                if(emergencyStop || (speedByte & 0x7F) == 0)
+                {
+                  decoder->throttle.setValueInternal(Decoder::throttleStop);
+                }
+                else
+                {
+                  const uint8_t speed = (speedByte & 0x7F) - 1;
+                  const auto currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), speedSteps);
+                  if(currentStep != speed) // only update trottle if it is a different step
+                  {
+                    decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed, speedSteps));
+                  }
+                }
+                decoder->direction.setValueInternal(direction);
+
+                for(uint8_t i = 0; i < sizeof(functionMask) * 8; ++i)
+                {
+                  decoder->setFunctionValue(i, functionMask & (static_cast<decltype(functionMask)>(1) << i));
+                }
+              }
+            });
+        }
+        break;
+
       case 'H': // Turnout response
       {
         uint16_t id;

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022,2024 Reinder Feenstra
+ * Copyright (C) 2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,16 +26,21 @@
 #include "iohandler.hpp"
 #include <array>
 #include <cstddef>
+#include "../../../../simulator/simulatoriohandler.hpp"
 
 namespace DCCEX {
 
 class SimulationIOHandler final : public IOHandler
 {
   private:
+    std::unique_ptr<SimulatorIOHandler> m_simulator;
+
     void reply(std::string_view message);
 
   public:
     SimulationIOHandler(Kernel& kernel);
+
+    void setSimulator(std::string hostname, uint16_t port);
 
     void start() final;
     void stop() final {}

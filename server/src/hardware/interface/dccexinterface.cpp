@@ -38,6 +38,7 @@
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
+#include "../../simulator/interfacesimulatorsettings.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
 #include "../../utils/makearray.hpp"
@@ -65,9 +66,11 @@ DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 2560, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , dccex{this, "dccex", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
+  , simulator{this, "simulator", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "DCC-EX";
   dccex.setValueInternal(std::make_shared<DCCEX::Settings>(*this, dccex.name()));
+  simulator.setValueInternal(std::make_shared<InterfaceSimulatorSettings>(*this, simulator.name()));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -103,6 +106,8 @@ DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(inputs, notes);
 
   m_interfaceItems.insertBefore(outputs, notes);
+
+  m_interfaceItems.insertBefore(simulator, notes);
 
   m_dccexPropertyChanged = dccex->propertyChanged.connect(
     [this](BaseProperty& property)
@@ -210,6 +215,11 @@ bool DCCEXInterface::setOnline(bool& value, bool simulation)
       if(simulation)
       {
         m_kernel = DCCEX::Kernel::create<DCCEX::SimulationIOHandler>(id.value(), dccex->config());
+
+        if(simulator->useSimulator)
+        {
+          m_kernel->ioHandler<DCCEX::SimulationIOHandler>().setSimulator(simulator->hostname, simulator->port);
+        }
       }
       else
       {

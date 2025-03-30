@@ -32,6 +32,8 @@
 #include "../../enum/serialflowcontrol.hpp"
 #include <traintastic/enum/dccexinterfacetype.hpp>
 
+class InterfaceSimulatorSettings;
+
 namespace DCCEX {
 class Kernel;
 class Settings;
@@ -76,6 +78,7 @@ class DCCEXInterface final
     Property<std::string> hostname;
     Property<uint16_t> port;
     ObjectProperty<DCCEX::Settings> dccex;
+    ObjectProperty<InterfaceSimulatorSettings> simulator;
 
     DCCEXInterface(World& world, std::string_view _id);
 

@@ -222,6 +222,36 @@ namespace Messages {
       .append(">\n");
   }
 
+  inline std::string locoBroadcast(uint16_t address, int8_t slot, uint8_t speed, bool emergencyStop, Direction direction, uint64_t functionMask)
+  {
+    assert(address <= 10293);
+    assert(speed <= 126);
+
+    uint8_t speedByte = 0;
+    if(emergencyStop)
+    {
+      speedByte = 1;
+    }
+    else if(speed != 0)
+    {
+      speedByte = 1 + speed;
+    }
+    if(direction == Direction::Forward)
+    {
+      speedByte |= 0x80;
+    }
+
+    return std::string("<l ")
+      .append(std::to_string(address))
+      .append(" ")
+      .append(std::to_string(slot))
+      .append(" ")
+      .append(std::to_string(speedByte))
+      .append(" ")
+      .append(std::to_string(functionMask))
+      .append(">\n");
+  }
+
   inline std::string setAccessory(uint16_t linearAddress, bool activate)
   {
     assert(linearAddress >= 1 && linearAddress <= 2044);
@@ -285,9 +315,12 @@ namespace Messages {
       .append(">\n");
   }
 
+  static constexpr uint16_t sensorIdMin = 0;
+  static constexpr uint16_t sensorIdMax = 32767;
+
   inline std::string sensorTransition(uint16_t id, bool active)
   {
-    assert(id <= 32767);
+    assert(id <= sensorIdMax);
 
     if(active)
       return std::string("<Q ").append(std::to_string(id)).append(">\n");
