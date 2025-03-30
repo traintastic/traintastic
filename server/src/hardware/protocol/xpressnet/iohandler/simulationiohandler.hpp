@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2024 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,22 +26,32 @@
 #include "iohandler.hpp"
 #include <array>
 #include <cstddef>
+#include "../../../../simulator/simulatoriohandler.hpp"
+
+enum class SimulateInputAction;
 
 namespace XpressNet {
 
 class SimulationIOHandler final : public IOHandler
 {
   private:
+    std::unique_ptr<SimulatorIOHandler> m_simulator;
+    std::unordered_map<uint16_t, bool> m_inputs;
+
     void reply(const Message& message);
     void reply(const Message& message, size_t count);
 
   public:
     SimulationIOHandler(Kernel& kernel);
 
+    void setSimulator(std::string hostname, uint16_t port);
+
     void start() final;
     void stop() final {}
 
     bool send(const Message& message) final;
+
+    void simulateInputChange(uint16_t address, SimulateInputAction action);
 };
 
 template<>

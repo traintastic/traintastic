@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
 
 #include "kernel.hpp"
 #include "messages.hpp"
+#include "iohandler/simulationiohandler.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../input/inputcontroller.hpp"
@@ -399,56 +400,6 @@ bool Kernel::setOutput(uint16_t address, OutputPairValue value)
           true));
     });
   return true;
-}
-
-void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
-{
-  if(m_simulation)
-    m_ioContext.post(
-      [this, address, action]()
-      {
-        if((action == SimulateInputAction::SetFalse && m_inputValues[address - 1] == TriState::False) ||
-            (action == SimulateInputAction::SetTrue && m_inputValues[address - 1] == TriState::True))
-          return; // no change
-
-        const uint16_t groupAddress = (address - 1) >> 2;
-        const auto index = static_cast<uint8_t>((address - 1) & 0x0003);
-
-        std::byte message[sizeof(FeedbackBroadcast) + sizeof(FeedbackBroadcast::Pair) + 1];
-        memset(message, 0, sizeof(message));
-        auto* feedbackBroadcast = reinterpret_cast<FeedbackBroadcast*>(&message);
-        feedbackBroadcast->header = idFeedbackBroadcast;
-        feedbackBroadcast->setPairCount(1);
-        auto& pair = feedbackBroadcast->pair(0);
-        pair.setGroupAddress(groupAddress);
-        pair.setType(FeedbackBroadcast::Pair::Type::FeedbackModule);
-        for(uint8_t i = 0; i < 4; i++)
-        {
-          const uint16_t n = (groupAddress << 2) + i;
-          if(i == index)
-          {
-            switch(action)
-            {
-              case SimulateInputAction::SetFalse:
-                pair.setStatus(i, false);
-                break;
-
-              case SimulateInputAction::SetTrue:
-                pair.setStatus(i, true);
-                break;
-
-              case SimulateInputAction::Toggle:
-                pair.setStatus(i, m_inputValues[n] != TriState::True);
-                break;
-            }
-          }
-          else
-            pair.setStatus(i, m_inputValues[n] == TriState::True);
-        }
-        updateChecksum(*feedbackBroadcast);
-
-        receive(*feedbackBroadcast);
-      });
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)

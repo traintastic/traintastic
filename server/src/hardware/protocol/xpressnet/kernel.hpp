@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -262,13 +262,6 @@ class Kernel : public ::KernelBase
      * @return \c true if send successful, \c false otherwise.
      */
     bool setOutput(uint16_t address, OutputPairValue value);
-
-    /**
-     * \brief Simulate input change
-     * \param[in] address Input address, #inputAddressMin..#inputAddressMax
-     * \param[in] action Simulation action to perform
-     */
-    void simulateInputChange(uint16_t address, SimulateInputAction action);
 };
 
 }
