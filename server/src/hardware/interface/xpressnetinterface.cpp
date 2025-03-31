@@ -39,6 +39,7 @@
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
+#include "../../simulator/interfacesimulatorsettings.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
 #include "../../utils/makearray.hpp"
@@ -97,9 +98,11 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   , s88StartAddress{this, "s88_start_address", XpressNet::RoSoftS88XpressNetLI::S88StartAddress::startAddressDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88ModuleCount{this, "s88_module_count", XpressNet::RoSoftS88XpressNetLI::S88ModuleCount::moduleCountDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
+  , simulator{this, "simulator", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "XpressNet";
   xpressnet.setValueInternal(std::make_shared<XpressNet::Settings>(*this, xpressnet.name()));
+  simulator.setValueInternal(std::make_shared<InterfaceSimulatorSettings>(*this, simulator.name()));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -155,6 +158,9 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
 
   m_interfaceItems.insertBefore(outputs, notes);
 
+  m_interfaceItems.insertBefore(simulator, notes);
+
+  updateEnabled();
   updateVisible();
 }
 
@@ -208,7 +214,12 @@ std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(uint32_t /*
 void XpressNetInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
-    m_kernel->simulateInputChange(address, action);
+  {
+    if(auto* ioHandler = dynamic_cast<XpressNet::SimulationIOHandler*>(&m_kernel->ioHandler<XpressNet::IOHandler>()))
+    {
+      ioHandler->simulateInputChange(address, action);
+    }
+  }
 }
 
 std::span<const OutputChannel> XpressNetInterface::outputChannels() const
@@ -240,6 +251,11 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
       if(simulation)
       {
         m_kernel = XpressNet::Kernel::create<XpressNet::SimulationIOHandler>(id.value(), xpressnet->config());
+
+        if(simulator->useSimulator)
+        {
+          m_kernel->ioHandler<XpressNet::SimulationIOHandler>().setSimulator(simulator->hostname, simulator->port);
+        }
       }
       else
       {
@@ -330,8 +346,6 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
         m_kernel->stopAllLocomotives();
       else
         m_kernel->resumeOperations();
-
-      Attributes::setEnabled({type, serialInterfaceType, device, baudrate, flowControl, hostname, port, s88StartAddress, s88ModuleCount}, false);
     }
     catch(const LogMessageException& e)
     {
@@ -342,8 +356,6 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
   }
   else if(m_kernel && !value)
   {
-    Attributes::setEnabled({type, serialInterfaceType, device, baudrate, flowControl, hostname, port, s88StartAddress, s88ModuleCount}, true);
-
     m_xpressnetPropertyChanged.disconnect();
 
     m_kernel->stop();
@@ -366,6 +378,7 @@ void XpressNetInterface::loaded()
 {
   Interface::loaded();
 
+  updateEnabled();
   updateVisible();
 }
 
@@ -381,33 +394,59 @@ void XpressNetInterface::worldEvent(WorldState state, WorldEvent event)
 {
   Interface::worldEvent(state, event);
 
-  if(m_kernel)
+  switch(event)
   {
-    switch(event)
-    {
-      case WorldEvent::PowerOff:
+    case WorldEvent::PowerOff:
+      if(m_kernel)
+      {
         m_kernel->stopOperations();
-        break;
+      }
+      break;
 
-      case WorldEvent::PowerOn:
+    case WorldEvent::PowerOn:
+      if(m_kernel)
+      {
         m_kernel->resumeOperations();
         if(!contains(state, WorldState::Run))
+        {
           m_kernel->stopAllLocomotives();
-        break;
+        }
+      }
+      break;
 
-      case WorldEvent::Stop:
+    case WorldEvent::Stop:
+      if(m_kernel)
+      {
         m_kernel->stopAllLocomotives();
-        break;
+      }
+      break;
 
-      case WorldEvent::Run:
-        if(contains(state, WorldState::PowerOn))
-          m_kernel->resumeOperations();
-        break;
+    case WorldEvent::Run:
+      if(m_kernel && contains(state, WorldState::PowerOn))
+      {
+        m_kernel->resumeOperations();
+      }
+      break;
 
-      default:
-        break;
-    }
+    case WorldEvent::EditEnabled:
+    case WorldEvent::EditDisabled:
+      updateEnabled();
+      break;
+
+    default:
+      break;
   }
+}
+
+void XpressNetInterface::onlineChanged(bool /*value*/)
+{
+  updateEnabled();
+}
+
+void XpressNetInterface::updateEnabled()
+{
+  Attributes::setEnabled({type, serialInterfaceType, device, baudrate, flowControl, hostname, port, s88StartAddress, s88ModuleCount}, !online);
+  simulator->updateEnabled(contains(m_world.state, WorldState::Edit), online);
 }
 
 void XpressNetInterface::updateVisible()

@@ -33,6 +33,8 @@
 #include "../../enum/xpressnetserialinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
 
+class InterfaceSimulatorSettings;
+
 namespace XpressNet {
 class Kernel;
 class Settings;
@@ -59,7 +61,9 @@ class XpressNetInterface final
     void loaded() final;
     void destroying() final;
     void worldEvent(WorldState state, WorldEvent event) final;
+    void onlineChanged(bool value) final;
 
+    void updateEnabled();
     void updateVisible();
 
   protected:
@@ -76,6 +80,7 @@ class XpressNetInterface final
     Property<uint8_t> s88StartAddress;
     Property<uint8_t> s88ModuleCount;
     ObjectProperty<XpressNet::Settings> xpressnet;
+    ObjectProperty<InterfaceSimulatorSettings> simulator;
 
     XpressNetInterface(World& world, std::string_view _id);
 
