@@ -21,8 +21,10 @@
  */
 
 #include "simulationiohandler.hpp"
+#include <traintastic/enum/decoderprotocol.hpp>
 #include "../kernel.hpp"
 #include "../messages.hpp"
+#include "../../dcc/dcc.hpp"
 #include "../../../../enum/simulateinputaction.hpp"
 #include "../../../../utils/inrange.hpp"
 
@@ -60,6 +62,32 @@ void SimulationIOHandler::start()
         else
         {
           reply(TrackPowerOff(), 3);
+        }
+      };
+    m_simulator->onLocomotiveSpeedDirection =
+      [this](DecoderProtocol protocol, uint16_t address, uint8_t speed, Direction direction, bool emergencyStop)
+      {
+        if((protocol == DecoderProtocol::None || protocol == DecoderProtocol::DCCShort || protocol == DecoderProtocol::DCCLong) &&
+            inRange(address, DCC::addressMin, DCC::addressLongMax))
+        {
+          auto it = m_locomotives.find(address);
+          if(it != m_locomotives.end())
+          {
+            if(it->second.inUse)
+            {
+              reply(LocomotiveSteal(address));
+            }
+          }
+          else
+          {
+            it = m_locomotives.emplace(address, Locomotive{}).first;
+            it->second.speedMax = 126;
+          }
+
+          it->second.inUse = false;
+          it->second.eStop = emergencyStop;
+          it->second.direction = direction;
+          it->second.speed = (speed * it->second.speedMax) / std::numeric_limits<uint8_t>::max();
         }
       };
     m_simulator->onSensorChanged =
@@ -102,6 +130,30 @@ bool SimulationIOHandler::send(const Message& message)
       if(message == StopAllLocomotivesRequest())
         reply(EmergencyStop(), 3);
       break;
+
+    case 0xE4:
+    {
+      const auto& locomotiveInstruction = static_cast<const LocomotiveInstruction&>(message);
+      switch(locomotiveInstruction.identification)
+      {
+        case 0x10:
+          speedAndDirectionInstruction(static_cast<const SpeedAndDirectionInstruction14&>(locomotiveInstruction));
+          break;
+
+        case 0x11:
+          speedAndDirectionInstruction(static_cast<const SpeedAndDirectionInstruction27&>(locomotiveInstruction));
+          break;
+
+        case 0x12:
+          speedAndDirectionInstruction(static_cast<const SpeedAndDirectionInstruction28&>(locomotiveInstruction));
+          break;
+
+        case 0x13:
+          speedAndDirectionInstruction(static_cast<const SpeedAndDirectionInstruction128&>(locomotiveInstruction));
+          break;
+      }
+      break;
+    }
   }
 
   return true;
@@ -170,6 +222,27 @@ void SimulationIOHandler::reply(const Message& message, const size_t count)
 {
   for(size_t i = 0; i < count; i++)
     reply(message);
+}
+
+template<class T>
+void SimulationIOHandler::speedAndDirectionInstruction(const T& message)
+{
+  auto& loco = m_locomotives[message.address()];
+  loco.inUse = true;
+  loco.eStop = message.emergencyStop();
+  loco.direction = message.direction();
+  loco.speed = message.speed();
+  loco.speedMax = T::speedMax;
+
+  if(m_simulator)
+  {
+    m_simulator->sendLocomotiveSpeedDirection(
+      message.isLongAddress() ? DecoderProtocol::DCCLong : DecoderProtocol::DCCShort,
+      message.address(),
+      message.speed() * std::numeric_limits<uint8_t>::max() / T::speedMax,
+      message.direction(),
+      message.emergencyStop());
+  }
 }
 
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022,2024 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,6 +59,17 @@ std::string toString(const Message& message)
       s.append(" port=").append(req.port() ? "2" : "1");
       s.append(req.activate() ? " activate" : " deactivate");
       break;
+    }
+    case 0xE3:
+    {
+      const auto& locomotive = static_cast<const LocomotiveInstruction&>(message);
+      switch(locomotive.identification)
+      {
+        case 0x40:
+          s.append("LocomotiveSteal");
+          s.append(" address=").append(std::to_string(locomotive.address()));
+          break;
+      }
     }
     // FIXME: add all messages
   }

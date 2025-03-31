@@ -28,6 +28,7 @@
 #include <cstddef>
 #include "../../../../simulator/simulatoriohandler.hpp"
 
+enum class Direction : uint8_t;
 enum class SimulateInputAction;
 
 namespace XpressNet {
@@ -35,11 +36,24 @@ namespace XpressNet {
 class SimulationIOHandler final : public IOHandler
 {
   private:
+    struct Locomotive
+    {
+      bool inUse;
+      bool eStop;
+      Direction direction;
+      uint8_t speed;
+      uint8_t speedMax;
+    };
+
     std::unique_ptr<SimulatorIOHandler> m_simulator;
+    std::unordered_map<uint16_t, Locomotive> m_locomotives;
     std::unordered_map<uint16_t, bool> m_inputs;
 
     void reply(const Message& message);
     void reply(const Message& message, size_t count);
+
+    template<class T>
+    void speedAndDirectionInstruction(const T& message);
 
   public:
     SimulationIOHandler(Kernel& kernel);

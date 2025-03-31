@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,7 @@
 #include <cstring>
 #include <string>
 #include "../../../enum/direction.hpp"
+#include "../../../utils/byte.hpp"
 
 namespace XpressNet {
 
@@ -289,11 +290,39 @@ struct LocomotiveInstruction : Message
       addressLow = address & 0x7f;
     }
   }
+
+  bool isLongAddress() const
+  {
+    return (addressHigh & 0xC0) == 0xC0;
+  }
+
+  uint16_t address() const
+  {
+    return to16(addressLow, addressHigh & 0x3F);
+  }
 };
 static_assert(sizeof(LocomotiveInstruction) == 4);
 
+struct LocomotiveSteal : LocomotiveInstruction
+{
+  uint8_t checksum;
+
+  LocomotiveSteal(uint16_t address)
+    : LocomotiveInstruction(address)
+  {
+    header = 0xE3;
+    identification = 0x40;
+    checksum = calcChecksum(*this);
+  }
+};
+static_assert(sizeof(LocomotiveSteal) == 5);
+
 struct SpeedAndDirectionInstruction : LocomotiveInstruction
 {
+  static constexpr uint8_t directionBit = 0x80;
+  static constexpr uint8_t stop = 0x00;
+  static constexpr uint8_t eStop = 0x01;
+
   uint8_t speedAndDirection;
   uint8_t checksum;
 
@@ -301,14 +330,22 @@ struct SpeedAndDirectionInstruction : LocomotiveInstruction
     LocomotiveInstruction(address)
   {
     assert(direction != Direction::Unknown);
-    speedAndDirection = emergencyStop ? 0x01 : 0x00;
+    speedAndDirection = emergencyStop ? eStop : stop;
     if(direction == Direction::Forward)
-      speedAndDirection |= 0x80;
+      speedAndDirection |= directionBit;
+  }
+
+  Direction direction() const
+  {
+    return (speedAndDirection & directionBit) ? Direction::Forward : Direction::Reverse;
   }
 };
 
 struct SpeedAndDirectionInstruction14 : SpeedAndDirectionInstruction
 {
+  static constexpr uint8_t speedMask = 0x0F;
+  static constexpr uint8_t speedMax = 14;
+
   SpeedAndDirectionInstruction14(uint16_t address, bool emergencyStop, Direction direction, uint8_t speedStep, bool fl) :
     SpeedAndDirectionInstruction(address, emergencyStop, direction)
   {
@@ -320,10 +357,24 @@ struct SpeedAndDirectionInstruction14 : SpeedAndDirectionInstruction
       speedAndDirection |= 0x10;
     checksum = calcChecksum(*this);
   }
+
+  bool emergencyStop() const
+  {
+    return (speedAndDirection & speedMask) == eStop;
+  }
+
+  uint8_t speed() const
+  {
+    const uint8_t v = (speedAndDirection & speedMask);
+    return v > 1 ? v - 1 : 0;
+  }
 };
 
 struct SpeedAndDirectionInstruction27 : SpeedAndDirectionInstruction
 {
+  static constexpr uint8_t speedMask = 0x1F;
+  static constexpr uint8_t speedMax = 27;
+
   SpeedAndDirectionInstruction27(uint16_t address, bool emergencyStop, Direction direction, uint8_t speedStep) :
     SpeedAndDirectionInstruction(address, emergencyStop, direction)
   {
@@ -333,10 +384,24 @@ struct SpeedAndDirectionInstruction27 : SpeedAndDirectionInstruction
       speedAndDirection |= (((speedStep + 1) & 0x01) << 4) | ((speedStep + 1) >> 1);
     checksum = calcChecksum(*this);
   }
+
+  bool emergencyStop() const
+  {
+    return (speedAndDirection & speedMask) == eStop;
+  }
+
+  uint8_t speed() const
+  {
+    const uint8_t v = ((speedAndDirection & 0x0F) << 1) | ((speedAndDirection & 0x10) >> 4);
+    return v > 3 ? v - 3 : 0;
+  }
 };
 
 struct SpeedAndDirectionInstruction28 : SpeedAndDirectionInstruction
 {
+  static constexpr uint8_t speedMask = 0x1F;
+  static constexpr uint8_t speedMax = 28;
+
   SpeedAndDirectionInstruction28(uint16_t address, bool emergencyStop, Direction direction, uint8_t speedStep) :
     SpeedAndDirectionInstruction(address, emergencyStop, direction)
   {
@@ -346,10 +411,24 @@ struct SpeedAndDirectionInstruction28 : SpeedAndDirectionInstruction
       speedAndDirection |= (((speedStep + 1) & 0x01) << 4) | ((speedStep + 1) >> 1);
     checksum = calcChecksum(*this);
   }
+
+  bool emergencyStop() const
+  {
+    return (speedAndDirection & speedMask) == eStop;
+  }
+
+  uint8_t speed() const
+  {
+    const uint8_t v = ((speedAndDirection & 0x0F) << 1) | ((speedAndDirection & 0x10) >> 4);
+    return v > 3 ? v - 3 : 0;
+  }
 };
 
 struct SpeedAndDirectionInstruction128 : SpeedAndDirectionInstruction
 {
+  static constexpr uint8_t speedMask = 0x7F;
+  static constexpr uint8_t speedMax = 126;
+
   SpeedAndDirectionInstruction128(uint16_t address, bool emergencyStop, Direction direction, uint8_t speedStep) :
     SpeedAndDirectionInstruction(address, emergencyStop, direction)
   {
@@ -358,6 +437,17 @@ struct SpeedAndDirectionInstruction128 : SpeedAndDirectionInstruction
     if(!emergencyStop && speedStep > 0)
       speedAndDirection |= speedStep + 1;
     checksum = calcChecksum(*this);
+  }
+
+  bool emergencyStop() const
+  {
+    return (speedAndDirection & speedMask) == eStop;
+  }
+
+  uint8_t speed() const
+  {
+    const uint8_t v = (speedAndDirection & speedMask);
+    return v > 1 ? v - 1 : 0;
   }
 };
 
