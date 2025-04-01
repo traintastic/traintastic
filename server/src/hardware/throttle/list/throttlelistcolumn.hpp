@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,12 +29,14 @@ enum class ThrottleListColumn
 {
   Id = 1 << 0,
   Name = 1 << 1,
-  Interface = 1 << 2,
+  Train = 1 << 2,
+  Interface = 1 << 3,
 };
 
-constexpr std::array<ThrottleListColumn, 3> throttleListColumnValues = {
+constexpr std::array<ThrottleListColumn, 4> throttleListColumnValues = {
   ThrottleListColumn::Id,
   ThrottleListColumn::Name,
+  ThrottleListColumn::Train,
   ThrottleListColumn::Interface,
 };
 

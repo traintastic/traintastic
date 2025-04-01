@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,6 +53,7 @@ class BoardList;
 class LinkRailTileList;
 class NXManager;
 class Clock;
+class ThrottleList;
 class TrainList;
 class RailVehicleList;
 class SimulationStatus;
@@ -122,6 +123,7 @@ class World : public Object
     ObjectProperty<IdentificationList> identifications;
     ObjectProperty<BoardList> boards;
     ObjectProperty<Clock> clock;
+    ObjectProperty<ThrottleList> throttles;
     ObjectProperty<TrainList> trains;
     ObjectProperty<RailVehicleList> railVehicles;
     ObjectProperty<Lua::ScriptList> luaScripts;

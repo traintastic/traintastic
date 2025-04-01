@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,9 @@
 
 #include "throttlelisttablemodel.hpp"
 #include "throttlelist.hpp"
+#include "../webthrottle.hpp"
+#include "../../../core/objectproperty.tpp"
+#include "../../../train/train.hpp"
 #include "../../../utils/displayname.hpp"
 
 bool ThrottleListTableModel::isListedProperty(std::string_view name)
@@ -29,6 +32,7 @@ bool ThrottleListTableModel::isListedProperty(std::string_view name)
   return
     name == "id" ||
     name == "name" ||
+    name == "train" ||
     name == "interface";
 }
 
@@ -41,6 +45,9 @@ static std::string_view displayName(ThrottleListColumn column)
 
     case ThrottleListColumn::Name:
       return DisplayName::Object::name;
+
+    case ThrottleListColumn::Train:
+      return DisplayName::Vehicle::Rail::train;
 
     case ThrottleListColumn::Interface:
       return DisplayName::Hardware::interface;
@@ -81,6 +88,13 @@ std::string ThrottleListTableModel::getText(uint32_t column, uint32_t row) const
       case ThrottleListColumn::Name:
         return throttle.name;
 
+      case ThrottleListColumn::Train:
+        if(throttle.train)
+        {
+          return throttle.train->name;
+        }
+        return {};
+
       case ThrottleListColumn::Interface:
         if(const auto* interfaceProperty = throttle.getObjectProperty("interface"); interfaceProperty)
         {
@@ -91,6 +105,10 @@ std::string ThrottleListTableModel::getText(uint32_t column, uint32_t row) const
 
             return interface->getObjectId();
           }
+        }
+        else if(dynamic_cast<const WebThrottle*>(&throttle))
+        {
+          return "WebThrottle";
         }
         return "";
     }
@@ -108,6 +126,8 @@ void ThrottleListTableModel::propertyChanged(BaseProperty& property, uint32_t ro
     changed(row, ThrottleListColumn::Id);
   else if(name == "name")
     changed(row, ThrottleListColumn::Name);
+  else if(name == "train")
+    changed(row, ThrottleListColumn::Train);
   else if(name == "interface")
     changed(row, ThrottleListColumn::Interface);
 }
