@@ -58,7 +58,7 @@ class Session : public std::enable_shared_from_this<Session>
     static void writeAttribute(Message& message, const AbstractAttribute& attribute);
     static void writeTypeInfo(Message& message, const TypeInfo& typeInfo);
 
-    boost::signals2::connection m_memoryLoggerChanged;
+    boost::signals2::scoped_connection m_memoryLoggerChanged;
 
   protected:
     using Handle = uint32_t;
@@ -67,7 +67,7 @@ class Session : public std::enable_shared_from_this<Session>
     std::shared_ptr<ClientConnection> m_connection;
     boost::uuids::uuid m_uuid;
     Handles m_handles;
-    std::unordered_multimap<Handle, boost::signals2::connection> m_objectSignals;
+    std::unordered_multimap<Handle, boost::signals2::scoped_connection> m_objectSignals;
 
     bool processMessage(const Message& message);
 

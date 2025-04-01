@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,6 +57,12 @@ MethodIcon::MethodIcon(Method& method, QIcon icon, QWidget* parent) :
     });
 }
 
+MethodIcon::MethodIcon(Method& item, QIcon icon, std::function<void()> triggered, QWidget* parent)
+  : MethodIcon(item, icon, parent)
+{
+  m_triggered = std::move(triggered);
+}
+
 void MethodIcon::mousePressEvent(QMouseEvent* event)
 {
   if(event->button() == Qt::LeftButton)
@@ -76,7 +82,14 @@ void MethodIcon::mouseReleaseEvent(QMouseEvent* event)
     if(rect().contains(event->position().toPoint())) // test if mouse release in widget
 #endif
     {
-      m_method.call();
+      if(m_triggered)
+      {
+        m_triggered();
+      }
+      else
+      {
+        m_method.call();
+      }
     }
   }
 }

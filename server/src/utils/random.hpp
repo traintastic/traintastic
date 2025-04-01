@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,13 +24,12 @@
 #define TRAINTASTIC_SERVER_UTILS_RANDOM_HPP
 
 #include <ctime>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
+#include <random>
 
 class Random
 {
   private:
-    inline static boost::random::mt19937 s_gen{static_cast<unsigned int>(time(nullptr))};
+    inline static std::mt19937 s_gen{static_cast<unsigned int>(time(nullptr))};
 
     Random() = default;
 
@@ -38,7 +37,7 @@ class Random
     template<typename T>
     static T value(T min, T max)
     {
-      boost::random::uniform_int_distribution<T> dist(min, max);
+      std::uniform_int_distribution<T> dist(min, max);
       return dist(s_gen);
     }
 

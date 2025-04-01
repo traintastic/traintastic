@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2022,2024 Reinder Feenstra
+ * Copyright (C) 2020-2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -67,7 +67,7 @@ TurnoutLeftRailTile::TurnoutLeftRailTile(World& world, std::string_view _id, Til
   : TurnoutRailTile(world, _id, tileId_, 3)
 {
   // Skip Unknown position
-  tcb::span<const TurnoutPosition, 2> setPositionValues = tcb::make_span(positionValues).subspan<1>();
+  std::span<const TurnoutPosition, 2> setPositionValues = std::span(positionValues).subspan<1>();
 
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left}, getDefaultActionValue));
 

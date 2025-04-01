@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -125,7 +125,7 @@ Decoder::Decoder(World& world, std::string_view _id) :
   m_interfaceItems.add(interface);
 
   Attributes::addEnabled(protocol, false);
-  Attributes::addValues(protocol, tcb::span<const DecoderProtocol>{});
+  Attributes::addValues(protocol, std::span<const DecoderProtocol>{});
   Attributes::addVisible(protocol, false);
   m_interfaceItems.add(protocol);
 
@@ -151,7 +151,7 @@ Decoder::Decoder(World& world, std::string_view _id) :
 
   Attributes::addDisplayName(speedSteps, DisplayName::Hardware::speedSteps);
   Attributes::addEnabled(speedSteps, false);
-  Attributes::addValues(speedSteps, tcb::span<const uint8_t>{});
+  Attributes::addValues(speedSteps, std::span<const uint8_t>{});
   Attributes::addVisible(speedSteps, false);
   m_interfaceItems.add(speedSteps);
 
@@ -381,7 +381,7 @@ void Decoder::protocolChanged()
       checkSpeedSteps();
     }
     else
-      Attributes::setValues(speedSteps, tcb::span<const uint8_t>{});
+      Attributes::setValues(speedSteps, std::span<const uint8_t>{});
   }
   else
   {
@@ -395,7 +395,7 @@ bool Decoder::checkProtocol()
 {
   const auto protocols = protocol.getSpanAttribute<DecoderProtocol>(AttributeName::Values).values();
   assert(!protocols.empty());
-  if(const auto* it = std::find(protocols.begin(), protocols.end(), protocol); it == protocols.end())
+  if(const auto it = std::find(protocols.begin(), protocols.end(), protocol); it == protocols.end())
   {
     protocol = protocols.front();
     return true;
@@ -418,7 +418,7 @@ bool Decoder::checkAddress()
 bool Decoder::checkSpeedSteps()
 {
   const auto values = speedSteps.getSpanAttribute<uint8_t>(AttributeName::Values).values();
-  if(const auto* it = std::find(values.begin(), values.end(), speedSteps); it == values.end())
+  if(const auto it = std::find(values.begin(), values.end(), speedSteps); it == values.end())
   {
     speedSteps = values.back();
     return true;

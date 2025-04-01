@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -72,7 +72,16 @@ QString TableModel::getValue(int column, int row) const
   return m_texts.value(ColumnRow(column, row));
 }
 
-void TableModel::setRegion(int columnMin, int columnMax, int rowMin, int rowMax)
+void TableModel::setRegionAll(bool enable)
+{
+  m_regionAll = enable;
+  if(m_regionAll)
+  {
+    updateRegionAll();
+  }
+}
+
+void TableModel::setRegion(uint32_t columnMin, uint32_t columnMax, uint32_t rowMin, uint32_t rowMax)
 {
   if(m_region.columnMin != columnMin ||
      m_region.columnMax != columnMax ||
@@ -94,6 +103,10 @@ void TableModel::setColumnHeaders(const QVector<QString>& values)
   {
     beginResetModel();
     m_columnHeaders = values;
+    if(m_regionAll)
+    {
+      updateRegionAll();
+    }
     endResetModel();
   }
 }
@@ -104,6 +117,22 @@ void TableModel::setRowCount(int value)
   {
     beginResetModel();
     m_rowCount = value;
+    if(m_regionAll)
+    {
+      updateRegionAll();
+    }
     endResetModel();
+  }
+}
+
+void TableModel::updateRegionAll()
+{
+  if(columnCount() == 0 || rowCount() == 0)
+  {
+    setRegion(1, 0, 1, 0); // select nothing
+  }
+  else
+  {
+    setRegion(0, columnCount() - 1, 0, rowCount() - 1);
   }
 }

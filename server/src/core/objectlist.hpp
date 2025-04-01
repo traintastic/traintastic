@@ -42,7 +42,7 @@ class ObjectList : public AbstractObjectList
 
   protected:
     Items m_items;
-    std::unordered_map<Object*, boost::signals2::connection> m_propertyChanged;
+    std::unordered_map<Object*, boost::signals2::scoped_connection> m_propertyChanged;
     std::vector<ObjectListTableModel<T>*> m_models;
 
     void deleteMethodHandler(const std::shared_ptr<T>& object)
@@ -119,12 +119,6 @@ class ObjectList : public AbstractObjectList
       AbstractObjectList{_parent, parentPropertyName}
     {
       static_assert(std::is_base_of_v<Object, T>);
-    }
-
-    ~ObjectList()
-    {
-      for(auto& it : m_propertyChanged)
-        it.second.disconnect();
     }
 
     inline const_iterator begin() const noexcept { return m_items.begin(); }

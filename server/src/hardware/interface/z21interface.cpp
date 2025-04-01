@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -90,10 +90,10 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(firmwareVersion, notes);
 }
 
-tcb::span<const DecoderProtocol> Z21Interface::decoderProtocols() const
+std::span<const DecoderProtocol> Z21Interface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 3> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong, DecoderProtocol::Motorola};
-  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
 std::pair<uint16_t, uint16_t> Z21Interface::decoderAddressMinMax(DecoderProtocol protocol) const
@@ -144,7 +144,7 @@ void Z21Interface::inputSimulateChange(uint32_t channel, uint32_t address, Simul
     m_kernel->simulateInputChange(channel, address, action);
 }
 
-tcb::span<const OutputChannel> Z21Interface::outputChannels() const
+std::span<const OutputChannel> Z21Interface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::DCCext);
   return values;
@@ -215,35 +215,35 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
         {
           if(powerOn)
           {
-              /* NOTE:
-               * Setting stop and powerOn together is not an atomic operation,
-               * so it would trigger 2 state changes with in the middle state.
-               * Fortunately this does not happen because at least one of the state is already set.
-               * Because if we are in Run state we go to PowerOn,
-               * and if we are on PowerOff then we go to PowerOn.
-               */
+            /* NOTE:
+             * Setting stop and powerOn together is not an atomic operation,
+             * so it would trigger 2 state changes with in the middle state.
+             * Fortunately this does not happen because at least one of the state is already set.
+             * Because if we are in Run state we go to PowerOn,
+             * and if we are on PowerOff then we go to PowerOn.
+             */
 
-              // First of all, stop if we have to, otherwhise we might inappropiately run trains
-              if(isStopped && contains(m_world.state.value(), WorldState::Run))
-              {
-                m_world.stop();
-              }
-              else if(!contains(m_world.state.value(), WorldState::Run) && !isStopped)
-              {
-                m_world.run(); // Run trains yay!
-              }
+            // First of all, stop if we have to, otherwhise we might inappropiately run trains
+            if(isStopped && contains(m_world.state.value(), WorldState::Run))
+            {
+              m_world.stop();
+            }
+            else if(!contains(m_world.state.value(), WorldState::Run) && !isStopped)
+            {
+              m_world.run(); // Run trains yay!
+            }
 
-              // EmergencyStop in Z21 also means power is still on
-              if(!contains(m_world.state.value(), WorldState::PowerOn) && isStopped)
-              {
-                m_world.powerOn(); // Just power on but keep stopped
-              }
+            // EmergencyStop in Z21 also means power is still on
+            if(!contains(m_world.state.value(), WorldState::PowerOn) && isStopped)
+            {
+              m_world.powerOn(); // Just power on but keep stopped
+            }
           }
           else
           {
-              // Power off regardless of stop state
-              if(contains(m_world.state.value(), WorldState::PowerOn))
-                  m_world.powerOff();
+            // Power off regardless of stop state
+            if(contains(m_world.state.value(), WorldState::PowerOn))
+              m_world.powerOff();
           }
         });
 

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2022,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,7 +54,7 @@ class InterfaceItem
     }
 
     template<typename T, size_t N>
-    void addAttribute(AttributeName name, tcb::span<const T, N> values)
+    void addAttribute(AttributeName name, std::span<const T, N> values)
     {
       assert(m_attributes.find(name) == m_attributes.end());
       m_attributes.emplace(name, std::make_unique<SpanAttribute<T, N>>(*this, name, values));
@@ -63,7 +63,7 @@ class InterfaceItem
     template<typename T, size_t N>
     void addAttribute(AttributeName name, const std::array<T, N>& values)
     {
-      addAttribute(name, tcb::span<const T, N>{values.data(), values.size()});
+      addAttribute(name, std::span<const T, N>{values.data(), values.size()});
     }
 
     template<typename T>
@@ -88,7 +88,7 @@ class InterfaceItem
     }
 
     template<typename T, size_t N>
-    void setAttribute(AttributeName name, tcb::span<const T, N> values)
+    void setAttribute(AttributeName name, std::span<const T, N> values)
     {
       assert(m_attributes.find(name) != m_attributes.end());
       static_cast<SpanAttribute<T, N>*>(m_attributes[name].get())->setValues(values);

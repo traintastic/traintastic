@@ -22,7 +22,7 @@
 
 #include "server.hpp"
 #include <boost/beast/http/buffer_body.hpp>
-#include <tcb/span.hpp>
+#include <span>
 #include <traintastic/network/message.hpp>
 #include <version.hpp>
 #include "clientconnection.hpp"
@@ -89,7 +89,7 @@ http::message_generator methodNotAllowed(const http::request<http::string_body>&
   return response;
 }
 
-http::message_generator binary(const http::request<http::string_body>& request, std::string_view contentType, tcb::span<const std::byte> body)
+http::message_generator binary(const http::request<http::string_body>& request, std::string_view contentType, std::span<const std::byte> body)
 {
   if(request.method() != http::verb::get && request.method() != http::verb::head)
   {

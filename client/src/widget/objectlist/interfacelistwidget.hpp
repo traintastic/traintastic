@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/output/map/switchoutputmapitem.cpp
+ * client/src/widget/objectlist/interfacelistwidget.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024-2025 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,14 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "switchoutputmapitem.hpp"
-#include "outputmapitembase.tpp"
+#ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_INTERFACELISTWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_INTERFACELISTWIDGET_HPP
 
-static constexpr std::array<bool, 2> keyAliasKeys{{false, true}};
-static const std::array<std::string, 2> keyAliasValues{{"$output_map_item.switch.key:off$", "$output_map_item.switch.key:on$"}};
+#include "stackedobjectlistwidget.hpp"
 
-SwitchOutputMapItem::SwitchOutputMapItem(Object& map, bool value) :
-  OutputMapItemBase(map, value)
+class InterfaceListWidget : public StackedObjectListWidget
 {
-  Attributes::addAliases(key, std::span<const bool>(keyAliasKeys), std::span<const std::string>(keyAliasValues));
-}
+public:
+  explicit InterfaceListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
+};
+
+#endif
