@@ -313,6 +313,11 @@ Simulator::Simulator(const QString& filename, QObject* parent)
 #endif
 }
 
+bool Simulator::isSensorOccupied(size_t sensorIndex) const
+{
+  return sensorIndex < m_sensors.size() && m_sensors[sensorIndex].occupied != 0;
+}
+
 bool Simulator::powerOn() const
 {
   return m_powerOn;
@@ -567,13 +572,25 @@ void Simulator::loadTrackPlan(const QJsonArray& trackPlan)
       }
     }
 
-    if(obj.contains("sensor_channel"))
-    {
-      segment.sensorChannel = obj["sensor_channel"].toInt();
-    }
     if(obj.contains("sensor_address"))
     {
-      segment.sensorAddress = obj["sensor_address"].toInt();
+      const uint16_t sensorChannel = obj.contains("sensor_channel") ? obj["sensor_channel"].toInt() : 0;
+      const uint16_t sensorAddress = obj["sensor_address"].toInt();
+
+      for(size_t i = 0; i < m_sensors.size(); ++i)
+      {
+        if(m_sensors[i].channel == sensorChannel && m_sensors[i].address == sensorAddress)
+        {
+          segment.sensorIndex = i;
+          break;
+        }
+      }
+
+      if(segment.sensorIndex == invalidIndex) // new sensor
+      {
+        segment.sensorIndex = m_sensors.size();
+        m_sensors.emplace_back(Sensor{0, sensorChannel, sensorAddress, false});
+      }
     }
 
     segment.index = m_trackSegments.size();
@@ -705,7 +722,7 @@ void Simulator::loadTrains(const QJsonArray& array)
       segmentIndex = 0; // in case there is no free segment
       for(size_t i = 0; i < m_trackSegments.size(); ++i)
       {
-        if(!m_trackSegments[i].occupied)
+        if(!isSensorOccupied(m_trackSegments[i].sensorIndex))
         {
           segmentIndex = static_cast<int>(i);
           break;
@@ -738,10 +755,11 @@ void Simulator::loadTrains(const QJsonArray& array)
     {
       // center train in segment and mark it occupied:
       auto& segment = m_trackSegments[train.vehicles.front().front.segmentIndex];
-      segment.occupied = train.vehicles.size() * 2;
-      if(segment.sensorAddress)
+      if(segment.sensorIndex != invalidIndex)
       {
-        segment.sensorValue = (segment.occupied != 0);
+        auto& sensor = m_sensors[segment.sensorIndex];
+        sensor.occupied = train.vehicles.size() * 2;
+        sensor.value = (sensor.occupied != 0);
       }
       const float segmentLength = segment.length();
       const float move = segmentLength - (segmentLength - train.length()) / 2;
@@ -821,8 +839,12 @@ bool Simulator::updateVehiclePosition(RailVehicle::Face& face, const float speed
         return false; // no next segment
       }
 
-      assert(segment.occupied != 0);
-      segment.occupied--;
+      if(segment.sensorIndex != invalidIndex)
+      {
+        auto& sensor = m_sensors[segment.sensorIndex];
+        assert(sensor.occupied != 0);
+        sensor.occupied--;
+      }
 
       face.segmentIndex = nextSegmentIndex;
       auto& nextSegment = m_trackSegments[face.segmentIndex];
@@ -838,7 +860,10 @@ bool Simulator::updateVehiclePosition(RailVehicle::Face& face, const float speed
         face.segmentDirectionInverted = (speed > 0);
       }
 
-      nextSegment.occupied++;
+      if(nextSegment.sensorIndex != invalidIndex)
+      {
+        m_sensors[nextSegment.sensorIndex].occupied++;
+      }
     }
     else if(distance < 0)
     {
@@ -848,8 +873,12 @@ bool Simulator::updateVehiclePosition(RailVehicle::Face& face, const float speed
         return false; // no next segment
       }
 
-      assert(segment.occupied != 0);
-      segment.occupied--;
+      if(segment.sensorIndex != invalidIndex)
+      {
+        auto& sensor = m_sensors[segment.sensorIndex];
+        assert(sensor.occupied != 0);
+        sensor.occupied--;
+      }
 
       face.segmentIndex = nextSegmentIndex;
       auto& nextSegment = m_trackSegments[face.segmentIndex];
@@ -865,7 +894,10 @@ bool Simulator::updateVehiclePosition(RailVehicle::Face& face, const float speed
         face.segmentDirectionInverted = (speed > 0);
       }
 
-      nextSegment.occupied++;
+      if(nextSegment.sensorIndex != invalidIndex)
+      {
+        m_sensors[nextSegment.sensorIndex].occupied++;
+      }
     }
   }
 
@@ -910,16 +942,13 @@ bool Simulator::updateVehiclePosition(RailVehicle::Face& face, const float speed
 
 void Simulator::updateSensors()
 {
-  for(auto& segment : m_trackSegments)
+  for(auto& sensor : m_sensors)
   {
-    if(segment.sensorAddress)
+    const bool sensorValue = m_powerOn && (sensor.occupied != 0);
+    if(sensor.value != sensorValue)
     {
-      const bool sensorValue = m_powerOn && (segment.occupied != 0);
-      if(segment.sensorValue != sensorValue)
-      {
-        segment.sensorValue = sensorValue;
-        send(SimulatorProtocol::SensorChanged(segment.sensorChannel, segment.sensorAddress.value(), segment.sensorValue));
-      }
+      sensor.value = sensorValue;
+      send(SimulatorProtocol::SensorChanged(sensor.channel, sensor.address, sensor.value));
     }
   }
 }

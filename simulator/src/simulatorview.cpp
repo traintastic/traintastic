@@ -266,7 +266,7 @@ void SimulatorView::drawTracks()
   assert(m_simulator);
   for(const auto& segment : m_simulator->trackSegments())
   {
-    if(m_showTrackOccupancy && segment.occupied && segment.sensorAddress)
+    if(m_showTrackOccupancy && m_simulator->isSensorOccupied(segment.sensorIndex))
     {
       glColor3f(1.0f, 0.0f, 0.0f); // Red if occupied
     }

@@ -82,10 +82,7 @@ public:
       size_t thrownSegmentIndex = invalidIndex;
     } turnout;
 
-    size_t occupied = 0;
-    uint16_t sensorChannel = 0;
-    std::optional<uint16_t> sensorAddress;
-    bool sensorValue = false;
+    size_t sensorIndex = invalidIndex;
 
     float length() const
     {
@@ -208,6 +205,8 @@ public:
     return m_trainWidth;
   }
 
+  bool isSensorOccupied(size_t sensorIndex) const;
+
   bool powerOn() const;
   void setPowerOn(bool value);
 
@@ -221,12 +220,21 @@ protected:
   void timerEvent(QTimerEvent *ev) override;
 
 private:
+  struct Sensor
+  {
+    size_t occupied = 0;
+    uint16_t channel = 0;
+    uint16_t address = 0;
+    bool value = false;
+  };
+
   static constexpr uint fps = 30;
 
   QTcpServer* m_server;
   QList<Connection*> m_connections;
   std::vector<TrackSegment> m_trackSegments;
   std::unordered_map<QString, size_t> m_trackSegmentId;
+  std::vector<Sensor> m_sensors;
   std::vector<Train> m_trains;
 
   QBasicTimer m_tickTimer;
