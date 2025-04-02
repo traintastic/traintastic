@@ -1,9 +1,9 @@
 /**
- * shared/src/traintastic/copyright.hpp
+ * server/src/hardware/throttle/webthrottle.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2025 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +20,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_COPYRIGHT_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_COPYRIGHT_HPP
+#include "webthrottle.hpp"
+#include "../../world/world.hpp"
 
-#define TRAINTASTIC_COPYRIGHT "Copyright (c) 2019-2025 Reinder Feenstra and contributors"
+std::shared_ptr<WebThrottle> WebThrottle::create(World& world)
+{
+  return create(world, world.getUniqueId(defaultId));
+}
 
-#endif
+std::shared_ptr<WebThrottle> WebThrottle::create(World& world, std::string_view objectId)
+{
+  auto obj = std::make_shared<WebThrottle>(world, objectId);
+  obj->addToWorld();
+  return obj;
+}
+
+WebThrottle::WebThrottle(World& world, std::string_view objectId)
+  : Throttle(world, objectId)
+{
+}
+
+void WebThrottle::load(WorldLoader& /*loader*/, const nlohmann::json& /*data*/)
+{
+  // do not load
+}
+
+void WebThrottle::save(WorldSaver& /*saver*/, nlohmann::json& /*data*/, nlohmann::json& /*state*/) const
+{
+  // do not save
+}

@@ -32,6 +32,7 @@
 #include <traintastic/enum/interfacestate.hpp>
 #include <traintastic/locale/locale.hpp>
 
+#include "../methodicon.hpp"
 #include "../../theme/theme.hpp"
 #include "../../mainwindow.hpp"
 
@@ -99,6 +100,12 @@ InterfaceListWidget::InterfaceListWidget(const ObjectPtr& object, QWidget* paren
   : StackedObjectListWidget(object, parent)
 {
   m_list->setItemDelegate(new InterfaceListItemDelegate(m_list));
+  m_listEmptyLabel->setText(Locale::tr("interface_list:list_is_empty"));
+
+  if(m_create) /*[[likely]]*/
+  {
+    m_create->setToolTip(Locale::tr("interface_list:create"));
+  }
 
   if(m_createMenu) /*[[likely]]*/
   {

@@ -425,7 +425,7 @@ void Connection::releaseTableModel(TableModel* tableModel)
   tableModel->m_handle = invalidHandle;
 }
 
-void Connection::setTableModelRegion(TableModel* tableModel, int columnMin, int columnMax, int rowMin, int rowMax)
+void Connection::setTableModelRegion(TableModel* tableModel, uint32_t columnMin, uint32_t columnMax, uint32_t rowMin, uint32_t rowMax)
 {
   auto event = Message::newEvent(Message::Command::TableModelSetRegion);
   event->write(tableModel->handle());

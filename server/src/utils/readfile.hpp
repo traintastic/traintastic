@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/throttle/throttlefunction.hpp
+ * server/src/utils/readfile.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,32 +20,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_THROTTLE_THROTTLEFUNCTION_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_THROTTLE_THROTTLEFUNCTION_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_READFILE_HPP
+#define TRAINTASTIC_SERVER_UTILS_READFILE_HPP
 
-#include "../../core/object.hpp"
-#include "../../core/property.hpp"
-#include "../../core/method.hpp"
+#include <filesystem>
+#include <string>
+#include <optional>
 
-class Throttle;
-
-class ThrottleFunction : public Object
-{
-  CLASS_ID("throttle_function")
-
-  private:
-    Throttle& m_throttle;
-
-  public:
-    Property<uint32_t> number;
-    Property<std::string> name;
-    Property<bool> value;
-    Method<void()> press;
-    Method<void()> release;
-
-    ThrottleFunction(Throttle& throttle, uint32_t number);
-
-    std::string getObjectId() const final;
-};
+std::optional<std::string> readFile(const std::filesystem::path& filename);
 
 #endif

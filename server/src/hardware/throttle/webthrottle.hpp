@@ -1,9 +1,9 @@
 /**
- * shared/src/traintastic/copyright.hpp
+ * server/src/hardware/throttle/webthrottle.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2025 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_COPYRIGHT_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_COPYRIGHT_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_THROTTLE_WEBTHROTTLE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_THROTTLE_WEBTHROTTLE_HPP
 
-#define TRAINTASTIC_COPYRIGHT "Copyright (c) 2019-2025 Reinder Feenstra and contributors"
+#include "throttle.hpp"
+#include "throttlecontroller.hpp"
+
+class WebThrottle : public Throttle
+{
+  CLASS_ID("throttle.web")
+  DEFAULT_ID("webthrottle")
+
+protected:
+  void load(WorldLoader& loader, const nlohmann::json& data) override;
+  void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
+
+public:
+  static std::shared_ptr<WebThrottle> create(World& world);
+  static std::shared_ptr<WebThrottle> create(World& world, std::string_view objectId);
+
+  WebThrottle(World& world, std::string_view objectId);
+
+  using Throttle::acquire;
+};
 
 #endif

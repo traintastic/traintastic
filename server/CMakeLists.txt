@@ -211,15 +211,23 @@ endif()
 
 include(cmake/add-resource.cmake)
 
+add_resource(resource-www
+  FILES
+    www/css/normalize.css
+    www/css/throttle.css
+    www/js/throttle.js
+    www/throttle.html
+)
+
 add_resource(resource-shared
   BASE_DIR ../
   FILES
     shared/gfx/appicon.ico
 )
 
-add_dependencies(traintastic-server resource-shared)
+add_dependencies(traintastic-server resource-www resource-shared)
 if(BUILD_TESTING)
-  add_dependencies(traintastic-server-test resource-shared)
+  add_dependencies(traintastic-server-test resource-www resource-shared)
 endif()
 
 ### OPTIONS ###

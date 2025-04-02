@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,6 +40,7 @@ class TrainVehicleList;
 class TrainBlockStatus;
 class BlockRailTile;
 class PoweredRailVehicle;
+class Throttle;
 
 class Train : public IdObject
 {
@@ -58,6 +59,7 @@ class Train : public IdObject
 
     boost::asio::steady_timer m_speedTimer;
     SpeedState m_speedState = SpeedState::Idle;
+    std::shared_ptr<Throttle> m_throttle;
 
     void setSpeed(double kmph);
     void updateSpeed();
@@ -113,6 +115,18 @@ class Train : public IdObject
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onBlockRemoved;
 
     Train(World& world, std::string_view _id);
+
+    bool hasThrottle() const
+    {
+      return m_throttle.operator bool();
+    }
+
+    std::string throttleName() const;
+    std::error_code acquire(Throttle& throttle, bool steal = false);
+    std::error_code release(Throttle& throttle);
+    std::error_code setSpeed(Throttle& throttle, double value);
+    std::error_code setTargetSpeed(Throttle& throttle, double value);
+    std::error_code setDirection(Throttle& throttle, Direction value);
 
     void fireBlockAssigned(const std::shared_ptr<BlockRailTile>& block);
     void fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block);

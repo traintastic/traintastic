@@ -1,9 +1,9 @@
 /**
- * shared/src/traintastic/copyright.hpp
+ * server/src/utils/valuestep.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2025 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_COPYRIGHT_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_COPYRIGHT_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_VALUESTEP_HPP
+#define TRAINTASTIC_SERVER_UTILS_VALUESTEP_HPP
 
-#define TRAINTASTIC_COPYRIGHT "Copyright (c) 2019-2025 Reinder Feenstra and contributors"
+#include <cassert>
+#include <cmath>
+
+constexpr double valueStepUp(double value, double step)
+{
+  assert(step > 0);
+  const double margin = step / 1e6;
+  return (std::floor((value + margin) / step) + 1) * step;
+}
+
+constexpr double valueStepDown(double value, double step)
+{
+  assert(step > 0);
+  const double margin = step / 1e6;
+  return (std::ceil((value - margin) / step) - 1) * step;
+}
+
+constexpr double valueStep(double value, double step, bool up)
+{
+  return up ? valueStepUp(value, step) : valueStepDown(value, step);
+}
 
 #endif

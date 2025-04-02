@@ -176,6 +176,19 @@ struct Attributes
   }
 
   template<class T, class Unit>
+  static inline T getMin(UnitProperty<T, Unit>& property)
+  {
+    static_assert(std::is_floating_point_v<T>);
+    return property.template getAttribute<T>(AttributeName::Min);
+  }
+
+  template<class T, class Unit>
+  static inline T getMin(UnitProperty<T, Unit>& property, Unit unit)
+  {
+    return convertUnit(getMin(property), property.unit(), unit);
+  }
+
+  template<class T, class Unit>
   static inline void setMin(UnitProperty<T, Unit>& property, T value, Unit unit)
   {
     static_assert(std::is_floating_point_v<T>);
@@ -187,6 +200,19 @@ struct Attributes
   {
     static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
     property.setAttribute(AttributeName::Max, value);
+  }
+
+  template<class T, class Unit>
+  static inline T getMax(UnitProperty<T, Unit>& property)
+  {
+    static_assert(std::is_floating_point_v<T>);
+    return property.template getAttribute<T>(AttributeName::Max);
+  }
+
+  template<class T, class Unit>
+  static inline T getMax(UnitProperty<T, Unit>& property, Unit unit)
+  {
+    return convertUnit(getMax(property), property.unit(), unit);
   }
 
   template<class T, class Unit>

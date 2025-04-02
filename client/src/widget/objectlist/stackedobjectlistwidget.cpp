@@ -30,12 +30,15 @@
 #include <QStackedWidget>
 #include <QToolBar>
 #include <QVBoxLayout>
+#include <QIdentityProxyModel>
+#include <QGuiApplication>
 
 #include <traintastic/locale/locale.hpp>
 
 #include "../createwidget.hpp"
 #include "../tablewidget.hpp"
 #include "../methodicon.hpp"
+#include "../../mainwindow.hpp"
 #include "../../network/object.hpp"
 #include "../../network/method.hpp"
 #include "../../network/connection.hpp"
@@ -45,12 +48,35 @@
 #include "../../theme/theme.hpp"
 #include "../../misc/methodaction.hpp"
 
+namespace
+{
+  class StackedObjectListProxyModel final : public QIdentityProxyModel
+  {
+    public:
+      StackedObjectListProxyModel(QAbstractItemModel* sourceModel)
+        : QIdentityProxyModel()
+      {
+        setSourceModel(sourceModel);
+      }
+
+      QVariant data(const QModelIndex &index, int role) const final
+      {
+        if (role == Qt::ToolTipRole)
+        {
+          return Locale::tr("stacked_object_list:click_to_edit_ctrl_click_to_open_in_a_new_window");
+        }
+        return QIdentityProxyModel::data(index, role);
+      }
+  };
+}
+
 StackedObjectListWidget::StackedObjectListWidget(const ObjectPtr& object, QWidget* parent)
   : QWidget(parent)
   , m_object{object}
   , m_navBar{new QToolBar(this)}
   , m_stack{new QStackedWidget(this)}
   , m_list{new QListView(this)}
+  , m_listEmptyLabel{new QLabel(Locale::tr("stacked_object_list:list_is_empty"), m_list)}
   , m_requestId{Connection::invalidRequestId}
 {
   m_navBar->hide();
@@ -91,13 +117,13 @@ StackedObjectListWidget::StackedObjectListWidget(const ObjectPtr& object, QWidge
       if(tableModel)
       {
         m_tableModel = tableModel;
-        m_list->setModel(m_tableModel.get());
+        m_tableModel->setRegionAll(true);
+        m_list->setModel(new StackedObjectListProxyModel(m_tableModel.get()));
         connect(m_tableModel.get(), &TableModel::modelReset,
           [this]()
           {
-            m_tableModel->setRegion(0, m_tableModel->columnCount(), 0, m_tableModel->rowCount());
+            m_listEmptyLabel->setVisible(m_tableModel->rowCount() == 0);
           });
-        m_tableModel->setRegion(0, m_tableModel->columnCount(), 0, m_tableModel->rowCount());
       }
       else if(error)
       {
@@ -156,10 +182,10 @@ StackedObjectListWidget::StackedObjectListWidget(const ObjectPtr& object, QWidge
       m_create->hide();
     }
 
-    m_list->installEventFilter(this);
     m_create->installEventFilter(this);
   }
 
+  m_list->installEventFilter(this);
   m_list->setSelectionMode(QListView::NoSelection);
   connect(m_list, &QListView::clicked,
     [this](const QModelIndex &index)
@@ -169,16 +195,25 @@ StackedObjectListWidget::StackedObjectListWidget(const ObjectPtr& object, QWidge
         return;
       }
 
+      const bool openInSubWindow = (QGuiApplication::queryKeyboardModifiers() & Qt::ControlModifier);
+
       cancelRequest();
 
       m_requestId = m_object->connection()->getObject(m_tableModel->getRowObjectId(index.row()),
-        [this](const ObjectPtr& selectedObject, std::optional<const Error> error)
+        [this, openInSubWindow](const ObjectPtr& selectedObject, std::optional<const Error> error)
         {
            m_requestId = Connection::invalidRequestId;
 
           if(selectedObject)
           {
-            show(selectedObject);
+            if(openInSubWindow)
+            {
+              MainWindow::instance->showObject(selectedObject);
+            }
+            else
+            {
+              show(selectedObject);
+            }
           }
           else if(error)
           {
@@ -186,6 +221,9 @@ StackedObjectListWidget::StackedObjectListWidget(const ObjectPtr& object, QWidge
           }
         });
     });
+
+  m_listEmptyLabel->installEventFilter(this);
+  m_listEmptyLabel->setWordWrap(true);
 
   m_stack->addWidget(m_list);
 
@@ -203,6 +241,13 @@ StackedObjectListWidget::~StackedObjectListWidget()
 
 bool StackedObjectListWidget::eventFilter(QObject* object, QEvent* event)
 {
+  if(m_listEmptyLabel->isVisible() && ((object == m_list && event->type() == QEvent::Resize) || (object == m_listEmptyLabel && event->type() == QEvent::Show)))
+  {
+    m_listEmptyLabel->setMaximumWidth(qRound(width() * 0.9f));
+    m_listEmptyLabel->adjustSize();
+    m_listEmptyLabel->setFixedHeight(m_listEmptyLabel->heightForWidth(m_listEmptyLabel->maximumWidth()));
+    m_listEmptyLabel->move((rect().bottomRight() - m_listEmptyLabel->rect().bottomRight()) / 2);
+  }
   if(m_create && ((object == m_list && event->type() == QEvent::Resize) || (object == m_create && event->type() == QEvent::Show)))
   {
     auto pnt = m_create->rect().bottomRight();

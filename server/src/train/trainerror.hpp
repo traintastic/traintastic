@@ -1,9 +1,9 @@
 /**
- * shared/src/traintastic/copyright.hpp
+ * server/src/train/trainerror.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2025 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +20,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_COPYRIGHT_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_COPYRIGHT_HPP
+#ifndef TRAINTASTIC_SERVER_TRAIN_TRAINERROR_HPP
+#define TRAINTASTIC_SERVER_TRAIN_TRAINERROR_HPP
 
-#define TRAINTASTIC_COPYRIGHT "Copyright (c) 2019-2025 Reinder Feenstra and contributors"
+#include <system_error>
+
+enum class TrainError
+{
+  // zero means no error!
+  InvalidThrottle = 1,
+  AlreadyAcquired,
+  CanNotActivateTrain,
+  TrainMustBeStoppedToChangeDirection,
+};
+
+template<>
+struct std::is_error_code_enum<TrainError> : std::true_type {};
+
+std::error_code make_error_code(TrainError ec);
 
 #endif

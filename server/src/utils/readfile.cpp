@@ -1,9 +1,9 @@
 /**
- * shared/src/traintastic/copyright.hpp
+ * server/src/utils/readfile.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2025 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +20,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SHARED_TRAINTASTIC_COPYRIGHT_HPP
-#define TRAINTASTIC_SHARED_TRAINTASTIC_COPYRIGHT_HPP
+#include "readfile.hpp"
+#include <fstream>
 
-#define TRAINTASTIC_COPYRIGHT "Copyright (c) 2019-2025 Reinder Feenstra and contributors"
-
-#endif
+std::optional<std::string> readFile(const std::filesystem::path& filename)
+{
+  std::ifstream file(filename, std::ios::in | std::ios::binary | std::ios::ate);
+  if(!file.is_open())
+  {
+    return std::nullopt;
+  }
+  const size_t size = file.tellg();
+  std::string contents;
+  contents.resize(size);
+  file.seekg(std::ios::beg);
+  file.read(contents.data(), size);
+  return contents;
+}

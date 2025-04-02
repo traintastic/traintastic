@@ -54,11 +54,37 @@ class Kernel : public ::KernelBase
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
 
-    TriState m_trackPowerOn;
-    TriState m_emergencyStop;
-    std::function<void()> m_onNormalOperationResumed;
-    std::function<void()> m_onTrackPowerOff;
-    std::function<void()> m_onEmergencyStop;
+    /*!
+     * \brief m_trackPowerOn caches command station track power state.
+     *
+     * \note It must be accessed only from event loop thread or from
+     * XpressNet::Kernel::start().
+     *
+     * \sa EventLoop
+     */
+    TriState m_trackPowerOn = TriState::Undefined;
+
+    /*!
+     * \brief m_emergencyStop caches command station emergency stop state.
+     *
+     * \note It must be accessed only from event loop thread or from
+     * XpressNet::Kernel::start().
+     *
+     * \sa EventLoop
+     */
+    TriState m_emergencyStop = TriState::Undefined;
+
+    /*!
+     * \brief m_onTrackPowerChanged callback is called when XpressNet power state changes.
+     *
+     * \note It is always called from event loop thread
+     * \note First argument is powerOn, second argument is isStopped
+     * In XpressNet EmergencyStop is really PowerOn + EmergencyStop and
+     * PowerOn implicitly means Run so we cannot call \sa trackPowerOn() if world must be stopped
+     *
+     * \sa EventLoop
+     */
+    std::function<void(bool, bool)> m_onTrackPowerChanged;
 
     DecoderController* m_decoderController;
 
@@ -135,38 +161,13 @@ class Kernel : public ::KernelBase
 
     /**
      * @brief ...
-     *
      * @param[in] callback ...
      * @note This function may not be called when the kernel is running.
      */
-    inline void setOnNormalOperationResumed(std::function<void()> callback)
+    inline void setOnTrackPowerChanged(std::function<void(bool, bool)> callback)
     {
       assert(!m_started);
-      m_onNormalOperationResumed = std::move(callback);
-    }
-
-    /**
-     * @brief ...
-     *
-     * @param[in] callback ...
-     * @note This function may not be called when the kernel is running.
-     */
-    inline void setOnTrackPowerOff(std::function<void()> callback)
-    {
-      assert(!m_started);
-      m_onTrackPowerOff = std::move(callback);
-    }
-
-    /**
-     * @brief ...
-     *
-     * @param[in] callback ...
-     * @note This function may not be called when the kernel is running.
-     */
-    inline void setOnEmergencyStop(std::function<void()> callback)
-    {
-      assert(!m_started);
-      m_onEmergencyStop = std::move(callback);
+      m_onTrackPowerChanged = std::move(callback);
     }
 
     /**

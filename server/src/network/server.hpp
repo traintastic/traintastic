@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2024 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,12 +34,12 @@
 #include <boost/beast/http/message_generator.hpp>
 #include <boost/beast/http/string_body.hpp>
 
-class ClientConnection;
+class WebSocketConnection;
 class Message;
 
 class Server : public std::enable_shared_from_this<Server>
 {
-  friend class ClientConnection;
+  friend class WebSocketConnection;//WebThrottleConnection;
   friend class HTTPConnection;
 
   private:
@@ -50,7 +50,7 @@ class Server : public std::enable_shared_from_this<Server>
     std::array<char, 8> m_udpBuffer;
     boost::asio::ip::udp::endpoint m_remoteEndpoint;
     const bool m_localhostOnly;
-    std::list<std::shared_ptr<ClientConnection>> m_connections;
+    std::list<std::shared_ptr<WebSocketConnection>> m_connections;
 
     void doReceive();
     static std::unique_ptr<Message> processMessage(const Message& message);
@@ -58,8 +58,10 @@ class Server : public std::enable_shared_from_this<Server>
 
     boost::beast::http::message_generator handleHTTPRequest(boost::beast::http::request<boost::beast::http::string_body>&& request);
     bool handleWebSocketUpgradeRequest(boost::beast::http::request<boost::beast::http::string_body>&& request, boost::beast::tcp_stream& stream);
+    template<class T>
+    bool acceptWebSocketUpgradeRequest(boost::beast::http::request<boost::beast::http::string_body>&& request, boost::beast::tcp_stream& stream);
 
-    void connectionGone(const std::shared_ptr<ClientConnection>& connection);
+    void connectionGone(const std::shared_ptr<WebSocketConnection>& connection);
 
   public:
     static constexpr std::string_view id{"server"};
