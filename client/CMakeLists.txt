@@ -132,7 +132,7 @@ install(TARGETS traintastic-client
 
 if(LINUX)
   install(FILES ${CMAKE_SOURCE_DIR}/debian/traintastic-client.desktop DESTINATION share/applications)
-  install(FILES ${CMAKE_SOURCE_DIR}/debian/traintastic_256.png DESTINATION "/opt/traintastic/icons/")
+  install(FILES ${CMAKE_SOURCE_DIR}/debian/traintastic-client_256.png DESTINATION "/opt/traintastic/icons/")
 endif()
 
 ### BUILD TYPE ###

@@ -442,12 +442,24 @@ jobs:
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         windeployqt --release --no-translations -no-system-d3d-compiler ${{github.workspace}}/simulator/build/${{matrix.config.build_type}}/traintastic-simulator.exe
 
+    - name: Build debian package
+      if: matrix.config.build_deb
+      working-directory: ${{github.workspace}}/simulator/build
+      run: cpack
+
     - name: Upload artifact
       if: startswith(matrix.config.os, 'windows')
       uses: actions/upload-artifact@v4
       with:
         name: traintastic-simulator-windows
         path: ${{github.workspace}}/simulator/build/${{matrix.config.build_type}}
+
+    - name: Upload debian package artifact
+      if: matrix.config.build_deb
+      uses: actions/upload-artifact@v4
+      with:
+        name: traintastic-simulator-deb-${{matrix.config.name}}
+        path: ${{github.workspace}}/simulator/build/*.deb
 
   build-data:
     name: shared data ${{matrix.config.name}}
@@ -679,6 +691,13 @@ jobs:
       with:
         name: traintastic-manual-lua
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/manual-lua
+
+    - name: "Download artifacts: traintastic-simulator-deb"
+      uses: actions/download-artifact@v4
+      with:
+        pattern: traintastic-simulator-deb-*
+        merge-multiple: true
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - uses: easingthemes/ssh-deploy@v2.2.11
       env:

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Traintastic simulator
+Comment=Model railroad simulator
+Exec=/opt/traintastic/bin/traintastic-simulator
+Icon=/opt/traintastic/icons/traintastic-simulator_256.png
+Terminal=false
+Categories=Science;Engineering;
