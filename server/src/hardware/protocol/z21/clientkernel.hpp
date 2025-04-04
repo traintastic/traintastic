@@ -141,16 +141,6 @@ class ClientKernel final : public Kernel
      */
     std::unordered_map<uint16_t, LocoCache> m_locoCache;
 
-    /*!
-     * \brief m_isUpdatingDecoderFromKernel prevents mirroring changes to Z21
-     *
-     * \note It must be accessed only from event loop thread or from
-     * Z21::ClientKernel::onStart().
-     *
-     * \sa EventLoop
-     */
-    bool m_isUpdatingDecoderFromKernel = false;
-
     struct PendingRequest
     {
       std::vector<uint8_t> messageBytes;
