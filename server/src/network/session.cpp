@@ -55,9 +55,6 @@ Session::Session(const std::shared_ptr<ClientConnection>& connection) :
 Session::~Session()
 {
   assert(isEventLoopThread());
-  m_memoryLoggerChanged.disconnect();
-  for(const auto& it : m_objectSignals)
-    it.second.disconnect();
 }
 
 bool Session::processMessage(const Message& message)

@@ -29,7 +29,6 @@
 #include "../output/outputcontroller.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../core/objectproperty.hpp"
-#include <tcb/span.hpp>
 
 namespace Selectrix {
   class Kernel;
@@ -133,7 +132,7 @@ class SelectrixInterface final
     SelectrixInterface(World& world, std::string_view _id);
 
     // DecoderController:
-    tcb::span<const DecoderProtocol> decoderProtocols() const final;
+    std::span<const DecoderProtocol> decoderProtocols() const final;
     [[nodiscard]] bool isDecoderAddressAvailable(DecoderProtocol protocol, uint16_t address) const final;
     [[nodiscard]] bool changeDecoderProtocolAddress(Decoder& decoder, DecoderProtocol newProtocol, uint16_t newAddress) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
@@ -147,7 +146,7 @@ class SelectrixInterface final
     void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
-    tcb::span<const OutputChannel> outputChannels() const final;
+    std::span<const OutputChannel> outputChannels() const final;
     [[nodiscard]] bool isOutputAvailable(OutputChannel channel, uint32_t outputId) const final;
     [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t outputId, OutputValue value) final;
 };

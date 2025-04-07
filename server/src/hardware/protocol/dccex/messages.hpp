@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022,2024 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_MESSAGES_HPP
 
 #include <string_view>
-#include <tcb/span.hpp>
+#include <span>
 #include <traintastic/enum/direction.hpp>
 #include "../../../utils/tohex.hpp"
 
@@ -307,7 +307,7 @@ namespace Messages {
     return "";
   }
 
-  inline std::string dccPacket(tcb::span<const uint8_t> packet, Track track = Track::Main)
+  inline std::string dccPacket(std::span<const uint8_t> packet, Track track = Track::Main)
   {
     assert(packet.size() <= 5);
     assert(track == Track::Main || track == Track::Programming);
@@ -321,7 +321,7 @@ namespace Messages {
   template<class T, std::enable_if_t<std::is_trivially_copyable_v<T> && sizeof(T) <= 5, bool> = true>
   inline std::string dccPacket(const T& packet, Track track = Track::Main)
   {
-    return dccPacket(tcb::span<const uint8_t>(reinterpret_cast<const uint8_t*>(&packet), sizeof(T)), track);
+    return dccPacket(std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(&packet), sizeof(T)), track);
   }
 }
 

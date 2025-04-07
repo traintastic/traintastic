@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -71,7 +71,7 @@ class Z21Interface final
     Z21Interface(World& world, std::string_view _id);
 
     // DecoderController:
-    tcb::span<const DecoderProtocol> decoderProtocols() const final;
+    std::span<const DecoderProtocol> decoderProtocols() const final;
     std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
@@ -82,7 +82,7 @@ class Z21Interface final
     void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
-    tcb::span<const OutputChannel> outputChannels() const final;
+    std::span<const OutputChannel> outputChannels() const final;
     std::pair<uint32_t, uint32_t> outputAddressMinMax(OutputChannel /*channel*/) const final;
     [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t address, OutputValue value) final;
 };

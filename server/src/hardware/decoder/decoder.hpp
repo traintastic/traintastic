@@ -64,7 +64,7 @@ class Decoder : public IdObject
     //! If the current value isn't in the list of valid protocols the protocol is set the the first valid one.
     //! \param[in] protocols Valid protocols
     //! \return \c true if adjusted, \c false if unchanged
-    bool checkProtocol(tcb::span<const DecoderProtocol> protocols);
+    bool checkProtocol(std::span<const DecoderProtocol> protocols);
 
     //! \brief Check and correct address
     //! If the current value isn't within the protocol address range, the value is set to the nearest valid one.

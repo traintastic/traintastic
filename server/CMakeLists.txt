@@ -23,7 +23,7 @@ endif()
 
 add_executable(traintastic-server src/main.cpp src/options.hpp)
 add_dependencies(traintastic-server traintastic-lang)
-set_target_properties(traintastic-server PROPERTIES CXX_STANDARD 17)
+set_target_properties(traintastic-server PROPERTIES CXX_STANDARD 20)
 target_include_directories(traintastic-server PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
   ../shared/src)
@@ -34,14 +34,17 @@ target_include_directories(traintastic-server SYSTEM PRIVATE
 if(BUILD_TESTING)
   add_subdirectory(thirdparty/catch2)
   set_target_properties(Catch2 PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     CXX_CLANG_TIDY ""
   )
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(Catch2 PRIVATE -Wno-restrict) # workaround GCC bug
+  endif()
   add_executable(traintastic-server-test test/main.cpp)
   add_dependencies(traintastic-server-test traintastic-lang)
   target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
   set_target_properties(traintastic-server-test PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     CXX_CLANG_TIDY ""
   )
   target_include_directories(traintastic-server-test PRIVATE
@@ -211,15 +214,23 @@ endif()
 
 include(cmake/add-resource.cmake)
 
+add_resource(resource-www
+  FILES
+    www/css/normalize.css
+    www/css/throttle.css
+    www/js/throttle.js
+    www/throttle.html
+)
+
 add_resource(resource-shared
   BASE_DIR ../
   FILES
     shared/gfx/appicon.ico
 )
 
-add_dependencies(traintastic-server resource-shared)
+add_dependencies(traintastic-server resource-www resource-shared)
 if(BUILD_TESTING)
-  add_dependencies(traintastic-server-test resource-shared)
+  add_dependencies(traintastic-server-test resource-www resource-shared)
 endif()
 
 ### OPTIONS ###

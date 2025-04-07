@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@ class MethodIcon : public QLabel
 {
   protected:
     Method& m_method;
+    std::function<void()> m_triggered;
     bool m_mouseLeftButtonPressed;
 
     void mousePressEvent(QMouseEvent* event) final;
@@ -38,6 +39,7 @@ class MethodIcon : public QLabel
 
   public:
     MethodIcon(Method& item, QIcon icon, QWidget* parent = nullptr);
+    MethodIcon(Method& item, QIcon icon, std::function<void()> triggered, QWidget* parent = nullptr);
 };
 
 #endif

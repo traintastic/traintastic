@@ -29,11 +29,11 @@
 class SerialDeviceProperty final : public Property<std::string>
 {
   private:
-    boost::signals2::connection m_serialPortListChanged;
+    boost::signals2::scoped_connection m_serialPortListChanged;
 
   public:
     SerialDeviceProperty(Object* object, std::string_view name, const std::string& value, PropertyFlags flags);
-    ~SerialDeviceProperty() final;
+    ~SerialDeviceProperty() final = default;
 };
 
 #endif

@@ -24,6 +24,7 @@
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../hardware/decoder/list/decoderlist.hpp"
+#include "../../train/train.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 

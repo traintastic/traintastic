@@ -85,10 +85,10 @@ SelectrixInterface::SelectrixInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(outputs, notes);
 }
 
-tcb::span<const DecoderProtocol> SelectrixInterface::decoderProtocols() const
+std::span<const DecoderProtocol> SelectrixInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 1> protocols{DecoderProtocol::Selectrix};
-  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
 bool SelectrixInterface::isDecoderAddressAvailable(DecoderProtocol protocol, uint16_t address) const
@@ -166,7 +166,7 @@ void SelectrixInterface::inputSimulateChange(uint32_t channel, uint32_t address,
   }
 }
 
-tcb::span<const OutputChannel> SelectrixInterface::outputChannels() const
+std::span<const OutputChannel> SelectrixInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::AccessorySX0, OutputChannel::AccessorySX1, OutputChannel::AccessorySX2);
   return values;

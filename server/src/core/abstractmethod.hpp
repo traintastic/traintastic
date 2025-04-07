@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2022,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@
 #include <vector>
 #include <variant>
 #include <stdexcept>
-#include <tcb/span.hpp>
+#include <span>
 #include "argument.hpp"
 #include "typeinfo.hpp"
 
@@ -113,7 +113,7 @@ class AbstractMethod : public InterfaceItem
 
     inline MethodFlags flags() const { return m_flags; }
 
-    virtual tcb::span<const TypeInfo> argumentTypeInfo() const = 0;
+    virtual std::span<const TypeInfo> argumentTypeInfo() const = 0;
     virtual TypeInfo resultTypeInfo() const = 0;
     virtual Result call(const Arguments& args) = 0;
 };

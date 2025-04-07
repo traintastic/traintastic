@@ -151,7 +151,7 @@ Decoder::Decoder(World& world, std::string_view _id) :
   m_interfaceItems.add(interface);
 
   Attributes::addEnabled(protocol, false);
-  Attributes::addValues(protocol, tcb::span<const DecoderProtocol>{});
+  Attributes::addValues(protocol, std::span<const DecoderProtocol>{});
   Attributes::addVisible(protocol, false);
   m_interfaceItems.add(protocol);
 
@@ -177,7 +177,7 @@ Decoder::Decoder(World& world, std::string_view _id) :
 
   Attributes::addDisplayName(speedSteps, DisplayName::Hardware::speedSteps);
   Attributes::addEnabled(speedSteps, false);
-  Attributes::addValues(speedSteps, tcb::span<const uint8_t>{});
+  Attributes::addValues(speedSteps, std::span<const uint8_t>{});
   Attributes::addVisible(speedSteps, false);
   m_interfaceItems.add(speedSteps);
 
@@ -407,7 +407,7 @@ void Decoder::protocolChanged()
       checkSpeedSteps();
     }
     else
-      Attributes::setValues(speedSteps, tcb::span<const uint8_t>{});
+      Attributes::setValues(speedSteps, std::span<const uint8_t>{});
   }
   else
   {
@@ -422,7 +422,7 @@ bool Decoder::checkProtocol()
   return interface && checkProtocol(interface->decoderProtocols());
 }
 
-bool Decoder::checkProtocol(tcb::span<const DecoderProtocol> protocols)
+bool Decoder::checkProtocol(std::span<const DecoderProtocol> protocols)
 {
   if(!protocols.empty() && !contains(protocols, protocol.value()))
   {
@@ -447,7 +447,7 @@ bool Decoder::checkAddress()
 bool Decoder::checkSpeedSteps()
 {
   const auto values = speedSteps.getSpanAttribute<uint8_t>(AttributeName::Values).values();
-  if(const auto* it = std::find(values.begin(), values.end(), speedSteps); it == values.end())
+  if(const auto it = std::find(values.begin(), values.end(), speedSteps); it == values.end())
   {
     speedSteps = values.back();
     return true;

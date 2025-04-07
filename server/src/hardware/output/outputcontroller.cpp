@@ -102,7 +102,7 @@ std::pair<uint32_t, uint32_t> OutputController::outputAddressMinMax(OutputChanne
   return {0, 0};
 }
 
-std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> OutputController::getOutputECoSObjects(OutputChannel /*channel*/) const
+std::pair<std::span<const uint16_t>, std::span<const std::string>> OutputController::getOutputECoSObjects(OutputChannel /*channel*/) const
 {
   assert(false);
   return {{}, {}};

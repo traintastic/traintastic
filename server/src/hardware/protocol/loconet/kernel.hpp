@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +29,7 @@
 #include <filesystem>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/connection.hpp>
-#include <tcb/span.hpp>
+#include <span>
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/outputchannel.hpp>
@@ -416,18 +416,18 @@ class Kernel : public ::KernelBase
     //! \brief Send LocoNet packet
     //! \param[in] packet LocoNet packet bytes, exluding checksum.
     //! \return \c true if send, \c false otherwise.
-    bool send(tcb::span<uint8_t> packet);
+    bool send(std::span<uint8_t> packet);
 
     //! \brief Send immediate DCC packet
     //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 5.
     //! \param[in] repeat DCC packet repeat count 0..7
     //! \return \c true if send to command station, \c false otherwise.
-    bool immPacket(tcb::span<const uint8_t> dccPacket, uint8_t repeat);
+    bool immPacket(std::span<const uint8_t> dccPacket, uint8_t repeat);
 
     template<class T, std::enable_if_t<std::is_trivially_copyable_v<T> && sizeof(T) <= 5, bool> = true>
     bool immPacket(const T& dccPacket, uint8_t repeat)
     {
-      return immPacket(tcb::span<const uint8_t>(reinterpret_cast<const uint8_t*>(&dccPacket), sizeof(T)), repeat);
+      return immPacket(std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(&dccPacket), sizeof(T)), repeat);
     }
 
     /**

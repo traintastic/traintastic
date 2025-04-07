@@ -73,6 +73,7 @@ enum class LogMessage : uint32_t
   D2010_SLOT_X_IS_FREE = LogMessageOffset::debug + 2010,
   D2011_WRITE_SXX_X_X_X = LogMessageOffset::debug + 2011,
   D2012_CHANGED_SXX_X_X_X = LogMessageOffset::debug + 2012,
+  D3001_ACQUIRING_TRAIN_X_FAILED_X = LogMessageOffset::debug + 3001,
   D9999_X = LogMessageOffset::debug + 9999,
 
   // Info:
@@ -90,6 +91,8 @@ enum class LogMessage : uint32_t
   I2003_FIRMWARE_VERSION_X = LogMessageOffset::info + 2003,
   I2004_HSI_88_X = LogMessageOffset::info + 2004,
   I2005_X = LogMessageOffset::info + 2005,
+  I3001_THROTTLE_X_ACQUIRED_TRAIN_X = LogMessageOffset::info + 3001,
+  I3002_THROTTLE_X_RELEASED_TRAIN_X = LogMessageOffset::info + 3002,
   I9001_STOPPED_SCRIPT = LogMessageOffset::info + 9001,
   I9002_X = LogMessageOffset::info + 9002, //!< Lua version
   I9003_CLEARED_PERSISTENT_VARIABLES = LogMessageOffset::info + 9003,
@@ -135,6 +138,8 @@ enum class LogMessage : uint32_t
   N3002_REMOVED_TRAIN_X_FROM_BLOCK_X = LogMessageOffset::notice + 3002,
   N3003_TURNOUT_RESET_TO_RESERVED_POSITION = LogMessageOffset::notice + 3003,
   N3004_SIGNAL_RESET_TO_RESERVED_ASPECT = LogMessageOffset::notice + 3004,
+  N3005_THROTTLE_X_STOLE_TRAIN_X_FROM_THROTTLE_X = LogMessageOffset::notice + 3005,
+  N3006_THROTTLE_X_RELEASED_TRAIN_X_WITHOUT_STOPPING_IT = LogMessageOffset::notice + 3006,
   N9001_STARTING_SCRIPT = LogMessageOffset::notice + 9001,
   N9999_X = LogMessageOffset::notice + 9999,
 

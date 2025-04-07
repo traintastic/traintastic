@@ -99,7 +99,7 @@ bool DecoderController::changeDecoderProtocolAddress(Decoder& decoder, DecoderPr
   return isDecoderAddressAvailable(newProtocol, newAddress);
 }
 
-tcb::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol protocol) const
+std::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol protocol) const
 {
   static constexpr std::array<uint8_t, 3> dccSpeedSteps{{14, 28, 128}};
   static constexpr std::array<uint8_t, 3> motorolaSpeedSteps{{14, 27, 28}};

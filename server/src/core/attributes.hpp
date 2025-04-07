@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@
 #include "property.hpp"
 #include "unitproperty.hpp"
 #include "vectorproperty.hpp"
-#include <tcb/span.hpp>
+#include <span>
 
 struct Attributes
 {
@@ -59,7 +59,7 @@ struct Attributes
   }
 
   template<class T>
-  static inline void addAliases(Property<T>& property, tcb::span<const T> keys, tcb::span<const std::string> values)
+  static inline void addAliases(Property<T>& property, std::span<const T> keys, std::span<const std::string> values)
   {
     assert(keys.size() == values.size());
     property.addAttribute(AttributeName::AliasKeys, keys);
@@ -67,7 +67,7 @@ struct Attributes
   }
 
   template<class T>
-  static inline void setAliases(Property<T>& property, tcb::span<const T> keys, tcb::span<const std::string> values)
+  static inline void setAliases(Property<T>& property, std::span<const T> keys, std::span<const std::string> values)
   {
     assert(keys.size() == values.size());
     property.setAttribute(AttributeName::AliasKeys, keys);
@@ -75,7 +75,7 @@ struct Attributes
   }
 
   template<class T, typename Unit>
-  static inline void addAliases(UnitProperty<T, Unit>& property, tcb::span<const T> keys, tcb::span<const std::string> values)
+  static inline void addAliases(UnitProperty<T, Unit>& property, std::span<const T> keys, std::span<const std::string> values)
   {
     assert(keys.size() == values.size());
     property.addAttribute(AttributeName::AliasKeys, keys);
@@ -88,7 +88,7 @@ struct Attributes
   }
 
   template<size_t N>
-  static inline void addClassList(InterfaceItem& item, tcb::span<const std::string_view, N> classList)
+  static inline void addClassList(InterfaceItem& item, std::span<const std::string_view, N> classList)
   {
     item.addAttribute(AttributeName::ClassList, classList);
   }
@@ -176,6 +176,19 @@ struct Attributes
   }
 
   template<class T, class Unit>
+  static inline T getMin(UnitProperty<T, Unit>& property)
+  {
+    static_assert(std::is_floating_point_v<T>);
+    return property.template getAttribute<T>(AttributeName::Min);
+  }
+
+  template<class T, class Unit>
+  static inline T getMin(UnitProperty<T, Unit>& property, Unit unit)
+  {
+    return convertUnit(getMin(property), property.unit(), unit);
+  }
+
+  template<class T, class Unit>
   static inline void setMin(UnitProperty<T, Unit>& property, T value, Unit unit)
   {
     static_assert(std::is_floating_point_v<T>);
@@ -187,6 +200,19 @@ struct Attributes
   {
     static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
     property.setAttribute(AttributeName::Max, value);
+  }
+
+  template<class T, class Unit>
+  static inline T getMax(UnitProperty<T, Unit>& property)
+  {
+    static_assert(std::is_floating_point_v<T>);
+    return property.template getAttribute<T>(AttributeName::Max);
+  }
+
+  template<class T, class Unit>
+  static inline T getMax(UnitProperty<T, Unit>& property, Unit unit)
+  {
+    return convertUnit(getMax(property), property.unit(), unit);
   }
 
   template<class T, class Unit>
@@ -290,19 +316,19 @@ struct Attributes
   }
 
   template<class R, class T, size_t N>
-  static inline void addValues(Method<R(T)>& method, tcb::span<const T, N> values)
+  static inline void addValues(Method<R(T)>& method, std::span<const T, N> values)
   {
     method.addAttribute(AttributeName::Values, values);
   }
 
   template<typename T, size_t N>
-  static inline void addValues(Property<T>& property, tcb::span<const T, N> values)
+  static inline void addValues(Property<T>& property, std::span<const T, N> values)
   {
     property.addAttribute(AttributeName::Values, values);
   }
 
   template<typename T, typename Unit, size_t N>
-  static inline void addValues(UnitProperty<T, Unit>& property, tcb::span<const T, N> values)
+  static inline void addValues(UnitProperty<T, Unit>& property, std::span<const T, N> values)
   {
     property.addAttribute(AttributeName::Values, values);
   }
@@ -344,13 +370,13 @@ struct Attributes
   }
 
   template<typename T, size_t N>
-  static inline void setValues(Property<T>& property, tcb::span<const T, N> values)
+  static inline void setValues(Property<T>& property, std::span<const T, N> values)
   {
     property.setAttribute(AttributeName::Values, values);
   }
 
   template<typename T, typename Unit, size_t N>
-  static inline void setValues(UnitProperty<T, Unit>& property, tcb::span<const T, N> values)
+  static inline void setValues(UnitProperty<T, Unit>& property, std::span<const T, N> values)
   {
     property.setAttribute(AttributeName::Values, values);
   }
@@ -374,7 +400,7 @@ struct Attributes
   }
 
   template<class R, class T, size_t N>
-  static inline void setValues(Method<R(T)>& method, tcb::span<const T, N> values)
+  static inline void setValues(Method<R(T)>& method, std::span<const T, N> values)
   {
     method.setAttribute(AttributeName::Values, values);
   }

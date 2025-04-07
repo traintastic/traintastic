@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,5 +29,5 @@ static const std::array<std::string, 2> keyAliasValues{{"$output_map_item.switch
 SwitchOutputMapItem::SwitchOutputMapItem(Object& map, bool value) :
   OutputMapItemBase(map, value)
 {
-  Attributes::addAliases(key, tcb::span<const bool>(keyAliasKeys), tcb::span<const std::string>(keyAliasValues));
+  Attributes::addAliases(key, std::span<const bool>(keyAliasKeys), std::span<const std::string>(keyAliasValues));
 }
