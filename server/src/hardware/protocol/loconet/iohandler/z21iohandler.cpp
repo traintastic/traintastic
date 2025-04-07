@@ -126,7 +126,7 @@ void Z21IOHandler::receive()
             case Z21::LAN_LOCONET_Z21_TX:
             case Z21::LAN_LOCONET_FROM_LAN:
             {
-              const Message* msg = reinterpret_cast<const Message*>(pos + sizeof(Z21::Message));
+              const auto* msg = reinterpret_cast<const Message*>(pos + sizeof(Z21::Message));
               if(isValid(*msg))
                 m_kernel.receive(*msg);
               break;

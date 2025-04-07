@@ -27,14 +27,18 @@
 #include <QTableWidget>
 #include <QHeaderView>
 #include <QPushButton>
+#include <QEvent>
 #include <traintastic/locale/locale.hpp>
+#include "createwidget.hpp"
 #include "interfaceitemnamelabel.hpp"
 #include "propertycheckbox.hpp"
 #include "propertycombobox.hpp"
+#include "propertypairoutputaction.hpp"
 #include "propertyspinbox.hpp"
 #include "objectpropertycombobox.hpp"
 #include "propertyaddresses.hpp"
 #include "outputmapoutputactionwidget.hpp"
+#include "methodicon.hpp"
 #include "../board/tilepainter.hpp"
 #include "../board/getboardcolorscheme.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
@@ -116,6 +120,17 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
   m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
   l->addWidget(m_table);
+
+  if(auto* swapOutputs = m_object->getMethod("swap_outputs"))
+  {
+    m_swapOutputs = new MethodIcon(*swapOutputs, Theme::getIcon("swap"), m_table);
+    if(!swapOutputs->getAttributeBool(AttributeName::Visible, true))
+    {
+      m_swapOutputs->hide();
+    }
+    m_table->installEventFilter(this);
+    m_swapOutputs->installEventFilter(this);
+  }
 
   setLayout(l);
 
@@ -324,6 +339,17 @@ void OutputMapWidget::updateTableOutputColumns()
   }
 }
 
+bool OutputMapWidget::eventFilter(QObject* object, QEvent* event)
+{
+  if(m_swapOutputs && ((object == m_table && event->type() == QEvent::Resize) || (object == m_swapOutputs && event->type() == QEvent::Show)))
+  {
+    auto pnt = m_swapOutputs->rect().bottomRight();
+    pnt = m_table->rect().bottomRight() - pnt - pnt / 4;
+    m_swapOutputs->move(pnt.x(), pnt.y());
+  }
+  return QWidget::eventFilter(object, event);
+}
+
 void OutputMapWidget::updateTableOutputActions(ObjectVectorProperty& property, int row)
 {
   if(!property.empty())
@@ -345,7 +371,7 @@ void OutputMapWidget::updateTableOutputActions(ObjectVectorProperty& property, i
           {
             if(auto* action = dynamic_cast<Property*>(object->getProperty("action")))
             {
-              m_table->setCellWidget(row, column, new PropertyComboBox(*action, this));
+              m_table->setCellWidget(row, column, createWidget(*action, this));
             }
             else if(auto* aspect = dynamic_cast<Property*>(object->getProperty("aspect")))
             {

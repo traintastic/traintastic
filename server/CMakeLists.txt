@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.18)
 include(../shared/traintastic.cmake)
 project(traintastic-server VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic server")
 include(GNUInstallDirs)
@@ -23,7 +23,7 @@ endif()
 
 add_executable(traintastic-server src/main.cpp src/options.hpp)
 add_dependencies(traintastic-server traintastic-lang)
-set_target_properties(traintastic-server PROPERTIES CXX_STANDARD 17)
+set_target_properties(traintastic-server PROPERTIES CXX_STANDARD 20)
 target_include_directories(traintastic-server PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
   ../shared/src)
@@ -33,11 +33,20 @@ target_include_directories(traintastic-server SYSTEM PRIVATE
 
 if(BUILD_TESTING)
   add_subdirectory(thirdparty/catch2)
-  set_target_properties(Catch2 PROPERTIES CXX_STANDARD 17)
+  set_target_properties(Catch2 PROPERTIES
+    CXX_STANDARD 20
+    CXX_CLANG_TIDY ""
+  )
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(Catch2 PRIVATE -Wno-restrict) # workaround GCC bug
+  endif()
   add_executable(traintastic-server-test test/main.cpp)
   add_dependencies(traintastic-server-test traintastic-lang)
   target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
-  set_target_properties(traintastic-server-test PROPERTIES CXX_STANDARD 17)
+  set_target_properties(traintastic-server-test PROPERTIES
+    CXX_STANDARD 20
+    CXX_CLANG_TIDY ""
+  )
   target_include_directories(traintastic-server-test PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}
     ../shared/src)
@@ -58,6 +67,7 @@ file(GLOB SOURCES
   "src/board/nx/*.cpp"
   "src/board/tile/*.hpp"
   "src/board/tile/*.cpp"
+  "src/board/tile/hidden/*.cpp"
   "src/board/tile/misc/*.hpp"
   "src/board/tile/misc/*.cpp"
   "src/board/tile/rail/*.hpp"
@@ -189,6 +199,38 @@ file(GLOB TEST_SOURCES
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DENABLE_LOG_DEBUG")
 
+### VCPKG
+if(DEFINED ENV{VCPKG_ROOT})
+  message(STATUS "Using VCPKG (VCPKG_ROOT=$ENV{VCPKG_ROOT})")
+  if(WIN32)
+    set(VCPKG_TARGET_TRIPLET "x64-windows-static-md")
+  endif()
+  include($ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+endif()
+
+### RESOURCES ###
+
+include(cmake/add-resource.cmake)
+
+add_resource(resource-www
+  FILES
+    www/css/normalize.css
+    www/css/throttle.css
+    www/js/throttle.js
+    www/throttle.html
+)
+
+add_resource(resource-shared
+  BASE_DIR ../
+  FILES
+    shared/gfx/appicon.ico
+)
+
+add_dependencies(traintastic-server resource-www resource-shared)
+if(BUILD_TESTING)
+  add_dependencies(traintastic-server-test resource-www resource-shared)
+endif()
+
 ### OPTIONS ###
 
 if(NO_LOCALHOST_ONLY_SETTING)
@@ -280,154 +322,30 @@ if(WIN32 AND NOT MSVC)
 endif()
 
 # boost
-if(LINUX)
-  find_package(Boost 1.71 REQUIRED COMPONENTS program_options)
-
-  target_include_directories(traintastic-server SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
-  target_link_libraries(traintastic-server PRIVATE ${Boost_LIBRARIES})
-  if(BUILD_TESTING)
-    target_include_directories(traintastic-server-test SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
-    target_link_libraries(traintastic-server-test PRIVATE ${Boost_LIBRARIES})
-  endif()
-else()
-  add_definitions(
-    -DBOOST_ALL_NO_LIB
-    -DBOOST_ERROR_CODE_HEADER_ONLY
-    -DBOOST_CHRONO_HEADER_ONLY
-    -DBOOST_ASIO_HEADER_ONLY
-    -DBOOST_SYSTEM_NO_DEPRECATED)
-
-  if(NOT MSVC)
-    set_source_files_properties(
-        thirdparty/boost/libs/program_options/src/cmdline.cpp
-        thirdparty/boost/libs/program_options/src/config_file.cpp
-        thirdparty/boost/libs/program_options/src/convert.cpp
-        thirdparty/boost/libs/program_options/src/options_description.cpp
-        thirdparty/boost/libs/program_options/src/parsers.cpp
-        thirdparty/boost/libs/program_options/src/positional_options.cpp
-        thirdparty/boost/libs/program_options/src/split.cpp
-        thirdparty/boost/libs/program_options/src/utf8_codecvt_facet.cpp
-        thirdparty/boost/libs/program_options/src/value_semantic.cpp
-        thirdparty/boost/libs/program_options/src/variables_map.cpp
-        thirdparty/boost/libs/program_options/src/winmain.cpp
-      PROPERTIES
-        COMPILE_FLAGS -Wno-shadow)
-  endif()
-
-  target_include_directories(traintastic-server SYSTEM PRIVATE thirdparty/boost)
-  if(BUILD_TESTING)
-    target_include_directories(traintastic-server-test SYSTEM PRIVATE thirdparty/boost)
-  endif()
-
-  file(GLOB SOURCES_BOOST "thirdparty/boost/libs/program_options/src/*.cpp")
-  list(APPEND SOURCES ${SOURCES_BOOST})
+find_package(Boost 1.81 REQUIRED COMPONENTS program_options)
+target_include_directories(traintastic-server SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries(traintastic-server PRIVATE ${Boost_LIBRARIES})
+if(BUILD_TESTING)
+  target_include_directories(traintastic-server-test SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
+  target_link_libraries(traintastic-server-test PRIVATE ${Boost_LIBRARIES})
 endif()
 
 # zlib
-if(WIN32)
-  set(ZLIB_INCLUDE_DIRS "thirdparty/zlib/include")
-
-  if(MSVC)
-      set(ZLIB_LIBRARIES zlib1)
-      add_custom_command(TARGET traintastic-server PRE_LINK
-        COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/zlib/bin/zlib1.def" /out:zlib1.lib /machine:x64)
-      add_custom_command(TARGET traintastic-server-test PRE_LINK
-        COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/zlib/bin/zlib1.def" /out:zlib1.lib /machine:x64)
-  else()
-      # MinGW can directly link .dll without import lib
-      set(ZLIB_LIBRARIES "${PROJECT_SOURCE_DIR}/thirdparty/zlib/bin/zlib1.dll")
-  endif()
-
-  # copy zlib1.dll to build directory:
-  add_custom_command(TARGET traintastic-server POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/zlib/bin/zlib1.dll" .)
-else()
-  find_package(ZLIB REQUIRED)
-endif()
-target_include_directories(traintastic-server PRIVATE ${ZLIB_INCLUDE_DIRS})
-target_link_libraries(traintastic-server PRIVATE ${ZLIB_LIBRARIES})
+find_package(ZLIB REQUIRED)
+target_link_libraries(traintastic-server PRIVATE ZLIB::ZLIB)
 if(BUILD_TESTING)
-  target_include_directories(traintastic-server-test PRIVATE ${ZLIB_INCLUDE_DIRS})
-  target_link_libraries(traintastic-server-test PRIVATE ${ZLIB_LIBRARIES})
+  target_link_libraries(traintastic-server-test PRIVATE ZLIB::ZLIB)
 endif()
 
 # libarchive
-if(WIN32)
-  set(LibArchive_INCLUDE_DIRS "thirdparty/libarchive/include")
-
-  if(MSVC)
-      set(LibArchive_LIBRARIES archive)
-      add_custom_command(TARGET traintastic-server PRE_LINK
-        COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/libarchive/bin/archive.def" /out:archive.lib /machine:x64)
-      add_custom_command(TARGET traintastic-server-test PRE_LINK
-        COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/libarchive/bin/archive.def" /out:archive.lib /machine:x64)
-  else()
-      # MinGW can directly link .dll without import lib
-      set(LibArchive_LIBRARIES "${PROJECT_SOURCE_DIR}/thirdparty/libarchive/bin/archive.dll")
-  endif()
-
-  # copy archive.dll to build directory:
-  add_custom_command(TARGET traintastic-server POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/libarchive/bin/archive.dll" .)
-elseif(APPLE)
-  find_path(LibArchive_INCLUDE_DIRS
-    NAMES archive.h
-    PATHS
-    "/usr/local/opt/libarchive/include" # x86_64
-    "/opt/homebrew/opt/libarchive/include" # arm64
-    )
-  find_library(LibArchive_LIBRARIES
-    NAMES archive libarchive
-    PATHS
-    "/usr/local/opt/libarchive/lib/" # x86_64
-    "/opt/homebrew/opt/libarchive/lib" # arm64
-    )
-else()
-  find_package(LibArchive REQUIRED)
-endif()
-target_include_directories(traintastic-server PRIVATE ${LibArchive_INCLUDE_DIRS})
-target_link_libraries(traintastic-server PRIVATE ${LibArchive_LIBRARIES})
+find_package(LibArchive REQUIRED)
+target_link_libraries(traintastic-server PRIVATE LibArchive::LibArchive)
 if(BUILD_TESTING)
-  target_include_directories(traintastic-server-test PRIVATE ${LibArchive_INCLUDE_DIRS})
-  target_link_libraries(traintastic-server-test PRIVATE ${LibArchive_LIBRARIES})
+  target_link_libraries(traintastic-server-test PRIVATE LibArchive::LibArchive)
 endif()
 
-# liblua5.4
-if(WIN32)
-  add_definitions(-DLUA_BUILD_AS_DLL)
-  set(LUA_INCLUDE_DIR "thirdparty/lua5.4/include")
-
-  if(MSVC)
-      set(LUA_LIBRARIES lua54)
-      add_custom_command(TARGET traintastic-server PRE_LINK
-        COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.4/bin/win64/lua54.def" /out:lua54.lib /machine:x64)
-      add_custom_command(TARGET traintastic-server-test PRE_LINK
-        COMMAND lib "/def:${PROJECT_SOURCE_DIR}/thirdparty/lua5.4/bin/win64/lua54.def" /out:lua54.lib /machine:x64)
-  else()
-      # MinGW can directly link .dll without import lib
-      set(LUA_LIBRARIES "${PROJECT_SOURCE_DIR}/thirdparty/lua5.4/bin/win64/lua54.dll")
-  endif()
-
-
-  # copy lua54.dll to build directory, to be able to run the tests:
-  add_custom_command(TARGET traintastic-server-test POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/thirdparty/lua5.4/bin/win64/lua54.dll" .)
-elseif(APPLE)
-  find_path(LUA_INCLUDE_DIR
-    NAMES lua.h
-    PATHS
-    "/usr/local/opt/lua@5.4/include/lua" # x86_64
-    "/opt/homebrew/opt/lua@5.4/include/lua" # arm64
-    )
-  find_library(LUA_LIBRARIES
-    NAMES lua5.4 liblua5.4
-    PATHS
-    "/usr/local/opt/lua@5.4/lib" # x86_64
-    "/opt/homebrew/opt/lua@5.4/lib" # arm64
-    )
-else()
-  find_package(Lua 5.4 REQUIRED)
-endif()
+# lua
+find_package(Lua REQUIRED)
 target_include_directories(traintastic-server PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(traintastic-server PRIVATE ${LUA_LIBRARIES})
 if(BUILD_TESTING)

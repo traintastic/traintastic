@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -65,7 +65,7 @@ std::pair<uint16_t, uint16_t> DecoderController::decoderAddressMinMax(DecoderPro
   return noAddressMinMax;
 }
 
-tcb::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol protocol) const
+std::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol protocol) const
 {
   static constexpr std::array<uint8_t, 3> dccSpeedSteps{{14, 28, 128}};
   static constexpr std::array<uint8_t, 3> motorolaSpeedSteps{{14, 27, 28}};

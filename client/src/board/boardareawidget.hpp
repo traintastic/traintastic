@@ -40,6 +40,7 @@
 
 class BoardWidget;
 class BlockHighlight;
+class Board;
 
 class BoardAreaWidget : public QWidget
 {
@@ -67,7 +68,7 @@ class BoardAreaWidget : public QWidget
   protected:
     static constexpr int boardMargin = 1; // tile
 
-    BoardWidget& m_board;
+    std::shared_ptr<Board> m_board;
     AbstractProperty* m_boardLeft;
     AbstractProperty* m_boardTop;
     AbstractProperty* m_boardRight;
@@ -132,7 +133,7 @@ class BoardAreaWidget : public QWidget
     static constexpr int zoomLevelMin = -2;
     static constexpr int zoomLevelMax = 15;
 
-    BoardAreaWidget(BoardWidget& board, QWidget* parent = nullptr);
+    BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent = nullptr);
 
     Grid grid() const { return m_grid; }
     void nextGrid();

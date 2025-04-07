@@ -41,7 +41,7 @@ SingleOutputKeyboard::SingleOutputKeyboard(OutputController& controller, OutputC
 std::vector<OutputKeyboard::OutputInfo> SingleOutputKeyboard::getOutputInfo() const
 {
   std::vector<OutputInfo> states;
-  for(auto& it : m_controller.outputMap())
+  for(const auto& it : m_controller.outputMap())
   {
     if(it.second->channel == channel)
     {

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,7 +47,7 @@ void ObjectVectorProperty<T>::setObject(size_t index, const ObjectPtr& value)
 }
 
 template<class T>
-void ObjectVectorProperty<T>::loadObjects(tcb::span<ObjectPtr> values)
+void ObjectVectorProperty<T>::loadObjects(std::span<ObjectPtr> values)
 {
   std::vector<std::shared_ptr<T>> objects;
   objects.reserve(values.size());

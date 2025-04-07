@@ -20,16 +20,6 @@ jobs:
           build_deb: false
           defines: ""
 
-        - name: "ubuntu_22.04"
-          os: ubuntu-22.04
-          generator: "Unix Makefiles"
-          arch: ""
-          target: traintastic-client
-          jobs: 4
-          build_type: Release
-          build_deb: true
-          defines: ""
-
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
           generator: "Unix Makefiles"
@@ -70,26 +60,6 @@ jobs:
           build_deb: false
           defines: ""
 
-        - name: "macos-14"
-          os: "macos-14"
-          generator: "Unix Makefiles"
-          arch: ""
-          target: traintastic-client
-          jobs: 3
-          build_type: Release
-          build_deb: false
-          defines: ""
-
-        - name: "macos-15"
-          os: "macos-15"
-          generator: "Unix Makefiles"
-          arch: ""
-          target: traintastic-client
-          jobs: 3
-          build_type: Release
-          build_deb: false
-          defines: ""
-
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
@@ -112,7 +82,15 @@ jobs:
       uses: jurplel/install-qt-action@v4
       with:
         cache: true
+        modules: qtwebsockets
         version: 6.5.*
+
+    - name: Set CMAKE_OSX_ARCHITECTURES
+      if: startswith(matrix.config.os, 'macos')
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('CMAKE_OSX_ARCHITECTURES', 'x86_64');
 
     # Ubuntu only:
     - name: apt update
@@ -122,7 +100,7 @@ jobs:
     # Ubuntu only:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
-      run: sudo apt install qtbase5-dev qtbase5-dev-tools libqt5svg5-dev
+      run: sudo apt install qtbase5-dev qtbase5-dev-tools libqt5svg5-dev libqt5websockets5-dev
 
     # All:
     - name: Create Build Environment
@@ -173,6 +151,8 @@ jobs:
   build-server:
     name: server ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
+    env:
+      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
     strategy:
       fail-fast: false
       matrix:
@@ -186,31 +166,7 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: false
-          defines: "-DENABLE_CLANG_TIDY=ON"
-          ccov: false
-
-        - name: "windows_x64_mingw"
-          os: windows-2022
-          generator: "MinGW Makefiles"
-          arch: ""
-          toolset: ""
-          target: all
-          jobs: 4
-          build_type: Release
-          build_deb: false
           defines: ""
-          ccov: false
-
-        - name: "ubuntu_22.04"
-          os: ubuntu-22.04
-          generator: "Unix Makefiles"
-          arch: ""
-          toolset: ""
-          target: all
-          jobs: 4
-          build_type: Release
-          build_deb: true
-          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON"
           ccov: false
 
         - name: "ubuntu_24.04"
@@ -222,11 +178,11 @@ jobs:
           jobs: 4
           build_type: Release
           build_deb: true
-          defines: "-DENABLE_CLANG_TIDY=ON -DINSTALL_SYSTEMD_SERVICE=ON"
+          defines: "-DINSTALL_SYSTEMD_SERVICE=ON"
           ccov: false
 
-        - name: "ubuntu_latest (debug+ccov)"
-          os: ubuntu-latest
+        - name: "ubuntu_24.04 (debug+ccov)"
+          os: ubuntu-24.04
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
@@ -234,7 +190,7 @@ jobs:
           jobs: 4
           build_type: Debug
           build_deb: false
-          defines: "-DENABLE_CLANG_TIDY=ON -DCODE_COVERAGE=ON"
+          defines: "-DCODE_COVERAGE=ON"
           ccov: true
 
         - name: "raspberrypios_arm7"
@@ -273,30 +229,6 @@ jobs:
           defines: ""
           ccov: false
 
-        - name: "macos-14"
-          os: "macos-14"
-          generator: "Unix Makefiles"
-          arch: ""
-          toolset: ""
-          target: all
-          jobs: 3
-          build_type: Release
-          build_deb: false
-          defines: ""
-          ccov: false
-
-        - name: "macos-15"
-          os: "macos-15"
-          generator: "Unix Makefiles"
-          arch: ""
-          toolset: ""
-          target: all
-          jobs: 3
-          build_type: Release
-          build_deb: false
-          defines: ""
-          ccov: false
-
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
@@ -305,6 +237,27 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: recursive
+
+    - name: Export GitHub Actions cache environment variables
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    - name: Set VCPKG_ROOT
+      if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('VCPKG_ROOT', process.env.VCPKG_INSTALLATION_ROOT || '');
+
+    - name: Set CMAKE_OSX_ARCHITECTURES
+      if: startswith(matrix.config.os, 'macos')
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('CMAKE_OSX_ARCHITECTURES', 'x86_64');
 
     # Ubuntu only:
     - name: apt update
@@ -408,10 +361,6 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - name: "ubuntu_22.04"
-          os: ubuntu-22.04
-          defines: ""
-
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
           defines: ""
@@ -594,12 +543,14 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         pattern: traintastic-client-deb-*
+        merge-multiple: true
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - name: Download artifacts 3/6
       uses: actions/download-artifact@v4
       with:
         pattern: traintastic-server-deb-*
+        merge-multiple: true
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - name: Download artifacts 4/6
@@ -618,6 +569,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         pattern: traintastic-data-deb-*
+        merge-multiple: true
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - name: "Download artifact: manual-lua"

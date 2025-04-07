@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023-2024 Reinder Feenstra
+ * Copyright (C) 2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@ const std::shared_ptr<Link>& Path::otherLink(const Node& node, const Link& link)
   return noLink;
 }
 
-tcb::span<const Path::TurnoutPositionLink> Path::getTurnoutLinks(TurnoutRailTile& turnout, const Link& link)
+std::span<const Path::TurnoutPositionLink> Path::getTurnoutLinks(TurnoutRailTile& turnout, const Link& link)
 {
   static constexpr std::array<TurnoutPositionLink, 1> straight0{{{TurnoutPosition::Straight, 0}}};
   static constexpr std::array<TurnoutPositionLink, 1> left0{{{TurnoutPosition::Left, 0}}};

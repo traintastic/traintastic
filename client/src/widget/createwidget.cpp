@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "createwidget.hpp"
 #include "list/marklincanlocomotivelistwidget.hpp"
 #include "objectlist/boardlistwidget.hpp"
+#include "objectlist/interfacelistwidget.hpp"
 #include "objectlist/throttleobjectlistwidget.hpp"
 #include "objectlist/trainlistwidget.hpp"
 #include "objectlist/zoneblocklistwidget.hpp"
@@ -36,6 +37,7 @@
 #include "propertydoublespinbox.hpp"
 #include "propertyspinbox.hpp"
 #include "propertylineedit.hpp"
+#include "propertypairoutputaction.hpp"
 #include "../board/boardwidget.hpp"
 #include "../network/object.hpp"
 #include "../network/inputmonitor.hpp"
@@ -47,8 +49,10 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 {
   const QString& classId = object->classId();
 
-  if(classId == "command_station_list")
-    return new ObjectListWidget(object, parent); // todo remove
+  if(classId == "list.interface")
+  {
+    return new InterfaceListWidget(object, parent);
+  }
   else if(classId == "decoder_list")
     return new ThrottleObjectListWidget(object, parent); // todo remove
   else if(classId == "controller_list")
@@ -127,6 +131,10 @@ QWidget* createWidget(Property& property, QWidget* parent)
       break; // TODO
 
     case ValueType::Enum:
+      if(property.enumName() == "pair_output_action")
+      {
+        return new PropertyPairOutputAction(property, parent);
+      }
       return new PropertyComboBox(property, parent);
 
     case ValueType::Integer:

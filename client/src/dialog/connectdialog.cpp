@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,8 +56,14 @@ ConnectDialog::ConnectDialog(QWidget* parent, const QString& url) :
   m_password->setEchoMode(QLineEdit::Password);
 
   m_connectAutomatically->setChecked(GeneralSettings::instance().connectAutomaticallyToDiscoveredServer.value());
+
+  #if QT_VERSION < QT_VERSION_CHECK(6, 7, 0)
   connect(m_connectAutomatically, &QCheckBox::stateChanged, this,
     [](int state)
+  #else
+  connect(m_connectAutomatically, &QCheckBox::checkStateChanged, this,
+    [](Qt::CheckState state)
+  #endif
     {
       GeneralSettings::instance().connectAutomaticallyToDiscoveredServer.setValue(state == Qt::Checked);
     });
@@ -150,8 +156,10 @@ void ConnectDialog::socketReadyRead()
       QString name = QString::fromUtf8(message.read<QByteArray>());
 
       QUrl url;
+      url.setScheme("ws");
       url.setHost(host.toString());
       url.setPort(port);
+      url.setPath("/client");
 
       auto it = m_servers.find(url);
       if(it == m_servers.end())
@@ -230,6 +238,12 @@ void ConnectDialog::serverTextChanged(const QString& text)
 {
   QString url{text};
   m_url = QUrl::fromUserInput(url.remove(QRegularExpression("\\s*\\(.*\\)$")));
+  m_url.setScheme("ws");
+  m_url.setPath("/client");
+  if(m_url.port() == -1)
+  {
+    m_url.setPort(Connection::defaultPort);
+  }
   m_connect->setEnabled(m_url.isValid());
 }
 

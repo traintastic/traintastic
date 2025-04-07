@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022,2024 Reinder Feenstra
+ * Copyright (C) 2021-2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +34,7 @@
 #include "../../core/attributes.hpp"
 #include "../../core/controllerlist.hpp"
 #include "../../core/objectproperty.tpp"
+#include "../../utils/contains.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
 #include "../../world/getworld.hpp"
@@ -92,7 +93,7 @@ std::pair<uint32_t, uint32_t> OutputController::outputAddressMinMax(OutputChanne
   return {0, 0};
 }
 
-std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> OutputController::getOutputECoSObjects(OutputChannel /*channel*/) const
+std::pair<std::span<const uint16_t>, std::span<const std::string>> OutputController::getOutputECoSObjects(OutputChannel /*channel*/) const
 {
   assert(false);
   return {{}, {}};
@@ -100,16 +101,7 @@ std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> OutputControl
 
 bool OutputController::isOutputChannel(OutputChannel channel) const
 {
-  const auto channels = outputChannels();
-  // FIXME: return std::find(channels.begin(), channels.end(), channel) != channels.end();
-  for(auto ch : channels)
-  {
-    if(channel == ch)
-    {
-      return true;
-    }
-  }
-  return false;
+  return contains(outputChannels(), channel);
 }
 
 bool OutputController::isOutputId(OutputChannel channel, uint32_t id) const

@@ -54,12 +54,6 @@ InterfaceList::InterfaceList(Object& _parent, std::string_view parentPropertyNam
   m_interfaceItems.add(delete_);
 }
 
-InterfaceList::~InterfaceList()
-{
-  for(auto& it : m_statusPropertyChanged)
-    it.second.disconnect();
-}
-
 TableModelPtr InterfaceList::getModel()
 {
   return std::make_shared<InterfaceListTableModel>(*this);

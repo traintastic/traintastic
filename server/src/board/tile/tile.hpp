@@ -68,6 +68,7 @@ class Tile : public IdObject
     virtual std::optional<std::reference_wrapper<const Node>> node() const { return {}; }
     virtual std::optional<std::reference_wrapper<Node>> node() { return {}; }
     virtual void getConnectors(std::vector<Connector>& /*connectors*/) const {}
+    std::optional<Connector> getConnector(Connector::Direction direction) const;
 };
 
 #endif

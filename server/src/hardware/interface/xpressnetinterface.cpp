@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -158,10 +158,10 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   updateVisible();
 }
 
-tcb::span<const DecoderProtocol> XpressNetInterface::decoderProtocols() const
+std::span<const DecoderProtocol> XpressNetInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
-  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
 std::pair<uint16_t, uint16_t> XpressNetInterface::decoderAddressMinMax(DecoderProtocol protocol) const
@@ -179,7 +179,7 @@ std::pair<uint16_t, uint16_t> XpressNetInterface::decoderAddressMinMax(DecoderPr
   }
 }
 
-tcb::span<const uint8_t> XpressNetInterface::decoderSpeedSteps(DecoderProtocol protocol) const
+std::span<const uint8_t> XpressNetInterface::decoderSpeedSteps(DecoderProtocol protocol) const
 {
   static constexpr std::array<uint8_t, 4> dccSpeedSteps{{14, 27, 28, 128}}; // XpressNet also support 27 steps
 
@@ -200,7 +200,7 @@ void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFla
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(uint32_t) const
+std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(uint32_t /*channel*/) const
 {
   return {XpressNet::Kernel::inputAddressMin, XpressNet::Kernel::inputAddressMax};
 }
@@ -211,7 +211,7 @@ void XpressNetInterface::inputSimulateChange(uint32_t channel, uint32_t address,
     m_kernel->simulateInputChange(address, action);
 }
 
-tcb::span<const OutputChannel> XpressNetInterface::outputChannels() const
+std::span<const OutputChannel> XpressNetInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory);
   return values;
@@ -290,27 +290,41 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
           setState(InterfaceState::Error);
           online = false; // communication no longer possible
         });
-      m_kernel->setOnNormalOperationResumed(
-        [this]()
+      m_kernel->setOnTrackPowerChanged(
+        [this](bool powerOn, bool isStopped)
         {
-          if(!contains(m_world.state.value(), WorldState::PowerOn))
-            m_world.powerOn();
-          if(!contains(m_world.state.value(), WorldState::Run))
-            m_world.run();
-        });
-      m_kernel->setOnTrackPowerOff(
-        [this]()
-        {
-          if(contains(m_world.state.value(), WorldState::PowerOn))
-            m_world.powerOff();
-          if(contains(m_world.state.value(), WorldState::Run))
-            m_world.stop();
-        });
-      m_kernel->setOnEmergencyStop(
-        [this]()
-        {
-          if(contains(m_world.state.value(), WorldState::Run))
-            m_world.stop();
+          if(powerOn)
+          {
+            /* NOTE:
+             * Setting stop and powerOn together is not an atomic operation,
+             * so it would trigger 2 state changes with in the middle state.
+             * Fortunately this does not happen because at least one of the state is already set.
+             * Because if we are in Run state we go to PowerOn,
+             * and if we are on PowerOff then we go to PowerOn.
+             */
+
+            // First of all, stop if we have to, otherwhise we might inappropiately run trains
+            if(isStopped && contains(m_world.state.value(), WorldState::Run))
+            {
+              m_world.stop();
+            }
+            else if(!contains(m_world.state.value(), WorldState::Run) && !isStopped)
+            {
+              m_world.run(); // Run trains yay!
+            }
+
+            // EmergencyStop in XpressNet also means power is still on
+            if(!contains(m_world.state.value(), WorldState::PowerOn) && isStopped)
+            {
+              m_world.powerOn(); // Just power on but keep stopped
+            }
+          }
+          else
+          {
+            // Power off regardless of stop state
+            if(contains(m_world.state.value(), WorldState::PowerOn))
+              m_world.powerOff();
+          }
         });
 
       m_kernel->setDecoderController(this);
@@ -324,12 +338,13 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
           m_kernel->setConfig(xpressnet->config());
         });
 
+      // Avoid to set multiple power states in rapid succession
       if(!contains(m_world.state.value(), WorldState::PowerOn))
-        m_kernel->stopOperations();
+        m_kernel->stopOperations(); // Stop by powering off
       else if(!contains(m_world.state.value(), WorldState::Run))
-        m_kernel->stopAllLocomotives();
+        m_kernel->stopAllLocomotives(); // Emergency stop with power on
       else
-        m_kernel->resumeOperations();
+        m_kernel->resumeOperations(); // Run trains
 
       Attributes::setEnabled({type, serialInterfaceType, device, baudrate, flowControl, hostname, port, s88StartAddress, s88ModuleCount}, false);
     }
@@ -386,24 +401,38 @@ void XpressNetInterface::worldEvent(WorldState state, WorldEvent event)
     switch(event)
     {
       case WorldEvent::PowerOff:
+      {
         m_kernel->stopOperations();
         break;
-
+      }
       case WorldEvent::PowerOn:
-        m_kernel->resumeOperations();
-        if(!contains(state, WorldState::Run))
-          m_kernel->stopAllLocomotives();
+      {
+        if(contains(state, WorldState::Run))
+          m_kernel->resumeOperations();
+        else
+          m_kernel->stopAllLocomotives(); // In XpressNet E-Stop means power on but not running
         break;
-
+      }
       case WorldEvent::Stop:
-        m_kernel->stopAllLocomotives();
+      {
+        if(contains(state, WorldState::PowerOn))
+        {
+          // In XpressNet E-Stop means power is on but trains are not running
+          m_kernel->stopAllLocomotives();
+        }
+        else
+        {
+          // This Stops everything by removing power
+          m_kernel->stopOperations();
+        }
         break;
-
+      }
       case WorldEvent::Run:
+      {
         if(contains(state, WorldState::PowerOn))
           m_kernel->resumeOperations();
         break;
-
+      }
       default:
         break;
     }

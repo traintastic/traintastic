@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@ class BlockRailTile;
 class BridgeRailTile;
 enum class BridgePath : uint8_t;
 class CrossRailTile;
+class HiddenCrossOverRailTile;
 enum class CrossState : uint8_t;
 class DirectionControlRailTile;
 enum class DirectionControlState : uint8_t;
@@ -60,6 +61,7 @@ class BlockPath : public Path, public std::enable_shared_from_this<BlockPath>
     std::vector<std::pair<std::weak_ptr<TurnoutRailTile>, TurnoutPosition>> m_turnouts; //!< required turnout positions for the path
     std::vector<std::pair<std::weak_ptr<DirectionControlRailTile>, DirectionControlState>> m_directionControls; //!< required direction control states for the path
     std::vector<std::pair<std::weak_ptr<CrossRailTile>, CrossState>> m_crossings; //!< required crossing states for the path
+    std::vector<std::pair<std::weak_ptr<HiddenCrossOverRailTile>, CrossState>> m_crossOvers; //!< required crossing states for the path
     std::vector<std::pair<std::weak_ptr<BridgeRailTile>, BridgePath>> m_bridges; //!< bridges to reserve
     std::vector<std::weak_ptr<SignalRailTile>> m_signals; //!< signals in path
     std::weak_ptr<NXButtonRailTile> m_nxButtonFrom;

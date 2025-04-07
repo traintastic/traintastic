@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2024 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,14 +64,6 @@ AbstractSignalPath::AbstractSignalPath(SignalRailTile& signal, size_t blocksAhea
   }
 }
 
-AbstractSignalPath::~AbstractSignalPath()
-{
-  for(auto& connection : m_connections)
-  {
-    connection.disconnect();
-  }
-}
-
 void AbstractSignalPath::evaluate()
 {
   const bool stop = !signal().hasReservedPath() && requireReservation();
@@ -84,7 +76,7 @@ bool AbstractSignalPath::requireReservation() const
   return (m_signal.requireReservation == AutoYesNo::Yes || (m_signal.requireReservation == AutoYesNo::Auto && m_requireReservation));
 }
 
-const AbstractSignalPath::BlockItem* AbstractSignalPath::nextBlock(const Item* item) const
+const AbstractSignalPath::BlockItem* AbstractSignalPath::nextBlock(const Item* item)
 {
   while(item)
   {
@@ -97,7 +89,7 @@ const AbstractSignalPath::BlockItem* AbstractSignalPath::nextBlock(const Item* i
   return nullptr;
 }
 
-std::tuple<const AbstractSignalPath::BlockItem*, const AbstractSignalPath::SignalItem*> AbstractSignalPath::nextBlockOrSignal(const Item* item) const
+std::tuple<const AbstractSignalPath::BlockItem*, const AbstractSignalPath::SignalItem*> AbstractSignalPath::nextBlockOrSignal(const Item* item)
 {
   while(item)
   {
@@ -114,7 +106,7 @@ std::tuple<const AbstractSignalPath::BlockItem*, const AbstractSignalPath::Signa
   return {nullptr, nullptr};
 }
 
-void AbstractSignalPath::getBlockStates(tcb::span<BlockState> blockStates) const
+void AbstractSignalPath::getBlockStates(std::span<BlockState> blockStates) const
 {
   size_t i = 0;
   const Item* item = m_root.get();
@@ -238,7 +230,7 @@ std::unique_ptr<const AbstractSignalPath::Item> AbstractSignalPath::findBlocks(c
       if(nextNode.getLink(0).get() == &link)
         return findBlocks(nextNode, *nextLink, blocksAhead);
   }
-  else if(isRailBridge(tile->tileId) || isRailCross(tile->tileId))
+  else if(isRailBridge(tile->tileId) || isRailCross(tile->tileId) || tile->tileId == TileId::HiddenRailCrossOver)
   {
     //     2      1 2      2 3
     //     |       \|      |/

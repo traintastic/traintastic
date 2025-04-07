@@ -59,8 +59,8 @@ static std::tuple<bool, DecoderProtocol, uint16_t> uidToProtocolAddress(uint32_t
     const uint16_t address = uid - UID::Range::locomotiveDCC.first;
     if(address <= DCC::addressShortMax)
       return {true, DecoderProtocol::DCCShort, address};
-    else
-      return {true, DecoderProtocol::DCCLong, address};
+
+    return {true, DecoderProtocol::DCCLong, address};
   }
   return {false, DecoderProtocol::None, 0};
 }

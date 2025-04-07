@@ -21,7 +21,7 @@
  */
 
 #include "connection.hpp"
-#include <QTcpSocket>
+#include <QWebSocket>
 #include <QUrl>
 #include <QCryptographicHash>
 #include <traintastic/network/message.hpp>
@@ -130,23 +130,31 @@ inline static QStringList readObjectIdArray(const Message& message, const int le
 
 Connection::Connection() :
   QObject(),
-  m_socket{new QTcpSocket(this)},
+  m_socket{new QWebSocket()},
   m_state{State::Disconnected},
   m_worldProperty{nullptr},
   m_worldRequestId{invalidRequestId}
   , m_serverLogTableModel{nullptr}
 {
-  connect(m_socket, &QTcpSocket::connected, this, &Connection::socketConnected);
-  connect(m_socket, &QTcpSocket::disconnected, this, &Connection::socketDisconnected);
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-  connect(m_socket, static_cast<void(QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &Connection::socketError);
+  connect(m_socket, &QWebSocket::connected, this, &Connection::socketConnected);
+  connect(m_socket, &QWebSocket::disconnected, this, &Connection::socketDisconnected);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+  connect(m_socket, &QWebSocket::errorOccurred, this, &Connection::socketError);
 #else
-  connect(m_socket, &QTcpSocket::errorOccurred, this, &Connection::socketError);
+  connect(m_socket, static_cast<void(QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error), this, &Connection::socketError);
 #endif
 
-  m_socket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
-
-  connect(m_socket, &QTcpSocket::readyRead, this, &Connection::socketReadyRead);
+  connect(m_socket, &QWebSocket::binaryMessageReceived,
+    [this](const QByteArray& data)
+    {
+      const Message::Header& header = *reinterpret_cast<const Message::Header*>(data.data());
+      auto message = std::make_shared<Message>(header);
+      if(header.dataSize != 0)
+      {
+        std::memcpy(message->data(), data.data() + sizeof(header), message->dataSize());
+      }
+      processMessage(message);
+    });
 }
 
 bool Connection::isDisconnected() const
@@ -172,12 +180,12 @@ void Connection::connectToHost(const QUrl& url, const QString& username, const Q
   else
     m_password = QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256);
   setState(State::Connecting);
-  m_socket->connectToHost(url.host(), static_cast<quint16>(url.port(defaultPort)));
+  m_socket->open(url);
 }
 
 void Connection::disconnectFromHost()
 {
-  m_socket->disconnectFromHost();
+  m_socket->close();
 }
 
 void Connection::cancelRequest(int requestId)
@@ -417,7 +425,7 @@ void Connection::releaseTableModel(TableModel* tableModel)
   tableModel->m_handle = invalidHandle;
 }
 
-void Connection::setTableModelRegion(TableModel* tableModel, int columnMin, int columnMax, int rowMin, int rowMax)
+void Connection::setTableModelRegion(TableModel* tableModel, uint32_t columnMin, uint32_t columnMax, uint32_t rowMin, uint32_t rowMax)
 {
   auto event = Message::newEvent(Message::Command::TableModelSetRegion);
   event->write(tableModel->handle());
@@ -443,7 +451,8 @@ int Connection::getTileData(Board& object)
 void Connection::send(std::unique_ptr<Message>& message)
 {
   Q_ASSERT(!message->isRequest());
-  m_socket->write(static_cast<const char*>(**message), message->size());
+  QByteArray bytes(static_cast<const char*>(**message), message->size()); // Deep copy :(
+  m_socket->sendBinaryMessage(bytes); // sendBinaryMessage only supports QByteArray
 }
 
 void Connection::send(std::unique_ptr<Message>& message, std::function<void(const std::shared_ptr<Message>&)> callback)
@@ -451,7 +460,8 @@ void Connection::send(std::unique_ptr<Message>& message, std::function<void(cons
   Q_ASSERT(message->isRequest());
   Q_ASSERT(!m_requestCallback.contains(message->requestId()));
   m_requestCallback[message->requestId()] = callback;
-  m_socket->write(static_cast<const char*>(**message), message->size());
+  QByteArray bytes(static_cast<const char*>(**message), message->size()); // Deep copy :(
+  m_socket->sendBinaryMessage(bytes); // sendBinaryMessage only supports QByteArray
 }
 
 ObjectPtr Connection::readObject(const Message& message)
@@ -1050,14 +1060,14 @@ void Connection::socketConnected()
             else
             {
               setState(State::ErrorNewSessionFailed);
-              m_socket->disconnectFromHost();
+              m_socket->close();
             }
           });
       }
       else
       {
         setState(State::ErrorAuthenticationFailed);
-        m_socket->disconnectFromHost();
+        m_socket->close();
       }
     });
 }
@@ -1070,33 +1080,4 @@ void Connection::socketDisconnected()
 void Connection::socketError(QAbstractSocket::SocketError)
 {
   setState(State::SocketError);
-}
-
-void Connection::socketReadyRead()
-{
-  while(m_socket->bytesAvailable() != 0)
-  {
-    if(!m_readBuffer.message) // read header
-    {
-      m_readBuffer.offset += m_socket->read(reinterpret_cast<char*>(&m_readBuffer.header) + m_readBuffer.offset, sizeof(m_readBuffer.header) - m_readBuffer.offset);
-      if(m_readBuffer.offset == sizeof(m_readBuffer.header))
-      {
-        if(m_readBuffer.header.dataSize != 0)
-          m_readBuffer.message = std::make_shared<Message>(m_readBuffer.header);
-        else
-          processMessage(std::make_shared<Message>(m_readBuffer.header));
-        m_readBuffer.offset = 0;
-      }
-    }
-    else // read data
-    {
-      m_readBuffer.offset += m_socket->read(reinterpret_cast<char*>(m_readBuffer.message->data()) + m_readBuffer.offset, m_readBuffer.message->dataSize() - m_readBuffer.offset);
-      if(m_readBuffer.offset == m_readBuffer.message->dataSize())
-      {
-        processMessage(m_readBuffer.message);
-        m_readBuffer.message.reset();
-        m_readBuffer.offset = 0;
-      }
-    }
-  }
 }

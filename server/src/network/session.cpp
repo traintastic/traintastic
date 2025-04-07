@@ -24,7 +24,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include "../traintastic/traintastic.hpp"
-#include "connection.hpp"
+#include "clientconnection.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
 #ifndef NDEBUG
@@ -45,7 +45,7 @@
   #undef GetObject // GetObject is defined by a winapi header
 #endif
 
-Session::Session(const std::shared_ptr<Connection>& connection) :
+Session::Session(const std::shared_ptr<ClientConnection>& connection) :
   m_connection{connection},
   m_uuid{boost::uuids::random_generator()()}
 {
@@ -55,9 +55,6 @@ Session::Session(const std::shared_ptr<Connection>& connection) :
 Session::~Session()
 {
   assert(isEventLoopThread());
-  m_memoryLoggerChanged.disconnect();
-  for(const auto& it : m_objectSignals)
-    it.second.disconnect();
 }
 
 bool Session::processMessage(const Message& message)
@@ -119,8 +116,8 @@ bool Session::processMessage(const Message& message)
       // client counter value must match server counter value,
       // to make sure no handles are "on the wire"
       //
-      const Handle handle = message.read<Handle>();
-      const uint32_t counter = message.read<uint32_t>();
+      const auto handle = message.read<Handle>();
+      const auto counter = message.read<uint32_t>();
       if(counter == m_handles.getCounter(handle))
       {
         m_handles.removeHandle(handle);
@@ -338,7 +335,7 @@ bool Session::processMessage(const Message& message)
         {
           try
           {
-            const std::string id = message.read<std::string>();
+            const auto id = message.read<std::string>();
             if(!id.empty())
             {
               if(ObjectPtr obj = Traintastic::instance->world->getObjectByPath(id))
@@ -364,8 +361,8 @@ bool Session::processMessage(const Message& message)
       {
         if(AbstractMethod* method = object->getMethod(message.read<std::string>()); method && !method->isInternal())
         {
-          const ValueType resultType = message.read<ValueType>();
-          const uint8_t argumentCount = message.read<uint8_t>();
+          const auto resultType = message.read<ValueType>();
+          const auto argumentCount = message.read<uint8_t>();
 
           Arguments args;
           for(uint8_t i = 0; i < argumentCount; i++)
@@ -388,7 +385,7 @@ bool Session::processMessage(const Message& message)
 
               case ValueType::String:
               {
-                std::string arg = message.read<std::string>();
+                auto arg = message.read<std::string>();
                 if(i < method->argumentTypeInfo().size() && method->argumentTypeInfo()[i].type == ValueType::Object)
                 {
                   if(arg.empty())
@@ -459,11 +456,8 @@ bool Session::processMessage(const Message& message)
               m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), e.message(), e.args()));
               return true;
             }
-            else
-            {
-              // we can't report it back to the caller, so just log it.
-              Log::log(*object, e.message(), e.args());
-            }
+            // we can't report it back to the caller, so just log it.
+            Log::log(*object, e.message(), e.args());
           }
           catch(const std::exception& e)
           {
@@ -481,7 +475,7 @@ bool Session::processMessage(const Message& message)
     {
       if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
       {
-        if(Table* table = dynamic_cast<Table*>(object.get()))
+        if(auto* table = dynamic_cast<Table*>(object.get()))
         {
           TableModelPtr model = table->getModel();
           assert(model);
@@ -743,7 +737,7 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
       message.writeBlock(); // item
       message.write(name);
 
-      if(BaseProperty* baseProperty = dynamic_cast<BaseProperty*>(&item))
+      if(auto* baseProperty = dynamic_cast<BaseProperty*>(&item))
       {
         AbstractProperty* property = nullptr;
         AbstractUnitProperty* unitProperty = nullptr;
@@ -787,7 +781,7 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
         else
           assert(false);
       }
-      else if(const AbstractMethod* method = dynamic_cast<const AbstractMethod*>(&item))
+      else if(const auto* method = dynamic_cast<const AbstractMethod*>(&item))
       {
         message.write(InterfaceItemType::Method);
         message.write(method->resultTypeInfo().type);
@@ -887,14 +881,14 @@ void Session::objectPropertyChanged(BaseProperty& baseProperty)
   event->write(m_handles.getHandle(baseProperty.object().shared_from_this()));
   event->write(baseProperty.name());
   event->write(baseProperty.type());
-  if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&baseProperty))
+  if(auto* property = dynamic_cast<AbstractProperty*>(&baseProperty))
   {
     writePropertyValue(*event, *property);
 
-    if(AbstractUnitProperty* unitProperty = dynamic_cast<AbstractUnitProperty*>(property))
+    if(auto* unitProperty = dynamic_cast<AbstractUnitProperty*>(property))
       event->write(unitProperty->unitValue());
   }
-  else if(AbstractVectorProperty* vectorProperty = dynamic_cast<AbstractVectorProperty*>(&baseProperty))
+  else if(auto* vectorProperty = dynamic_cast<AbstractVectorProperty*>(&baseProperty))
     writeVectorPropertyValue(*event, *vectorProperty);
   else
     assert(false);
@@ -1038,7 +1032,7 @@ void Session::writeAttribute(Message& message , const AbstractAttribute& attribu
 {
   message.write(attribute.name());
   message.write(attribute.type());
-  if(const AbstractValueAttribute* valueAttribute = dynamic_cast<const AbstractValueAttribute*>(&attribute))
+  if(const auto* valueAttribute = dynamic_cast<const AbstractValueAttribute*>(&attribute))
   {
     message.write(AttributeType::Value);
     switch(attribute.type())
@@ -1065,7 +1059,7 @@ void Session::writeAttribute(Message& message , const AbstractAttribute& attribu
         break;
     }
   }
-  else if(const AbstractValuesAttribute* valuesAttributes = dynamic_cast<const AbstractValuesAttribute*>(&attribute))
+  else if(const auto* valuesAttributes = dynamic_cast<const AbstractValuesAttribute*>(&attribute))
   {
     const uint32_t length = valuesAttributes->length();
     message.write(AttributeType::Values);

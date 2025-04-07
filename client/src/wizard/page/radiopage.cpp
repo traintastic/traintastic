@@ -24,11 +24,19 @@
 #include <QLayout>
 #include <QButtonGroup>
 #include <QRadioButton>
+#include <QLabel>
 
 RadioPage::RadioPage(QWidget* parent)
   : TextPage(parent)
   , m_group{new QButtonGroup(this)}
+  , m_bottomText{new QLabel(this)}
 {
+  m_bottomText->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+  m_bottomText->setWordWrap(true);
+  setBottomText({});
+
+  static_cast<QVBoxLayout*>(layout())->addStretch();
+  layout()->addWidget(m_bottomText);
 }
 
 int RadioPage::currentIndex() const
@@ -36,23 +44,25 @@ int RadioPage::currentIndex() const
   return m_group->id(m_group->checkedButton());
 }
 
-void RadioPage::addItem(const QString& label, bool disabled)
+void RadioPage::addItem(const QString& label, bool checked, bool disabled)
 {
   auto* button = new QRadioButton(label);
+  button->setChecked(checked && !disabled);
   button->setDisabled(disabled);
   m_group->addButton(button, m_group->buttons().size());
-  layout()->addWidget(button);
+  static_cast<QVBoxLayout*>(layout())->insertWidget(layout()->count() - 2, button);
 }
 
 void RadioPage::clear()
 {
-  while(layout()->count() > 1) // remove all but first (=text label)
+  for(auto* button : m_group->buttons())
   {
-    auto* item = layout()->itemAt(layout()->count() - 1);
-    if(item->widget())
-    {
-      delete item->widget();
-    }
-    layout()->removeItem(item);
+    delete button;
   }
+}
+
+void RadioPage::setBottomText(const QString& text)
+{
+  m_bottomText->setText(text);
+  m_bottomText->setVisible(!text.isEmpty());
 }

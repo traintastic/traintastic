@@ -33,7 +33,7 @@
 #include "../core/tablemodelptr.hpp"
 #include "../core/argument.hpp"
 
-class Connection;
+class ClientConnection;
 class MemoryLogger;
 class BaseProperty;
 class AbstractProperty;
@@ -50,7 +50,7 @@ struct TileData;
 
 class Session : public std::enable_shared_from_this<Session>
 {
-  friend class Connection;
+  friend class ClientConnection;
 
   private:
     static void writePropertyValue(Message& message, const AbstractProperty& property);
@@ -58,16 +58,16 @@ class Session : public std::enable_shared_from_this<Session>
     static void writeAttribute(Message& message, const AbstractAttribute& attribute);
     static void writeTypeInfo(Message& message, const TypeInfo& typeInfo);
 
-    boost::signals2::connection m_memoryLoggerChanged;
+    boost::signals2::scoped_connection m_memoryLoggerChanged;
 
   protected:
     using Handle = uint32_t;
     using Handles = HandleList<Handle, ObjectPtr>;
 
-    std::shared_ptr<Connection> m_connection;
+    std::shared_ptr<ClientConnection> m_connection;
     boost::uuids::uuid m_uuid;
     Handles m_handles;
-    std::unordered_multimap<Handle, boost::signals2::connection> m_objectSignals;
+    std::unordered_multimap<Handle, boost::signals2::scoped_connection> m_objectSignals;
 
     bool processMessage(const Message& message);
 
@@ -87,7 +87,7 @@ class Session : public std::enable_shared_from_this<Session>
     void boardTileDataChanged(Board& board, const TileLocation& location, const TileData& data);
 
   public:
-    Session(const std::shared_ptr<Connection>& connection);
+    Session(const std::shared_ptr<ClientConnection>& connection);
     ~Session();
 
     const boost::uuids::uuid& uuid() const { return m_uuid; }

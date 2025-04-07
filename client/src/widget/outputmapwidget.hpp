@@ -29,6 +29,7 @@
 class QTableWidget;
 class Method;
 class MethodAction;
+class MethodIcon;
 class AbstractProperty;
 class AbstractVectorProperty;
 class ObjectVectorProperty;
@@ -47,6 +48,7 @@ class OutputMapWidget : public QWidget
     Property* m_ecosObject;
     ObjectVectorProperty* m_items;
     QTableWidget* m_table;
+    MethodIcon* m_swapOutputs = nullptr;
     std::vector<ObjectPtr> m_itemObjects;
     std::vector<std::vector<ObjectPtr>> m_actions;
     int m_getParentRequestId;
@@ -57,6 +59,8 @@ class OutputMapWidget : public QWidget
     void updateItems(const std::vector<ObjectPtr>& items);
     void updateKeyIcons();
     void updateTableOutputColumns();
+
+    bool eventFilter(QObject* object, QEvent* event) override;
 
   public:
     explicit OutputMapWidget(ObjectPtr object, QWidget* parent = nullptr);

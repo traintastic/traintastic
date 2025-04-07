@@ -130,7 +130,7 @@ void Kernel::receive(const Message& message)
   {
     case idFeedbackBroadcast:
     {
-      const FeedbackBroadcast* feedback = static_cast<const FeedbackBroadcast*>(&message);
+      const auto* feedback = static_cast<const FeedbackBroadcast*>(&message);
 
       for(uint8_t i = 0; i < feedback->pairCount(); i++)
       {
@@ -181,84 +181,99 @@ void Kernel::receive(const Message& message)
       break;
     }
     case 0x60:
-      if(message == NormalOperationResumed())
+    {
+      if(message == TrackPowerOff())
       {
-        if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
-        {
-          m_trackPowerOn = TriState::True;
-          m_emergencyStop = TriState::False;
-
-          if(m_onNormalOperationResumed)
-            EventLoop::call(
-              [this]()
-              {
-                m_onNormalOperationResumed();
-              });
-        }
+        EventLoop::call(
+          [this]()
+          {
+            if(m_trackPowerOn != TriState::False)
+            {
+              m_trackPowerOn = TriState::False;
+              m_emergencyStop = TriState::False;
+              if(m_onTrackPowerChanged)
+                m_onTrackPowerChanged(false, false);
+            }
+          });
       }
-      else if(message == TrackPowerOff())
+      else if(message == NormalOperationResumed())
       {
-        if(m_trackPowerOn != TriState::False)
-        {
-          m_trackPowerOn = TriState::False;
-
-          if(m_onTrackPowerOff)
-            EventLoop::call(
-              [this]()
-              {
-                m_onTrackPowerOff();
-              });
+        EventLoop::call(
+          [this]()
+          {
+            if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
+            {
+              m_trackPowerOn = TriState::True;
+              m_emergencyStop = TriState::False;
+              if(m_onTrackPowerChanged)
+                m_onTrackPowerChanged(true, false);
+            }
+          });
         }
-      }
       break;
-
+    }
     case 0x80:
+    {
       if(message == EmergencyStop())
       {
-        if(m_emergencyStop != TriState::True)
-        {
-          m_emergencyStop = TriState::True;
+        EventLoop::call(
+          [this]()
+          {
+            if(m_emergencyStop != TriState::True)
+            {
+              m_emergencyStop = TriState::True;
+              m_trackPowerOn = TriState::True;
 
-          if(m_onEmergencyStop)
-            EventLoop::call(
-              [this]()
-              {
-                m_onEmergencyStop();
-              });
-        }
+              if(m_onTrackPowerChanged)
+                m_onTrackPowerChanged(true, true);
+            }
+          });
       }
       break;
+    }
   }
 }
 
 void Kernel::resumeOperations()
 {
-  m_ioContext.post(
-    [this]()
-    {
-      if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
+  assert(isEventLoopThread());
+
+  if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
+  {
+    m_ioContext.post(
+      [this]()
+      {
         send(ResumeOperationsRequest());
-    });
+      });
+  }
 }
 
 void Kernel::stopOperations()
 {
-  m_ioContext.post(
-    [this]()
-    {
-      if(m_trackPowerOn != TriState::False)
+  assert(isEventLoopThread());
+
+  if(m_trackPowerOn != TriState::False || m_emergencyStop != TriState::False)
+  {
+    m_ioContext.post(
+      [this]()
+      {
         send(StopOperationsRequest());
-    });
+      });
+  }
 }
 
 void Kernel::stopAllLocomotives()
 {
-  m_ioContext.post(
-    [this]()
-    {
-      if(m_emergencyStop != TriState::True)
+  assert(isEventLoopThread());
+
+  if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::True)
+  {
+    m_ioContext.post(
+      [this]()
+      {
         send(StopAllLocomotivesRequest());
-    });
+      });
+  }
 }
 
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
@@ -388,7 +403,7 @@ bool Kernel::setOutput(uint16_t address, OutputPairValue value)
 {
   assert(isEventLoopThread());
   assert(address >= accessoryOutputAddressMin && address <= accessoryOutputAddressMax);
-  assert(value == OutputPairValue::First || value == OutputPairValue::First);
+  assert(value == OutputPairValue::First || value == OutputPairValue::Second);
   m_ioContext.post(
     [this, address, value]()
     {
@@ -412,7 +427,7 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
           return; // no change
 
         const uint16_t groupAddress = (address - 1) >> 2;
-        const uint8_t index = static_cast<uint8_t>((address - 1) & 0x0003);
+        const auto index = static_cast<uint8_t>((address - 1) & 0x0003);
 
         std::byte message[sizeof(FeedbackBroadcast) + sizeof(FeedbackBroadcast::Pair) + 1];
         memset(message, 0, sizeof(message));

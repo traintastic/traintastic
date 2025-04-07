@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "theme.hpp"
 #include <cassert>
 #include <QFile>
+#include <QPalette>
 
 const QString iconPathDefault = QStringLiteral(":/");
 const QString iconPathDark = QStringLiteral(":/dark/");
@@ -31,7 +32,19 @@ const QString iconExtension = QStringLiteral(".svg");
 const std::array<const QString*, 3> iconPathsDark = {&iconPathDark, &iconPathDefault, &iconPathLight};
 const std::array<const QString*, 3> iconPathsLight = {&iconPathLight, &iconPathDefault, &iconPathDark};
 
+bool Theme::s_isDark = false;
 Theme::IconSet Theme::s_iconSet = Theme::IconSet::Light;
+
+bool Theme::isDark()
+{
+  return s_isDark;
+}
+
+void Theme::setDark(bool value)
+{
+  s_isDark = value;
+  setIconSet(value ? Theme::IconSet::Dark : Theme::IconSet::Light);
+}
 
 void Theme::setIconSet(IconSet value)
 {

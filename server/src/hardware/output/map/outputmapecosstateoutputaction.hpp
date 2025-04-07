@@ -41,7 +41,7 @@ class OutputMapECoSStateOutputAction final : public OutputMapOutputAction
   public:
     Property<uint8_t> state;
 
-    OutputMapECoSStateOutputAction(OutputMap& _parent, size_t outputIndex);
+    OutputMapECoSStateOutputAction(OutputMap& parent_, size_t outputIndex);
 
     void execute() final;
 

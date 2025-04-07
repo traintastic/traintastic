@@ -27,7 +27,7 @@ namespace XpressNet {
 
 uint8_t calcChecksum(const Message& msg, const int dataSize)
 {
-  const uint8_t* p = reinterpret_cast<const uint8_t*>(&msg);
+  const auto* p = reinterpret_cast<const uint8_t*>(&msg);
   uint8_t checksum = p[0];
   for(int i = 1; i <= dataSize; i++)
     checksum ^= p[i];
@@ -44,13 +44,61 @@ bool isChecksumValid(const Message& msg, const int dataSize)
   return calcChecksum(msg, dataSize) == *(reinterpret_cast<const uint8_t*>(&msg) + dataSize + 1);
 }
 
-std::string toString(const Message& message)
+std::string toString(const Message& message, bool raw)
 {
-  std::string s;
+  std::string s = toHex(message.identification());
 
   // Human readable:
   switch(message.header)
   {
+    case 0x21:
+    {
+      if(message == ResumeOperationsRequest())
+      {
+        s = "RESUME_OPERATIONS_REQUEST";
+      }
+      else if(message == StopOperationsRequest())
+      {
+        s = "STOP_OPERATIONS_REQUEST";
+      }
+      else
+        raw = true;
+      break;
+    }
+    case 0x61:
+    {
+      if(message == NormalOperationResumed())
+      {
+        s = "NORMAL_OPERATIONS_RESUMED";
+      }
+      else if(message == TrackPowerOff())
+      {
+        s = "TRACK_POWER_OFF";
+      }
+      else
+        raw = true;
+      break;
+    }
+    case 0x80:
+    {
+      if(message == StopAllLocomotivesRequest())
+      {
+        s = "STOP_ALL_LOCO_REQUEST";
+      }
+      else
+        raw = true;
+      break;
+    }
+    case 0x81:
+    {
+      if(message == EmergencyStop())
+      {
+        s = "EMERGENCY_STOP";
+      }
+      else
+        raw = true;
+      break;
+    }
     case 0x52:
     {
       const auto& req = static_cast<const AccessoryDecoderOperationRequest&>(message);
@@ -60,13 +108,21 @@ std::string toString(const Message& message)
       s.append(req.activate() ? " activate" : " deactivate");
       break;
     }
+    default:
+    {
+      raw = true;
+      break;
+    }
     // FIXME: add all messages
   }
 
-  // Raw data:
-  s.append(" [");
-  s.append(toHex(reinterpret_cast<const uint8_t*>(&message), message.size(), true));
-  s.append("]");
+  if(raw)
+  {
+    // Raw data:
+    s.append(" [");
+    s.append(toHex(reinterpret_cast<const uint8_t*>(&message), message.size(), true));
+    s.append("]");
+  }
 
   return s;
 }

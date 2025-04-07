@@ -136,19 +136,34 @@ void TableWidget::updateRegion()
 
   int rowMin = qMax(topLeft.row(), 0);
   int rowMax = indexAt(r.bottomLeft()).row();
-  if(rowMax == -1)
+
+  if(rowCount == 0)
+  {
+    // Invalid region to represent empty model
+    rowMin = 1;
+    rowMax = 0;
+  }
+  else if(rowMax == -1)
     rowMax = rowCount - 1;
   else
     rowMax = qMin(rowMax + 1, rowCount - 1);
 
   int columnMin = qMax(topLeft.column(), 0);
   int columnMax = indexAt(r.topRight()).column();
+
+  if(columnCount == 0)
+  {
+    // Invalid region to represent empty model
+    columnMin = 1;
+    columnMax = 0;
+  }
   if(columnMax == -1)
     columnMax = columnCount - 1;
   else
     columnMax = qMin(columnMax + 1, columnCount - 1);
 
-  m_model->setRegion(columnMin, columnMax, rowMin, rowMax);
+  m_model->setRegion(uint32_t(columnMin), uint32_t(columnMax),
+                     uint32_t(rowMin), uint32_t(rowMax));
 }
 
 void TableWidget::mouseMoveEvent(QMouseEvent* event)

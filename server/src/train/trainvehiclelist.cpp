@@ -121,6 +121,8 @@ void TrainVehicleList::propertyChanged(BaseProperty& property)
     train().updateWeight();
   else if(property.name() == "speed_max")
     train().updateSpeedMax();
+
+  ObjectList<RailVehicle>::propertyChanged(property);
 }
 
 Train& TrainVehicleList::train()

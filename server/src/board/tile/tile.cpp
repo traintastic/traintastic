@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2020-2021,2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@ Tile::Tile(World& world, std::string_view _id, TileId tileId_)
   , width{this, "width", 1, PropertyFlags::ReadOnly | PropertyFlags::Store}
 {
   Attributes::addObjectEditor(tileId, false);
-  Attributes::addValues(tileId, tcb::span<const TileId, 0>{});
+  Attributes::addValues(tileId, std::span<const TileId, 0>{});
   m_interfaceItems.add(tileId);
 
   Attributes::addObjectEditor(x, false);
@@ -57,6 +57,21 @@ Tile::Tile(World& world, std::string_view _id, TileId tileId_)
   Attributes::addObjectEditor(width, false);
   Attributes::addMinMax<uint8_t>(width, 1, 1);
   m_interfaceItems.add(width);
+}
+
+std::optional<Connector> Tile::getConnector(Connector::Direction direction) const
+{
+  std::vector<Connector> connectors;
+  connectors.reserve(8);
+  getConnectors(connectors);
+  for(const auto& c : connectors)
+  {
+    if(c.direction == direction)
+    {
+      return c;
+    }
+  }
+  return std::nullopt;
 }
 
 Board& Tile::getBoard()

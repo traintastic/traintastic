@@ -1,11 +1,22 @@
 ---
 Checks: >
   -*,
+  misc-*,
+  -misc-no-recursion,
+  modernize-*,
+  -modernize-avoid-bind,
+  -modernize-avoid-c-arrays,
+  -modernize-use-trailing-return-type,
   readability-*,
   -readability-braces-around-statements,
   -readability-implicit-bool-conversion,
   -readability-identifier-length,
-  -readability-magic-numbers
+  -readability-magic-numbers,
+  -readability-suspicious-call-argument
+
+WarningsAsErrors: >
+  readability-*,
+  -readability-function-cognitive-complexity
 
 CheckOptions:
   - {key: readability-identifier-naming.NamespaceCase, value: CamelCase}

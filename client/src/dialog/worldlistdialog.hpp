@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020 Reinder Feenstra
+ * Copyright (C) 2019-2020,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,9 +25,11 @@
 
 #include <QDialog>
 #include "../network/objectptr.hpp"
+#include "../network/tablemodelptr.hpp"
 
 class QDialogButtonBox;
-class TableWidget;
+class QLineEdit;
+class QListView;
 class Connection;
 
 class WorldListDialog final : public QDialog
@@ -39,8 +41,10 @@ class WorldListDialog final : public QDialog
     int m_requestId;
     ObjectPtr m_object;
     QDialogButtonBox* m_buttons; // TODO: m_buttonLoad;
-    TableWidget* m_tableWidget;
+    QLineEdit* m_search;
+    QListView* m_list;
     QString m_uuid;
+    TableModelPtr m_tableModel;
 
   public:
     explicit WorldListDialog(std::shared_ptr<Connection> connection, QWidget* parent = nullptr);

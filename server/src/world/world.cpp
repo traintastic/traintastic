@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -67,6 +67,7 @@
 #include "../zone/zone.hpp"
 #include "../zone/zonelist.hpp"
 
+#include "../hardware/throttle/list/throttlelist.hpp"
 #include "../train/train.hpp"
 #include "../train/trainlist.hpp"
 #include "../vehicle/rail/railvehiclelist.hpp"
@@ -80,6 +81,7 @@ constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::N
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Interface | InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Interface | OutputListColumn::Channel | OutputListColumn::Address;
 constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface /*| IdentificationListColumn::Channel*/ | IdentificationListColumn::Address;
+constexpr auto throttleListColumns = ThrottleListColumn::Id | ThrottleListColumn::Name | ThrottleListColumn::Train | ThrottleListColumn::Interface;
 
 template<class T>
 inline static void deleteAll(T& objectList)
@@ -94,7 +96,16 @@ inline static void deleteAll(T& objectList)
         objectList.front()->active = false;
       }
     }
-    objectList.delete_(objectList.front());
+    if constexpr(std::is_same_v<T, ThrottleList>)
+    {
+      auto& throttle = objectList[0];
+      throttle->destroy();
+      objectList.removeObject(throttle);
+    }
+    else
+    {
+      objectList.delete_(objectList.front());
+    }
   }
 }
 
@@ -121,6 +132,7 @@ void World::init(World& world)
   world.boards.setValueInternal(std::make_shared<BoardList>(world, world.boards.name()));
   world.zones.setValueInternal(std::make_shared<ZoneList>(world, world.zones.name()));
   world.clock.setValueInternal(std::make_shared<Clock>(world, world.clock.name()));
+  world.throttles.setValueInternal(std::make_shared<ThrottleList>(world, world.throttles.name(), throttleListColumns));
   world.trains.setValueInternal(std::make_shared<TrainList>(world, world.trains.name()));
   world.railVehicles.setValueInternal(std::make_shared<RailVehicleList>(world, world.railVehicles.name()));
   world.luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(world, world.luaScripts.name()));
@@ -170,6 +182,7 @@ World::World(Private /*unused*/) :
   boards{this, "boards", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   zones{this, "zones", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
+  throttles{this, "throttles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   trains{this, "trains", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -249,7 +262,7 @@ World::World(Private /*unused*/) :
       }
       event(value ? WorldEvent::SimulationEnabled : WorldEvent::SimulationDisabled);
     }},
-  simulationStatus{this, "simulation_status", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
+  simulationStatus{this, "simulation_status", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::Internal},
   save{*this, "save", MethodFlags::NoScript,
     [this]()
     {
@@ -368,6 +381,8 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(outputs);
   Attributes::addObjectEditor(identifications, false);
   m_interfaceItems.add(identifications);
+  Attributes::addObjectEditor(throttles, false);
+  m_interfaceItems.add(throttles);
   Attributes::addObjectEditor(boards, false);
   m_interfaceItems.add(boards);
 
@@ -421,6 +436,8 @@ World::World(Private /*unused*/) :
   Attributes::addObjectEditor(simulation, false);
   m_interfaceItems.add(simulation);
 
+  m_interfaceItems.add(simulationStatus);
+
   Attributes::addObjectEditor(save, false);
   m_interfaceItems.add(save);
 
@@ -442,6 +459,7 @@ World::~World()
   deleteAll(*identifications);
   deleteAll(*boards);
   deleteAll(*zones);
+  deleteAll(*throttles);
   deleteAll(*trains);
   deleteAll(*railVehicles);
   deleteAll(*luaScripts);

@@ -198,7 +198,6 @@ Traintastic::RunStatus Traintastic::run(const std::string& worldUUID, bool simul
   Log::log(*this, LogMessage::I1007_X, std::string_view{"nlohmann::json " STR(NLOHMANN_JSON_VERSION_MAJOR) "." STR(NLOHMANN_JSON_VERSION_MINOR) "." STR(NLOHMANN_JSON_VERSION_PATCH)});
   Log::log(*this, LogMessage::I1008_X, std::string_view{archive_version_details()});
   Log::log(*this, LogMessage::I1009_ZLIB_X, std::string_view{zlibVersion()});
-  //! \todo Add tcb::span version when available, see https://github.com/tcbrindle/span/issues/33
   Log::log(*this, LogMessage::I9002_X, Lua::getVersion());
 
   settings = std::make_shared<Settings>(m_dataDir);

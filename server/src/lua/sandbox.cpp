@@ -364,7 +364,7 @@ Sandbox::StateData::~StateData()
   {
     if(auto outputController = it.first.lock())
     {
-      for(auto& outputWeak : it.second)
+      for(const auto& outputWeak : it.second)
       {
         if(auto output = outputWeak.lock())
         {

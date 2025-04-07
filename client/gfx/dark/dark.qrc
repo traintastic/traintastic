@@ -95,5 +95,7 @@
         <file>zone.svg</file>
         <file>clear_persistent_variables.svg</file>
         <file>highlight_zone.svg</file>
+        <file>swap.svg</file>
+        <file>circle/add.svg</file>
     </qresource>
 </RCC>

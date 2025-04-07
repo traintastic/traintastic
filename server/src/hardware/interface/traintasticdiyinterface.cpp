@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2024 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -102,7 +102,7 @@ TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view 
   updateVisible();
 }
 
-std::pair<uint32_t, uint32_t> TraintasticDIYInterface::inputAddressMinMax(uint32_t) const
+std::pair<uint32_t, uint32_t> TraintasticDIYInterface::inputAddressMinMax(uint32_t /*channel*/) const
 {
   return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax};
 }
@@ -113,7 +113,7 @@ void TraintasticDIYInterface::inputSimulateChange(uint32_t channel, uint32_t add
     m_kernel->simulateInputChange(address, action);
 }
 
-tcb::span<const OutputChannel> TraintasticDIYInterface::outputChannels() const
+std::span<const OutputChannel> TraintasticDIYInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Output);
   return values;

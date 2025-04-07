@@ -70,6 +70,7 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
   Attributes::addEnabled(activeTrain, true);
   m_interfaceItems.insertBefore(activeTrain, notes);
 
+  Attributes::addObjectEditor(trains, false);
   m_interfaceItems.insertBefore(trains, notes);
 }
 

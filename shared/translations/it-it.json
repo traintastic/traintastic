@@ -243,14 +243,6 @@
         "fuzzy": 0
     },
     {
-        "term": "category:trains",
-        "definition": "Treni",
-        "context": "",
-        "term_plural": "",
-        "reference": "",
-        "comment": ""
-    },
-    {
         "term": "class_id:board_tile.misc.push_button",
         "definition": "Bottone",
         "context": "",
@@ -5146,7 +5138,7 @@
         "fuzzy": 0
     },
     {
-        "term": "board_tile.rail.signal_3_aspect:require_reservation",
+        "term": "board_tile.rail.signal:require_reservation",
         "definition": "Richiedi prenotazione",
         "context": "",
         "term_plural": "",
