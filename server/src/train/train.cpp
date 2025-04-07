@@ -268,7 +268,13 @@ void Train::updateMute()
   if(value != mute)
   {
     mute.setValueInternal(value);
-    //! \todo Apply to train
+    if(active)
+    {
+      for(const auto& vehicle : *vehicles)
+      {
+        vehicle->updateMute();
+      }
+    }
   }
 }
 
@@ -289,7 +295,13 @@ void Train::updateNoSmoke()
   if(value != noSmoke)
   {
     noSmoke.setValueInternal(value);
-    //! \todo Apply to train
+    if(active)
+    {
+      for(const auto& vehicle : *vehicles)
+      {
+        vehicle->updateNoSmoke();
+      }
+    }
   }
 }
 
