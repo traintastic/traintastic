@@ -346,7 +346,26 @@ void Train::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
 
-  updateEnabled();
+  switch(event)
+  {
+    case WorldEvent::EditEnabled:
+    case WorldEvent::EditDisabled:
+      updateEnabled();
+      break;
+
+    case WorldEvent::Mute:
+    case WorldEvent::Unmute:
+      updateMute();
+      break;
+
+    case WorldEvent::NoSmoke:
+    case WorldEvent::Smoke:
+      updateNoSmoke();
+      break;
+
+    default:
+      break;
+  }
 }
 
 void Train::setSpeed(const double kmph)
