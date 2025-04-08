@@ -20,6 +20,8 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include "../src/core/method.tpp"
+#include "../src/core/objectproperty.tpp"
 #include "../src/board/board.hpp"
 #include "../src/board/boardlist.hpp"
 #include "../src/board/tile/rail/blockrailtile.hpp"
