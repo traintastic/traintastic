@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include "../board/map/blockpath.hpp"
 #include "../core/objectproperty.tpp"
 #include "../zone/blockzonelist.hpp"
+#include "../world/world.hpp"
 
 void TrainTracking::assigned(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block)
 {
@@ -36,7 +37,6 @@ void TrainTracking::assigned(const std::shared_ptr<Train>& train, const std::sha
   train->fireBlockAssigned(block);
   block->fireTrainAssigned(train);
 }
-#include "../world/world.hpp"
 
 void TrainTracking::reserve(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction)
 {
@@ -170,6 +170,8 @@ void TrainTracking::checkZoneAssigned(const std::shared_ptr<Train>& train, const
     zone->trains.appendInternal(zoneStatus);
     train->zones.appendInternal(zoneStatus);
 
+    trainEnteredOrLeftZone(*train, *zone);
+
     train->fireZoneAssigned(zone);
     zone->fireTrainAssigned(train);
   }
@@ -280,6 +282,8 @@ void TrainTracking::checkZoneRemoved(const std::shared_ptr<Train>& train, const 
   {
     if(removeTrainIfNotInZone(train, zone))
     {
+      trainEnteredOrLeftZone(*train, *zone);
+
       train->fireZoneRemoved(zone);
       zone->fireTrainRemoved(train);
     }
