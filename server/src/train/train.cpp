@@ -551,7 +551,7 @@ bool Train::setTrainActive(bool val)
     //Register this train as activeTrain
     for(const auto& vehicle : *vehicles)
     {
-      vehicle->activeTrain.setValueInternal(self);
+      vehicle->setActiveTrain(self);
     }
 
     //Sync Emergency Stop state
@@ -569,7 +569,7 @@ bool Train::setTrainActive(bool val)
     for(const auto& vehicle : *vehicles)
     {
       assert(vehicle->activeTrain.value() == self);
-      vehicle->activeTrain.setValueInternal(nullptr);
+      vehicle->setActiveTrain(nullptr);
     }
   }
 

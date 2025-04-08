@@ -58,6 +58,8 @@ class RailVehicle : public Vehicle
     ObjectProperty<Train> activeTrain;
     ObjectVectorProperty<Train> trains;
 
+    void setActiveTrain(const std::shared_ptr<Train>& train);
+
     void updateMute();
     void updateNoSmoke();
 };

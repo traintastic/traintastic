@@ -82,6 +82,13 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
   m_interfaceItems.insertBefore(trains, notes);
 }
 
+void RailVehicle::setActiveTrain(const std::shared_ptr<Train>& train)
+{
+  activeTrain.setValueInternal(train);
+  updateMute();
+  updateNoSmoke();
+}
+
 void RailVehicle::updateMute()
 {
   bool value = contains(m_world.state, WorldState::NoSmoke);
