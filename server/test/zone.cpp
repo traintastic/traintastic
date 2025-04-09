@@ -314,3 +314,88 @@ TEST_CASE("Zone: Assign/remove events", "[zone]")
   REQUIRE(zoneTrainLeftEventCount == 0);
   REQUIRE(zoneTrainRemovedEventCount == 1);
 }
+
+TEST_CASE("Zone: Toggle mute/noSmoke with train in zone", "[zone]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+
+  REQUIRE(world->railVehicles->length == 0);
+  std::weak_ptr<RailVehicle> locomotiveWeak = world->railVehicles->create(Locomotive::classId);
+  REQUIRE_FALSE(locomotiveWeak.expired());
+  REQUIRE(world->railVehicles->length == 1);
+
+  REQUIRE(world->trains->length == 0);
+  std::weak_ptr<Train> trainWeak = world->trains->create();
+  REQUIRE_FALSE(trainWeak.expired());
+  REQUIRE(world->trains->length == 1);
+  REQUIRE(trainWeak.lock()->vehicles->length == 0);
+  trainWeak.lock()->vehicles->add(locomotiveWeak.lock());
+  REQUIRE(trainWeak.lock()->vehicles->length == 1);
+
+  REQUIRE(world->boards->length == 0);
+  std::weak_ptr<Board> boardWeak = world->boards->create();
+  REQUIRE_FALSE(boardWeak.expired());
+  REQUIRE(world->boards->length == 1);
+
+  REQUIRE(boardWeak.lock()->addTile(0, 0, TileRotate::Deg90, BlockRailTile::classId, false));
+  std::weak_ptr<BlockRailTile> blockWeak = std::dynamic_pointer_cast<BlockRailTile>(boardWeak.lock()->getTile({0, 0}));
+  REQUIRE_FALSE(blockWeak.expired());
+
+  std::weak_ptr<Zone> zoneWeak = world->zones->create();
+  REQUIRE_FALSE(zoneWeak.expired());
+  REQUIRE(zoneWeak.lock()->blocks->length == 0);
+  zoneWeak.lock()->blocks->add(blockWeak.lock());
+  REQUIRE(zoneWeak.lock()->blocks->length == 1);
+  REQUIRE(zoneWeak.lock()->trains.size() == 0);
+
+  REQUIRE_FALSE(trainWeak.lock()->active);
+  blockWeak.lock()->assignTrain(trainWeak.lock());
+  REQUIRE(trainWeak.lock()->active);
+  REQUIRE(trainWeak.lock()->blocks.size() == 1);
+  REQUIRE(trainWeak.lock()->zones.size() == 1);
+  REQUIRE(blockWeak.lock()->trains.size() == 1);
+  REQUIRE(zoneWeak.lock()->trains.size() == 1);
+
+  REQUIRE_FALSE(trainWeak.lock()->mute);
+  REQUIRE_FALSE(trainWeak.lock()->noSmoke);
+  REQUIRE_FALSE(locomotiveWeak.lock()->mute);
+  REQUIRE_FALSE(locomotiveWeak.lock()->noSmoke);
+
+  zoneWeak.lock()->mute = true;
+  REQUIRE(trainWeak.lock()->mute);
+  REQUIRE(locomotiveWeak.lock()->mute);
+
+  zoneWeak.lock()->mute = false;
+  REQUIRE_FALSE(trainWeak.lock()->mute);
+  REQUIRE_FALSE(locomotiveWeak.lock()->mute);
+
+  zoneWeak.lock()->noSmoke = true;
+  REQUIRE(trainWeak.lock()->noSmoke);
+  REQUIRE(locomotiveWeak.lock()->noSmoke);
+
+  zoneWeak.lock()->noSmoke = false;
+  REQUIRE_FALSE(trainWeak.lock()->noSmoke);
+  REQUIRE_FALSE(locomotiveWeak.lock()->noSmoke);
+
+  zoneWeak.lock()->mute = true;
+  zoneWeak.lock()->noSmoke = true;
+
+  blockWeak.lock()->removeTrain(trainWeak.lock());
+
+  REQUIRE_FALSE(trainWeak.lock()->mute);
+  REQUIRE_FALSE(locomotiveWeak.lock()->mute);
+  REQUIRE_FALSE(trainWeak.lock()->noSmoke);
+  REQUIRE_FALSE(locomotiveWeak.lock()->noSmoke);
+
+  world.reset();
+
+  REQUIRE(worldWeak.expired());
+  REQUIRE(locomotiveWeak.expired());
+  REQUIRE(trainWeak.expired());
+  REQUIRE(boardWeak.expired());
+  REQUIRE(blockWeak.expired());
+  REQUIRE(zoneWeak.expired());
+}
+
