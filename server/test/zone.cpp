@@ -33,7 +33,9 @@
 #include "../src/train/train.hpp"
 #include "../src/train/trainvehiclelist.hpp"
 #include "../src/hardware/decoder/decoder.hpp"
+#include "../src/zone/blockzonelist.hpp"
 #include "../src/zone/zonelist.hpp"
+#include "../src/zone/zonelisttablemodel.hpp"
 #include "../src/zone/zone.hpp"
 #include "../src/zone/zoneblocklist.hpp"
 
@@ -399,3 +401,38 @@ TEST_CASE("Zone: Toggle mute/noSmoke with train in zone", "[zone]")
   REQUIRE(zoneWeak.expired());
 }
 
+TEST_CASE("Zone: Check class id's", "[zone]")
+{
+  // class id's may NOT be changed, it will break saved worlds and might break client stuff.
+
+  REQUIRE(BlockZoneList::classId == "list.block_zone");
+  REQUIRE(Zone::classId == "zone");
+  REQUIRE(ZoneBlockList::classId == "list.zone_block");
+  REQUIRE(ZoneList::classId == "list.zone");
+  REQUIRE(ZoneListTableModel::classId == "zone_list_table_model");
+
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(world->zones->getClassId() == "list.zone");
+
+  std::weak_ptr<Board> boardWeak = world->boards->create();
+  REQUIRE_FALSE(boardWeak.expired());
+
+  REQUIRE(boardWeak.lock()->addTile(0, 0, TileRotate::Deg90, BlockRailTile::classId, false));
+  std::weak_ptr<BlockRailTile> blockWeak = std::dynamic_pointer_cast<BlockRailTile>(boardWeak.lock()->getTile({0, 0}));
+  REQUIRE_FALSE(blockWeak.expired());
+  REQUIRE(blockWeak.lock()->zones->getClassId() == "list.block_zone");
+
+  std::weak_ptr<Zone> zoneWeak = world->zones->create();
+  REQUIRE_FALSE(zoneWeak.expired());
+  REQUIRE(zoneWeak.lock()->getClassId() == "zone");
+  REQUIRE(zoneWeak.lock()->blocks->getClassId() == "list.zone_block");
+
+  world.reset();
+
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
+  REQUIRE(blockWeak.expired());
+  REQUIRE(zoneWeak.expired());
+}
