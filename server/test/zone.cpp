@@ -20,6 +20,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include "../src/core/attributes.hpp"
 #include "../src/core/method.tpp"
 #include "../src/core/objectproperty.tpp"
 #include "../src/board/board.hpp"
@@ -434,5 +435,66 @@ TEST_CASE("Zone: Check class id's", "[zone]")
   REQUIRE(worldWeak.expired());
   REQUIRE(boardWeak.expired());
   REQUIRE(blockWeak.expired());
+  REQUIRE(zoneWeak.expired());
+}
+
+TEST_CASE("Zone: Check enabled attribute", "[zone]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+
+  std::weak_ptr<Zone> zoneWeak = world->zones->create();
+  REQUIRE_FALSE(zoneWeak.expired());
+
+  REQUIRE(world->state.value() == static_cast<WorldState>(0));
+  REQUIRE_FALSE(world->edit);
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->id));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->name));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->mute));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->noSmoke));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->speedLimit));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->blocks->add));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->blocks->remove));
+
+  world->edit = true;
+
+  REQUIRE(world->state.value() == WorldState::Edit);
+  REQUIRE(world->edit);
+  REQUIRE(Attributes::getEnabled(zoneWeak.lock()->id));
+  REQUIRE(Attributes::getEnabled(zoneWeak.lock()->name));
+  REQUIRE(Attributes::getEnabled(zoneWeak.lock()->mute));
+  REQUIRE(Attributes::getEnabled(zoneWeak.lock()->noSmoke));
+  REQUIRE(Attributes::getEnabled(zoneWeak.lock()->speedLimit));
+  REQUIRE(Attributes::getEnabled(zoneWeak.lock()->blocks->add));
+  REQUIRE(Attributes::getEnabled(zoneWeak.lock()->blocks->remove));
+
+  world->run();
+
+  REQUIRE(world->state.value() == (WorldState::Edit | WorldState::PowerOn | WorldState::Run));
+  REQUIRE(world->edit);
+  REQUIRE(Attributes::getEnabled(zoneWeak.lock()->id));
+  REQUIRE(Attributes::getEnabled(zoneWeak.lock()->name));
+  REQUIRE(Attributes::getEnabled(zoneWeak.lock()->mute));
+  REQUIRE(Attributes::getEnabled(zoneWeak.lock()->noSmoke));
+  REQUIRE(Attributes::getEnabled(zoneWeak.lock()->speedLimit));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->blocks->add));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->blocks->remove));
+
+  world->edit = false;
+
+  REQUIRE(world->state.value() == (WorldState::PowerOn | WorldState::Run));
+  REQUIRE_FALSE(world->edit);
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->id));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->name));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->mute));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->noSmoke));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->speedLimit));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->blocks->add));
+  REQUIRE_FALSE(Attributes::getEnabled(zoneWeak.lock()->blocks->remove));
+
+  world.reset();
+
+  REQUIRE(worldWeak.expired());
   REQUIRE(zoneWeak.expired());
 }
