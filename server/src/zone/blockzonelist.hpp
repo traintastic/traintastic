@@ -32,7 +32,7 @@ class Zone;
 
 class BlockZoneList : public ObjectList<Zone>
 {
-  CLASS_ID("list.zone_block")
+  CLASS_ID("list.block_zone")
 
 private:
   inline BlockRailTile& block();
