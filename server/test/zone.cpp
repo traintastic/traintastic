@@ -20,6 +20,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_approx.hpp>
 #include "../src/core/attributes.hpp"
 #include "../src/core/method.tpp"
 #include "../src/core/objectproperty.tpp"
@@ -40,7 +41,7 @@
 #include "../src/zone/zone.hpp"
 #include "../src/zone/zoneblocklist.hpp"
 
-TEST_CASE("Zone: Assign/remove train to/from muted and no smoke zone", "[zone]")
+TEST_CASE("Zone: Assign/remove train to/from muted, no smoke and speed limited zone", "[zone]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
@@ -74,17 +75,20 @@ TEST_CASE("Zone: Assign/remove train to/from muted and no smoke zone", "[zone]")
   REQUIRE_FALSE(zoneWeak.lock()->noSmoke.value());
   zoneWeak.lock()->mute = true;
   zoneWeak.lock()->noSmoke = true;
+  zoneWeak.lock()->speedLimit.setValue(100.0);
   REQUIRE(zoneWeak.lock()->mute);
   REQUIRE(zoneWeak.lock()->noSmoke);
+  REQUIRE(zoneWeak.lock()->speedLimit.value() == Catch::Approx(100.0));
   REQUIRE(zoneWeak.lock()->blocks->length == 0);
   zoneWeak.lock()->blocks->add(blockWeak.lock());
   REQUIRE(zoneWeak.lock()->blocks->length == 1);
   REQUIRE(zoneWeak.lock()->trains.size() == 0);
 
-  // Assign train to block in muted and no smoke zone:
+  // Assign train to block in muted, no smoke and speed limited zone:
   REQUIRE_FALSE(trainWeak.lock()->active);
   REQUIRE_FALSE(trainWeak.lock()->mute);
   REQUIRE_FALSE(trainWeak.lock()->noSmoke);
+  REQUIRE(std::isinf(trainWeak.lock()->speedLimit.value()));
   REQUIRE_FALSE(locomotiveWeak.lock()->mute);
   REQUIRE_FALSE(locomotiveWeak.lock()->noSmoke);
   blockWeak.lock()->assignTrain(trainWeak.lock());
@@ -95,10 +99,11 @@ TEST_CASE("Zone: Assign/remove train to/from muted and no smoke zone", "[zone]")
   REQUIRE(zoneWeak.lock()->trains.size() == 1);
   REQUIRE(trainWeak.lock()->mute);
   REQUIRE(trainWeak.lock()->noSmoke);
+  REQUIRE(trainWeak.lock()->speedLimit.value() == Catch::Approx(100.0));
   REQUIRE(locomotiveWeak.lock()->mute);
   REQUIRE(locomotiveWeak.lock()->noSmoke);
 
-  // Remove train from block in muted and no smoke zone:
+  // Remove train from block in muted, no smoke and speed limited zone:
   blockWeak.lock()->removeTrain(trainWeak.lock());
   REQUIRE_FALSE(trainWeak.lock()->active);
   REQUIRE(trainWeak.lock()->blocks.size() == 0);
@@ -107,6 +112,7 @@ TEST_CASE("Zone: Assign/remove train to/from muted and no smoke zone", "[zone]")
   REQUIRE(zoneWeak.lock()->trains.size() == 0);
   REQUIRE_FALSE(trainWeak.lock()->mute);
   REQUIRE_FALSE(trainWeak.lock()->noSmoke);
+  REQUIRE(std::isinf(trainWeak.lock()->speedLimit.value()));
   REQUIRE_FALSE(locomotiveWeak.lock()->mute);
   REQUIRE_FALSE(locomotiveWeak.lock()->noSmoke);
 
@@ -318,7 +324,7 @@ TEST_CASE("Zone: Assign/remove events", "[zone]")
   REQUIRE(zoneTrainRemovedEventCount == 1);
 }
 
-TEST_CASE("Zone: Toggle mute/noSmoke with train in zone", "[zone]")
+TEST_CASE("Zone: Toggle mute/noSmoke/speedLimit with train in zone", "[zone]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
@@ -382,8 +388,15 @@ TEST_CASE("Zone: Toggle mute/noSmoke with train in zone", "[zone]")
   REQUIRE_FALSE(trainWeak.lock()->noSmoke);
   REQUIRE_FALSE(locomotiveWeak.lock()->noSmoke);
 
+  zoneWeak.lock()->speedLimit.setValue(100.0);
+  REQUIRE(trainWeak.lock()->speedLimit.value() == Catch::Approx(100.0));
+
+  zoneWeak.lock()->speedLimit.setValue(std::numeric_limits<double>::infinity());
+  REQUIRE(std::isinf(trainWeak.lock()->speedLimit.value()));
+
   zoneWeak.lock()->mute = true;
   zoneWeak.lock()->noSmoke = true;
+  zoneWeak.lock()->speedLimit.setValue(100.0);
 
   blockWeak.lock()->removeTrain(trainWeak.lock());
 
@@ -391,6 +404,7 @@ TEST_CASE("Zone: Toggle mute/noSmoke with train in zone", "[zone]")
   REQUIRE_FALSE(locomotiveWeak.lock()->mute);
   REQUIRE_FALSE(trainWeak.lock()->noSmoke);
   REQUIRE_FALSE(locomotiveWeak.lock()->noSmoke);
+  REQUIRE(std::isinf(trainWeak.lock()->speedLimit.value()));
 
   world.reset();
 
