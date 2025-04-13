@@ -513,7 +513,7 @@ TEST_CASE("Zone: Check enabled attribute", "[zone]")
   REQUIRE(zoneWeak.expired());
 }
 
-TEST_CASE("Zone: table model", "[zone]")
+TEST_CASE("Zone: zone list table model", "[zone]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
@@ -521,6 +521,7 @@ TEST_CASE("Zone: table model", "[zone]")
 
   auto zoneListModel = world->zones->getModel();
   REQUIRE(zoneListModel);
+  REQUIRE(zoneListModel->getClassId() == "zone_list_table_model");
   REQUIRE(zoneListModel->rowCount() == 0);
 
   std::weak_ptr<Zone> zone1 = world->zones->create();
