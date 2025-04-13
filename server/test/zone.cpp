@@ -617,7 +617,63 @@ TEST_CASE("Zone: block zone list table model", "[zone]")
   REQUIRE(zone2.expired());
 }
 
-TEST_CASE("!Zone: delete zone with block assigned", "[zone]")
+TEST_CASE("Zone: zone block list table model", "[zone]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+
+  std::weak_ptr<Board> boardWeak = world->boards->create();
+  REQUIRE_FALSE(boardWeak.expired());
+  REQUIRE(boardWeak.lock()->addTile(0, 0, TileRotate::Deg90, BlockRailTile::classId, false));
+
+  std::weak_ptr<BlockRailTile> block1 = std::dynamic_pointer_cast<BlockRailTile>(boardWeak.lock()->getTile({0, 0}));
+  REQUIRE_FALSE(block1.expired());
+  REQUIRE(boardWeak.lock()->addTile(1, 1, TileRotate::Deg0, BlockRailTile::classId, false));
+
+  std::weak_ptr<BlockRailTile> block2 = std::dynamic_pointer_cast<BlockRailTile>(boardWeak.lock()->getTile({1, 1}));
+  REQUIRE_FALSE(block2.expired());
+
+  std::weak_ptr<Zone> zoneWeak = world->zones->create();
+  REQUIRE_FALSE(zoneWeak.expired());
+
+  auto zoneBlockList = zoneWeak.lock()->blocks->getModel();
+  REQUIRE(zoneBlockList->rowCount() == 0);
+
+  zoneWeak.lock()->blocks->add(block1.lock());
+  REQUIRE(zoneBlockList->rowCount() == 1);
+  REQUIRE(zoneBlockList->getText(0, 0) == block1.lock()->id.value());
+  REQUIRE(zoneBlockList->getText(1, 0) == block1.lock()->name.value());
+
+  block1.lock()->id = "block_one";
+  block1.lock()->name = "Block One";
+  REQUIRE(zoneBlockList->getText(0, 0) == "block_one");
+  REQUIRE(zoneBlockList->getText(1, 0) == "Block One");
+
+  zoneWeak.lock()->blocks->add(block2.lock());
+  REQUIRE(zoneBlockList->rowCount() == 2);
+  REQUIRE(zoneBlockList->getText(0, 1) == block2.lock()->id.value());
+  REQUIRE(zoneBlockList->getText(1, 1) == block2.lock()->name.value());
+
+  block2.lock()->id = "block_two";
+  block2.lock()->name = "Block Two";
+  REQUIRE(zoneBlockList->getText(0, 1) == "block_two");
+  REQUIRE(zoneBlockList->getText(1, 1) == "Block Two");
+
+  zoneWeak.lock()->blocks->remove(block1.lock());
+  REQUIRE(zoneBlockList->rowCount() == 1);
+  REQUIRE(zoneBlockList->getText(0, 0) == "block_two");
+  REQUIRE(zoneBlockList->getText(1, 0) == "Block Two");
+
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(boardWeak.expired());
+  REQUIRE(block1.expired());
+  REQUIRE(block2.expired());
+  REQUIRE(zoneWeak.expired());
+}
+
+TEST_CASE("Zone: delete zone with block assigned", "[zone]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
@@ -648,7 +704,7 @@ TEST_CASE("!Zone: delete zone with block assigned", "[zone]")
   REQUIRE(blockWeak.expired());
 }
 
-TEST_CASE("!Zone: delete block with zone assigned", "[zone]")
+TEST_CASE("Zone: delete block with zone assigned", "[zone]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
@@ -678,7 +734,7 @@ TEST_CASE("!Zone: delete block with zone assigned", "[zone]")
   REQUIRE(zoneWeak.expired());
 }
 
-TEST_CASE("!Zone: delete board with block with zone assigned", "[zone]")
+TEST_CASE("Zone: delete board with block with zone assigned", "[zone]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
