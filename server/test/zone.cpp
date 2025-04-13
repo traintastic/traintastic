@@ -512,3 +512,51 @@ TEST_CASE("Zone: Check enabled attribute", "[zone]")
   REQUIRE(worldWeak.expired());
   REQUIRE(zoneWeak.expired());
 }
+
+TEST_CASE("Zone: table model", "[zone]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+
+  auto zoneListModel = world->zones->getModel();
+  REQUIRE(zoneListModel);
+  REQUIRE(zoneListModel->rowCount() == 0);
+
+  std::weak_ptr<Zone> zone1 = world->zones->create();
+  REQUIRE_FALSE(zone1.expired());
+
+  REQUIRE(zoneListModel->rowCount() == 1);
+  REQUIRE(zoneListModel->getText(0, 0) == zone1.lock()->id.value());
+  REQUIRE(zoneListModel->getText(1, 0) == zone1.lock()->name.value());
+
+  zone1.lock()->id = "zone_one";
+  REQUIRE(zoneListModel->getText(0, 0) == "zone_one");
+  zone1.lock()->name = "Zone One";
+  REQUIRE(zoneListModel->getText(1, 0) == "Zone One");
+
+  std::weak_ptr<Zone> zone2 = world->zones->create();
+  REQUIRE_FALSE(zone2.expired());
+
+  REQUIRE(zoneListModel->rowCount() == 2);
+  REQUIRE(zoneListModel->getText(0, 1) == zone2.lock()->id.value());
+  REQUIRE(zoneListModel->getText(1, 1) == zone2.lock()->name.value());
+
+  zone2.lock()->id = "zone_two";
+  REQUIRE(zoneListModel->getText(0, 1) == "zone_two");
+  zone2.lock()->name = "Zone Two";
+  REQUIRE(zoneListModel->getText(1, 1) == "Zone Two");
+
+  world->zones->delete_(zone1.lock());
+  REQUIRE(zone1.expired());
+
+  REQUIRE(zoneListModel->rowCount() == 1);
+  REQUIRE(zoneListModel->getText(0, 0) == "zone_two");
+  REQUIRE(zoneListModel->getText(1, 0) == "Zone Two");
+  REQUIRE(zoneListModel->getText(0, 1) == "");
+  REQUIRE(zoneListModel->getText(1, 1) == "");
+
+  world.reset();
+  REQUIRE(worldWeak.expired());
+  REQUIRE(zone2.expired());
+}
