@@ -131,9 +131,9 @@ void Zone::addToWorld()
 void Zone::destroying()
 {
   auto self = shared_ptr<Zone>();
-  for(const auto& block : *blocks)
+  while(!blocks->empty())
   {
-    block->zones->remove(self);
+    blocks->back()->zones->remove(self);
   }
   m_world.zones->removeObject(self);
   IdObject::destroying();

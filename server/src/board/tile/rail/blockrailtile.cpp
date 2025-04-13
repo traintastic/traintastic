@@ -568,9 +568,9 @@ void BlockRailTile::destroying()
   {
     trains.back()->destroy();
   }
-  for(const auto& zone : *zones)
+  while(!zones->empty())
   {
-    zone->blocks->remove(self);
+    zones->back()->blocks->remove(self);
   }
   m_world.blockRailTiles->removeObject(self);
   RailTile::destroying();
