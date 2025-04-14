@@ -490,7 +490,7 @@ void Simulator::loadTrackPlan(const QJsonArray& trackPlan)
             curRotation += startSegment.curve.angle;
           }
 
-          lastSide = Side::Origin;
+          lastSide = Side::End;
           lastSegmentIndex = startSegment.index;
         }
         else if(startSegment.type == TrackSegment::Type::Turnout && startSegment.turnout.thrownSegmentIndex == invalidIndex)
