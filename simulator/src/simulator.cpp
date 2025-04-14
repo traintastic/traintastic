@@ -546,7 +546,26 @@ void Simulator::loadTrackPlan(const QJsonArray& trackPlan)
     }
     else if(segment.type == TrackSegment::Type::Turnout && side == Side::TurnoutThrown)
     {
-      assert(false); // TODO: implement
+      const float curAngle = (segment.curve.angle < 0) ? curRotation : (curRotation + 180);
+
+      // Calc circle center:
+      segment.x = curX - segment.curve.radius * sinf(qDegreesToRadians(curAngle));
+      segment.y = curY + segment.curve.radius * cosf(qDegreesToRadians(curAngle));
+
+      // Calc end point:
+      curX = segment.x + segment.curve.radius * sinf(qDegreesToRadians(-curAngle + segment.curve.angle));
+      curY = segment.y - segment.curve.radius * cosf(qDegreesToRadians(-curAngle + segment.curve.angle));
+
+      curRotation -= segment.curve.angle;
+
+      segment.rotation = curRotation + 180.0f;
+      if(segment.rotation >= 360.0f)
+      {
+        segment.rotation -= 360.0f;
+      }
+
+      segment.x = curX;
+      segment.y = curY;
     }
     else
     {
