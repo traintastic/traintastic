@@ -622,11 +622,11 @@ void Simulator::loadTrackPlan(const QJsonArray& trackPlan)
       switch(lastSide)
       {
         case Side::Origin:
-          m_trackSegments[lastSegmentIndex].nextSegmentIndex[1] = m_trackSegments.size();
+          m_trackSegments[lastSegmentIndex].nextSegmentIndex[0] = m_trackSegments.size();
           break;
 
         case Side::End:
-          m_trackSegments[lastSegmentIndex].nextSegmentIndex[0] = m_trackSegments.size();
+          m_trackSegments[lastSegmentIndex].nextSegmentIndex[1] = m_trackSegments.size();
           break;
 
         case Side::TurnoutThrown:
@@ -641,7 +641,27 @@ void Simulator::loadTrackPlan(const QJsonArray& trackPlan)
     }
     m_trackSegments.emplace_back(std::move(segment));
 
-    lastSide = side;
+    switch(side)
+    {
+      case Side::Origin:
+        lastSide = Side::End;
+        if(segment.type == TrackSegment::Type::Turnout)
+        {
+            if(segment.nextSegmentIndex[1] != invalidIndex)
+                lastSide = Side::TurnoutThrown;
+        }
+        break;
+
+      case Side::End:
+      case Side::TurnoutThrown:
+        lastSide = Side::Origin;
+        break;
+
+      default:
+        assert(false);
+        break;
+    }
+
     lastSegmentIndex = m_trackSegments.size() - 1;
   }
 
