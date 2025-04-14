@@ -518,14 +518,17 @@ void Simulator::loadTrackPlan(const QJsonArray& trackPlan)
       if(obj.contains("x"))
       {
         curX = obj["x"].toDouble();
+        lastSegmentIndex = invalidIndex;
       }
       if(obj.contains("y"))
       {
         curY = obj["y"].toDouble();
+        lastSegmentIndex = invalidIndex;
       }
       if(obj.contains("rotation"))
       {
         curRotation = obj["rotation"].toDouble();
+        lastSegmentIndex = invalidIndex;
       }
     }
 
