@@ -466,10 +466,11 @@ void Simulator::loadTrackPlan(const QJsonArray& trackPlan)
     if(obj.contains("start"))
     {
       auto start = obj["start"].toString();
+      const int startPoint = obj["start_point"].toInt(-1);
       if(auto it = m_trackSegmentId.find(start); it != m_trackSegmentId.end())
       {
         auto& startSegment = m_trackSegments[it->second];
-        if(startSegment.nextSegmentIndex[0] == invalidIndex)
+        if(startSegment.nextSegmentIndex[0] == invalidIndex && (startPoint == -1 || startPoint == 0))
         {
           const auto pt = origin(startSegment);
           curX = pt.x;
@@ -479,7 +480,7 @@ void Simulator::loadTrackPlan(const QJsonArray& trackPlan)
           lastSide = Side::Origin;
           lastSegmentIndex = startSegment.index;
         }
-        else if(startSegment.nextSegmentIndex[1] == invalidIndex)
+        else if(startSegment.nextSegmentIndex[1] == invalidIndex && (startPoint == -1 || startPoint == 1))
         {
           const auto pt = end(startSegment);
           curX = pt.x;
@@ -493,7 +494,7 @@ void Simulator::loadTrackPlan(const QJsonArray& trackPlan)
           lastSide = Side::End;
           lastSegmentIndex = startSegment.index;
         }
-        else if(startSegment.type == TrackSegment::Type::Turnout && startSegment.turnout.thrownSegmentIndex == invalidIndex)
+        else if(startSegment.type == TrackSegment::Type::Turnout && startSegment.turnout.thrownSegmentIndex == invalidIndex && (startPoint == -1 || startPoint == 2))
         {
           const auto pt = curveEnd(startSegment);
           curX = pt.x;
