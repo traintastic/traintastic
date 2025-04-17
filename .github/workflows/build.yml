@@ -169,6 +169,18 @@ jobs:
           defines: ""
           ccov: false
 
+        - name: "windows_x64_msvc"
+          os: windows-2019
+          generator: "Visual Studio 16 2019"
+          arch: "-A x64"
+          toolset: ""
+          target: ALL_BUILD
+          jobs: 4
+          build_type: Release
+          build_deb: false
+          defines: ""
+          ccov: false
+
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
           generator: "Unix Makefiles"
