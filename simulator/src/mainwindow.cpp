@@ -94,16 +94,17 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     addToolBar(Qt::TopToolBarArea, toolbar);
   }
+
+  connect(m_view, &SimulatorView::powerOnChanged, m_power, &QAction::setChecked);
 }
 
 void MainWindow::load(const QString& filename)
 {
-  auto* simulator = new Simulator(filename, m_view);
-
-  connect(simulator, &Simulator::powerOnChanged, m_power, &QAction::setChecked);
-  m_power->setChecked(simulator->powerOn());
-
-  m_view->setSimulator(simulator);
+  QFile file(filename);
+  if(file.open(QIODeviceBase::ReadOnly))
+  {
+    m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString())));
+  }
 }
 
 void MainWindow::showAbout()

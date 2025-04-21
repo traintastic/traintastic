@@ -151,27 +151,27 @@
       "vehicles": [
         {
           "length": 40.0,
-          "color": "dark_green"
+          "color": "green"
         },
         {
           "length": 30.0,
-          "color": "saddle_brown"
+          "color": "olive"
         },
         {
           "length": 30.0,
-          "color": "saddle_brown"
+          "color": "olive"
         },
         {
           "length": 30.0,
-          "color": "saddle_brown"
+          "color": "olive"
         },
         {
           "length": 30.0,
-          "color": "saddle_brown"
+          "color": "olive"
         },
         {
           "length": 30.0,
-          "color": "saddle_brown"
+          "color": "olive"
         }
       ]
     },
@@ -181,11 +181,11 @@
       "vehicles": [
         {
           "length": 40.0,
-          "color": "web_maroon"
+          "color": "maroon"
         },
         {
           "length": 40.0,
-          "color": "web_maroon"
+          "color": "maroon"
         }
       ]
     }

@@ -21,8 +21,9 @@ add_executable(traintastic-simulator
   gfx/common.qrc
   src/main.cpp
   src/mainwindow.cpp
-  src/simulator.cpp
   src/simulatorview.cpp
+  ../shared/src/traintastic/simulator/simulator.cpp
+  ../shared/src/traintastic/simulator/simulatorconnection.cpp
   ../shared/src/traintastic/utils/standardpaths.cpp
 )
 
@@ -36,6 +37,19 @@ target_include_directories(traintastic-simulator PRIVATE
 target_include_directories(traintastic-simulator SYSTEM PRIVATE
   ../shared/thirdparty
 )
+
+### VCPKG
+if(DEFINED ENV{VCPKG_ROOT})
+  message(STATUS "Using VCPKG (VCPKG_ROOT=$ENV{VCPKG_ROOT})")
+  if(WIN32)
+    set(VCPKG_TARGET_TRIPLET "x64-windows-static-md")
+  endif()
+  include($ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+endif()
+
+find_package(Boost 1.81 REQUIRED)
+target_include_directories(traintastic-simulator SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries(traintastic-simulator PRIVATE ${Boost_LIBRARIES})
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Xml OpenGLWidgets Network OpenGL)
 message(STATUS "Found Qt ${Qt6Core_VERSION}")

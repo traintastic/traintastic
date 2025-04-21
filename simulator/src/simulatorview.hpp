@@ -24,7 +24,7 @@
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
-#include "simulator.hpp"
+#include <traintastic/simulator/simulator.hpp>
 
 class SimulatorView
   : public QOpenGLWidget
@@ -36,7 +36,7 @@ public:
   explicit SimulatorView(QWidget* parent = nullptr);
 
   Simulator* simulator() const;
-  void setSimulator(Simulator* value);
+  void setSimulator(std::shared_ptr<Simulator> value);
 
   bool showTrackOccupancy() const
   {
@@ -48,6 +48,9 @@ public:
     m_showTrackOccupancy = value;
     update();
   }
+
+signals:
+  void powerOnChanged(bool value);
 
 protected:
   void initializeGL() override;
@@ -64,11 +67,17 @@ private:
   struct Turnout
   {
     size_t segmentIndex;
-    Simulator::Point points[3];
+    std::span<const Simulator::Point, 3> points;
   };
   using Turnouts = std::vector<Turnout>;
 
-  Simulator* m_simulator = nullptr;
+  std::shared_ptr<Simulator> m_simulator;
+  Simulator::StateData m_stateData;
+  struct
+  {
+    bool powerOn = false;
+  } m_stateDataPrevious;
+  std::vector<boost::signals2::connection> m_simulatorConnections;
   Turnouts m_turnouts;
   float m_cameraX = 0.0f;
   float m_cameraY = 0.0f;
@@ -84,6 +93,9 @@ private:
   void drawTrains();
 
   void updateProjection();
+
+private slots:
+  void tick();
 };
 
 #endif
