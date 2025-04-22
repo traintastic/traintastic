@@ -427,7 +427,7 @@ jobs:
 
     - name: apt install
       if: startswith(matrix.config.os, 'ubuntu')
-      run: sudo apt install qt6-base-dev qt6-base-dev-tools qt6-svg-dev
+      run: sudo apt install qt6-base-dev qt6-base-dev-tools qt6-svg-dev libboost-dev
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/simulator/build
