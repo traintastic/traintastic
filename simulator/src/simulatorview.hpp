@@ -22,6 +22,7 @@
 #ifndef TRAINTASTIC_SIMULATOR_SIMULATORVIEW_HPP
 #define TRAINTASTIC_SIMULATOR_SIMULATORVIEW_HPP
 
+#include <span>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <traintastic/simulator/simulator.hpp>

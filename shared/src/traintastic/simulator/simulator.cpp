@@ -21,6 +21,7 @@
 
 #include "simulator.hpp"
 #include "simulatorconnection.hpp"
+#include <numbers>
 #include <ranges>
 #include "protocol.hpp"
 
@@ -63,7 +64,12 @@ Simulator::Point curveEnd(const Simulator::TrackSegment& segment)
     cy - segment.curve.radius * std::cos(angle + segment.curve.angle)};
 }
 
-constexpr bool pointsClose(Simulator::Point a, Simulator::Point b)
+#ifdef _MSC_VER
+const // std::abs is not constexpr :(
+#else
+constexpr 
+#endif
+bool pointsClose(Simulator::Point a, Simulator::Point b)
 {
   return std::abs(a.x - b.x) <= 1.0f && std::abs(a.y - b.y) <= 1.0f;
 }
@@ -842,7 +848,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
 
       if(const uint16_t sensorAddress = obj.value("sensor_address", invalidAddress); sensorAddress != invalidAddress)
       {
-        const uint16_t sensorChannel = obj.value("sensor_channel", 0);
+        const uint16_t sensorChannel = obj.value("sensor_channel", defaultChannel);
 
         for(size_t i = 0; i < data.sensors.size(); ++i)
         {

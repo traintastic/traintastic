@@ -20,11 +20,16 @@
  */
 
 #include "simulatorview.hpp"
+#include <numbers>
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <cmath>
 
-namespace {
+namespace
+{
+
+constexpr auto pi = std::numbers::pi_v<float>;
+
 struct ColorF
 {
   float red;
@@ -177,10 +182,10 @@ void SimulatorView::drawTracks()
       float startAngle = segment.rotation;
       if(segment.curve.angle < 0)
       {
-        startAngle += M_PIf;
+        startAngle += pi;
       }
       float endAngle = segment.curve.angle;
-      int numSegments = qCeil(std::abs(segment.curve.angle) / (M_PIf / 36.0f)); // Smooth curve
+      int numSegments = qCeil(std::abs(segment.curve.angle) / (pi / 36.0f)); // Smooth curve
       float step = endAngle / numSegments;
       float prevX = segment.curve.radius * sinf(startAngle);
       float prevY = segment.curve.radius * -cosf(startAngle);
@@ -215,9 +220,9 @@ void SimulatorView::drawTracks()
         glColor3f(0.0f, 1.0f, 1.0f);
       }
 
-      const float rotation = segment.curve.angle < 0 ? 0.0f : M_PIf;
+      const float rotation = segment.curve.angle < 0 ? 0.0f : pi;
 
-      int numSegments = qCeil(std::abs(segment.curve.angle) / (M_PIf / 36.0f)); // Smooth curve
+      int numSegments = qCeil(std::abs(segment.curve.angle) / (pi / 36.0f)); // Smooth curve
       float step = segment.curve.angle / numSegments;
       float prevX = 0.0f;
       float prevY = 0.0f;
