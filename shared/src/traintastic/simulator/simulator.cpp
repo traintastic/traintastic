@@ -1031,7 +1031,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         const float length = vehicle.value("length", 20.0f);
         const auto color = stringToEnum<Color>(vehicle.value<std::string_view>("color", {})).value_or(Color::Red);
         const float distance = train.vehicleIndexes.empty() ? 0.0f : stateData.vehicles[train.vehicleIndexes.back()].rear.distance - data.trainCouplingLength;
-        train.length += length + train.vehicleIndexes.empty() ? 0.0f : data.trainCouplingLength;
+        train.length += length + (train.vehicleIndexes.empty() ? 0.0f : data.trainCouplingLength);
         train.vehicleIndexes.emplace_back(data.vehicles.size());
         data.vehicles.emplace_back(Vehicle{color, length});
         auto& vehicleState = stateData.vehicles.emplace_back(VehicleState{});
