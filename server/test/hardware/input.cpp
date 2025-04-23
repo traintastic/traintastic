@@ -23,10 +23,15 @@
 #include <bitset>
 #include "interfaces.hpp"
 #include "../src/core/eventloop.hpp"
+#include "../src/core/method.tpp"
+#include "../src/core/objectproperty.tpp"
 #include "../src/world/world.hpp"
 #include "../src/hardware/interface/interfacelist.hpp"
+#include "../src/hardware/decoder/list/decoderlist.hpp"
 #include "../src/hardware/input/input.hpp"
 #include "../src/hardware/input/list/inputlist.hpp"
+#include "../src/hardware/output/list/outputlist.hpp"
+#include "../src/simulator/interfacesimulatorsettings.hpp"
 #include "../../shared/src/traintastic/simulator/simulator.hpp"
 
 TEMPLATE_TEST_CASE("Input", "[input]", LocoNetInterface)
