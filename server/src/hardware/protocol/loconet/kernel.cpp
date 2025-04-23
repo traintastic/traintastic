@@ -78,7 +78,7 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   , m_inputController{nullptr}
   , m_outputController{nullptr}
   , m_identificationController{nullptr}
-  , m_debugDir{Traintastic::instance->debugDir()}
+  , m_debugDir{Traintastic::instance ? Traintastic::instance->debugDir() : std::filesystem::path{}}
   , m_config{config}
 {
   assert(isEventLoopThread());

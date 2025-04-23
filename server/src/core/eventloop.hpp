@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022-2024 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,9 @@
 #define TRAINTASTIC_SERVER_CORE_EVENTLOOP_HPP
 
 #include <thread>
+#ifdef TRAINTASTIC_TEST
+  #include <chrono>
+#endif
 #include <boost/asio/io_context.hpp>
 
 class EventLoop
@@ -55,6 +58,16 @@ class EventLoop
       auto work = std::make_shared<boost::asio::io_context::work>(ioContext);
       ioContext.run();
     }
+
+#ifdef TRAINTASTIC_TEST
+    template<typename Rep, typename Period>
+    static void runFor(const std::chrono::duration<Rep, Period>& duration)
+    {
+      threadId = std::this_thread::get_id();
+      auto work = std::make_shared<boost::asio::io_context::work>(ioContext);
+      ioContext.run_for(duration);
+    }
+#endif
 
     static void stop()
     {

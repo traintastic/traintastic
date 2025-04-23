@@ -201,6 +201,8 @@ public:
 
   void enableServer(bool localhostOnly = true, uint16_t port = 5741);
 
+  uint16_t serverPort() const;
+
   void start();
   void stop();
 

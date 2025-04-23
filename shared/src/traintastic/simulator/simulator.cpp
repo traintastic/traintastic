@@ -174,6 +174,11 @@ void Simulator::enableServer(bool localhostOnly, uint16_t port)
   m_serverPort = port;
 }
 
+uint16_t Simulator::serverPort() const
+{
+  return m_acceptor.local_endpoint().port();
+}
+
 void Simulator::start()
 {
   m_thread = std::thread(
