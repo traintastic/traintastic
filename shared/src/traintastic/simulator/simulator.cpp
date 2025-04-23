@@ -67,7 +67,7 @@ Simulator::Point curveEnd(const Simulator::TrackSegment& segment)
 #ifdef _MSC_VER
 const // std::abs is not constexpr :(
 #else
-constexpr 
+constexpr
 #endif
 bool pointsClose(Simulator::Point a, Simulator::Point b)
 {
@@ -200,10 +200,13 @@ void Simulator::start()
 void Simulator::stop()
 {
   m_acceptor.cancel();
-  for(const auto& connection : m_connections)
+  while(!m_connections.empty())
   {
+    auto connection =  m_connections.back();
+    m_connections.pop_back();
     connection->stop();
   }
+
   m_tickTimer.cancel();
   if(m_thread.joinable())
   {
@@ -692,6 +695,10 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         {
           side = Side::TurnoutThrown;
         }
+      }
+      else
+      {
+        throw std::runtime_error("unkonen track element type");
       }
 
       if(segment.type == TrackSegment::Type::Straight || segment.type == TrackSegment::Type::Turnout)
