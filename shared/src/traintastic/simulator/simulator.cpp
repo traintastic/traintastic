@@ -64,9 +64,7 @@ Simulator::Point curveEnd(const Simulator::TrackSegment& segment)
     cy - segment.curve.radius * std::cos(angle + segment.curve.angle)};
 }
 
-#ifdef _MSC_VER
-const // std::abs is not constexpr :(
-#else
+#ifndef _MSC_VER // std::abs is not constexpr :(
 constexpr
 #endif
 bool pointsClose(Simulator::Point a, Simulator::Point b)
@@ -76,15 +74,14 @@ bool pointsClose(Simulator::Point a, Simulator::Point b)
 
 constexpr size_t getConnectorCount(Simulator::TrackSegment::Type type)
 {
+  using Type = Simulator::TrackSegment::Type;
   switch(type)
   {
-    using enum Simulator::TrackSegment::Type;
-
-    case Straight:
-    case Curve:
+    case Type::Straight:
+    case Type::Curve:
       return 2;
 
-    case Turnout:
+    case Type::Turnout:
       return 3;
   }
   return 0;
@@ -92,25 +89,23 @@ constexpr size_t getConnectorCount(Simulator::TrackSegment::Type type)
 
 float getSegmentLength(const Simulator::TrackSegment& segment, const Simulator::StateData& stateData)
 {
+  using Type = Simulator::TrackSegment::Type;
   switch(segment.type)
   {
-    using enum Simulator::TrackSegment::Type;
-
-    case Straight:
+    case Type::Straight:
       return segment.straight.length;
 
-    case Curve:
+    case Type::Curve:
       return segment.curve.length;
 
-    case Turnout:
+    case Type::Turnout:
+      using State = Simulator::TurnoutState::State;
       switch(stateData.turnouts[segment.turnout.index].state)
       {
-        using enum Simulator::TurnoutState::State;
-
-        case Closed:
+        case State::Closed:
           return segment.straight.length;
 
-        case Thrown:
+        case State::Thrown:
           return segment.curve.length;
       }
       break;
