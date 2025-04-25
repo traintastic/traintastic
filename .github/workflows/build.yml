@@ -30,6 +30,16 @@ jobs:
           build_deb: true
           defines: ""
 
+        - name: "ubuntu_24.04_arm64"
+          os: ubuntu-24.04-arm
+          generator: "Unix Makefiles"
+          arch: ""
+          target: traintastic-client
+          jobs: 4
+          build_type: Release
+          build_deb: true
+          defines: ""
+
         - name: "raspberrypios_arm7"
           os: [self-hosted, ARM, RaspberryPi]
           generator: "Unix Makefiles"
@@ -193,6 +203,18 @@ jobs:
           build_deb: false
           defines: "-DCODE_COVERAGE=ON"
           ccov: true
+
+        - name: "ubuntu_24.04_arm64"
+          os: ubuntu-24.04-arm
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: all
+          jobs: 4
+          build_type: Release
+          build_deb: true
+          defines: "-DINSTALL_SYSTEMD_SERVICE=ON"
+          ccov: false
 
         - name: "raspberrypios_arm7"
           os: [self-hosted, ARM, RaspberryPi]
