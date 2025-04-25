@@ -724,7 +724,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
             const auto pt = startSegment.origin();
             curX = pt.x;
             curY = pt.y;
-            curRotation = startSegment.rotation;
+            curRotation = startSegment.rotation + pi;
 
             lastSide = Side::Origin;
             lastSegmentIndex = it->second;
