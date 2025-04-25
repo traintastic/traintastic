@@ -75,6 +75,7 @@ jobs:
       uses: jurplel/install-qt-action@v4
       with:
         cache: true
+        version: 5.15
 
     # macOS only:
     - name: Install Qt 6.5
