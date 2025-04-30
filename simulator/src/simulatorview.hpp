@@ -35,6 +35,7 @@ class SimulatorView
 
 public:
   explicit SimulatorView(QWidget* parent = nullptr);
+  ~SimulatorView() override;
 
   Simulator* simulator() const;
   void setSimulator(std::shared_ptr<Simulator> value);

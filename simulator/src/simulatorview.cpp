@@ -116,6 +116,11 @@ SimulatorView::SimulatorView(QWidget* parent)
   setFocusPolicy(Qt::StrongFocus); // for key stuff
 }
 
+SimulatorView::~SimulatorView()
+{
+  setSimulator({});
+}
+
 Simulator* SimulatorView::simulator() const
 {
   return m_simulator.get();
