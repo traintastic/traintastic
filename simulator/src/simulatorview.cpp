@@ -74,6 +74,40 @@ bool isPointInTriangle(std::span<const Simulator::Point, 3> triangle, const Simu
   return !(hasNeg && hasPos);
 }
 
+void drawStraight(const Simulator::TrackSegment& segment)
+{
+  glBegin(GL_LINES);
+  glVertex2f(0, 0);
+  glVertex2f(segment.straight.length, 0);
+  glEnd();
+}
+
+void drawCurve(const Simulator::TrackSegment& segment, size_t curveIndex)
+{
+  const auto& curve = segment.curves[curveIndex];
+  const float rotation = curve.angle < 0 ? 0.0f : pi;
+
+  int numSegments = qCeil(std::abs(curve.angle) / (pi / 36.0f)); // Smooth curve
+  float step = curve.angle / numSegments;
+  float prevX = 0.0f;
+  float prevY = 0.0f;
+  const float cx = curve.radius * sinf(rotation);
+  const float cy = curve.radius * -cosf(rotation);
+
+  glBegin(GL_LINE_STRIP);
+  for(int i = 1; i <= numSegments; i++)
+  {
+    float angle = rotation + i * step;
+    float x = cx - curve.radius * sinf(angle);
+    float y = cy - curve.radius * -cosf(angle);
+    glVertex2f(prevX, prevY);
+    glVertex2f(x, y);
+    prevX = x;
+    prevY = y;
+  }
+  glEnd();
+}
+
 }
 
 SimulatorView::SimulatorView(QWidget* parent)
@@ -104,7 +138,7 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
     for(size_t i = 0; i < count; ++i)
     {
       const auto& segment = m_simulator->staticData.trackSegments[i];
-      if(segment.type == Simulator::TrackSegment::Type::Turnout)
+      if(segment.type == Simulator::TrackSegment::Type::Turnout || segment.type == Simulator::TrackSegment::Type::TurnoutCurved)
       {
         m_turnouts.emplace_back(Turnout{i, segment.points});
       }
@@ -172,30 +206,27 @@ void SimulatorView::drawTracks()
     {
       glRotatef(qRadiansToDegrees(segment.rotation), 0, 0, 1);
 
-      glBegin(GL_LINES);
-      glVertex2f(0, 0);
-      glVertex2f(segment.straight.length, 0);
-      glEnd();
+      drawStraight(segment);
     }
     else if(segment.type == Simulator::TrackSegment::Type::Curve)
     {
       float startAngle = segment.rotation;
-      if(segment.curve.angle < 0)
+      if(segment.curves[0].angle < 0)
       {
         startAngle += pi;
       }
-      float endAngle = segment.curve.angle;
-      int numSegments = qCeil(std::abs(segment.curve.angle) / (pi / 36.0f)); // Smooth curve
+      float endAngle = segment.curves[0].angle;
+      int numSegments = qCeil(std::abs(segment.curves[0].angle) / (pi / 36.0f)); // Smooth curve
       float step = endAngle / numSegments;
-      float prevX = segment.curve.radius * sinf(startAngle);
-      float prevY = segment.curve.radius * -cosf(startAngle);
+      float prevX = segment.curves[0].radius * sinf(startAngle);
+      float prevY = segment.curves[0].radius * -cosf(startAngle);
 
       glBegin(GL_LINE_STRIP);
       for(int i = 1; i <= numSegments; i++)
       {
         float angle = startAngle + i * step;
-        float x = segment.curve.radius * sinf(angle);
-        float y = segment.curve.radius * -cosf(angle);
+        float x = segment.curves[0].radius * sinf(angle);
+        float y = segment.curves[0].radius * -cosf(angle);
         glVertex2f(prevX, prevY);
         glVertex2f(x, y);
         prevX = x;
@@ -210,46 +241,49 @@ void SimulatorView::drawTracks()
 
       glRotatef(qRadiansToDegrees(segment.rotation), 0, 0, 1);
 
-      if(state == Simulator::TurnoutState::State::Thrown)
+      switch(state)
       {
-        glBegin(GL_LINES);
-        glVertex2f(segment.straight.length, 0);
-        glVertex2f(0, 0);
-        glEnd();
+        case Simulator::TurnoutState::State::Closed:
+          drawCurve(segment, 0);
+          glColor3f(0.0f, 1.0f, 1.0f);
+          drawStraight(segment);
+          break;
 
-        glColor3f(0.0f, 1.0f, 1.0f);
+        case Simulator::TurnoutState::State::Thrown:
+          drawStraight(segment);
+          glColor3f(0.0f, 1.0f, 1.0f);
+          drawCurve(segment, 0);
+          break;
+
+        default:
+          assert(false);
+          break;
       }
+    }
+    else if(segment.type == Simulator::TrackSegment::Type::TurnoutCurved)
+    {
+      assert(segment.turnout.index < m_stateData.turnouts.size());
+      const auto state = m_stateData.turnouts[segment.turnout.index].state;
 
-      const float rotation = segment.curve.angle < 0 ? 0.0f : pi;
+      glRotatef(qRadiansToDegrees(segment.rotation), 0, 0, 1);
 
-      int numSegments = qCeil(std::abs(segment.curve.angle) / (pi / 36.0f)); // Smooth curve
-      float step = segment.curve.angle / numSegments;
-      float prevX = 0.0f;
-      float prevY = 0.0f;
-      const float cx = segment.curve.radius * sinf(rotation);
-      const float cy = segment.curve.radius * -cosf(rotation);
-
-      glBegin(GL_LINE_STRIP);
-      for(int i = 1; i <= numSegments; i++)
+      switch(state)
       {
-        float angle = rotation + i * step;
-        float x = cx - segment.curve.radius * sinf(angle);
-        float y = cy - segment.curve.radius * -cosf(angle);
-        glVertex2f(prevX, prevY);
-        glVertex2f(x, y);
-        prevX = x;
-        prevY = y;
-      }
-      glEnd();
+        case Simulator::TurnoutState::State::Closed:
+          drawCurve(segment, 1);
+          glColor3f(0.0f, 1.0f, 1.0f);
+          drawCurve(segment, 0);
+          break;
 
-      if(state == Simulator::TurnoutState::State::Closed)
-      {
-        glColor3f(0.0f, 1.0f, 1.0f);
+        case Simulator::TurnoutState::State::Thrown:
+          drawCurve(segment, 0);
+          glColor3f(0.0f, 1.0f, 1.0f);
+          drawCurve(segment, 1);
+          break;
 
-        glBegin(GL_LINES);
-        glVertex2f(0, 0);
-        glVertex2f(segment.straight.length, 0);
-        glEnd();
+        default:
+          assert(false);
+          break;
       }
     }
 

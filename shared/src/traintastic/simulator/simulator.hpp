@@ -65,6 +65,7 @@ public:
       Straight,
       Curve,
       Turnout,
+      TurnoutCurved,
     } type;
 
     std::array<size_t, connectorCount> nextSegmentIndex{{invalidIndex, invalidIndex, invalidIndex}};
@@ -81,7 +82,8 @@ public:
       float radius;
       float angle;
       float length;
-    } curve;
+    };
+    std::array<Curve, 2> curves;
 
     struct Sensor
     {
@@ -244,6 +246,7 @@ private:
 
   bool isTurnoutClosed(const TrackSegment& segment);
   bool isTurnoutThrown(const TrackSegment& segment);
+  bool isTurnoutCurvedThrown(const TrackSegment& segment);
 
   static StaticData load(const nlohmann::json& world, StateData& stateData);
 };
