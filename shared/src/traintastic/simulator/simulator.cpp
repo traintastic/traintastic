@@ -35,6 +35,7 @@ constexpr float deg2rad(float degrees)
   return degrees * static_cast<float>(std::numbers::pi / 180);
 }
 
+#ifndef NDEBUG
 constexpr size_t getStraightCount(Simulator::TrackSegment::Type type)
 {
   using Type = Simulator::TrackSegment::Type;
@@ -68,6 +69,7 @@ constexpr size_t getCurveCount(Simulator::TrackSegment::Type type)
   }
   return 0;
 }
+#endif
 
 Simulator::Point straightEnd(const Simulator::TrackSegment& segment)
 {
