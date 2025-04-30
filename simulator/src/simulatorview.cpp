@@ -206,45 +206,20 @@ void SimulatorView::drawTracks()
 
     glPushMatrix();
     glTranslatef(segment.origin().x, segment.origin().y, 0);
+    glRotatef(qRadiansToDegrees(segment.rotation), 0, 0, 1);
 
     if(segment.type == Simulator::TrackSegment::Type::Straight)
     {
-      glRotatef(qRadiansToDegrees(segment.rotation), 0, 0, 1);
-
       drawStraight(segment);
     }
     else if(segment.type == Simulator::TrackSegment::Type::Curve)
     {
-      float startAngle = segment.rotation;
-      if(segment.curves[0].angle < 0)
-      {
-        startAngle += pi;
-      }
-      float endAngle = segment.curves[0].angle;
-      int numSegments = qCeil(std::abs(segment.curves[0].angle) / (pi / 36.0f)); // Smooth curve
-      float step = endAngle / numSegments;
-      float prevX = segment.curves[0].radius * sinf(startAngle);
-      float prevY = segment.curves[0].radius * -cosf(startAngle);
-
-      glBegin(GL_LINE_STRIP);
-      for(int i = 1; i <= numSegments; i++)
-      {
-        float angle = startAngle + i * step;
-        float x = segment.curves[0].radius * sinf(angle);
-        float y = segment.curves[0].radius * -cosf(angle);
-        glVertex2f(prevX, prevY);
-        glVertex2f(x, y);
-        prevX = x;
-        prevY = y;
-      }
-      glEnd();
+      drawCurve(segment, 0);
     }
     else if(segment.type == Simulator::TrackSegment::Type::Turnout)
     {
       assert(segment.turnout.index < m_stateData.turnouts.size());
       const auto state = m_stateData.turnouts[segment.turnout.index].state;
-
-      glRotatef(qRadiansToDegrees(segment.rotation), 0, 0, 1);
 
       switch(state)
       {
@@ -269,8 +244,6 @@ void SimulatorView::drawTracks()
     {
       assert(segment.turnout.index < m_stateData.turnouts.size());
       const auto state = m_stateData.turnouts[segment.turnout.index].state;
-
-      glRotatef(qRadiansToDegrees(segment.rotation), 0, 0, 1);
 
       switch(state)
       {
