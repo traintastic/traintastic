@@ -53,6 +53,11 @@ public:
   {
     float x;
     float y;
+
+    constexpr bool isFinite() const
+    {
+      return std::isfinite(x) && std::isfinite(y);
+    }
   };
   static constexpr Point invalidPoint{std::numeric_limits<float>::signaling_NaN(), std::numeric_limits<float>::signaling_NaN()};
 
@@ -79,6 +84,7 @@ public:
 
     struct Curve
     {
+      Point center = invalidPoint;
       float radius;
       float angle;
       float length;

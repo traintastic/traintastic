@@ -84,11 +84,9 @@ Simulator::Point curveEnd(const Simulator::TrackSegment& segment, size_t curveIn
 
   const auto& curve = segment.curves[curveIndex];
   const float angle = (curve.angle < 0) ? (segment.rotation + pi) : segment.rotation;
-  const float cx = segment.points[0].x - curve.radius * std::sin(angle);
-  const float cy = segment.points[0].y + curve.radius * std::cos(angle);
 
-  return {cx + curve.radius * std::sin(angle + curve.angle),
-    cy - curve.radius * std::cos(angle + curve.angle)};
+  return {curve.center.x + curve.radius * std::sin(angle + curve.angle),
+    curve.center.y - curve.radius * std::cos(angle + curve.angle)};
 }
 
 #ifndef _MSC_VER // std::abs is not constexpr :(
@@ -629,12 +627,8 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float spee
         angle += pi;
       }
 
-      const float rotation = curve.angle < 0 ? segment.rotation + pi : segment.rotation;
-      const float cx = segment.points[0].x - curve.radius * std::sin(rotation);
-      const float cy = segment.points[0].y + curve.radius * std::cos(rotation);
-
-      face.position.x = cx + curve.radius * std::sin(angle);
-      face.position.y = cy - curve.radius * std::cos(angle);
+      face.position.x = curve.center.x + curve.radius * std::sin(angle);
+      face.position.y = curve.center.y - curve.radius * std::cos(angle);
     }
   }
 
@@ -705,6 +699,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
       }
 
       Side side = Side::Origin;
+      size_t nextPointIndex = 1;
       TrackSegment segment;
 
       if(auto id = obj.value<std::string_view>("id", {}); !id.empty())
@@ -861,24 +856,23 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         }
         segment.points[0].x = curX + segment.straight.length * std::cos(curRotation);
         segment.points[0].y = curY + segment.straight.length * std::sin(curRotation);
-        curX = segment.points[0].x;
-        curY = segment.points[0].y;
+        nextPointIndex = 0;
       }
       else if((segment.type == TrackSegment::Type::Turnout && side == Side::TurnoutThrown) ||
           (segment.type == TrackSegment::Type::TurnoutCurved && (side == Side::End || side == Side::TurnoutThrown)))
       {
         const size_t curveIndex = (segment.type == TrackSegment::Type::TurnoutCurved && side == Side::TurnoutThrown) ? 1 : 0;
-        const auto& curve = segment.curves[curveIndex];
+        auto& curve = segment.curves[curveIndex];
 
         const float curAngle = (curve.angle > 0) ? (curRotation + pi) : curRotation;
 
         // Calc circle center:
-        const float cx = curX - curve.radius * std::sin(curAngle);
-        const float cy = curY + curve.radius * std::cos(curAngle);
+        curve.center.x = curX - curve.radius * std::sin(curAngle);
+        curve.center.y = curY + curve.radius * std::cos(curAngle);
 
         // Calc origin:
-        curX = cx - curve.radius * std::sin(curRotation - curve.angle + pi);
-        curY = cy + curve.radius * std::cos(curRotation - curve.angle + pi);
+        segment.points[0].x = curve.center.x - curve.radius * std::sin(curRotation - curve.angle + pi);
+        segment.points[0].y = curve.center.y + curve.radius * std::cos(curRotation - curve.angle + pi);
 
         curRotation -= curve.angle;
 
@@ -888,8 +882,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           segment.rotation -= 2 * pi;
         }
 
-        segment.points[0].x = curX;
-        segment.points[0].y = curY;
+        nextPointIndex = 0;
       }
       else
       {
@@ -897,45 +890,83 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         segment.points[0].y = curY;
         segment.rotation = curRotation;
 
-        if(segment.type == TrackSegment::Type::Straight || segment.type == TrackSegment::Type::Turnout)
+        if(segment.type == TrackSegment::Type::Curve || segment.type == TrackSegment::Type::TurnoutCurved)
         {
-          curX += segment.straight.length * std::cos(curRotation);
-          curY += segment.straight.length * std::sin(curRotation);
-        }
-        else if(segment.type == TrackSegment::Type::Curve || segment.type == TrackSegment::Type::TurnoutCurved)
-        {
-          const auto end = curveEnd(segment, 0);
-          curX = end.x;
-          curY = end.y;
           curRotation += segment.curves[0].angle;
         }
       }
 
+      assert(segment.points[0].isFinite()); // origin must be known now
+
+      // Calculate center for curves:
+      for(size_t i = 0; i < getCurveCount(segment.type); ++i)
+      {
+        auto& curve = segment.curves[i];
+        if(!curve.center.isFinite()) // skip if already known
+        {
+          const float startAngle = (curve.angle < 0) ? (segment.rotation + pi) : segment.rotation;
+          curve.center.x = segment.points[0].x - curve.radius * std::sin(startAngle);
+          curve.center.y = segment.points[0].y + curve.radius * std::cos(startAngle);
+        }
+        assert(curve.center.isFinite());
+      }
+
+      // Calculate points if not known:
       switch(segment.type)
       {
         case TrackSegment::Type::Straight:
-          segment.points[1] = straightEnd(segment);
+          if(!segment.points[1].isFinite())
+          {
+            segment.points[1] = straightEnd(segment);
+          }
           break;
 
         case TrackSegment::Type::Curve:
-          segment.points[1] = curveEnd(segment, 0);
+          if(!segment.points[1].isFinite())
+          {
+            segment.points[1] = curveEnd(segment, 0);
+          }
           break;
 
         case TrackSegment::Type::Turnout:
-          segment.points[1] = straightEnd(segment);
-          segment.points[2] = curveEnd(segment, 0);
+          if(!segment.points[1].isFinite())
+          {
+            segment.points[2] = straightEnd(segment);
+          }
+          if(!segment.points[1].isFinite())
+          {
+            segment.points[2] = curveEnd(segment, 0);
+          }
           break;
 
         case TrackSegment::Type::TurnoutCurved:
-          segment.points[1] = curveEnd(segment, 0);
-          segment.points[2] = curveEnd(segment, 1);
+          if(!segment.points[1].isFinite())
+          {
+            segment.points[1] = curveEnd(segment, 0);
+          }
+          if(!segment.points[2].isFinite())
+          {
+            segment.points[2] = curveEnd(segment, 1);
+          }
           break;
 
         default:
           assert(false);
           break;
       }
+#ifndef NDEBUG
+      for(size_t i = 1; i < getConnectorCount(segment.type); ++i)
+      {
+        assert(segment.points[i].isFinite()); // all points must be known now
+      }
+#endif
 
+      // Set current point:
+      assert(nextPointIndex < getConnectorCount(segment.type));
+      curX = segment.points[nextPointIndex].x;
+      curY = segment.points[nextPointIndex].y;
+
+      // Sensors:
       if(const uint16_t sensorAddress = obj.value("sensor_address", invalidAddress); sensorAddress != invalidAddress)
       {
         const uint16_t sensorChannel = obj.value("sensor_channel", defaultChannel);
@@ -982,14 +1013,6 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         assert(static_cast<size_t>(lastSide) < getConnectorCount(data.trackSegments[lastSegmentIndex].type));
         data.trackSegments[lastSegmentIndex].nextSegmentIndex[static_cast<size_t>(lastSide)] = data.trackSegments.size();
       }
-
-#ifndef NDEBUG
-      for(size_t i = 0; i < getConnectorCount(segment.type); ++i)
-      {
-        assert(std::isfinite(segment.points[i].x));
-        assert(std::isfinite(segment.points[i].y));
-      }
-#endif
 
       data.trackSegments.emplace_back(std::move(segment));
 
