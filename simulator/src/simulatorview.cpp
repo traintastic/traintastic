@@ -145,7 +145,7 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
       const auto& segment = m_simulator->staticData.trackSegments[i];
       if(segment.type == Simulator::TrackSegment::Type::Turnout || segment.type == Simulator::TrackSegment::Type::TurnoutCurved)
       {
-        m_turnouts.emplace_back(Turnout{i, segment.points});
+        m_turnouts.emplace_back(Turnout{i, std::span<const Simulator::Point, 3>(segment.points.data(), 3)});
       }
     }
 
@@ -264,7 +264,39 @@ void SimulatorView::drawTracks()
           break;
       }
     }
+    else if(segment.type == Simulator::TrackSegment::Type::Turnout3Way)
+    {
+      assert(segment.turnout.index < m_stateData.turnouts.size());
+      const auto state = m_stateData.turnouts[segment.turnout.index].state;
 
+      switch(state)
+      {
+        case Simulator::TurnoutState::State::Closed:
+          drawCurve(segment, 0);
+          drawCurve(segment, 1);
+          glColor3f(0.0f, 1.0f, 1.0f);
+          drawStraight(segment);
+          break;
+
+        case Simulator::TurnoutState::State::ThrownLeft:
+          drawStraight(segment);
+          drawCurve(segment, 1);
+          glColor3f(0.0f, 1.0f, 1.0f);
+          drawCurve(segment, 0);
+          break;
+
+        case Simulator::TurnoutState::State::ThrownRight:
+          drawStraight(segment);
+          drawCurve(segment, 0);
+          glColor3f(0.0f, 1.0f, 1.0f);
+          drawCurve(segment, 1);
+          break;
+
+        default:
+          assert(false);
+          break;
+      }
+    }
     glPopMatrix();
   }
 }

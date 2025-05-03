@@ -63,7 +63,7 @@ public:
 
   struct TrackSegment
   {
-    static constexpr size_t connectorCount = 3;
+    static constexpr size_t connectorCount = 4;
 
     enum class Type
     {
@@ -71,10 +71,11 @@ public:
       Curve,
       Turnout,
       TurnoutCurved,
+      Turnout3Way,
     } type;
 
-    std::array<size_t, connectorCount> nextSegmentIndex{{invalidIndex, invalidIndex, invalidIndex}};
-    std::array<Point, connectorCount> points{{invalidPoint, invalidPoint, invalidPoint}};
+    std::array<size_t, connectorCount> nextSegmentIndex{{invalidIndex, invalidIndex, invalidIndex, invalidIndex}};
+    std::array<Point, connectorCount> points{{invalidPoint, invalidPoint, invalidPoint, invalidPoint}};
     float rotation;
 
     struct Straight
@@ -101,7 +102,7 @@ public:
     struct Turnout
     {
       size_t index = invalidIndex;
-      uint16_t address = invalidAddress;
+      std::array<uint16_t, 2> addresses{{invalidAddress, invalidAddress}};
     } turnout;
 
     Point origin() const
@@ -158,9 +159,12 @@ public:
     {
       Closed = 0,
       Thrown = 1,
+      ThrownLeft = 2,
+      ThrownRight = 3,
     };
 
     State state = State::Closed;
+    uint8_t coils = 0;
   };
 
   struct TrainState
@@ -250,9 +254,8 @@ private:
   bool updateVehiclePosition(VehicleState::Face& face, const float speed);
   void updateSensors();
 
-  bool isTurnoutClosed(const TrackSegment& segment);
-  bool isTurnoutThrown(const TrackSegment& segment);
-  bool isTurnoutCurvedThrown(const TrackSegment& segment);
+  bool isStraight(const TrackSegment& segment);
+  bool isCurve(const TrackSegment& segment, size_t& curveIndex);
 
   static StaticData load(const nlohmann::json& world, StateData& stateData);
 };
