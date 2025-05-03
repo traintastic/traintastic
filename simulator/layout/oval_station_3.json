@@ -1,0 +1,133 @@
+{
+  "trackplan": [
+    {
+      "type": "straight",
+      "x": 150,
+      "y": 100,
+      "length": 50,
+      "sensor_address": 1
+    },
+    {
+      "id": "top",
+      "type": "straight",
+      "length": 400,
+      "sensor_address": 2
+    },
+    {
+      "type": "straight",
+      "length": 50,
+      "sensor_address": 3
+    },
+    {
+      "type": "curve",
+      "radius": 100,
+      "angle": 180,
+      "sensor_address": 4
+    },
+    {
+      "type": "turnout_3way",
+      "id": "turnout_1",
+      "length": 50,
+      "radius": 200,
+      "angle": 15,
+      "address": 1
+    },
+    {
+      "type": "straight",
+      "length": 50,
+      "sensor_address": 5
+    },
+    {
+      "type": "straight",
+      "length": 300,
+      "sensor_address": 6
+    },
+    {
+      "type": "straight",
+      "length": 50,
+      "sensor_address": 7
+    },
+    {
+      "type": "turnout_3way",
+      "side": "straight",
+      "length": 50,
+      "radius": 200,
+      "angle": 15,
+      "address": 3
+    },
+    {
+      "type": "curve",
+      "radius": 100,
+      "angle": 180,
+      "sensor_address": 8
+    },
+    {
+      "type": "curve",
+      "start": "turnout_1",
+      "radius": 200,
+      "angle": 15,
+      "sensor_address": 12
+    },
+    {
+      "type": "straight",
+      "length": 293,
+      "sensor_address": 13
+    },
+    {
+      "type": "curve",
+      "radius": 200,
+      "angle": 15,
+      "sensor_address": 14
+    },
+    {
+      "type": "curve",
+      "start": "turnout_1",
+      "radius": 200,
+      "angle": -15,
+      "sensor_address": 9
+    },
+    {
+      "type": "straight",
+      "length": 293,
+      "sensor_address": 10
+    },
+    {
+      "type": "curve",
+      "radius": 200,
+      "angle": -15,
+      "sensor_address": 11
+    }
+  ],
+  "trains": [
+    {
+      "address": 3,
+      "track_id": "top",
+      "vehicles": [
+        {
+          "length": 40.0,
+          "color": "green"
+        },
+        {
+          "length": 30.0,
+          "color": "olive"
+        },
+        {
+          "length": 30.0,
+          "color": "olive"
+        },
+        {
+          "length": 30.0,
+          "color": "olive"
+        },
+        {
+          "length": 30.0,
+          "color": "olive"
+        },
+        {
+          "length": 30.0,
+          "color": "olive"
+        }
+      ]
+    }
+  ]
+}
