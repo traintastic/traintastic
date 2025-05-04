@@ -54,7 +54,7 @@ public:
     float x;
     float y;
 
-    constexpr bool isFinite() const
+    bool isFinite() const
     {
       return std::isfinite(x) && std::isfinite(y);
     }
