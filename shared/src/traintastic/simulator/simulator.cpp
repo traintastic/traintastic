@@ -121,7 +121,7 @@ constexpr size_t getPointCount(Simulator::TrackSegment::Type type)
 float getPointRotation(const Simulator::TrackSegment& segment, size_t pointIndex)
 {
   using Type = Simulator::TrackSegment::Type;
-  assert(pointIndex < getPointCount(segment));
+  assert(pointIndex < getPointCount(segment.type));
 
   if(pointIndex == 0)
   {
