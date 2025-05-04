@@ -118,6 +118,34 @@ constexpr size_t getConnectorCount(Simulator::TrackSegment::Type type)
   return 0;
 }
 
+float getPointRotation(const Simulator::TrackSegment& segment, size_t pointIndex)
+{
+  using Type = Simulator::TrackSegment::Type;
+  assert(pointIndex < getConnectorCount(segment));
+
+  if(pointIndex == 0)
+  {
+    return segment.rotation + pi;
+  }
+  else if(pointIndex == 1 && (segment.type == Type::Straight || segment.type == Type::Turnout || segment.type == Type::Turnout3Way))
+  {
+    return segment.rotation;
+  }
+  else if((pointIndex == 1 && (segment.type == Type::Curve || segment.type == Type::TurnoutCurved)) ||
+          (pointIndex == 2 && (segment.type == Type::Turnout || segment.type == Type::Turnout3Way)))
+  {
+    return segment.rotation + segment.curves[0].angle;
+  }
+  else if((pointIndex == 2 && segment.type == Type::TurnoutCurved) ||
+          (pointIndex == 3 && segment.type == Type::Turnout3Way))
+  {
+    return segment.rotation + segment.curves[1].angle;
+  }
+
+  assert(false);
+  return std::numeric_limits<float>::signaling_NaN();
+}
+
 float getSegmentLength(const Simulator::TrackSegment& segment, const Simulator::StateData& stateData)
 {
   using Type = Simulator::TrackSegment::Type;
@@ -867,7 +895,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
     data.trackSegments.reserve(trackPlan->size());
 
     size_t fromPointIndex = invalidIndex;
-    size_t lastSegmentIndex = invalidIndex;
+    size_t fromSegmentIndex = invalidIndex;
     Point curPoint{0.0f, 0.0f};
     float curRotation = 0;
 
@@ -970,61 +998,40 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         }
       }
 
-      if(obj.contains("start"))
+      if(const auto fromId = obj.value<std::string_view>("from_id", {}); !fromId.empty())
       {
-        auto start = obj.value<std::string_view>("start", {});
-        const int startPoint = obj.value("start_point", -1);
-        if(auto it = trackSegmentId.find(start); it != trackSegmentId.end())
+        const size_t fromPoint = obj.value("from_point", invalidIndex);
+
+        if(auto it = trackSegmentId.find(fromId); it != trackSegmentId.end())
         {
-          auto& startSegment = data.trackSegments[it->second];
-          if(startSegment.nextSegmentIndex[0] == invalidIndex && (startPoint == -1 || startPoint == 0))
+          auto& fromSegment = data.trackSegments[it->second];
+          const auto pointCount = getConnectorCount(fromSegment.type);
+          bool unconnectedPointFound = false;
+          for(size_t i = 0; i < pointCount; ++i)
           {
-            curPoint = startSegment.origin();
-            curRotation = startSegment.rotation + pi;
-
-            fromPointIndex = 0;
-            lastSegmentIndex = it->second;
-          }
-          else if(startSegment.nextSegmentIndex[1] == invalidIndex && (startPoint == -1 || startPoint == 1))
-          {
-            curPoint = startSegment.points[1];
-            curRotation = startSegment.rotation;
-            if(startSegment.type == TrackSegment::Type::Curve || startSegment.type == TrackSegment::Type::TurnoutCurved)
+            if((fromSegment.nextSegmentIndex[i] == invalidIndex && fromPoint == invalidIndex) || fromPoint == i)
             {
-              curRotation += startSegment.curves[0].angle;
+              if(fromSegment.nextSegmentIndex[i] != invalidIndex)
+              {
+                throw std::runtime_error("point already connected");
+              }
+              curPoint = fromSegment.points[i];
+              curRotation = getPointRotation(fromSegment, i);
+              fromPointIndex = i;
+              fromSegmentIndex = it->second;
+              unconnectedPointFound = true;
+              break;
             }
-
-            fromPointIndex = 1;
-            lastSegmentIndex = it->second;
           }
-          else if((startSegment.type == TrackSegment::Type::Turnout || startSegment.type == TrackSegment::Type::TurnoutCurved || startSegment.type == TrackSegment::Type::Turnout3Way) &&
-            startSegment.nextSegmentIndex[2] == invalidIndex && (startPoint == -1 || startPoint == 2))
-          {
-            const size_t curveIndex = (startSegment.type == TrackSegment::Type::TurnoutCurved) ? 1 : 0;
-            curPoint = startSegment.points[2];
-            curRotation = startSegment.rotation + startSegment.curves[curveIndex].angle;
 
-            fromPointIndex = 2;
-            lastSegmentIndex = it->second;
-          }
-          else if(startSegment.type == TrackSegment::Type::Turnout3Way &&
-            startSegment.nextSegmentIndex[3] == invalidIndex && (startPoint == -1 || startPoint == 3))
+          if(!unconnectedPointFound)
           {
-            const size_t curveIndex = 1;
-            curPoint = startSegment.points[3];
-            curRotation = startSegment.rotation + startSegment.curves[curveIndex].angle;
-
-            fromPointIndex = 3;
-            lastSegmentIndex = it->second;
-          }
-          else
-          {
-            throw std::runtime_error("start track element is already fully connected");
+            throw std::runtime_error("track element is already fully connected");
           }
         }
         else
         {
-          throw std::runtime_error("start contains unknown id");
+          throw std::runtime_error("from_id contains unknown id");
         }
       }
       else
@@ -1032,17 +1039,17 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         if(obj.contains("x"))
         {
           curPoint.x = obj.value("x", 0.0f);
-          lastSegmentIndex = invalidIndex;
+          fromSegmentIndex = invalidIndex;
         }
         if(obj.contains("y"))
         {
           curPoint.y = obj.value("y", 0.0f);
-          lastSegmentIndex = invalidIndex;
+          fromSegmentIndex = invalidIndex;
         }
         if(obj.contains("rotation"))
         {
           curRotation = deg2rad(obj.value("rotation", 0.0f));
-          lastSegmentIndex = invalidIndex;
+          fromSegmentIndex = invalidIndex;
         }
       }
 
@@ -1203,30 +1210,13 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         }
       }
 
-      if(lastSegmentIndex != invalidIndex)
+      if(fromSegmentIndex != invalidIndex)
       {
-        switch(startPointIndex)
-        {
-          case 0:
-            segment.nextSegmentIndex[0] = lastSegmentIndex;
-            break;
+        assert(startPointIndex < getConnectorCount(segment.type));
+        segment.nextSegmentIndex[startPointIndex] = fromSegmentIndex;
 
-          case 1:
-            segment.nextSegmentIndex[1] = lastSegmentIndex;
-            break;
-
-          case 2:
-            assert(segment.type == TrackSegment::Type::Turnout || segment.type == TrackSegment::Type::TurnoutCurved);
-            segment.nextSegmentIndex[2] = lastSegmentIndex;
-            break;
-
-          default:
-            assert(false);
-            break;
-        }
-
-        assert(fromPointIndex < getConnectorCount(data.trackSegments[lastSegmentIndex].type));
-        data.trackSegments[lastSegmentIndex].nextSegmentIndex[fromPointIndex] = data.trackSegments.size();
+        assert(fromPointIndex < getConnectorCount(data.trackSegments[fromSegmentIndex].type));
+        data.trackSegments[fromSegmentIndex].nextSegmentIndex[fromPointIndex] = data.trackSegments.size();
       }
 
       data.trackSegments.emplace_back(std::move(segment));
@@ -1266,7 +1256,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           break;
       }
 
-      lastSegmentIndex = data.trackSegments.size() - 1;
+      fromSegmentIndex = data.trackSegments.size() - 1;
     }
 
     // Connect open ends:

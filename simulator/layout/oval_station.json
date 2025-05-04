@@ -63,7 +63,7 @@
     },
     {
       "type": "curve",
-      "start": "turnout_1",
+      "from_id": "turnout_1",
       "radius": 200,
       "angle": -15,
       "sensor_address": 9

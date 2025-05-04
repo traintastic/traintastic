@@ -65,7 +65,7 @@
     },
     {
       "type": "straight",
-      "start": "turnout_1",
+      "from_id": "turnout_1",
       "length": 85,
       "sensor_address": 9
     },
