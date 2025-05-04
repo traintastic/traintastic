@@ -1154,9 +1154,9 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         case TrackSegment::Type::Turnout:
           if(!segment.points[1].isFinite())
           {
-            segment.points[2] = straightEnd(segment);
+            segment.points[1] = straightEnd(segment);
           }
-          if(!segment.points[1].isFinite())
+          if(!segment.points[2].isFinite())
           {
             segment.points[2] = curveEnd(segment, 0);
           }
