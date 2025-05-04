@@ -956,7 +956,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         {
           const auto address = obj.value("address", invalidAddress);
           segment.turnout.addresses[0] = obj.value("address_left", address);
-          segment.turnout.addresses[1] = obj.value("address_right", (address != invalidAddress) ? (address + 1) : invalidAddress);
+          segment.turnout.addresses[1] = obj.value("address_right", (address != invalidAddress) ? static_cast<uint16_t>(address + 1) : invalidAddress);
         }
         else
         {
