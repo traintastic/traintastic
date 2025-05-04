@@ -864,16 +864,9 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
 
   if(auto trackPlan = world.find("trackplan"); trackPlan != world.end() && trackPlan->is_array())
   {
-    enum class Side
-    {
-      Origin = 0,
-      End = 1,
-      TurnoutThrown = 2,
-    };
-
     data.trackSegments.reserve(trackPlan->size());
 
-    Side lastSide = Side::Origin;
+    size_t fromPointIndex = invalidIndex;
     size_t lastSegmentIndex = invalidIndex;
     Point curPoint{0.0f, 0.0f};
     float curRotation = 0;
@@ -885,7 +878,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         continue;
       }
 
-      Side side = Side::Origin;
+      size_t startPointIndex = 0;
       size_t nextPointIndex = 1;
       TrackSegment segment;
 
@@ -967,28 +960,13 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         {
           turnoutState.coils = 0x0A; // both closed
         }
+      }
 
-        if(auto it = obj.find("side"); it != obj.end())
+      if(getConnectorCount(segment.type) > 2)
+      {
+        if(const size_t n = obj.value("side", invalidIndex); n < getConnectorCount(segment.type))
         {
-          if(it->is_number_unsigned())
-          {
-            if(const auto n = obj.value<size_t>("side", invalidIndex); n < getConnectorCount(segment.type))
-            {
-              side = static_cast<Side>(n);
-            }
-          }
-          else if(it->is_string()) // deprecated, remove once all side stuff is index based.
-          {
-            const auto sideStr = obj.value<std::string_view>("side", {});
-            if(sideStr == "straight")
-            {
-              side = Side::End;
-            }
-            else if(sideStr == "curve")
-            {
-              side = Side::TurnoutThrown;
-            }
-          }
+          startPointIndex = n;
         }
       }
 
@@ -1004,7 +982,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
             curPoint = startSegment.origin();
             curRotation = startSegment.rotation + pi;
 
-            lastSide = Side::Origin;
+            fromPointIndex = 0;
             lastSegmentIndex = it->second;
           }
           else if(startSegment.nextSegmentIndex[1] == invalidIndex && (startPoint == -1 || startPoint == 1))
@@ -1016,7 +994,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
               curRotation += startSegment.curves[0].angle;
             }
 
-            lastSide = Side::End;
+            fromPointIndex = 1;
             lastSegmentIndex = it->second;
           }
           else if((startSegment.type == TrackSegment::Type::Turnout || startSegment.type == TrackSegment::Type::TurnoutCurved || startSegment.type == TrackSegment::Type::Turnout3Way) &&
@@ -1026,7 +1004,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
             curPoint = startSegment.points[2];
             curRotation = startSegment.rotation + startSegment.curves[curveIndex].angle;
 
-            lastSide = Side::TurnoutThrown;
+            fromPointIndex = 2;
             lastSegmentIndex = it->second;
           }
           else if(startSegment.type == TrackSegment::Type::Turnout3Way &&
@@ -1036,7 +1014,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
             curPoint = startSegment.points[3];
             curRotation = startSegment.rotation + startSegment.curves[curveIndex].angle;
 
-            lastSide = static_cast<Side>(3);
+            fromPointIndex = 3;
             lastSegmentIndex = it->second;
           }
           else
@@ -1068,7 +1046,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         }
       }
 
-      if((segment.type == TrackSegment::Type::Turnout || segment.type == TrackSegment::Type::Turnout3Way) && side == Side::End)
+      if((segment.type == TrackSegment::Type::Turnout || segment.type == TrackSegment::Type::Turnout3Way) && startPointIndex == 1)
       {
         segment.rotation = curRotation + pi;
         if(segment.rotation >= 2 * pi)
@@ -1079,11 +1057,11 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         segment.points[0].y = curPoint.y + segment.straight.length * std::sin(curRotation);
         nextPointIndex = 0;
       }
-      else if((segment.type == TrackSegment::Type::Turnout && side == Side::TurnoutThrown) ||
-          (segment.type == TrackSegment::Type::TurnoutCurved && (side == Side::End || side == Side::TurnoutThrown)) ||
-          (segment.type == TrackSegment::Type::Turnout3Way && (side == static_cast<Side>(2) || side == static_cast<Side>(3))))
+      else if((segment.type == TrackSegment::Type::Turnout && startPointIndex == 2) ||
+          (segment.type == TrackSegment::Type::TurnoutCurved && (startPointIndex == 1 || startPointIndex == 2)) ||
+          (segment.type == TrackSegment::Type::Turnout3Way && (startPointIndex == 2 || startPointIndex == 3)))
       {
-        const size_t curveIndex = ((segment.type == TrackSegment::Type::TurnoutCurved && side == Side::TurnoutThrown) || (segment.type == TrackSegment::Type::Turnout3Way && side == static_cast<Side>(3))) ? 1 : 0;
+        const size_t curveIndex = ((segment.type == TrackSegment::Type::TurnoutCurved && startPointIndex == 2) || (segment.type == TrackSegment::Type::Turnout3Way && startPointIndex == 3)) ? 1 : 0;
         auto& curve = segment.curves[curveIndex];
 
         const float curAngle = (curve.angle > 0) ? (curRotation + pi) : curRotation;
@@ -1227,17 +1205,17 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
 
       if(lastSegmentIndex != invalidIndex)
       {
-        switch(side)
+        switch(startPointIndex)
         {
-          case Side::Origin:
+          case 0:
             segment.nextSegmentIndex[0] = lastSegmentIndex;
             break;
 
-          case Side::End:
+          case 1:
             segment.nextSegmentIndex[1] = lastSegmentIndex;
             break;
 
-          case Side::TurnoutThrown:
+          case 2:
             assert(segment.type == TrackSegment::Type::Turnout || segment.type == TrackSegment::Type::TurnoutCurved);
             segment.nextSegmentIndex[2] = lastSegmentIndex;
             break;
@@ -1247,32 +1225,32 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
             break;
         }
 
-        assert(static_cast<size_t>(lastSide) < getConnectorCount(data.trackSegments[lastSegmentIndex].type));
-        data.trackSegments[lastSegmentIndex].nextSegmentIndex[static_cast<size_t>(lastSide)] = data.trackSegments.size();
+        assert(fromPointIndex < getConnectorCount(data.trackSegments[lastSegmentIndex].type));
+        data.trackSegments[lastSegmentIndex].nextSegmentIndex[fromPointIndex] = data.trackSegments.size();
       }
 
       data.trackSegments.emplace_back(std::move(segment));
 
-      switch(static_cast<size_t>(side))
+      switch(startPointIndex)
       {
         case 0:
-          lastSide = Side::End;
+          fromPointIndex = 1;
           if(segment.type == TrackSegment::Type::Turnout || segment.type == TrackSegment::Type::TurnoutCurved)
           {
             if(segment.nextSegmentIndex[1] != invalidIndex)
             {
-              lastSide = Side::TurnoutThrown;
+              fromPointIndex = 2;
             }
           }
           if(segment.type == TrackSegment::Type::Turnout3Way)
           {
             if(segment.nextSegmentIndex[1] != invalidIndex)
             {
-              lastSide = Side::TurnoutThrown;
+              fromPointIndex = 2;
             }
             if(segment.nextSegmentIndex[2] != invalidIndex)
             {
-              lastSide = static_cast<Side>(3);
+              fromPointIndex = 3;
             }
           }
           break;
@@ -1280,7 +1258,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         case 1:
         case 2:
         case 3:
-          lastSide = Side::Origin;
+          fromPointIndex = 0;
           break;
 
         default:
