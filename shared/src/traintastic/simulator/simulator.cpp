@@ -99,7 +99,7 @@ bool pointsClose(Simulator::Point a, Simulator::Point b)
   return std::abs(a.x - b.x) <= 1.0f && std::abs(a.y - b.y) <= 1.0f;
 }
 
-constexpr size_t getConnectorCount(Simulator::TrackSegment::Type type)
+constexpr size_t getPointCount(Simulator::TrackSegment::Type type)
 {
   using Type = Simulator::TrackSegment::Type;
   switch(type)
@@ -121,7 +121,7 @@ constexpr size_t getConnectorCount(Simulator::TrackSegment::Type type)
 float getPointRotation(const Simulator::TrackSegment& segment, size_t pointIndex)
 {
   using Type = Simulator::TrackSegment::Type;
-  assert(pointIndex < getConnectorCount(segment));
+  assert(pointIndex < getPointCount(segment));
 
   if(pointIndex == 0)
   {
@@ -990,9 +990,9 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         }
       }
 
-      if(getConnectorCount(segment.type) > 2)
+      if(getPointCount(segment.type) > 2)
       {
-        if(const size_t n = obj.value("side", invalidIndex); n < getConnectorCount(segment.type))
+        if(const size_t n = obj.value("side", invalidIndex); n < getPointCount(segment.type))
         {
           startPointIndex = n;
         }
@@ -1005,7 +1005,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         if(auto it = trackSegmentId.find(fromId); it != trackSegmentId.end())
         {
           auto& fromSegment = data.trackSegments[it->second];
-          const auto pointCount = getConnectorCount(fromSegment.type);
+          const auto pointCount = getPointCount(fromSegment.type);
           bool unconnectedPointFound = false;
           for(size_t i = 0; i < pointCount; ++i)
           {
@@ -1178,14 +1178,14 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           break;
       }
 #ifndef NDEBUG
-      for(size_t i = 1; i < getConnectorCount(segment.type); ++i)
+      for(size_t i = 1; i < getPointCount(segment.type); ++i)
       {
         assert(segment.points[i].isFinite()); // all points must be known now
       }
 #endif
 
       // Set current point:
-      assert(nextPointIndex < getConnectorCount(segment.type));
+      assert(nextPointIndex < getPointCount(segment.type));
       curPoint = segment.points[nextPointIndex];
 
       // Sensors:
@@ -1212,10 +1212,10 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
 
       if(fromSegmentIndex != invalidIndex)
       {
-        assert(startPointIndex < getConnectorCount(segment.type));
+        assert(startPointIndex < getPointCount(segment.type));
         segment.nextSegmentIndex[startPointIndex] = fromSegmentIndex;
 
-        assert(fromPointIndex < getConnectorCount(data.trackSegments[fromSegmentIndex].type));
+        assert(fromPointIndex < getPointCount(data.trackSegments[fromSegmentIndex].type));
         data.trackSegments[fromSegmentIndex].nextSegmentIndex[fromPointIndex] = data.trackSegments.size();
       }
 
@@ -1267,8 +1267,8 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         for(size_t i = start + 1; i < count; ++i)
         {
           auto& segment = data.trackSegments[i];
-          const auto connectorCount = getConnectorCount(segment.type);
-          for(size_t j = 0; j < connectorCount; ++j)
+          const auto pointCount = getPointCount(segment.type);
+          for(size_t j = 0; j < pointCount; ++j)
           {
             if(segment.nextSegmentIndex[j] == invalidIndex && pointsClose(point, segment.points[j]))
             {
@@ -1284,8 +1284,8 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
       for(size_t i = 0; i < count; ++i)
       {
         auto& segment = data.trackSegments[i];
-        const auto connectorCount = getConnectorCount(segment.type);
-        for(size_t j = 0; j < connectorCount; ++j)
+        const auto pointCount = getPointCount(segment.type);
+        for(size_t j = 0; j < pointCount; ++j)
         {
           if(segment.nextSegmentIndex[j] == invalidIndex)
           {
