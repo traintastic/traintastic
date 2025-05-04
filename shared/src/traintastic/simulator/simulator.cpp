@@ -875,8 +875,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
 
     Side lastSide = Side::Origin;
     size_t lastSegmentIndex = invalidIndex;
-    float curX = 0;
-    float curY = 0;
+    Point curPoint{0.0f, 0.0f};
     float curRotation = 0;
 
     for(const auto& obj : *trackPlan)
@@ -956,7 +955,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         {
           const auto address = obj.value("address", invalidAddress);
           segment.turnout.addresses[0] = obj.value("address_left", address);
-          segment.turnout.addresses[1] = obj.value("address_right", (address != invalidAddress) ? static_cast<uint16_t>(address + 1) : invalidAddress);
+          segment.turnout.addresses[1] = obj.value("address_right", (address != invalidAddress) ? (address + 1) : invalidAddress);
         }
         else
         {
@@ -1002,9 +1001,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           auto& startSegment = data.trackSegments[it->second];
           if(startSegment.nextSegmentIndex[0] == invalidIndex && (startPoint == -1 || startPoint == 0))
           {
-            const auto pt = startSegment.origin();
-            curX = pt.x;
-            curY = pt.y;
+            curPoint = startSegment.origin();
             curRotation = startSegment.rotation + pi;
 
             lastSide = Side::Origin;
@@ -1012,9 +1009,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           }
           else if(startSegment.nextSegmentIndex[1] == invalidIndex && (startPoint == -1 || startPoint == 1))
           {
-            const auto pt = startSegment.points[1];
-            curX = pt.x;
-            curY = pt.y;
+            curPoint = startSegment.points[1];
             curRotation = startSegment.rotation;
             if(startSegment.type == TrackSegment::Type::Curve || startSegment.type == TrackSegment::Type::TurnoutCurved)
             {
@@ -1028,9 +1023,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
             startSegment.nextSegmentIndex[2] == invalidIndex && (startPoint == -1 || startPoint == 2))
           {
             const size_t curveIndex = (startSegment.type == TrackSegment::Type::TurnoutCurved) ? 1 : 0;
-            const auto pt = startSegment.points[2];
-            curX = pt.x;
-            curY = pt.y;
+            curPoint = startSegment.points[2];
             curRotation = startSegment.rotation + startSegment.curves[curveIndex].angle;
 
             lastSide = Side::TurnoutThrown;
@@ -1040,9 +1033,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
             startSegment.nextSegmentIndex[3] == invalidIndex && (startPoint == -1 || startPoint == 3))
           {
             const size_t curveIndex = 1;
-            const auto pt = startSegment.points[3];
-            curX = pt.x;
-            curY = pt.y;
+            curPoint = startSegment.points[3];
             curRotation = startSegment.rotation + startSegment.curves[curveIndex].angle;
 
             lastSide = static_cast<Side>(3);
@@ -1062,12 +1053,12 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
       {
         if(obj.contains("x"))
         {
-          curX = obj.value("x", 0.0f);
+          curPoint.x = obj.value("x", 0.0f);
           lastSegmentIndex = invalidIndex;
         }
         if(obj.contains("y"))
         {
-          curY = obj.value("y", 0.0f);
+          curPoint.y = obj.value("y", 0.0f);
           lastSegmentIndex = invalidIndex;
         }
         if(obj.contains("rotation"))
@@ -1084,8 +1075,8 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         {
           segment.rotation -= 2 * pi;
         }
-        segment.points[0].x = curX + segment.straight.length * std::cos(curRotation);
-        segment.points[0].y = curY + segment.straight.length * std::sin(curRotation);
+        segment.points[0].x = curPoint.x + segment.straight.length * std::cos(curRotation);
+        segment.points[0].y = curPoint.y + segment.straight.length * std::sin(curRotation);
         nextPointIndex = 0;
       }
       else if((segment.type == TrackSegment::Type::Turnout && side == Side::TurnoutThrown) ||
@@ -1098,8 +1089,8 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         const float curAngle = (curve.angle > 0) ? (curRotation + pi) : curRotation;
 
         // Calc circle center:
-        curve.center.x = curX - curve.radius * std::sin(curAngle);
-        curve.center.y = curY + curve.radius * std::cos(curAngle);
+        curve.center.x = curPoint.x - curve.radius * std::sin(curAngle);
+        curve.center.y = curPoint.y + curve.radius * std::cos(curAngle);
 
         // Calc origin:
         segment.points[0].x = curve.center.x - curve.radius * std::sin(curRotation - curve.angle + pi);
@@ -1117,8 +1108,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
       }
       else
       {
-        segment.points[0].x = curX;
-        segment.points[0].y = curY;
+        segment.points[0] = curPoint;
         segment.rotation = curRotation;
 
         if(segment.type == TrackSegment::Type::Curve || segment.type == TrackSegment::Type::TurnoutCurved)
@@ -1211,8 +1201,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
 
       // Set current point:
       assert(nextPointIndex < getConnectorCount(segment.type));
-      curX = segment.points[nextPointIndex].x;
-      curY = segment.points[nextPointIndex].y;
+      curPoint = segment.points[nextPointIndex];
 
       // Sensors:
       if(const uint16_t sensorAddress = obj.value("sensor_address", invalidAddress); sensorAddress != invalidAddress)
