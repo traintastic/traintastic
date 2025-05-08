@@ -122,7 +122,7 @@ void SimulationIOHandler::start()
         else if(channel == 1 && inRange(address, ClientKernel::loconetAddressMin, ClientKernel::loconetAddressMax) &&
             (m_broadcastFlags & BroadcastFlags::LocoNetDetector) == BroadcastFlags::LocoNetDetector)
         {
-          reply(LanLocoNetDetectorOccupancyDetector(address, value));
+          reply(LanLocoNetDetectorOccupancyDetector(address - ClientKernel::loconetAddressMin, value));
         }
       };
     m_simulator->start();
