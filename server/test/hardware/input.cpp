@@ -31,12 +31,28 @@
 #include "../src/hardware/input/input.hpp"
 #include "../src/hardware/input/list/inputlist.hpp"
 #include "../src/hardware/output/list/outputlist.hpp"
+#include "../src/hardware/protocol/z21/clientkernel.hpp"
 #include "../src/simulator/interfacesimulatorsettings.hpp"
 #include "../../shared/src/traintastic/simulator/simulator.hpp"
 
-TEMPLATE_TEST_CASE("Input", "[input]", LocoNetInterface)
+TEMPLATE_TEST_CASE("Input", "[input]",
+  DCCEXInterface,
+  LocoNetInterface,
+  XpressNetInterface,
+  Z21Interface
+  )
 {
   using namespace std::chrono_literals;
+
+  constexpr auto simulatorSensorChannels =
+    []() -> std::array<uint16_t, 4>
+    {
+      if constexpr(std::is_same_v<TestType, Z21Interface>)
+      {
+        return {{0, 0, 1, 1}}; // 0 = RBus, 1 = LocoNet
+      }
+      return {{0, 0, 0, 0}};
+    }();
 
   static const nlohmann::json layout
   {
@@ -44,21 +60,25 @@ TEMPLATE_TEST_CASE("Input", "[input]", LocoNetInterface)
       {
         {"type", "straight"},
         {"length", 200},
+        {"sensor_channel", simulatorSensorChannels[0]},
         {"sensor_address", 1}
       },
       {
         {"type", "straight"},
         {"length", 200},
+        {"sensor_channel", simulatorSensorChannels[1]},
         {"sensor_address", 2}
       },
       {
         {"type", "straight"},
         {"length", 200},
+        {"sensor_channel", simulatorSensorChannels[2]},
         {"sensor_address", 3}
       },
       {
         {"type", "straight"},
         {"length", 200},
+        {"sensor_channel", simulatorSensorChannels[3]},
         {"sensor_address", 4}
       },
     }},
@@ -92,6 +112,7 @@ TEMPLATE_TEST_CASE("Input", "[input]", LocoNetInterface)
   interfaceWeak.lock()->simulator->port = simulator->serverPort();
 
   using InputState = std::bitset<4>;
+  InputState inputStateKnown(0);
   InputState inputState(0);
   std::vector<InputState> inputStates;
   inputStates.reserve(16);
@@ -100,26 +121,56 @@ TEMPLATE_TEST_CASE("Input", "[input]", LocoNetInterface)
   auto inputValueChangedHandler =
     [&](bool value, const std::shared_ptr<Input>& input)
     {
-      REQUIRE(inputState[input->address.value() - 1] != value);
-      inputState[input->address.value() - 1] = value;
+      const auto index = input->address.value() - 1;
+      REQUIRE((!inputStateKnown[index] || inputState[index] != value));
+      inputState[index] = value;
+      inputStateKnown[index] = true;
       inputStates.push_back(inputState);
     };
 
   std::weak_ptr<Input> input1 = interfaceWeak.lock()->inputs->create();
+  input1.lock()->address = 1;
   REQUIRE(input1.lock()->address == 1);
   input1.lock()->onValueChanged.connect(inputValueChangedHandler);
+  if constexpr(std::is_same_v<TestType, Z21Interface>)
+  {
+    input1.lock()->channel = Z21::ClientKernel::InputChannel::rbus;
+    REQUIRE(input1.lock()->channel == Z21::ClientKernel::InputChannel::rbus);
+    REQUIRE(input1.lock()->address == 1);
+  }
 
   std::weak_ptr<Input> input2 = interfaceWeak.lock()->inputs->create();
+  input2.lock()->address = 2;
   REQUIRE(input2.lock()->address == 2);
   input2.lock()->onValueChanged.connect(inputValueChangedHandler);
+  if constexpr(std::is_same_v<TestType, Z21Interface>)
+  {
+    input2.lock()->channel = Z21::ClientKernel::InputChannel::rbus;
+    REQUIRE(input2.lock()->channel == Z21::ClientKernel::InputChannel::rbus);
+    REQUIRE(input2.lock()->address == 2);
+  }
 
   std::weak_ptr<Input> input3 = interfaceWeak.lock()->inputs->create();
+  input3.lock()->address = 3;
   REQUIRE(input3.lock()->address == 3);
   input3.lock()->onValueChanged.connect(inputValueChangedHandler);
+  if constexpr(std::is_same_v<TestType, Z21Interface>)
+  {
+    input3.lock()->channel = Z21::ClientKernel::InputChannel::loconet;
+    REQUIRE(input3.lock()->channel == Z21::ClientKernel::InputChannel::loconet);
+    REQUIRE(input3.lock()->address == 3);
+  }
 
   std::weak_ptr<Input> input4 = interfaceWeak.lock()->inputs->create();
+  input4.lock()->address = 4;
   REQUIRE(input4.lock()->address == 4);
   input4.lock()->onValueChanged.connect(inputValueChangedHandler);
+  if constexpr(std::is_same_v<TestType, Z21Interface>)
+  {
+    input4.lock()->channel = Z21::ClientKernel::InputChannel::loconet;
+    REQUIRE(input4.lock()->channel == Z21::ClientKernel::InputChannel::loconet);
+    REQUIRE(input4.lock()->address == 4);
+  }
 
   REQUIRE(interfaceWeak.lock()->inputs->length.value() == 4);
 
@@ -130,7 +181,6 @@ TEMPLATE_TEST_CASE("Input", "[input]", LocoNetInterface)
     [&]()
     {
       world->online();
-      world->powerOn();
       world->run();
       simulator->setTrainDirection(0, false);
       simulator->setTrainSpeed(0, simulator->staticData.trains[0].speedMax);
@@ -138,15 +188,46 @@ TEMPLATE_TEST_CASE("Input", "[input]", LocoNetInterface)
 
   EventLoop::runFor(5s);
 
-  REQUIRE(inputStates.size() == 8);
-  REQUIRE(inputStates[0].to_ulong() == 0b0000);
-  REQUIRE(inputStates[1].to_ulong() == 0b0001);
-  REQUIRE(inputStates[2].to_ulong() == 0b0011);
-  REQUIRE(inputStates[3].to_ulong() == 0b0010);
-  REQUIRE(inputStates[4].to_ulong() == 0b0110);
-  REQUIRE(inputStates[5].to_ulong() == 0b0100);
-  REQUIRE(inputStates[6].to_ulong() == 0b1100);
-  REQUIRE(inputStates[7].to_ulong() == 0b1000);
+  if constexpr(std::is_same_v<TestType, XpressNetInterface>)
+  {
+    REQUIRE(inputStates.size() == 11);
+    REQUIRE(inputStates[0].to_ulong() == 0b0000);
+    REQUIRE(inputStates[1].to_ulong() == 0b0001); // XpressNet has multiple feedback values in one message,
+    REQUIRE(inputStates[2].to_ulong() == 0b0001); // this causes the first change to trigger a change on all.
+    REQUIRE(inputStates[3].to_ulong() == 0b0001); // In this test case 4 event.
+    REQUIRE(inputStates[4].to_ulong() == 0b0001); //
+    REQUIRE(inputStates[5].to_ulong() == 0b0011);
+    REQUIRE(inputStates[6].to_ulong() == 0b0010);
+    REQUIRE(inputStates[7].to_ulong() == 0b0110);
+    REQUIRE(inputStates[8].to_ulong() == 0b0100);
+    REQUIRE(inputStates[9].to_ulong() == 0b1100);
+    REQUIRE(inputStates[10].to_ulong() == 0b1000);
+  }
+  else if constexpr(std::is_same_v<TestType, Z21Interface>)
+  {
+    REQUIRE(inputStates.size() == 9);
+    REQUIRE(inputStates[0].to_ulong() == 0b0000);
+    REQUIRE(inputStates[1].to_ulong() == 0b0001); // Z21 R-bus has multiple feedback values in one message,
+    REQUIRE(inputStates[2].to_ulong() == 0b0001); // this causes the first change to trigger a change on all.
+    REQUIRE(inputStates[3].to_ulong() == 0b0011);
+    REQUIRE(inputStates[4].to_ulong() == 0b0010);
+    REQUIRE(inputStates[5].to_ulong() == 0b0110);
+    REQUIRE(inputStates[6].to_ulong() == 0b0100);
+    REQUIRE(inputStates[7].to_ulong() == 0b1100);
+    REQUIRE(inputStates[8].to_ulong() == 0b1000);
+  }
+  else
+  {
+    REQUIRE(inputStates.size() == 8);
+    REQUIRE(inputStates[0].to_ulong() == 0b0000);
+    REQUIRE(inputStates[1].to_ulong() == 0b0001);
+    REQUIRE(inputStates[2].to_ulong() == 0b0011);
+    REQUIRE(inputStates[3].to_ulong() == 0b0010);
+    REQUIRE(inputStates[4].to_ulong() == 0b0110);
+    REQUIRE(inputStates[5].to_ulong() == 0b0100);
+    REQUIRE(inputStates[6].to_ulong() == 0b1100);
+    REQUIRE(inputStates[7].to_ulong() == 0b1000);
+  }
 
   EventLoop::call(
     [&]()
