@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #include <cassert>
 #include "feedback.hpp"
 #include "../messages.hpp"
+#include "../../../../utils/endswith.hpp"
 
 namespace ECoS {
 
@@ -55,6 +56,18 @@ bool FeedbackManager::receiveReply(const Reply& reply)
 bool FeedbackManager::receiveEvent(const Event& event)
 {
   assert(event.objectId == m_id);
+
+  for(std::string_view line : event.lines)
+  {
+    Line data;
+    if(parseLine(line, data) && data.objectId != m_id)
+    {
+      if(endsWith(line, " appended"))
+      {
+        addObject(std::make_unique<Feedback>(m_kernel, data.objectId));
+      }
+    }
+  }
 
   return Object::receiveEvent(event);
 }

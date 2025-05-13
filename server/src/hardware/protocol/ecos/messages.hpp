@@ -27,6 +27,7 @@
 #include <vector>
 #include <unordered_map>
 #include <cstdint>
+#include <traintastic/enum/direction.hpp>
 #include "../../../utils/ltrim.hpp"
 #include "../../../utils/tohex.hpp"
 
@@ -224,11 +225,30 @@ inline std::string release(uint16_t objectId, std::initializer_list<std::string_
   return buildCommand(Command::release, objectId, options);
 }
 
+inline std::string locomotiveEvent(uint16_t objectId, uint8_t speedStep, Direction direction)
+{
+  return
+    std::string("<EVENT ").append(std::to_string(objectId)).append(">\r\n")
+      .append(std::to_string(objectId)).append(" ").append(Option::speedStep).append("[").append(std::to_string(speedStep)).append("]>\r\n")
+      .append(std::to_string(objectId)).append(" ").append(Option::dir).append("[").append((direction == Direction::Reverse) ? "1" : "0").append("]>\r\n")
+      .append("<END 0 (OK)>\r\n");
+}
+
 inline std::string feedbackEvent(uint16_t objectId, uint16_t state)
 {
   return
     std::string("<EVENT ").append(std::to_string(objectId)).append(">\r\n")
       .append(std::to_string(objectId)).append(" state[0x").append(state != 0 ? ltrim(toHex(state), '0') : std::string_view{"0"}).append("]>\r\n")
+      .append("<END 0 (OK)>\r\n");
+}
+
+inline std::string listAppendedEvent(uint16_t listObjectId, uint16_t itemObjectId, uint16_t size)
+{
+  return
+    std::string("<EVENT ").append(std::to_string(listObjectId)).append(">\r\n")
+      .append(std::to_string(listObjectId)).append(" msg[LIST_CHANGED]>\r\n")
+      .append(std::to_string(itemObjectId)).append(" appended\r\n")
+      .append(std::to_string(listObjectId)).append(" size[").append(std::to_string(size)).append("]>\r\n")
       .append("<END 0 (OK)>\r\n");
 }
 

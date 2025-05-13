@@ -152,7 +152,21 @@ void SimulationIOHandler::start()
       {
         if(address >= 1)
         {
+          auto addS88Module =
+            [this]()
+            {
+              const auto id = m_simulation.s88.empty() ? ObjectId::s88 : static_cast<uint16_t>(m_simulation.s88.back().id + 1);
+              // create a new 16 port module:
+              m_simulation.s88.emplace_back(Simulation::S88{id, 16});
+              reply(listAppendedEvent(ObjectId::feedbackManager, id, m_simulation.s88.size()));
+            };
+
           m_simulatorS88[address] = value;
+
+          if(m_simulation.s88.empty())
+          {
+            addS88Module();
+          }
 
           uint16_t offset = 0;
           for(const auto& s88 : m_simulation.s88)
@@ -175,9 +189,7 @@ void SimulationIOHandler::start()
 
             if(s88.id == m_simulation.s88.back().id && s88.id < ObjectId::ecosDetector - 1)
             {
-              // create a new 16 port module:
-              m_simulation.s88.emplace_back(Simulation::S88{{static_cast<uint16_t>(s88.id + 1)}, 16});
-              // FIXME: reply create event?
+              addS88Module();
             }
           }
         }
@@ -363,7 +375,13 @@ bool SimulationIOHandler::send(std::string_view message)
       for(auto option : request.options)
       {
         if(option == Option::state)
+        {
           response.append(std::to_string(request.objectId)).append(" state[0x0]\r\n");
+        }
+        if(option == Option::ports)
+        {
+          response.append(std::to_string(request.objectId)).append(" ports[").append(std::to_string(it->ports)).append("]\r\n");
+        }
       }
       response.append("<END 0 (OK)>\r\n");
 

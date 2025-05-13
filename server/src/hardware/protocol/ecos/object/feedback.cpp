@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@ Feedback::Feedback(Kernel& kernel, uint16_t id)
   : Object(kernel, id)
 {
   requestView();
-  send(get(m_id, {Option::state}));
+  send(get(m_id, {Option::ports, Option::state}));
 }
 
 Feedback::Feedback(Kernel& kernel, const Line& data)
@@ -66,6 +66,14 @@ void Feedback::update(std::string_view option, std::string_view value)
           m_kernel.feedbackStateChanged(*this, i, v);
         }
       }
+    }
+  }
+  else if(option == Option::ports)
+  {
+    size_t n;
+    if(fromChars(value, n).ec == std::errc())
+    {
+      m_state.resize(n, TriState::Undefined);
     }
   }
 }
