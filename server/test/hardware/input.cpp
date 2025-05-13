@@ -37,6 +37,7 @@
 
 TEMPLATE_TEST_CASE("Input", "[input]",
   DCCEXInterface,
+  ECoSInterface,
   LocoNetInterface,
   XpressNetInterface,
   Z21Interface
@@ -188,7 +189,23 @@ TEMPLATE_TEST_CASE("Input", "[input]",
 
   EventLoop::runFor(5s);
 
-  if constexpr(std::is_same_v<TestType, XpressNetInterface>)
+  if constexpr(std::is_same_v<TestType, ECoSInterface>)
+  {
+    REQUIRE(inputStates.size() == 12);
+    REQUIRE(inputStates[0].to_ulong() == 0b0000);
+    REQUIRE(inputStates[1].to_ulong() == 0b0000); // ECoS S88 multiple feedback values in one message,
+    REQUIRE(inputStates[2].to_ulong() == 0b0000); // this causes the first change to trigger a change on all.
+    REQUIRE(inputStates[3].to_ulong() == 0b0000); // In this test case 4 event.
+    REQUIRE(inputStates[4].to_ulong() == 0b0000); //
+    REQUIRE(inputStates[5].to_ulong() == 0b0001);
+    REQUIRE(inputStates[6].to_ulong() == 0b0011);
+    REQUIRE(inputStates[7].to_ulong() == 0b0010);
+    REQUIRE(inputStates[8].to_ulong() == 0b0110);
+    REQUIRE(inputStates[9].to_ulong() == 0b0100);
+    REQUIRE(inputStates[10].to_ulong() == 0b1100);
+    REQUIRE(inputStates[11].to_ulong() == 0b1000);
+  }
+  else if constexpr(std::is_same_v<TestType, XpressNetInterface>)
   {
     REQUIRE(inputStates.size() == 11);
     REQUIRE(inputStates[0].to_ulong() == 0b0000);
