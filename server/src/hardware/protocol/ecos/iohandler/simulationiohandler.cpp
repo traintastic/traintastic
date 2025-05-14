@@ -157,7 +157,7 @@ void SimulationIOHandler::start()
             {
               const auto id = m_simulation.s88.empty() ? ObjectId::s88 : static_cast<uint16_t>(m_simulation.s88.back().id + 1);
               // create a new 16 port module:
-              m_simulation.s88.emplace_back(Simulation::S88{id, 16});
+              m_simulation.s88.emplace_back(Simulation::S88{{id}, 16});
               reply(listAppendedEvent(ObjectId::feedbackManager, id, m_simulation.s88.size()));
             };
 
