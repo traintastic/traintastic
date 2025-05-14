@@ -262,4 +262,6 @@ TEMPLATE_TEST_CASE("Input", "[input]",
   REQUIRE(input2.expired());
   REQUIRE(input3.expired());
   REQUIRE(input4.expired());
+
+  EventLoop::stop();
 }

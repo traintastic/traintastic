@@ -64,6 +64,10 @@ class EventLoop
     static void runFor(const std::chrono::duration<Rep, Period>& duration)
     {
       threadId = std::this_thread::get_id();
+      if(ioContext.stopped())
+      {
+        ioContext.restart();
+      }
       auto work = std::make_shared<boost::asio::io_context::work>(ioContext);
       ioContext.run_for(duration);
     }
