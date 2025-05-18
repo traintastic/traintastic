@@ -40,6 +40,7 @@
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
+#include "../../simulator/interfacesimulatorsettings.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
 #include "../../utils/makearray.hpp"
@@ -66,11 +67,13 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   , marklinCAN{this, "marklin_can", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , marklinCANNodeList{this, "marklin_can_node_list", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
   , marklinCANLocomotiveList{this, "marklin_can_locomotive_list", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
+  , simulator{this, "simulator", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "M\u00E4rklin CAN";
   marklinCAN.setValueInternal(std::make_shared<MarklinCAN::Settings>(*this, marklinCAN.name()));
   marklinCANNodeList.setValueInternal(std::make_shared<MarklinCANNodeList>(*this, marklinCANNodeList.name()));
   marklinCANLocomotiveList.setValueInternal(std::make_shared<MarklinCANLocomotiveList>(*this, marklinCANLocomotiveList.name()));
+  simulator.setValueInternal(std::make_shared<InterfaceSimulatorSettings>(*this, simulator.name()));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -114,6 +117,8 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(inputs, notes);
 
   m_interfaceItems.insertBefore(outputs, notes);
+
+  m_interfaceItems.insertBefore(simulator, notes);
 
   typeChanged();
 }
@@ -172,6 +177,11 @@ bool MarklinCANInterface::setOnline(bool& value, bool simulation)
       if(simulation)
       {
         m_kernel = MarklinCAN::Kernel::create<MarklinCAN::SimulationIOHandler>(id.value(), marklinCAN->config());
+
+        if(simulator->useSimulator)
+        {
+          m_kernel->ioHandler<MarklinCAN::SimulationIOHandler>().setSimulator(simulator->hostname, simulator->port);
+        }
       }
       else
       {

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023-2024 Reinder Feenstra
+ * Copyright (C) 2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,8 +36,31 @@ SimulationIOHandler::SimulationIOHandler(Kernel& kernel)
 {
 }
 
+void SimulationIOHandler::setSimulator(std::string hostname, uint16_t port)
+{
+  assert(!m_simulator);
+  m_simulator = std::make_unique<SimulatorIOHandler>(m_kernel.ioContext(), std::move(hostname), port);
+}
+
 void SimulationIOHandler::start()
 {
+  if(m_simulator)
+  {
+    m_simulator->onSensorChanged =
+      [this](uint16_t /*channel*/, uint16_t address, bool value)
+      {
+        if(inRange(address, Kernel::s88AddressMin, Kernel::s88AddressMax))
+        {
+          FeedbackState fb(DeviceId::GleisFormatProzessorOrBooster, address);
+          fb.setStateOld(value ? 0 : 1);
+          fb.setStateNew(value ? 1 : 0);
+          fb.setTime(0);
+          reply(fb);
+        }
+      };
+    m_simulator->start();
+  }
+
   using namespace std::chrono_literals;
   auto expireAfter = std::chrono::milliseconds(Random::value<int>(0, bootstrapCANInterval.count()));
   startBootloaderCANTimer(expireAfter);
@@ -103,7 +126,19 @@ bool SimulationIOHandler::send(const Message& message)
       switch(system.subCommand())
       {
         case SystemSubCommand::SystemStop:
+          if(m_simulator)
+          {
+            m_simulator->sendPower(false);
+          }
+          break;
+
         case SystemSubCommand::SystemGo:
+          if(m_simulator)
+          {
+            m_simulator->sendPower(true);
+          }
+          break;
+
         case SystemSubCommand::SystemHalt:
         case SystemSubCommand::LocomotiveEmergencyStop:
         case SystemSubCommand::LocomotiveCycleEnd:

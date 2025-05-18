@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023-2024 Reinder Feenstra
+ * Copyright (C) 2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -69,7 +69,7 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
   , m_simulation{simulation}
   , m_statusDataConfigRequestTimer{m_ioContext}
-  , m_debugDir{Traintastic::instance->debugDir()}
+  , m_debugDir{Traintastic::instance ? Traintastic::instance->debugDir() : std::filesystem::path{}}
   , m_config{config}
 {
   assert(isEventLoopThread());
@@ -404,7 +404,7 @@ void Kernel::receive(const Message& message)
         {
           const auto& feedbackState = static_cast<const FeedbackState&>(message);
 
-          if(feedbackState.deviceId() == 0) //! \todo what about other values?
+          if(feedbackState.deviceId() == DeviceId::GleisFormatProzessorOrBooster) //! \todo what about other values?
           {
             const auto value = feedbackState.stateNew() == 0 ? TriState::False : TriState::True;
             if(inRange(feedbackState.contactId(), s88AddressMin, s88AddressMax) && m_inputValues[feedbackState.contactId() - s88AddressMin] != value)
@@ -769,7 +769,7 @@ void Kernel::receiveStatusDataConfig(uint32_t nodeUID, uint8_t index, const std:
 void Kernel::receiveConfigData(std::unique_ptr<ConfigDataStreamCollector> configData)
 {
   const auto basename = m_debugDir / logId / "configstream" / configData->name;
-  if(m_config.debugConfigStream)
+  if(m_config.debugConfigStream && !m_debugDir.empty())
   {
     writeFile(std::filesystem::path(basename).concat(".bin"), configData->bytes());
   }
@@ -780,7 +780,7 @@ void Kernel::receiveConfigData(std::unique_ptr<ConfigDataStreamCollector> config
     std::string locList;
     if(ZLib::Uncompress::toString(configData->data() + sizeof(uint32_t), configData->dataSize() - sizeof(uint32_t), uncompressedSize, locList))
     {
-      if(m_config.debugConfigStream)
+      if(m_config.debugConfigStream && !m_debugDir.empty())
       {
         writeFile(std::filesystem::path(basename).concat(".txt"), locList);
       }

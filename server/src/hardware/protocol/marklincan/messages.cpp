@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -247,7 +247,7 @@ std::string toString(const Message& message)
       s.append("FeedbackEvent");
 
       const auto& feedbackEvent = static_cast<const FeedbackMessage&>(message);
-      s.append(" device_id=").append(std::to_string(feedbackEvent.deviceId()));
+      s.append(" device_id=0x").append(toHex(static_cast<uint16_t>(feedbackEvent.deviceId())));
       s.append(" contact_id=").append(std::to_string(feedbackEvent.contactId()));
 
       if(message.dlc == 5)

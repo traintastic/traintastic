@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@
 #include <set>
 #include <boost/asio/steady_timer.hpp>
 #include "../messages.hpp"
+#include "../../../../simulator/simulatoriohandler.hpp"
 
 namespace MarklinCAN {
 
@@ -64,6 +65,7 @@ class SimulationIOHandler final : public IOHandler
     boost::asio::steady_timer m_bootloaderCANTimer;
     boost::asio::steady_timer m_delayedMessageTimer;
     std::set<uint32_t> m_knownPingUIDs;
+    std::unique_ptr<SimulatorIOHandler> m_simulator;
 
     void reply(const Message& message);
     void reply(const Message& message, std::chrono::milliseconds delay);
@@ -75,6 +77,8 @@ class SimulationIOHandler final : public IOHandler
 
   public:
     SimulationIOHandler(Kernel& kernel);
+
+    void setSimulator(std::string hostname, uint16_t port);
 
     void start() final;
     void stop() final;

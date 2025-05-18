@@ -34,6 +34,7 @@
 #include "../protocol/marklincan/settings.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../enum/serialflowcontrol.hpp"
+#include "../../simulator/interfacesimulatorsettings.hpp"
 
 /**
  * @brief Märklin CAN hardware interface
@@ -74,6 +75,7 @@ class MarklinCANInterface final
     ObjectProperty<MarklinCAN::Settings> marklinCAN;
     ObjectProperty<MarklinCANNodeList> marklinCANNodeList;
     ObjectProperty<MarklinCANLocomotiveList> marklinCANLocomotiveList;
+    ObjectProperty<InterfaceSimulatorSettings> simulator;
 
     MarklinCANInterface(World& world, std::string_view _id);
 

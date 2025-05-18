@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -615,7 +615,7 @@ struct S88ModuleState : UidMessage
 
 struct FeedbackMessage : UidMessage
 {
-  FeedbackMessage(uint16_t deviceId_, uint16_t contactId_, bool response)
+  FeedbackMessage(DeviceId deviceId_, uint16_t contactId_, bool response)
     : UidMessage(Command::FeedbackEvent, response, 0)
   {
     dlc = 4;
@@ -623,15 +623,15 @@ struct FeedbackMessage : UidMessage
     setContactId(contactId_);
   }
 
-  uint16_t deviceId() const
+  DeviceId deviceId() const
   {
-    return to16(data[1], data[0]);
+    return static_cast<DeviceId>(to16(data[1], data[0]));
   }
 
-  void setDeviceId(uint16_t value)
+  void setDeviceId(DeviceId value)
   {
-    data[0] = high8(value);
-    data[1] = low8(value);
+    data[0] = high8(static_cast<uint16_t>(value));
+    data[1] = low8(static_cast<uint16_t>(value));
   }
 
   uint16_t contactId() const
@@ -648,7 +648,7 @@ struct FeedbackMessage : UidMessage
 
 struct FeedbackStateRequest : FeedbackMessage
 {
-  FeedbackStateRequest(uint16_t deviceId_, uint16_t contactId_)
+  FeedbackStateRequest(DeviceId deviceId_, uint16_t contactId_)
     : FeedbackMessage(deviceId_, contactId_, false)
   {
   }
@@ -656,7 +656,7 @@ struct FeedbackStateRequest : FeedbackMessage
 
 struct FeedbackStateParameter : FeedbackMessage
 {
-  FeedbackStateParameter(uint16_t deviceId_, uint16_t contactId_, uint8_t parameter_)
+  FeedbackStateParameter(DeviceId deviceId_, uint16_t contactId_, uint8_t parameter_)
     : FeedbackMessage(deviceId_, contactId_, false)
   {
     dlc = 5;
@@ -676,7 +676,7 @@ struct FeedbackStateParameter : FeedbackMessage
 
 struct FeedbackState : FeedbackMessage
 {
-  FeedbackState(uint16_t deviceId_, uint16_t contactId_)
+  FeedbackState(DeviceId deviceId_, uint16_t contactId_)
     : FeedbackMessage(deviceId_, contactId_, true)
   {
     dlc = 8;

@@ -39,6 +39,7 @@ TEMPLATE_TEST_CASE("Input", "[input]",
   DCCEXInterface,
   ECoSInterface,
   LocoNetInterface,
+  MarklinCANInterface,
   XpressNetInterface,
   Z21Interface
   )
@@ -188,6 +189,8 @@ TEMPLATE_TEST_CASE("Input", "[input]",
     });
 
   EventLoop::runFor(5s);
+
+  REQUIRE(simulator->stateData().powerOn);
 
   if constexpr(std::is_same_v<TestType, ECoSInterface>)
   {
