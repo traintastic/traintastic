@@ -22,6 +22,7 @@
 
 #include "simulationiohandler.hpp"
 #include "../kernel.hpp"
+#include "../uid.hpp"
 #include "../message/statusdataconfig.hpp"
 #include "../../../../utils/random.hpp"
 #include "../../../../utils/zlib.hpp"
@@ -140,7 +141,17 @@ bool SimulationIOHandler::send(const Message& message)
           break;
 
         case SystemSubCommand::SystemHalt:
+          // not (yet) implemented
+          break;
+
         case SystemSubCommand::LocomotiveEmergencyStop:
+        {
+          const auto& locomotiveEmergencyStop = static_cast<const LocomotiveEmergencyStop&>(message);
+          auto& locomotive = m_locomotives[locomotiveEmergencyStop.uid()];
+          locomotive.emergencyStop = true;
+          simulatorSendLoco(locomotiveEmergencyStop.uid());
+          break;
+        }
         case SystemSubCommand::LocomotiveCycleEnd:
           // not (yet) implemented
           break;
@@ -170,8 +181,42 @@ bool SimulationIOHandler::send(const Message& message)
     case Command::Discovery:
     case Command::Bind:
     case Command::Verify:
+      // not (yet) implemented
+      break;
+
     case Command::LocomotiveSpeed:
+    {
+      const auto& locomotiveSpeed = static_cast<const LocomotiveSpeed&>(message);
+      auto& locomotive = m_locomotives[locomotiveSpeed.uid()];
+      locomotive.speed = locomotiveSpeed.speed();
+      locomotive.emergencyStop = false;
+      simulatorSendLoco(locomotiveSpeed.uid());
+      break;
+    }
     case Command::LocomotiveDirection:
+    {
+      const auto& locomotiveDirection = static_cast<const LocomotiveDirection&>(message);
+      auto& locomotive = m_locomotives[locomotiveDirection.uid()];
+      switch(locomotiveDirection.direction())
+      {
+        case LocomotiveDirection::Direction::Forward:
+          locomotive.direction = Direction::Forward;
+          break;
+
+        case LocomotiveDirection::Direction::Reverse:
+          locomotive.direction = Direction::Reverse;
+          break;
+
+        case LocomotiveDirection::Direction::Inverse:
+          locomotive.direction = ~locomotive.direction;
+          break;
+
+        case LocomotiveDirection::Direction::Same:
+          break;
+      }
+      simulatorSendLoco(locomotiveDirection.uid());
+      break;
+    }
     case Command::LocomotiveFunction:
     case Command::ReadConfig:
     case Command::WriteConfig:
@@ -367,6 +412,23 @@ void SimulationIOHandler::restartDelayedMessageTimer()
       if(ec != boost::asio::error::operation_aborted && !m_delayedMessages.empty())
         restartDelayedMessageTimer();
     });
+}
+
+void SimulationIOHandler::simulatorSendLoco(uint32_t uid)
+{
+  if(m_simulator)
+  {
+    const Locomotive& locomotive = m_locomotives[uid];
+    auto [success, protocol, address] = UID::toProtocolAddress(uid);
+
+    m_simulator->sendLocomotiveSpeedDirection(
+      protocol,
+      address,
+      (locomotive.speed * 255) / LocomotiveSpeed::speedMax,
+      locomotive.direction,
+      locomotive.emergencyStop
+    );
+  }
 }
 
 }

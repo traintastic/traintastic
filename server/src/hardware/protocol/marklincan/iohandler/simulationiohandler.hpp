@@ -28,6 +28,7 @@
 #include <queue>
 #include <set>
 #include <boost/asio/steady_timer.hpp>
+#include <traintastic/enum/direction.hpp>
 #include "../messages.hpp"
 #include "../../../../simulator/simulatoriohandler.hpp"
 
@@ -59,12 +60,20 @@ class SimulationIOHandler final : public IOHandler
         }
     };
 
+    struct Locomotive
+    {
+      uint16_t speed = 0;
+      Direction direction = Direction::Forward;
+      bool emergencyStop = false;
+    };
+
     std::chrono::milliseconds m_switchTime = defaultSwitchTime;
     std::priority_queue<DelayedMessage, std::vector<DelayedMessage>, DelayedMessageCompare> m_delayedMessages;
     boost::asio::steady_timer m_pingTimer;
     boost::asio::steady_timer m_bootloaderCANTimer;
     boost::asio::steady_timer m_delayedMessageTimer;
     std::set<uint32_t> m_knownPingUIDs;
+    std::unordered_map<uint32_t, Locomotive> m_locomotives;
     std::unique_ptr<SimulatorIOHandler> m_simulator;
 
     void reply(const Message& message);
@@ -74,6 +83,8 @@ class SimulationIOHandler final : public IOHandler
     void startBootloaderCANTimer(std::chrono::milliseconds expireAfter = bootstrapCANInterval);
     void startPingTimer(std::chrono::milliseconds expireAfter = pingInterval);
     void restartDelayedMessageTimer();
+
+    void simulatorSendLoco(uint32_t uid);
 
   public:
     SimulationIOHandler(Kernel& kernel);
