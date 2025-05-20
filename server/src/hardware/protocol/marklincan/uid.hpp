@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,8 @@
 #include <string>
 #include <utility>
 #include <traintastic/enum/decoderprotocol.hpp>
+#include "../dcc/dcc.hpp"
+#include "../../../utils/inrange.hpp"
 
 namespace MarklinCAN::UID {
 
@@ -69,6 +71,24 @@ constexpr uint32_t locomotiveMFX(uint16_t address)
 constexpr uint32_t locomotiveDCC(uint16_t address)
 {
   return (Range::locomotiveDCC.first | address);
+}
+
+constexpr std::tuple<bool, DecoderProtocol, uint16_t> toProtocolAddress(uint32_t uid)
+{
+  if(inRange(uid, UID::Range::locomotiveMotorola))
+    return {true, DecoderProtocol::Motorola, uid - UID::Range::locomotiveMotorola.first};
+  if(inRange(uid, UID::Range::locomotiveMFX))
+    return {true, DecoderProtocol::MFX, uid - UID::Range::locomotiveMFX.first};
+  if(inRange(uid, UID::Range::locomotiveDCC))
+  {
+    //! \todo Handle long address < 128
+    const uint16_t address = uid - UID::Range::locomotiveDCC.first;
+    if(address <= DCC::addressShortMax)
+      return {true, DecoderProtocol::DCCShort, address};
+
+    return {true, DecoderProtocol::DCCLong, address};
+  }
+  return {false, DecoderProtocol::None, 0};
 }
 
 std::string toString(uint32_t uid);

@@ -47,24 +47,6 @@
 
 namespace MarklinCAN {
 
-static std::tuple<bool, DecoderProtocol, uint16_t> uidToProtocolAddress(uint32_t uid)
-{
-  if(inRange(uid, UID::Range::locomotiveMotorola))
-    return {true, DecoderProtocol::Motorola, uid - UID::Range::locomotiveMotorola.first};
-  if(inRange(uid, UID::Range::locomotiveMFX))
-    return {true, DecoderProtocol::MFX, uid - UID::Range::locomotiveMFX.first};
-  if(inRange(uid, UID::Range::locomotiveDCC))
-  {
-    //! \todo Handle long address < 128
-    const uint16_t address = uid - UID::Range::locomotiveDCC.first;
-    if(address <= DCC::addressShortMax)
-      return {true, DecoderProtocol::DCCShort, address};
-
-    return {true, DecoderProtocol::DCCLong, address};
-  }
-  return {false, DecoderProtocol::None, 0};
-}
-
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
   , m_simulation{simulation}
@@ -231,7 +213,7 @@ void Kernel::receive(const Message& message)
         case SystemSubCommand::LocomotiveEmergencyStop:
           if(m_decoderController && system.isResponse())
           {
-            auto [success, proto, addr] = uidToProtocolAddress(system.uid());
+            auto [success, proto, addr] = UID::toProtocolAddress(system.uid());
             if(success)
             {
               EventLoop::call(
@@ -273,7 +255,7 @@ void Kernel::receive(const Message& message)
         const auto& locomotiveSpeed = static_cast<const LocomotiveSpeed&>(message);
         if(locomotiveSpeed.isResponse() && locomotiveSpeed.hasSpeed())
         {
-          auto [success, proto, addr] = uidToProtocolAddress(locomotiveSpeed.uid());
+          auto [success, proto, addr] = UID::toProtocolAddress(locomotiveSpeed.uid());
           if(success)
           {
             EventLoop::call(
@@ -296,7 +278,7 @@ void Kernel::receive(const Message& message)
         const auto& locomotiveDirection = static_cast<const LocomotiveDirection&>(message);
         if(locomotiveDirection.isResponse() && locomotiveDirection.hasDirection())
         {
-          auto [success, proto, addr] = uidToProtocolAddress(locomotiveDirection.uid());
+          auto [success, proto, addr] = UID::toProtocolAddress(locomotiveDirection.uid());
           if(success)
           {
             Direction direction = Direction::Unknown;
@@ -332,7 +314,7 @@ void Kernel::receive(const Message& message)
         const auto& locomotiveFunction = static_cast<const LocomotiveFunction&>(message);
         if(locomotiveFunction.isResponse() && locomotiveFunction.hasValue())
         {
-          auto [success, proto, addr] = uidToProtocolAddress(locomotiveFunction.uid());
+          auto [success, proto, addr] = UID::toProtocolAddress(locomotiveFunction.uid());
           if(success)
           {
             EventLoop::call(
