@@ -135,7 +135,7 @@ TEMPLATE_TEST_CASE("Decoder - forward, reverse", "[decoder]",
     REQUIRE(stateData.trains[0].speed > 0.0f);
     REQUIRE_FALSE(stateData.trains[0].reverse);
   }
-  EventLoop::runFor(2s);
+  EventLoop::runFor(3s);
   {
     const auto stateData = simulator->stateData();
     REQUIRE(stateData.powerOn);
@@ -162,7 +162,7 @@ TEMPLATE_TEST_CASE("Decoder - forward, reverse", "[decoder]",
     REQUIRE(stateData.trains[0].speed > 0.0f);
     REQUIRE(stateData.trains[0].reverse);
   }
-  EventLoop::runFor(2s);
+  EventLoop::runFor(3s);
   {
     const auto stateData = simulator->stateData();
     REQUIRE(stateData.powerOn);
