@@ -1370,6 +1370,29 @@ void Kernel::send(uint16_t address, Message& message, uint8_t& slot)
     auto pendingSlotMessage = m_pendingSlotMessages.find(address);
     if(pendingSlotMessage == m_pendingSlotMessages.end())
     {
+      // If a new slot is aquired, make sure speed and direction are set.
+      if(message.opCode == OPC_LOCO_SPD)
+      {
+        EventLoop::call(
+          [this, address]()
+          {
+            if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(address), address))
+            {
+              decoderChanged(*decoder, DecoderChangeFlags::Direction, 0);
+            }
+          });
+      }
+      else if(message.opCode == OPC_LOCO_DIRF)
+      {
+        EventLoop::call(
+          [this, address]()
+          {
+            if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(address), address))
+            {
+              decoderChanged(*decoder, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::SpeedSteps, 0);
+            }
+          });
+      }
       m_pendingSlotMessages[address].assign(ptr, ptr + message.size());
       send(LocoAdr{address}, HighPriority);
     }
