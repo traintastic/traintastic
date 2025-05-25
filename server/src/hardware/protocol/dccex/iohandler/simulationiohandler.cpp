@@ -56,7 +56,8 @@ void SimulationIOHandler::start()
         if((protocol == DecoderProtocol::None || protocol == DecoderProtocol::DCCShort || protocol == DecoderProtocol::DCCLong) &&
             inRange(address, DCC::addressMin, DCC::addressLongMax))
         {
-          reply(Messages::locoBroadcast(address, -1, speed, emergencyStop, direction, 0));
+          const uint8_t speedStep = speed * m_speedSteps / 255;
+          reply(Messages::locoBroadcast(address, -1, speedStep, emergencyStop, direction, 0));
         }
       };
     // FIXME: m_simulator->onAccessorySetState
@@ -195,6 +196,17 @@ bool SimulationIOHandler::send(std::string_view message)
           reply(Messages::setOutputResponse(id, true));
       }
       break;
+    }
+    case 'D':
+    {
+      if(message == DCCEX::Messages::setSpeedSteps(28))
+      {
+        m_speedSteps = 28;
+      }
+      else if(message == DCCEX::Messages::setSpeedSteps(128))
+      {
+        m_speedSteps = 126;
+      }
     }
   }
 

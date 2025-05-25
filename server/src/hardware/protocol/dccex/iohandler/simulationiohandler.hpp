@@ -34,6 +34,7 @@ class SimulationIOHandler final : public IOHandler
 {
   private:
     std::unique_ptr<SimulatorIOHandler> m_simulator;
+    uint8_t m_speedSteps = 126;
 
     void reply(std::string_view message);
 
