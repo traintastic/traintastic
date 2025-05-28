@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/throttle/webthrottle.cpp
+ * server/src/throttle/list/throttlelist.cpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,32 +20,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "webthrottle.hpp"
-#include "../../world/world.hpp"
+#include "throttlelist.hpp"
+#include "throttlelisttablemodel.hpp"
+#include "../throttlecontroller.hpp"
 
-std::shared_ptr<WebThrottle> WebThrottle::create(World& world)
-{
-  return create(world, world.getUniqueId(defaultId));
-}
-
-std::shared_ptr<WebThrottle> WebThrottle::create(World& world, std::string_view objectId)
-{
-  auto obj = std::make_shared<WebThrottle>(world, objectId);
-  obj->addToWorld();
-  return obj;
-}
-
-WebThrottle::WebThrottle(World& world, std::string_view objectId)
-  : Throttle(world, objectId)
+ThrottleList::ThrottleList(Object& _parent, std::string_view parentPropertyName, ThrottleListColumn _columns)
+  : ObjectList<Throttle>(_parent, parentPropertyName)
+  , columns{_columns}
 {
 }
 
-void WebThrottle::load(WorldLoader& /*loader*/, const nlohmann::json& /*data*/)
+TableModelPtr ThrottleList::getModel()
 {
-  // do not load
+  return std::make_shared<ThrottleListTableModel>(*this);
 }
 
-void WebThrottle::save(WorldSaver& /*saver*/, nlohmann::json& /*data*/, nlohmann::json& /*state*/) const
+bool ThrottleList::isListedProperty(std::string_view name)
 {
-  // do not save
+  return ThrottleListTableModel::isListedProperty(name);
 }

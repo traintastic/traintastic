@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/throttle/hardwarethrottle.cpp
+ * server/src/throttle/hardwarethrottle.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -21,12 +21,12 @@
  */
 
 #include "hardwarethrottle.hpp"
-#include "../../core/attributes.hpp"
-#include "../../core/objectproperty.tpp"
-#include "../../hardware/decoder/list/decoderlist.hpp"
-#include "../../train/train.hpp"
-#include "../../utils/displayname.hpp"
-#include "../../world/world.hpp"
+#include "../core/attributes.hpp"
+#include "../core/objectproperty.tpp"
+#include "../hardware/decoder/list/decoderlist.hpp"
+#include "../train/train.hpp"
+#include "../utils/displayname.hpp"
+#include "../world/world.hpp"
 
 std::shared_ptr<HardwareThrottle> HardwareThrottle::create(std::shared_ptr<ThrottleController> controller, World& world)
 {

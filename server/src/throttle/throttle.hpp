@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/throttle/throttle.hpp
+ * server/src/throttle/throttle.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,15 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_THROTTLE_THROTTLE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_THROTTLE_THROTTLE_HPP
+#ifndef TRAINTASTIC_SERVER_THROTTLE_THROTTLE_HPP
+#define TRAINTASTIC_SERVER_THROTTLE_THROTTLE_HPP
 
-#include "../../core/idobject.hpp"
+#include "../core/idobject.hpp"
 #include <traintastic/enum/direction.hpp>
-#include "../../core/property.hpp"
-#include "../../core/objectproperty.hpp"
-#include "../../core/objectvectorproperty.hpp"
-#include "../../core/method.hpp"
+#include "../core/property.hpp"
+#include "../core/objectproperty.hpp"
+#include "../core/objectvectorproperty.hpp"
+#include "../core/method.hpp"
 
 class Decoder;
 enum class DecoderProtocol : uint8_t;

@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/throttle/list/throttlelisttablemodel.cpp
+ * server/src/throttle/list/throttlelisttablemodel.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -23,9 +23,9 @@
 #include "throttlelisttablemodel.hpp"
 #include "throttlelist.hpp"
 #include "../webthrottle.hpp"
-#include "../../../core/objectproperty.tpp"
-#include "../../../train/train.hpp"
-#include "../../../utils/displayname.hpp"
+#include "../../core/objectproperty.tpp"
+#include "../../train/train.hpp"
+#include "../../utils/displayname.hpp"
 
 bool ThrottleListTableModel::isListedProperty(std::string_view name)
 {

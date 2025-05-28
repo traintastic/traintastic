@@ -63,7 +63,7 @@
 #include "../board/nx/nxmanager.hpp"
 #include "../board/tile/rail/nxbuttonrailtile.hpp"
 
-#include "../hardware/throttle/list/throttlelist.hpp"
+#include "../throttle/list/throttlelist.hpp"
 #include "../train/train.hpp"
 #include "../train/trainlist.hpp"
 #include "../vehicle/rail/railvehiclelist.hpp"

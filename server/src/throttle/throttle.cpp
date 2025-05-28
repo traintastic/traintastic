@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/throttle/throttle.cpp
+ * server/src/throttle/throttle.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -23,16 +23,16 @@
 #include "throttle.hpp"
 #include "list/throttlelist.hpp"
 #include "list/throttlelisttablemodel.hpp"
-#include "../../core/attributes.hpp"
-#include "../../core/method.tpp"
-#include "../../core/objectproperty.tpp"
-#include "../../core/objectvectorproperty.tpp"
-#include "../../hardware/decoder/decoder.hpp"
-#include "../../log/log.hpp"
-#include "../../train/train.hpp"
-#include "../../utils/displayname.hpp"
-#include "../../utils/valuestep.hpp"
-#include "../../world/world.hpp"
+#include "../core/attributes.hpp"
+#include "../core/method.tpp"
+#include "../core/objectproperty.tpp"
+#include "../core/objectvectorproperty.tpp"
+#include "../hardware/decoder/decoder.hpp"
+#include "../log/log.hpp"
+#include "../train/train.hpp"
+#include "../utils/displayname.hpp"
+#include "../utils/valuestep.hpp"
+#include "../world/world.hpp"
 
 namespace {
 

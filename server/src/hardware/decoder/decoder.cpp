@@ -27,7 +27,7 @@
 #include "decoderfunction.hpp"
 #include "decoderfunctions.hpp"
 #include "../protocol/dcc/dcc.hpp"
-#include "../throttle/throttle.hpp"
+#include "../../throttle/throttle.hpp"
 #include "../../world/world.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../core/attributes.hpp"

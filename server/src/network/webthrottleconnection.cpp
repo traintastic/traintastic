@@ -27,7 +27,7 @@
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
 #include "../hardware/decoder/decoder.hpp"
-#include "../hardware/throttle/webthrottle.hpp"
+#include "../throttle/webthrottle.hpp"
 #include "../log/log.hpp"
 #include "../train/train.hpp"
 #include "../train/trainerror.hpp"

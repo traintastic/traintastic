@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/throttle/list/throttlelist.cpp
+ * server/src/throttle/webthrottle.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,22 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "throttlelist.hpp"
-#include "throttlelisttablemodel.hpp"
-#include "../throttlecontroller.hpp"
+#ifndef TRAINTASTIC_SERVER_THROTTLE_WEBTHROTTLE_HPP
+#define TRAINTASTIC_SERVER_THROTTLE_WEBTHROTTLE_HPP
 
-ThrottleList::ThrottleList(Object& _parent, std::string_view parentPropertyName, ThrottleListColumn _columns)
-  : ObjectList<Throttle>(_parent, parentPropertyName)
-  , columns{_columns}
-{
-}
+#include "throttle.hpp"
+#include "throttlecontroller.hpp"
 
-TableModelPtr ThrottleList::getModel()
+class WebThrottle : public Throttle
 {
-  return std::make_shared<ThrottleListTableModel>(*this);
-}
+  CLASS_ID("throttle.web")
+  DEFAULT_ID("webthrottle")
 
-bool ThrottleList::isListedProperty(std::string_view name)
-{
-  return ThrottleListTableModel::isListedProperty(name);
-}
+protected:
+  void load(WorldLoader& loader, const nlohmann::json& data) override;
+  void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
+
+public:
+  static std::shared_ptr<WebThrottle> create(World& world);
+  static std::shared_ptr<WebThrottle> create(World& world, std::string_view objectId);
+
+  WebThrottle(World& world, std::string_view objectId);
+
+  using Throttle::acquire;
+};
+
+#endif

@@ -25,8 +25,8 @@
 #include "messages.hpp"
 #include "../../decoder/decoder.hpp" // TODO: remove when migrated to Train control
 #include "../../interface/interface.hpp"
-#include "../../throttle/hardwarethrottle.hpp"
-#include "../../throttle/throttlecontroller.hpp"
+#include "../../../throttle/hardwarethrottle.hpp"
+#include "../../../throttle/throttlecontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../core/method.tpp"
 #include "../../../core/objectproperty.tpp"

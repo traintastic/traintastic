@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/throttle/list/throttlelistcolumn.hpp
+ * server/src/throttle/list/throttlelistcolumn.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_THROTTLE_LIST_THROTTLELISTCOLUMN_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_THROTTLE_LIST_THROTTLELISTCOLUMN_HPP
+#ifndef TRAINTASTIC_SERVER_THROTTLE_LIST_THROTTLELISTCOLUMN_HPP
+#define TRAINTASTIC_SERVER_THROTTLE_LIST_THROTTLELISTCOLUMN_HPP
 
 #include <type_traits>
 

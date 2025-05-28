@@ -21,7 +21,7 @@
  */
 
 #include "withrottleinterface.hpp"
-#include "../throttle/list/throttlelistcolumn.hpp"
+#include "../../throttle/list/throttlelistcolumn.hpp"
 #include "../protocol/withrottle/kernel.hpp"
 #include "../protocol/withrottle/settings.hpp"
 #include "../protocol/withrottle/iohandler/tcpiohandler.hpp"
