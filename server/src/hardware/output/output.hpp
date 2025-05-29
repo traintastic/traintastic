@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022,2024 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUT_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_OUTPUT_HPP
 
-#include "../../core/object.hpp"
+#include "../../core/nonpersistentobject.hpp"
 #include <set>
 #include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/outputtype.hpp>
@@ -37,7 +37,7 @@
 
 class OutputController;
 
-class Output : public Object
+class Output : public NonPersistentObject
 {
   friend class OutputController;
 
@@ -61,8 +61,6 @@ class Output : public Object
      * \return Unique identifier, can be any number/mask.
      */
     virtual uint32_t id() const = 0;
-
-    std::string getObjectId() const final;
 };
 
 #endif
