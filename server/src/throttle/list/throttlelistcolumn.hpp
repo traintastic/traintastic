@@ -27,14 +27,12 @@
 
 enum class ThrottleListColumn
 {
-  Id = 1 << 0,
-  Name = 1 << 1,
-  Train = 1 << 2,
-  Interface = 1 << 3,
+  Name = 1 << 0,
+  Train = 1 << 1,
+  Interface = 1 << 2,
 };
 
-constexpr std::array<ThrottleListColumn, 4> throttleListColumnValues = {
-  ThrottleListColumn::Id,
+constexpr std::array<ThrottleListColumn, 3> throttleListColumnValues = {
   ThrottleListColumn::Name,
   ThrottleListColumn::Train,
   ThrottleListColumn::Interface,

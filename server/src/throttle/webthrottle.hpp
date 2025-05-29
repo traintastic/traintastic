@@ -29,17 +29,11 @@
 class WebThrottle : public Throttle
 {
   CLASS_ID("throttle.web")
-  DEFAULT_ID("webthrottle")
-
-protected:
-  void load(WorldLoader& loader, const nlohmann::json& data) override;
-  void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
 
 public:
   static std::shared_ptr<WebThrottle> create(World& world);
-  static std::shared_ptr<WebThrottle> create(World& world, std::string_view objectId);
 
-  WebThrottle(World& world, std::string_view objectId);
+  WebThrottle(World& world, std::string_view logId);
 
   using Throttle::acquire;
 };

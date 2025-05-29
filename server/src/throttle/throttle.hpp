@@ -23,7 +23,8 @@
 #ifndef TRAINTASTIC_SERVER_THROTTLE_THROTTLE_HPP
 #define TRAINTASTIC_SERVER_THROTTLE_THROTTLE_HPP
 
-#include "../core/idobject.hpp"
+#include "../core/nonpersistentobject.hpp"
+#include <unordered_set>
 #include <traintastic/enum/direction.hpp>
 #include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
@@ -32,15 +33,11 @@
 
 class Decoder;
 enum class DecoderProtocol : uint8_t;
-class ThrottleFunction;
 class Train;
+class World;
 
-class Throttle : public IdObject
+class Throttle : public NonPersistentObject
 {
-  friend class ThrottleFunction;
-
-  DEFAULT_ID("throttle")
-
   public:
     enum class AcquireResult
     {
@@ -50,13 +47,19 @@ class Throttle : public IdObject
     };
 
   private:
+    static std::unordered_set<std::string> s_logIds;
     std::shared_ptr<Decoder> m_decoder;
 
   protected:
-    Throttle(World& world, std::string_view _id);
+    static std::string_view getUniqueLogId(std::string_view prefix = "throttle");
+
+    World& m_world;
+    const std::string_view m_logId;
+
+    Throttle(World& world, std::string_view logId);
 
     void destroying() override;
-    void addToWorld() override;
+    virtual void addToList();
 
     AcquireResult acquire(std::shared_ptr<Decoder> decoder, bool steal = false);
 

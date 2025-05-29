@@ -77,7 +77,7 @@ constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::N
 constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Interface | InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Interface | OutputListColumn::Channel | OutputListColumn::Address;
 constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface /*| IdentificationListColumn::Channel*/ | IdentificationListColumn::Address;
-constexpr auto throttleListColumns = ThrottleListColumn::Id | ThrottleListColumn::Name | ThrottleListColumn::Train | ThrottleListColumn::Interface;
+constexpr auto throttleListColumns = ThrottleListColumn::Name | ThrottleListColumn::Train | ThrottleListColumn::Interface;
 
 template<class T>
 inline static void deleteAll(T& objectList)

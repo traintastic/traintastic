@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,19 +30,13 @@
 
 std::shared_ptr<HardwareThrottle> HardwareThrottle::create(std::shared_ptr<ThrottleController> controller, World& world)
 {
-  return create(std::move(controller), world, world.getUniqueId(defaultId));
-}
-
-std::shared_ptr<HardwareThrottle> HardwareThrottle::create(std::shared_ptr<ThrottleController> controller, World& world, std::string_view _id)
-{
-  auto obj = std::make_shared<HardwareThrottle>(std::move(controller), world, _id);
-  obj->addToWorld();
+  auto obj = std::make_shared<HardwareThrottle>(std::move(controller), world, getUniqueLogId());
+  obj->addToList();
   return obj;
 }
 
-
-HardwareThrottle::HardwareThrottle(std::shared_ptr<ThrottleController> controller, World& world, std::string_view _id)
-  : Throttle(world, _id)
+HardwareThrottle::HardwareThrottle(std::shared_ptr<ThrottleController> controller, World& world, std::string_view logId)
+  : Throttle(world, logId)
   , interface{this, "interface", controller, PropertyFlags::ReadOnly | PropertyFlags::Store}
 {
   Attributes::addDisplayName(interface, DisplayName::Hardware::interface);
@@ -63,16 +57,6 @@ Throttle::AcquireResult HardwareThrottle::acquire(DecoderProtocol protocol, uint
   return Throttle::acquire(std::move(decoder), steal);
 }
 
-void HardwareThrottle::addToWorld()
-{
-  Throttle::addToWorld();
-  assert(interface);
-  if(interface->addThrottle(*this))
-    m_world.hardwareThrottles.setValueInternal(m_world.hardwareThrottles + 1);
-  else
-    assert(false);
-}
-
 void HardwareThrottle::destroying()
 {
   assert(interface);
@@ -84,12 +68,12 @@ void HardwareThrottle::destroying()
   Throttle::destroying();
 }
 
-void HardwareThrottle::load(WorldLoader& /*loader*/, const nlohmann::json& /*data*/)
+void HardwareThrottle::addToList()
 {
-  // do not load
-}
-
-void HardwareThrottle::save(WorldSaver& /*saver*/, nlohmann::json& /*data*/, nlohmann::json& /*state*/) const
-{
-  // do not save
+  Throttle::addToList();
+  assert(interface);
+  if(interface->addThrottle(*this))
+    m_world.hardwareThrottles.setValueInternal(m_world.hardwareThrottles + 1);
+  else
+    assert(false);
 }

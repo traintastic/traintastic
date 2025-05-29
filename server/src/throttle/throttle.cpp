@@ -54,9 +54,26 @@ constexpr double getValueStep(double value, SpeedUnit unit)
 
 }
 
-Throttle::Throttle(World& world, std::string_view _id)
-  : IdObject(world, _id)
-  , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store}
+std::unordered_set<std::string> Throttle::s_logIds;
+
+std::string_view Throttle::getUniqueLogId(std::string_view prefix)
+{
+  std::string uniqueLogId{prefix};
+  uniqueLogId.append("_");
+  uint32_t number = 0;
+  do
+  {
+    uniqueLogId.resize(prefix.size() + 1);
+    uniqueLogId.append(std::to_string(++number));
+  }
+  while(s_logIds.contains(uniqueLogId));
+  return *s_logIds.emplace(std::move(uniqueLogId)).first;
+}
+
+Throttle::Throttle(World& world, std::string_view logId)
+  : m_world{world}
+  , m_logId{logId}
+  , name{this, "name", std::string(logId), PropertyFlags::ReadWrite | PropertyFlags::Store}
   , direction{this, "direction", Direction::Forward, PropertyFlags::ReadOnly}
   , throttle{this, "throttle", throttleMin, PropertyFlags::ReadWrite,
       [this](const float& value)
@@ -232,7 +249,7 @@ std::error_code Throttle::acquire(const std::shared_ptr<Train>& acquireTrain, bo
   const auto ec = acquireTrain->acquire(*this, steal);
   if(ec)
   {
-    Log::log(*this, LogMessage::D3001_ACQUIRING_TRAIN_X_FAILED_X, acquireTrain->name.value(), ec.message());
+    Log::log(m_logId, LogMessage::D3001_ACQUIRING_TRAIN_X_FAILED_X, acquireTrain->name.value(), ec.message());
     return ec;
   }
 
@@ -246,11 +263,11 @@ std::error_code Throttle::acquire(const std::shared_ptr<Train>& acquireTrain, bo
 
   if(stole)
   {
-    Log::log(*this, LogMessage::N3005_THROTTLE_X_STOLE_TRAIN_X_FROM_THROTTLE_X, name.value(), train->name.value(), stoleFrom);
+    Log::log(m_logId, LogMessage::N3005_THROTTLE_X_STOLE_TRAIN_X_FROM_THROTTLE_X, name.value(), train->name.value(), stoleFrom);
   }
   else
   {
-    Log::log(*this, LogMessage::I3001_THROTTLE_X_ACQUIRED_TRAIN_X, name.value(), train->name.value());
+    Log::log(m_logId, LogMessage::I3001_THROTTLE_X_ACQUIRED_TRAIN_X, name.value(), train->name.value());
   }
 
   Attributes::setEnabled({emergencyStop, throttle, stop, setDirection}, true);
@@ -276,7 +293,7 @@ void Throttle::release(bool stopIt)
   else if(train)
   {
     const auto logMessage = !stopIt && !train->isStopped.value() ? LogMessage::N3006_THROTTLE_X_RELEASED_TRAIN_X_WITHOUT_STOPPING_IT : LogMessage::I3002_THROTTLE_X_RELEASED_TRAIN_X;
-    Log::log(*this, logMessage, name.value(), train->name.value());
+    Log::log(m_logId, logMessage, name.value(), train->name.value());
     train->release(*this);
     train.setValueInternal(nullptr);
   }
@@ -290,12 +307,11 @@ void Throttle::destroying()
 {
   m_world.throttles->removeObject(shared_ptr<Throttle>());
   release();
-  IdObject::destroying();
+  NonPersistentObject::destroying();
 }
 
-void Throttle::addToWorld()
+void Throttle::addToList()
 {
-  IdObject::addToWorld();
   m_world.throttles->addObject(shared_ptr<Throttle>());
 }
 
