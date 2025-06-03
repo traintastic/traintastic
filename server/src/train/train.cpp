@@ -243,6 +243,12 @@ void Train::loaded()
   Attributes::setEnabled(lob, overrideLength);
   Attributes::setEnabled(weight, overrideWeight);
 
+  auto self = shared_ptr<Train>();
+  for(auto& vehicle : *vehicles)
+  {
+    vehicle->trains.appendInternal(self);
+  }
+
   vehiclesChanged();
 }
 
