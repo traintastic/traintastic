@@ -35,6 +35,7 @@
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/almostzero.hpp"
+#include "../../vehicle/rail/railvehicle.hpp"
 
 CREATE_IMPL(Decoder)
 
@@ -101,6 +102,7 @@ Decoder::Decoder(World& world, std::string_view _id) :
     {
       changed(DecoderChangeFlags::SpeedSteps);
     }},
+  vehicle{this, "vehicle", nullptr, PropertyFlags::ReadOnly},
   throttle{this, "throttle", throttleMin, PropertyFlags::ReadWrite,
     [this](const double& /*value*/)
     {
@@ -154,6 +156,9 @@ Decoder::Decoder(World& world, std::string_view _id) :
   Attributes::addValues(speedSteps, std::span<const uint8_t>{});
   Attributes::addVisible(speedSteps, false);
   m_interfaceItems.add(speedSteps);
+
+  Attributes::addObjectEditor(vehicle, false);
+  m_interfaceItems.add(vehicle);
 
   Attributes::addMinMax(throttle, throttleMin, throttleMax);
   Attributes::addObjectEditor(throttle, false);
