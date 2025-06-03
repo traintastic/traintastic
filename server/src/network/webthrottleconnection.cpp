@@ -23,6 +23,7 @@
 #include "webthrottleconnection.hpp"
 #include "server.hpp"
 #include "../traintastic/traintastic.hpp"
+#include "../core/errorcode.hpp"
 #include "../core/eventloop.hpp"
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
@@ -30,7 +31,6 @@
 #include "../throttle/webthrottle.hpp"
 #include "../log/log.hpp"
 #include "../train/train.hpp"
-#include "../train/trainerror.hpp"
 #include "../train/trainlist.hpp"
 #include "../train/trainvehiclelist.hpp"
 
@@ -380,15 +380,15 @@ void WebThrottleConnection::sendError(uint32_t throttleId, std::error_code ec)
 {
   assert(isEventLoopThread());
 
-  if(ec == TrainError::AlreadyAcquired)
+  if(ec == ErrorCode::AlreadyAcquired)
   {
     sendError(throttleId, ec.message(), "already_acquired");
   }
-  else if(ec == TrainError::CanNotActivateTrain)
+  else if(ec == ErrorCode::CanNotActivateTrain)
   {
     sendError(throttleId, ec.message(), "can_not_activate_train");
   }
-  else if(ec == TrainError::TrainMustBeStoppedToChangeDirection)
+  else if(ec == ErrorCode::TrainMustBeStoppedToChangeDirection)
   {
     sendError(throttleId, ec.message(), "train_must_be_stopped_to_change_direction");
   }
