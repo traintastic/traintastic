@@ -1,9 +1,8 @@
 /**
- * server/src/lua/classid.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021,2025 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,35 +19,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_LUA_CLASS_HPP
-#define TRAINTASTIC_SERVER_LUA_CLASS_HPP
+#ifndef TRAINTASTIC_SERVER_THROTTLE_SCRIPTTHROTTLE_HPP
+#define TRAINTASTIC_SERVER_THROTTLE_SCRIPTTHROTTLE_HPP
 
-#include <string_view>
-#include <lua.hpp>
-#include "../core/objectptr.hpp"
+#include "throttle.hpp"
 
-namespace Lua {
-
-struct Class
+class ScriptThrottle : public Throttle
 {
-  static void registerValues(lua_State* L);
+  CLASS_ID("throttle.script")
 
-  static void push(lua_State* L, std::string_view classId);
-  static void push(lua_State* L, const ObjectPtr& object);
+private:
+  Method<bool()> m_emergencyStop;
+  Method<bool(Direction)> m_setDirection;
+  Method<bool()> m_changeDirection;
+  Method<bool(double, SpeedUnit)> m_setSpeed;
+  Method<bool(double, SpeedUnit)> m_setTargetSpeed;
 
-  template<class T>
-  static void push(lua_State* L)
-  {
-    static_assert(std::is_base_of_v<::Object, T>);
-    push(L, T::classId);
-  }
+public:
+  static std::shared_ptr<ScriptThrottle> create(World& world);
 
-  static int __tostring(lua_State* L);
-
-  static int getClass(lua_State* L);
-  static int create_throttle(lua_State* L);
+  ScriptThrottle(World& world, std::string_view objectId);
 };
-
-}
 
 #endif

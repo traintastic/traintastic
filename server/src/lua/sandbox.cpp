@@ -40,6 +40,7 @@
 #include <traintastic/utils/str.hpp>
 #include "../world/world.hpp"
 #include "../hardware/output/outputcontroller.hpp"
+#include "../throttle/scriptthrottle.hpp"
 
 #define LUA_SANDBOX "_sandbox"
 #define LUA_SANDBOX_GLOBALS "_sandbox_globals"
@@ -372,6 +373,13 @@ Sandbox::StateData::~StateData()
         }
       }
     }
+  }
+
+  // Destroy throttles:
+  while(!m_throttles.empty())
+  {
+    m_throttles.back()->destroy();
+    m_throttles.pop_back();
   }
 }
 

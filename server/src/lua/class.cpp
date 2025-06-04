@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,8 @@
 #include "test.hpp"
 #include "checkarguments.hpp"
 #include "sandbox.hpp"
+#include "script.hpp"
+#include "to.hpp"
 
 #include "../board/board.hpp"
 #include "../board/boardlist.hpp"
@@ -94,6 +96,8 @@
 #include "../hardware/identification/identification.hpp"
 #include "../hardware/identification/list/identificationlist.hpp"
 
+#include "../throttle/scriptthrottle.hpp"
+
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../vehicle/rail/locomotive.hpp"
 #include "../vehicle/rail/freightwagon.hpp"
@@ -148,6 +152,9 @@ void Class::registerValues(lua_State* L)
 
   lua_pushcfunction(L, getClass);
   lua_setfield(L, -2, "get");
+
+  lua_pushcfunction(L, create_throttle);
+  lua_setfield(L, -2, "create_throttle");
 
   registerValue<Board>(L, "BOARD");
   registerValue<BoardList>(L, "BOARD_LIST");
@@ -213,6 +220,8 @@ void Class::registerValues(lua_State* L)
   registerValue<Identification>(L, "IDENTIFICATION");
   registerValue<IdentificationList>(L, "IDENTIFICATION_LIST");
 
+  registerValue<ScriptThrottle>(L, "SCRIPT_THROTTLE");
+
   registerValue<RailVehicleList>(L, "RAIL_VEHICLE_LIST");
   registerValue<Locomotive>(L, "LOCOMOTIVE");
   registerValue<FreightWagon>(L, "FREIGHT_WAGON");
@@ -271,6 +280,20 @@ int Class::getClass(lua_State* L)
     push(L, object);
   else
     lua_pushnil(L);
+  return 1;
+}
+
+int Class::create_throttle(lua_State* L)
+{
+  const int n = checkArguments(L, 0, 1);
+  auto& stateData = Sandbox::getStateData(L);
+  auto throttle = ScriptThrottle::create(stateData.script().world());
+  if(n >= 1)
+  {
+    throttle->name = to<std::string>(L, 1);
+  }
+  stateData.addThrottle(throttle);
+  Object::push(L, throttle);
   return 1;
 }
 
