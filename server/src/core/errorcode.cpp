@@ -49,6 +49,15 @@ std::string ErrorCodeCategory::message(int ev) const
 
     case ErrorCode::TrainMustBeStoppedToChangeDirection:
       return "train must be stopped to change direction";
+
+    case ErrorCode::UnknownDecoderAddress:
+      return "unknown decoder address";
+
+    case ErrorCode::DecoderNotAssignedToAVehicle:
+      return "decoder not assigned to a vehicle";
+
+    case ErrorCode::VehicleNotAssignedToATrain:
+      return "vehicle not assigned to a train";
   }
   return "(unrecognized error)";
 }

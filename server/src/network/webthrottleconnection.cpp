@@ -301,7 +301,14 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
       }
       else if(action == "stop")
       {
-        throttle->stop(message.value("immediate", false));
+        if(message.value("immediate", false))
+        {
+          throttle->train->setSpeed(*throttle, 0.0);
+        }
+        else
+        {
+          throttle->train->setTargetSpeed(*throttle, 0.0);
+        }
       }
       else if(action == "faster")
       {

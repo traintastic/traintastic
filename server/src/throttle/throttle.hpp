@@ -26,10 +26,13 @@
 #include "../core/nonpersistentobject.hpp"
 #include <unordered_set>
 #include <traintastic/enum/direction.hpp>
+#include <traintastic/enum/speedunit.hpp>
 #include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
 #include "../core/objectvectorproperty.hpp"
 #include "../core/method.hpp"
+#include "../utils/stringequal.hpp"
+#include "../utils/stringhash.hpp"
 
 class Decoder;
 enum class DecoderProtocol : uint8_t;
@@ -47,8 +50,7 @@ class Throttle : public NonPersistentObject
     };
 
   private:
-    static std::unordered_set<std::string> s_logIds;
-    std::shared_ptr<Decoder> m_decoder;
+    static std::unordered_set<std::string, StringHash, StringEqual> s_logIds;
 
   protected:
     static std::string_view getUniqueLogId(std::string_view prefix = "throttle");
@@ -61,37 +63,24 @@ class Throttle : public NonPersistentObject
     void destroying() override;
     virtual void addToList();
 
-    AcquireResult acquire(std::shared_ptr<Decoder> decoder, bool steal = false);
-
   public:
-    static constexpr float throttleMin = 0;
-    static constexpr float throttleStop = throttleMin;
-    static constexpr float throttleMax = 1;
-
     boost::signals2::signal<void()> released;
 
     Property<std::string> name;
-    Property<Direction> direction;
-    Property<float> throttle;
     ObjectProperty<Train> train;
-    Method<bool()> emergencyStop;
-    Method<bool(bool)> stop;
-    Method<bool(bool)> faster;
-    Method<bool(bool)> slower;
-    Method<bool(Direction)> setDirection;
 
-#ifndef NDEBUG
     ~Throttle() override;
-#endif
 
     bool acquired() const;
     std::error_code acquire(const std::shared_ptr<Train>& acquireTrain, bool steal = false);
     void release(bool stopIt = true);
 
-    const std::shared_ptr<Decoder>& decoder() const // TODO: remove once WiThrottle is migrated to train control
-    {
-      return m_decoder;
-    }
+    bool emergencyStop();
+    bool setDirection(Direction value);
+    bool setSpeed(double value, SpeedUnit unit);
+    bool setTargetSpeed(double value, SpeedUnit unit);
+    bool slower(bool immediate);
+    bool faster(bool immediate);
 };
 
 #endif

@@ -22,10 +22,12 @@
 
 #include "hardwarethrottle.hpp"
 #include "../core/attributes.hpp"
+#include "../core/errorcode.hpp"
 #include "../core/objectproperty.tpp"
 #include "../hardware/decoder/list/decoderlist.hpp"
 #include "../train/train.hpp"
 #include "../utils/displayname.hpp"
+#include "../vehicle/rail/railvehicle.hpp"
 #include "../world/world.hpp"
 
 std::shared_ptr<HardwareThrottle> HardwareThrottle::create(std::shared_ptr<ThrottleController> controller, World& world)
@@ -43,18 +45,48 @@ HardwareThrottle::HardwareThrottle(std::shared_ptr<ThrottleController> controlle
   m_interfaceItems.add(interface);
 }
 
-Throttle::AcquireResult HardwareThrottle::acquire(DecoderProtocol protocol, uint16_t address, bool steal)
+std::error_code HardwareThrottle::acquire(DecoderProtocol protocol, uint16_t address, bool steal)
 {
   assert(m_world.decoders.value());
   auto& decoderList = *m_world.decoders.value();
 
   auto decoder = decoderList.getDecoder(protocol, address);
   if(!decoder)
+  {
     decoder = decoderList.getDecoder(address);
+  }
   if(!decoder)
-    return AcquireResult::FailedNonExisting;
-
-  return Throttle::acquire(std::move(decoder), steal);
+  {
+    return make_error_code(ErrorCode::UnknownDecoderAddress);
+  }
+  if(!decoder->vehicle)
+  {
+    return make_error_code(ErrorCode::DecoderNotAssignedToAVehicle);
+  }
+  if(decoder->vehicle->activeTrain)
+  {
+    return Throttle::acquire(decoder->vehicle->activeTrain.value(), steal);
+  }
+  if(decoder->vehicle->trains.empty())
+  {
+    return make_error_code(ErrorCode::VehicleNotAssignedToATrain);
+  }
+  for(auto& vehicleTrain : decoder->vehicle->trains)
+  {
+    assert(!vehicleTrain->active);
+    try
+    {
+      vehicleTrain->active = true; // try to activate train
+      if(vehicleTrain->active)
+      {
+        return Throttle::acquire(vehicleTrain, steal);
+      }
+    }
+    catch(...)
+    {
+    }
+  }
+  return make_error_code(ErrorCode::CanNotActivateTrain);
 }
 
 void HardwareThrottle::destroying()

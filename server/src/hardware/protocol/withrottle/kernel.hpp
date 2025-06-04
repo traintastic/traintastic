@@ -31,6 +31,7 @@
 #include "iohandler/iohandler.hpp"
 
 class Clock;
+class Decoder;
 class HardwareThrottle;
 class ThrottleController;
 
@@ -96,6 +97,7 @@ class Kernel : public ::KernelBase
 
     MultiThrottle* getMultiThrottle(IOHandler::ClientId clientId, char multiThrottleId);
     const std::shared_ptr<HardwareThrottle>& getThottle(IOHandler::ClientId clientId, char multiThrottleId = invalidMultiThrottleId);
+    const std::shared_ptr<Decoder>& getDecoder(IOHandler::ClientId clientId, char multiThrottleId);
 
     void multiThrottleAction(IOHandler::ClientId clientId, char multiThrottleId, const Address& address, ThrottleCommand throttleCommand, std::string_view message);
 

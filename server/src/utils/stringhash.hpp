@@ -19,26 +19,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_CORE_ERRORCODE_HPP
-#define TRAINTASTIC_SERVER_CORE_ERRORCODE_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_STRINGHASH_HPP
+#define TRAINTASTIC_SERVER_UTILS_STRINGHASH_HPP
 
-#include <system_error>
+#include <string>
+#include <string_view>
 
-enum class ErrorCode
+struct StringHash
 {
-  // zero means no error!
-  InvalidThrottle = 1,
-  AlreadyAcquired,
-  CanNotActivateTrain,
-  TrainMustBeStoppedToChangeDirection,
-  UnknownDecoderAddress,
-  DecoderNotAssignedToAVehicle,
-  VehicleNotAssignedToATrain,
+  using is_transparent = void;
+
+  [[nodiscard]] size_t operator()(const char* value) const noexcept
+  {
+    return std::hash<std::string_view>{}(value);
+  }
+
+  [[nodiscard]] size_t operator()(std::string_view value) const noexcept
+  {
+    return std::hash<std::string_view>{}(value);
+  }
+
+  [[nodiscard]] size_t operator()(const std::string& value) const noexcept
+  {
+    return std::hash<std::string>{}(value);
+  }
 };
-
-template<>
-struct std::is_error_code_enum<ErrorCode> : std::true_type {};
-
-std::error_code make_error_code(ErrorCode ec);
 
 #endif

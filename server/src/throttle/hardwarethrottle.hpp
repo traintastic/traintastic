@@ -45,7 +45,7 @@ class HardwareThrottle : public Throttle
 
     HardwareThrottle(std::shared_ptr<ThrottleController> controller, World& world, std::string_view logId);
 
-    AcquireResult acquire(DecoderProtocol protocol, uint16_t address, bool steal = false);
+    std::error_code acquire(DecoderProtocol protocol, uint16_t address, bool steal = false);
 };
 
 #endif
