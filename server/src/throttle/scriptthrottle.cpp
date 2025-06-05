@@ -22,6 +22,7 @@
 #include "scriptthrottle.hpp"
 #include "../core/attributes.hpp"
 #include "../core/method.tpp"
+#include "../core/objectproperty.tpp"
 #include "../train/train.hpp"
 #include "../world/world.hpp"
 
