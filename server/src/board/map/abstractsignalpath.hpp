@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -155,7 +155,7 @@ class AbstractSignalPath : public Path
   private:
     std::unique_ptr<const Item> m_root;
     bool m_requireReservation = false;
-    std::vector<boost::signals2::connection> m_connections;
+    std::vector<boost::signals2::scoped_connection> m_connections;
 
     std::unique_ptr<const Item> findBlocks(const Node& node, const Link& link, size_t blocksAhead);
 
@@ -193,13 +193,13 @@ class AbstractSignalPath : public Path
       return nextBlockOrSignal(root());
     }
 
-    void getBlockStates(tcb::span<BlockState> blockStates) const;
+    void getBlockStates(std::span<BlockState> blockStates) const;
     std::shared_ptr<BlockRailTile> getBlock(size_t index) const;
 
   public:
     AbstractSignalPath(SignalRailTile& signal);
     AbstractSignalPath(SignalRailTile& signal, size_t blocksAhead);
-    virtual ~AbstractSignalPath();
+    virtual ~AbstractSignalPath() = default;
 
     void evaluate();
 };

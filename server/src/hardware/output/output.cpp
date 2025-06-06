@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022,2024 Reinder Feenstra
+ * Copyright (C) 2019-2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,10 +43,4 @@ Output::Output(std::shared_ptr<OutputController> outputController, OutputChannel
   m_interfaceItems.add(channel);
 
   m_interfaceItems.add(onValueChangedGeneric);
-}
-
-std::string Output::getObjectId() const
-{
-  assert(false); // Object is not stored or serialized for network, method may not be called.
-  return "";
 }

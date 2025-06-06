@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -431,6 +431,7 @@ MainWindow::MainWindow(QWidget* parent) :
           auto* tabs = new QTabWidget(m_trainAndRailVehiclesSubWindow);
           tabs->addTab(new ObjectEditWidget("world.trains"), Locale::tr("world:trains"));
           tabs->addTab(new ObjectEditWidget("world.rail_vehicles"), Locale::tr("world:rail_vehicles"));
+          tabs->addTab(new ObjectEditWidget("world.throttles"), Locale::tr("hardware:throttles"));
           m_trainAndRailVehiclesSubWindow->setWidget(tabs);
           m_mdiArea->addSubWindow(m_trainAndRailVehiclesSubWindow);
           m_trainAndRailVehiclesSubWindow->setAttribute(Qt::WA_DeleteOnClose);

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +35,23 @@
 
 RailVehicle::RailVehicle(World& world, std::string_view _id) :
   Vehicle(world, _id),
-  decoder{this, "decoder", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  decoder{this, "decoder", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
+    [this](const std::shared_ptr<Decoder>& value)
+    {
+      if(decoder)
+      {
+        decoder->vehicle.setValueInternal(nullptr);
+      }
+      if(value)
+      {
+        if(value->vehicle)
+        {
+          value->vehicle->decoder = nullptr;
+        }
+        value->vehicle.setValueInternal(shared_ptr<RailVehicle>());
+      }
+      return true;
+    }},
   lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
   speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](double /*value*/, WeightUnit /*unit*/){ updateTotalWeight(); }},
@@ -96,6 +112,11 @@ void RailVehicle::destroying()
 void RailVehicle::loaded()
 {
   Vehicle::loaded();
+
+  if(decoder)
+  {
+    decoder->vehicle.setValueInternal(shared_ptr<RailVehicle>());
+  }
 
   updateTotalWeight();
 }

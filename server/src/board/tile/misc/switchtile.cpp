@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,7 +74,7 @@ SwitchTile::SwitchTile(World& world, std::string_view _id)
   m_interfaceItems.add(colorOff);
 
   Attributes::addObjectEditor(value, false);
-  Attributes::addAliases(value, tcb::span<const bool>(valueAliasKeys), tcb::span<const std::string>(valueAliasValues));
+  Attributes::addAliases(value, std::span<const bool>(valueAliasKeys), std::span<const std::string>(valueAliasValues));
   m_interfaceItems.add(value);
 
   Attributes::addDisplayName(outputMap, DisplayName::BoardTile::outputMap);

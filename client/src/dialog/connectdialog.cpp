@@ -56,8 +56,14 @@ ConnectDialog::ConnectDialog(QWidget* parent, const QString& url) :
   m_password->setEchoMode(QLineEdit::Password);
 
   m_connectAutomatically->setChecked(GeneralSettings::instance().connectAutomaticallyToDiscoveredServer.value());
+
+  #if QT_VERSION < QT_VERSION_CHECK(6, 7, 0)
   connect(m_connectAutomatically, &QCheckBox::stateChanged, this,
     [](int state)
+  #else
+  connect(m_connectAutomatically, &QCheckBox::checkStateChanged, this,
+    [](Qt::CheckState state)
+  #endif
     {
       GeneralSettings::instance().connectAutomaticallyToDiscoveredServer.setValue(state == Qt::Checked);
     });

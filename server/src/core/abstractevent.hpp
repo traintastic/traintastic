@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2022,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 
 #include "interfaceitem.hpp"
 #include <list>
-#include <tcb/span.hpp>
+#include <span>
 #include "eventflags.hpp"
 #include "argument.hpp"
 #include "typeinfo.hpp"
@@ -54,7 +54,7 @@ class AbstractEvent : public InterfaceItem
 
     inline EventFlags flags() const { return m_flags; }
 
-    virtual tcb::span<const TypeInfo> argumentTypeInfo() const = 0;
+    virtual std::span<const TypeInfo> argumentTypeInfo() const = 0;
 
     void connect(std::shared_ptr<AbstractEventHandler> handler);
     bool disconnect(const std::shared_ptr<AbstractEventHandler>& handler);

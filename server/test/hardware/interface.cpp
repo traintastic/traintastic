@@ -20,8 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __aarch64__
-
 #include <catch2/catch_template_test_macros.hpp>
 #include "../src/world/world.hpp"
 #include "../src/core/method.tpp"
@@ -166,5 +164,4 @@ TEMPLATE_TEST_CASE("Assign identification to another interface", "[interface]", 
   REQUIRE(identificationWeak.expired());
 }
 
-#endif
 #endif

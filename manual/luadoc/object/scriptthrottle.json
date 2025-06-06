@@ -1,0 +1,52 @@
+{
+  "emergency_stop": {},
+  "set_direction": {
+    "parameters": [
+      {
+        "name": "direction"
+      }
+    ]
+  },
+  "change_direction": {},
+  "set_speed": {
+    "parameters": [
+      {
+        "name": "speed"
+      },
+      {
+        "name": "unit"
+      }
+    ]
+  },
+  "set_target_speed": {
+    "parameters": [
+      {
+        "name": "target_speed"
+      },
+      {
+        "name": "unit"
+      }
+    ]
+  },
+  "acquire": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "steal",
+        "optional": true
+      }
+    ],
+    "return_values": 1
+  },
+  "release": {
+    "parameters": [
+      {
+        "name": "stop",
+        "optional": true
+      }
+    ],
+    "return_values": 0
+  }
+}

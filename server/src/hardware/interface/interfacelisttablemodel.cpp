@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 
 constexpr uint32_t columnId = 0;
 constexpr uint32_t columnName = 1;
+constexpr uint32_t columnClassId = 3;
 
 bool InterfaceListTableModel::isListedProperty(std::string_view name)
 {
@@ -43,6 +44,7 @@ InterfaceListTableModel::InterfaceListTableModel(InterfaceList& list) :
     DisplayName::Object::id,
     DisplayName::Object::name,
     DisplayName::Interface::status,
+    "class_id"
     });
 }
 
@@ -61,9 +63,14 @@ std::string InterfaceListTableModel::getText(uint32_t column, uint32_t row) cons
         return interface.name;
 
       case columnStatus:
-        if(const auto* it = EnumValues<InterfaceState>::value.find(interface.status->state); it != EnumValues<InterfaceState>::value.end())
-          return std::string("$").append(EnumName<InterfaceState>::value).append(":").append(it->second).append("$");
+        if(const auto* it = EnumValues<InterfaceState>::value.find(interface.status->state); it != EnumValues<InterfaceState>::value.end()) [[likely]]
+        {
+          return it->second;
+        }
         break;
+
+      case columnClassId:
+        return std::string{interface.getClassId()};
 
       default:
         assert(false);

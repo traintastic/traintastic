@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include "trainblockstatus.hpp"
 #include "trainlisttablemodel.hpp"
 #include "../core/attributes.hpp"
+#include "../core/errorcode.hpp"
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
 #include "../core/objectvectorproperty.tpp"
@@ -34,6 +35,7 @@
 #include "../board/tile/rail/blockrailtile.hpp"
 #include "../vehicle/rail/poweredrailvehicle.hpp"
 #include "../hardware/decoder/decoder.hpp"
+#include "../throttle/throttle.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
 
@@ -138,9 +140,13 @@ Train::Train(World& world, std::string_view _id) :
   vehicles{this, "vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   powered{this, "powered", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly,
-    [this](bool)
+    [this](bool value)
     {
       updateSpeed();
+      if(!value && m_throttle)
+      {
+        m_throttle->release();
+      }
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
   mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
@@ -236,6 +242,12 @@ void Train::loaded()
 
   Attributes::setEnabled(lob, overrideLength);
   Attributes::setEnabled(weight, overrideWeight);
+
+  auto self = shared_ptr<Train>();
+  for(auto& vehicle : *vehicles)
+  {
+    vehicle->trains.appendInternal(self);
+  }
 
   vehiclesChanged();
 }
@@ -441,6 +453,111 @@ bool Train::setTrainActive(bool val)
   }
 
   return true;
+}
+
+std::string Train::throttleName() const
+{
+  if(m_throttle)
+  {
+    return m_throttle->name;
+  }
+  return {};
+}
+
+std::error_code Train::acquire(Throttle& throttle, bool steal)
+{
+  if(m_throttle)
+  {
+    if(!steal)
+    {
+      return make_error_code(ErrorCode::AlreadyAcquired);
+    }
+    m_throttle->release();
+  }
+  if(!active)
+  {
+    try
+    {
+      active = true; // TODO: activate();
+    }
+    catch(...)
+    {
+    }
+    if(!active)
+    {
+      return make_error_code(ErrorCode::CanNotActivateTrain);
+    }
+  }
+  assert(!m_throttle);
+  m_throttle = throttle.shared_ptr<Throttle>();
+  return {};
+}
+
+std::error_code Train::release(Throttle& throttle)
+{
+  if(m_throttle.get() != &throttle)
+  {
+    return make_error_code(ErrorCode::InvalidThrottle);
+  }
+  m_throttle.reset();
+  if(isStopped && blocks.empty())
+  {
+    active = false; // deactive train if it is stopped and not assigned to a block
+  }
+  return {};
+}
+
+std::error_code Train::setSpeed(Throttle& throttle, double value)
+{
+  if(m_throttle.get() != &throttle)
+  {
+    return make_error_code(ErrorCode::InvalidThrottle);
+  }
+  assert(active);
+
+  value = std::clamp(value, Attributes::getMin(speed), Attributes::getMax(speed));
+
+  setSpeed(convertUnit(value, speed.unit(), SpeedUnit::KiloMeterPerHour));
+  throttleSpeed.setValue(convertUnit(value, speed.unit(), throttleSpeed.unit()));
+  m_speedTimer.cancel();
+  m_speedState = SpeedState::Idle;
+
+  const bool currentValue = isStopped;
+  isStopped.setValueInternal(m_speedState == SpeedState::Idle && almostZero(speed.value()) && almostZero(throttleSpeed.value()));
+  if(currentValue != isStopped)
+  {
+    updateEnabled();
+  }
+  return {};
+}
+
+std::error_code Train::setTargetSpeed(Throttle& throttle, double value)
+{
+  if(m_throttle.get() != &throttle)
+  {
+    return make_error_code(ErrorCode::InvalidThrottle);
+  }
+  assert(active);
+  throttleSpeed.setValue(std::clamp(value, Attributes::getMin(throttleSpeed), Attributes::getMax(throttleSpeed)));
+  return {};
+}
+
+std::error_code Train::setDirection(Throttle& throttle, Direction value)
+{
+  if(m_throttle.get() != &throttle)
+  {
+    return make_error_code(ErrorCode::InvalidThrottle);
+  }
+  if(direction != value)
+  {
+    if(!isStopped)
+    {
+      return make_error_code(ErrorCode::TrainMustBeStoppedToChangeDirection);
+    }
+    assert(active);
+    direction = value;
+  }
+  return {};
 }
 
 void Train::fireBlockAssigned(const std::shared_ptr<BlockRailTile>& block)
