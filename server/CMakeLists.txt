@@ -216,6 +216,9 @@ if(DEFINED ENV{VCPKG_ROOT})
   include($ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
 endif()
 
+### Python3
+find_package(Python3 COMPONENTS Interpreter)
+
 ### RESOURCES ###
 
 include(cmake/add-resource.cmake)

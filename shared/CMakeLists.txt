@@ -3,6 +3,9 @@ include(./traintastic.cmake)
 project(traintastic-data VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic data")
 include(translations/traintastic-lang.cmake)
 
+### Python3
+find_package(Python3 COMPONENTS Interpreter)
+
 ### INSTALL ###
 
 install(FILES ${TRANSLATION_FILES} DESTINATION "/opt/traintastic/translations")

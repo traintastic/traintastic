@@ -3,6 +3,7 @@ include(../shared/traintastic.cmake)
 project(traintastic-client VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic client")
 include(GNUInstallDirs)
 if(NOT TRAINTASTIC_CS)
+  find_package(Python3 COMPONENTS Interpreter)
   include(../shared/translations/traintastic-lang.cmake)
 endif()
 
