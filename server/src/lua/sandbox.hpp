@@ -30,6 +30,7 @@
 #include <limits>
 #include <chrono>
 #include <cassert>
+#include <vector>
 #include <lua.hpp>
 
 class OutputController;
