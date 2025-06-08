@@ -26,6 +26,7 @@
 #include "../core/objectproperty.tpp"
 #include "../hardware/decoder/list/decoderlist.hpp"
 #include "../train/train.hpp"
+#include "../train/trainvehiclelist.hpp"
 #include "../utils/displayname.hpp"
 #include "../vehicle/rail/railvehicle.hpp"
 #include "../world/world.hpp"
@@ -87,6 +88,36 @@ std::error_code HardwareThrottle::acquire(DecoderProtocol protocol, uint16_t add
     }
   }
   return make_error_code(ErrorCode::CanNotActivateTrain);
+}
+
+const std::shared_ptr<Decoder> HardwareThrottle::getDecoder(DecoderProtocol protocol, uint16_t address)
+{
+  static const std::shared_ptr<Decoder> noDecoder;
+
+  if(!acquired())
+  {
+    return noDecoder;
+  }
+
+  // Find matching protocol and address:
+  for(const auto& vehicle : *train->vehicles)
+  {
+    if(vehicle->decoder && vehicle->decoder->protocol == protocol && vehicle->decoder->address == address)
+    {
+      return vehicle->decoder.value();
+    }
+  }
+
+  // Find matching addess, ignore protocol:
+  for(const auto& vehicle : *train->vehicles)
+  {
+    if(vehicle->decoder && vehicle->decoder->address == address)
+    {
+      return vehicle->decoder.value();
+    }
+  }
+
+  return noDecoder;
 }
 
 void HardwareThrottle::destroying()
