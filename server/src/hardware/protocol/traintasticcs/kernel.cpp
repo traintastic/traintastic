@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +29,7 @@
 #include "../../interface/interface.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
-#include "../../throttle/hardwarethrottle.hpp"
+#include "../../../throttle/hardwarethrottle.hpp"
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../core/eventloop.hpp"
@@ -245,23 +245,25 @@ void Kernel::receive(const Message& message)
         {
           if(auto throttle = getThrottle(setSpeedDirection.channel, setSpeedDirection.throttleId(), setSpeedDirection.protocol(), setSpeedDirection.address()))
           {
-            throttle->emergencyStop = (setSpeedDirection.eStop != 0);
-
-            if(setSpeedDirection.setSpeedStep)
+            if(setSpeedDirection.eStop != 0)
+            {
+              throttle->emergencyStop();
+            }
+            else if(setSpeedDirection.setSpeedStep)
             {
               if(setSpeedDirection.speedStep <= setSpeedDirection.speedSteps && setSpeedDirection.speedSteps != 0)
               {
-                throttle->throttle = static_cast<float>(setSpeedDirection.speedStep) / static_cast<float>(setSpeedDirection.speedSteps);
+                throttle->setSpeedRatio(static_cast<double>(setSpeedDirection.speedStep) / static_cast<double>(setSpeedDirection.speedSteps));
               }
               else
               {
-                throttle->throttle = Throttle::throttleStop;
+                throttle->setSpeedRatio(0.0);
               }
             }
 
             if(setSpeedDirection.setDirection)
             {
-              throttle->direction = (setSpeedDirection.direction != 0) ? Direction::Forward : Direction::Reverse;
+              throttle->setDirection((setSpeedDirection.direction != 0) ? Direction::Forward : Direction::Reverse);
             }
           }
         });
@@ -276,12 +278,15 @@ void Kernel::receive(const Message& message)
           const auto& setFunctions = *reinterpret_cast<const ThrottleSetFunctions*>(buffer.data());
           if(auto throttle = getThrottle(setFunctions.channel, setFunctions.throttleId(), setFunctions.protocol(), setFunctions.address()))
           {
-            for(uint8_t i = 0; i < setFunctions.functionCount(); ++i)
+            if(const auto& decoder = throttle->getDecoder(setFunctions.protocol(), setFunctions.address()))
             {
-              auto [number, value] = setFunctions.function(i);
-              if(auto function = throttle->getFunction(number))
+              for(uint8_t i = 0; i < setFunctions.functionCount(); ++i)
               {
-                function->value = value;
+                auto [number, value] = setFunctions.function(i);
+                if(auto function = decoder->getFunction(number))
+                {
+                  function->value = value;
+                }
               }
             }
           }
@@ -466,15 +471,15 @@ const std::shared_ptr<HardwareThrottle>& Kernel::getThrottle(ThrottleChannel cha
     {
       throttleInfo->throttle->release();
     }
-    auto result = throttleInfo->throttle->acquire(protocol, address, steal);
-    if(result == Throttle::AcquireResult::Success)
+    auto ec = throttleInfo->throttle->acquire(protocol, address, steal);
+    if(!ec)
     {
       throttleInfo->protocol = protocol;
       throttleInfo->address = address;
     }
     else
     {
-      LOG_DEBUG("acquire failed: %1", (int)result);
+      LOG_DEBUG("acquire failed: %1", ec.message());
       return nullThrottle;
     }
   }

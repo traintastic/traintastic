@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@
  */
 
 #include "simulationiohandler.hpp"
-#include <tcb/span.hpp>
+#include <span>
 #include "../kernel.hpp"
 #include "../messages.hpp"
 #include "../config.hpp"
@@ -160,7 +160,7 @@ bool SimulationIOHandler::send(const Message& message)
 
 void SimulationIOHandler::inputSimulateChange(InputChannel channel, uint16_t address, SimulateInputAction action)
 {
-  tcb::span<InputState> states;
+  std::span<InputState> states;
 
   switch(channel)
   {

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +27,7 @@
 #include "../protocol/traintasticcs/iohandler/simulationiohandler.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../input/list/inputlistcolumn.hpp"
-#include "../throttle/list/throttlelistcolumn.hpp"
+#include "../../throttle/list/throttlelistcolumn.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../core/objectproperty.tpp"
@@ -37,7 +37,7 @@
 #include "../../world/world.hpp"
 
 static constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
-static constexpr auto throttleListColumns = ThrottleListColumn::Id | ThrottleListColumn::Name;
+static constexpr auto throttleListColumns = ThrottleListColumn::Name;
 
 CREATE_IMPL(TraintasticCSInterface)
 
