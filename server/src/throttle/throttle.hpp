@@ -78,6 +78,7 @@ class Throttle : public NonPersistentObject
     bool emergencyStop();
     bool setDirection(Direction value);
     bool setSpeed(double value, SpeedUnit unit);
+    bool setSpeedRatio(double ratio);
     bool setTargetSpeed(double value, SpeedUnit unit);
     bool slower(bool immediate);
     bool faster(bool immediate);

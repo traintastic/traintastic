@@ -176,6 +176,16 @@ bool Throttle::setSpeed(double value, SpeedUnit unit)
   return false;
 }
 
+bool Throttle::setSpeedRatio(double ratio)
+{
+  if(acquired())
+  {
+    train->emergencyStop = false;
+    return !train->setSpeed(*this, std::clamp(ratio, 0.0, 1.0) * Attributes::getMax(train->speed));
+  }
+  return false;
+}
+
 bool Throttle::setTargetSpeed(double value, SpeedUnit unit)
 {
   if(acquired())
