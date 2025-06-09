@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,6 +41,7 @@
 #include "throttlefunctionbutton.hpp"
 #include "throttlestopbutton.hpp"
 #include "speedometerwidget.hpp"
+#include "sliderwidget.hpp"
 
 ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
   : QWidget(parent)
@@ -50,6 +51,7 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
   , m_nameLabel{new QLabel("", this)}
   , m_functionGrid{new QGridLayout()}
   , m_speedoMeter{new SpeedoMeterWidget(this)}
+  , m_speedSlider{new SliderWidget(Qt::Vertical, this)}
   , m_stopButton{new ThrottleStopButton(m_object, this)}
   , m_reverseButton{new ThrottleDirectionButton(m_object, Direction::Reverse, this)}
   , m_forwardButton{new ThrottleDirectionButton(m_object, Direction::Forward, this)}
@@ -72,6 +74,9 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
     m_speedoMeter->setSpeed(m_speed->toDouble());
     m_speedoMeter->setSpeedTarget(m_throttleSpeed->toDouble());
 
+    m_speedSlider->setMaximum(m_speed->getAttributeDouble(AttributeName::Max, 0));
+    m_speedSlider->setValue(m_throttleSpeed->toDouble());
+
     connect(m_speed, &AbstractProperty::valueChangedDouble, this,
       [this](double value)
       {
@@ -84,6 +89,7 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
         {
           case AttributeName::Max:
             m_speedoMeter->setSpeedMax(value.toDouble());
+            m_speedSlider->setMaximum(value.toDouble());
             break;
 
           default:
@@ -94,6 +100,12 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
       [this](double value)
       {
         m_speedoMeter->setSpeedTarget(value);
+        m_speedSlider->setValue(value);
+      });
+    connect(m_speedSlider, &SliderWidget::valueChanged, this,
+      [this](float value)
+      {
+        m_throttleSpeed->setValueDouble(value);
       });
   }
   else if((m_throttle = m_object->getProperty("throttle"))) // decoder
@@ -102,10 +114,14 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
     m_speedoMeter->setSpeedMax(m_throttle->getAttributeDouble(AttributeName::Max, 0) * 100);
     m_speedoMeter->setSpeed(m_throttle->toDouble() * 100);
 
+    m_speedSlider->setMaximum(m_throttle->getAttributeDouble(AttributeName::Max, 0) * 100);
+    m_speedSlider->setValue(m_throttle->toDouble() * 100);
+
     connect(m_throttle, &AbstractProperty::valueChangedDouble, this,
       [this](double value)
       {
         m_speedoMeter->setSpeed(value * 100);
+        m_speedSlider->setValue(value * 100);
       });
     connect(m_throttle, &InterfaceItem::attributeChanged, this,
       [this](AttributeName name, const QVariant& value)
@@ -114,11 +130,17 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
         {
           case AttributeName::Max:
             m_speedoMeter->setSpeedMax(value.toDouble() * 100);
+            m_speedSlider->setMaximum(value.toDouble() * 100);
             break;
 
           default:
             break;
         }
+      });
+    connect(m_speedSlider, &SliderWidget::valueChanged, this,
+      [this](float value)
+      {
+        m_throttle->setValueDouble(value);
       });
   }
 
@@ -183,6 +205,7 @@ ThrottleWidget::ThrottleWidget(ObjectPtr object, QWidget* parent)
   auto* l = new QHBoxLayout();
   l->addLayout(left);
   l->addLayout(right);
+  l->addWidget(m_speedSlider);
   setLayout(l);
 }
 

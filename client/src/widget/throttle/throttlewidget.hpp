@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 class QLabel;
 class QGridLayout;
 class SpeedoMeterWidget;
+class SliderWidget;
 class ThrottleStopButton;
 class ThrottleDirectionButton;
 class ThrottleFunctionButton;
@@ -54,6 +55,7 @@ class ThrottleWidget final : public QWidget
     QGridLayout* m_functionGrid;
     std::list<ThrottleFunctionButton*> m_functionButtons;
     SpeedoMeterWidget* m_speedoMeter;
+    SliderWidget* m_speedSlider;
     ThrottleStopButton* m_stopButton;
     ThrottleDirectionButton* m_reverseButton;
     ThrottleDirectionButton* m_forwardButton;
