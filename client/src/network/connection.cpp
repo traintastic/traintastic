@@ -804,8 +804,17 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
                 const qlonglong value = message->read<qlonglong>();
                 static_cast<Property*>(property)->m_value = value;
                 if(valueType == ValueType::Integer)
+                {
                   if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
-                    unitProperty->m_unitValue = message->read<qint64>();
+                  {
+                    const auto unit = message->read<qint64>();
+                    if(unitProperty->m_unitValue != unit)
+                    {
+                      unitProperty->m_unitValue = unit;
+                      emit unitProperty->unitChanged();
+                    }
+                  }
+                }
                 emit property->valueChanged();
                 emit property->valueChangedInt64(value);
                 if(value >= std::numeric_limits<int>::min() && value <= std::numeric_limits<int>::max())
@@ -817,7 +826,14 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
                 const double value = message->read<double>();
                 static_cast<Property*>(property)->m_value = value;
                 if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
-                  unitProperty->m_unitValue = message->read<qint64>();
+                {
+                  const auto unit = message->read<qint64>();
+                  if(unitProperty->m_unitValue != unit)
+                  {
+                    unitProperty->m_unitValue = unit;
+                    emit unitProperty->unitChanged();
+                  }
+                }
                 emit property->valueChanged();
                 emit property->valueChangedDouble(value);
                 break;
