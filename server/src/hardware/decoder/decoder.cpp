@@ -80,7 +80,8 @@ Decoder::Decoder(World& world, std::string_view _id) :
   emergencyStop{this, "emergency_stop", false, PropertyFlags::ReadWrite,
     [this](const bool& /*value*/)
     {
-      changed(DecoderChangeFlags::EmergencyStop);
+      throttle.setValueInternal(0.0f);
+      changed(DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle);
       updateEditable();
     }},
   direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite,
