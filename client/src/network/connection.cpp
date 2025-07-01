@@ -220,6 +220,25 @@ void Connection::serverLog(ServerLogTableModel& model, bool enable)
   send(request);
 }
 
+int Connection::createObject(const QString& classId, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback)
+{
+  std::unique_ptr<Message> request{Message::newRequest(Message::Command::CreateObject)};
+  request->write(classId.toLatin1());
+  send(request,
+    [this, callback](const std::shared_ptr<Message> message)
+    {
+      if(!message->isError())
+      {
+        callback(readObject(*message), {});
+      }
+      else
+      {
+        callback({}, *message);
+      }
+    });
+  return request->requestId();
+}
+
 int Connection::getObject(const QString& id, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::GetObject)};
@@ -510,7 +529,7 @@ ObjectPtr Connection::readObject(const Message& message)
       }
       else
       {
-        p = createObject(shared_from_this(), handle, QString::fromLatin1(message.read<QByteArray>()));
+        p = ::createObject(shared_from_this(), handle, QString::fromLatin1(message.read<QByteArray>()));
         m_handleCounter[handle] = 1;
       }
 
