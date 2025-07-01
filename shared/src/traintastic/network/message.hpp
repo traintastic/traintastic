@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -212,6 +212,30 @@ class Message
 
     ~Message()
     {
+    }
+
+    inline std::unique_ptr<Message> response(size_t capacity = 0) const
+    {
+      assert(isRequest());
+      return newResponse(command(), requestId(), capacity);
+    }
+
+    inline std::unique_ptr<Message> errorResponse(LogMessage code) const
+    {
+      assert(isRequest());
+      return newErrorResponse(command(), requestId(), code);
+    }
+
+    inline std::unique_ptr<Message> errorResponse(LogMessage code, std::string_view arg) const
+    {
+      assert(isRequest());
+      return newErrorResponse(command(), requestId(), code, arg);
+    }
+
+    inline std::unique_ptr<Message> errorResponse(LogMessage code, const std::vector<std::string>& args) const
+    {
+      assert(isRequest());
+      return newErrorResponse(command(), requestId(), code, args);
     }
 
     inline Command command() const { return header().command; }
