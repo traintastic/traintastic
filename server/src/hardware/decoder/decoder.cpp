@@ -104,7 +104,7 @@ Decoder::Decoder(World& world, std::string_view _id) :
     }},
   vehicle{this, "vehicle", nullptr, PropertyFlags::ReadOnly},
   throttle{this, "throttle", throttleMin, PropertyFlags::ReadWrite,
-    [this](const double& /*value*/)
+    [this](const float& /*value*/)
     {
       changed(DecoderChangeFlags::Throttle);
       updateEditable();
