@@ -138,6 +138,7 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
     [[nodiscard]] int getObject(const QString& id, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
     [[nodiscard]] int getObject(const ObjectProperty& property, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
     [[nodiscard]] int getObject(const ObjectVectorProperty& property, uint32_t index, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
+    [[nodiscard]] int getObjects(const Object& objectList, uint32_t startIndex, uint32_t endIndex, std::function<void(const std::vector<ObjectPtr>&, std::optional<const Error>)> callback);
     [[nodiscard]] int getObjects(const ObjectVectorProperty& property, uint32_t startIndex, uint32_t endIndex, std::function<void(const std::vector<ObjectPtr>&, std::optional<const Error>)> callback);
     void releaseObject(Object* object);
 

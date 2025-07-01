@@ -83,6 +83,8 @@ class Message
       ObjectGetObjectVectorPropertyObject = 45,
       ObjectSetVectorProperty = 46,
 
+      ObjectListGetObjects = 47,
+
       Discover = 255,
     };
 

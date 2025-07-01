@@ -281,6 +281,31 @@ int Connection::getObject(const ObjectVectorProperty& property, uint32_t index, 
   return request->requestId();
 }
 
+int Connection::getObjects(const Object& objectList, uint32_t startIndex, uint32_t endIndex, std::function<void(const std::vector<ObjectPtr>&, std::optional<const Error>)> callback)
+{
+  std::unique_ptr<Message> request{Message::newRequest(Message::Command::ObjectListGetObjects)};
+  request->write(objectList.handle());
+  request->write(startIndex);
+  request->write(endIndex);
+  send(request,
+    [this, size=(endIndex - startIndex + 1), callback](const std::shared_ptr<Message> message)
+    {
+      if(!message->isError())
+      {
+        std::vector<ObjectPtr> objects;
+        objects.reserve(size);
+        for(uint32_t i = 0; i < size; i++)
+          objects.emplace_back(readObject(*message));
+        callback(objects, {});
+      }
+      else
+      {
+        callback({}, *message);
+      }
+    });
+  return request->requestId();
+}
+
 int Connection::getObjects(const ObjectVectorProperty& property, uint32_t startIndex, uint32_t endIndex, std::function<void(const std::vector<ObjectPtr>&, std::optional<const Error>)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::ObjectGetObjectVectorPropertyObject)};
