@@ -288,6 +288,12 @@ class Message
         memcpy(value.data(), p + sizeof(Length), length);
         m_readPosition += length;
       }
+      else if constexpr(std::is_same_v<T, std::string_view>)
+      {
+        const Length length = read<Length>();
+        value = std::string_view(reinterpret_cast<const char*>(p + sizeof(Length)), static_cast<size_t>(length));
+        m_readPosition += length;
+      }
       else if constexpr(std::is_trivially_copyable_v<T>)
       {
         memcpy(&value, p, sizeof(value));
