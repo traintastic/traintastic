@@ -64,6 +64,8 @@ class Throttle : public NonPersistentObject
     void destroying() override;
     virtual void addToList();
 
+    virtual void trainChanged() {}
+
   public:
     Property<std::string> name;
     ObjectProperty<Train> train;

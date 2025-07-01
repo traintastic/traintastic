@@ -128,6 +128,7 @@ std::error_code Throttle::acquire(const std::shared_ptr<Train>& acquireTrain, bo
     Log::log(m_logId, LogMessage::I3001_THROTTLE_X_ACQUIRED_TRAIN_X, name.value(), train->name.value());
   }
 
+  trainChanged();
   fireEvent(onAcquire, shared_ptr<Throttle>(), acquireTrain);
 
   return {};
@@ -148,6 +149,7 @@ void Throttle::release(bool stopIt)
   train->release(*this);
   train.setValueInternal(nullptr);
 
+  trainChanged();
   fireEvent(onRelease, shared_ptr<Throttle>());
 }
 
