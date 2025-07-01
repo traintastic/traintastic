@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023-2024 Reinder Feenstra
+ * Copyright (C) 2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,6 +86,8 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
       }}
 {
   const auto& world = getWorld(parent());
+
+  m_interfaceItems.add(length);
 
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, false);
