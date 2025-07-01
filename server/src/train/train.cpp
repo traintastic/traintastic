@@ -150,6 +150,8 @@ Train::Train(World& world, std::string_view _id) :
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
   mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+  hasThrottle{this, "has_throttle", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
+  throttleName{this, "throttle_name", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , onBlockAssigned{*this, "on_block_assigned", EventFlags::Scriptable}
@@ -201,6 +203,12 @@ Train::Train(World& world, std::string_view _id) :
 
   Attributes::addValues(mode, trainModeValues);
   m_interfaceItems.add(mode);
+
+  Attributes::addObjectEditor(hasThrottle, false);
+  m_interfaceItems.add(hasThrottle);
+
+  Attributes::addObjectEditor(throttleName, false);
+  m_interfaceItems.add(throttleName);
 
   Attributes::addObjectEditor(blocks, false);
   m_interfaceItems.add(blocks);
@@ -455,15 +463,6 @@ bool Train::setTrainActive(bool val)
   return true;
 }
 
-std::string Train::throttleName() const
-{
-  if(m_throttle)
-  {
-    return m_throttle->name;
-  }
-  return {};
-}
-
 std::error_code Train::acquire(Throttle& throttle, bool steal)
 {
   if(m_throttle)
@@ -490,6 +489,8 @@ std::error_code Train::acquire(Throttle& throttle, bool steal)
   }
   assert(!m_throttle);
   m_throttle = throttle.shared_ptr<Throttle>();
+  hasThrottle.setValueInternal(true);
+  throttleName.setValueInternal(m_throttle->name);
   return {};
 }
 
@@ -500,6 +501,8 @@ std::error_code Train::release(Throttle& throttle)
     return make_error_code(ErrorCode::InvalidThrottle);
   }
   m_throttle.reset();
+  hasThrottle.setValueInternal(false);
+  throttleName.setValueInternal("");
   if(isStopped && blocks.empty())
   {
     active = false; // deactive train if it is stopped and not assigned to a block

@@ -102,8 +102,8 @@ bool Throttle::acquired() const
 std::error_code Throttle::acquire(const std::shared_ptr<Train>& acquireTrain, bool steal)
 {
   assert(acquireTrain);
-  const auto stole = steal && acquireTrain->hasThrottle();
-  const std::string stoleFrom = stole ? acquireTrain->throttleName() : std::string{};
+  const auto stole = steal && acquireTrain->hasThrottle.value();
+  const std::string stoleFrom = stole ? acquireTrain->throttleName.value() : std::string{};
   const auto ec = acquireTrain->acquire(*this, steal);
   if(ec)
   {
