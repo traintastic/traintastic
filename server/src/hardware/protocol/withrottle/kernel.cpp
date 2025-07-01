@@ -506,7 +506,7 @@ const std::shared_ptr<HardwareThrottle>& Kernel::getThottle(IOHandler::ClientId 
       auto it = multiThrottles.insert(std::move(n)).position;
       const auto& throttle = it->second.throttle;
       throttle->name.setValueInternal(buildName(itClient->second.name, multiThrottleId));
-      throttle->released.connect(std::bind(&Kernel::throttleReleased, this, clientId, multiThrottleId));
+      throttle->onRelease.connect(std::bind_front(&Kernel::throttleReleased, this, clientId, multiThrottleId));
       return throttle;
     }
 
@@ -518,7 +518,7 @@ const std::shared_ptr<HardwareThrottle>& Kernel::getThottle(IOHandler::ClientId 
       assert(success);
       const auto& throttle = it->second.throttle;
       throttle->name.setValueInternal(buildName(itClient->second.name, multiThrottleId));
-      throttle->released.connect(std::bind(&Kernel::throttleReleased, this, clientId, multiThrottleId));
+      throttle->onRelease.connect(std::bind_front(&Kernel::throttleReleased, this, clientId, multiThrottleId));
       return throttle;
     }
   }
@@ -725,7 +725,7 @@ void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottl
   }
 }
 
-void Kernel::throttleReleased(IOHandler::ClientId clientId, char multiThrottleId)
+void Kernel::throttleReleased(IOHandler::ClientId clientId, char multiThrottleId, const std::shared_ptr<Throttle>& /*throttle*/)
 {
   assert(isEventLoopThread());
 

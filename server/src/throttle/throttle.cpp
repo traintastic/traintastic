@@ -75,6 +75,8 @@ Throttle::Throttle(World& world, std::string_view logId)
   , m_logId{logId}
   , name{this, "name", std::string(logId), PropertyFlags::ReadWrite | PropertyFlags::NoStore | PropertyFlags::ScriptReadWrite}
   , train{this, "train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , onAcquire{*this, "on_acquire", EventFlags::Scriptable | EventFlags::Public}
+  , onRelease{*this, "on_release", EventFlags::Scriptable | EventFlags::Public}
 {
   Attributes::addDisplayName(name, DisplayName::Object::name);
   m_interfaceItems.add(name);
@@ -126,6 +128,8 @@ std::error_code Throttle::acquire(const std::shared_ptr<Train>& acquireTrain, bo
     Log::log(m_logId, LogMessage::I3001_THROTTLE_X_ACQUIRED_TRAIN_X, name.value(), train->name.value());
   }
 
+  fireEvent(onAcquire, shared_ptr<Throttle>(), acquireTrain);
+
   return {};
 }
 
@@ -144,7 +148,7 @@ void Throttle::release(bool stopIt)
   train->release(*this);
   train.setValueInternal(nullptr);
 
-  released();
+  fireEvent(onRelease, shared_ptr<Throttle>());
 }
 
 bool Throttle::emergencyStop()

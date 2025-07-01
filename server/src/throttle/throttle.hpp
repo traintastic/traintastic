@@ -27,6 +27,7 @@
 #include <unordered_set>
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/speedunit.hpp>
+#include "../core/event.hpp"
 #include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
 #include "../core/objectvectorproperty.hpp"
@@ -64,10 +65,10 @@ class Throttle : public NonPersistentObject
     virtual void addToList();
 
   public:
-    boost::signals2::signal<void()> released;
-
     Property<std::string> name;
     ObjectProperty<Train> train;
+    Event<const std::shared_ptr<Throttle>&, const std::shared_ptr<Train>&> onAcquire;
+    Event<const std::shared_ptr<Throttle>&> onRelease;
 
     ~Throttle() override;
 

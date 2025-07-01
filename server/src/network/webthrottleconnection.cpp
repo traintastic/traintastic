@@ -445,8 +445,8 @@ const std::shared_ptr<WebThrottle>& WebThrottleConnection::getThrottle(uint32_t 
           m_throttleConnections.erase(throttleId);
           m_throttles.erase(throttleId);
         }));
-      m_throttleConnections.emplace(throttleId, it->second->released.connect(
-        [this, throttleId]()
+      m_throttleConnections.emplace(throttleId, it->second->onRelease.connect(
+        [this, throttleId](const std::shared_ptr<Throttle>& /*throttle*/)
         {
           released(throttleId);
         }));
