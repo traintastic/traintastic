@@ -24,6 +24,7 @@
 #include <QMouseEvent>
 #include <QSvgRenderer>
 #include <QFile>
+#include <QtMath>
 #include <traintastic/enum/decoderfunctiontype.hpp>
 #include <traintastic/enum/decoderfunctionfunction.hpp>
 #include "throttlestyle.hpp"
