@@ -79,6 +79,8 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(simulator, notes);
 }
 
+ECoSInterface::~ECoSInterface() = default;
+
 std::span<const DecoderProtocol> ECoSInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 4> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong, DecoderProtocol::Motorola, DecoderProtocol::Selectrix};

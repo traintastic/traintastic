@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/throttle/list/throttlelist.cpp
+ * server/src/throttle/list/throttlelist.cpp
  *
  * This file is part of the traintastic source code.
  *

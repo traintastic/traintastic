@@ -164,6 +164,8 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   updateVisible();
 }
 
+XpressNetInterface::~XpressNetInterface() = default;
+
 std::span<const DecoderProtocol> XpressNetInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};

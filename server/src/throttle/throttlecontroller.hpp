@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/throttle/list/throttlelisttablemodel.hpp
+ * server/src/throttle/throttlecontroller.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,35 +20,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_THROTTLE_LIST_THROTTLELISTTABLEMODEL_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_THROTTLE_LIST_THROTTLELISTTABLEMODEL_HPP
+#ifndef TRAINTASTIC_SERVER_THROTTLE_THROTTLECONTROLLER_HPP
+#define TRAINTASTIC_SERVER_THROTTLE_THROTTLECONTROLLER_HPP
 
-#include "../../../core/objectlisttablemodel.hpp"
-#include "throttlelistcolumn.hpp"
-#include "../throttle.hpp"
+#include "../core/objectproperty.hpp"
 
+#ifdef interface
+  #undef interface // interface is defined in combaseapi.h
+#endif
+
+class IdObject;
+class Throttle;
 class ThrottleList;
+enum class ThrottleListColumn;
 
-class ThrottleListTableModel : public ObjectListTableModel<Throttle>
+class ThrottleController
 {
-  friend class ThrottleList;
-
   private:
-    std::vector<ThrottleListColumn> m_columns;
-
-    void changed(uint32_t row, ThrottleListColumn column);
+    IdObject& interface();
 
   protected:
-    void propertyChanged(BaseProperty& property, uint32_t row) final;
+    ThrottleController(IdObject& interface, ThrottleListColumn columns);
 
   public:
-    CLASS_ID("throttle_list_table_model")
+    ObjectProperty<ThrottleList> throttles;
 
-    static bool isListedProperty(std::string_view name);
+    virtual ~ThrottleController();
 
-    ThrottleListTableModel(ThrottleList& list);
+    /**
+     *
+     * \return \c true if added, \c false otherwise.
+     */
+    [[nodiscard]] bool addThrottle(Throttle& throttle);
 
-    std::string getText(uint32_t column, uint32_t row) const final;
+    /**
+     *
+     * \return \c true if removed, \c false otherwise.
+     */
+    [[nodiscard]] bool removeThrottle(Throttle& throttle);
 };
 
 #endif

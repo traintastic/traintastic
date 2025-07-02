@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/throttle/webthrottle.cpp
+ * server/src/throttle/webthrottle.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -21,31 +21,16 @@
  */
 
 #include "webthrottle.hpp"
-#include "../../world/world.hpp"
+#include "../world/world.hpp"
 
 std::shared_ptr<WebThrottle> WebThrottle::create(World& world)
 {
-  return create(world, world.getUniqueId(defaultId));
-}
-
-std::shared_ptr<WebThrottle> WebThrottle::create(World& world, std::string_view objectId)
-{
-  auto obj = std::make_shared<WebThrottle>(world, objectId);
-  obj->addToWorld();
+  auto obj = std::make_shared<WebThrottle>(world, getUniqueLogId("webthrottle"));
+  obj->addToList();
   return obj;
 }
 
-WebThrottle::WebThrottle(World& world, std::string_view objectId)
-  : Throttle(world, objectId)
+WebThrottle::WebThrottle(World& world, std::string_view logId)
+  : Throttle(world, logId)
 {
-}
-
-void WebThrottle::load(WorldLoader& /*loader*/, const nlohmann::json& /*data*/)
-{
-  // do not load
-}
-
-void WebThrottle::save(WorldSaver& /*saver*/, nlohmann::json& /*data*/, nlohmann::json& /*state*/) const
-{
-  // do not save
 }

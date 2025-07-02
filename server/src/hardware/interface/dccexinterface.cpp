@@ -132,6 +132,8 @@ DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
   updateVisible();
 }
 
+DCCEXInterface::~DCCEXInterface() = default;
+
 std::span<const DecoderProtocol> DCCEXInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};

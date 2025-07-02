@@ -78,6 +78,7 @@ class ECoSInterface final
     ObjectProperty<InterfaceSimulatorSettings> simulator;
 
     ECoSInterface(World& world, std::string_view _id);
+    ~ECoSInterface() final;
 
     // DecoderController:
     std::span<const DecoderProtocol> decoderProtocols() const final;

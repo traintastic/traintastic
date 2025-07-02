@@ -126,6 +126,8 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   updateEnabled();
 }
 
+LocoNetInterface::~LocoNetInterface() = default;
+
 bool LocoNetInterface::send(std::span<uint8_t> packet)
 {
   if(m_kernel)

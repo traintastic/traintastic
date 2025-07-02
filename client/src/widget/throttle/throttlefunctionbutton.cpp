@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,11 +26,13 @@
 #include <QSvgRenderer>
 #include <traintastic/enum/decoderfunctiontype.hpp>
 #include <traintastic/enum/decoderfunctionfunction.hpp>
+#include "throttlestyle.hpp"
 #include "../../network/object.hpp"
 #include "../../network/abstractproperty.hpp"
 
 ThrottleFunctionButton::ThrottleFunctionButton(ObjectPtr object, QWidget* parent)
-  : AbstractThrottleButton(std::move(object), parent)
+  : ThrottleButton(parent)
+  , m_object{std::move(object)}
   , m_number{m_object->getProperty("number")}
   , m_name{m_object->getProperty("name")}
   , m_type{m_object->getProperty("type")}
@@ -52,6 +54,10 @@ ThrottleFunctionButton::ThrottleFunctionButton(ObjectPtr object, QWidget* parent
   setToolTip(m_name->toString());
   setText("F" + QString::number(m_number->toInt()));
   functionOrValueChanged();
+
+  connect(this, &ThrottleButton::clicked, this, &ThrottleFunctionButton::click);
+  connect(this, &ThrottleButton::pressed, this, &ThrottleFunctionButton::press);
+  connect(this, &ThrottleButton::released, this, &ThrottleFunctionButton::release);
 }
 
 int ThrottleFunctionButton::number() const
@@ -86,26 +92,9 @@ void ThrottleFunctionButton::release()
 void ThrottleFunctionButton::functionOrValueChanged()
 {
   const bool active = m_value->toBool();
-  setTextColor(active ? Qt::white : Qt::gray);
+  setColor(active ? ThrottleStyle::buttonActiveColor : ThrottleStyle::buttonColor);
   setResource(
-    QString(":/dark/decoder_function.")
+    QString(":/light/decoder_function.")
       .append(EnumValues<DecoderFunctionFunction>::value.at(m_function->toEnum<DecoderFunctionFunction>()))
-      .append(active ? ".on" : ".off")
       .append(".svg"));
-}
-
-void ThrottleFunctionButton::mousePressEvent(QMouseEvent* event)
-{
-  if(m_type->toEnum<DecoderFunctionType>() == DecoderFunctionType::Hold)
-    press();
-  else
-    AbstractThrottleButton::mousePressEvent(event);
-}
-
-void ThrottleFunctionButton::mouseReleaseEvent(QMouseEvent* event)
-{
-  if(m_type->toEnum<DecoderFunctionType>() == DecoderFunctionType::Hold)
-    release();
-  else
-    AbstractThrottleButton::mouseReleaseEvent(event);
 }

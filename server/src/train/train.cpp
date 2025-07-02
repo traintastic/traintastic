@@ -21,13 +21,13 @@
  */
 
 #include "train.hpp"
-#include "trainerror.hpp"
 #include "trainlist.hpp"
 #include "trainvehiclelist.hpp"
 #include "../world/world.hpp"
 #include "trainblockstatus.hpp"
 #include "trainlisttablemodel.hpp"
 #include "../core/attributes.hpp"
+#include "../core/errorcode.hpp"
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
 #include "../core/objectvectorproperty.tpp"
@@ -35,7 +35,7 @@
 #include "../board/tile/rail/blockrailtile.hpp"
 #include "../vehicle/rail/poweredrailvehicle.hpp"
 #include "../hardware/decoder/decoder.hpp"
-#include "../hardware/throttle/throttle.hpp"
+#include "../throttle/throttle.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
 
@@ -150,6 +150,8 @@ Train::Train(World& world, std::string_view _id) :
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
   mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+  hasThrottle{this, "has_throttle", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
+  throttleName{this, "throttle_name", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , onBlockAssigned{*this, "on_block_assigned", EventFlags::Scriptable}
@@ -202,6 +204,12 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addValues(mode, trainModeValues);
   m_interfaceItems.add(mode);
 
+  Attributes::addObjectEditor(hasThrottle, false);
+  m_interfaceItems.add(hasThrottle);
+
+  Attributes::addObjectEditor(throttleName, false);
+  m_interfaceItems.add(throttleName);
+
   Attributes::addObjectEditor(blocks, false);
   m_interfaceItems.add(blocks);
 
@@ -242,6 +250,12 @@ void Train::loaded()
 
   Attributes::setEnabled(lob, overrideLength);
   Attributes::setEnabled(weight, overrideWeight);
+
+  auto self = shared_ptr<Train>();
+  for(auto& vehicle : *vehicles)
+  {
+    vehicle->trains.appendInternal(self);
+  }
 
   vehiclesChanged();
 }
@@ -449,22 +463,13 @@ bool Train::setTrainActive(bool val)
   return true;
 }
 
-std::string Train::throttleName() const
-{
-  if(m_throttle)
-  {
-    return m_throttle->name;
-  }
-  return {};
-}
-
 std::error_code Train::acquire(Throttle& throttle, bool steal)
 {
   if(m_throttle)
   {
     if(!steal)
     {
-      return make_error_code(TrainError::AlreadyAcquired);
+      return make_error_code(ErrorCode::AlreadyAcquired);
     }
     m_throttle->release();
   }
@@ -479,11 +484,13 @@ std::error_code Train::acquire(Throttle& throttle, bool steal)
     }
     if(!active)
     {
-      return make_error_code(TrainError::CanNotActivateTrain);
+      return make_error_code(ErrorCode::CanNotActivateTrain);
     }
   }
   assert(!m_throttle);
   m_throttle = throttle.shared_ptr<Throttle>();
+  hasThrottle.setValueInternal(true);
+  throttleName.setValueInternal(m_throttle->name);
   return {};
 }
 
@@ -491,9 +498,11 @@ std::error_code Train::release(Throttle& throttle)
 {
   if(m_throttle.get() != &throttle)
   {
-    return make_error_code(TrainError::InvalidThrottle);
+    return make_error_code(ErrorCode::InvalidThrottle);
   }
   m_throttle.reset();
+  hasThrottle.setValueInternal(false);
+  throttleName.setValueInternal("");
   if(isStopped && blocks.empty())
   {
     active = false; // deactive train if it is stopped and not assigned to a block
@@ -505,7 +514,7 @@ std::error_code Train::setSpeed(Throttle& throttle, double value)
 {
   if(m_throttle.get() != &throttle)
   {
-    return make_error_code(TrainError::InvalidThrottle);
+    return make_error_code(ErrorCode::InvalidThrottle);
   }
   assert(active);
 
@@ -529,7 +538,7 @@ std::error_code Train::setTargetSpeed(Throttle& throttle, double value)
 {
   if(m_throttle.get() != &throttle)
   {
-    return make_error_code(TrainError::InvalidThrottle);
+    return make_error_code(ErrorCode::InvalidThrottle);
   }
   assert(active);
   throttleSpeed.setValue(std::clamp(value, Attributes::getMin(throttleSpeed), Attributes::getMax(throttleSpeed)));
@@ -540,13 +549,13 @@ std::error_code Train::setDirection(Throttle& throttle, Direction value)
 {
   if(m_throttle.get() != &throttle)
   {
-    return make_error_code(TrainError::InvalidThrottle);
+    return make_error_code(ErrorCode::InvalidThrottle);
   }
   if(direction != value)
   {
     if(!isStopped)
     {
-      return make_error_code(TrainError::TrainMustBeStoppedToChangeDirection);
+      return make_error_code(ErrorCode::TrainMustBeStoppedToChangeDirection);
     }
     assert(active);
     direction = value;

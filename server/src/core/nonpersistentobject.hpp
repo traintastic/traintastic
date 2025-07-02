@@ -1,9 +1,8 @@
 /**
- * client/src/widget/throttle/throttlestopbutton.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,24 +19,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_THROTTLE_THROTTLESTOPBUTTON_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_THROTTLE_THROTTLESTOPBUTTON_HPP
+#ifndef TRAINTASTIC_SERVER_CORE_NONPERSISTENTOBJECT_HPP
+#define TRAINTASTIC_SERVER_CORE_NONPERSISTENTOBJECT_HPP
 
-#include "abstractthrottlebutton.hpp"
+#include "object.hpp"
 
-class AbstractProperty;
-
-class ThrottleStopButton : public AbstractThrottleButton
+/**
+ * \brief Base class for objects that are never stored
+ */
+class NonPersistentObject : public Object
 {
-  private:
-    AbstractProperty* m_throttle;
-    AbstractProperty* m_throttleSpeed;
-    AbstractProperty* m_emergencyStop;
-
   public:
-    ThrottleStopButton(ObjectPtr object, QWidget* parent = nullptr);
-
-    void click() final;
+    std::string getObjectId() const final;
 };
 
 #endif

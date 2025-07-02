@@ -1,9 +1,8 @@
 /**
- * client/src/widget/abstractthrottlebutton.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,39 +19,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_THROTTLE_ABSTRACTTHROTTLEBUTTON_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_THROTTLE_ABSTRACTTHROTTLEBUTTON_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_THROTTLE_THROTTLEBUTTON_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_THROTTLE_THROTTLEBUTTON_HPP
 
 #include <QWidget>
-#include "../../network/objectptr.hpp"
 
-class AbstractThrottleButton : public QWidget
+class ThrottleButton : public QWidget
 {
+  Q_OBJECT
+
   private:
     QString m_resource;
     QString m_text;
-    QColor m_textColor;
+    QColor m_color;
     QPoint m_mousePressPos;
 
   protected:
-    ObjectPtr m_object;
-
-    void paintEvent(QPaintEvent*) final;
+    void paintEvent(QPaintEvent*) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
 
-    void setResource(QString resource);
-    void setText(QString text);
-    void setTextColor(QColor color);
-
   public:
-    AbstractThrottleButton(ObjectPtr object, QWidget* parent = nullptr);
+    explicit ThrottleButton(QWidget* parent = nullptr);
+    explicit ThrottleButton(const QString& text_, QWidget* parent = nullptr);
 
-    QSize minimumSizeHint() const final { return QSize{32, 32}; }
-    bool hasHeightForWidth() const final { return true; }
-    int heightForWidth(int w) const final { return w; }
+    QSize minimumSizeHint() const override;
 
-    virtual void click() {}
+    const QColor& color() const;
+    void setColor(const QColor& value);
+
+    const QString& resource() const;
+    void setResource(const QString& value);
+
+    const QString& text() const;
+    void setText(const QString& value);
+
+  signals:
+    void pressed();
+    void released();
+    void clicked();
 };
 
 #endif

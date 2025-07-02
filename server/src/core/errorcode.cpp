@@ -1,7 +1,6 @@
 /**
- * server/src/train/trainerror.cpp
- *
- * This file is part of the traintastic source code.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) 2025 Reinder Feenstra
  *
@@ -20,45 +19,54 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "trainerror.hpp"
+#include "errorcode.hpp"
 
 namespace {
 
-struct TrainErrorCategory : std::error_category
+struct ErrorCodeCategory : std::error_category
 {
   const char* name() const noexcept final;
   std::string message(int ev) const final;
 };
 
-const char* TrainErrorCategory::name() const noexcept
+const char* ErrorCodeCategory::name() const noexcept
 {
-  return "train";
+  return "traintastic";
 }
 
-std::string TrainErrorCategory::message(int ev) const
+std::string ErrorCodeCategory::message(int ev) const
 {
-  switch(static_cast<TrainError>(ev))
+  switch(static_cast<ErrorCode>(ev))
   {
-    case TrainError::InvalidThrottle:
+    case ErrorCode::InvalidThrottle:
       return "invalid throttle";
 
-    case TrainError::AlreadyAcquired:
+    case ErrorCode::AlreadyAcquired:
       return "already acquired";
 
-    case TrainError::CanNotActivateTrain:
+    case ErrorCode::CanNotActivateTrain:
       return "can't activate train";
 
-    case TrainError::TrainMustBeStoppedToChangeDirection:
+    case ErrorCode::TrainMustBeStoppedToChangeDirection:
       return "train must be stopped to change direction";
+
+    case ErrorCode::UnknownDecoderAddress:
+      return "unknown decoder address";
+
+    case ErrorCode::DecoderNotAssignedToAVehicle:
+      return "decoder not assigned to a vehicle";
+
+    case ErrorCode::VehicleNotAssignedToATrain:
+      return "vehicle not assigned to a train";
   }
   return "(unrecognized error)";
 }
 
-const TrainErrorCategory trainErrorCategory{};
+const ErrorCodeCategory errorCodeCategory{};
 
 }
 
-std::error_code make_error_code(TrainError ec)
+std::error_code make_error_code(ErrorCode ec)
 {
-  return {static_cast<int>(ec), trainErrorCategory};
+  return {static_cast<int>(ec), errorCodeCategory};
 }

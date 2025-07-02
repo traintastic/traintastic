@@ -73,6 +73,7 @@ class Z21Interface final
     ObjectProperty<InterfaceSimulatorSettings> simulator;
 
     Z21Interface(World& world, std::string_view _id);
+    ~Z21Interface() final;
 
     // DecoderController:
     std::span<const DecoderProtocol> decoderProtocols() const final;

@@ -102,6 +102,8 @@ class Train : public IdObject
     Property<bool> powered;
     Property<bool> active;
     Property<TrainMode> mode;
+    Property<bool> hasThrottle;
+    Property<std::string> throttleName;
 
     //! \brief List of block status the train is in
     //! Index 0 is the block where the head of the train is.
@@ -116,12 +118,6 @@ class Train : public IdObject
 
     Train(World& world, std::string_view _id);
 
-    bool hasThrottle() const
-    {
-      return m_throttle.operator bool();
-    }
-
-    std::string throttleName() const;
     std::error_code acquire(Throttle& throttle, bool steal = false);
     std::error_code release(Throttle& throttle);
     std::error_code setSpeed(Throttle& throttle, double value);

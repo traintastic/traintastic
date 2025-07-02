@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@
 
 enum class DecoderChangeFlags;
 class DecoderFunction;
+class RailVehicle;
 class Throttle;
 
 class Decoder : public IdObject
@@ -109,6 +110,7 @@ class Decoder : public IdObject
     Property<Direction> direction;
     Method<void()> toggleDirection;
     Property<uint8_t> speedSteps;
+    ObjectProperty<RailVehicle> vehicle;
     Property<float> throttle;
     ObjectProperty<DecoderFunctions> functions;
     Property<std::string> notes;

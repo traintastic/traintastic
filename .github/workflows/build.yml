@@ -11,8 +11,8 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_msvc"
-          os: windows-2019
-          generator: "Visual Studio 16 2019"
+          os: windows-latest
+          generator: "Visual Studio 17 2022"
           arch: "-A x64"
           target: traintastic-client
           jobs: 4
@@ -125,7 +125,7 @@ jobs:
       if: startswith(matrix.config.os, 'windows')
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{github.workspace}}/client/build/${{matrix.config.build_type}}/traintastic-client.exe
 
     # Linux only:
@@ -160,8 +160,8 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_clang"
-          os: windows-2019
-          generator: "Visual Studio 16 2019"
+          os: windows-latest
+          generator: "Visual Studio 17 2022"
           arch: "-A x64"
           toolset: "-T ClangCL"
           target: ALL_BUILD
@@ -375,8 +375,8 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_msvc"
-          os: windows-2019
-          generator: "Visual Studio 16 2019"
+          os: windows-latest
+          generator: "Visual Studio 17 2022"
           arch: "-A x64"
           target: traintastic-simulator
           jobs: 4
@@ -478,7 +478,7 @@ jobs:
       if: startswith(matrix.config.os, 'windows')
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         windeployqt --release --no-translations -no-system-d3d-compiler ${{github.workspace}}/simulator/build/${{matrix.config.build_type}}/traintastic-simulator.exe
 
     - name: Build debian package
@@ -619,7 +619,7 @@ jobs:
 
   package-innosetup:
     name: package innosetup
-    runs-on: windows-2019
+    runs-on: windows-latest
     needs: [build-client, build-server, build-simulator, build-lang, build-manual, build-manual-lua]
 
     steps:

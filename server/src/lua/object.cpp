@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 #include "object/objectlist.hpp"
 #include "object/interface.hpp"
 #include "object/loconetinterface.hpp"
+#include "object/scriptthrottle.hpp"
 
 namespace Lua::Object {
 
@@ -36,6 +37,7 @@ void registerTypes(lua_State* L)
   ObjectList::registerType(L);
   Interface::registerType(L);
   LocoNetInterface::registerType(L);
+  ScriptThrottle::registerType(L);
 
   // weak table for object userdata:
   lua_newtable(L);
@@ -67,6 +69,10 @@ void push(lua_State* L, const ObjectPtr& value)
         luaL_setmetatable(L, LocoNetInterface::metaTableName);
       else if(dynamic_cast<AbstractObjectList*>(value.get()))
         luaL_setmetatable(L, ObjectList::metaTableName);
+      else if(dynamic_cast<::ScriptThrottle*>(value.get()))
+      {
+        luaL_setmetatable(L, ScriptThrottle::metaTableName);
+      }
       else
         luaL_setmetatable(L, Object::metaTableName);
 
