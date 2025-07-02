@@ -178,7 +178,7 @@ ThrottleWidget::ThrottleWidget(ObjectPtr train, QWidget* parent)
       else // acquire / steal
       {
         callMethodR<bool>(*m_throttleAcquire,
-          [this](const bool& /*success*/, std::optional<const Error> /*error*/)
+          [](const bool& /*success*/, std::optional<const Error> /*error*/)
           {
           },
           m_train, // train
@@ -326,7 +326,7 @@ void ThrottleWidget::setDirection(Direction value)
   if(throttleAcquired() && m_throttleSetDirection)
   {
     callMethodR<bool>(*m_throttleSetDirection,
-      [this](bool /*success*/, std::optional<const Error> /*error*/)
+      [](bool /*success*/, std::optional<const Error> /*error*/)
       {
       },
       value);
@@ -338,7 +338,7 @@ void ThrottleWidget::setSpeed(double value, bool immediate)
   if(throttleAcquired() && m_throttleSetSpeed)
   {
     callMethodR<bool>(*m_throttleSetSpeed,
-      [this](bool /*success*/, std::optional<const Error> /*error*/)
+      [](bool /*success*/, std::optional<const Error> /*error*/)
       {
       },
       value,
@@ -352,7 +352,7 @@ void ThrottleWidget::faster(bool immediate)
   if(throttleAcquired() && m_throttleFaster)
   {
     callMethodR<bool>(*m_throttleFaster,
-      [this](bool /*success*/, std::optional<const Error> /*error*/)
+      [](bool /*success*/, std::optional<const Error> /*error*/)
       {
       },
       immediate);
@@ -364,7 +364,7 @@ void ThrottleWidget::slower(bool immediate)
   if(throttleAcquired() && m_throttleSlower)
   {
     callMethodR<bool>(*m_throttleSlower,
-      [this](bool /*success*/, std::optional<const Error> /*error*/)
+      [](bool /*success*/, std::optional<const Error> /*error*/)
       {
       },
       immediate);
@@ -376,7 +376,7 @@ void ThrottleWidget::emergencyStop()
   if(throttleAcquired() && m_throttleEmergencyStop)
   {
     callMethodR<bool>(*m_throttleEmergencyStop,
-      [this](bool /*success*/, std::optional<const Error> /*error*/)
+      [](bool /*success*/, std::optional<const Error> /*error*/)
       {
       });
   }
