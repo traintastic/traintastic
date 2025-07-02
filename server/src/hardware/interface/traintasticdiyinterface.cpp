@@ -102,6 +102,8 @@ TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view 
   updateVisible();
 }
 
+TraintasticDIYInterface::~TraintasticDIYInterface() = default;
+
 std::pair<uint32_t, uint32_t> TraintasticDIYInterface::inputAddressMinMax(uint32_t /*channel*/) const
 {
   return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax};

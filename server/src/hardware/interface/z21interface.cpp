@@ -90,6 +90,8 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(firmwareVersion, notes);
 }
 
+Z21Interface::~Z21Interface() = default;
+
 std::span<const DecoderProtocol> Z21Interface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 3> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong, DecoderProtocol::Motorola};

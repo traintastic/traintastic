@@ -78,6 +78,7 @@ class DCCEXInterface final
     ObjectProperty<DCCEX::Settings> dccex;
 
     DCCEXInterface(World& world, std::string_view _id);
+    ~DCCEXInterface() final;
 
     // DecoderController:
     std::span<const DecoderProtocol> decoderProtocols() const final;
