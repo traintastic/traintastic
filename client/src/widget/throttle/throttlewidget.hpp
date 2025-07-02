@@ -30,41 +30,87 @@
 #include "../../network/objectptr.hpp"
 
 class QLabel;
-class QGridLayout;
+class QPushButton;
+class QVBoxLayout;
 class SpeedoMeterWidget;
 class SliderWidget;
-class ThrottleStopButton;
-class ThrottleDirectionButton;
 class ThrottleFunctionButton;
+class ThrottleButton;
 class AbstractProperty;
+class ObjectProperty;
 class UnitProperty;
 class Method;
+
+enum class Direction : uint8_t;
 
 class ThrottleWidget final : public QWidget
 {
   private:
-    ObjectPtr m_object;
-    int m_functionsRequestId;
-    std::map<int, int> m_functionRequestIds;
-    AbstractProperty* m_emergencyStop;
-    UnitProperty* m_speed = nullptr;
-    UnitProperty* m_throttleSpeed = nullptr;
-    AbstractProperty* m_throttle = nullptr;
-    Method* m_toggleDirection;
+    struct VehicleDecoder
+    {
+      ObjectPtr decoder;
+      ObjectPtr decoderFunctions;
+      std::vector<ObjectPtr> functions;
+    };
+
+    ObjectPtr m_train;
+    AbstractProperty* m_trainHasThrottle;
+    AbstractProperty* m_trainThrottleName;
+    AbstractProperty* m_trainDirection;
+    UnitProperty* m_trainSpeed;
+    UnitProperty* m_trainTargetSpeed;
+    AbstractProperty* m_trainIsStopped;
+    AbstractProperty* m_trainEmergencyStop;
+    ObjectPtr m_trainVehiclesList;
+    std::vector<ObjectPtr> m_trainVehicles;
+    std::vector<VehicleDecoder> m_trainVehicleDecoders;
+
+    ObjectPtr m_throttle;
+    ObjectProperty* m_throttleTrain = nullptr;
+    Method* m_throttleAcquire = nullptr;
+    Method* m_throttleRelease = nullptr;
+    Method* m_throttleSetSpeed = nullptr;
+    Method* m_throttleFaster = nullptr;
+    Method* m_throttleSlower = nullptr;
+    Method* m_throttleEmergencyStop = nullptr;
+    Method* m_throttleSetDirection = nullptr;
+
+    int m_createThrottleRequestId;
+    int m_vehiclesRequestId;
+    std::unordered_map<size_t, int> m_vehicleDecoderRequestIds;
+
     QLabel* m_nameLabel;
-    QGridLayout* m_functionGrid;
-    std::list<ThrottleFunctionButton*> m_functionButtons;
+    QVBoxLayout* m_functions;
     SpeedoMeterWidget* m_speedoMeter;
     SliderWidget* m_speedSlider;
-    ThrottleStopButton* m_stopButton;
-    ThrottleDirectionButton* m_reverseButton;
-    ThrottleDirectionButton* m_forwardButton;
+    ThrottleButton* m_stopButton;
+    ThrottleButton* m_reverseButton;
+    ThrottleButton* m_forwardButton;
+    ThrottleButton* m_eStopButton;
+    QLabel* m_throttleStatus;
+    ThrottleButton* m_throttleAction;
+    bool m_speedSliderUpdateFromNetwork = false;
 
-    void changeSpeed(bool up);
+    bool throttleAcquired() const;
+    void setDirection(Direction value);
+    void setSpeed(double value, bool immediate);
+    void faster(bool immediate);
+    void slower(bool immediate);
+    void emergencyStop();
 
-    ThrottleFunctionButton* getFunctionButton(int number);
-    ThrottleFunctionButton* getFunctionButton(DecoderFunctionFunction function);
-    ThrottleFunctionButton* getFunctionButton(const QKeyEvent& event);
+    const ObjectPtr& getFunction(int number);
+    const ObjectPtr& getFunction(DecoderFunctionFunction function);
+    const ObjectPtr& getFunction(const QKeyEvent& event);
+
+    void updateSpeedMax();
+    void updateSpeedUnit();
+    void updateThrottleControls();
+
+    void fetchTrainVehicles();
+    void fetchTrainVehicleDecoders();
+    void fetchTrainVehicleDecoderFunctions(size_t vehicleIndex);
+
+    void createDecoderFunctionWidgets(size_t vehicleIndex);
 
   protected:
     void keyPressEvent(QKeyEvent* event) final;
@@ -73,7 +119,7 @@ class ThrottleWidget final : public QWidget
     void paintEvent(QPaintEvent*) final;
 
   public:
-    explicit ThrottleWidget(ObjectPtr object, QWidget* parent = nullptr);
+    explicit ThrottleWidget(ObjectPtr train, QWidget* parent = nullptr);
     ~ThrottleWidget() final;
 };
 

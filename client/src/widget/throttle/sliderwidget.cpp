@@ -172,22 +172,22 @@ void SliderWidget::paintEvent(QPaintEvent* /*event*/)
   painter.setRenderHint(QPainter::Antialiasing);
 
   // Draw gutter
-  QRectF backgroundRect = rect();
+  QRectF gutterRect = rect();
   if(m_orientation == Qt::Vertical)
   {
-    backgroundRect.adjust(0.5, handleSize / 2, -0.5, -handleSize / 2);
-    backgroundRect.setLeft((backgroundRect.width() - gutterSize) / 2);
-    backgroundRect.setWidth(9);
+    gutterRect.adjust(0.5, handleSize / 2, -0.5, -handleSize / 2);
+    gutterRect.setLeft((gutterRect.width() - gutterSize) / 2);
+    gutterRect.setWidth(9);
   }
   else
   {
-    backgroundRect.adjust(handleSize / 2, 0.5, -handleSize / 2, -0.5);
-    backgroundRect.setTop((backgroundRect.height() - gutterSize) / 2);
-    backgroundRect.setHeight(9);
+    gutterRect.adjust(handleSize / 2, 0.5, -handleSize / 2, -0.5);
+    gutterRect.setTop((gutterRect.height() - gutterSize) / 2);
+    gutterRect.setHeight(9);
   }
   painter.setPen(Qt::NoPen);
   painter.setBrush(QColor(33, 33, 33));
-  painter.drawRoundedRect(backgroundRect, gutterRadius, gutterRadius);
+  painter.drawRoundedRect(gutterRect, gutterRadius, gutterRadius);
 
   // Calculate handle position
   float ratio = (m_value - m_minimum) / (m_maximum - m_minimum);
@@ -207,6 +207,6 @@ void SliderWidget::paintEvent(QPaintEvent* /*event*/)
   }
 
   // Draw handle
-  painter.setBrush(Qt::white);
+  painter.setBrush(isEnabled() ? Qt::white : QColor(180, 180, 180));
   painter.drawRoundedRect(handleRect, handleRadius, handleRadius);
 }

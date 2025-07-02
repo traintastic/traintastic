@@ -1,9 +1,8 @@
 /**
- * client/src/widget/throttle/throttlestopbutton.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,24 +19,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_THROTTLE_THROTTLESTOPBUTTON_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_THROTTLE_THROTTLESTOPBUTTON_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_THROTTLE_THROTTLESTYLE_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_THROTTLE_THROTTLESTYLE_HPP
 
-#include "abstractthrottlebutton.hpp"
+#include <QColor>
 
-class AbstractProperty;
-
-class ThrottleStopButton : public AbstractThrottleButton
+struct ThrottleStyle
 {
-  private:
-    AbstractProperty* m_throttle;
-    AbstractProperty* m_throttleSpeed;
-    AbstractProperty* m_emergencyStop;
-
-  public:
-    ThrottleStopButton(ObjectPtr object, QWidget* parent = nullptr);
-
-    void click() final;
+  inline static const QColor backgroundColor{0x10, 0x10, 0x10};
+  inline static const QColor buttonColor{0xBB, 0x86, 0xFC};
+  inline static const QColor buttonActiveColor{0x03, 0xDA, 0xC6};
+  inline static const QColor buttonDisabledColor{0x80, 0x80, 0x80};
+  inline static const QColor buttonEStopColor{0xCF, 0x66, 0x79};
+  inline static const QColor buttonTextColor{0x00, 0x00, 0x00};
 };
 
 #endif
