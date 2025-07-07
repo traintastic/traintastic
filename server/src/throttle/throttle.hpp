@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/throttle/throttle.hpp
+ * server/src/throttle/throttle.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,27 +20,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_THROTTLE_THROTTLE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_THROTTLE_THROTTLE_HPP
+#ifndef TRAINTASTIC_SERVER_THROTTLE_THROTTLE_HPP
+#define TRAINTASTIC_SERVER_THROTTLE_THROTTLE_HPP
 
-#include "../../core/idobject.hpp"
+#include "../core/nonpersistentobject.hpp"
+#include <unordered_set>
 #include <traintastic/enum/direction.hpp>
-#include "../../core/property.hpp"
-#include "../../core/objectproperty.hpp"
-#include "../../core/objectvectorproperty.hpp"
-#include "../../core/method.hpp"
+#include <traintastic/enum/speedunit.hpp>
+#include "../core/event.hpp"
+#include "../core/property.hpp"
+#include "../core/objectproperty.hpp"
+#include "../core/objectvectorproperty.hpp"
+#include "../core/method.hpp"
+#include "../utils/stringequal.hpp"
+#include "../utils/stringhash.hpp"
 
 class Decoder;
 enum class DecoderProtocol : uint8_t;
-class ThrottleFunction;
 class Train;
+class World;
 
-class Throttle : public IdObject
+class Throttle : public NonPersistentObject
 {
-  friend class ThrottleFunction;
-
-  DEFAULT_ID("throttle")
-
   public:
     enum class AcquireResult
     {
@@ -50,45 +51,39 @@ class Throttle : public IdObject
     };
 
   private:
-    std::shared_ptr<Decoder> m_decoder;
+    static std::unordered_set<std::string, StringHash, StringEqual> s_logIds;
 
   protected:
-    Throttle(World& world, std::string_view _id);
+    static std::string_view getUniqueLogId(std::string_view prefix = "throttle");
+
+    World& m_world;
+    const std::string_view m_logId;
+
+    Throttle(World& world, std::string_view logId);
 
     void destroying() override;
-    void addToWorld() override;
+    virtual void addToList();
 
-    AcquireResult acquire(std::shared_ptr<Decoder> decoder, bool steal = false);
+    virtual void trainChanged() {}
 
   public:
-    static constexpr float throttleMin = 0;
-    static constexpr float throttleStop = throttleMin;
-    static constexpr float throttleMax = 1;
-
-    boost::signals2::signal<void()> released;
-
     Property<std::string> name;
-    Property<Direction> direction;
-    Property<float> throttle;
     ObjectProperty<Train> train;
-    Method<bool()> emergencyStop;
-    Method<bool(bool)> stop;
-    Method<bool(bool)> faster;
-    Method<bool(bool)> slower;
-    Method<bool(Direction)> setDirection;
+    Event<const std::shared_ptr<Throttle>&, const std::shared_ptr<Train>&> onAcquire;
+    Event<const std::shared_ptr<Throttle>&> onRelease;
 
-#ifndef NDEBUG
     ~Throttle() override;
-#endif
 
     bool acquired() const;
     std::error_code acquire(const std::shared_ptr<Train>& acquireTrain, bool steal = false);
     void release(bool stopIt = true);
 
-    const std::shared_ptr<Decoder>& decoder() const // TODO: remove once WiThrottle is migrated to train control
-    {
-      return m_decoder;
-    }
+    bool emergencyStop();
+    bool setDirection(Direction value);
+    bool setSpeed(double value, SpeedUnit unit);
+    bool setTargetSpeed(double value, SpeedUnit unit);
+    bool slower(bool immediate);
+    bool faster(bool immediate);
 };
 
 #endif

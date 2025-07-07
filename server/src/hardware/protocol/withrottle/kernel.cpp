@@ -25,14 +25,16 @@
 #include "messages.hpp"
 #include "../../decoder/decoder.hpp" // TODO: remove when migrated to Train control
 #include "../../interface/interface.hpp"
-#include "../../throttle/hardwarethrottle.hpp"
-#include "../../throttle/throttlecontroller.hpp"
+#include "../../../throttle/hardwarethrottle.hpp"
+#include "../../../throttle/throttlecontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../core/method.tpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../clock/clock.hpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
+#include "../../../train/train.hpp"
+#include "../../../train/trainvehiclelist.hpp"
 #include "../../../utils/fromchars.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../utils/startswith.hpp"
@@ -318,45 +320,49 @@ void Kernel::receiveFrom(std::string_view message, IOHandler::ClientId clientId)
               if(!throttle)
                 return;
 
-              switch(throttle->acquire(address.isLong ? DecoderProtocol::DCCLong : DecoderProtocol::DCCShort, address.address, steal))
+              const auto ec = throttle->acquire(address.isLong ? DecoderProtocol::DCCLong : DecoderProtocol::DCCShort, address.address, steal);
+              if(!ec)
               {
-                case Throttle::AcquireResult::Success:
+                if(auto* multiThrottle = getMultiThrottle(clientId, multiThrottleId))
                 {
-                  if(auto* multiThrottle = getMultiThrottle(clientId, multiThrottleId))
-                  {
-                    multiThrottle->address = address.address;
-                    multiThrottle->isLongAddress = address.isLong;
-                  }
-                  else
-                    assert(false);
-
-                  postSendTo(throttleCommand(multiThrottleId, '+', address.address, address.isLong), clientId);
-
-                  std::unordered_map<uint32_t, std::string_view> functionNames;
-                  for(const auto& f : *throttle->decoder()->functions)
-                    functionNames.emplace(f->number.value(), f->name.value());
-                  postSendTo(throttleFuctionNames(multiThrottleId, address.address, address.isLong, functionNames), clientId);
-
-                  for(const auto& f : *throttle->decoder()->functions)
-                    postSendTo(throttleFunction(multiThrottleId, address.address, address.isLong, f->number, f->value), clientId);
-
-                  if(throttle->decoder()->emergencyStop)
-                    postSendTo(throttleEstop(multiThrottleId, address.address, address.isLong), clientId);
-                  else
-                    postSendTo(throttleSpeed(multiThrottleId, address.address, address.isLong, std::round(throttle->throttle * speedMax)), clientId);
-
-                  postSendTo(throttleDirection(multiThrottleId, address.address, address.isLong, throttle->direction), clientId);
-
-                  postSendTo(throttleSpeedStepMode(multiThrottleId, address.address, address.isLong, 128), clientId);
-                  break;
+                  multiThrottle->address = address.address;
+                  multiThrottle->isLongAddress = address.isLong;
                 }
-                case Throttle::AcquireResult::FailedNonExisting:
-                  postSendTo(alert(std::string("Unknown ").append(address.isLong ? "long" : "short").append(" address: ").append(std::to_string(address.address))), clientId);
-                  break;
+                else
+                  assert(false);
 
-                case Throttle::AcquireResult::FailedInUse:
-                  postSendTo(throttleSteal(multiThrottleId, address.address, address.isLong), clientId);
-                  break;
+                postSendTo(throttleCommand(multiThrottleId, '+', address.address, address.isLong), clientId);
+
+                for(const auto& vehicle : *throttle->train->vehicles)
+                {
+                  if(vehicle->decoder && vehicle->decoder->address == address.address)
+                  {
+                    const auto& functions = vehicle->decoder->functions;
+
+                    std::unordered_map<uint32_t, std::string_view> functionNames;
+                    for(const auto& f : *functions)
+                      functionNames.emplace(f->number.value(), f->name.value());
+                    postSendTo(throttleFuctionNames(multiThrottleId, address.address, address.isLong, functionNames), clientId);
+
+                    for(const auto& f : *functions)
+                      postSendTo(throttleFunction(multiThrottleId, address.address, address.isLong, f->number, f->value), clientId);
+
+                    break;
+                  }
+                }
+
+                if(throttle->train->emergencyStop)
+                  postSendTo(throttleEstop(multiThrottleId, address.address, address.isLong), clientId);
+                else
+                  postSendTo(throttleSpeed(multiThrottleId, address.address, address.isLong, std::round(throttle->train->speed.value() / throttle->train->speedMax.getValue(throttle->train->speed.unit()) * speedMax)), clientId);
+
+                postSendTo(throttleDirection(multiThrottleId, address.address, address.isLong, throttle->train->direction), clientId);
+
+                postSendTo(throttleSpeedStepMode(multiThrottleId, address.address, address.isLong, 128), clientId);
+              }
+              else
+              {
+                postSendTo(alert(ec.message()), clientId);
               }
             });
 
@@ -500,7 +506,7 @@ const std::shared_ptr<HardwareThrottle>& Kernel::getThottle(IOHandler::ClientId 
       auto it = multiThrottles.insert(std::move(n)).position;
       const auto& throttle = it->second.throttle;
       throttle->name.setValueInternal(buildName(itClient->second.name, multiThrottleId));
-      throttle->released.connect(std::bind(&Kernel::throttleReleased, this, clientId, multiThrottleId));
+      throttle->onRelease.connect(std::bind_front(&Kernel::throttleReleased, this, clientId, multiThrottleId));
       return throttle;
     }
 
@@ -512,12 +518,34 @@ const std::shared_ptr<HardwareThrottle>& Kernel::getThottle(IOHandler::ClientId 
       assert(success);
       const auto& throttle = it->second.throttle;
       throttle->name.setValueInternal(buildName(itClient->second.name, multiThrottleId));
-      throttle->released.connect(std::bind(&Kernel::throttleReleased, this, clientId, multiThrottleId));
+      throttle->onRelease.connect(std::bind_front(&Kernel::throttleReleased, this, clientId, multiThrottleId));
       return throttle;
     }
   }
 
   return noThrottle;
+}
+
+const std::shared_ptr<Decoder>& Kernel::getDecoder(IOHandler::ClientId clientId, char multiThrottleId)
+{
+  assert(isEventLoopThread());
+
+  static const std::shared_ptr<Decoder> noDecoder;
+
+  const auto* multiThrottle = getMultiThrottle(clientId, multiThrottleId);
+
+  if(multiThrottle && multiThrottle->throttle->acquired())
+  {
+    for(const auto& vehicle : *multiThrottle->throttle->train->vehicles)
+    {
+      if(vehicle->decoder && vehicle->decoder->address == multiThrottle->address)
+      {
+        return vehicle->decoder.value();
+      }
+    }
+  }
+
+  return noDecoder;
 }
 
 void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottleId, const Address& /*address*/, ThrottleCommand throttleCommand, std::string_view message)
@@ -543,8 +571,7 @@ void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottl
               }
               else
               {
-                throttle->decoder()->emergencyStop = false;
-                throttle->throttle = static_cast<float>(value) / speedMax;
+                throttle->setSpeed(throttle->train->speedMax.value() * value / speedMax, throttle->train->speedMax.unit());
               }
             }
           });
@@ -579,9 +606,9 @@ void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottl
         EventLoop::call(
           [this, clientId, multiThrottleId, number, force=(throttleCommand == ThrottleCommand::ForceFunction), value]()
           {
-            if(const auto& throttle = getThottle(clientId, multiThrottleId); throttle && throttle->acquired())
+            if(const auto& decoder = getDecoder(clientId, multiThrottleId))
             {
-              if(const auto& function = throttle->decoder()->getFunction(number))
+              if(const auto& function = decoder->getFunction(number))
               {
                 if(force) // set
                 {
@@ -633,8 +660,7 @@ void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottl
         {
           if(const auto& throttle = getThottle(clientId, multiThrottleId); throttle && throttle->acquired())
           {
-            throttle->decoder()->emergencyStop = false;
-            throttle->throttle = Throttle::throttleStop;
+            throttle->setSpeed(0.0, throttle->train->speed.unit());
           }
         });
       break;
@@ -661,10 +687,11 @@ void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottl
               {
                 if(const auto* multiThrottle = getMultiThrottle(clientId, multiThrottleId))
                 {
-                  if(multiThrottle->throttle->decoder()->emergencyStop)
+                  const auto& train = *multiThrottle->throttle->train;
+                  if(train.emergencyStop)
                     postSendTo(throttleEstop(multiThrottleId, multiThrottle->address, multiThrottle->isLongAddress), clientId);
                   else
-                    postSendTo(throttleSpeed(multiThrottleId, multiThrottle->address, multiThrottle->isLongAddress, std::round(multiThrottle->throttle->throttle * speedMax)), clientId);
+                    postSendTo(throttleSpeed(multiThrottleId, multiThrottle->address, multiThrottle->isLongAddress, std::round(train.speed.value() / train.speedMax.getValue(train.speed.unit()) * speedMax)), clientId);
                 }
               });
             break;
@@ -675,7 +702,7 @@ void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottl
               {
                 if(const auto* multiThrottle = getMultiThrottle(clientId, multiThrottleId))
                 {
-                  postSendTo(throttleDirection(multiThrottleId, multiThrottle->address, multiThrottle->isLongAddress, multiThrottle->throttle->direction), clientId);
+                  postSendTo(throttleDirection(multiThrottleId, multiThrottle->address, multiThrottle->isLongAddress, multiThrottle->throttle->train->direction), clientId);
                 }
               });
             break;
@@ -698,7 +725,7 @@ void Kernel::multiThrottleAction(IOHandler::ClientId clientId, char multiThrottl
   }
 }
 
-void Kernel::throttleReleased(IOHandler::ClientId clientId, char multiThrottleId)
+void Kernel::throttleReleased(IOHandler::ClientId clientId, char multiThrottleId, const std::shared_ptr<Throttle>& /*throttle*/)
 {
   assert(isEventLoopThread());
 

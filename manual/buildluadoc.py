@@ -273,7 +273,7 @@ class LuaDoc:
         name = 'class'
         items = []
         class_hpp = LuaDoc._read_file(os.path.join(project_root, 'server', 'src', 'lua', 'class.hpp'))
-        for item_name in re.findall(r'static\s+int\s+([a-zA-Z]+)\(\s*lua_State\s*\*\s*L\s*\)', class_hpp):
+        for item_name in re.findall(r'static\s+int\s+([a-z][a-zA-Z_]+)\(\s*lua_State\s*\*\s*L\s*\)', class_hpp):
             if item_name == 'getClass':
                 item_name = 'get'
             items.append(item_name)

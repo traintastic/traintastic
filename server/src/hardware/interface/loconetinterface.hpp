@@ -79,6 +79,7 @@ class LocoNetInterface final
     ObjectProperty<LocoNet::Settings> loconet;
 
     LocoNetInterface(World& world, std::string_view _id);
+    ~LocoNetInterface() final;
 
     //! \brief Send LocoNet packet
     //! \param[in] packet LocoNet packet bytes, exluding checksum.

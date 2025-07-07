@@ -23,14 +23,14 @@
 #include "webthrottleconnection.hpp"
 #include "server.hpp"
 #include "../traintastic/traintastic.hpp"
+#include "../core/errorcode.hpp"
 #include "../core/eventloop.hpp"
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
 #include "../hardware/decoder/decoder.hpp"
-#include "../hardware/throttle/webthrottle.hpp"
+#include "../throttle/webthrottle.hpp"
 #include "../log/log.hpp"
 #include "../train/train.hpp"
-#include "../train/trainerror.hpp"
 #include "../train/trainlist.hpp"
 #include "../train/trainvehiclelist.hpp"
 
@@ -301,7 +301,14 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
       }
       else if(action == "stop")
       {
-        throttle->stop(message.value("immediate", false));
+        if(message.value("immediate", false))
+        {
+          throttle->train->setSpeed(*throttle, 0.0);
+        }
+        else
+        {
+          throttle->train->setTargetSpeed(*throttle, 0.0);
+        }
       }
       else if(action == "faster")
       {
@@ -380,15 +387,15 @@ void WebThrottleConnection::sendError(uint32_t throttleId, std::error_code ec)
 {
   assert(isEventLoopThread());
 
-  if(ec == TrainError::AlreadyAcquired)
+  if(ec == ErrorCode::AlreadyAcquired)
   {
     sendError(throttleId, ec.message(), "already_acquired");
   }
-  else if(ec == TrainError::CanNotActivateTrain)
+  else if(ec == ErrorCode::CanNotActivateTrain)
   {
     sendError(throttleId, ec.message(), "can_not_activate_train");
   }
-  else if(ec == TrainError::TrainMustBeStoppedToChangeDirection)
+  else if(ec == ErrorCode::TrainMustBeStoppedToChangeDirection)
   {
     sendError(throttleId, ec.message(), "train_must_be_stopped_to_change_direction");
   }
@@ -438,8 +445,8 @@ const std::shared_ptr<WebThrottle>& WebThrottleConnection::getThrottle(uint32_t 
           m_throttleConnections.erase(throttleId);
           m_throttles.erase(throttleId);
         }));
-      m_throttleConnections.emplace(throttleId, it->second->released.connect(
-        [this, throttleId]()
+      m_throttleConnections.emplace(throttleId, it->second->onRelease.connect(
+        [this, throttleId](const std::shared_ptr<Throttle>& /*throttle*/)
         {
           released(throttleId);
         }));

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,16 +23,18 @@
 #ifndef TRAINTASTIC_CLIENT_WIDGET_THROTTLE_THROTTLEFUNCTIONBUTTON_HPP
 #define TRAINTASTIC_CLIENT_WIDGET_THROTTLE_THROTTLEFUNCTIONBUTTON_HPP
 
-#include "abstractthrottlebutton.hpp"
+#include "throttlebutton.hpp"
 #include <traintastic/enum/decoderfunctionfunction.hpp>
+#include "../../network/objectptr.hpp"
 
 class AbstractProperty;
 
-class ThrottleFunctionButton : public AbstractThrottleButton
+class ThrottleFunctionButton : public ThrottleButton
 {
   Q_OBJECT
 
   private:
+    ObjectPtr m_object;
     AbstractProperty* m_number;
     AbstractProperty* m_name;
     AbstractProperty* m_type;
@@ -42,17 +44,13 @@ class ThrottleFunctionButton : public AbstractThrottleButton
   private slots:
     void functionOrValueChanged();
 
-  protected:
-    void mousePressEvent(QMouseEvent* event) final;
-    void mouseReleaseEvent(QMouseEvent* event) final;
-
   public:
     ThrottleFunctionButton(ObjectPtr object, QWidget* parent = nullptr);
 
     int number() const;
     DecoderFunctionFunction function() const;
 
-    void click() final;
+    void click();
     void press();
     void release();
 };

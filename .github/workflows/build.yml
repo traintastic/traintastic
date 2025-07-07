@@ -11,8 +11,8 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_msvc"
-          os: windows-2019
-          generator: "Visual Studio 16 2019"
+          os: windows-latest
+          generator: "Visual Studio 17 2022"
           arch: "-A x64"
           target: traintastic-client
           jobs: 4
@@ -22,6 +22,16 @@ jobs:
 
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
+          generator: "Unix Makefiles"
+          arch: ""
+          target: traintastic-client
+          jobs: 4
+          build_type: Release
+          build_deb: true
+          defines: ""
+
+        - name: "ubuntu_24.04_arm64"
+          os: ubuntu-24.04-arm
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
@@ -75,6 +85,7 @@ jobs:
       uses: jurplel/install-qt-action@v4
       with:
         cache: true
+        version: 5.15
 
     # macOS only:
     - name: Install Qt 6.5
@@ -123,7 +134,7 @@ jobs:
       if: startswith(matrix.config.os, 'windows')
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{github.workspace}}/client/build/${{matrix.config.build_type}}/traintastic-client.exe
 
     # Linux only:
@@ -158,8 +169,8 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_clang"
-          os: windows-2019
-          generator: "Visual Studio 16 2019"
+          os: windows-latest
+          generator: "Visual Studio 17 2022"
           arch: "-A x64"
           toolset: "-T ClangCL"
           target: ALL_BUILD
@@ -170,8 +181,8 @@ jobs:
           ccov: false
 
         - name: "windows_x64_msvc"
-          os: windows-2019
-          generator: "Visual Studio 16 2019"
+          os: windows-latest
+          generator: "Visual Studio 17 2022"
           arch: "-A x64"
           toolset: ""
           target: ALL_BUILD
@@ -204,6 +215,18 @@ jobs:
           build_deb: false
           defines: "-DCODE_COVERAGE=ON"
           ccov: true
+
+        - name: "ubuntu_24.04_arm64"
+          os: ubuntu-24.04-arm
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: all
+          jobs: 4
+          build_type: Release
+          build_deb: true
+          defines: "-DINSTALL_SYSTEMD_SERVICE=ON"
+          ccov: false
 
         - name: "raspberrypios_arm7"
           os: [self-hosted, ARM, RaspberryPi]
@@ -484,7 +507,7 @@ jobs:
 
   package-innosetup:
     name: package innosetup
-    runs-on: windows-2019
+    runs-on: windows-latest
     needs: [build-client, build-server, build-lang, build-manual, build-manual-lua]
 
     steps:

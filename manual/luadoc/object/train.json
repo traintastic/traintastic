@@ -7,6 +7,8 @@
   "active": {},
   "mode": {},
   "blocks": {},
+  "has_throttle": {},
+  "throttle_name": {},
   "on_block_assigned": {
     "parameters": [
       {

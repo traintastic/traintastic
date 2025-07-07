@@ -78,6 +78,7 @@ class XpressNetInterface final
     ObjectProperty<XpressNet::Settings> xpressnet;
 
     XpressNetInterface(World& world, std::string_view _id);
+    ~XpressNetInterface() final;
 
     // DecoderController:
     std::span<const DecoderProtocol> decoderProtocols() const final;

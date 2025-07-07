@@ -67,5 +67,7 @@
         <file>board_tile.misc.switch.svg</file>
         <file>board_tile.misc.label.svg</file>
         <file>clear_persistent_variables.svg</file>
+        <file>decoder_function.mute.svg</file>
+        <file>decoder_function.sound.svg</file>
     </qresource>
 </RCC>

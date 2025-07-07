@@ -53,7 +53,7 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return new InterfaceListWidget(object, parent);
   }
   else if(classId == "decoder_list")
-    return new ThrottleObjectListWidget(object, parent); // todo remove
+    return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "controller_list")
     return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "rail_vehicle_list")

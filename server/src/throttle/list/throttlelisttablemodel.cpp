@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/throttle/list/throttlelisttablemodel.cpp
+ * server/src/throttle/list/throttlelisttablemodel.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -23,14 +23,13 @@
 #include "throttlelisttablemodel.hpp"
 #include "throttlelist.hpp"
 #include "../webthrottle.hpp"
-#include "../../../core/objectproperty.tpp"
-#include "../../../train/train.hpp"
-#include "../../../utils/displayname.hpp"
+#include "../../core/objectproperty.tpp"
+#include "../../train/train.hpp"
+#include "../../utils/displayname.hpp"
 
 bool ThrottleListTableModel::isListedProperty(std::string_view name)
 {
   return
-    name == "id" ||
     name == "name" ||
     name == "train" ||
     name == "interface";
@@ -40,9 +39,6 @@ static std::string_view displayName(ThrottleListColumn column)
 {
   switch(column)
   {
-    case ThrottleListColumn::Id:
-      return DisplayName::Object::id;
-
     case ThrottleListColumn::Name:
       return DisplayName::Object::name;
 
@@ -82,9 +78,6 @@ std::string ThrottleListTableModel::getText(uint32_t column, uint32_t row) const
     assert(column < m_columns.size());
     switch(m_columns[column])
     {
-      case ThrottleListColumn::Id:
-        return throttle.id;
-
       case ThrottleListColumn::Name:
         return throttle.name;
 
@@ -122,9 +115,7 @@ void ThrottleListTableModel::propertyChanged(BaseProperty& property, uint32_t ro
 {
   std::string_view name = property.name();
 
-  if(name == "id")
-    changed(row, ThrottleListColumn::Id);
-  else if(name == "name")
+  if(name == "name")
     changed(row, ThrottleListColumn::Name);
   else if(name == "train")
     changed(row, ThrottleListColumn::Train);

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022-2024 Reinder Feenstra
+ * Copyright (C) 2019-2020,2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,10 +30,12 @@
 #include <limits>
 #include <chrono>
 #include <cassert>
+#include <vector>
 #include <lua.hpp>
 
 class OutputController;
 class Output;
+class ScriptThrottle;
 
 namespace Lua {
 
@@ -66,6 +68,7 @@ class Sandbox
           std::set<std::weak_ptr<Output>, std::owner_less<std::weak_ptr<Output>>>,
           std::owner_less<std::weak_ptr<OutputController>>
           > m_outputs;
+        std::vector<std::shared_ptr<ScriptThrottle>> m_throttles;
 
       public:
         std::chrono::time_point<std::chrono::steady_clock> pcallStart;
@@ -123,6 +126,11 @@ class Sandbox
         void registerOutput(std::weak_ptr<OutputController> outputController, std::weak_ptr<Output> output)
         {
           m_outputs[outputController].emplace(output);
+        }
+
+        void addThrottle(std::shared_ptr<ScriptThrottle> throttle)
+        {
+          m_throttles.emplace_back(std::move(throttle));
         }
     };
 
