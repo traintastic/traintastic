@@ -160,10 +160,10 @@ int Sandbox::__newindex(lua_State* L)
 
 SandboxPtr Sandbox::create(Script& script)
 {
-  lua_State* L = luaL_newstate();
+  auto* stateData = new StateData(script);
 
-  // create state data:
-  *static_cast<StateData**>(lua_getextraspace(L)) = new StateData(script);
+  lua_State* L = lua_newstate(alloc, stateData);
+  *static_cast<StateData**>(lua_getextraspace(L)) = stateData;
 
   // register types:
   PersistentVariables::registerType(L);
@@ -340,6 +340,45 @@ int Sandbox::pcall(lua_State* L, int nargs, int nresults, int errfunc)
   }
 
   return r;
+}
+
+void* Sandbox::alloc(void* userData, void* ptr, size_t oldSize, size_t newSize)
+{
+  auto& stateData = *static_cast<StateData*>(userData);
+
+  if(newSize == 0)
+  {
+    stateData.memoryUsed -= oldSize;
+    std::free(ptr);
+    return nullptr;
+  }
+
+  if(!ptr)
+  {
+    if(stateData.memoryUsed + newSize > stateData.memoryLimit)
+    {
+      return nullptr; // Memory limit reached
+    }
+
+    void* newptr = std::malloc(newSize);
+    if(newptr)
+    {
+      stateData.memoryUsed += newSize;
+    }
+    return newptr;
+  }
+
+  if(stateData.memoryUsed - oldSize + newSize > stateData.memoryLimit)
+  {
+    return nullptr; // Memory limit reached
+  }
+
+  void* newptr = std::realloc(ptr, newSize);
+  if(newptr)
+  {
+    stateData.memoryUsed = stateData.memoryUsed - oldSize + newSize;
+  }
+  return newptr;
 }
 
 void Sandbox::hook(lua_State* L, lua_Debug* /*ar*/)
