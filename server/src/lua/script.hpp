@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,7 +53,6 @@ class Script : public IdObject
 
     void startSandbox();
     void stopSandbox();
-    bool pcall(lua_State* L, int nargs = 0, int nresults = 0);
 
   public:
     CLASS_ID("lua.script")
