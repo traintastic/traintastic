@@ -92,6 +92,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         }
       });
 
+    QWidget* spacer = new QWidget();
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    toolbar->addWidget(spacer);
+
+    toolbar->addAction("Zoom in", m_view, &SimulatorView::zoomIn);
+    toolbar->addAction("Zoom out", m_view, &SimulatorView::zoomOut);
+    toolbar->addAction("Zoom fit", m_view, &SimulatorView::zoomToFit);
+
     addToolBar(Qt::TopToolBarArea, toolbar);
   }
 
@@ -104,6 +112,7 @@ void MainWindow::load(const QString& filename)
   if(file.open(QIODeviceBase::ReadOnly))
   {
     m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString())));
+    QMetaObject::invokeMethod(m_view, &SimulatorView::zoomToFit, Qt::QueuedConnection);
   }
 }
 

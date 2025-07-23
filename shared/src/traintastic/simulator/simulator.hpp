@@ -139,6 +139,23 @@ public:
 
   struct StaticData
   {
+    struct View
+    {
+      float top = std::numeric_limits<float>::infinity();
+      float left = std::numeric_limits<float>::infinity();
+      float bottom = -std::numeric_limits<float>::infinity();
+      float right = -std::numeric_limits<float>::infinity();
+
+      float height() const
+      {
+        return bottom - top;
+      }
+
+      float width() const
+      {
+        return right - left;
+      }
+    } view;
     std::vector<TrackSegment> trackSegments;
     std::vector<Sensor> sensors;
     std::vector<Vehicle> vehicles;

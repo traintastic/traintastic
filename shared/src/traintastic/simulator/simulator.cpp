@@ -35,6 +35,55 @@ constexpr float deg2rad(float degrees)
   return degrees * static_cast<float>(std::numbers::pi / 180);
 }
 
+void updateView(Simulator::StaticData::View& view, Simulator::Point point)
+{
+  if(point.x < view.left)
+  {
+    view.left = point.x;
+  }
+  if(point.x > view.right)
+  {
+    view.right = point.x;
+  }
+  if(point.y < view.top)
+  {
+    view.top = point.y;
+  }
+  if(point.y > view.bottom)
+  {
+    view.bottom = point.y;
+  }
+}
+
+void updateView(Simulator::StaticData::View& view, const Simulator::TrackSegment::Curve& curve, float startAngle)
+{
+  const float endAngle = startAngle + curve.angle;
+
+  // Start and end points:
+  {
+    const float x = curve.center.x + curve.radius * std::cos(startAngle);
+    const float y = curve.center.y + curve.radius * std::sin(startAngle);
+    updateView(view, {x, y});
+  }
+  {
+    const float x = curve.center.x + curve.radius * std::cos(endAngle);
+    const float y = curve.center.y + curve.radius * std::sin(endAngle);
+    updateView(view, {x, y});
+  }
+
+  // Check critical angles (0, 90, 180, 270 degrees):
+  static const std::array<float, 7> cardinalAngles{1.5f * -pi, -pi, 0.5f * -pi, 0.0f, 0.5f * pi, pi, 1.5f * pi};
+  for(float angle : cardinalAngles)
+  {
+    if(angle > startAngle && angle < endAngle)
+    {
+      const float x = curve.center.x + curve.radius * std::cos(angle);
+      const float y = curve.center.y + curve.radius * std::sin(angle);
+      updateView(view, {x, y});
+    }
+  }
+}
+
 #ifndef NDEBUG
 constexpr size_t getStraightCount(Simulator::TrackSegment::Type type)
 {
@@ -1051,6 +1100,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           curRotation = deg2rad(obj.value("rotation", 0.0f));
           fromSegmentIndex = invalidIndex;
         }
+        updateView(data.view, curPoint);
       }
 
       if((segment.type == TrackSegment::Type::Turnout || segment.type == TrackSegment::Type::Turnout3Way) && startPointIndex == 1)
@@ -1126,6 +1176,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           if(!segment.points[1].isFinite())
           {
             segment.points[1] = straightEnd(segment);
+            updateView(data.view, segment.points[1]);
           }
           break;
 
@@ -1133,6 +1184,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           if(!segment.points[1].isFinite())
           {
             segment.points[1] = curveEnd(segment, 0);
+            updateView(data.view, segment.curves[0], segment.rotation);
           }
           break;
 
@@ -1140,10 +1192,12 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           if(!segment.points[1].isFinite())
           {
             segment.points[1] = straightEnd(segment);
+            updateView(data.view, segment.points[1]);
           }
           if(!segment.points[2].isFinite())
           {
             segment.points[2] = curveEnd(segment, 0);
+            updateView(data.view, segment.curves[0], segment.rotation);
           }
           break;
 
@@ -1151,10 +1205,12 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           if(!segment.points[1].isFinite())
           {
             segment.points[1] = curveEnd(segment, 0);
+            updateView(data.view, segment.curves[0], segment.rotation);
           }
           if(!segment.points[2].isFinite())
           {
             segment.points[2] = curveEnd(segment, 1);
+            updateView(data.view, segment.curves[1], segment.rotation);
           }
           break;
 
@@ -1162,14 +1218,17 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           if(!segment.points[1].isFinite())
           {
             segment.points[1] = straightEnd(segment);
+            updateView(data.view, segment.points[1]);
           }
           if(!segment.points[2].isFinite())
           {
             segment.points[2] = curveEnd(segment, 0);
+            updateView(data.view, segment.curves[0], segment.rotation);
           }
           if(!segment.points[3].isFinite())
           {
             segment.points[3] = curveEnd(segment, 1);
+            updateView(data.view, segment.curves[1], segment.rotation);
           }
           break;
 
@@ -1377,6 +1436,11 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
   }
 
   data.trainWidth = world.value("train_width", data.trainWidth);
+
+  data.view.top -= data.trainWidth;
+  data.view.left -= data.trainWidth;
+  data.view.bottom += data.trainWidth;
+  data.view.right += data.trainWidth;
 
   assert(data.sensors.size() == stateData.sensors.size());
   assert(data.trains.size() == stateData.trains.size());

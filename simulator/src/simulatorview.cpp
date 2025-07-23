@@ -165,6 +165,35 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
   update();
 }
 
+void SimulatorView::zoomIn()
+{
+  setZoomLevel(m_zoomLevel * zoomFactorIn);
+}
+
+void SimulatorView::zoomOut()
+{
+  setZoomLevel(m_zoomLevel * zoomFactorOut);
+}
+
+void SimulatorView::zoomToFit()
+{
+  if(!m_simulator) [[unlikely]]
+  {
+    return;
+  }
+
+  // Make it fit:
+  const float zoomLevelX = width() / m_simulator->staticData.view.width();
+  const float zoomLevelY = height() / m_simulator->staticData.view.height();
+  const float zoomLevel = std::min(zoomLevelX, zoomLevelY);
+
+  // Center it:
+  m_cameraX = m_simulator->staticData.view.left - (width() / zoomLevel - m_simulator->staticData.view.width()) / 2;
+  m_cameraY = m_simulator->staticData.view.top - (height() / zoomLevel - m_simulator->staticData.view.height()) / 2;
+
+  setZoomLevel(zoomLevel);
+}
+
 void SimulatorView::initializeGL()
 {
   initializeOpenGLFunctions();
@@ -436,9 +465,14 @@ void SimulatorView::mouseReleaseEvent(QMouseEvent* event)
 
 void SimulatorView::wheelEvent(QWheelEvent* event)
 {
-  const float zoomFactor = (event->angleDelta().y() < 0) ? 0.9f : 1.1f; // Zoom in or out
-  m_zoomLevel = std::clamp(m_zoomLevel * zoomFactor, 0.1f, 10.0f);
-  updateProjection();
+  if(event->angleDelta().y() < 0)
+  {
+    zoomOut();
+  }
+  else
+  {
+    zoomIn();
+  }
 }
 
 void SimulatorView::mouseLeftClick(QPointF pos)
@@ -453,6 +487,12 @@ void SimulatorView::mouseLeftClick(QPointF pos)
       break;
     }
   }
+}
+
+void SimulatorView::setZoomLevel(float value)
+{
+  m_zoomLevel = std::clamp(value, zoomLevelMin, zoomLevelMax);
+  updateProjection();
 }
 
 void SimulatorView::updateProjection()

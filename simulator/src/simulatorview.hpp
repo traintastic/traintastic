@@ -51,6 +51,10 @@ public:
     update();
   }
 
+  void zoomIn();
+  void zoomOut();
+  void zoomToFit();
+
 signals:
   void powerOnChanged(bool value);
 
@@ -73,6 +77,11 @@ private:
   };
   using Turnouts = std::vector<Turnout>;
 
+  static constexpr float zoomLevelMin =  0.1f;
+  static constexpr float zoomLevelMax = 10.0f;
+  static constexpr float zoomFactorIn = 1.1f;
+  static constexpr float zoomFactorOut = 0.9f;
+
   std::shared_ptr<Simulator> m_simulator;
   Simulator::StateData m_stateData;
   struct
@@ -93,6 +102,8 @@ private:
 
   void drawTracks();
   void drawTrains();
+
+  void setZoomLevel(float zoomLevel);
 
   void updateProjection();
 
