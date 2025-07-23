@@ -38,6 +38,7 @@
 #include "../../shared/src/traintastic/simulator/simulator.hpp"
 
 TEMPLATE_TEST_CASE("Decoder - forward, reverse", "[decoder]",
+  DCCEXInterface,
   LocoNetInterface,
   MarklinCANInterface,
   XpressNetInterface,
