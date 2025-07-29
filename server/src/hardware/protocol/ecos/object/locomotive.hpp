@@ -58,7 +58,6 @@ class Locomotive final : public Object
   public:
     static const std::initializer_list<std::string_view> options;
 
-    static constexpr uint8_t getSpeedSteps(LocomotiveProtocol protocol);
     static constexpr uint8_t getFunctionCount(LocomotiveProtocol protocol);
 
     Locomotive(Kernel& kernel, uint16_t id);
@@ -83,36 +82,6 @@ class Locomotive final : public Object
     TriState getFunctionValue(uint8_t index) const;
     void setFunctionValue(uint8_t index, bool value);
 };
-
-constexpr uint8_t Locomotive::getSpeedSteps(LocomotiveProtocol protocol)
-{
-  switch(protocol)
-  {
-    case LocomotiveProtocol::DCC14:
-    case LocomotiveProtocol::MM14:
-      return 14;
-
-    case LocomotiveProtocol::MM27:
-      return 27;
-
-    case LocomotiveProtocol::DCC28:
-    case LocomotiveProtocol::MM28:
-      return 28;
-
-    case LocomotiveProtocol::SX32:
-      return 32;
-
-    case LocomotiveProtocol::DCC128:
-      return 128;
-
-    case LocomotiveProtocol::MMFKT:
-      return 0; // ??
-
-    case LocomotiveProtocol::Unknown:
-      break;
-  }
-  return 0;
-}
 
 constexpr uint8_t Locomotive::getFunctionCount(LocomotiveProtocol protocol)
 {

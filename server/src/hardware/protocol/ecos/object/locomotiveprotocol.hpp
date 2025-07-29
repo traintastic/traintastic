@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,8 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_LOCOMOTIVEPROTOCOL_HPP
 
 #include <string_view>
+#include <traintastic/enum/decoderprotocol.hpp>
+#include "../../dcc/dcc.hpp"
 
 namespace ECoS
 {
@@ -40,6 +42,22 @@ enum class LocomotiveProtocol
   SX32 = 7,
   MMFKT = 8,
 };
+
+constexpr bool isDCC(LocomotiveProtocol value)
+{
+  return
+    (value == LocomotiveProtocol::DCC14) ||
+    (value == LocomotiveProtocol::DCC28) ||
+    (value == LocomotiveProtocol::DCC128);
+}
+
+constexpr bool isMM(LocomotiveProtocol value)
+{
+  return
+    (value == LocomotiveProtocol::MM14) ||
+    (value == LocomotiveProtocol::MM27) ||
+    (value == LocomotiveProtocol::MM28);
+}
 
 constexpr std::string_view toString(LocomotiveProtocol protocol)
 {
@@ -96,6 +114,60 @@ inline bool fromString(std::string_view text, LocomotiveProtocol& protocol)
   else
     return false;
   return true;
+}
+
+constexpr DecoderProtocol toDecoderProtocol(LocomotiveProtocol locomotiveProtocol, uint16_t address)
+{
+  switch(locomotiveProtocol)
+  {
+    case LocomotiveProtocol::DCC14:
+    case LocomotiveProtocol::DCC28:
+    case LocomotiveProtocol::DCC128:
+      return DCC::getProtocol(address);
+
+    case LocomotiveProtocol::MM14:
+    case LocomotiveProtocol::MM27:
+    case LocomotiveProtocol::MM28:
+      return DecoderProtocol::Motorola;
+
+    case LocomotiveProtocol::SX32:
+      return DecoderProtocol::Selectrix;
+
+    case LocomotiveProtocol::Unknown:
+    case LocomotiveProtocol::MMFKT:
+      break;
+  }
+  return DecoderProtocol::None;
+}
+
+constexpr uint8_t getSpeedSteps(LocomotiveProtocol protocol)
+{
+  switch(protocol)
+  {
+    case LocomotiveProtocol::DCC14:
+    case LocomotiveProtocol::MM14:
+      return 14;
+
+    case LocomotiveProtocol::MM27:
+      return 27;
+
+    case LocomotiveProtocol::DCC28:
+    case LocomotiveProtocol::MM28:
+      return 28;
+
+    case LocomotiveProtocol::SX32:
+      return 32;
+
+    case LocomotiveProtocol::DCC128:
+      return 128;
+
+    case LocomotiveProtocol::MMFKT:
+      return 0; // ??
+
+    case LocomotiveProtocol::Unknown:
+      break;
+  }
+  return 0;
 }
 
 }

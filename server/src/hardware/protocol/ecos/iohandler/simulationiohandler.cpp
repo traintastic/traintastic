@@ -23,6 +23,7 @@
 #include "simulationiohandler.hpp"
 #include "../kernel.hpp"
 #include "../messages.hpp"
+#include "../../../../utils/fromchars.hpp"
 #include "../../../../utils/rtrim.hpp"
 
 namespace ECoS {
@@ -146,7 +147,68 @@ void SimulationIOHandler::start()
             .append(std::to_string(ObjectId::ecos)).append(" status[").append(powerOn ? "GO" : "STOP").append("]>\r\n")
             .append("<END 0 (OK)>\r\n"));
       };
-    // FIXME: m_simulator->onLocomotiveSpeedDirection
+    m_simulator->onLocomotiveSpeedDirection =
+      [this](DecoderProtocol protocol, uint16_t address, uint8_t speed, Direction direction, bool emergencyStop)
+      {
+        auto it = m_simulation.locomotives.end();
+        switch(protocol)
+        {
+          case DecoderProtocol::None:
+            it = std::find_if(m_simulation.locomotives.begin(), m_simulation.locomotives.end(),
+              [address](const auto& locomotive)
+              {
+                return locomotive.address == address;
+              });
+            break;
+
+          case DecoderProtocol::DCCShort:
+          case DecoderProtocol::DCCLong:
+            it = std::find_if(m_simulation.locomotives.begin(), m_simulation.locomotives.end(),
+              [address](const auto& locomotive)
+              {
+                return isDCC(locomotive.protocol) && locomotive.address == address;
+              });
+            break;
+
+          case DecoderProtocol::Motorola:
+            it = std::find_if(m_simulation.locomotives.begin(), m_simulation.locomotives.end(),
+              [address](const auto& locomotive)
+              {
+                return isMM(locomotive.protocol) && locomotive.address == address;
+              });
+            break;
+
+          case DecoderProtocol::MFX:
+            it = std::find_if(m_simulation.locomotives.begin(), m_simulation.locomotives.end(),
+              [address](const auto& locomotive)
+              {
+                return locomotive.protocol == LocomotiveProtocol::MMFKT && locomotive.address == address;
+              });
+            break;
+
+          case DecoderProtocol::Selectrix:
+            it = std::find_if(m_simulation.locomotives.begin(), m_simulation.locomotives.end(),
+              [address](const auto& locomotive)
+              {
+                return locomotive.protocol == LocomotiveProtocol::SX32 && locomotive.address == address;
+              });
+            break;
+        }
+
+        const uint8_t speedStep = emergencyStop ? 0 : speed;
+
+        if(it == m_simulation.locomotives.end())
+        {
+          // FIXME: create loco
+        }
+
+        if(it != m_simulation.locomotives.end())
+        {
+          m_locomotives[it->id].dir = direction == Direction::Reverse ? 1 : 0;
+          m_locomotives[it->id].speedStep = speedStep;
+          reply(locomotiveEvent(it->id, speedStep, direction));
+        }
+      };
     m_simulator->onSensorChanged =
       [this](uint16_t /*channel*/, uint16_t address, bool value)
       {
@@ -325,9 +387,9 @@ bool SimulationIOHandler::send(std::string_view message)
       for(auto option : request.options)
       {
         if(option == Option::dir)
-          response.append(std::to_string(request.objectId)).append(" dir[0]\r\n");
+          response.append(std::to_string(request.objectId)).append(" dir[").append(std::to_string(m_locomotives[request.objectId].dir)).append("]\r\n");
         else if(option == Option::speedStep)
-          response.append(std::to_string(request.objectId)).append(" speedstep[0]\r\n");
+          response.append(std::to_string(request.objectId)).append(" speedstep[").append(std::to_string(m_locomotives[request.objectId].speedStep)).append("]\r\n");
         else if(parseOptionValue(option, key, value) && key == Option::func)
           response.append(std::to_string(request.objectId)).append(" func[").append(value).append(",0]\r\n");
         else
@@ -336,6 +398,49 @@ bool SimulationIOHandler::send(std::string_view message)
       response.append("<END 0 (OK)>\r\n");
 
       return reply(response);
+    }
+    else if(request.command == Command::set)
+    {
+      auto& locomotive = m_locomotives[request.objectId];
+      std::string_view option;
+      std::string_view value;
+
+      for(auto text : request.options)
+      {
+        if(!parseOptionValue(text, option, value))
+        {
+          continue;
+        }
+
+        if(option == Option::dir)
+        {
+          uint8_t dir;
+          if(fromChars(value, dir).ec == std::errc())
+          {
+            locomotive.dir = dir;
+          }
+        }
+        else if(option == Option::speedStep)
+        {
+          uint8_t speedStep;
+          if(fromChars(value, speedStep).ec == std::errc())
+          {
+            locomotive.speedStep = speedStep;
+          }
+        }
+        else
+          assert(false);
+      }
+
+      if(m_simulator)
+      {
+        m_simulator->sendLocomotiveSpeedDirection(
+          toDecoderProtocol(itLocomotive->protocol, itLocomotive->address),
+          itLocomotive->address,
+          locomotive.speedStep * 255u / getSpeedSteps(itLocomotive->protocol),
+          locomotive.dir == 0 ? Direction::Forward : Direction::Reverse,
+          false);
+      }
     }
   }
   else if(auto itSwitch = std::find_if(m_simulation.switches.begin(), m_simulation.switches.end(),

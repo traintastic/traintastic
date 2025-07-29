@@ -35,7 +35,14 @@ namespace ECoS {
 class SimulationIOHandler final : public IOHandler
 {
   private:
+    struct Locomotive
+    {
+      uint8_t dir = 0;
+      uint8_t speedStep = 0;
+    };
+
     Simulation m_simulation;
+    std::unordered_map<uint16_t, Locomotive> m_locomotives;
     std::unique_ptr<SimulatorIOHandler> m_simulator;
     std::unordered_map<uint16_t, bool> m_simulatorS88;
 

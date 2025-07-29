@@ -48,30 +48,6 @@
 
 namespace ECoS {
 
-static constexpr DecoderProtocol toDecoderProtocol(LocomotiveProtocol locomotiveProtocol, uint16_t address)
-{
-  switch(locomotiveProtocol)
-  {
-    case LocomotiveProtocol::DCC14:
-    case LocomotiveProtocol::DCC28:
-    case LocomotiveProtocol::DCC128:
-      return DCC::getProtocol(address);
-
-    case LocomotiveProtocol::MM14:
-    case LocomotiveProtocol::MM27:
-    case LocomotiveProtocol::MM28:
-      return DecoderProtocol::Motorola;
-
-    case LocomotiveProtocol::SX32:
-      return DecoderProtocol::Selectrix;
-
-    case LocomotiveProtocol::Unknown:
-    case LocomotiveProtocol::MMFKT:
-      break;
-  }
-  return DecoderProtocol::None;
-}
-
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
   , m_simulation{simulation}
