@@ -39,6 +39,7 @@
 
 TEMPLATE_TEST_CASE("Decoder - forward, reverse", "[decoder]",
   DCCEXInterface,
+  ECoSInterface,
   LocoNetInterface,
   MarklinCANInterface,
   XpressNetInterface,
@@ -88,6 +89,22 @@ TEMPLATE_TEST_CASE("Decoder - forward, reverse", "[decoder]",
 
   std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
   REQUIRE_FALSE(interfaceWeak.expired());
+  if constexpr(std::is_same_v<TestType, ECoSInterface>)
+  {
+    static const nlohmann::json simulationData
+    {
+      {"locomotives", {
+            {
+              {"id", 1000},
+              {"address", 3},
+              {"protocol", "DCC128"}
+            }
+        }
+      }
+    };
+    auto& ecosInterface = static_cast<ECoSInterface&>(*interfaceWeak.lock());
+    ecosInterface.loadSimulationData(simulationData);
+  }
   interfaceWeak.lock()->simulator->useSimulator = true;
   interfaceWeak.lock()->simulator->port = simulator->serverPort();
 
