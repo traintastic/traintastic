@@ -80,6 +80,8 @@ class ECoSInterface final
     ECoSInterface(World& world, std::string_view _id);
     ~ECoSInterface() final;
 
+    void loadSimulationData(const nlohmann::json& simulation);
+
     // DecoderController:
     std::span<const DecoderProtocol> decoderProtocols() const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;

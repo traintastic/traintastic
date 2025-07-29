@@ -297,78 +297,84 @@ void ECoSInterface::load(WorldLoader& loader, const nlohmann::json& data)
   Interface::load(loader, data);
 
   // load simulation data:
+  nlohmann::json simulation;
+  if(loader.readFile(simulationDataFilename(), simulation))
   {
-    using namespace nlohmann;
+    loadSimulationData(simulation);
+  }
+}
 
-    json simulation;
-    if(loader.readFile(simulationDataFilename(), simulation))
+void ECoSInterface::loadSimulationData(const nlohmann::json& simulation)
+{
+  if(online)
+  {
+    return;
+  }
+
+  using namespace ECoS;
+
+  // ECoS:
+  if(nlohmann::json object = simulation.value("ecos", nlohmann::json::object()); !object.empty())
+  {
+    m_simulation.ecos.commandStationType = object.value("command_station_type", "");
+    m_simulation.ecos.applicationVersion = object.value("application_version", "");
+    m_simulation.ecos.applicationVersionSuffix = object.value("application_version_suffix", "");
+    m_simulation.ecos.hardwareVersion = object.value("hardware_version", "");
+    m_simulation.ecos.protocolVersion = object.value("protocol_version", "");
+    m_simulation.ecos.railcom = object.value("railcom", false);
+    m_simulation.ecos.railcomPlus = object.value("railcom_plus", false);
+  }
+
+  if(nlohmann::json locomotives = simulation.value("locomotives", nlohmann::json::array()); !locomotives.empty())
+  {
+    for(const nlohmann::json& object : locomotives)
     {
-      using namespace ECoS;
+      const uint16_t objectId = object.value("id", 0U);
+      LocomotiveProtocol protocol;
+      const uint16_t address = object.value("address", 0U);
+      if(objectId != 0 && fromString(object.value("protocol", ""), protocol) && address != 0)
+        m_simulation.locomotives.emplace_back(Simulation::Locomotive{{objectId}, protocol, address});
+    }
+  }
 
-      // ECoS:
-      if(json object = simulation.value("ecos", json::object()); !object.empty())
+  if(nlohmann::json switches = simulation.value("switches", nlohmann::json::array()); !switches.empty())
+  {
+    for(const nlohmann::json& object : switches)
+    {
+      const uint16_t objectId = object.value("id", 0U);
+      const uint16_t address = object.value("address", 0U);
+      if(objectId != 0 && address != 0)
       {
-        m_simulation.ecos.commandStationType = object.value("command_station_type", "");
-        m_simulation.ecos.applicationVersion = object.value("application_version", "");
-        m_simulation.ecos.applicationVersionSuffix = object.value("application_version_suffix", "");
-        m_simulation.ecos.hardwareVersion = object.value("hardware_version", "");
-        m_simulation.ecos.protocolVersion = object.value("protocol_version", "");
-        m_simulation.ecos.railcom = object.value("railcom", false);
-        m_simulation.ecos.railcomPlus = object.value("railcom_plus", false);
+        m_simulation.switches.emplace_back(
+          Simulation::Switch{
+            {objectId},
+            object.value("name1", ""),
+            object.value("name2", ""),
+            object.value("name3", ""),
+            address,
+            object.value("addrext", ""),
+            object.value("type", ""),
+            object.value("symbol", -1),
+            object.value("protocol", ""),
+            object.value<uint8_t>("state", 0U),
+            object.value("mode", ""),
+            object.value<uint16_t>("duration", 0U),
+            object.value<uint8_t>("variant", 0U)
+            });
       }
+    }
+  }
 
-      if(json locomotives = simulation.value("locomotives", json::array()); !locomotives.empty())
-      {
-        for(const json& object : locomotives)
-        {
-          const uint16_t objectId = object.value("id", 0U);
-          LocomotiveProtocol protocol;
-          const uint16_t address = object.value("address", 0U);
-          if(objectId != 0 && fromString(object.value("protocol", ""), protocol) && address != 0)
-            m_simulation.locomotives.emplace_back(Simulation::Locomotive{{objectId}, protocol, address});
-        }
-      }
-
-      if(json switches = simulation.value("switches", json::array()); !switches.empty())
-      {
-        for(const json& object : switches)
-        {
-          const uint16_t objectId = object.value("id", 0U);
-          const uint16_t address = object.value("address", 0U);
-          if(objectId != 0 && address != 0)
-          {
-            m_simulation.switches.emplace_back(
-              Simulation::Switch{
-                {objectId},
-                object.value("name1", ""),
-                object.value("name2", ""),
-                object.value("name3", ""),
-                address,
-                object.value("addrext", ""),
-                object.value("type", ""),
-                object.value("symbol", -1),
-                object.value("protocol", ""),
-                object.value<uint8_t>("state", 0U),
-                object.value("mode", ""),
-                object.value<uint16_t>("duration", 0U),
-                object.value<uint8_t>("variant", 0U)
-                });
-          }
-        }
-      }
-
-      if(json s88 = simulation.value("s88", json::array()); !s88.empty())
-      {
-        for(const json& object : s88)
-        {
-          const uint16_t objectId = object.value("id", 0U);
-          const uint8_t ports = object.value("ports", 0U);
-          if(objectId != 0 && (ports == 8 || ports == 16))
-            m_simulation.s88.emplace_back(Simulation::S88{{objectId}, ports});
-          else
-            break;
-        }
-      }
+  if(nlohmann::json s88 = simulation.value("s88", nlohmann::json::array()); !s88.empty())
+  {
+    for(const nlohmann::json& object : s88)
+    {
+      const uint16_t objectId = object.value("id", 0U);
+      const uint8_t ports = object.value("ports", 0U);
+      if(objectId != 0 && (ports == 8 || ports == 16))
+        m_simulation.s88.emplace_back(Simulation::S88{{objectId}, ports});
+      else
+        break;
     }
   }
 }
