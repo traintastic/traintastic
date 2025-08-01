@@ -102,6 +102,7 @@ private:
 
   void drawTracks();
   void drawTrains();
+  void drawMisc();
 
   void setZoomLevel(float zoomLevel);
 

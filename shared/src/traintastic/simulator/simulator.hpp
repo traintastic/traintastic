@@ -137,6 +137,19 @@ public:
     uint16_t address = invalidAddress;
   };
 
+  struct Misc
+  {
+    enum class Type
+    {
+      Rectangle,
+    } type;
+
+    Point origin;
+    float height = 0.0;
+    float width = 0.0;
+    Color color;
+  };
+
   struct StaticData
   {
     struct View
@@ -160,6 +173,7 @@ public:
     std::vector<Sensor> sensors;
     std::vector<Vehicle> vehicles;
     std::vector<Train> trains;
+    std::vector<Misc> misc;
     float trainWidth = 10.0f;
     float trainCouplingLength = 4.0f;
   };

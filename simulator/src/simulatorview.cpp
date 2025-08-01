@@ -214,6 +214,7 @@ void SimulatorView::paintGL()
 
   if(m_simulator) [[likely]]
   {
+    drawMisc();
     drawTracks();
     drawTrains();
   }
@@ -360,6 +361,29 @@ void SimulatorView::drawTrains()
     glEnd();
 
     glPopMatrix();
+  }
+}
+
+void SimulatorView::drawMisc()
+{
+  assert(m_simulator);
+
+  for(const auto& item : m_simulator->staticData.misc)
+  {
+    const auto& color = colors[static_cast<size_t>(item.color)];
+    glColor3f(color.red, color.green, color.blue);
+
+    switch(item.type)
+    {
+      case Simulator::Misc::Type::Rectangle:
+        glBegin(GL_LINE_LOOP);
+        glVertex2f(item.origin.x, item.origin.y);
+        glVertex2f(item.origin.x + item.width, item.origin.y);
+        glVertex2f(item.origin.x + item.width, item.origin.y + item.height);
+        glVertex2f(item.origin.x, item.origin.y + item.height);
+        glEnd();
+        break;
+    }
   }
 }
 

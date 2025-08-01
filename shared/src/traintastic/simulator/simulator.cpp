@@ -1435,6 +1435,53 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
     }
   }
 
+  if(auto misc = world.find("misc"); misc != world.end() && misc->is_array())
+  {
+    for(const auto& object : *misc)
+    {
+      if(!object.is_object())
+      {
+        continue;
+      }
+
+      Misc item;
+
+      item.origin.x = object.value("x", std::numeric_limits<float>::quiet_NaN());
+      item.origin.y = object.value("y", std::numeric_limits<float>::quiet_NaN());
+      item.color = stringToEnum<Color>(object.value<std::string_view>("color", {})).value_or(Color::None);
+      if(!item.origin.isFinite() || item.color == Color::None)
+      {
+        continue;
+      }
+
+      const auto type = object.value<std::string_view>("type", {});
+      if(type == "rectangle")
+      {
+        item.type = Misc::Type::Rectangle;
+        item.height = object.value("height", std::numeric_limits<float>::quiet_NaN());
+        item.width = object.value("width", std::numeric_limits<float>::quiet_NaN());
+        if(!std::isfinite(item.height) || !std::isfinite(item.width))
+        {
+          continue;
+        }
+      }
+      else
+      {
+        continue;
+      }
+
+      updateView(data.view, item.origin);
+      switch(item.type)
+      {
+        case Misc::Type::Rectangle:
+          updateView(data.view, {item.origin.x + item.width, item.origin.y + item.height});
+          break;
+      }
+
+      data.misc.emplace_back(std::move(item));
+    }
+  }
+
   data.trainWidth = world.value("train_width", data.trainWidth);
 
   data.view.top -= data.trainWidth;
