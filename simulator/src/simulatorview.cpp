@@ -89,21 +89,17 @@ void drawCurve(const Simulator::TrackSegment& segment, size_t curveIndex)
 
   int numSegments = qCeil(std::abs(curve.angle) / (pi / 36.0f)); // Smooth curve
   float step = curve.angle / numSegments;
-  float prevX = 0.0f;
-  float prevY = 0.0f;
   const float cx = curve.radius * sinf(rotation);
   const float cy = curve.radius * -cosf(rotation);
 
   glBegin(GL_LINE_STRIP);
+  glVertex2f(0.0f, 0.0f);
   for(int i = 1; i <= numSegments; i++)
   {
     float angle = rotation + i * step;
     float x = cx - curve.radius * sinf(angle);
     float y = cy - curve.radius * -cosf(angle);
-    glVertex2f(prevX, prevY);
     glVertex2f(x, y);
-    prevX = x;
-    prevY = y;
   }
   glEnd();
 }
