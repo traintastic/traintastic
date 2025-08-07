@@ -1083,6 +1083,18 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           throw std::runtime_error("from_id contains unknown id");
         }
       }
+      else if(const auto fromSide = obj.value("from_side", invalidIndex);
+          fromSide != invalidIndex &&
+          fromSegmentIndex != invalidIndex &&
+          getPointCount(data.trackSegments[fromSegmentIndex].type) > 2 &&
+          fromSide < getPointCount(data.trackSegments[fromSegmentIndex].type) &&
+          data.trackSegments[fromSegmentIndex].nextSegmentIndex[fromSide] == invalidIndex)
+      {
+        const auto& fromSegment = data.trackSegments[fromSegmentIndex];
+        curPoint = fromSegment.points[fromSide];
+        curRotation = getPointRotation(fromSegment, fromSide);
+        fromPointIndex = fromSide;
+      }
       else
       {
         if(obj.contains("x"))
