@@ -372,12 +372,16 @@ void SimulatorView::drawMisc()
     switch(item.type)
     {
       case Simulator::Misc::Type::Rectangle:
+        glPushMatrix();
+        glTranslatef(item.origin.x, item.origin.y, 0.0f);
+        glRotatef(qRadiansToDegrees(item.rotation), 0.0f, 0.0f, 1.0f);
         glBegin(GL_LINE_LOOP);
-        glVertex2f(item.origin.x, item.origin.y);
-        glVertex2f(item.origin.x + item.width, item.origin.y);
-        glVertex2f(item.origin.x + item.width, item.origin.y + item.height);
-        glVertex2f(item.origin.x, item.origin.y + item.height);
+        glVertex2f(0.0f, 0.0f);
+        glVertex2f(item.width, 0.0f);
+        glVertex2f(item.width, item.height);
+        glVertex2f(0.0f, item.height);
         glEnd();
+        glPopMatrix();
         break;
     }
   }

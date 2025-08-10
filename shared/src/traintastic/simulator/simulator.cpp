@@ -1470,6 +1470,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
       if(type == "rectangle")
       {
         item.type = Misc::Type::Rectangle;
+        item.rotation = deg2rad(object.value("rotation", 0.0f));
         item.height = object.value("height", std::numeric_limits<float>::quiet_NaN());
         item.width = object.value("width", std::numeric_limits<float>::quiet_NaN());
         if(!std::isfinite(item.height) || !std::isfinite(item.width))
@@ -1486,8 +1487,14 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
       switch(item.type)
       {
         case Misc::Type::Rectangle:
-          updateView(data.view, {item.origin.x + item.width, item.origin.y + item.height});
+        {
+          const float cosRotation = std::cos(item.rotation);
+          const float sinRotation = std::sin(item.rotation);
+          updateView(data.view, {item.origin.x + item.width * cosRotation, item.origin.y + item.width * sinRotation}); // top right
+          updateView(data.view, {item.origin.x - item.height * sinRotation, item.origin.y + item.height * cosRotation}); // bottom left
+          updateView(data.view, {item.origin.x - item.height * sinRotation + item.width * cosRotation, item.origin.y + item.height * cosRotation + item.width * sinRotation}); // bottom right
           break;
+        }
       }
 
       data.misc.emplace_back(std::move(item));

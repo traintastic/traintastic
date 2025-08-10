@@ -145,8 +145,9 @@ public:
     } type;
 
     Point origin;
-    float height = 0.0;
-    float width = 0.0;
+    float rotation = 0.0f;
+    float height = 0.0f;
+    float width = 0.0f;
     Color color;
   };
 
