@@ -111,6 +111,8 @@ Train::Train(World& world, std::string_view _id) :
   emergencyStop{this, "emergency_stop", true, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadWrite,
     [this](bool value)
     {
+      m_accelerationIsImmediate = false; // Reset for next speed changes
+
       if(value)
       {
         m_speedState = SpeedState::Idle;
@@ -397,8 +399,11 @@ void Train::setSpeed(const SpeedPoint& speedPoint)
   updateEnabled();
 }
 
-void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
+void Train::setThrottleSpeed(const SpeedPoint& targetSpeed, bool immediate)
 {
+  const bool wasAccelImmediate = m_accelerationIsImmediate;
+  m_accelerationIsImmediate = immediate;
+
   if(!m_speedTable)
   {
     // Legacy multiple traction
@@ -479,6 +484,8 @@ void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
   auto elapsed = std::chrono::steady_clock::now() - m_speedTimerStart;
   auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 
+  const double oldAccelRate = getAccelerationRate(m_speedState, wasAccelImmediate) / m_world.scaleRatio;
+
   if(throttleSpeedPoint.tableIdx > lastSetSpeedPoint.tableIdx)
   {
     if(m_speedState == SpeedState::Accelerating)
@@ -494,7 +501,7 @@ void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
       {
         // We start from under last set speed
         // NOTE: braking rate is positive so it needs minus
-        double deltaSpeed = ( -brakingRate / m_world.scaleRatio) * double(millis.count()) / 1000.0;
+        double deltaSpeed = oldAccelRate * double(millis.count()) / 1000.0;
         currentSpeed += deltaSpeed; // Negative delta
         nextTableIdx--;
       }
@@ -518,7 +525,7 @@ void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
       if(m_speedState == SpeedState::Accelerating)
       {
         // We start from above last set speed
-        double deltaSpeed = (accelerationRate / m_world.scaleRatio) * double(millis.count()) / 1000.0;
+        double deltaSpeed = oldAccelRate * double(millis.count()) / 1000.0;
         currentSpeed += deltaSpeed;
         prevTableIdx++;
       }
@@ -539,18 +546,15 @@ void Train::setThrottleSpeed(const SpeedPoint& targetSpeed)
   }
 }
 
-void Train::scheduleAccelerationFrom(double currentSpeed, uint8_t newTableIdx, SpeedState state)
+void Train::scheduleAccelerationFrom(double currentSpeed, uint8_t newTableIdx,
+                                     SpeedState state)
 {
   // Calculate seconds to previous table index
   double newSpeed = m_speedTable->getEntryAt(newTableIdx).avgSpeed;
 
   const double deltaSpeed = newSpeed - currentSpeed;
-  double accelRate = accelerationRate;
-  if(state == SpeedState::Braking)
-  {
-    // Make it negative
-    accelRate = -brakingRate;
-  }
+
+  double accelRate = getAccelerationRate(state, m_accelerationIsImmediate);
   accelRate /= m_world.scaleRatio;
 
   const double deltaSeconds = deltaSpeed / accelRate;
@@ -582,12 +586,7 @@ void Train::updateSpeed()
     const double targetSpeed = throttleSpeed.getValue(SpeedUnit::MeterPerSecond);
     double currentSpeed = speed.getValue(SpeedUnit::MeterPerSecond);
 
-    double acceleration = accelerationRate;
-    if(m_speedState == SpeedState::Braking)
-    {
-      // Make it negative
-      acceleration = -brakingRate;
-    }
+    const double acceleration = getAccelerationRate(m_speedState, m_accelerationIsImmediate);
 
     currentSpeed += acceleration * 0.1; // x 100ms
 
@@ -1080,12 +1079,8 @@ std::error_code Train::setSpeed(Throttle& throttle, double value)
   speedPoint.speedMetersPerSecond = match.tableEntry.avgSpeed;
   speedPoint.tableIdx = match.tableIdx;
 
-  // Cancel current acceleration
-  m_speedState = SpeedState::Idle;
-  m_speedTimer.cancel();
-
-  // Force setting speed
-  setSpeed(throttleSpeedPoint);
+  // Force set speed bypassing user acceleration
+  setThrottleSpeed(speedPoint, true);
 
   // Update real speed property
   const double realSpeedMS = throttleSpeedPoint.speedMetersPerSecond * m_world.scaleRatio.value();
@@ -1179,6 +1174,7 @@ void Train::propagateDirection(Direction newDirection)
   if(!active)
     return;
 
+  m_accelerationIsImmediate = false; // Reset for next speed change
   const Direction oppositeDirection = newDirection == Direction::Forward ? Direction::Reverse : Direction::Forward;
   for(const auto& item : *vehicles)
   {

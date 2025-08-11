@@ -223,6 +223,13 @@ struct Attributes
   }
 
   template<typename T>
+  static inline T getMax(const Property<T>& property)
+  {
+    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
+    return property.template getAttribute<T>(AttributeName::Max);
+  }
+
+  template<typename T>
   static inline void getMinMax(const Property<T>& property, T& min, T& max)
   {
     static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);

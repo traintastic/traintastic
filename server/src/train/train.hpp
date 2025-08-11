@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_TRAIN_TRAIN_HPP
 #define TRAINTASTIC_SERVER_TRAIN_TRAIN_HPP
 
+#include "../core/attributes.hpp"
 #include "../core/idobject.hpp"
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/blocktraindirection.hpp>
@@ -59,8 +60,8 @@ class Train : public IdObject
 
     struct SpeedPoint
     {
-        double speedMetersPerSecond;
-        uint8_t tableIdx = 0;
+      double speedMetersPerSecond;
+      uint8_t tableIdx = 0;
     };
 
     SpeedPoint throttleSpeedPoint;
@@ -70,6 +71,7 @@ class Train : public IdObject
     std::vector<std::shared_ptr<PoweredRailVehicle>> m_poweredVehicles;
     std::unique_ptr<TrainSpeedTable> m_speedTable;
     bool m_speedTableNeedsRecalculation = false;
+    bool m_accelerationIsImmediate = false;
 
     std::chrono::steady_clock::time_point m_speedTimerStart;
     boost::asio::steady_timer m_speedTimer;
@@ -80,7 +82,26 @@ class Train : public IdObject
     std::shared_ptr<PoweredRailVehicle> m_delayedApplyLoco;
 
     void setSpeed(const SpeedPoint &speedPoint);
-    void setThrottleSpeed(const SpeedPoint &targetSpeed);
+    void setThrottleSpeed(const SpeedPoint &targetSpeed, bool immediate = false);
+
+    inline double getAccelerationRate(SpeedState state, bool immediate)
+    {
+        if(state == SpeedState::Accelerating)
+        {
+          if(immediate)
+              return Attributes::getMax(accelerationRate);
+
+          return accelerationRate;
+        }
+        else
+        {
+            // Make it negative
+            if(immediate)
+                return -Attributes::getMax(brakingRate);
+
+            return -brakingRate;
+        }
+    }
 
     void scheduleAccelerationFrom(double currentSpeed,
                                   uint8_t newTableIdx,
