@@ -33,6 +33,8 @@
 #include "../train/train.hpp"
 #include "../train/trainlist.hpp"
 #include "../train/trainvehiclelist.hpp"
+#include "../train/trainvehiclelistitem.hpp"
+#include "../vehicle/rail/railvehicle.hpp"
 
 WebThrottleConnection::WebThrottleConnection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws)
   : WebSocketConnection(server, std::move(ws), "webthrottle")
@@ -237,18 +239,18 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
           object.emplace("throttle_speed", train->throttleSpeed.toJSON());
 
           auto functions = nlohmann::json::array();
-          for(const auto& vehicle : *train->vehicles)
+          for(const auto& vehicleItem : *train->vehicles)
           {
-            if(const auto& decoder = vehicle->decoder.value(); decoder && !decoder->functions->empty())
+            if(const auto& decoder = vehicleItem->vehicle->decoder.value(); decoder && !decoder->functions->empty())
             {
               auto group = nlohmann::json::object();
-              group.emplace("id", vehicle->id.toJSON());
-              group.emplace("name", vehicle->name.toJSON());
+              group.emplace("id", vehicleItem->vehicle->id.toJSON());
+              group.emplace("name", vehicleItem->vehicle->name.toJSON());
               auto items = nlohmann::json::array();
               for(const auto& function : *decoder->functions)
               {
                 m_trainConnections.emplace(throttleId, function->propertyChanged.connect(
-                  [this, throttleId, vehicleId=vehicle->id.value()](BaseProperty& property)
+                  [this, throttleId, vehicleId=vehicleItem->vehicle->id.value()](BaseProperty& property)
                   {
                     if(property.name() == "value")
                     {
@@ -336,11 +338,11 @@ void WebThrottleConnection::processMessage(const nlohmann::json& message)
         const auto vehicleId = message.value<std::string_view>("vehicle_id", {});
         const auto functionNumber = message.value<uint32_t>("function_number", 0);
 
-        for(const auto& vehicle : *throttle->train->vehicles)
+        for(const auto& vehicleItem : *throttle->train->vehicles)
         {
-          if(vehicle->id.value() == vehicleId && vehicle->decoder)
+          if(vehicleItem->vehicle->id.value() == vehicleId && vehicleItem->vehicle->decoder)
           {
-            if(const auto& function = vehicle->decoder->getFunction(functionNumber))
+            if(const auto& function = vehicleItem->vehicle->decoder->getFunction(functionNumber))
             {
               function->value = !function->value;
             }

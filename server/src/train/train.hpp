@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_TRAIN_TRAIN_HPP
 #define TRAINTASTIC_SERVER_TRAIN_TRAIN_HPP
 
+#include "../core/attributes.hpp"
 #include "../core/idobject.hpp"
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/blocktraindirection.hpp>
@@ -41,42 +42,98 @@ class TrainBlockStatus;
 class BlockRailTile;
 class PoweredRailVehicle;
 class Throttle;
+class TrainSpeedTable;
 
 class Train : public IdObject
 {
   friend class TrainVehicleList;
+  friend class PoweredRailVehicle;
   friend class TrainTracking;
 
   private:
     enum class SpeedState
     {
       Idle,
-      Accelerate,
+      Accelerating,
       Braking,
     };
 
-    std::vector<std::shared_ptr<PoweredRailVehicle>> m_poweredVehicles;
+    struct SpeedPoint
+    {
+      double speedMetersPerSecond;
+      uint8_t tableIdx = 0;
+    };
 
+    SpeedPoint throttleSpeedPoint;
+    SpeedPoint lastSetSpeedPoint;
+    SpeedPoint maxSpeedPoint;
+
+    std::vector<std::shared_ptr<PoweredRailVehicle>> m_poweredVehicles;
+    std::unique_ptr<TrainSpeedTable> m_speedTable;
+    bool m_speedTableNeedsRecalculation = false;
+    bool m_accelerationIsImmediate = false;
+
+    std::chrono::steady_clock::time_point m_speedTimerStart;
     boost::asio::steady_timer m_speedTimer;
     SpeedState m_speedState = SpeedState::Idle;
     std::shared_ptr<Throttle> m_throttle;
 
-    void setSpeed(double kmph);
+    boost::asio::steady_timer m_delayedSpeedApplyTimer;
+    std::shared_ptr<PoweredRailVehicle> m_delayedApplyLoco;
+
+    void setSpeed(const SpeedPoint &speedPoint);
+    void setThrottleSpeed(const SpeedPoint &targetSpeed, bool immediate = false);
+
+    inline double getAccelerationRate(SpeedState state, bool immediate)
+    {
+        if(state == SpeedState::Accelerating)
+        {
+          if(immediate)
+              return Attributes::getMax(accelerationRate);
+
+          return accelerationRate;
+        }
+        else
+        {
+            // Make it negative
+            if(immediate)
+                return -Attributes::getMax(brakingRate);
+
+            return -brakingRate;
+        }
+    }
+
+    void scheduleAccelerationFrom(double currentSpeed,
+                                  uint8_t newTableIdx,
+                                  SpeedState state);
     void updateSpeed();
+    void updateSpeedTable();
+    void scheduleSpeedTableUpdate();
+
+    void startDelayedSpeedApply(const std::shared_ptr<PoweredRailVehicle> &vehicle);
+    void stopDelayedSpeedApply();
+    void applyDelayedSpeed();
+
+    void driveLocomotive(const std::shared_ptr<PoweredRailVehicle> &vehicle,
+                         uint8_t step);
 
     void vehiclesChanged();
     void updateLength();
     void updateWeight();
     void updatePowered();
     void updateSpeedMax();
+    void updateAcceleration();
     void updateEnabled();
     bool setTrainActive(bool val);
+    void propagateDirection(Direction newDirection);
+    void handleDecoderDirection(const std::shared_ptr<PoweredRailVehicle>& vehicle, Direction newDirection);
+    void handleDecoderThrottle(const std::shared_ptr<PoweredRailVehicle>& vehicle, float newThrottle);
 
     void fireBlockReserved(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
     void fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
     void fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
 
-  protected:
+protected:
     void addToWorld() override;
     void destroying() override;
     void loaded() override;
@@ -94,6 +151,13 @@ class Train : public IdObject
     SpeedProperty speed;
     SpeedProperty speedMax;
     SpeedProperty throttleSpeed;
+
+    //! \todo add realistic acceleration
+    Property<double> accelerationRate;
+
+    //! \todo add realistic braking
+    Property<double> brakingRate;
+
     Method<void()> stop;
     Property<bool> emergencyStop;
     WeightProperty weight;
