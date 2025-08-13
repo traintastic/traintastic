@@ -1140,8 +1140,8 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         curve.center.y = curPoint.y + curve.radius * std::cos(curAngle);
 
         // Calc origin:
-        segment.points[0].x = curve.center.x - curve.radius * std::sin(curRotation - curve.angle + pi);
-        segment.points[0].y = curve.center.y + curve.radius * std::cos(curRotation - curve.angle + pi);
+        segment.points[0].x = curve.center.x - curve.radius * std::sin(curAngle - curve.angle + pi);
+        segment.points[0].y = curve.center.y + curve.radius * std::cos(curAngle - curve.angle + pi);
 
         curRotation -= curve.angle;
 
