@@ -31,6 +31,9 @@
 #include <traintastic/copyright.hpp>
 #include <traintastic/utils/standardpaths.hpp>
 
+#include <QMessageBox>
+#include <QKeyEvent>
+
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
   , m_view{new SimulatorView(this)}
@@ -108,12 +111,39 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
 void MainWindow::load(const QString& filename)
 {
+  setWindowFilePath(filename);
+
   QFile file(filename);
   if(file.open(QIODeviceBase::ReadOnly))
   {
-    m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString())));
+    try
+    {
+      m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString())));
+    }
+    catch(std::exception &e)
+    {
+      qDebug() << "Error loading:" << filename << e.what();
+      QMessageBox::warning(this, tr("Load Error"),
+                           e.what());
+      return;
+    }
+
     QMetaObject::invokeMethod(m_view, &SimulatorView::zoomToFit, Qt::QueuedConnection);
   }
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *ev)
+{
+  if(ev->modifiers() == Qt::ControlModifier && ev->key() == Qt::Key_L)
+  {
+    // Reload
+    if(windowFilePath().isEmpty())
+        return;
+
+    load(windowFilePath());
+    return;
+  }
+  QMainWindow::keyPressEvent(ev);
 }
 
 void MainWindow::showAbout()

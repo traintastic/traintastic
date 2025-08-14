@@ -33,6 +33,9 @@ public:
 
   void load(const QString& filename);
 
+protected:
+  void keyPressEvent(QKeyEvent *ev) override;
+
 private:
   SimulatorView* m_view;
   QAction* m_power;
