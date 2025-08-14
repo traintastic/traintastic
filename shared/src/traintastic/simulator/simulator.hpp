@@ -289,6 +289,8 @@ private:
   void accept();
   void doReceive();
 
+  void sendInitialState(const std::shared_ptr<SimulatorConnection>& connection);
+
   void tick();
 
   void updateTrainPositions();
