@@ -25,6 +25,8 @@
 #include <QWheelEvent>
 #include <cmath>
 
+#include <QPainter>
+
 namespace
 {
 
@@ -132,6 +134,7 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
 
   m_simulator = std::move(value);
   m_turnouts.clear();
+  m_images.clear();
 
   if(m_simulator)
   {
@@ -156,6 +159,28 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
 
     m_simulator->enableServer();
     m_simulator->start();
+
+    for(const auto &imgRef : m_simulator->staticData.images)
+    {
+      Image item;
+      item.ref = imgRef;
+
+      if(!item.img.load(QString::fromStdString(item.ref.fileName)))
+        continue;
+
+      m_images.push_back(item);
+
+      // const QSizeF imgSize = QSizeF(item.img.size()) * item.ref.ratio;
+
+      // const float cosRotation = std::cos(item.ref.rotation);
+      // const float sinRotation = std::sin(item.ref.rotation);
+      // Simulator::updateView(m_simulator->staticData.view,
+      //                       {item.ref.origin.x + imgSize.width() * cosRotation, item.ref.origin.y + imgSize.width() * sinRotation}); // top right
+      // Simulator::updateView(m_simulator->staticData.view,
+      //            {item.ref.origin.x - imgSize.height() * sinRotation, item.ref.origin.y + imgSize.height() * cosRotation}); // bottom left
+      // Simulator::updateView(m_simulator->staticData.view,
+      //            {item.ref.origin.x - imgSize.height() * sinRotation + imgSize.width() * cosRotation, item.ref.origin.y + imgSize.height() * cosRotation + imgSize.width() * sinRotation}); // bottom right
+    }
   }
 
   update();
@@ -206,6 +231,29 @@ void SimulatorView::resizeGL(int w, int h)
 void SimulatorView::paintGL()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  if(m_images.size() > 0)
+  {
+      QPainter p;
+      p.begin(this);
+
+      p.scale(m_zoomLevel, m_zoomLevel);
+      p.translate(-m_cameraX, -m_cameraY);
+
+      const QTransform trasf = p.transform();
+
+      for(const auto &image : m_images)
+      {
+          p.translate(image.ref.origin.x, image.ref.origin.y);
+          p.rotate(qRadiansToDegrees(image.ref.rotation));
+          p.scale(image.ref.ratio, image.ref.ratio);
+          p.drawImage(QPoint(), image.img);
+          p.setTransform(trasf);
+      }
+
+      p.end();
+  }
+
   glLoadIdentity();
 
   if(m_simulator) [[likely]]
@@ -214,6 +262,7 @@ void SimulatorView::paintGL()
     drawTracks();
     drawTrains();
   }
+
 }
 
 void SimulatorView::drawTracks()

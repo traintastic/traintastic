@@ -27,6 +27,8 @@
 #include <QOpenGLFunctions>
 #include <traintastic/simulator/simulator.hpp>
 
+#include <QImage>
+
 class SimulatorView
   : public QOpenGLWidget
   , protected QOpenGLFunctions
@@ -84,6 +86,15 @@ private:
 
   std::shared_ptr<Simulator> m_simulator;
   Simulator::StateData m_stateData;
+
+  struct Image
+  {
+    QImage img;
+    Simulator::ImageRef ref;
+  };
+
+  std::vector<Image> m_images;
+
   struct
   {
     bool powerOn = false;

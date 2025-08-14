@@ -151,6 +151,14 @@ public:
     Color color;
   };
 
+  struct ImageRef
+  {
+    std::string fileName;
+    Point origin;
+    float rotation = 0.0f;
+    float ratio = 0.0f;
+  };
+
   struct StaticData
   {
     struct View
@@ -175,6 +183,7 @@ public:
     std::vector<Vehicle> vehicles;
     std::vector<Train> trains;
     std::vector<Misc> misc;
+    std::vector<ImageRef> images;
     float trainWidth = 10.0f;
     float trainCouplingLength = 4.0f;
   };
@@ -240,6 +249,10 @@ public:
 
   explicit Simulator(const nlohmann::json& world);
   ~Simulator();
+
+  static void updateView(Simulator::StaticData::View& view, Simulator::Point point);
+  static void updateView(Simulator::StaticData::View& view,
+                         const Simulator::TrackSegment::Curve& curve, float startAngle);
 
   StateData stateData() const;
 

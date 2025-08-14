@@ -35,7 +35,9 @@ constexpr float deg2rad(float degrees)
   return degrees * static_cast<float>(std::numbers::pi / 180);
 }
 
-void updateView(Simulator::StaticData::View& view, Simulator::Point point)
+}
+
+void Simulator::updateView(Simulator::StaticData::View& view, Simulator::Point point)
 {
   if(point.x < view.left)
   {
@@ -55,7 +57,7 @@ void updateView(Simulator::StaticData::View& view, Simulator::Point point)
   }
 }
 
-void updateView(Simulator::StaticData::View& view, const Simulator::TrackSegment::Curve& curve, float startAngle)
+void Simulator::updateView(Simulator::StaticData::View& view, const Simulator::TrackSegment::Curve& curve, float startAngle)
 {
   const float endAngle = startAngle + curve.angle;
 
@@ -83,6 +85,9 @@ void updateView(Simulator::StaticData::View& view, const Simulator::TrackSegment
     }
   }
 }
+
+namespace
+{
 
 #ifndef NDEBUG
 constexpr size_t getStraightCount(Simulator::TrackSegment::Type type)
@@ -1499,6 +1504,38 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
       }
 
       data.misc.emplace_back(std::move(item));
+    }
+  }
+
+  if(auto images = world.find("images"); images != world.end() && images->is_array())
+  {
+    for(const auto& object : *images)
+    {
+      if(!object.is_object())
+      {
+        continue;
+      }
+
+      ImageRef item;
+
+      item.origin.x = object.value("x", std::numeric_limits<float>::quiet_NaN());
+      item.origin.y = object.value("y", std::numeric_limits<float>::quiet_NaN());
+      item.fileName = object.value<std::string_view>("file", {});
+      item.rotation = deg2rad(object.value("rotation", 0.0f));
+
+      const float pxCount = object.value("n_px", std::numeric_limits<float>::quiet_NaN());
+      const float mtCount = object.value("n_mt", std::numeric_limits<float>::quiet_NaN());
+
+      if(!item.origin.isFinite() || item.fileName.empty() || pxCount == 0)
+      {
+        continue;
+      }
+
+      item.ratio = mtCount / pxCount;
+
+      updateView(data.view, item.origin);
+
+      data.images.emplace_back(std::move(item));
     }
   }
 
