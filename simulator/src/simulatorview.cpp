@@ -26,6 +26,7 @@
 #include <cmath>
 
 #include <QPainter>
+#include <QToolTip>
 
 namespace
 {
@@ -215,6 +216,13 @@ void SimulatorView::zoomToFit()
   setZoomLevel(zoomLevel);
 }
 
+void SimulatorView::setCamera(const Simulator::Point &cameraPt)
+{
+  m_cameraX = cameraPt.x;
+  m_cameraY = cameraPt.y;
+  updateProjection();
+}
+
 void SimulatorView::initializeGL()
 {
   initializeOpenGLFunctions();
@@ -263,6 +271,18 @@ void SimulatorView::paintGL()
     drawTrains();
   }
 
+}
+
+bool SimulatorView::event(QEvent *e)
+{
+    if(e->type() == QEvent::ToolTip)
+    {
+        QHelpEvent *ev = static_cast<QHelpEvent *>(e);
+        showItemTooltip(mapToSim(ev->pos()), ev);
+        return true;
+    }
+
+    return QOpenGLWidget::event(e);
 }
 
 void SimulatorView::drawTracks()
@@ -525,9 +545,9 @@ void SimulatorView::mouseReleaseEvent(QMouseEvent* event)
   if(event->button() == Qt::LeftButton)
   {
     auto diff = m_leftClickMousePos - event->pos();
-    if(qAbs(diff.x()) <= 2 && qAbs(diff.y()) <= 2)
+    if(std::abs(diff.x()) <= 2 && std::abs(diff.y()) <= 2)
     {
-      mouseLeftClick({m_cameraX + m_leftClickMousePos.x() / m_zoomLevel, m_cameraY + m_leftClickMousePos.y() / m_zoomLevel});
+      mouseLeftClick(mapToSim(m_leftClickMousePos));
     }
   }
   if(event->button() == Qt::RightButton)
@@ -548,9 +568,8 @@ void SimulatorView::wheelEvent(QWheelEvent* event)
   }
 }
 
-void SimulatorView::mouseLeftClick(QPointF pos)
+void SimulatorView::mouseLeftClick(const Simulator::Point &point)
 {
-  const Simulator::Point point(pos.x(), pos.y());
   for(const auto& turnout : m_turnouts)
   {
     if(isPointInTriangle(turnout.points, point))
@@ -560,6 +579,241 @@ void SimulatorView::mouseLeftClick(QPointF pos)
       break;
     }
   }
+}
+
+bool lineContains(const QPointF& pos,
+                  const QPointF& a, const QPointF& b,
+                  const float tolerance = 1.0)
+{
+    if(std::abs(a.y() - b.y()) < 0.0001)
+    {
+        // Horizontal
+        return std::abs(a.y() - pos.y()) < tolerance &&
+                (a.x() - tolerance) <= pos.x() && (b.x() + tolerance) >= pos.x();
+    }
+
+    if(std::abs(a.x() - b.x()) < 0.0001)
+    {
+        // Vertical
+        return std::abs(a.x() - pos.x()) < tolerance &&
+                (a.y() - tolerance) <= pos.y() && (b.y() + tolerance) >= pos.y();
+    }
+
+    // Diagonal
+    const float resultingY  = a.y() + (pos.x() - a.x()) * (b.y() - a.y()) / (b.x() - a.x());
+    const float segDistance = std::abs(resultingY - pos.y());
+    return segDistance <= tolerance;
+}
+
+size_t getSegmentAt(const Simulator::Point& point, const Simulator::StaticData& data)
+{
+    for(size_t idx = 0; idx < data.trackSegments.size(); idx++)
+    {
+        const auto &segment = data.trackSegments.at(idx);
+
+        switch (segment.type)
+        {
+        case Simulator::TrackSegment::Type::Turnout:
+        case Simulator::TrackSegment::Type::TurnoutCurved:
+        case Simulator::TrackSegment::Type::Turnout3Way:
+        {
+            std::span<const Simulator::Point, 3> points({segment.points[0],
+                                                         segment.points[1],
+                                                         segment.points[2]});
+            if(isPointInTriangle(points, point))
+                return idx;
+            break;
+        }
+
+        case Simulator::TrackSegment::Type::Straight:
+        {
+            QPointF pos(point.x, point.y);
+
+            QRectF br;
+            br.setTop(segment.points[0].y);
+            br.setLeft(segment.points[0].x);
+            br.setBottom(segment.points[1].y);
+            br.setRight(segment.points[1].x);
+            br = br.normalized();
+
+            if(br.width() > 0 && br.height() > 0 && !br.contains(pos))
+                continue;
+
+            if(!lineContains(pos, br.topLeft(), br.bottomRight(), 5))
+                continue;
+
+            return idx;
+        }
+        case Simulator::TrackSegment::Type::Curve:
+        {
+            const Simulator::Point center = segment.curves[0].center;
+            const Simulator::Point diff = point - center;
+            const float distance = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+
+            if(std::abs(distance - segment.curves[0].radius) > 5)
+                continue;
+
+            // Y coordinate is swapped
+            float angle = std::atan2(-diff.y, diff.x);
+
+            float rotation = segment.rotation;
+            if(rotation < 0)
+                rotation += 2 * pi;
+
+            const float curveAngle = segment.curves[0].angle;
+            float angleMax = - rotation + pi / 2.0 * (curveAngle > 0 ? 1 : -1);
+            float angleMin = - rotation - curveAngle + pi / 2.0 * (curveAngle > 0 ? 1 : -1);
+
+            if(curveAngle < 0)
+                std::swap(angleMin, angleMax);
+
+            if(angleMin < 0)
+            {
+                angleMin += 2 * pi;
+                angleMax += 2 * pi;
+            }
+
+            if(angleMin < 0 && angle < 0)
+            {
+                angleMin += 2 * pi;
+                angleMax += 2 * pi;
+            }
+
+            if(angle < 0)
+            {
+                angle += 2 * pi;
+            }
+
+            if(angleMin <= angleMax)
+            {
+                // min -> max
+                if(angle < angleMin || angle > angleMax)
+                    continue;
+            }
+            else
+            {
+                // 0 -> min, max -> 2 * pi
+                if(angle > angleMin && angle < angleMax)
+                    continue;
+            }
+
+            return idx;
+        }
+        default:
+            break;
+        }
+    }
+
+    return Simulator::invalidIndex;
+}
+
+void SimulatorView::showItemTooltip(const Simulator::Point &point, QHelpEvent *ev)
+{
+    if(QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier))
+    {
+        QString text = tr("X: %1\n"
+                          "Y: %2")
+                .arg(point.x).arg(point.y);
+        QToolTip::showText(ev->globalPos(), text, this);
+        return;
+    }
+
+    QString text;
+    bool found = false;
+
+    int ptCount = 0;
+    auto addPt = [&ptCount, &text](const QString &name, const Simulator::Point &p)
+    {
+        ptCount++;
+        QString ptText = tr("%1: %2; %3")
+                .arg(name.isEmpty() ? QString::number(ptCount) : name)
+                .arg(p.x).arg(p.y);
+        text.append("<br>");
+        text.append(ptText);
+    };
+
+    const auto &data_ = m_simulator->staticData;
+
+    for(const auto& turnout : m_turnouts)
+    {
+      if(isPointInTriangle(turnout.points, point))
+      {
+        const auto& segment = data_.trackSegments.at(turnout.segmentIndex);
+        text = tr("Turnout: <b>%1</b><br>")
+                .arg(QString::fromStdString(segment.m_id));
+        addPt("orig", turnout.points[0]);
+        addPt("straight", turnout.points[1]);
+        addPt("curve", turnout.points[2]);
+        text.append("<br>");
+        text.append(tr("radius: %1<br>").arg(segment.curves[0].radius));
+        text.append(tr("angle: %1<br>").arg(segment.curves[0].angle));
+
+        if(segment.hasSensor())
+        {
+            const auto &sensor = data_.sensors.at(segment.sensor.index);
+            text.append("<br>");
+            text.append(tr("sensor addr: <b>%1</b><br>"
+                           "sensor channel: <b>%2</b><br>")
+                        .arg(sensor.address)
+                        .arg(sensor.channel));
+        }
+
+        text.append("<br>");
+        text.append(tr("turnout addr: <b>%1</b><br>")
+                    .arg(segment.turnout.addresses[0]));
+
+        found = true;
+        break;
+      }
+    }
+
+    if(!found)
+    {
+        const size_t idx = getSegmentAt(point, data_);
+        if(idx != Simulator::invalidIndex)
+        {
+            const auto& segment = data_.trackSegments.at(idx);
+            if(segment.type == Simulator::TrackSegment::Type::Straight)
+            {
+                text = tr("Straight: <b>%1</b><br>")
+                        .arg(QString::fromStdString(segment.m_id));
+                addPt("orig", segment.points[0]);
+                addPt("end", segment.points[1]);
+            }
+            else if(segment.type == Simulator::TrackSegment::Type::Curve)
+            {
+                text = tr("Curve: <b>%1</b><br>")
+                        .arg(QString::fromStdString(segment.m_id));
+                addPt("orig", segment.points[0]);
+                addPt("end", segment.points[1]);
+                addPt("center", segment.curves[0].center);
+                text.append("<br>");
+                text.append(tr("radius: %1<br>").arg(segment.curves[0].radius));
+                text.append(tr("angle: %1<br>").arg(segment.curves[0].angle));
+            }
+
+            if(segment.hasSensor())
+            {
+                const auto &sensor = data_.sensors.at(segment.sensor.index);
+                text.append("<br>");
+                text.append(tr("sensor addr: <b>%1</b><br>"
+                               "sensor channel: <b>%2</b><br>")
+                            .arg(sensor.address)
+                            .arg(sensor.channel));
+            }
+
+            found = true;
+        }
+    }
+
+    if(found)
+    {
+        QToolTip::showText(ev->globalPos(), text, this);
+    }
+    else
+    {
+        QToolTip::hideText();
+    }
 }
 
 void SimulatorView::setZoomLevel(float value)

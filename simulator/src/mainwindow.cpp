@@ -63,6 +63,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         {
           settings.setValue("LastLoadDir", QFileInfo(filename).absoluteFilePath());
           load(filename);
+          QMetaObject::invokeMethod(m_view, &SimulatorView::zoomToFit, Qt::QueuedConnection);
         }
       });
     menu->addAction("Quit", this, &MainWindow::close);
@@ -128,7 +129,6 @@ void MainWindow::load(const QString& filename)
       return;
     }
 
-    QMetaObject::invokeMethod(m_view, &SimulatorView::zoomToFit, Qt::QueuedConnection);
   }
 }
 
@@ -136,11 +136,18 @@ void MainWindow::keyPressEvent(QKeyEvent *ev)
 {
   if(ev->modifiers() == Qt::ControlModifier && ev->key() == Qt::Key_L)
   {
-    // Reload
-    if(windowFilePath().isEmpty())
-        return;
+    // Reload if not power on
+    if(windowFilePath().isEmpty() || m_power->isChecked())
+      return;
+
+    const float zoomLevel = m_view->getZoomLevel();
+    const auto &cameraPt = m_view->getCamera();
 
     load(windowFilePath());
+
+    m_view->setZoomLevel(zoomLevel);
+    m_view->setCamera(cameraPt);
+
     return;
   }
   QMainWindow::keyPressEvent(ev);

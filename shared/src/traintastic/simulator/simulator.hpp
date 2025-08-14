@@ -74,6 +74,7 @@ public:
       Turnout3Way,
     } type;
 
+    std::string m_id;
     std::array<size_t, connectorCount> nextSegmentIndex{{invalidIndex, invalidIndex, invalidIndex, invalidIndex}};
     std::array<Point, connectorCount> points{{invalidPoint, invalidPoint, invalidPoint, invalidPoint}};
     float rotation;
@@ -184,6 +185,8 @@ public:
     std::vector<Train> trains;
     std::vector<Misc> misc;
     std::vector<ImageRef> images;
+    std::unordered_map<std::string, size_t> trackSegmentId;
+
     float trainWidth = 10.0f;
     float trainCouplingLength = 4.0f;
   };

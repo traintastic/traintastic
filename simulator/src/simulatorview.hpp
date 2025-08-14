@@ -29,6 +29,8 @@
 
 #include <QImage>
 
+class QHelpEvent;
+
 class SimulatorView
   : public QOpenGLWidget
   , protected QOpenGLFunctions
@@ -57,6 +59,23 @@ public:
   void zoomOut();
   void zoomToFit();
 
+  inline Simulator::Point getCamera() const
+  {
+      return {m_cameraX, m_cameraY};
+  }
+
+  void setCamera(const Simulator::Point& cameraPt);
+
+  inline Simulator::Point mapToSim(const QPointF& p)
+  {
+    return {m_cameraX + float(p.x()) / m_zoomLevel,
+            m_cameraY + float(p.y()) / m_zoomLevel};
+  }
+
+  inline float getZoomLevel() const { return m_zoomLevel; }
+
+  void setZoomLevel(float zoomLevel);
+
 signals:
   void powerOnChanged(bool value);
 
@@ -65,6 +84,7 @@ protected:
   void resizeGL(int w, int h) override;
   void paintGL() override;
 
+  bool event(QEvent *e) override;
   void keyPressEvent(QKeyEvent* event) override;
   void mousePressEvent(QMouseEvent* event) override;
   void mouseMoveEvent(QMouseEvent* event) override;
@@ -109,13 +129,12 @@ private:
   bool m_showTrackOccupancy = true;
   size_t m_trainIndex = 0;
 
-  void mouseLeftClick(QPointF pos);
+  void mouseLeftClick(const Simulator::Point &point);
+  void showItemTooltip(const Simulator::Point &point, QHelpEvent *ev);
 
   void drawTracks();
   void drawTrains();
   void drawMisc();
-
-  void setZoomLevel(float zoomLevel);
 
   void updateProjection();
 
