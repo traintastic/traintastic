@@ -645,6 +645,7 @@ void Simulator::accept()
       if(!ec)
       {
         m_connections.emplace_back(std::make_shared<SimulatorConnection>(shared_from_this(), std::move(socket)))->start();
+        sendInitialState(*m_connections.rbegin());
         accept();
       }
     });
@@ -1513,4 +1514,16 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
   assert(data.vehicles.size() == stateData.vehicles.size());
 
   return data;
+}
+
+void Simulator::sendInitialState(const std::shared_ptr<SimulatorConnection> &connection)
+{
+  // Send current sensor state
+  const size_t count = staticData.sensors.size();
+  for(size_t i = 0; i < count; ++i)
+  {
+    const auto& sensor = staticData.sensors[i];
+    auto& sensorState = m_stateData.sensors[i];
+    connection->send(SimulatorProtocol::SensorChanged(sensor.channel, sensor.address, sensorState.value));
+  }
 }

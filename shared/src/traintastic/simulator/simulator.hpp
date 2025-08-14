@@ -279,6 +279,7 @@ private:
   std::list<std::shared_ptr<SimulatorConnection>> m_connections;
 
   void accept();
+  void sendInitialState(const std::shared_ptr<SimulatorConnection>& connection);
 
   void tick();
 
