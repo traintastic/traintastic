@@ -290,14 +290,16 @@ void SimulatorView::drawTracks()
   assert(m_simulator);
   for(const auto& segment : m_simulator->staticData.trackSegments)
   {
-    if(m_showTrackOccupancy && segment.hasSensor() && m_stateData.sensors[segment.sensor.index].value)
-    {
-      glColor3f(1.0f, 0.0f, 0.0f); // Red if occupied
-    }
-    else
-    {
-      glColor3f(0.8f, 0.8f, 0.8f);
-    }
+    // if(m_showTrackOccupancy && segment.hasSensor() && m_stateData.sensors[segment.sensor.index].value)
+    // {
+    //   glColor3f(1.0f, 0.0f, 0.0f); // Red if occupied
+    // }
+    // else
+    // {
+    //   glColor3f(0.8f, 0.8f, 0.8f);
+    // }
+
+    glColor3f(1.0f, 0.0f, 0.0f); // Red if occupied
 
     glPushMatrix();
     glTranslatef(segment.origin().x, segment.origin().y, 0);
