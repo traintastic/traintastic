@@ -73,6 +73,8 @@ public:
       Turnout,
       TurnoutCurved,
       Turnout3Way,
+      SingleSlipTurnout,
+      DoubleSlipTurnout,
     } type;
 
     std::string m_id;
@@ -83,7 +85,7 @@ public:
     struct Straight
     {
       float length;
-    } straight;
+    } straight, straight2; // TODO: make array
 
     struct Curve
     {
@@ -194,10 +196,13 @@ public:
   {
     enum class State : uint8_t
     {
-      Closed = 0,
-      Thrown = 1,
-      ThrownLeft = 2,
-      ThrownRight = 3,
+      Unknown = 0,
+      Closed = 1,
+      Thrown = 2,
+      ThrownLeft = 3,
+      ThrownRight = 4,
+      ClosedLeft = 5,
+      ClosedRight = 6
     };
 
     State state = State::Closed;

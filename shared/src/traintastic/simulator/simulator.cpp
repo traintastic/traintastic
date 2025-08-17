@@ -109,6 +109,10 @@ constexpr size_t getStraightCount(Simulator::TrackSegment::Type type)
     case Type::Turnout:
     case Type::Turnout3Way:
       return 1;
+
+    case Type::SingleSlipTurnout:
+    case Type::DoubleSlipTurnout:
+      return 2;
   }
   return 0;
 }
@@ -124,10 +128,12 @@ constexpr size_t getCurveCount(Simulator::TrackSegment::Type type)
 
     case Type::Curve:
     case Type::Turnout:
+    case Type::SingleSlipTurnout:
       return 1;
 
     case Type::TurnoutCurved:
     case Type::Turnout3Way:
+    case Type::DoubleSlipTurnout:
       return 2;
   }
   return 0;
@@ -173,6 +179,8 @@ constexpr size_t getPointCount(Simulator::TrackSegment::Type type)
       return 3;
 
     case Type::Turnout3Way:
+    case Type::SingleSlipTurnout:
+    case Type::DoubleSlipTurnout:
       return 4;
   }
   return 0;
@@ -200,6 +208,15 @@ float getPointRotation(const Simulator::TrackSegment& segment, size_t pointIndex
           (pointIndex == 3 && segment.type == Type::Turnout3Way))
   {
     return segment.rotation + segment.curves[1].angle;
+  }
+  else if(segment.type == Type::SingleSlipTurnout || segment.type == Type::DoubleSlipTurnout)
+  {
+    if(pointIndex == 1)
+      return segment.rotation;
+    if(pointIndex == 2)
+      return segment.rotation + segment.curves[0].angle;
+    if(pointIndex == 3)
+      return segment.rotation + segment.curves[0].angle + pi;
   }
 
   assert(false);
@@ -258,6 +275,25 @@ float getSegmentLength(const Simulator::TrackSegment& segment, const Simulator::
 
         case State::ThrownRight:
           return segment.curves[1].length;
+
+        default: // all others are invalid
+          break;
+      }
+      break;
+
+    case Type::SingleSlipTurnout:
+    case Type::DoubleSlipTurnout:
+      switch(stateData.turnouts[segment.turnout.index].state)
+      {
+        case State::Closed:
+        case State::ClosedLeft:
+        case State::ClosedRight:
+          return segment.straight.length;
+
+        case State::Thrown:
+        case State::ThrownLeft:
+        case State::ThrownRight:
+          return segment.curves[0].length;
 
         default: // all others are invalid
           break;
@@ -1038,6 +1074,19 @@ bool Simulator::isStraight(const TrackSegment& segment)
     case Type::Turnout:
     case Type::Turnout3Way:
       return m_stateData.turnouts[segment.turnout.index].state == State::Closed;
+
+    case Type::SingleSlipTurnout:
+    case Type::DoubleSlipTurnout:
+      const auto state = m_stateData.turnouts[segment.turnout.index].state;
+      switch (state)
+      {
+      case State::Closed:
+      case State::ClosedLeft:
+      case State::ClosedRight:
+          return true;
+      default:
+          return false;
+      }
   }
   assert(false);
   return false;
@@ -1085,6 +1134,21 @@ bool Simulator::isCurve(const TrackSegment& segment, size_t& curveIndex)
 
         default:
           break;
+      }
+      break;
+
+    case Type::SingleSlipTurnout:
+    case Type::DoubleSlipTurnout:
+      const auto state = m_stateData.turnouts[segment.turnout.index].state;
+      switch (state)
+      {
+      case State::Thrown:
+      case State::ThrownLeft:
+      case State::ThrownRight:
+          curveIndex = 1; // TODO
+          return true;
+      default:
+          return false;
       }
       break;
   }
@@ -1145,6 +1209,14 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
       {
         segment.type = TrackSegment::Type::Turnout3Way;
       }
+      else if(type == "turnout_single_slip")
+      {
+        segment.type = TrackSegment::Type::SingleSlipTurnout;
+      }
+      else if(type == "turnout_double_slip")
+      {
+        segment.type = TrackSegment::Type::DoubleSlipTurnout;
+      }
       else
       {
         throw std::runtime_error("unknown track element type");
@@ -1156,7 +1228,9 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
       }
       if(segment.type == TrackSegment::Type::Curve ||
           segment.type == TrackSegment::Type::Turnout ||
-          segment.type == TrackSegment::Type::TurnoutCurved)
+          segment.type == TrackSegment::Type::TurnoutCurved ||
+          segment.type == TrackSegment::Type::SingleSlipTurnout ||
+          segment.type == TrackSegment::Type::DoubleSlipTurnout)
       {
         segment.curves[0].radius = obj.value("radius", 100.0f);
         segment.curves[0].angle = deg2rad(obj.value("angle", 45.0f));
@@ -1179,9 +1253,15 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         segment.curves[1].radius = std::max(1.0f,obj.value("radius_right", radius));
         segment.curves[1].angle = deg2rad(std::clamp(obj.value("angle_right", angle), angleMin, angleMax));
       }
-      if(segment.type == TrackSegment::Type::Turnout || segment.type == TrackSegment::Type::TurnoutCurved || segment.type == TrackSegment::Type::Turnout3Way)
+      if(segment.type == TrackSegment::Type::Turnout ||
+           segment.type == TrackSegment::Type::TurnoutCurved ||
+           segment.type == TrackSegment::Type::Turnout3Way ||
+           segment.type == TrackSegment::Type::SingleSlipTurnout ||
+           segment.type == TrackSegment::Type::DoubleSlipTurnout)
       {
-        if(segment.type == TrackSegment::Type::Turnout3Way)
+        if(segment.type == TrackSegment::Type::Turnout3Way ||
+             segment.type == TrackSegment::Type::SingleSlipTurnout ||
+             segment.type == TrackSegment::Type::DoubleSlipTurnout)
         {
           const auto address = obj.value("address", invalidAddress);
           segment.turnout.addresses[0] = obj.value("address_left", address);
@@ -1193,7 +1273,9 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         }
         segment.turnout.index = stateData.turnouts.size();
         auto& turnoutState = stateData.turnouts.emplace_back(TurnoutState{});
-        if(segment.type == TrackSegment::Type::Turnout3Way)
+        if(segment.type == TrackSegment::Type::Turnout3Way ||
+             segment.type == TrackSegment::Type::SingleSlipTurnout ||
+             segment.type == TrackSegment::Type::DoubleSlipTurnout)
         {
           turnoutState.coils = 0x0A; // both closed
         }
@@ -1275,7 +1357,11 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         updateView(data.view, curPoint);
       }
 
-      if((segment.type == TrackSegment::Type::Turnout || segment.type == TrackSegment::Type::Turnout3Way) && startPointIndex == 1)
+      if((segment.type == TrackSegment::Type::Turnout ||
+          segment.type == TrackSegment::Type::Turnout3Way ||
+          segment.type == TrackSegment::Type::SingleSlipTurnout ||
+          segment.type == TrackSegment::Type::DoubleSlipTurnout) &&
+              startPointIndex == 1)
       {
         segment.rotation = curRotation + pi;
         if(segment.rotation >= 2 * pi)
@@ -1288,7 +1374,9 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
       }
       else if((segment.type == TrackSegment::Type::Turnout && startPointIndex == 2) ||
           (segment.type == TrackSegment::Type::TurnoutCurved && (startPointIndex == 1 || startPointIndex == 2)) ||
-          (segment.type == TrackSegment::Type::Turnout3Way && (startPointIndex == 2 || startPointIndex == 3)))
+          (segment.type == TrackSegment::Type::Turnout3Way && (startPointIndex == 2 || startPointIndex == 3)) ||
+          (segment.type == TrackSegment::Type::SingleSlipTurnout && startPointIndex == 2) ||
+          (segment.type == TrackSegment::Type::DoubleSlipTurnout && startPointIndex == 2))
       {
         const size_t curveIndex = ((segment.type == TrackSegment::Type::TurnoutCurved && startPointIndex == 2) || (segment.type == TrackSegment::Type::Turnout3Way && startPointIndex == 3)) ? 1 : 0;
         auto& curve = segment.curves[curveIndex];
