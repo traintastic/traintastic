@@ -736,6 +736,7 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float spee
   float distance = face.distance + (face.segmentDirectionInverted ? -speed : speed);
 
   // Move to next segment when reaching the end:
+  for(;;)
   {
     const size_t faceSegmentIndexBefore = face.segmentIndex;
     const auto& segment = staticData.trackSegments[face.segmentIndex];
@@ -808,6 +809,10 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float spee
       {
         m_stateData.sensors[nextSegment.sensor.index].occupied++;
       }
+    }
+    else
+    {
+      break; // we're within section boundries
     }
   }
 
