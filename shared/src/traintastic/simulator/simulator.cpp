@@ -1180,9 +1180,8 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           const float startAngle = (curve.angle < 0) ? (segment.rotation + pi) : segment.rotation;
           curve.center.x = segment.points[0].x - curve.radius * std::sin(startAngle);
           curve.center.y = segment.points[0].y + curve.radius * std::cos(startAngle);
-
-          curve.length = std::abs(curve.radius * curve.angle);
         }
+        curve.length = std::abs(curve.radius * curve.angle);
         assert(curve.center.isFinite());
       }
 
