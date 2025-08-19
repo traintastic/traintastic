@@ -57,30 +57,40 @@ void updateView(Simulator::StaticData::View& view, Simulator::Point point)
 
 void updateView(Simulator::StaticData::View& view, const Simulator::TrackSegment::Curve& curve, float startAngle)
 {
-  const float endAngle = startAngle + curve.angle;
+  if(curve.angle < 0)
+  {
+    startAngle += pi;
+  }
+
+  float endAngle = startAngle + curve.angle;
+
+  if(endAngle < startAngle)
+  {
+    std::swap(startAngle, endAngle);
+  }
 
   // Start and end points:
   {
-    const float x = curve.center.x + curve.radius * std::cos(startAngle);
-    const float y = curve.center.y + curve.radius * std::sin(startAngle);
+    const float x = curve.center.x + curve.radius * std::sin(startAngle);
+    const float y = curve.center.y - curve.radius * std::cos(startAngle);
     updateView(view, {x, y});
   }
   {
-    const float x = curve.center.x + curve.radius * std::cos(endAngle);
-    const float y = curve.center.y + curve.radius * std::sin(endAngle);
+    const float x = curve.center.x + curve.radius * std::sin(endAngle);
+    const float y = curve.center.y - curve.radius * std::cos(endAngle);
     updateView(view, {x, y});
   }
 
   // Check critical angles (0, 90, 180, 270 degrees):
-  static const std::array<float, 7> cardinalAngles{1.5f * -pi, -pi, 0.5f * -pi, 0.0f, 0.5f * pi, pi, 1.5f * pi};
-  for(float angle : cardinalAngles)
+  const int start = std::ceil(startAngle / (0.5f * pi));
+  const int end = std::floor(endAngle / (0.5f * pi));
+
+  for(int i = start; i <= end; ++i)
   {
-    if(angle > startAngle && angle < endAngle)
-    {
-      const float x = curve.center.x + curve.radius * std::cos(angle);
-      const float y = curve.center.y + curve.radius * std::sin(angle);
-      updateView(view, {x, y});
-    }
+    const float angle = i * 0.5f * pi;
+    const float x = curve.center.x + curve.radius * std::sin(angle);
+    const float y = curve.center.y - curve.radius * std::cos(angle);
+    updateView(view, {x, y});
   }
 }
 
