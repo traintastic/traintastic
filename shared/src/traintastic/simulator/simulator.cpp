@@ -538,7 +538,14 @@ void Simulator::setTurnoutState(size_t segmentIndex, TurnoutState::State state)
       {
         if(segment.turnout.addresses[0] != invalidAddress)
         {
-          send(SimulatorProtocol::AccessorySetState(0, segment.turnout.addresses[0], turnout.state == State::Thrown ? 1 : 2));
+          uint8_t val = 0;
+          if(state == State::Thrown)
+            val = 2;
+          else if(state == State::Closed)
+            val = 1;
+          send(SimulatorProtocol::AccessorySetState(segment.turnout.channel,
+                                                    segment.turnout.addresses[0],
+                                                    val));
         }
       }
       else if(segment.type == Type::Turnout3Way)
@@ -553,7 +560,7 @@ void Simulator::setTurnoutState(size_t segmentIndex, TurnoutState::State state)
   }
 }
 
-void Simulator::toggleTurnoutState(size_t segmentIndex)
+void Simulator::toggleTurnoutState(size_t segmentIndex, bool setUnknown)
 {
   using Type = TrackSegment::Type;
   using State = TurnoutState::State;
@@ -570,11 +577,18 @@ void Simulator::toggleTurnoutState(size_t segmentIndex)
 
     if(segment.type == Type::Turnout || segment.type == Type::TurnoutCurved)
     {
-      state = (state != TurnoutState::State::Closed) ? TurnoutState::State::Closed : TurnoutState::State::Thrown;
+      if(setUnknown)
+        state = State::Unknown;
+      else
+        state = (state != State::Closed) ? State::Closed : State::Thrown;
     }
     else if(segment.type == Type::Turnout3Way)
     {
-      if(state == State::Closed)
+      if(setUnknown)
+      {
+        state = State::Unknown;
+      }
+      else if(state == State::Closed)
       {
         state = State::ThrownLeft;
       }
@@ -584,7 +598,7 @@ void Simulator::toggleTurnoutState(size_t segmentIndex)
       }
       else
       {
-        assert(state == State::ThrownRight);
+        assert(state == State::ThrownRight || state == State::Unknown);
         state = State::Closed;
       }
     }
@@ -644,18 +658,18 @@ void Simulator::receive(const SimulatorProtocol::Message& message, size_t fromCo
       {
         const auto& segment = staticData.trackSegments[i];
         if((segment.type == Simulator::TrackSegment::Type::Turnout || segment.type == Simulator::TrackSegment::Type::TurnoutCurved) &&
-            m.address == segment.turnout.addresses[0])
+            m.address == segment.turnout.addresses[0] && m.channel == segment.turnout.channel)
         {
-          std::lock_guard<std::mutex> lock(m_stateMutex);
-          auto& turnoutState = m_stateData.turnouts[segment.turnout.index];
+          Simulator::TurnoutState::State newState = Simulator::TurnoutState::State::Unknown;
           if(m.state == 1)
           {
-            turnoutState.state = Simulator::TurnoutState::State::Thrown;
+            newState = Simulator::TurnoutState::State::Closed;
           }
           else if(m.state == 2)
           {
-            turnoutState.state = Simulator::TurnoutState::State::Closed;
+            newState = Simulator::TurnoutState::State::Thrown;
           }
+          setTurnoutState(i, newState);
           break;
         }
         else if(segment.type == Simulator::TrackSegment::Type::Turnout3Way && (m.address == segment.turnout.addresses[0] || m.address == segment.turnout.addresses[1]))
@@ -1259,6 +1273,8 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
            segment.type == TrackSegment::Type::SingleSlipTurnout ||
            segment.type == TrackSegment::Type::DoubleSlipTurnout)
       {
+        segment.turnout.channel = obj.value("channel", defaultChannel);
+
         if(segment.type == TrackSegment::Type::Turnout3Way ||
              segment.type == TrackSegment::Type::SingleSlipTurnout ||
              segment.type == TrackSegment::Type::DoubleSlipTurnout)

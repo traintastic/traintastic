@@ -27,6 +27,8 @@
 #include <QOpenGLFunctions>
 #include <traintastic/simulator/simulator.hpp>
 
+#include <QBasicTimer>
+
 class SimulatorView
   : public QOpenGLWidget
   , protected QOpenGLFunctions
@@ -88,6 +90,7 @@ protected:
   void mouseMoveEvent(QMouseEvent* event) override;
   void mouseReleaseEvent(QMouseEvent* event) override;
   void wheelEvent(QWheelEvent* event) override;
+  void timerEvent(QTimerEvent *e) override;
 
 private:
   struct Turnout
@@ -118,8 +121,10 @@ private:
   QPoint m_rightMousePos;
   bool m_showTrackOccupancy = true;
   size_t m_trainIndex = 0;
+  QBasicTimer turnoutBlinkTimer;
+  bool turnoutBlinkState = false;
 
-  void mouseLeftClick(const Simulator::Point &point);
+  void mouseLeftClick(const Simulator::Point &point, bool shiftPressed);
 
   void drawTracks();
   void drawTrains();
