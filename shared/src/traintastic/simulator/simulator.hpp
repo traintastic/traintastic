@@ -105,6 +105,7 @@ public:
     struct Turnout
     {
       size_t index = invalidIndex;
+      uint16_t channel = 0;
       std::array<uint16_t, 2> addresses{{invalidAddress, invalidAddress}};
     } turnout;
 
@@ -280,7 +281,7 @@ public:
   void stopAllTrains();
 
   void setTurnoutState(size_t segmentIndex, TurnoutState::State state);
-  void toggleTurnoutState(size_t segmentIndex);
+  void toggleTurnoutState(size_t segmentIndex, bool setUnknown);
 
   void send(const SimulatorProtocol::Message& message);
   void receive(const SimulatorProtocol::Message& message);

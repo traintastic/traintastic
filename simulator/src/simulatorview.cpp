@@ -113,6 +113,9 @@ SimulatorView::SimulatorView(QWidget* parent)
   : QOpenGLWidget(parent)
 {
   setFocusPolicy(Qt::StrongFocus); // for key stuff
+
+  // 800 ms turnout blink
+  turnoutBlinkTimer.start(std::chrono::milliseconds(800), Qt::PreciseTimer, this);
 }
 
 SimulatorView::~SimulatorView()
@@ -318,6 +321,14 @@ void SimulatorView::drawTracks()
 
       switch(state)
       {
+        case Simulator::TurnoutState::State::Unknown:
+          // Blink cyan or normal
+          if(turnoutBlinkState)
+            glColor3f(0.0f, 1.0f, 1.0f);
+          drawCurve(segment, 0);
+          drawStraight(segment);
+          break;
+
         case Simulator::TurnoutState::State::Closed:
           drawCurve(segment, 0);
           glColor3f(0.0f, 1.0f, 1.0f);
@@ -547,7 +558,8 @@ void SimulatorView::mouseReleaseEvent(QMouseEvent* event)
     auto diff = m_leftClickMousePos - event->pos();
     if(std::abs(diff.x()) <= 2 && std::abs(diff.y()) <= 2)
     {
-      mouseLeftClick(mapToSim(m_leftClickMousePos));
+      const bool shiftPressed = event->modifiers().testFlag(Qt::ShiftModifier);
+      mouseLeftClick(mapToSim(m_leftClickMousePos), shiftPressed);
     }
   }
   if(event->button() == Qt::RightButton)
@@ -568,13 +580,25 @@ void SimulatorView::wheelEvent(QWheelEvent* event)
   }
 }
 
-void SimulatorView::mouseLeftClick(const Simulator::Point &point)
+void SimulatorView::timerEvent(QTimerEvent *e)
+{
+  if(e->timerId() == turnoutBlinkTimer.timerId())
+  {
+    turnoutBlinkState = !turnoutBlinkState;
+    update();
+    return;
+  }
+
+  QOpenGLWidget::timerEvent(e);
+}
+
+void SimulatorView::mouseLeftClick(const Simulator::Point &point, bool shiftPressed)
 {
   for(const auto& turnout : m_turnouts)
   {
     if(isPointInTriangle(turnout.points, point))
     {
-      m_simulator->toggleTurnoutState(turnout.segmentIndex);
+      m_simulator->toggleTurnoutState(turnout.segmentIndex, shiftPressed);
       update();
       break;
     }
