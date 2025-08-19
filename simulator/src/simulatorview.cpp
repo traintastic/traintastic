@@ -90,7 +90,7 @@ void drawCurve(const Simulator::TrackSegment& segment, size_t curveIndex)
   const auto& curve = segment.curves[curveIndex];
   const float rotation = curve.angle < 0 ? 0.0f : pi;
 
-  int numSegments = qCeil(std::abs(curve.angle) / (pi / 36.0f)); // Smooth curve
+  int numSegments = qCeil(curve.length / 10.0); // Smooth curve
   float step = curve.angle / numSegments;
   const float cx = curve.radius * sinf(rotation);
   const float cy = curve.radius * -cosf(rotation);
