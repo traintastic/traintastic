@@ -34,10 +34,56 @@
 #include <QMessageBox>
 #include <QKeyEvent>
 
+#include <QJsonObject>
+#include <QJsonDocument>
+
+void convertJS()
+{
+    constexpr auto pi = std::numbers::pi_v<double>;
+
+    QFile f("/home/filippo/Documenti/SVF - PADOVA/CIRCUITI/Padova_sim/piazzale/um.json");
+    f.open(QFile::ReadOnly);
+
+    QJsonObject result;
+    QJsonParseError err;
+
+    const QJsonObject root = QJsonDocument::fromJson(f.readAll(), &err).object();
+    f.close();
+
+    qDebug() << err.errorString();
+
+    for(auto it = root.begin(); it != root.end(); it++)
+    {
+        QJsonObject obj = it.value().toObject();
+
+        double angle = obj.value("a").toDouble();
+        angle = angle / pi * 180;
+        obj["a"] = angle;
+
+        double x = obj.value("x").toDouble();
+        x += 84.3746816367;
+        obj["x"] = x;
+
+        double y = obj.value("y").toDouble();
+        y += -76.4459306046;
+        obj["y"] = y;
+
+        result.insert(it.key(), obj);
+    }
+
+    f.setFileName("/home/filippo/Documenti/SVF - PADOVA/CIRCUITI/Padova_sim/piazzale/um2.json");
+    f.open(QFile::WriteOnly);
+    f.write(QJsonDocument(result).toJson());
+    f.flush();
+    f.close();
+}
+
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
   , m_view{new SimulatorView(this)}
 {
+  //convertJS();
+
   setWindowIcon(QIcon(":/appicon.svg"));
   setWindowTitle("Traintastic simulator v" TRAINTASTIC_VERSION_FULL);
 
