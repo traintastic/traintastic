@@ -504,10 +504,10 @@ void Simulator::setTurnoutState(size_t segmentIndex, TurnoutState::State state)
         if(segment.turnout.addresses[0] != invalidAddress)
         {
           uint8_t val = 0;
-          if(turnout.state == State::Thrown)
-            val = 1;
-          else if(turnout.state == State::Closed)
+          if(state == State::Thrown)
             val = 2;
+          else if(state == State::Closed)
+            val = 1;
           send(SimulatorProtocol::AccessorySetState(segment.turnout.channel,
                                                     segment.turnout.addresses[0],
                                                     val));
@@ -625,20 +625,16 @@ void Simulator::receive(const SimulatorProtocol::Message& message)
         if((segment.type == Simulator::TrackSegment::Type::Turnout || segment.type == Simulator::TrackSegment::Type::TurnoutCurved) &&
             m.address == segment.turnout.addresses[0] && m.channel == segment.turnout.channel)
         {
-          std::lock_guard<std::mutex> lock(m_stateMutex);
-          auto& turnoutState = m_stateData.turnouts[segment.turnout.index];
-          if(m.state == 0)
+          Simulator::TurnoutState::State newState = Simulator::TurnoutState::State::Unknown;
+          if(m.state == 1)
           {
-            turnoutState.state = Simulator::TurnoutState::State::Unknown;
-          }
-          else if(m.state == 1)
-          {
-            turnoutState.state = Simulator::TurnoutState::State::Thrown;
+            newState = Simulator::TurnoutState::State::Closed;
           }
           else if(m.state == 2)
           {
-            turnoutState.state = Simulator::TurnoutState::State::Closed;
+            newState = Simulator::TurnoutState::State::Thrown;
           }
+          setTurnoutState(i, newState);
           break;
         }
         else if(segment.type == Simulator::TrackSegment::Type::Turnout3Way && (m.address == segment.turnout.addresses[0] || m.address == segment.turnout.addresses[1]))
