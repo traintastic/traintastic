@@ -27,6 +27,7 @@
 
 #include <QPainter>
 #include <QToolTip>
+#include <QGuiApplication>
 
 namespace
 {
