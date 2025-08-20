@@ -616,6 +616,7 @@ void SimulatorView::mouseLeftClick(const Simulator::Point &point, bool shiftPres
 
 bool lineContains(const QPointF& pos,
                   const QPointF& a, const QPointF& b,
+                  float &distanceOut,
                   const float tolerance = 1.0)
 {
     if(std::abs(a.y() - b.y()) < 0.0001)
@@ -634,12 +635,15 @@ bool lineContains(const QPointF& pos,
 
     // Diagonal
     const float resultingY  = a.y() + (pos.x() - a.x()) * (b.y() - a.y()) / (b.x() - a.x());
-    const float segDistance = std::abs(resultingY - pos.y());
-    return segDistance <= tolerance;
+    distanceOut = std::abs(resultingY - pos.y());
+    return distanceOut <= tolerance;
 }
 
 size_t getSegmentAt(const Simulator::Point& point, const Simulator::StaticData& data)
 {
+    size_t bestIdx = Simulator::invalidIndex;
+    float bestDistance = 0.0;
+
     for(size_t idx = 0; idx < data.trackSegments.size(); idx++)
     {
         const auto &segment = data.trackSegments.at(idx);
@@ -655,9 +659,8 @@ size_t getSegmentAt(const Simulator::Point& point, const Simulator::StaticData& 
                                                          segment.points[2]});
             if(isPointInTriangle(points, point))
                 return idx;
-            break;
+            continue;
         }
-
         case Simulator::TrackSegment::Type::Straight:
         {
             QPointF pos(point.x, point.y);
@@ -670,12 +673,18 @@ size_t getSegmentAt(const Simulator::Point& point, const Simulator::StaticData& 
             br = br.normalized();
 
             if(br.width() > 0 && br.height() > 0 && !br.contains(pos))
-                continue;
+              continue;
 
-            if(!lineContains(pos, br.topLeft(), br.bottomRight(), 5))
-                continue;
+            float segDistance = 0;
+            if(!lineContains(pos, br.topLeft(), br.bottomRight(), segDistance, 5))
+              continue;
 
-            return idx;
+            if(bestIdx == Simulator::invalidIndex || segDistance < bestDistance)
+            {
+              bestIdx = idx;
+              bestDistance = segDistance;
+            }
+            continue;
         }
         case Simulator::TrackSegment::Type::Curve:
         {
@@ -684,60 +693,65 @@ size_t getSegmentAt(const Simulator::Point& point, const Simulator::StaticData& 
             const float distance = std::sqrt(diff.x * diff.x + diff.y * diff.y);
 
             if(std::abs(distance - segment.curves[0].radius) > 5)
-                continue;
+              continue;
+
+            if(bestIdx != Simulator::invalidIndex && distance > bestDistance)
+              continue;
 
             // Y coordinate is swapped
             float angle = std::atan2(-diff.y, diff.x);
 
             float rotation = segment.rotation;
             if(rotation < 0)
-                rotation += 2 * pi;
+              rotation += 2 * pi;
 
             const float curveAngle = segment.curves[0].angle;
             float angleMax = - rotation + pi / 2.0 * (curveAngle > 0 ? 1 : -1);
             float angleMin = - rotation - curveAngle + pi / 2.0 * (curveAngle > 0 ? 1 : -1);
 
             if(curveAngle < 0)
-                std::swap(angleMin, angleMax);
+              std::swap(angleMin, angleMax);
 
             if(angleMin < 0)
             {
-                angleMin += 2 * pi;
-                angleMax += 2 * pi;
+              angleMin += 2 * pi;
+              angleMax += 2 * pi;
             }
 
             if(angleMin < 0 && angle < 0)
             {
-                angleMin += 2 * pi;
-                angleMax += 2 * pi;
+              angleMin += 2 * pi;
+              angleMax += 2 * pi;
             }
 
             if(angle < 0)
             {
-                angle += 2 * pi;
+              angle += 2 * pi;
             }
 
             if(angleMin <= angleMax)
             {
-                // min -> max
-                if(angle < angleMin || angle > angleMax)
-                    continue;
+              // min -> max
+              if(angle < angleMin || angle > angleMax)
+                continue;
             }
             else
             {
-                // 0 -> min, max -> 2 * pi
-                if(angle > angleMin && angle < angleMax)
-                    continue;
+              // 0 -> min, max -> 2 * pi
+              if(angle > angleMin && angle < angleMax)
+                continue;
             }
 
-            return idx;
+            bestIdx = idx;
+            bestDistance = distance;
+            continue;
         }
         default:
             break;
         }
     }
 
-    return Simulator::invalidIndex;
+    return bestIdx;
 }
 
 void SimulatorView::showItemTooltip(const Simulator::Point &point, QHelpEvent *ev)
