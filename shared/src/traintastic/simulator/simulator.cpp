@@ -82,8 +82,8 @@ void updateView(Simulator::StaticData::View& view, const Simulator::TrackSegment
   }
 
   // Check critical angles (0, 90, 180, 270 degrees):
-  const int start = std::ceil(startAngle / (0.5f * pi));
-  const int end = std::floor(endAngle / (0.5f * pi));
+  const int start = static_cast<int>(std::ceil(startAngle / (0.5f * pi)));
+  const int end = static_cast<int>(std::floor(endAngle / (0.5f * pi)));
 
   for(int i = start; i <= end; ++i)
   {
