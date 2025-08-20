@@ -440,6 +440,23 @@ void Simulator::togglePowerOn()
   send(SimulatorProtocol::Power(m_stateData.powerOn));
 }
 
+bool Simulator::isTrainDirectionInverted(size_t trainIndex)
+{
+  if(trainIndex < staticData.trains.size())
+  {
+    const auto& train = staticData.trains[trainIndex];
+    if(train.vehicleIndexes.empty())
+      return false;
+
+    std::lock_guard<std::mutex> lock(m_stateMutex);
+    const auto& vehicle = m_stateData.vehicles[train.vehicleIndexes.front()];
+    if(vehicle.front.position.x < vehicle.rear.position.x)
+      return true;
+  }
+
+  return false;
+}
+
 void Simulator::setTrainDirection(size_t trainIndex, bool reverse)
 {
   if(trainIndex < staticData.trains.size())

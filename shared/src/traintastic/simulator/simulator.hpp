@@ -275,6 +275,7 @@ public:
   void setPowerOn(bool powerOn);
   void togglePowerOn();
 
+  bool isTrainDirectionInverted(size_t trainIndex);
   void setTrainDirection(size_t trainIndex, bool reverse);
   void setTrainSpeed(size_t trainIndex, float speed);
   void applyTrainSpeedDelta(size_t trainIndex, float delta);

@@ -500,12 +500,21 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
       break;
 
     case Qt::Key_Right:
-      m_simulator->setTrainDirection(m_trainIndex, false);
+    {
+      bool dir = false;
+      if(m_simulator->isTrainDirectionInverted(m_trainIndex))
+        dir = true;
+      m_simulator->setTrainDirection(m_trainIndex, dir);
       break;
-
+    }
     case Qt::Key_Left:
-      m_simulator->setTrainDirection(m_trainIndex, true);
+    {
+      bool dir = true;
+      if(m_simulator->isTrainDirectionInverted(m_trainIndex))
+        dir = false;
+      m_simulator->setTrainDirection(m_trainIndex, dir);
       break;
+    }
 
     case Qt::Key_Space:
       m_simulator->setTrainSpeed(m_trainIndex, 0.0f);
