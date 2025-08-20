@@ -366,21 +366,21 @@ void SimulatorView::drawTrains()
 
   const float trainWidth = m_simulator->staticData.trainWidth;
 
-  const size_t railVehicleCount = m_simulator->staticData.vehicles.size();
-  for(size_t i = 0; i < railVehicleCount; ++i)
+  for(auto it : m_stateData.vehicles)
   {
-    const auto& vehicle = m_stateData.vehicles[i];
-    const float length = m_simulator->staticData.vehicles[i].length;
+    const auto* vehicle = it.second;
+    const auto& vehicleState = vehicle->state;
+    const float length = vehicle->length;
 
-    const auto center = (vehicle.front.position + vehicle.rear.position) / 2;
-    const auto delta = vehicle.front.position - vehicle.rear.position;
+    const auto center = (vehicleState.front.position + vehicleState.rear.position) / 2;
+    const auto delta = vehicleState.front.position - vehicleState.rear.position;
     const float angle = atan2f(delta.y, delta.x);
 
     glPushMatrix();
     glTranslatef(center.x, center.y, 0);
     glRotatef(qRadiansToDegrees(angle), 0, 0, 1);
 
-    const auto& color = colors[static_cast<size_t>(m_simulator->staticData.vehicles[i].color)];
+    const auto& color = colors[static_cast<size_t>(vehicle->color)];
     glColor3f(color.red, color.green, color.blue);
     glBegin(GL_QUADS);
     glVertex2f(-length / 2, -trainWidth / 2);
@@ -438,32 +438,55 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
     case Qt::Key_7:
     case Qt::Key_8:
     case Qt::Key_9:
-      if(static_cast<size_t>(event->key() - Qt::Key_1) < m_simulator->staticData.trains.size())
+    {
+      const size_t trainIndex = static_cast<size_t>(event->key() - Qt::Key_1);
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(trainIndex);
+      if(train)
       {
         m_trainIndex = event->key() - Qt::Key_1;
       }
       break;
-
+    }
     case Qt::Key_Up:
-      m_simulator->applyTrainSpeedDelta(m_trainIndex, m_simulator->staticData.trains[m_trainIndex].speedMax / 20);
+    {
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
+      if(train)
+        m_simulator->applyTrainSpeedDelta(train, train->speedMax / 20);
       break;
-
+    }
     case Qt::Key_Down:
-      m_simulator->applyTrainSpeedDelta(m_trainIndex, -m_simulator->staticData.trains[m_trainIndex].speedMax / 20);
+    {
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
+      if(train)
+        m_simulator->applyTrainSpeedDelta(train, -train->speedMax / 20);
       break;
-
+    }
     case Qt::Key_Right:
-      m_simulator->setTrainDirection(m_trainIndex, false);
-      break;
-
     case Qt::Key_Left:
-      m_simulator->setTrainDirection(m_trainIndex, true);
+    {
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
+      if(train)
+      {
+        bool dir = (event->key() == Qt::Key_Left);
+        if(m_simulator->isTrainDirectionInverted(train))
+          dir = !dir;
+        m_simulator->setTrainDirection(train, dir);
+      }
       break;
+    }
 
     case Qt::Key_Space:
-      m_simulator->setTrainSpeed(m_trainIndex, 0.0f);
+    {
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
+      if(train)
+        m_simulator->setTrainSpeed(train, 0.0f);
       break;
-
+    }
     case Qt::Key_Escape:
       m_simulator->stopAllTrains();
       break;

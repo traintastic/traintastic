@@ -25,6 +25,7 @@
 #include <list>
 #include <memory>
 #include <mutex>
+#include <numbers>
 #include <optional>
 #include <thread>
 #include <vector>
@@ -36,6 +37,8 @@
 #include <nlohmann/json.hpp>
 #include <traintastic/enum/color.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
+#include <traintastic/utils/stringhash.hpp>
+#include <traintastic/utils/stringequal.hpp>
 
 namespace SimulatorProtocol {
   struct Message;
@@ -127,21 +130,6 @@ public:
     uint16_t address = invalidAddress;
   };
 
-  struct Vehicle
-  {
-    Color color;
-    float length;
-  };
-
-  struct Train
-  {
-    std::vector<size_t> vehicleIndexes;
-    float length = 0.0f;
-    float speedMax = 10.0f;
-    DecoderProtocol protocol = DecoderProtocol::None;
-    uint16_t address = invalidAddress;
-  };
-
   struct Misc
   {
     enum class Type
@@ -177,14 +165,13 @@ public:
     } view;
     std::vector<TrackSegment> trackSegments;
     std::vector<Sensor> sensors;
-    std::vector<Vehicle> vehicles;
-    std::vector<Train> trains;
     std::vector<Misc> misc;
 
     std::unordered_map<std::string, size_t> trackSegmentId;
 
     float trainWidth = 10.0f;
     float trainCouplingLength = 4.0f;
+    float worldScale = 1.0f;
   };
 
   struct SensorState
@@ -231,6 +218,44 @@ public:
     Face rear;
   };
 
+  struct Train;
+
+  struct Vehicle
+  {
+    std::string name;
+    Color color;
+    float length;
+    Train *activeTrain = nullptr;
+    VehicleState state;
+  };
+
+  struct Train
+  {
+    std::string name;
+
+    struct VehicleItem
+    {
+      Vehicle *vehicle;
+      bool reversed = false;
+    };
+
+    std::vector<VehicleItem> vehicles;
+    float length = 0.0f;
+    float speedMax = 0.0f;
+    DecoderProtocol protocol = DecoderProtocol::None;
+    uint16_t address = invalidAddress;
+    TrainState state;
+
+    ~Train()
+    {
+      for(const VehicleItem& item : vehicles)
+      {
+        assert(item.vehicle->activeTrain == this);
+        item.vehicle->activeTrain = nullptr;
+      }
+    }
+  };
+
   struct StateData
   {
     float tickActive = 0.0f;
@@ -238,8 +263,8 @@ public:
     bool powerOn = false;
     std::vector<SensorState> sensors;
     std::vector<TurnoutState> turnouts;
-    std::vector<TrainState> trains;
-    std::vector<VehicleState> vehicles;
+    std::unordered_map<std::string, Train *, StringHash, StringEqual> trains;
+    std::unordered_map<std::string, Vehicle *, StringHash, StringEqual> vehicles;
   };
 
 private:
@@ -264,9 +289,12 @@ public:
   void setPowerOn(bool powerOn);
   void togglePowerOn();
 
-  void setTrainDirection(size_t trainIndex, bool reverse);
-  void setTrainSpeed(size_t trainIndex, float speed);
-  void applyTrainSpeedDelta(size_t trainIndex, float delta);
+  Train *getTrainAt(size_t trainIndex) const;
+
+  bool isTrainDirectionInverted(Train *train);
+  void setTrainDirection(Train *train, bool reverse);
+  void setTrainSpeed(Train *train, float speed);
+  void applyTrainSpeedDelta(Train *train, float delta);
   void stopAllTrains();
 
   void setTurnoutState(size_t segmentIndex, TurnoutState::State state);
@@ -276,9 +304,15 @@ public:
   void receive(const SimulatorProtocol::Message& message, size_t fromConnId);
   void removeConnection(const std::shared_ptr<SimulatorConnection>& connection);
 
+  inline std::recursive_mutex& stateMutex() { return m_stateMutex; }
+
 private:
   constexpr static auto tickRate = std::chrono::milliseconds(1000 / 30);
   constexpr static auto handShakeRate = std::chrono::milliseconds(1000);
+
+  constexpr static float defaultSpeedKmH = 200;
+  constexpr static float defaultSpeedMeterPerSecond = defaultSpeedKmH / 3.6;
+  constexpr static float defaultSpeedTickRate = defaultSpeedMeterPerSecond / 1000 * tickRate.count();
 
   boost::asio::io_context m_ioContext;
   boost::asio::steady_timer m_tickTimer;
@@ -289,7 +323,7 @@ private:
   boost::asio::ip::udp::endpoint m_remoteEndpoint;
 
   std::thread m_thread;
-  mutable std::mutex m_stateMutex;
+  mutable std::recursive_mutex m_stateMutex;
   bool m_serverEnabled = false;
   bool m_serverLocalHostOnly = true;
   static constexpr uint16_t defaultPort = 5741; // UDP Discovery
