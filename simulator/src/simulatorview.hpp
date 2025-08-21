@@ -83,6 +83,8 @@ public:
 
   void setImageVisible(int idx, bool val);
 
+  nlohmann::json copySegmentData(size_t segmentIdx) const;
+
 signals:
   void powerOnChanged(bool value);
 
@@ -98,6 +100,7 @@ protected:
   void mouseReleaseEvent(QMouseEvent* event) override;
   void wheelEvent(QWheelEvent* event) override;
   void timerEvent(QTimerEvent *e) override;
+  void contextMenuEvent(QContextMenuEvent *e) override;
 
 private:
   struct Turnout

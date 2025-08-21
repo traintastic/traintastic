@@ -31,6 +31,9 @@
 #include <QDir>
 #include <QFileInfo>
 
+#include <QMenu>
+#include <QClipboard>
+
 namespace
 {
 
@@ -78,6 +81,146 @@ bool isPointInTriangle(std::span<const Simulator::Point, 3> triangle, const Simu
   return !(hasNeg && hasPos);
 }
 
+bool lineContains(const QPointF& pos,
+                  const QPointF& a, const QPointF& b,
+                  float &distanceOut,
+                  const float tolerance = 1.0)
+{
+    if(std::abs(a.y() - b.y()) < 0.0001)
+    {
+        // Horizontal
+        return std::abs(a.y() - pos.y()) < tolerance &&
+                (a.x() - tolerance) <= pos.x() && (b.x() + tolerance) >= pos.x();
+    }
+
+    if(std::abs(a.x() - b.x()) < 0.0001)
+    {
+        // Vertical
+        return std::abs(a.x() - pos.x()) < tolerance &&
+                (a.y() - tolerance) <= pos.y() && (b.y() + tolerance) >= pos.y();
+    }
+
+    // Diagonal
+    const float resultingY  = a.y() + (pos.x() - a.x()) * (b.y() - a.y()) / (b.x() - a.x());
+    distanceOut = std::abs(resultingY - pos.y());
+    return distanceOut <= tolerance;
+}
+
+size_t getSegmentAt(const Simulator::Point& point, const Simulator::StaticData& data)
+{
+    size_t bestIdx = Simulator::invalidIndex;
+    float bestDistance = 0.0;
+
+    for(size_t idx = 0; idx < data.trackSegments.size(); idx++)
+    {
+        const auto &segment = data.trackSegments.at(idx);
+
+        switch (segment.type)
+        {
+        case Simulator::TrackSegment::Type::Turnout:
+        case Simulator::TrackSegment::Type::TurnoutCurved:
+        case Simulator::TrackSegment::Type::Turnout3Way:
+        {
+            std::span<const Simulator::Point, 3> points({segment.points[0],
+                                                         segment.points[1],
+                                                         segment.points[2]});
+            if(isPointInTriangle(points, point))
+                return idx;
+            continue;
+        }
+        case Simulator::TrackSegment::Type::Straight:
+        {
+            QPointF pos(point.x, point.y);
+
+            QRectF br;
+            br.setTop(segment.points[0].y);
+            br.setLeft(segment.points[0].x);
+            br.setBottom(segment.points[1].y);
+            br.setRight(segment.points[1].x);
+            br = br.normalized();
+
+            if(br.width() > 0 && br.height() > 0 && !br.contains(pos))
+              continue;
+
+            float segDistance = 0;
+            if(!lineContains(pos, br.topLeft(), br.bottomRight(), segDistance, 5))
+              continue;
+
+            if(bestIdx == Simulator::invalidIndex || segDistance < bestDistance)
+            {
+              bestIdx = idx;
+              bestDistance = segDistance;
+            }
+            continue;
+        }
+        case Simulator::TrackSegment::Type::Curve:
+        {
+            const Simulator::Point center = segment.curves[0].center;
+            const Simulator::Point diff = point - center;
+            const float distance = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+
+            if(std::abs(distance - segment.curves[0].radius) > 5)
+              continue;
+
+            if(bestIdx != Simulator::invalidIndex && distance > bestDistance)
+              continue;
+
+            // Y coordinate is swapped
+            float angle = std::atan2(-diff.y, diff.x);
+
+            float rotation = segment.rotation;
+            if(rotation < 0)
+              rotation += 2 * pi;
+
+            const float curveAngle = segment.curves[0].angle;
+            float angleMax = - rotation + pi / 2.0 * (curveAngle > 0 ? 1 : -1);
+            float angleMin = - rotation - curveAngle + pi / 2.0 * (curveAngle > 0 ? 1 : -1);
+
+            if(curveAngle < 0)
+              std::swap(angleMin, angleMax);
+
+            if(angleMin < 0)
+            {
+              angleMin += 2 * pi;
+              angleMax += 2 * pi;
+            }
+
+            if(angleMin < 0 && angle < 0)
+            {
+              angleMin += 2 * pi;
+              angleMax += 2 * pi;
+            }
+
+            if(angle < 0)
+            {
+              angle += 2 * pi;
+            }
+
+            if(angleMin <= angleMax)
+            {
+              // min -> max
+              if(angle < angleMin || angle > angleMax)
+                continue;
+            }
+            else
+            {
+              // 0 -> min, max -> 2 * pi
+              if(angle > angleMin && angle < angleMax)
+                continue;
+            }
+
+            bestIdx = idx;
+            bestDistance = distance;
+            continue;
+        }
+        default:
+            break;
+        }
+    }
+
+    return bestIdx;
+}
+
 void drawStraight(const Simulator::TrackSegment& segment)
 {
   glBegin(GL_LINES);
@@ -117,6 +260,8 @@ SimulatorView::SimulatorView(QWidget* parent)
 
   // 800 ms turnout blink
   turnoutBlinkTimer.start(std::chrono::milliseconds(800), Qt::PreciseTimer, this);
+
+  setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 
 SimulatorView::~SimulatorView()
@@ -344,18 +489,6 @@ void SimulatorView::paintGL()
   }
 }
 
-bool SimulatorView::event(QEvent *e)
-{
-    if(e->type() == QEvent::ToolTip)
-    {
-        QHelpEvent *ev = static_cast<QHelpEvent *>(e);
-        showItemTooltip(mapToSim(ev->pos()), ev);
-        return true;
-    }
-
-    return QOpenGLWidget::event(e);
-}
-
 void SimulatorView::drawTracks()
 {
   assert(m_simulator);
@@ -535,6 +668,18 @@ void SimulatorView::drawMisc()
   }
 }
 
+bool SimulatorView::event(QEvent *e)
+{
+    if(e->type() == QEvent::ToolTip)
+    {
+        QHelpEvent *ev = static_cast<QHelpEvent *>(e);
+        showItemTooltip(mapToSim(ev->pos()), ev);
+        return true;
+    }
+
+    return QOpenGLWidget::event(e);
+}
+
 void SimulatorView::keyPressEvent(QKeyEvent* event)
 {
   if(!m_simulator) [[unlikely]]
@@ -669,6 +814,26 @@ void SimulatorView::timerEvent(QTimerEvent *e)
   QOpenGLWidget::timerEvent(e);
 }
 
+void SimulatorView::contextMenuEvent(QContextMenuEvent *e)
+{
+  if(e->modifiers() != Qt::ControlModifier)
+    return; // Use control to distinguish from right click pan
+
+  const Simulator::Point point = mapToSim(e->pos());
+  const size_t idx = getSegmentAt(point, m_simulator->staticData);
+  if(idx == Simulator::invalidIndex)
+    return;
+
+  QMenu *m = new QMenu(this);
+  QAction *copySegData = m->addAction(tr("Copy segment data"));
+  QAction *result = m->exec(e->globalPos());
+  if(result == copySegData)
+  {
+    const auto obj = copySegmentData(idx);
+    QGuiApplication::clipboard()->setText(QString::fromStdString(obj.dump(2)));
+  }
+}
+
 void SimulatorView::mouseLeftClick(const Simulator::Point &point, bool shiftPressed)
 {
   for(const auto& turnout : m_turnouts)
@@ -680,146 +845,6 @@ void SimulatorView::mouseLeftClick(const Simulator::Point &point, bool shiftPres
       break;
     }
   }
-}
-
-bool lineContains(const QPointF& pos,
-                  const QPointF& a, const QPointF& b,
-                  float &distanceOut,
-                  const float tolerance = 1.0)
-{
-    if(std::abs(a.y() - b.y()) < 0.0001)
-    {
-        // Horizontal
-        return std::abs(a.y() - pos.y()) < tolerance &&
-                (a.x() - tolerance) <= pos.x() && (b.x() + tolerance) >= pos.x();
-    }
-
-    if(std::abs(a.x() - b.x()) < 0.0001)
-    {
-        // Vertical
-        return std::abs(a.x() - pos.x()) < tolerance &&
-                (a.y() - tolerance) <= pos.y() && (b.y() + tolerance) >= pos.y();
-    }
-
-    // Diagonal
-    const float resultingY  = a.y() + (pos.x() - a.x()) * (b.y() - a.y()) / (b.x() - a.x());
-    distanceOut = std::abs(resultingY - pos.y());
-    return distanceOut <= tolerance;
-}
-
-size_t getSegmentAt(const Simulator::Point& point, const Simulator::StaticData& data)
-{
-    size_t bestIdx = Simulator::invalidIndex;
-    float bestDistance = 0.0;
-
-    for(size_t idx = 0; idx < data.trackSegments.size(); idx++)
-    {
-        const auto &segment = data.trackSegments.at(idx);
-
-        switch (segment.type)
-        {
-        case Simulator::TrackSegment::Type::Turnout:
-        case Simulator::TrackSegment::Type::TurnoutCurved:
-        case Simulator::TrackSegment::Type::Turnout3Way:
-        {
-            std::span<const Simulator::Point, 3> points({segment.points[0],
-                                                         segment.points[1],
-                                                         segment.points[2]});
-            if(isPointInTriangle(points, point))
-                return idx;
-            continue;
-        }
-        case Simulator::TrackSegment::Type::Straight:
-        {
-            QPointF pos(point.x, point.y);
-
-            QRectF br;
-            br.setTop(segment.points[0].y);
-            br.setLeft(segment.points[0].x);
-            br.setBottom(segment.points[1].y);
-            br.setRight(segment.points[1].x);
-            br = br.normalized();
-
-            if(br.width() > 0 && br.height() > 0 && !br.contains(pos))
-              continue;
-
-            float segDistance = 0;
-            if(!lineContains(pos, br.topLeft(), br.bottomRight(), segDistance, 5))
-              continue;
-
-            if(bestIdx == Simulator::invalidIndex || segDistance < bestDistance)
-            {
-              bestIdx = idx;
-              bestDistance = segDistance;
-            }
-            continue;
-        }
-        case Simulator::TrackSegment::Type::Curve:
-        {
-            const Simulator::Point center = segment.curves[0].center;
-            const Simulator::Point diff = point - center;
-            const float distance = std::sqrt(diff.x * diff.x + diff.y * diff.y);
-
-            if(std::abs(distance - segment.curves[0].radius) > 5)
-              continue;
-
-            if(bestIdx != Simulator::invalidIndex && distance > bestDistance)
-              continue;
-
-            // Y coordinate is swapped
-            float angle = std::atan2(-diff.y, diff.x);
-
-            float rotation = segment.rotation;
-            if(rotation < 0)
-              rotation += 2 * pi;
-
-            const float curveAngle = segment.curves[0].angle;
-            float angleMax = - rotation + pi / 2.0 * (curveAngle > 0 ? 1 : -1);
-            float angleMin = - rotation - curveAngle + pi / 2.0 * (curveAngle > 0 ? 1 : -1);
-
-            if(curveAngle < 0)
-              std::swap(angleMin, angleMax);
-
-            if(angleMin < 0)
-            {
-              angleMin += 2 * pi;
-              angleMax += 2 * pi;
-            }
-
-            if(angleMin < 0 && angle < 0)
-            {
-              angleMin += 2 * pi;
-              angleMax += 2 * pi;
-            }
-
-            if(angle < 0)
-            {
-              angle += 2 * pi;
-            }
-
-            if(angleMin <= angleMax)
-            {
-              // min -> max
-              if(angle < angleMin || angle > angleMax)
-                continue;
-            }
-            else
-            {
-              // 0 -> min, max -> 2 * pi
-              if(angle > angleMin && angle < angleMax)
-                continue;
-            }
-
-            bestIdx = idx;
-            bestDistance = distance;
-            continue;
-        }
-        default:
-            break;
-        }
-    }
-
-    return bestIdx;
 }
 
 void SimulatorView::showItemTooltip(const Simulator::Point &point, QHelpEvent *ev)
@@ -860,10 +885,10 @@ void SimulatorView::showItemTooltip(const Simulator::Point &point, QHelpEvent *e
         addPt("straight", turnout.points[1]);
         addPt("curve", turnout.points[2]);
         text.append("<br>");
-        text.append(tr("rotation: %1<br>").arg(segment.rotation));
+        text.append(tr("rotation: %1<br>").arg(qRadiansToDegrees(segment.rotation)));
         text.append("<br>");
         text.append(tr("radius: %1<br>").arg(segment.curves[0].radius));
-        text.append(tr("angle: %1<br>").arg(segment.curves[0].angle));
+        text.append(tr("angle: %1<br>").arg(qRadiansToDegrees(segment.curves[0].angle)));
         text.append(tr("curve_l: %1<br>").arg(segment.curves[0].length));
         text.append(tr("strai_l: %1<br>").arg(segment.straight.length));
 
@@ -901,7 +926,7 @@ void SimulatorView::showItemTooltip(const Simulator::Point &point, QHelpEvent *e
                 addPt("orig", segment.points[0]);
                 addPt("end", segment.points[1]);
                 text.append("<br>");
-                text.append(tr("rotation: %1<br>").arg(segment.rotation));
+                text.append(tr("rotation: %1<br>").arg(qRadiansToDegrees(segment.rotation)));
                 text.append("<br>");
                 text.append(tr("strai_l: %1<br>").arg(segment.straight.length));
             }
@@ -913,10 +938,10 @@ void SimulatorView::showItemTooltip(const Simulator::Point &point, QHelpEvent *e
                 addPt("end", segment.points[1]);
                 addPt("center", segment.curves[0].center);
                 text.append("<br>");
-                text.append(tr("rotation: %1<br>").arg(segment.rotation));
+                text.append(tr("rotation: %1<br>").arg(qRadiansToDegrees(segment.rotation)));
                 text.append("<br>");
                 text.append(tr("radius: %1<br>").arg(segment.curves[0].radius));
-                text.append(tr("angle: %1<br>").arg(segment.curves[0].angle));
+                text.append(tr("angle: %1<br>").arg(qRadiansToDegrees(segment.curves[0].angle)));
                 text.append(tr("curve_l: %1<br>").arg(segment.curves[0].length));
             }
 
@@ -956,6 +981,22 @@ void SimulatorView::setImageVisible(int idx, bool val)
     return;
 
   m_extraImages[idx].visible = val;
+}
+
+nlohmann::json SimulatorView::copySegmentData(size_t segmentIdx) const
+{
+    if(segmentIdx == Simulator::invalidIndex)
+        return {};
+
+    const auto& segment = m_simulator->staticData.trackSegments[segmentIdx];
+
+    nlohmann::json obj;
+    obj["id"] = segment.m_id;
+    obj["x"] = segment.origin().x;
+    obj["y"] = segment.origin().y;
+    obj["rotation"] = qRadiansToDegrees(segment.rotation);
+
+    return obj;
 }
 
 void SimulatorView::updateProjection()
