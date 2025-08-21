@@ -28,6 +28,9 @@
 #include <QToolTip>
 #include <QGuiApplication>
 
+#include <QDir>
+#include <QFileInfo>
+
 namespace
 {
 
@@ -188,9 +191,11 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
   update();
 }
 
-void SimulatorView::loadExtraImages(const nlohmann::json& world)
+void SimulatorView::loadExtraImages(const nlohmann::json& world, const QString& imagesFile)
 {
   m_extraImages.clear();
+
+  const QDir fileDir = QFileInfo(imagesFile).absoluteDir();
 
   if(auto images = world.find("images"); images != world.end() && images->is_array())
   {
@@ -221,7 +226,14 @@ void SimulatorView::loadExtraImages(const nlohmann::json& world)
       Image img;
       img.ref = item;
 
-      if(!img.img.load(QString::fromStdString(img.ref.fileName)))
+      QString fileName = QString::fromStdString(img.ref.fileName);
+      if(QFileInfo(fileName).isRelative())
+      {
+        // Treat as relative to image JSON file
+        fileName = fileDir.absoluteFilePath(fileName);
+      }
+
+      if(!img.img.load(fileName))
         continue;
 
       m_extraImages.push_back(img);

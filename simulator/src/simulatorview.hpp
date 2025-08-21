@@ -45,7 +45,7 @@ public:
   Simulator* simulator() const;
   void setSimulator(std::shared_ptr<Simulator> value);
 
-  void loadExtraImages(const nlohmann::json &world);
+  void loadExtraImages(const nlohmann::json &world, const QString &imagesFile);
 
   bool showTrackOccupancy() const
   {

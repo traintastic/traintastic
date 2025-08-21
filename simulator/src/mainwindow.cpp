@@ -195,7 +195,7 @@ void MainWindow::loadExtraImages(const QString& filename)
   QFile file(filename);
   if(file.open(QIODeviceBase::ReadOnly))
   {
-    m_view->loadExtraImages(nlohmann::json::parse(file.readAll().toStdString()));
+    m_view->loadExtraImages(nlohmann::json::parse(file.readAll().toStdString()), filename);
   }
 }
 
