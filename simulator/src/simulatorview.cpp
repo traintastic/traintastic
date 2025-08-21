@@ -860,6 +860,8 @@ void SimulatorView::showItemTooltip(const Simulator::Point &point, QHelpEvent *e
         addPt("straight", turnout.points[1]);
         addPt("curve", turnout.points[2]);
         text.append("<br>");
+        text.append(tr("rotation: %1<br>").arg(segment.rotation));
+        text.append("<br>");
         text.append(tr("radius: %1<br>").arg(segment.curves[0].radius));
         text.append(tr("angle: %1<br>").arg(segment.curves[0].angle));
         text.append(tr("curve_l: %1<br>").arg(segment.curves[0].length));
@@ -898,6 +900,9 @@ void SimulatorView::showItemTooltip(const Simulator::Point &point, QHelpEvent *e
                         .arg(QString::fromStdString(segment.m_id));
                 addPt("orig", segment.points[0]);
                 addPt("end", segment.points[1]);
+                text.append("<br>");
+                text.append(tr("rotation: %1<br>").arg(segment.rotation));
+                text.append("<br>");
                 text.append(tr("strai_l: %1<br>").arg(segment.straight.length));
             }
             else if(segment.type == Simulator::TrackSegment::Type::Curve)
@@ -907,6 +912,8 @@ void SimulatorView::showItemTooltip(const Simulator::Point &point, QHelpEvent *e
                 addPt("orig", segment.points[0]);
                 addPt("end", segment.points[1]);
                 addPt("center", segment.curves[0].center);
+                text.append("<br>");
+                text.append(tr("rotation: %1<br>").arg(segment.rotation));
                 text.append("<br>");
                 text.append(tr("radius: %1<br>").arg(segment.curves[0].radius));
                 text.append(tr("angle: %1<br>").arg(segment.curves[0].angle));
