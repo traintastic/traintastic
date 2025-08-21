@@ -45,6 +45,8 @@ public:
   Simulator* simulator() const;
   void setSimulator(std::shared_ptr<Simulator> value);
 
+  void loadExtraImages(const nlohmann::json &world);
+
   bool showTrackOccupancy() const
   {
     return m_showTrackOccupancy;
@@ -116,6 +118,7 @@ private:
   };
 
   std::vector<Image> m_images;
+  std::vector<Image> m_extraImages;
 
   struct
   {

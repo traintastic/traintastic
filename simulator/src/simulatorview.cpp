@@ -20,7 +20,6 @@
  */
 
 #include "simulatorview.hpp"
-#include <numbers>
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <cmath>
@@ -31,8 +30,6 @@
 
 namespace
 {
-
-constexpr auto pi = std::numbers::pi_v<float>;
 
 struct ColorF
 {
@@ -191,6 +188,49 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
   update();
 }
 
+void SimulatorView::loadExtraImages(const nlohmann::json& world)
+{
+  m_extraImages.clear();
+
+  if(auto images = world.find("images"); images != world.end() && images->is_array())
+  {
+    for(const auto& object : *images)
+    {
+      if(!object.is_object())
+      {
+        continue;
+      }
+
+      Simulator::ImageRef item;
+
+      item.origin.x = object.value("x", std::numeric_limits<float>::quiet_NaN());
+      item.origin.y = object.value("y", std::numeric_limits<float>::quiet_NaN());
+      item.fileName = object.value<std::string_view>("file", {});
+      item.rotation = deg2rad(object.value("rotation", 0.0f));
+
+      const float pxCount = object.value("n_px", std::numeric_limits<float>::quiet_NaN());
+      const float mtCount = object.value("n_mt", std::numeric_limits<float>::quiet_NaN());
+
+      if(!item.origin.isFinite() || item.fileName.empty() || pxCount == 0)
+      {
+        continue;
+      }
+
+      item.ratio = mtCount / pxCount;
+
+      Image img;
+      img.ref = item;
+
+      if(!img.img.load(QString::fromStdString(img.ref.fileName)))
+        continue;
+
+      m_extraImages.push_back(img);
+    }
+  }
+
+  update();
+}
+
 void SimulatorView::zoomIn()
 {
   setZoomLevel(m_zoomLevel * zoomFactorIn);
@@ -244,26 +284,35 @@ void SimulatorView::paintGL()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  if(m_images.size() > 0)
+  if(!m_images.empty() || !m_extraImages.empty())
   {
-      QPainter p;
-      p.begin(this);
+    QPainter p;
+    p.begin(this);
 
-      p.scale(m_zoomLevel, m_zoomLevel);
-      p.translate(-m_cameraX, -m_cameraY);
+    p.scale(m_zoomLevel, m_zoomLevel);
+    p.translate(-m_cameraX, -m_cameraY);
 
-      const QTransform trasf = p.transform();
+    const QTransform trasf = p.transform();
 
-      for(const auto &image : m_images)
-      {
-          p.translate(image.ref.origin.x, image.ref.origin.y);
-          p.rotate(qRadiansToDegrees(image.ref.rotation));
-          p.scale(image.ref.ratio, image.ref.ratio);
-          p.drawImage(QPoint(), image.img);
-          p.setTransform(trasf);
-      }
+    for(const auto &image : m_images)
+    {
+      p.translate(image.ref.origin.x, image.ref.origin.y);
+      p.rotate(qRadiansToDegrees(image.ref.rotation));
+      p.scale(image.ref.ratio, image.ref.ratio);
+      p.drawImage(QPoint(), image.img);
+      p.setTransform(trasf);
+    }
 
-      p.end();
+    for(const auto &image : m_extraImages)
+    {
+      p.translate(image.ref.origin.x, image.ref.origin.y);
+      p.rotate(qRadiansToDegrees(image.ref.rotation));
+      p.scale(image.ref.ratio, image.ref.ratio);
+      p.drawImage(QPoint(), image.img);
+      p.setTransform(trasf);
+    }
+
+    p.end();
   }
 
   glLoadIdentity();
@@ -274,7 +323,6 @@ void SimulatorView::paintGL()
     drawTracks();
     drawTrains();
   }
-
 }
 
 bool SimulatorView::event(QEvent *e)

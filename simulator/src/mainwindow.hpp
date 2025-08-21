@@ -33,6 +33,8 @@ public:
 
   void load(const QString& filename);
 
+  void loadExtraImages(const QString &filename);
+
 protected:
   void keyPressEvent(QKeyEvent *ev) override;
 

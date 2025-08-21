@@ -112,6 +112,18 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
           QMetaObject::invokeMethod(m_view, &SimulatorView::zoomToFit, Qt::QueuedConnection);
         }
       });
+    menu->addAction("Load Images",
+      [this]()
+      {
+        QSettings settings;
+        const QString dir = settings.value("LastLoadImagesDir", QString::fromStdString(getSimulatorLayoutPath().string())).toString();
+        const auto filename = QFileDialog::getOpenFileName(this, "Load images", dir, "*.json");
+        if(QFile::exists(filename))
+        {
+          settings.setValue("LastLoadImagesDir", QFileInfo(filename).absoluteFilePath());
+          loadExtraImages(filename);
+        }
+      });
     menu->addAction("Quit", this, &MainWindow::close);
 
     menu = menuBar()->addMenu("View");
@@ -175,6 +187,15 @@ void MainWindow::load(const QString& filename)
       return;
     }
 
+  }
+}
+
+void MainWindow::loadExtraImages(const QString& filename)
+{
+  QFile file(filename);
+  if(file.open(QIODeviceBase::ReadOnly))
+  {
+    m_view->loadExtraImages(nlohmann::json::parse(file.readAll().toStdString()));
   }
 }
 

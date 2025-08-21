@@ -21,21 +21,8 @@
 
 #include "simulator.hpp"
 #include "simulatorconnection.hpp"
-#include <numbers>
 #include <ranges>
 #include "protocol.hpp"
-
-namespace
-{
-
-constexpr auto pi = std::numbers::pi_v<float>;
-
-constexpr float deg2rad(float degrees)
-{
-  return degrees * static_cast<float>(std::numbers::pi / 180);
-}
-
-}
 
 void Simulator::updateView(Simulator::StaticData::View& view, Simulator::Point point)
 {
