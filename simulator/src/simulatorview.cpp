@@ -191,7 +191,9 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
   update();
 }
 
-void SimulatorView::loadExtraImages(const nlohmann::json& world, const QString& imagesFile)
+void SimulatorView::loadExtraImages(const nlohmann::json& world,
+                                    const QString& imagesFile,
+                                    QStringList &namesOut)
 {
   m_extraImages.clear();
 
@@ -227,7 +229,8 @@ void SimulatorView::loadExtraImages(const nlohmann::json& world, const QString& 
       img.ref = item;
 
       QString fileName = QString::fromStdString(img.ref.fileName);
-      if(QFileInfo(fileName).isRelative())
+      QFileInfo info(fileName);
+      if(info.isRelative())
       {
         // Treat as relative to image JSON file
         fileName = fileDir.absoluteFilePath(fileName);
@@ -237,6 +240,8 @@ void SimulatorView::loadExtraImages(const nlohmann::json& world, const QString& 
         continue;
 
       m_extraImages.push_back(img);
+
+      namesOut.append(info.fileName());
     }
   }
 
@@ -317,6 +322,8 @@ void SimulatorView::paintGL()
 
     for(const auto &image : m_extraImages)
     {
+      if(!image.visible)
+        continue;
       p.translate(image.ref.origin.x, image.ref.origin.y);
       p.rotate(qRadiansToDegrees(image.ref.rotation));
       p.scale(image.ref.ratio, image.ref.ratio);
@@ -934,6 +941,14 @@ void SimulatorView::setZoomLevel(float value)
 {
   m_zoomLevel = std::clamp(value, zoomLevelMin, zoomLevelMax);
   updateProjection();
+}
+
+void SimulatorView::setImageVisible(int idx, bool val)
+{
+  if(idx < 0 || size_t(idx) >= m_extraImages.size())
+    return;
+
+  m_extraImages[idx].visible = val;
 }
 
 void SimulatorView::updateProjection()

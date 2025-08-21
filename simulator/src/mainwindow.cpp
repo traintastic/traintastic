@@ -134,6 +134,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     menu = menuBar()->addMenu("Help");
     menu->addAction("About...", this, &MainWindow::showAbout);
+
+    imagesMenu = menuBar()->addMenu("Images");
   }
 
   // Toolbar:
@@ -192,10 +194,32 @@ void MainWindow::load(const QString& filename)
 
 void MainWindow::loadExtraImages(const QString& filename)
 {
+  QStringList imageNames;
+
   QFile file(filename);
   if(file.open(QIODeviceBase::ReadOnly))
   {
-    m_view->loadExtraImages(nlohmann::json::parse(file.readAll().toStdString()), filename);
+    m_view->loadExtraImages(nlohmann::json::parse(file.readAll().toStdString()),
+                            filename,
+                            imageNames);
+  }
+
+  imagesMenu->clear();
+
+  int idx = 0;
+  for(const QString &img : imageNames)
+  {
+    QAction *act = imagesMenu->addAction(img);
+    act->setCheckable(true);
+    act->setChecked(true);
+
+    connect(act, &QAction::toggled,
+            m_view, [idx, view=m_view](bool val)
+    {
+        view->setImageVisible(idx, val);
+    });
+
+    idx++;
   }
 }
 

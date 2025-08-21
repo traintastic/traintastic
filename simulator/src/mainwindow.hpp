@@ -42,6 +42,8 @@ private:
   SimulatorView* m_view;
   QAction* m_power;
 
+  QMenu *imagesMenu;
+
   void showAbout();
 };
 

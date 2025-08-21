@@ -45,7 +45,9 @@ public:
   Simulator* simulator() const;
   void setSimulator(std::shared_ptr<Simulator> value);
 
-  void loadExtraImages(const nlohmann::json &world, const QString &imagesFile);
+  void loadExtraImages(const nlohmann::json &world,
+                       const QString &imagesFile,
+                       QStringList &namesOut);
 
   bool showTrackOccupancy() const
   {
@@ -78,6 +80,8 @@ public:
   inline float getZoomLevel() const { return m_zoomLevel; }
 
   void setZoomLevel(float zoomLevel);
+
+  void setImageVisible(int idx, bool val);
 
 signals:
   void powerOnChanged(bool value);
@@ -115,6 +119,7 @@ private:
   {
     QImage img;
     Simulator::ImageRef ref;
+    bool visible = true;
   };
 
   std::vector<Image> m_images;
