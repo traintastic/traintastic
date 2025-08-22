@@ -456,8 +456,11 @@ void SimulatorView::paintGL()
 
     const QTransform trasf = p.transform();
 
-    for(const auto &image : m_images)
+    for(const auto &image : m_extraImages)
     {
+      if(!image.visible)
+        continue;
+      p.setOpacity(image.ref.opacity);
       p.translate(image.ref.origin.x, image.ref.origin.y);
       p.rotate(qRadiansToDegrees(image.ref.rotation));
       p.scale(image.ref.ratio, image.ref.ratio);
@@ -465,16 +468,17 @@ void SimulatorView::paintGL()
       p.setTransform(trasf);
     }
 
-    for(const auto &image : m_extraImages)
+    for(const auto &image : m_images)
     {
-      if(!image.visible)
-        continue;
+      p.setOpacity(image.ref.opacity);
       p.translate(image.ref.origin.x, image.ref.origin.y);
       p.rotate(qRadiansToDegrees(image.ref.rotation));
       p.scale(image.ref.ratio, image.ref.ratio);
       p.drawImage(QPoint(), image.img);
       p.setTransform(trasf);
     }
+
+    p.setOpacity(1);
 
     p.end();
   }
