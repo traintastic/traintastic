@@ -57,11 +57,13 @@ Source: "..\..\server\build\{#ServerExeName}"; DestDir: "{app}\server"; Flags: i
 ; Client
 Source: "..\..\client\build\Release\{#ClientExeName}"; DestDir: "{app}\client"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\*.dll"; DestDir: "{app}\client"; Flags: ignoreversion; Check: InstallClient
-Source: "..\..\client\build\Release\bearer\*.dll"; DestDir: "{app}\client\bearer"; Flags: ignoreversion; Check: InstallClient
+Source: "..\..\client\build\Release\generic\*.dll"; DestDir: "{app}\client\generic"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\iconengines\*.dll"; DestDir: "{app}\client\iconengines"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\imageformats\*.dll"; DestDir: "{app}\client\imageformats"; Flags: ignoreversion; Check: InstallClient
+Source: "..\..\client\build\Release\networkinformation\*.dll"; DestDir: "{app}\client\networkinformation"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\platforms\*.dll"; DestDir: "{app}\client\platforms"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\styles\*.dll"; DestDir: "{app}\client\styles"; Flags: ignoreversion; Check: InstallClient
+Source: "..\..\client\build\Release\tls\*.dll"; DestDir: "{app}\client\tls"; Flags: ignoreversion; Check: InstallClient
 ; Shared
 Source: "..\..\shared\translations\*.lang"; DestDir: "{commonappdata}\traintastic\translations"; Flags: ignoreversion;
 ; Manual
@@ -90,6 +92,22 @@ Type: files; Name: "{app}\server\lua53.dll"
 Type: files; Name: "{app}\server\lua54.dll"
 Type: files; Name: "{app}\server\archive.dll"
 Type: files; Name: "{app}\server\zlib1.dll"
+; Delete Qt5 DLLs (TODO: remove in 0.4)
+Type: files; Name: "{app}\client\libEGL.dll"
+Type: files; Name: "{app}\client\libGLESv2.dll"
+Type: files; Name: "{app}\client\Qt5Xml.dll"
+Type: files; Name: "{app}\client\Qt5Core.dll"
+Type: files; Name: "{app}\client\Qt5Gui.dll"
+Type: files; Name: "{app}\client\Qt5Network.dll"
+Type: files; Name: "{app}\client\Qt5Svg.dll"
+Type: files; Name: "{app}\client\Qt5WebSockets.dll"
+Type: files; Name: "{app}\client\Qt5Widgets.dll"
+Type: files; Name: "{app}\client\bearer\qgenericbearer.dll"
+Type: files; Name: "{app}\client\imageformats\qtiff.dll"
+Type: files; Name: "{app}\client\imageformats\qwbmp.dll"
+Type: files; Name: "{app}\client\imageformats\qwebp.dll"
+Type: files; Name: "{app}\client\imageformats\qicns.dll"
+Type: files; Name: "{app}\client\imageformats\qtga.dll"
 
 [UninstallRun]
 Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic server (TCP)"""; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
@@ -114,30 +132,34 @@ Filename: {commonappdata}\traintastic\traintastic-client.ini; Section: general_;
 [Code]
 const
   ComponentsValueName = 'Components';
+  ComponentServer = $1;
+  ComponentClient = $2;
 var
+  Components : DWORD;
   ComponentsPage : TWizardPage;
   ClientAndServerRadioButton : TRadioButton;
   ClientOnlyRadioButton : TRadioButton;
 
 function InstallClient : Boolean;
 begin
-  Result := ClientAndServerRadioButton.Checked or ClientOnlyRadioButton.Checked;
+  Result := (Components and ComponentServer) <> 0;
 end;
 
 function InstallServer : Boolean;
 begin
-  Result := ClientAndServerRadioButton.Checked;
+  Result := (Components and ComponentClient) <> 0;
 end;
 
-procedure RegWriteTraintasticComponents(Value: String);
+procedure RegWriteTraintasticComponents(Value: DWORD);
 begin
-  RegWriteStringValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Value);
+  RegWriteDWORDValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Value);
 end;
 
-function RegReadTraintasticComponents: String;
+function RegReadTraintasticComponents: DWORD;
 begin
-  if not RegQueryStringValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Result) then
-    Result := '';
+  if not RegQueryDWORDValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Result) then begin
+    Result := 0;
+  end;
 end;
 
 procedure ComponentsPageUpdateNextButtonEnabled;
@@ -159,18 +181,20 @@ end;
 function NextButtonClick(CurPageID: Integer): Boolean;
 begin
   if CurPageID = ComponentsPage.ID then begin
+    Components := 0;
+    
     if ClientAndServerRadioButton.Checked then
-      RegWriteTraintasticComponents('ClientAndServer')
+      Components := Components or ComponentServer or ComponentClient
     else if ClientOnlyRadioButton.Checked then
-      RegWriteTraintasticComponents('ClientOnly');
+      Components := Components or ComponentClient;
+    
+    RegWriteTraintasticComponents(Components);
   end;
   Result := True;
 end;
-
 procedure InitializeWizard;
 var
   Lbl: TLabel;
-  Components: String;
 begin
   Components := RegReadTraintasticComponents;
 
@@ -178,7 +202,7 @@ begin
 
   ClientAndServerRadioButton := TNewRadioButton.Create(ComponentsPage);
   ClientAndServerRadioButton.Caption := ExpandConstant('{cm:client_and_server}');
-  ClientAndServerRadioButton.Checked := (Components = 'ClientAndServer');
+  ClientAndServerRadioButton.Checked := InstallClient and InstallServer;
   ClientAndServerRadioButton.Font.Style := [fsBold];
   ClientAndServerRadioButton.Height := ScaleY(23);
   ClientAndServerRadioButton.Width := ComponentsPage.SurfaceWidth;
@@ -194,7 +218,7 @@ begin
 
   ClientOnlyRadioButton := TNewRadioButton.Create(ComponentsPage);
   ClientOnlyRadioButton.Caption := ExpandConstant('{cm:client_only}');
-  ClientOnlyRadioButton.Checked := (Components = 'ClientOnly');
+  ClientOnlyRadioButton.Checked := InstallClient and not InstallServer;
   ClientOnlyRadioButton.Font.Style := [fsBold];
   ClientOnlyRadioButton.Top := Lbl.Top + Lbl.Height + ScaleY(10);
   ClientOnlyRadioButton.Height := ScaleY(23);
