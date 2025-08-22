@@ -28,6 +28,7 @@
 #include <QFileInfo>
 #include <QStatusBar>
 #include <QLabel>
+#include <QKeyEvent>
 #include "simulatorview.hpp"
 #include <version.hpp>
 #include <traintastic/copyright.hpp>
@@ -95,6 +96,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     menu->addAction("Quit", this, &MainWindow::close);
 
     menu = menuBar()->addMenu("View");
+    m_actFullScreen = menu->addAction("Fullscreen", this, &MainWindow::toggleFullScreen);
+    m_actFullScreen->setCheckable(true);
+    m_actFullScreen->setShortcut(Qt::Key_F11);
     act = menu->addAction("Show track occupancy");
     act->setCheckable(true);
     act->setChecked(m_view->showTrackOccupancy());
@@ -160,6 +164,55 @@ void MainWindow::load(const QString& filename)
   {
     m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString())));
     QMetaObject::invokeMethod(m_view, &SimulatorView::zoomToFit, Qt::QueuedConnection);
+  }
+}
+
+void MainWindow::keyPressEvent(QKeyEvent* event)
+{
+  if(event->key() == Qt::Key_F11) // Once fullscreen the QAction does't receive the key press because it is hidden.
+  {
+    m_actFullScreen->setChecked(!m_actFullScreen->isChecked());
+    toggleFullScreen();
+  }
+  else
+  {
+    QMainWindow::keyPressEvent(event);
+  }
+}
+
+void MainWindow::toggleFullScreen()
+{
+  if(m_actFullScreen->isChecked() == isFullScreen())
+    return;
+
+  if(m_actFullScreen->isChecked())
+  {
+    m_beforeFullScreenGeometry = saveGeometry();
+    showFullScreen();
+    menuBar()->hide();
+    for (auto* toolbar : findChildren<QToolBar*>())
+    {
+      toolbar->hide();
+    }
+    statusBar()->hide();
+  }
+  else
+  {
+    showNormal();
+    if(!m_beforeFullScreenGeometry.isEmpty())
+    {
+      restoreGeometry(m_beforeFullScreenGeometry);
+    }
+    else
+    {
+      showMaximized();
+    }
+    menuBar()->show();
+    for (auto* toolbar : findChildren<QToolBar*>())
+    {
+      toolbar->show();
+    }
+    statusBar()->show();
   }
 }
 

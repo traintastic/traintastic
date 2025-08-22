@@ -35,12 +35,18 @@ public:
 
   void load(const QString& filename);
 
+protected:
+  void keyPressEvent(QKeyEvent *event) final;
+
 private:
   SimulatorView* m_view;
+  QAction* m_actFullScreen;
+  QByteArray m_beforeFullScreenGeometry;
   QAction* m_power;
   QLabel* m_tickActive;
   std::vector<float> m_tickActiveFilter;
 
+  void toggleFullScreen();
   void showAbout();
 };
 
