@@ -367,7 +367,11 @@ void Simulator::start()
 
 void Simulator::stop()
 {
-  m_acceptor.cancel();
+  boost::system::error_code ec;
+  m_acceptor.cancel(ec);
+  m_acceptor.close(ec);
+  // ignore errors
+
   while(!m_connections.empty())
   {
     auto connection =  m_connections.back();
