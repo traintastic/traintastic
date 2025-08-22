@@ -542,6 +542,8 @@ void SimulatorView::tick()
   m_stateDataPrevious.powerOn = m_stateData.powerOn;
   m_stateData = m_simulator->stateData();
 
+  emit tickActiveChanged(m_stateData.tickActive);
+
   if(m_stateDataPrevious.powerOn != m_stateData.powerOn)
   {
     emit powerOnChanged(m_stateData.powerOn);

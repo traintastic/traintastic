@@ -23,7 +23,9 @@
 #define TRAINTASTIC_SIMULATOR_MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <vector>
 
+class QLabel;
 class SimulatorView;
 
 class MainWindow : public QMainWindow
@@ -36,6 +38,8 @@ public:
 private:
   SimulatorView* m_view;
   QAction* m_power;
+  QLabel* m_tickActive;
+  std::vector<float> m_tickActiveFilter;
 
   void showAbout();
 };

@@ -26,14 +26,44 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QFileInfo>
+#include <QStatusBar>
+#include <QLabel>
 #include "simulatorview.hpp"
 #include <version.hpp>
 #include <traintastic/copyright.hpp>
 #include <traintastic/utils/standardpaths.hpp>
 
+namespace
+{
+
+QString formatDuration(float value)
+{
+  if(value < 1e-3f)
+  {
+    return QString(u8"%1 \u00B5s").arg(value * 1e6f, 0, 'f', 0);
+  }
+  else if(value < 1e-2f)
+  {
+    return QString("%1 ms").arg(value * 1e3f, 0, 'f', 2);
+  }
+  else if(value < 1e-1f)
+  {
+    return QString("%1 ms").arg(value * 1e3f, 0, 'f', 1);
+  }
+  return QString("%1 ms").arg(value * 1e3f, 0, 'f', 0);
+}
+
+float mean(const std::vector<float>& values)
+{
+  return std::accumulate(values.begin(), values.end(), 0.0f) / values.size();
+}
+
+}
+
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
   , m_view{new SimulatorView(this)}
+  , m_tickActive{new QLabel(this)}
 {
   setWindowIcon(QIcon(":/appicon.svg"));
   setWindowTitle("Traintastic simulator v" TRAINTASTIC_VERSION_FULL);
@@ -103,6 +133,23 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     addToolBar(Qt::TopToolBarArea, toolbar);
   }
 
+  // Status bar:
+  {
+    auto* statusBar = new QStatusBar(this);
+    statusBar->addPermanentWidget(m_tickActive);
+    setStatusBar(statusBar);
+  }
+
+  connect(m_view, &SimulatorView::tickActiveChanged,
+    [this](float value)
+    {
+      m_tickActiveFilter.push_back(value);
+      if(m_tickActiveFilter.size() >= 15)
+      {
+        m_tickActive->setText(formatDuration(mean(m_tickActiveFilter)));
+        m_tickActiveFilter.clear();
+      }
+    });
   connect(m_view, &SimulatorView::powerOnChanged, m_power, &QAction::setChecked);
 }
 

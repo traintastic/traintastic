@@ -56,6 +56,7 @@ public:
   void zoomToFit();
 
 signals:
+  void tickActiveChanged(float value);
   void powerOnChanged(bool value);
 
 protected:
