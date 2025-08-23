@@ -350,11 +350,33 @@ Simulator::Simulator(const nlohmann::json& world)
 Simulator::~Simulator()
 {
   stop();
+
+  {
+    std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+    {
+      auto it = m_stateData.trains.begin();
+      while(it != m_stateData.trains.end())
+      {
+        delete it->second;
+        it = m_stateData.trains.erase(it);
+      }
+    }
+
+    {
+      auto it = m_stateData.vehicles.begin();
+      while(it != m_stateData.vehicles.end())
+      {
+        assert(!it->second->activeTrain);
+        delete it->second;
+        it = m_stateData.vehicles.erase(it);
+      }
+    }
+  }
 }
 
 Simulator::StateData Simulator::stateData() const
 {
-  std::lock_guard<std::mutex> lock(m_stateMutex);
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
   return m_stateData;
 }
 
@@ -412,7 +434,7 @@ void Simulator::stop()
 
 void Simulator::setPowerOn(bool powerOn)
 {
-  std::lock_guard<std::mutex> lock(m_stateMutex);
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
   if(m_stateData.powerOn != powerOn)
   {
     m_stateData.powerOn = powerOn;
@@ -422,81 +444,84 @@ void Simulator::setPowerOn(bool powerOn)
 
 void Simulator::togglePowerOn()
 {
-  std::lock_guard<std::mutex> lock(m_stateMutex);
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
   m_stateData.powerOn = !m_stateData.powerOn;
   send(SimulatorProtocol::Power(m_stateData.powerOn));
 }
 
-bool Simulator::isTrainDirectionInverted(size_t trainIndex)
+Simulator::Train *Simulator::getTrainAt(size_t trainIndex) const
 {
-  if(trainIndex < staticData.trains.size())
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+  if(trainIndex < m_stateData.trains.size())
   {
-    const auto& train = staticData.trains[trainIndex];
-    if(train.vehicleIndexes.empty())
-      return false;
-
-    std::lock_guard<std::mutex> lock(m_stateMutex);
-    const auto& vehicle = m_stateData.vehicles[train.vehicleIndexes.front()];
-    if(vehicle.front.position.x < vehicle.rear.position.x)
-      return true;
+    auto it = std::cbegin(m_stateData.trains);
+    for(size_t i = 0; i < trainIndex; i++)
+      it++;
+    return it->second;
   }
+
+  return nullptr;
+}
+
+bool Simulator::isTrainDirectionInverted(Train *train)
+{
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+
+  if(train->vehicles.empty())
+    return false;
+
+  const auto vehicleItem = train->vehicles.front();
+  if(vehicleItem.vehicle->state.front.position.x < vehicleItem.vehicle->state.rear.position.x)
+    return true;
 
   return false;
 }
 
-void Simulator::setTrainDirection(size_t trainIndex, bool reverse)
+void Simulator::setTrainDirection(Train *train, bool reverse)
 {
-  if(trainIndex < staticData.trains.size())
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+
+  if(train->state.reverse != reverse)
   {
-    std::lock_guard<std::mutex> lock(m_stateMutex);
-    auto& train = m_stateData.trains[trainIndex];
-    if(train.reverse != reverse)
-    {
-      train.reverse = reverse;
-      train.speedOrDirectionChanged = true;
-    }
+    train->state.reverse = reverse;
+    train->state.speedOrDirectionChanged = true;
   }
 }
 
-void Simulator::setTrainSpeed(size_t trainIndex, float speed)
+void Simulator::setTrainSpeed(Train *train, float speed)
 {
-  if(trainIndex < staticData.trains.size())
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+
+  speed = std::clamp(speed, 0.0f, train->speedMax);
+  if(train->state.speed != speed)
   {
-    std::lock_guard<std::mutex> lock(m_stateMutex);
-    auto& train = m_stateData.trains[trainIndex];
-    speed = std::clamp(speed, 0.0f, staticData.trains[trainIndex].speedMax);
-    if(train.speed != speed)
-    {
-      train.speed = speed;
-      train.speedOrDirectionChanged = true;
-    }
+    train->state.speed = speed;
+    train->state.speedOrDirectionChanged = true;
   }
 }
 
-void Simulator::applyTrainSpeedDelta(size_t trainIndex, float delta)
+void Simulator::applyTrainSpeedDelta(Train *train, float delta)
 {
-  if(trainIndex < staticData.trains.size())
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+
+  const float speed = std::clamp(train->state.speed + delta, 0.0f, train->speedMax);
+  if(train->state.speed != speed)
   {
-    std::lock_guard<std::mutex> lock(m_stateMutex);
-    auto& train = m_stateData.trains[trainIndex];
-    const float speed = std::clamp(train.speed + delta, 0.0f, staticData.trains[trainIndex].speedMax);
-    if(train.speed != speed)
-    {
-      train.speed = speed;
-      train.speedOrDirectionChanged = true;
-    }
+    train->state.speed = speed;
+    train->state.speedOrDirectionChanged = true;
   }
 }
 
 void Simulator::stopAllTrains()
 {
-  std::lock_guard<std::mutex> lock(m_stateMutex);
-  for(auto& train : m_stateData.trains)
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+  for(auto& it : m_stateData.trains)
   {
-    if(train.speed != 0.0f)
+    auto *train = it.second;
+    if(train->state.speed != 0.0f)
     {
-      train.speed = 0.0f;
-      train.speedOrDirectionChanged = true;
+      train->state.speed = 0.0f;
+      train->state.speedOrDirectionChanged = true;
     }
   }
 }
@@ -509,7 +534,7 @@ void Simulator::setTurnoutState(size_t segmentIndex, TurnoutState::State state)
   if(segmentIndex < staticData.trackSegments.size() && staticData.trackSegments[segmentIndex].turnout.index != invalidIndex)
   {
     const auto& segment = staticData.trackSegments[segmentIndex];
-    std::lock_guard<std::mutex> lock(m_stateMutex);
+    std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
     auto& turnout = m_stateData.turnouts[segment.turnout.index];
     if(turnout.state != state)
     {
@@ -550,7 +575,7 @@ void Simulator::toggleTurnoutState(size_t segmentIndex, bool setUnknown)
 
     Simulator::TurnoutState::State state;
     {
-      std::lock_guard<std::mutex> lock(m_stateMutex);
+      std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
       state = m_stateData.turnouts[segment.turnout.index].state;
     }
 
@@ -602,23 +627,24 @@ void Simulator::receive(const SimulatorProtocol::Message& message)
   {
     case OpCode::Power:
     {
-      std::lock_guard<std::mutex> lock(m_stateMutex);
+      std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
       m_stateData.powerOn = static_cast<const Power&>(message).powerOn;
       break;
     }
     case OpCode::LocomotiveSpeedDirection:
     {
-      const auto& m = static_cast<const LocomotiveSpeedDirection&>(message);
-      const auto count = staticData.trains.size();
-      for(size_t i = 0; i < count; ++i)
+      const auto &m = static_cast<const LocomotiveSpeedDirection &>(message);
+      for(auto it : m_stateData.trains)
       {
-        const auto& train = staticData.trains[i];
-        if(m.address == train.address && (m.protocol == train.protocol || train.protocol == DecoderProtocol::None))
+        Train *train = it.second;
+
+        if(m.address == train->address && (m.protocol == train->protocol || train->protocol == DecoderProtocol::None))
         {
-          std::lock_guard<std::mutex> lock(m_stateMutex);
-          const float speed = std::clamp(train.speedMax * (m.speed / 255.0f), 0.0f, train.speedMax);
+          std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+          const float speed = std::clamp(train->speedMax * (m.speed / 255.0f), 0.0f, train->speedMax);
           const bool reverse = m.direction == Direction::Reverse;
-          auto& trainState = m_stateData.trains[i];
+
+          auto &trainState = train->state;
           if(trainState.speed != speed || trainState.reverse != reverse)
           {
             trainState.speed = speed;
@@ -660,7 +686,7 @@ void Simulator::receive(const SimulatorProtocol::Message& message)
           //
           // TurnoutState::coils = 0 0 0 0 RC RT LC LT
 
-          std::lock_guard<std::mutex> lock(m_stateMutex);
+          std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
           auto& turnoutState = m_stateData.turnouts[segment.turnout.index];
           if(m.address == segment.turnout.addresses[0])
           {
@@ -733,7 +759,7 @@ void Simulator::tick()
     });
 
   {
-    std::lock_guard<std::mutex> lock(m_stateMutex);
+    std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
     const auto start = std::chrono::high_resolution_clock::now();
     updateTrainPositions();
     updateSensors();
@@ -752,17 +778,16 @@ void Simulator::updateTrainPositions()
     return;
   }
 
-  const size_t trainCount = staticData.trains.size();
-  for(size_t i = 0; i < trainCount; ++i)
+  for(auto it : m_stateData.trains)
   {
-    const auto& train = staticData.trains[i];
-    auto& trainState = m_stateData.trains[i];
+    Train* train = it.second;
+    auto& trainState = train->state;
 
-    if(train.address != invalidAddress && trainState.speedOrDirectionChanged)
+    if(train->address != invalidAddress && trainState.speedOrDirectionChanged)
     {
-      send(SimulatorProtocol::LocomotiveSpeedDirection(train.address,
-        train.protocol,
-        static_cast<uint8_t>(std::clamp<float>(std::round(std::numeric_limits<uint8_t>::max() * (trainState.speed / train.speedMax)),
+        send(SimulatorProtocol::LocomotiveSpeedDirection(train->address,
+                                                         train->protocol,
+                                                         static_cast<uint8_t>(std::clamp<float>(std::round(std::numeric_limits<uint8_t>::max() * (trainState.speed / train->speedMax)),
           std::numeric_limits<uint8_t>::min(),
           std::numeric_limits<uint8_t>::max())),
         trainState.reverse ? Direction::Reverse : Direction::Forward,
@@ -774,9 +799,9 @@ void Simulator::updateTrainPositions()
 
     if(!trainState.reverse)
     {
-      for(const auto& vehicleIndex : train.vehicleIndexes)
+      for(auto& vehicleItem : train->vehicles)
       {
-        auto& vehicleState = m_stateData.vehicles[vehicleIndex];
+        auto& vehicleState = vehicleItem.vehicle->state;
         if(!updateVehiclePosition(vehicleState.front, speed) || !updateVehiclePosition(vehicleState.rear, speed))
         {
           trainState.speed = 0.0f;
@@ -787,9 +812,9 @@ void Simulator::updateTrainPositions()
     }
     else // reverse
     {
-      for(const auto& vehicleIndex : train.vehicleIndexes | std::views::reverse)
+      for(auto& vehicleItem : train->vehicles)
       {
-        auto& vehicleState = m_stateData.vehicles[vehicleIndex];
+        auto& vehicleState = vehicleItem.vehicle->state;
         if(!updateVehiclePosition(vehicleState.rear, -speed) || !updateVehiclePosition(vehicleState.front, -speed))
         {
           trainState.speed = 0.0f;
@@ -1039,6 +1064,14 @@ bool Simulator::isCurve(const TrackSegment& segment, size_t& curveIndex)
 Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& stateData)
 {
   StaticData data;
+
+  const float scaleA = world.value("scale_num", 1.0);
+  const float scaleB = world.value("scale_den", 1.0);
+  if(scaleB > 0.0001)
+      data.worldScale = scaleA / scaleB;
+
+  data.trainWidth = world.value("train_width", data.trainWidth);
+  data.trainCouplingLength = world.value("train_coupling_length", data.trainCouplingLength);
 
   if(auto trackPlan = world.find("trackplan"); trackPlan != world.end() && trackPlan->is_array())
   {
@@ -1494,6 +1527,27 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
     }
   }
 
+  if(auto vehicles = world.find("vehicles"); vehicles != world.end() && vehicles->is_array())
+  {
+    for(const auto& object : *vehicles)
+    {
+      if(!object.is_object())
+      {
+        continue;
+      }
+
+      std::string_view name = object.value<std::string_view>("name", {});
+      if(name.empty() || stateData.vehicles.contains(name))
+        continue;
+
+      Vehicle *vehicle = new Vehicle;
+      vehicle->name = name;
+      vehicle->length = object.value("length", 20.0f);
+      vehicle->color = stringToEnum<Color>(object.value<std::string_view>("color", {})).value_or(Color::Red);
+      stateData.vehicles.insert({vehicle->name, vehicle});
+    }
+  }
+
   if(auto trains = world.find("trains"); trains != world.end() && trains->is_array())
   {
     for(const auto& object : *trains)
@@ -1503,7 +1557,10 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         continue;
       }
 
-      Train train;
+      std::string_view name = object.value<std::string_view>("name", {});
+      if(name.empty() || stateData.trains.contains(name))
+        continue;
+
       size_t segmentIndex = invalidIndex;
 
       if(const auto trackId = object.value<std::string>("track_id", {}); !trackId.empty())
@@ -1528,48 +1585,86 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         }
       }
 
-      train.protocol = stringToEnum<DecoderProtocol>(object.value<std::string_view>("protocol", {})).value_or(DecoderProtocol::None);
-      train.address = object.value("address", train.address);
+      std::unique_ptr<Train> train(new Train);
+      train->name = name;
+      train->protocol = stringToEnum<DecoderProtocol>(object.value<std::string_view>("protocol", {})).value_or(DecoderProtocol::None);
+      train->address = object.value("address", train->address);
 
-      for(const auto& vehicle : object["vehicles"])
+      float lastDistance = 0;
+
+      for(const auto& vehicleObj : object["vehicles"])
       {
-        if(!vehicle.is_object())
+        if(!vehicleObj.is_object())
         {
           continue;
         }
-        const float length = vehicle.value("length", 20.0f);
-        const auto color = stringToEnum<Color>(vehicle.value<std::string_view>("color", {})).value_or(Color::Red);
-        const float distance = train.vehicleIndexes.empty() ? 0.0f : stateData.vehicles[train.vehicleIndexes.back()].rear.distance - data.trainCouplingLength;
-        train.length += length + (train.vehicleIndexes.empty() ? 0.0f : data.trainCouplingLength);
-        train.vehicleIndexes.emplace_back(data.vehicles.size());
-        data.vehicles.emplace_back(Vehicle{color, length});
-        auto& vehicleState = stateData.vehicles.emplace_back(VehicleState{});
+
+        const std::string_view vehicleName = vehicleObj.value<std::string_view>("name", {});
+        if(vehicleName.empty())
+          continue;
+
+        Vehicle *vehicle = nullptr;
+        if(const auto it = stateData.vehicles.find(vehicleName); it != stateData.vehicles.end())
+          vehicle = it->second;
+
+        if(!vehicle || vehicle->activeTrain)
+          continue;
+
+        const float distance = train->vehicles.empty() ? 0.0f : lastDistance - data.trainCouplingLength;
+        train->length += vehicle->length + (train->vehicles.empty() ? 0.0f : data.trainCouplingLength);
+
+        Train::VehicleItem item{vehicle, false};
+        item.reversed = vehicleObj.value("reversed", item.reversed);
+
+        auto& vehicleState = vehicle->state;
         vehicleState.front.segmentIndex = segmentIndex;
         vehicleState.front.distance = distance;
         vehicleState.rear.segmentIndex = segmentIndex;
-        vehicleState.rear.distance = distance - length;
+        vehicleState.rear.distance = distance - vehicle->length;
+
+        lastDistance = vehicleState.rear.distance;
+        if(item.reversed)
+        {
+          std::swap(vehicleState.front, vehicleState.rear);
+        }
+
+        train->vehicles.push_back(item);
       }
 
-      if(!train.vehicleIndexes.empty())
+      if(!train->vehicles.empty())
       {
         // center train in segment and mark it occupied:
         auto& segment = data.trackSegments[segmentIndex];
         if(segment.sensor.index != invalidIndex)
         {
           auto& sensor = stateData.sensors[segment.sensor.index];
-          sensor.occupied = train.vehicleIndexes.size() * 2;
+          sensor.occupied = train->vehicles.size() * 2;
           sensor.value = (sensor.occupied != 0);
         }
+
         const float segmentLength = getSegmentLength(segment, stateData);
-        const float move = segmentLength - (segmentLength - train.length) / 2;
-        for(const auto& vehicleIndex : train.vehicleIndexes)
+        const float move = segmentLength - (segmentLength - train->length) / 2;
+        for(const auto& vehicleItem : train->vehicles)
         {
-          auto& vehicle = stateData.vehicles[vehicleIndex];
-          vehicle.front.distance += move;
-          vehicle.rear.distance += move;
+          auto* vehicle = vehicleItem.vehicle;
+          if(vehicleItem.reversed)
+          {
+            vehicle->state.front.distance -= move;
+            vehicle->state.rear.distance -= move;
+          }
+          else
+          {
+            vehicle->state.front.distance += move;
+            vehicle->state.rear.distance += move;
+          }
+
+          vehicle->activeTrain = train.get();
         }
-        data.trains.emplace_back(std::move(train));
-        stateData.trains.emplace_back(TrainState{});
+
+        if(train->speedMax < 0.0001)
+          train->speedMax = defaultSpeedTickRate * data.worldScale;
+
+        stateData.trains.insert({train->name, train.release()});
       }
     }
   }
@@ -1661,16 +1756,12 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
     }
   }
 
-  data.trainWidth = world.value("train_width", data.trainWidth);
-
   data.view.top -= data.trainWidth;
   data.view.left -= data.trainWidth;
   data.view.bottom += data.trainWidth;
   data.view.right += data.trainWidth;
 
   assert(data.sensors.size() == stateData.sensors.size());
-  assert(data.trains.size() == stateData.trains.size());
-  assert(data.vehicles.size() == stateData.vehicles.size());
 
   return data;
 }
