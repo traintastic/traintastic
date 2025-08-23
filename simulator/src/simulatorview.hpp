@@ -134,16 +134,25 @@ private:
   } m_stateDataPrevious;
   std::vector<boost::signals2::connection> m_simulatorConnections;
   Turnouts m_turnouts;
+
+  // View
   float m_cameraX = 0.0f;
   float m_cameraY = 0.0f;
   float m_zoomLevel = 1.0f;
+  bool m_showTrackOccupancy = true;
+
   QPoint m_leftClickMousePos;
   QPoint m_rightMousePos;
-  bool m_showTrackOccupancy = true;
+
   size_t m_trainIndex = 0;
+
+  // Turnout blink
   QBasicTimer turnoutBlinkTimer;
   bool turnoutBlinkState = false;
 
+  // Mouse hover
+  QBasicTimer segmentHoverTimer;
+  Simulator::Point m_lastHoverPos;
   size_t m_hoverSegmentIdx = Simulator::invalidIndex;
   size_t m_hoverSensorIdx = Simulator::invalidIndex;
 
@@ -155,6 +164,13 @@ private:
   void drawMisc();
 
   void updateProjection();
+
+  inline void resetSegmentHover()
+  {
+    m_hoverSegmentIdx = Simulator::invalidIndex;
+    m_hoverSensorIdx = Simulator::invalidIndex;
+    segmentHoverTimer.stop();
+  }
 
 private slots:
   void tick();

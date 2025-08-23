@@ -812,13 +812,13 @@ void SimulatorView::mousePressEvent(QMouseEvent* event)
   if(event->button() == Qt::LeftButton)
   {
     m_leftClickMousePos = event->pos();
-    m_hoverSegmentIdx = Simulator::invalidIndex;
+    resetSegmentHover();
   }
   if(event->button() == Qt::RightButton)
   {
     m_rightMousePos = event->pos();
-    setCursor(Qt::ClosedHandCursor);;
-    m_hoverSegmentIdx = Simulator::invalidIndex;
+    setCursor(Qt::ClosedHandCursor);
+    resetSegmentHover();
   }
 }
 
@@ -836,21 +836,10 @@ void SimulatorView::mouseMoveEvent(QMouseEvent* event)
   }
   else if(event->buttons() == Qt::NoButton && m_simulator && !m_stateData.powerOn)
   {
-    size_t newHoverSegment = getSegmentAt(mapToSim(event->pos()), m_simulator->staticData);
-    if(m_hoverSegmentIdx != newHoverSegment)
-    {
-      m_hoverSegmentIdx = newHoverSegment;
-      if(m_hoverSegmentIdx != Simulator::invalidIndex)
-      {
-        const auto& segment = m_simulator->staticData.trackSegments[m_hoverSegmentIdx];
-        m_hoverSensorIdx = segment.sensor.index;
-      }
-      else
-      {
-        // Reset also sensor if not hover
-        m_hoverSensorIdx = Simulator::invalidIndex;
-      }
-    }
+    // Refresh hovered segment every 100 ms
+    m_lastHoverPos = mapToSim(event->pos());
+    if(!segmentHoverTimer.isActive())
+        segmentHoverTimer.start(std::chrono::milliseconds(100), this);
   }
 }
 
@@ -890,6 +879,24 @@ void SimulatorView::timerEvent(QTimerEvent *e)
     turnoutBlinkState = !turnoutBlinkState;
     update();
     return;
+  }
+  else if(e->timerId() == segmentHoverTimer.timerId())
+  {
+    size_t newHoverSegment = getSegmentAt(m_lastHoverPos, m_simulator->staticData);
+    if(m_hoverSegmentIdx != newHoverSegment)
+    {
+      m_hoverSegmentIdx = newHoverSegment;
+      if(m_hoverSegmentIdx != Simulator::invalidIndex)
+      {
+          const auto& segment = m_simulator->staticData.trackSegments[m_hoverSegmentIdx];
+          m_hoverSensorIdx = segment.sensor.index;
+      }
+      else
+      {
+          // Reset also sensor if not hover
+          m_hoverSensorIdx = Simulator::invalidIndex;
+      }
+    }
   }
 
   QOpenGLWidget::timerEvent(e);
