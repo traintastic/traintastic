@@ -34,6 +34,7 @@ public:
   explicit MainWindow(QWidget* parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
   void load(const QString& filename);
+  void setFullScreen(bool value);
 
 protected:
   void keyPressEvent(QKeyEvent *event) final;

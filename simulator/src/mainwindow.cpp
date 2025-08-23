@@ -167,6 +167,12 @@ void MainWindow::load(const QString& filename)
   }
 }
 
+void MainWindow::setFullScreen(bool value)
+{
+  m_actFullScreen->setChecked(value);
+  toggleFullScreen();
+}
+
 void MainWindow::keyPressEvent(QKeyEvent* event)
 {
   if(event->key() == Qt::Key_F11) // Once fullscreen the QAction does't receive the key press because it is hidden.

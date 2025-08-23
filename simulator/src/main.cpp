@@ -20,11 +20,39 @@
  */
 
 #include <QApplication>
+#include <QCommandLineParser>
 #ifdef Q_OS_WINDOWS
   #include <QSettings>
 #endif
 #include <version.hpp>
 #include "mainwindow.hpp"
+
+struct Options
+{
+  bool fullscreen = false;
+  QString filename;
+};
+
+void parseOptions(QCoreApplication& app, Options& options)
+{
+  QCommandLineParser parser;
+  parser.setApplicationDescription("Traintastic simulator");
+  parser.addHelpOption();
+  parser.addVersionOption();
+
+  QCommandLineOption fullscreen("fullscreen", "Start application fullscreen.");
+  parser.addOption(fullscreen);
+
+  parser.addPositionalArgument("filename", "File to load.");
+
+  parser.process(app);
+
+  options.fullscreen = parser.isSet(fullscreen);
+  if(!parser.positionalArguments().isEmpty())
+  {
+    options.filename = parser.positionalArguments().first();
+  }
+}
 
 int main(int argc, char* argv[])
 {
@@ -39,12 +67,19 @@ int main(int argc, char* argv[])
 
   QApplication app(argc, argv);
 
+  Options options;
+  parseOptions(app, options);
+
   MainWindow mw;
-  if(argc >= 2)
-  {
-    mw.load(argv[1]);
-  }
   mw.show();
+  if(!options.filename.isEmpty())
+  {
+    mw.load(options.filename);
+  }
+  if(options.fullscreen)
+  {
+    mw.setFullScreen(true);
+  }
 
   return app.exec();
 }
