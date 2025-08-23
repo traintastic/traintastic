@@ -86,11 +86,30 @@ bool lineContains(const QPointF& pos,
                   float &distanceOut,
                   const float tolerance = 1.0)
 {
+    QPointF topLeft = a, bottomRight = b;
+    if(topLeft.x() > bottomRight.x())
+        std::swap(topLeft.rx(), bottomRight.rx());
+    if(topLeft.y() < bottomRight.y())
+        std::swap(topLeft.ry(), bottomRight.ry());
+
+
     if(std::abs(a.y() - b.y()) < 0.0001)
     {
         // Horizontal
-        return std::abs(a.y() - pos.y()) < tolerance &&
-                (a.x() - tolerance) <= pos.x() && (b.x() + tolerance) >= pos.x();
+        const float yDist = std::abs(a.y() - pos.y());
+        const float leftDist = topLeft.x() - pos.x();
+        const float rightDist = pos.x() - bottomRight.x();
+        if(yDist < tolerance &&
+                (topLeft.x() - tolerance) <= pos.x() && (bottomRight.x() + tolerance) >= pos.x())
+        {
+            const float minOutDist = -std::min(leftDist, rightDist);
+            distanceOut = yDist;
+            if(minOutDist > yDist)
+                distanceOut = minOutDist;
+            return true;
+        }
+
+        return false;
     }
 
     if(std::abs(a.x() - b.x()) < 0.0001)
@@ -98,6 +117,21 @@ bool lineContains(const QPointF& pos,
         // Vertical
         return std::abs(a.x() - pos.x()) < tolerance &&
                 (a.y() - tolerance) <= pos.y() && (b.y() + tolerance) >= pos.y();
+
+        const float xDist = std::abs(a.x() - pos.x());
+        const float leftDist = pos.y() - topLeft.y();
+        const float rightDist = bottomRight.y() - pos.y();
+        if(xDist < tolerance &&
+                (a.y() - tolerance) <= pos.y() && (b.y() + tolerance) >= pos.y())
+        {
+            const float minOutDist = -std::min(leftDist, rightDist);
+            distanceOut = xDist;
+            if(minOutDist > xDist)
+                distanceOut = minOutDist;
+            return true;
+        }
+
+        return false;
     }
 
     // Diagonal
@@ -143,6 +177,9 @@ size_t getSegmentAt(const Simulator::Point &point, const Simulator::StaticData &
       {
         QPointF pos(point.x, point.y);
 
+        QPointF a(segment.points[0].x, segment.points[0].y);
+        QPointF b(segment.points[1].x, segment.points[1].y);
+
         QRectF br;
         br.setTop(segment.points[0].y);
         br.setLeft(segment.points[0].x);
@@ -156,7 +193,7 @@ size_t getSegmentAt(const Simulator::Point &point, const Simulator::StaticData &
           continue;
 
         float segDistance = 0;
-        if (!lineContains(pos, br.topLeft(), br.bottomRight(), segDistance, 5))
+        if (!lineContains(pos, a, b, segDistance, 5))
           continue;
 
         if (bestIdx == Simulator::invalidIndex || segDistance < bestDistance)
