@@ -817,14 +817,17 @@ void SimulatorView::mousePressEvent(QMouseEvent* event)
   if(event->button() == Qt::RightButton)
   {
     m_rightMousePos = event->pos();
-    setCursor(Qt::ClosedHandCursor);
+
+    if(event->modifiers() != Qt::ControlModifier)
+      setCursor(Qt::ClosedHandCursor);
+
     resetSegmentHover();
   }
 }
 
 void SimulatorView::mouseMoveEvent(QMouseEvent* event)
 {
-  if(event->buttons() & Qt::RightButton)
+  if(event->buttons() & Qt::RightButton && event->modifiers() != Qt::ControlModifier)
   {
     const auto diff = m_rightMousePos - event->pos();
 
