@@ -137,7 +137,7 @@ public:
   {
     std::vector<size_t> vehicleIndexes;
     float length = 0.0f;
-    float speedMax = 10.0f;
+    float speedMax = 0.0f;
     DecoderProtocol protocol = DecoderProtocol::None;
     uint16_t address = invalidAddress;
   };
@@ -194,6 +194,7 @@ public:
 
     float trainWidth = 10.0f;
     float trainCouplingLength = 4.0f;
+    float worldScale = 1.0f;
   };
 
   struct SensorState
@@ -292,6 +293,10 @@ public:
 
 private:
   constexpr static auto tickRate = std::chrono::milliseconds(1000 / 30);
+
+  constexpr static float defaultSpeedKmH = 200;
+  constexpr static float defaultSpeedMeterPerSecond = defaultSpeedKmH / 3.6;
+  constexpr static float defaultSpeedTickRate = defaultSpeedMeterPerSecond / 1000 * tickRate.count();
 
   boost::asio::io_context m_ioContext;
   boost::asio::steady_timer m_tickTimer;

@@ -1040,6 +1040,11 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
 {
   StaticData data;
 
+  const float scaleA = world.value("scale_num", 1.0);
+  const float scaleB = world.value("scale_den", 1.0);
+  if(scaleB > 0.0001)
+      data.worldScale = scaleA / scaleB;
+
   if(auto trackPlan = world.find("trackplan"); trackPlan != world.end() && trackPlan->is_array())
   {
     data.trackSegments.reserve(trackPlan->size());
@@ -1568,6 +1573,10 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
           vehicle.front.distance += move;
           vehicle.rear.distance += move;
         }
+
+        if(train.speedMax < 0.0001)
+          train.speedMax = defaultSpeedTickRate * data.worldScale;
+
         data.trains.emplace_back(std::move(train));
         stateData.trains.emplace_back(TrainState{});
       }
