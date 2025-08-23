@@ -163,11 +163,13 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
 
 void SimulatorView::zoomIn()
 {
+  m_zoomFit = false;
   setZoomLevel(m_zoomLevel * zoomFactorIn);
 }
 
 void SimulatorView::zoomOut()
 {
+  m_zoomFit = false;
   setZoomLevel(m_zoomLevel * zoomFactorOut);
 }
 
@@ -177,6 +179,8 @@ void SimulatorView::zoomToFit()
   {
     return;
   }
+
+  m_zoomFit = true;
 
   // Make it fit:
   const float zoomLevelX = width() / m_simulator->staticData.view.width();
@@ -213,6 +217,15 @@ void SimulatorView::paintGL()
     drawMisc();
     drawTracks();
     drawTrains();
+  }
+}
+
+void SimulatorView::resizeEvent(QResizeEvent* event)
+{
+  QOpenGLWidget::resizeEvent(event);
+  if(m_zoomFit)
+  {
+    zoomToFit();
   }
 }
 
@@ -461,6 +474,8 @@ void SimulatorView::mouseMoveEvent(QMouseEvent* event)
 {
   if(event->buttons() & Qt::RightButton)
   {
+    m_zoomFit = false;
+
     const auto diff = m_rightMousePos - event->pos();
 
     m_cameraX += diff.x() / m_zoomLevel;
@@ -489,6 +504,7 @@ void SimulatorView::mouseReleaseEvent(QMouseEvent* event)
 
 void SimulatorView::wheelEvent(QWheelEvent* event)
 {
+  m_zoomFit = false;
   if(event->angleDelta().y() < 0)
   {
     zoomOut();

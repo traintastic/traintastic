@@ -63,6 +63,7 @@ protected:
   void initializeGL() override;
   void resizeGL(int w, int h) override;
   void paintGL() override;
+  void resizeEvent(QResizeEvent* event) override;
 
   void keyPressEvent(QKeyEvent* event) override;
   void mousePressEvent(QMouseEvent* event) override;
@@ -94,6 +95,7 @@ private:
   float m_cameraX = 0.0f;
   float m_cameraY = 0.0f;
   float m_zoomLevel = 1.0f;
+  bool m_zoomFit = false;
   QPoint m_leftClickMousePos;
   QPoint m_rightMousePos;
   bool m_showTrackOccupancy = true;
