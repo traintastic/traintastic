@@ -35,6 +35,7 @@
 #include <nlohmann/json.hpp>
 #include <traintastic/enum/color.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
+#include <numbers>
 
 namespace SimulatorProtocol {
   struct Message;
@@ -161,6 +162,7 @@ public:
     Point origin;
     float rotation = 0.0f;
     float ratio = 0.0f;
+    float opacity = 1.0f;
   };
 
   struct StaticData
@@ -329,6 +331,18 @@ constexpr Simulator::Point operator-(const Simulator::Point lhs, const Simulator
 constexpr Simulator::Point operator/(const Simulator::Point divided, const int divisor)
 {
   return {divided.x / divisor, divided.y / divisor};
+}
+
+namespace
+{
+
+constexpr auto pi = std::numbers::pi_v<float>;
+
+constexpr float deg2rad(float degrees)
+{
+  return degrees * static_cast<float>(std::numbers::pi / 180);
+}
+
 }
 
 #endif

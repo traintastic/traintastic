@@ -112,6 +112,18 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
           QMetaObject::invokeMethod(m_view, &SimulatorView::zoomToFit, Qt::QueuedConnection);
         }
       });
+    menu->addAction("Load Images",
+      [this]()
+      {
+        QSettings settings;
+        const QString dir = settings.value("LastLoadImagesDir", QString::fromStdString(getSimulatorLayoutPath().string())).toString();
+        const auto filename = QFileDialog::getOpenFileName(this, "Load images", dir, "*.json");
+        if(QFile::exists(filename))
+        {
+          settings.setValue("LastLoadImagesDir", QFileInfo(filename).absoluteFilePath());
+          loadExtraImages(filename);
+        }
+      });
     menu->addAction("Quit", this, &MainWindow::close);
 
     menu = menuBar()->addMenu("View");
@@ -122,6 +134,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     menu = menuBar()->addMenu("Help");
     menu->addAction("About...", this, &MainWindow::showAbout);
+
+    imagesMenu = menuBar()->addMenu("Images");
   }
 
   // Toolbar:
@@ -175,6 +189,37 @@ void MainWindow::load(const QString& filename)
       return;
     }
 
+  }
+}
+
+void MainWindow::loadExtraImages(const QString& filename)
+{
+  QStringList imageNames;
+
+  QFile file(filename);
+  if(file.open(QIODeviceBase::ReadOnly))
+  {
+    m_view->loadExtraImages(nlohmann::json::parse(file.readAll().toStdString()),
+                            filename,
+                            imageNames);
+  }
+
+  imagesMenu->clear();
+
+  int idx = 0;
+  for(const QString &img : imageNames)
+  {
+    QAction *act = imagesMenu->addAction(img);
+    act->setCheckable(true);
+    act->setChecked(true);
+
+    connect(act, &QAction::toggled,
+            m_view, [idx, view=m_view](bool val)
+    {
+        view->setImageVisible(idx, val);
+    });
+
+    idx++;
   }
 }
 

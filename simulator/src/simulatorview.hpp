@@ -45,6 +45,10 @@ public:
   Simulator* simulator() const;
   void setSimulator(std::shared_ptr<Simulator> value);
 
+  void loadExtraImages(const nlohmann::json &world,
+                       const QString &imagesFile,
+                       QStringList &namesOut);
+
   bool showTrackOccupancy() const
   {
     return m_showTrackOccupancy;
@@ -77,6 +81,10 @@ public:
 
   void setZoomLevel(float zoomLevel);
 
+  void setImageVisible(int idx, bool val);
+
+  nlohmann::json copySegmentData(size_t segmentIdx) const;
+
 signals:
   void powerOnChanged(bool value);
 
@@ -92,6 +100,7 @@ protected:
   void mouseReleaseEvent(QMouseEvent* event) override;
   void wheelEvent(QWheelEvent* event) override;
   void timerEvent(QTimerEvent *e) override;
+  void contextMenuEvent(QContextMenuEvent *e) override;
 
 private:
   struct Turnout
@@ -113,9 +122,11 @@ private:
   {
     QImage img;
     Simulator::ImageRef ref;
+    bool visible = true;
   };
 
   std::vector<Image> m_images;
+  std::vector<Image> m_extraImages;
 
   struct
   {
