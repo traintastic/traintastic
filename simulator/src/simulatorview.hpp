@@ -144,6 +144,9 @@ private:
   QBasicTimer turnoutBlinkTimer;
   bool turnoutBlinkState = false;
 
+  size_t m_hoverSegmentIdx = Simulator::invalidIndex;
+  size_t m_hoverSensorIdx = Simulator::invalidIndex;
+
   void mouseLeftClick(const Simulator::Point &point, bool shiftPressed);
   void showItemTooltip(const Simulator::Point &point, QHelpEvent *ev);
 
