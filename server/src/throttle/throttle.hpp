@@ -32,8 +32,8 @@
 #include "../core/objectproperty.hpp"
 #include "../core/objectvectorproperty.hpp"
 #include "../core/method.hpp"
-#include "../utils/stringequal.hpp"
-#include "../utils/stringhash.hpp"
+#include <traintastic/utils/stringequal.hpp>
+#include <traintastic/utils/stringhash.hpp>
 
 class Decoder;
 enum class DecoderProtocol : uint8_t;
