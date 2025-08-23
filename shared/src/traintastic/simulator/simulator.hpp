@@ -25,6 +25,7 @@
 #include <list>
 #include <memory>
 #include <mutex>
+#include <numbers>
 #include <optional>
 #include <thread>
 #include <vector>
@@ -35,7 +36,8 @@
 #include <nlohmann/json.hpp>
 #include <traintastic/enum/color.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
-#include <numbers>
+#include <traintastic/utils/stringhash.hpp>
+#include <traintastic/utils/stringequal.hpp>
 
 namespace SimulatorProtocol {
   struct Message;
@@ -127,21 +129,6 @@ public:
     uint16_t address = invalidAddress;
   };
 
-  struct Vehicle
-  {
-    Color color;
-    float length;
-  };
-
-  struct Train
-  {
-    std::vector<size_t> vehicleIndexes;
-    float length = 0.0f;
-    float speedMax = 0.0f;
-    DecoderProtocol protocol = DecoderProtocol::None;
-    uint16_t address = invalidAddress;
-  };
-
   struct Misc
   {
     enum class Type
@@ -186,8 +173,6 @@ public:
     } view;
     std::vector<TrackSegment> trackSegments;
     std::vector<Sensor> sensors;
-    std::vector<Vehicle> vehicles;
-    std::vector<Train> trains;
     std::vector<Misc> misc;
     std::vector<ImageRef> images;
     std::unordered_map<std::string, size_t> trackSegmentId;
@@ -241,6 +226,44 @@ public:
     Face rear;
   };
 
+  struct Train;
+
+  struct Vehicle
+  {
+    std::string name;
+    Color color;
+    float length;
+    Train *activeTrain = nullptr;
+    VehicleState state;
+  };
+
+  struct Train
+  {
+    std::string name;
+
+    struct VehicleItem
+    {
+      Vehicle *vehicle;
+      bool reversed = false;
+    };
+
+    std::vector<VehicleItem> vehicles;
+    float length = 0.0f;
+    float speedMax = 0.0f;
+    DecoderProtocol protocol = DecoderProtocol::None;
+    uint16_t address = invalidAddress;
+    TrainState state;
+
+    ~Train()
+    {
+      for(const VehicleItem& item : vehicles)
+      {
+        assert(item.vehicle->activeTrain == this);
+        item.vehicle->activeTrain = nullptr;
+      }
+    }
+  };
+
   struct StateData
   {
     float tickActive = 0.0f;
@@ -248,8 +271,8 @@ public:
     bool powerOn = false;
     std::vector<SensorState> sensors;
     std::vector<TurnoutState> turnouts;
-    std::vector<TrainState> trains;
-    std::vector<VehicleState> vehicles;
+    std::unordered_map<std::string, Train *, StringHash, StringEqual> trains;
+    std::unordered_map<std::string, Vehicle *, StringHash, StringEqual> vehicles;
   };
 
 private:
@@ -278,10 +301,12 @@ public:
   void setPowerOn(bool powerOn);
   void togglePowerOn();
 
-  bool isTrainDirectionInverted(size_t trainIndex);
-  void setTrainDirection(size_t trainIndex, bool reverse);
-  void setTrainSpeed(size_t trainIndex, float speed);
-  void applyTrainSpeedDelta(size_t trainIndex, float delta);
+  Train *getTrainAt(size_t trainIndex) const;
+
+  bool isTrainDirectionInverted(Train *train);
+  void setTrainDirection(Train *train, bool reverse);
+  void setTrainSpeed(Train *train, float speed);
+  void applyTrainSpeedDelta(Train *train, float delta);
   void stopAllTrains();
 
   void setTurnoutState(size_t segmentIndex, TurnoutState::State state);
@@ -290,6 +315,8 @@ public:
   void send(const SimulatorProtocol::Message& message);
   void receive(const SimulatorProtocol::Message& message);
   void removeConnection(const std::shared_ptr<SimulatorConnection>& connection);
+
+  inline std::recursive_mutex& stateMutex() { return m_stateMutex; }
 
 private:
   constexpr static auto tickRate = std::chrono::milliseconds(1000 / 30);
@@ -302,7 +329,7 @@ private:
   boost::asio::steady_timer m_tickTimer;
   boost::asio::ip::tcp::acceptor m_acceptor;
   std::thread m_thread;
-  mutable std::mutex m_stateMutex;
+  mutable std::recursive_mutex m_stateMutex;
   bool m_serverEnabled = false;
   bool m_serverLocalHostOnly = true;
   uint16_t m_serverPort = 5741;
