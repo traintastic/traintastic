@@ -90,7 +90,7 @@ jobs:
         submodules: recursive
 
     - name: Install Qt 6.9
-      if: startswith(matrix.config.os, 'windows') or startswith(matrix.config.os, 'macos')
+      if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
       uses: jurplel/install-qt-action@v4
       with:
         cache: true
