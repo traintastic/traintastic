@@ -6731,7 +6731,7 @@
         "definition": "Recommended"
     },
     {
-        "term":"wizard.add_interface.protocol_dr5000_usb:bottom_text",
+        "term": "wizard.add_interface.protocol_dr5000_usb:bottom_text",
         "definition": "The %command_station% supports two different protocols for communication. Although both are supported by Traintastic, using LocoNet is recommended as it is more versatile."
     },
     {
@@ -6781,6 +6781,33 @@
     {
         "term": "qtapp.world_list_dialog:search",
         "definition": "Search"
+    },
+    {
+        "term": "throttle.estop",
+        "definition": "EStop"
+    },
+    {
+        "term": "throttle.steal",
+        "definition": "Steal"
+    },
+    {
+        "term": "throttle.in_control",
+        "definition": "You're in control"
+    },
+    {
+        "term": "throttle.release",
+        "definition": "Release"
+    },
+    {
+        "term": "throttle.not_controlled",
+        "definition": "Not controlled"
+    },
+    {
+        "term": "throttle.acquire",
+        "definition": "Acquire"
+    },
+    {
+        "term": "throttle.controlled_by_x",
+        "definition": "Controlled by %1"
     }
 ]
-

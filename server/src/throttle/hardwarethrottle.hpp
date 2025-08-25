@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/throttle/hardwarethrottle.hpp
+ * server/src/throttle/hardwarethrottle.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_THROTTLE_HARDWARETHROTTLE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_THROTTLE_HARDWARETHROTTLE_HPP
+#ifndef TRAINTASTIC_SERVER_THROTTLE_HARDWARETHROTTLE_HPP
+#define TRAINTASTIC_SERVER_THROTTLE_HARDWARETHROTTLE_HPP
 
 #include "throttle.hpp"
 #include "throttlecontroller.hpp"
@@ -34,10 +34,8 @@ class HardwareThrottle : public Throttle
     ThrottleController& throttleController();
 
   protected:
-    void addToWorld() override;
     void destroying() override;
-    void load(WorldLoader& loader, const nlohmann::json& data) override;
-    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
+    void addToList() override;
 
   public:
     static std::shared_ptr<HardwareThrottle> create(std::shared_ptr<ThrottleController> controller, World& world);
@@ -45,9 +43,9 @@ class HardwareThrottle : public Throttle
 
     ObjectProperty<ThrottleController> interface;
 
-    HardwareThrottle(std::shared_ptr<ThrottleController> controller, World& world, std::string_view _id);
+    HardwareThrottle(std::shared_ptr<ThrottleController> controller, World& world, std::string_view logId);
 
-    AcquireResult acquire(DecoderProtocol protocol, uint16_t address, bool steal = false);
+    std::error_code acquire(DecoderProtocol protocol, uint16_t address, bool steal = false);
 };
 
 #endif

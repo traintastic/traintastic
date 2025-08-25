@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/throttle/throttlecontroller.cpp
+ * server/src/throttle/throttlecontroller.cpp
  *
  * This file is part of the traintastic source code.
  *
@@ -24,9 +24,9 @@
 #include "throttle.hpp"
 #include "list/throttlelist.hpp"
 #include "list/throttlelisttablemodel.hpp"
-#include "../../core/attributes.hpp"
-#include "../../core/objectproperty.tpp"
-#include "../../utils/displayname.hpp"
+#include "../core/attributes.hpp"
+#include "../core/objectproperty.tpp"
+#include "../utils/displayname.hpp"
 
 ThrottleController::ThrottleController(IdObject& interface, ThrottleListColumn columns)
   : throttles{&interface, "throttles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}

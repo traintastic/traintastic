@@ -220,6 +220,25 @@ void Connection::serverLog(ServerLogTableModel& model, bool enable)
   send(request);
 }
 
+int Connection::createObject(const QString& classId, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback)
+{
+  std::unique_ptr<Message> request{Message::newRequest(Message::Command::CreateObject)};
+  request->write(classId.toLatin1());
+  send(request,
+    [this, callback](const std::shared_ptr<Message> message)
+    {
+      if(!message->isError())
+      {
+        callback(readObject(*message), {});
+      }
+      else
+      {
+        callback({}, *message);
+      }
+    });
+  return request->requestId();
+}
+
 int Connection::getObject(const QString& id, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback)
 {
   std::unique_ptr<Message> request{Message::newRequest(Message::Command::GetObject)};
@@ -272,6 +291,31 @@ int Connection::getObject(const ObjectVectorProperty& property, uint32_t index, 
       if(!message->isError())
       {
         callback(readObject(*message), {});
+      }
+      else
+      {
+        callback({}, *message);
+      }
+    });
+  return request->requestId();
+}
+
+int Connection::getObjects(const Object& objectList, uint32_t startIndex, uint32_t endIndex, std::function<void(const std::vector<ObjectPtr>&, std::optional<const Error>)> callback)
+{
+  std::unique_ptr<Message> request{Message::newRequest(Message::Command::ObjectListGetObjects)};
+  request->write(objectList.handle());
+  request->write(startIndex);
+  request->write(endIndex);
+  send(request,
+    [this, size=(endIndex - startIndex + 1), callback](const std::shared_ptr<Message> message)
+    {
+      if(!message->isError())
+      {
+        std::vector<ObjectPtr> objects;
+        objects.reserve(size);
+        for(uint32_t i = 0; i < size; i++)
+          objects.emplace_back(readObject(*message));
+        callback(objects, {});
       }
       else
       {
@@ -485,7 +529,7 @@ ObjectPtr Connection::readObject(const Message& message)
       }
       else
       {
-        p = createObject(shared_from_this(), handle, QString::fromLatin1(message.read<QByteArray>()));
+        p = ::createObject(shared_from_this(), handle, QString::fromLatin1(message.read<QByteArray>()));
         m_handleCounter[handle] = 1;
       }
 
@@ -779,8 +823,17 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
                 const qlonglong value = message->read<qlonglong>();
                 static_cast<Property*>(property)->m_value = value;
                 if(valueType == ValueType::Integer)
+                {
                   if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
-                    unitProperty->m_unitValue = message->read<qint64>();
+                  {
+                    const auto unit = message->read<qint64>();
+                    if(unitProperty->m_unitValue != unit)
+                    {
+                      unitProperty->m_unitValue = unit;
+                      emit unitProperty->unitChanged();
+                    }
+                  }
+                }
                 emit property->valueChanged();
                 emit property->valueChangedInt64(value);
                 if(value >= std::numeric_limits<int>::min() && value <= std::numeric_limits<int>::max())
@@ -792,7 +845,14 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
                 const double value = message->read<double>();
                 static_cast<Property*>(property)->m_value = value;
                 if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
-                  unitProperty->m_unitValue = message->read<qint64>();
+                {
+                  const auto unit = message->read<qint64>();
+                  if(unitProperty->m_unitValue != unit)
+                  {
+                    unitProperty->m_unitValue = unit;
+                    emit unitProperty->unitChanged();
+                  }
+                }
                 emit property->valueChanged();
                 emit property->valueChangedDouble(value);
                 break;

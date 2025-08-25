@@ -87,6 +87,8 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
 {
   const auto& world = getWorld(parent());
 
+  m_interfaceItems.add(length);
+
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, false);
   Attributes::addObjectList(add, world.railVehicles);

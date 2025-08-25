@@ -69,5 +69,7 @@
         <file>zone.svg</file>
         <file>clear_persistent_variables.svg</file>
         <file>highlight_zone.svg</file>
+        <file>decoder_function.mute.svg</file>
+        <file>decoder_function.sound.svg</file>
     </qresource>
 </RCC>

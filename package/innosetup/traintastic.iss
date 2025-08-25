@@ -34,8 +34,8 @@ OutputDir=output
 OutputBaseFilename=traintastic-setup-v{#VersionFull}
 SolidCompression=yes
 WizardStyle=modern
-ArchitecturesInstallIn64BitMode=x64
-ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64compatible
+ArchitecturesAllowed=x64compatible
 MinVersion=10.0
 
 [Languages]

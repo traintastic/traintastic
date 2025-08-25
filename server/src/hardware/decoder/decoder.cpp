@@ -27,7 +27,7 @@
 #include "decoderfunction.hpp"
 #include "decoderfunctions.hpp"
 #include "../protocol/dcc/dcc.hpp"
-#include "../throttle/throttle.hpp"
+#include "../../throttle/throttle.hpp"
 #include "../../world/world.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../core/attributes.hpp"
@@ -35,6 +35,7 @@
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/almostzero.hpp"
+#include "../../vehicle/rail/railvehicle.hpp"
 
 CREATE_IMPL(Decoder)
 
@@ -79,7 +80,8 @@ Decoder::Decoder(World& world, std::string_view _id) :
   emergencyStop{this, "emergency_stop", false, PropertyFlags::ReadWrite,
     [this](const bool& /*value*/)
     {
-      changed(DecoderChangeFlags::EmergencyStop);
+      throttle.setValueInternal(0.0f);
+      changed(DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle);
       updateEditable();
     }},
   direction{this, "direction", Direction::Forward, PropertyFlags::ReadWrite,
@@ -101,8 +103,9 @@ Decoder::Decoder(World& world, std::string_view _id) :
     {
       changed(DecoderChangeFlags::SpeedSteps);
     }},
+  vehicle{this, "vehicle", nullptr, PropertyFlags::ReadOnly},
   throttle{this, "throttle", throttleMin, PropertyFlags::ReadWrite,
-    [this](const double& /*value*/)
+    [this](const float& /*value*/)
     {
       changed(DecoderChangeFlags::Throttle);
       updateEditable();
@@ -154,6 +157,9 @@ Decoder::Decoder(World& world, std::string_view _id) :
   Attributes::addValues(speedSteps, std::span<const uint8_t>{});
   Attributes::addVisible(speedSteps, false);
   m_interfaceItems.add(speedSteps);
+
+  Attributes::addObjectEditor(vehicle, false);
+  m_interfaceItems.add(vehicle);
 
   Attributes::addMinMax(throttle, throttleMin, throttleMax);
   Attributes::addObjectEditor(throttle, false);

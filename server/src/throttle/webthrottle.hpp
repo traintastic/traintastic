@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/throttle/list/throttlelist.hpp
+ * server/src/throttle/webthrottle.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,26 +20,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_THROTTLE_LIST_THROTTLELIST_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_THROTTLE_LIST_THROTTLELIST_HPP
+#ifndef TRAINTASTIC_SERVER_THROTTLE_WEBTHROTTLE_HPP
+#define TRAINTASTIC_SERVER_THROTTLE_WEBTHROTTLE_HPP
 
-#include "../../../core/objectlist.hpp"
-#include "throttlelistcolumn.hpp"
-#include "../throttle.hpp"
+#include "throttle.hpp"
+#include "throttlecontroller.hpp"
 
-class ThrottleList : public ObjectList<Throttle>
+class WebThrottle : public Throttle
 {
-  CLASS_ID("list.throttle")
+  CLASS_ID("throttle.web")
 
-  protected:
-    bool isListedProperty(std::string_view name) final;
+public:
+  static std::shared_ptr<WebThrottle> create(World& world);
 
-  public:
-    const ThrottleListColumn columns;
+  WebThrottle(World& world, std::string_view logId);
 
-    ThrottleList(Object& _parent, std::string_view parentPropertyName, ThrottleListColumn _columns);
-
-    TableModelPtr getModel() final;
+  using Throttle::acquire;
 };
 
 #endif

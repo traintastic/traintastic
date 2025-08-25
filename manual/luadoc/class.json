@@ -1,4 +1,15 @@
 {
+  "create_throttle": {
+    "type":"function",
+    "parameters": [
+      {
+        "name": "name",
+        "optional": true
+      }
+    ],
+    "return_values": 1,
+    "since": "0.3"
+  },
   "get": {
     "type": "function",
     "parameters": [
@@ -171,6 +182,9 @@
     "type": "constant"
   },
   "IDENTIFICATION_LIST": {
+    "type": "constant"
+  },
+  "SCRIPT_THROTTLE": {
     "type": "constant"
   },
   "RAIL_VEHICLE_LIST": {

@@ -71,6 +71,7 @@ class TraintasticDIYInterface final
     ObjectProperty<TraintasticDIY::Settings> traintasticDIY;
 
     TraintasticDIYInterface(World& world, std::string_view _id);
+    ~TraintasticDIYInterface() final;
 
     // InputController:
     std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final;

@@ -8,6 +8,8 @@
   "mode": {},
   "mute": {},
   "no_smoke": {},
+  "has_throttle": {},
+  "throttle_name": {},
   "blocks": {},
   "zones": {},
   "on_block_assigned": {

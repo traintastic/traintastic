@@ -1,7 +1,6 @@
 /**
- * server/src/hardware/throttle/webthrottle.hpp
- *
- * This file is part of the traintastic source code.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) 2025 Reinder Feenstra
  *
@@ -20,28 +19,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_THROTTLE_WEBTHROTTLE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_THROTTLE_WEBTHROTTLE_HPP
+#ifndef TRAINTASTIC_SERVER_UTILS_STRINGHASH_HPP
+#define TRAINTASTIC_SERVER_UTILS_STRINGHASH_HPP
 
-#include "throttle.hpp"
-#include "throttlecontroller.hpp"
+#include <string>
+#include <string_view>
 
-class WebThrottle : public Throttle
+struct StringHash
 {
-  CLASS_ID("throttle.web")
-  DEFAULT_ID("webthrottle")
+  using is_transparent = void;
 
-protected:
-  void load(WorldLoader& loader, const nlohmann::json& data) override;
-  void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const override;
+  [[nodiscard]] size_t operator()(const char* value) const noexcept
+  {
+    return std::hash<std::string_view>{}(value);
+  }
 
-public:
-  static std::shared_ptr<WebThrottle> create(World& world);
-  static std::shared_ptr<WebThrottle> create(World& world, std::string_view objectId);
+  [[nodiscard]] size_t operator()(std::string_view value) const noexcept
+  {
+    return std::hash<std::string_view>{}(value);
+  }
 
-  WebThrottle(World& world, std::string_view objectId);
-
-  using Throttle::acquire;
+  [[nodiscard]] size_t operator()(const std::string& value) const noexcept
+  {
+    return std::hash<std::string>{}(value);
+  }
 };
 
 #endif
