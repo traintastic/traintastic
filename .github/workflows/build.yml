@@ -20,6 +20,16 @@ jobs:
           build_deb: false
           defines: ""
 
+        - name: "windows_arm64_msvc"
+          os: windows-latest
+          generator: "Visual Studio 17 2022"
+          arch: "-A arm64"
+          target: traintastic-client
+          jobs: 4
+          build_type: Release
+          build_deb: false
+          defines: ""
+
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
           generator: "Unix Makefiles"
@@ -79,22 +89,13 @@ jobs:
       with:
         submodules: recursive
 
-    # Windows only:
-    - name: Install Qt 5
-      if: startswith(matrix.config.os, 'windows')
-      uses: jurplel/install-qt-action@v4
-      with:
-        cache: true
-        version: 5.15
-
-    # macOS only:
-    - name: Install Qt 6.5
-      if: startswith(matrix.config.os, 'macos')
+    - name: Install Qt 6.9
+      if: startswith(matrix.config.os, 'windows') or startswith(matrix.config.os, 'macos')
       uses: jurplel/install-qt-action@v4
       with:
         cache: true
         modules: qtwebsockets
-        version: 6.5.*
+        version: 6.9.*
 
     - name: Set CMAKE_OSX_ARCHITECTURES
       if: startswith(matrix.config.os, 'macos')
@@ -148,7 +149,7 @@ jobs:
       if: startswith(matrix.config.os, 'windows')
       uses: actions/upload-artifact@v4
       with:
-        name: traintastic-client-windows
+        name: traintastic-client-${{matrix.config.build_type}}
         path: ${{github.workspace}}/client/build/${{matrix.config.build_type}}
 
     # Linux only:
@@ -506,11 +507,17 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Download artifacts 1/2
+    - name: "Download artifact: client (x64)"
       uses: actions/download-artifact@v4
       with:
-        name: traintastic-client-windows
+        name: traintastic-client-windows_x64_msvc
         path: ${{github.workspace}}/client/build/Release
+
+    - name: "Download artifact: client (arm64)"
+      uses: actions/download-artifact@v4
+      with:
+        name: traintastic-client-windows_arm64_msvc
+        path: ${{github.workspace}}/client/build/Release-arm64
 
     - name: Download artifacts 2/2
       uses: actions/download-artifact@v4
