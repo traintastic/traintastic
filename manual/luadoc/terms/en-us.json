@@ -2266,5 +2266,41 @@
   {
     "term": "pv.checking:paragraph_1",
     "definition": "To determine if a persistent variable has been set, use an `if` statement with `nil` checks. Variables in {ref:globals#pv|`pv`} that haven't been initialized or have been deleted will return `nil`. This pattern is useful for initializing default values or handling cases where the persistent variables are cleared."
+  },
+  {
+    "term": "enum.zone_train_state:description",
+    "definition": "Enum value represeting the state of a {ref:object.train|train} related to a {ref:object.zone|zone}. For long trains and/or short zones it is possible that a train is `LEAVING` before it fully `ENTERED` the zone, in that case `LEAVING` takes preference over `ENTERING`."
+  },
+  {
+    "term": "enum.zone_train_state.entered:description",
+    "definition": "The {ref:object.train|train} is in the {ref:object.zone|zone}, it does not occupy any {ref:object.blockrailtile|block} outside the zone."
+  },
+  {
+    "term": "enum.zone_train_state.entering:description",
+    "definition": "The front of the {ref:object.train|train} is in or has reserved at least one {ref:object.blockrailtile|block} of the {ref:object.zone|zone}."
+  },
+  {
+    "term": "enum.zone_train_state.leaving:description",
+    "definition": "The front of the {ref:object.train|train} is in or has reserved at least one {ref:object.blockrailtile|block} that is not of the {ref:object.zone|zone}."
+  },
+  {
+    "term": "enum.zone_train_state.unknown:description",
+    "definition": "The state is unknown, this value isn't used, it can be used for initialization purposes."
+  },
+  {
+    "term": "object.trainzonestatus:description",
+    "definition": "Object represeting the state of a train related to a zone."
+  },
+  {
+    "term": "object.train.mute:description",
+    "definition": "`true` if the train is currently muted by the {ref:object.world|world} mute or a muted {ref:object.zone|zone}, `false` otherwise."
+  },
+  {
+    "term": "object.train.no_smoke:description",
+    "definition": "`true` if the train's smoke generators are disabled by the {ref:object.world|world} no smoke or a non smoking {ref:object.zone|zone}, `false` otherwise."
+  },
+  {
+    "term": "object.train.zones:description",
+    "definition": "List of {ref:object.trainzonestatus|train zone status} objects of all zones that the train is entering, has entered and/or is leaving."
   }
 ]
