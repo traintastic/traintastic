@@ -45,8 +45,8 @@ class Decoder : public IdObject
   friend class DecoderFunction;
 
   private:
-    bool m_worldMute;
-    bool m_worldNoSmoke;
+    bool m_mute = false;
+    bool m_noSmoke = false;
     std::shared_ptr<Throttle> m_driver;
 
   protected:
@@ -131,6 +131,9 @@ class Decoder : public IdObject
 
     bool acquire(Throttle& driver, bool steal = false);
     void release(Throttle& driver);
+
+    void updateMute();
+    void updateNoSmoke();
 };
 
 #endif

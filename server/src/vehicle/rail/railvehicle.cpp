@@ -115,7 +115,10 @@ void RailVehicle::updateMute()
   if(value != mute)
   {
     mute.setValueInternal(value);
-    //! \todo update decoder
+    if(decoder)
+    {
+      decoder->updateMute();
+    }
   }
 }
 
@@ -129,7 +132,10 @@ void RailVehicle::updateNoSmoke()
   if(value != noSmoke)
   {
     noSmoke.setValueInternal(value);
-    //! \todo update decoder
+    if(decoder)
+    {
+      decoder->updateNoSmoke();
+    }
   }
 }
 

@@ -115,9 +115,6 @@ Decoder::Decoder(World& world, std::string_view _id) :
 {
   functions.setValueInternal(std::make_shared<DecoderFunctions>(*this, functions.name()));
 
-  m_worldMute = contains(m_world.state.value(), WorldState::Mute);
-  m_worldNoSmoke = contains(m_world.state.value(), WorldState::NoSmoke);
-
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, false);
   m_interfaceItems.add(name);
@@ -169,6 +166,8 @@ Decoder::Decoder(World& world, std::string_view _id) :
   m_interfaceItems.add(notes);
 
   updateEditable();
+  updateMute();
+  updateNoSmoke();
 }
 
 void Decoder::addToWorld()
@@ -258,15 +257,15 @@ bool Decoder::getFunctionValue(const std::shared_ptr<const DecoderFunction>& fun
 
   assert(this == &function->decoder());
 
-  // Apply mute/noSmoke world states:
-  if(m_worldMute)
+  // Apply mute/noSmoke:
+  if(m_mute)
   {
     if(function->function == DecoderFunctionFunction::Mute)
       return true;
     if(function->function == DecoderFunctionFunction::Sound && !getFunction(DecoderFunctionFunction::Mute))
       return false;
   }
-  if(m_worldNoSmoke)
+  if(m_noSmoke)
   {
     if(function->function == DecoderFunctionFunction::Smoke)
       return false;
@@ -307,6 +306,54 @@ void Decoder::release(Throttle& driver)
     assert(false);
 }
 
+void Decoder::updateMute()
+{
+  bool value = contains(m_world.state, WorldState::Mute);
+  if(!value && vehicle)
+  {
+    value |= vehicle->mute;
+  }
+  if(value != m_mute)
+  {
+    m_mute = value;
+
+    if(auto muteFn = getFunction(DecoderFunctionFunction::Mute))
+    {
+      if(muteFn->value != m_mute)
+      {
+        changed(DecoderChangeFlags::FunctionValue, muteFn->number);
+      }
+    }
+    else if(auto soundFn = getFunction(DecoderFunctionFunction::Sound))
+    {
+      if(soundFn->value == m_mute)
+      {
+        changed(DecoderChangeFlags::FunctionValue, soundFn->number);
+      }
+    }
+  }
+}
+
+void Decoder::updateNoSmoke()
+{
+  bool value = contains(m_world.state, WorldState::NoSmoke);
+  if(!value && vehicle)
+  {
+    value |= vehicle->noSmoke;
+  }
+  if(value != m_noSmoke)
+  {
+    m_noSmoke = value;
+    if(auto smokeFn = getFunction(DecoderFunctionFunction::Smoke))
+    {
+      if(smokeFn->value == m_noSmoke)
+      {
+        changed(DecoderChangeFlags::FunctionValue, smokeFn->number);
+      }
+    }
+  }
+}
+
 void Decoder::destroying()
 {
   if(m_driver) // release driver throttle
@@ -325,34 +372,20 @@ void Decoder::worldEvent(WorldState state, WorldEvent event)
   IdObject::worldEvent(state, event);
   updateEditable(contains(state, WorldState::Edit));
 
-  // Handle mute/noSmoke world states:
-  m_worldMute = contains(state, WorldState::Mute);
-  m_worldNoSmoke = contains(state, WorldState::NoSmoke);
-
-  if(event == WorldEvent::Mute || event == WorldEvent::Unmute)
+  switch(event)
   {
-    bool hasMute = false;
+    case WorldEvent::Mute:
+    case WorldEvent::Unmute:
+      updateMute();
+      break;
 
-    for(const auto& f : *functions)
-      if(f->function == DecoderFunctionFunction::Mute)
-      {
-        if(!f->value)
-          changed(DecoderChangeFlags::FunctionValue, f->number);
-        hasMute = true;
-      }
+    case WorldEvent::NoSmoke:
+    case WorldEvent::Smoke:
+      updateNoSmoke();
+      break;
 
-    if(!hasMute)
-    {
-      for(const auto& f : *functions)
-        if(f->function == DecoderFunctionFunction::Sound && f->value)
-          changed(DecoderChangeFlags::FunctionValue, f->number);
-    }
-  }
-  else if(event == WorldEvent::NoSmoke || event == WorldEvent::Smoke)
-  {
-    for(const auto& f : *functions)
-      if(f->function == DecoderFunctionFunction::Smoke && f->value)
-        changed(DecoderChangeFlags::FunctionValue, f->number);
+    default:
+      break;
   }
 }
 
