@@ -280,8 +280,10 @@ private:
   mutable std::mutex m_stateMutex;
   bool m_serverEnabled = false;
   bool m_serverLocalHostOnly = true;
-  static constexpr uint16_t defaultPort = 5741; // UDP Discovery
+  static constexpr uint16_t defaultPort = 5742; // UDP Discovery
   uint16_t m_serverPort = 5741;
+
+  size_t lastConnectionId = 0;
   std::list<std::shared_ptr<SimulatorConnection>> m_connections;
 
   void accept();

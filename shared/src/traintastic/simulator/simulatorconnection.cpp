@@ -27,6 +27,8 @@ SimulatorConnection::SimulatorConnection(std::shared_ptr<Simulator> simulator, b
   : m_simulator{std::move(simulator)}
   , m_socket{std::move(socket)}
 {
+    m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
+    m_socket.set_option(boost::asio::socket_base::send_buffer_size(8192 * 2));
 }
 
 void SimulatorConnection::start()

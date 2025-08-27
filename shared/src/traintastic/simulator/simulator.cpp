@@ -23,6 +23,8 @@
 #include "simulatorconnection.hpp"
 #include <numbers>
 #include <ranges>
+#include <bit>
+#include <iostream>
 #include "protocol.hpp"
 
 namespace
@@ -318,12 +320,7 @@ Simulator::Simulator(const nlohmann::json& world)
   , m_acceptor{m_ioContext}
   , m_socketUDP{m_ioContext}
 {
-    boost::system::error_code ec;
-    m_socketUDP.open(boost::asio::ip::udp::v4(), ec);
 
-    m_socketUDP.set_option(boost::asio::socket_base::reuse_address(true), ec);
-
-    m_socketUDP.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), defaultPort), ec);
 }
 
 Simulator::~Simulator()
@@ -356,6 +353,8 @@ void Simulator::start()
     {
       if(m_serverEnabled)
       {
+        std::cout << "Starting server..." << std::endl;
+
         boost::system::error_code ec;
         boost::asio::ip::tcp::endpoint endpoint(m_serverLocalHostOnly ? boost::asio::ip::address_v4::loopback() : boost::asio::ip::address_v4::any(), m_serverPort);
 
@@ -364,6 +363,22 @@ void Simulator::start()
         m_acceptor.bind(endpoint, ec);
 
         m_acceptor.listen(5, ec);
+
+        m_socketUDP.open(boost::asio::ip::udp::v4(), ec);
+        if(ec)
+            assert(false);
+
+        m_socketUDP.set_option(boost::asio::socket_base::reuse_address(true), ec);
+        if(ec)
+            assert(false);
+
+        m_socketUDP.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), defaultPort), ec);
+        if(ec)
+        {
+            std::cout << "UDP cannot bind" << std::endl;
+        }
+
+        std::cout << ec.message() << " END" << std::endl << std::flush;
 
         doReceive();
         accept();
@@ -375,18 +390,32 @@ void Simulator::start()
 
 void Simulator::stop()
 {
-  boost::system::error_code ec;
-  m_acceptor.cancel(ec);
-  m_acceptor.close(ec);
-  // ignore errors
+  std::cout << "Stopping server...";
 
-  m_socketUDP.close();
+  try
+  {
+    m_socketUDP.close();
+  }
+  catch(...)
+  {
+  }
 
   while(!m_connections.empty())
   {
     auto connection =  m_connections.back();
     m_connections.pop_back();
     connection->stop();
+  }
+
+  try
+  {
+    boost::system::error_code ec;
+    m_acceptor.cancel(ec);
+    m_acceptor.close(ec);
+  }
+  catch(std::exception &e)
+  {
+    std::cout << "Error while closing TCP: " << e.what() << std::endl << std::flush;
   }
 
   m_tickTimer.cancel();
@@ -687,16 +716,32 @@ void Simulator::doReceive()
             if(!ec)
             {
                 const char *recvMsg = reinterpret_cast<char*>(m_udpBuffer.data());
-                if(bytesReceived == sizeof(RequestMessage) && std::memcmp(recvMsg, &RequestMessage, bytesReceived) == 0)
+                if(bytesReceived >= sizeof(RequestMessage) && std::memcmp(recvMsg, &RequestMessage, sizeof(RequestMessage)) == 0)
                 {
                     if(!m_serverLocalHostOnly || m_remoteEndpoint.address().is_loopback())
                     {
                         uint16_t response[3] = {0, 0, serverPort()};
+
+                        // Send in big endian format
+                        if constexpr (std::endian::native == std::endian::little)
+                        {
+                            // Swap bytes
+                            uint8_t b[2] = {};
+                            *reinterpret_cast<uint16_t *>(b) = response[2];
+                            std::swap(b[0], b[1]);
+                            response[2] = *reinterpret_cast<uint16_t *>(b);
+                        }
+
+                        std::cout << "UDP Sending to: " << m_remoteEndpoint.address().to_string()
+                                                        << " port: " << m_remoteEndpoint.port()
+                                                        << std::endl << std::flush;
+
                         std::memcpy(&response, &ResponseMessage, sizeof(ResponseMessage));
                         m_socketUDP.async_send_to(boost::asio::buffer(response, sizeof(response)), m_remoteEndpoint,
-                                                  [this](const boost::system::error_code& /*ec*/, std::size_t /*bytesTransferred*/)
+                                                  [this](const boost::system::error_code& ec2, std::size_t bytesTransferred)
                                                   {
-                                                      doReceive();
+                                                     assert(!ec2 && bytesTransferred == 6);
+                                                     doReceive();
                                                   });
                         return;
                     }
