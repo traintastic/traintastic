@@ -527,6 +527,7 @@ void SimulatorView::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     QPainter painter;
+    painter.setRenderHint(QPainter::Antialiasing, true);
     painter.begin(this);
 
     painter.scale(m_zoomLevel, m_zoomLevel);
@@ -583,11 +584,22 @@ void SimulatorView::drawTracks(QPainter *painter)
 {
     assert(m_simulator);
 
-    const QPen trackPen(QColor(204, 204, 204), 1.5);
-    const QPen trackPenOccupied(QColor(255, 0, 0), 1.5);
-    const QPen trackPenGreen(QColor(0, 255, 0), 1.5);
-    const QPen trackPenPurple(QColor(128, 0, 255), 1.5);
-    const QPen trackPenCyan(QColor(0, 255, 255), 1.5);
+    QPen trackPen(QColor(204, 204, 204), 1.1);
+    trackPen.setCapStyle(Qt::FlatCap);
+
+    QPen trackPenOccupied = trackPen;
+    trackPenOccupied.setColor(QColor(255, 0, 0));
+
+    QPen trackPenGreen = trackPen;
+    trackPenGreen.setColor(QColor(0, 255, 0));
+
+    QPen trackPenPurple = trackPen;
+    trackPenPurple.setColor(QColor(128, 0, 255));
+
+    QPen trackPenCyan = trackPen;
+    trackPenCyan.setColor(QColor(0, 255, 255));
+    trackPenCyan.setWidthF(0.5);
+    trackPenCyan.setCosmetic(false);
 
     const QTransform trasf = painter->transform();
 
@@ -634,28 +646,58 @@ void SimulatorView::drawTracks(QPainter *painter)
         }
         else if(segment.type == Simulator::TrackSegment::Type::Turnout)
         {
-            assert(segment.turnout.index < m_stateData.turnouts.size());
-            const auto state = m_stateData.turnouts[segment.turnout.index].state;
+            drawCurve(segment, 0, painter);
+            drawStraight(segment, painter);
+        }
+        else if(segment.type == Simulator::TrackSegment::Type::TurnoutCurved)
+        {
+            drawCurve(segment, 1, painter);
+            drawCurve(segment, 0, painter);
+        }
+        else if(segment.type == Simulator::TrackSegment::Type::Turnout3Way)
+        {
+            drawCurve(segment, 0, painter);
+            drawCurve(segment, 1, painter);
+            drawStraight(segment, painter);
+        }
 
+        painter->setTransform(trasf);
+        idx++;
+    }
+
+    // Redraw on top turnout current state
+    painter->setPen(trackPenCyan);
+
+    for(const auto& segment : m_simulator->staticData.trackSegments)
+    {
+        if(segment.type == Simulator::TrackSegment::Type::Straight ||
+            segment.type == Simulator::TrackSegment::Type::Curve)
+            continue;
+
+        painter->translate(segment.origin().x, segment.origin().y);
+        painter->rotate(qRadiansToDegrees(segment.rotation));
+
+        assert(segment.turnout.index < m_stateData.turnouts.size());
+        const auto state = m_stateData.turnouts[segment.turnout.index].state;
+
+        if(segment.type == Simulator::TrackSegment::Type::Turnout)
+        {
             switch(state)
             {
             case Simulator::TurnoutState::State::Unknown:
                 // Blink cyan or normal
                 if(turnoutBlinkState)
-                    painter->setPen(trackPenCyan);
-                drawCurve(segment, 0, painter);
-                drawStraight(segment, painter);
+                {
+                    drawCurve(segment, 0, painter);
+                    drawStraight(segment, painter);
+                }
                 break;
 
             case Simulator::TurnoutState::State::Closed:
-                drawCurve(segment, 0, painter);
-                painter->setPen(trackPenCyan);
                 drawStraight(segment, painter);
                 break;
 
             case Simulator::TurnoutState::State::Thrown:
-                drawStraight(segment, painter);
-                painter->setPen(trackPenCyan);
                 drawCurve(segment, 0, painter);
                 break;
 
@@ -666,20 +708,22 @@ void SimulatorView::drawTracks(QPainter *painter)
         }
         else if(segment.type == Simulator::TrackSegment::Type::TurnoutCurved)
         {
-            assert(segment.turnout.index < m_stateData.turnouts.size());
-            const auto state = m_stateData.turnouts[segment.turnout.index].state;
-
             switch(state)
             {
+            case Simulator::TurnoutState::State::Unknown:
+                // Blink cyan or normal
+                if(turnoutBlinkState)
+                {
+                    drawCurve(segment, 0, painter);
+                    drawCurve(segment, 1, painter);
+                }
+                break;
+
             case Simulator::TurnoutState::State::Closed:
-                drawCurve(segment, 1, painter);
-                painter->setPen(trackPenCyan);
                 drawCurve(segment, 0, painter);
                 break;
 
             case Simulator::TurnoutState::State::Thrown:
-                drawCurve(segment, 0, painter);
-                painter->setPen(trackPenCyan);
                 drawCurve(segment, 1, painter);
                 break;
 
@@ -690,29 +734,27 @@ void SimulatorView::drawTracks(QPainter *painter)
         }
         else if(segment.type == Simulator::TrackSegment::Type::Turnout3Way)
         {
-            assert(segment.turnout.index < m_stateData.turnouts.size());
-            const auto state = m_stateData.turnouts[segment.turnout.index].state;
-
             switch(state)
             {
+            case Simulator::TurnoutState::State::Unknown:
+                // Blink cyan or normal
+                if(turnoutBlinkState)
+                {
+                    drawCurve(segment, 0, painter);
+                    drawCurve(segment, 1, painter);
+                    drawStraight(segment, painter);
+                }
+                break;
+
             case Simulator::TurnoutState::State::Closed:
-                drawCurve(segment, 0, painter);
-                drawCurve(segment, 1, painter);
-                painter->setPen(trackPenCyan);
                 drawStraight(segment, painter);
                 break;
 
             case Simulator::TurnoutState::State::ThrownLeft:
-                drawStraight(segment, painter);
-                drawCurve(segment, 1, painter);
-                painter->setPen(trackPenCyan);
                 drawCurve(segment, 0, painter);
                 break;
 
             case Simulator::TurnoutState::State::ThrownRight:
-                drawStraight(segment, painter);
-                drawCurve(segment, 0, painter);
-                painter->setPen(trackPenCyan);
                 drawCurve(segment, 1, painter);
                 break;
 
