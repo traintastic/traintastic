@@ -776,34 +776,69 @@ void SimulatorView::drawTrackObjects(QPainter *painter)
 {
     assert(m_simulator);
 
-    const QPen trackPen(QColor(255, 255, 0), 3);
-    const QPen trackPenOccupied(QColor(255, 0, 0), 3);
+    QColor positionSensorActive = Qt::red;
+    QColor positionSensorInactive = Qt::darkGreen;
+
+    const QPen signalMastPen(Qt::gray, 1.1);
+    const QPen signalLightPen(Qt::gray, 0.5);
 
     const QTransform trasf = painter->transform();
 
     size_t idx = 0;
     for(const auto& segment : m_simulator->staticData.trackSegments)
     {
-        for(const auto& obj : segment.objects)
+        using Object = Simulator::TrackSegment::Object;
+
+        for(const Object& obj : segment.objects)
         {
             painter->translate(obj.pos.x, obj.pos.y);
-            painter->rotate(qRadiansToDegrees(obj.rotation));
+            painter->rotate(qRadiansToDegrees(obj.rotation + obj.dirForward ? 0 : pi));
 
-            if(m_stateData.sensors[obj.sensorIndex].value)
+            switch (obj.type)
             {
-                // Red if active
-                painter->setPen(trackPenOccupied);
+            case Object::Type::PositionSensor:
+            {
+                QColor color = positionSensorInactive;
+                if(m_stateData.sensors[obj.sensorIndex].value)
+                    color = positionSensorActive;
+
+                QRectF r;
+                r.setSize(QSizeF(4, 2));
+                r.moveCenter(QPointF(0, obj.lateralDiff));
+                painter->fillRect(r, color);
+                break;
             }
-            else
+            case Object::Type::MainSignal:
             {
-                // Yellow inactive
-                painter->setPen(trackPen);
+                auto signIt = m_stateData.mainSignals.find(obj.signalName);
+                if(signIt == m_stateData.mainSignals.end())
+                    continue;
+
+                Simulator::MainSignal *signal = signIt->second;
+                const int mastLength = 8 + 6 * (signal->lights.size() - 1);
+
+                painter->setPen(signalMastPen);
+                painter->drawLine(QLineF(0, obj.lateralDiff,
+                                         mastLength, obj.lateralDiff));
+
+                QRectF lightRect;
+                lightRect.setSize(QSizeF(5, 5));
+                lightRect.moveCenter(QPointF(10, obj.lateralDiff));
+
+                for(size_t i = 0; i < signal->lights.size(); i++)
+                {
+                    painter->setBrush(Qt::red);
+                    painter->drawEllipse(lightRect);
+
+                    lightRect.moveLeft(lightRect.left() + 6);
+                }
+
+                break;
+            }
+            default:
+                break;
             }
 
-            painter->drawLine(0,
-                              obj.lateralDiff,
-                              obj.dirForward ? 5 : -5,
-                              obj.lateralDiff);
 
             painter->setTransform(trasf);
         }

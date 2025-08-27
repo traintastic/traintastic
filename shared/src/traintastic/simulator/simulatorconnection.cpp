@@ -23,9 +23,11 @@
 #include "simulator.hpp"
 #include "protocol.hpp"
 
-SimulatorConnection::SimulatorConnection(std::shared_ptr<Simulator> simulator, boost::asio::ip::tcp::socket&& socket)
+SimulatorConnection::SimulatorConnection(std::shared_ptr<Simulator> simulator, boost::asio::ip::tcp::socket&& socket,
+                                         size_t connId)
   : m_simulator{std::move(simulator)}
   , m_socket{std::move(socket)}
+  , m_connectionId(connId)
 {
 }
 
