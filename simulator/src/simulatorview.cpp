@@ -583,11 +583,11 @@ void SimulatorView::drawTracks(QPainter *painter)
 {
     assert(m_simulator);
 
-    QPen trackPen(QColor(204, 204, 204), 3);
-    QPen trackPenOccupied(QColor(255, 0, 0), 3);
-    QPen trackPenGreen(QColor(0, 255, 0), 3);
-    QPen trackPenPurple(QColor(128, 0, 255), 3);
-    QPen trackPenCyan(QColor(0, 255, 255), 3);
+    const QPen trackPen(QColor(204, 204, 204), 1.5);
+    const QPen trackPenOccupied(QColor(255, 0, 0), 1.5);
+    const QPen trackPenGreen(QColor(0, 255, 0), 1.5);
+    const QPen trackPenPurple(QColor(128, 0, 255), 1.5);
+    const QPen trackPenCyan(QColor(0, 255, 255), 1.5);
 
     const QTransform trasf = painter->transform();
 
@@ -731,31 +731,36 @@ void SimulatorView::drawTrackObjects(QPainter *painter)
 {
     assert(m_simulator);
 
+    const QPen trackPen(QColor(255, 255, 0), 3);
+    const QPen trackPenOccupied(QColor(255, 0, 0), 3);
+
+    const QTransform trasf = painter->transform();
+
     size_t idx = 0;
     for(const auto& segment : m_simulator->staticData.trackSegments)
     {
         for(const auto& obj : segment.objects)
         {
-            glPushMatrix();
-            glTranslatef(obj.pos.x, obj.pos.y, 0);
-            glRotatef(qRadiansToDegrees(obj.rotation), 0, 0, 1);
+            painter->translate(obj.pos.x, obj.pos.y);
+            painter->rotate(qRadiansToDegrees(obj.rotation));
 
             if(m_stateData.sensors[obj.sensorIndex].value)
             {
-                glColor3f(1.0f, 0.0f, 0.0f); // Red if active
+                // Red if active
+                painter->setPen(trackPenOccupied);
             }
             else
             {
                 // Yellow inactive
-                glColor3f(1.0f, 1.0f, 0.0f);
+                painter->setPen(trackPen);
             }
 
-            glBegin(GL_LINES);
-            glVertex2f(0, obj.lateralDiff);
-            glVertex2f(obj.dirForward ? 5 : -5, obj.lateralDiff);
-            glEnd();
+            painter->drawLine(0,
+                              obj.lateralDiff,
+                              obj.dirForward ? 5 : -5,
+                              obj.lateralDiff);
 
-            glPopMatrix();
+            painter->setTransform(trasf);
         }
 
         idx++;
