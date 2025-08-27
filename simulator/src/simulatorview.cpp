@@ -526,9 +526,8 @@ void SimulatorView::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    QPainter painter;
+    QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.begin(this);
 
     painter.scale(m_zoomLevel, m_zoomLevel);
     painter.translate(-m_cameraX, -m_cameraY);
@@ -565,18 +564,10 @@ void SimulatorView::paintGL()
 
     if(m_simulator) [[likely]]
     {
-        painter.beginNativePainting();
-        glLoadIdentity();
-        drawMisc();
-        painter.endNativePainting();
-
-        painter.setTransform(trasf);
+        drawMisc(&painter);
         drawTracks(&painter);
-        painter.setTransform(trasf);
         drawTrackObjects(&painter);
-        painter.setTransform(trasf);
         drawTrains(&painter);
-        painter.setTransform(trasf);
     }
 }
 
@@ -842,28 +833,31 @@ void SimulatorView::drawTrains(QPainter *painter)
     }
 }
 
-void SimulatorView::drawMisc()
+void SimulatorView::drawMisc(QPainter *painter)
 {
   assert(m_simulator);
+
+  QPen miscPen;
+  miscPen.setWidth(1);
+  miscPen.setCosmetic(false);
+
+  const QTransform trasf = painter->transform();
 
   for(const auto& item : m_simulator->staticData.misc)
   {
     const auto& color = colors[static_cast<size_t>(item.color)];
-    glColor3f(color.red, color.green, color.blue);
+    miscPen.setColor(QColor(color.red * 255, color.green * 255, color.blue * 255));
+    painter->setPen(miscPen);
 
     switch(item.type)
     {
       case Simulator::Misc::Type::Rectangle:
-        glPushMatrix();
-        glTranslatef(item.origin.x, item.origin.y, 0.0f);
-        glRotatef(qRadiansToDegrees(item.rotation), 0.0f, 0.0f, 1.0f);
-        glBegin(GL_LINE_LOOP);
-        glVertex2f(0.0f, 0.0f);
-        glVertex2f(item.width, 0.0f);
-        glVertex2f(item.width, item.height);
-        glVertex2f(0.0f, item.height);
-        glEnd();
-        glPopMatrix();
+        painter->translate(item.origin.x, item.origin.y);
+        painter->rotate(qRadiansToDegrees(item.rotation));
+
+        painter->drawRect(QRectF(0, 0, item.width, item.height));
+
+        painter->setTransform(trasf);
         break;
     }
   }

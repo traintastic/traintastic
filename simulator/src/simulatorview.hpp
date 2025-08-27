@@ -162,7 +162,7 @@ private:
   void drawTracks(QPainter *painter);
   void drawTrackObjects(QPainter *painter);
   void drawTrains(QPainter *painter);
-  void drawMisc();
+  void drawMisc(QPainter *painter);
 
   void updateProjection();
 
