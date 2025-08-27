@@ -344,7 +344,14 @@ Simulator::Simulator(const nlohmann::json& world)
   : staticData(load(world, m_stateData))
   , m_tickTimer{m_ioContext}
   , m_acceptor{m_ioContext}
+  , m_socketUDP{m_ioContext}
 {
+    boost::system::error_code ec;
+    m_socketUDP.open(boost::asio::ip::udp::v4(), ec);
+
+    m_socketUDP.set_option(boost::asio::socket_base::reuse_address(true), ec);
+
+    m_socketUDP.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), defaultPort), ec);
 }
 
 Simulator::~Simulator()
@@ -408,6 +415,7 @@ void Simulator::start()
 
         m_acceptor.listen(5, ec);
 
+        doReceive();
         accept();
       }
       tick();
@@ -417,6 +425,8 @@ void Simulator::start()
 
 void Simulator::stop()
 {
+  m_socketUDP.close();
+
   m_acceptor.cancel();
   while(!m_connections.empty())
   {
@@ -744,6 +754,38 @@ void Simulator::accept()
         accept();
       }
     });
+}
+
+constexpr char RequestMessage[] = {'s', 'i', 'm', '?'};
+constexpr char ResponseMessage[] = {'s', 'i', 'm', '!'};
+
+void Simulator::doReceive()
+{
+    m_socketUDP.async_receive_from(
+        boost::asio::buffer(m_udpBuffer),
+        m_remoteEndpoint,
+        [this](const boost::system::error_code& ec, std::size_t bytesReceived)
+        {
+            if(!ec)
+            {
+                const char *recvMsg = reinterpret_cast<char*>(m_udpBuffer.data());
+                if(bytesReceived == sizeof(RequestMessage) && std::memcmp(recvMsg, &RequestMessage, bytesReceived) == 0)
+                {
+                    if(!m_serverLocalHostOnly || m_remoteEndpoint.address().is_loopback())
+                    {
+                        uint16_t response[3] = {0, 0, serverPort()};
+                        std::memcpy(&response, &ResponseMessage, sizeof(ResponseMessage));
+                        m_socketUDP.async_send_to(boost::asio::buffer(response, sizeof(response)), m_remoteEndpoint,
+                                                  [this](const boost::system::error_code& /*ec*/, std::size_t /*bytesTransferred*/)
+                                                  {
+                                                      doReceive();
+                                                  });
+                        return;
+                    }
+                }
+                doReceive();
+            }
+        });
 }
 
 void Simulator::tick()
