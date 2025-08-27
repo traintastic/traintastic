@@ -592,6 +592,9 @@ void SimulatorView::drawTracks(QPainter *painter)
     trackPenCyan.setWidthF(0.5);
     trackPenCyan.setCosmetic(false);
 
+    QPen trackPenYellow = trackPenCyan;
+    trackPenYellow.setColor(Qt::darkYellow);
+
     const QTransform trasf = painter->transform();
 
     size_t idx = 0;
@@ -657,8 +660,6 @@ void SimulatorView::drawTracks(QPainter *painter)
     }
 
     // Redraw on top turnout current state
-    painter->setPen(trackPenCyan);
-
     for(const auto& segment : m_simulator->staticData.trackSegments)
     {
         if(segment.type == Simulator::TrackSegment::Type::Straight ||
@@ -670,6 +671,17 @@ void SimulatorView::drawTracks(QPainter *painter)
 
         assert(segment.turnout.index < m_stateData.turnouts.size());
         const auto state = m_stateData.turnouts[segment.turnout.index].state;
+
+        if(m_showTrackOccupancy && segment.hasSensor() && m_stateData.sensors[segment.sensor.index].value)
+        {
+            // Cyan contrast on red
+            painter->setPen(trackPenCyan);
+        }
+        else
+        {
+            // Dark yellow contrast on white
+            painter->setPen(trackPenYellow);
+        }
 
         if(segment.type == Simulator::TrackSegment::Type::Turnout)
         {
