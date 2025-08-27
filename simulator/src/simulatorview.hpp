@@ -159,9 +159,9 @@ private:
   void mouseLeftClick(const Simulator::Point &point, bool shiftPressed);
   void showItemTooltip(const Simulator::Point &point, QHelpEvent *ev);
 
-  void drawTracks();
-  void drawTrackObjects();
-  void drawTrains();
+  void drawTracks(QPainter *painter);
+  void drawTrackObjects(QPainter *painter);
+  void drawTrains(QPainter *painter);
   void drawMisc();
 
   void updateProjection();

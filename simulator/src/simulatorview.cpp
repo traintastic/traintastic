@@ -34,6 +34,8 @@
 #include <QMenu>
 #include <QClipboard>
 
+#include <QVector>
+
 namespace
 {
 
@@ -296,15 +298,12 @@ size_t getSegmentAt(const Simulator::Point &point, const Simulator::StaticData &
     return bestIdx;
 }
 
-void drawStraight(const Simulator::TrackSegment& segment)
+void drawStraight(const Simulator::TrackSegment& segment, QPainter *painter)
 {
-  glBegin(GL_LINES);
-  glVertex2f(0, 0);
-  glVertex2f(segment.straight.length, 0);
-  glEnd();
+  painter->drawLine(0, 0, segment.straight.length, 0);
 }
 
-void drawCurve(const Simulator::TrackSegment& segment, size_t curveIndex)
+void drawCurve(const Simulator::TrackSegment& segment, size_t curveIndex, QPainter *painter)
 {
   const auto& curve = segment.curves[curveIndex];
   const float rotation = curve.angle < 0 ? 0.0f : pi;
@@ -314,16 +313,19 @@ void drawCurve(const Simulator::TrackSegment& segment, size_t curveIndex)
   const float cx = curve.radius * sinf(rotation);
   const float cy = curve.radius * -cosf(rotation);
 
-  glBegin(GL_LINE_STRIP);
-  glVertex2f(0.0f, 0.0f);
+  QVector<QPointF> pointVec;
+  pointVec.reserve(numSegments + 1);
+  pointVec.append({0, 0});
+
   for(int i = 1; i <= numSegments; i++)
   {
     float angle = rotation + i * step;
     float x = cx - curve.radius * sinf(angle);
     float y = cy - curve.radius * -cosf(angle);
-    glVertex2f(x, y);
+    pointVec.append({x, y});
   }
-  glEnd();
+
+  painter->drawPolyline(pointVec.data(), pointVec.size());
 }
 
 }
@@ -522,193 +524,210 @@ void SimulatorView::resizeGL(int w, int h)
 
 void SimulatorView::paintGL()
 {
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  if(!m_images.empty() || !m_extraImages.empty())
-  {
-    QPainter p;
-    p.begin(this);
+    QPainter painter;
+    painter.begin(this);
 
-    p.scale(m_zoomLevel, m_zoomLevel);
-    p.translate(-m_cameraX, -m_cameraY);
+    painter.scale(m_zoomLevel, m_zoomLevel);
+    painter.translate(-m_cameraX, -m_cameraY);
 
-    const QTransform trasf = p.transform();
+    const QTransform trasf = painter.transform();
 
-    for(const auto &image : m_extraImages)
+    if(!m_images.empty() || !m_extraImages.empty())
     {
-      if(!image.visible)
-        continue;
-      p.setOpacity(image.ref.opacity);
-      p.translate(image.ref.origin.x, image.ref.origin.y);
-      p.rotate(qRadiansToDegrees(image.ref.rotation));
-      p.scale(image.ref.ratio, image.ref.ratio);
-      p.drawImage(QPoint(), image.img);
-      p.setTransform(trasf);
+        for(const auto &image : m_extraImages)
+        {
+            if(!image.visible)
+                continue;
+            painter.setOpacity(image.ref.opacity);
+            painter.translate(image.ref.origin.x, image.ref.origin.y);
+            painter.rotate(qRadiansToDegrees(image.ref.rotation));
+            painter.scale(image.ref.ratio, image.ref.ratio);
+            painter.drawImage(QPoint(), image.img);
+            painter.setTransform(trasf);
+        }
+
+        for(const auto &image : m_images)
+        {
+            painter.setOpacity(image.ref.opacity);
+            painter.translate(image.ref.origin.x, image.ref.origin.y);
+            painter.rotate(qRadiansToDegrees(image.ref.rotation));
+            painter.scale(image.ref.ratio, image.ref.ratio);
+            painter.drawImage(QPoint(), image.img);
+            painter.setTransform(trasf);
+        }
+
+        painter.setOpacity(1);
     }
 
-    for(const auto &image : m_images)
+
+    if(m_simulator) [[likely]]
     {
-      p.setOpacity(image.ref.opacity);
-      p.translate(image.ref.origin.x, image.ref.origin.y);
-      p.rotate(qRadiansToDegrees(image.ref.rotation));
-      p.scale(image.ref.ratio, image.ref.ratio);
-      p.drawImage(QPoint(), image.img);
-      p.setTransform(trasf);
+        painter.beginNativePainting();
+        glLoadIdentity();
+        drawMisc();
+        painter.endNativePainting();
+
+        painter.setTransform(trasf);
+        drawTracks(&painter);
+        painter.setTransform(trasf);
+        drawTrackObjects(&painter);
+        painter.setTransform(trasf);
+        drawTrains(&painter);
+        painter.setTransform(trasf);
     }
-
-    p.setOpacity(1);
-
-    p.end();
-  }
-
-  glLoadIdentity();
-
-  if(m_simulator) [[likely]]
-  {
-    drawMisc();
-    drawTracks();
-    drawTrackObjects();
-    drawTrains();
-  }
 }
 
-void SimulatorView::drawTracks()
+void SimulatorView::drawTracks(QPainter *painter)
 {
-  assert(m_simulator);
+    assert(m_simulator);
 
-  size_t idx = 0;
-  for(const auto& segment : m_simulator->staticData.trackSegments)
-  {
-    if(m_showTrackOccupancy && segment.hasSensor() && m_stateData.sensors[segment.sensor.index].value)
+    QPen trackPen(QColor(204, 204, 204), 3);
+    QPen trackPenOccupied(QColor(255, 0, 0), 3);
+    QPen trackPenGreen(QColor(0, 255, 0), 3);
+    QPen trackPenPurple(QColor(128, 0, 255), 3);
+    QPen trackPenCyan(QColor(0, 255, 255), 3);
+
+    const QTransform trasf = painter->transform();
+
+    size_t idx = 0;
+    for(const auto& segment : m_simulator->staticData.trackSegments)
     {
-      glColor3f(1.0f, 0.0f, 0.0f); // Red if occupied
+        if(m_showTrackOccupancy && segment.hasSensor() && m_stateData.sensors[segment.sensor.index].value)
+        {
+            // Red if occupied
+            painter->setPen(trackPenOccupied);
+        }
+        else
+        {
+            painter->setPen(trackPen);
+        }
+
+        if(!m_stateData.powerOn)
+        {
+            // Red if not powered for better contrast
+            painter->setPen(trackPenOccupied);
+
+            if(idx == m_hoverSegmentIdx)
+            {
+                // Green on hover
+                painter->setPen(trackPenGreen);
+            }
+            else if(segment.hasSensor() && segment.sensor.index == m_hoverSensorIdx)
+            {
+                // Blue on same hovered sensor
+                painter->setPen(trackPenPurple);
+            }
+        }
+
+        painter->translate(segment.origin().x, segment.origin().y);
+        painter->rotate(qRadiansToDegrees(segment.rotation));
+
+        if(segment.type == Simulator::TrackSegment::Type::Straight)
+        {
+            drawStraight(segment, painter);
+        }
+        else if(segment.type == Simulator::TrackSegment::Type::Curve)
+        {
+            drawCurve(segment, 0, painter);
+        }
+        else if(segment.type == Simulator::TrackSegment::Type::Turnout)
+        {
+            assert(segment.turnout.index < m_stateData.turnouts.size());
+            const auto state = m_stateData.turnouts[segment.turnout.index].state;
+
+            switch(state)
+            {
+            case Simulator::TurnoutState::State::Unknown:
+                // Blink cyan or normal
+                if(turnoutBlinkState)
+                    painter->setPen(trackPenCyan);
+                drawCurve(segment, 0, painter);
+                drawStraight(segment, painter);
+                break;
+
+            case Simulator::TurnoutState::State::Closed:
+                drawCurve(segment, 0, painter);
+                painter->setPen(trackPenCyan);
+                drawStraight(segment, painter);
+                break;
+
+            case Simulator::TurnoutState::State::Thrown:
+                drawStraight(segment, painter);
+                painter->setPen(trackPenCyan);
+                drawCurve(segment, 0, painter);
+                break;
+
+            default:
+                assert(false);
+                break;
+            }
+        }
+        else if(segment.type == Simulator::TrackSegment::Type::TurnoutCurved)
+        {
+            assert(segment.turnout.index < m_stateData.turnouts.size());
+            const auto state = m_stateData.turnouts[segment.turnout.index].state;
+
+            switch(state)
+            {
+            case Simulator::TurnoutState::State::Closed:
+                drawCurve(segment, 1, painter);
+                painter->setPen(trackPenCyan);
+                drawCurve(segment, 0, painter);
+                break;
+
+            case Simulator::TurnoutState::State::Thrown:
+                drawCurve(segment, 0, painter);
+                painter->setPen(trackPenCyan);
+                drawCurve(segment, 1, painter);
+                break;
+
+            default:
+                assert(false);
+                break;
+            }
+        }
+        else if(segment.type == Simulator::TrackSegment::Type::Turnout3Way)
+        {
+            assert(segment.turnout.index < m_stateData.turnouts.size());
+            const auto state = m_stateData.turnouts[segment.turnout.index].state;
+
+            switch(state)
+            {
+            case Simulator::TurnoutState::State::Closed:
+                drawCurve(segment, 0, painter);
+                drawCurve(segment, 1, painter);
+                painter->setPen(trackPenCyan);
+                drawStraight(segment, painter);
+                break;
+
+            case Simulator::TurnoutState::State::ThrownLeft:
+                drawStraight(segment, painter);
+                drawCurve(segment, 1, painter);
+                painter->setPen(trackPenCyan);
+                drawCurve(segment, 0, painter);
+                break;
+
+            case Simulator::TurnoutState::State::ThrownRight:
+                drawStraight(segment, painter);
+                drawCurve(segment, 0, painter);
+                painter->setPen(trackPenCyan);
+                drawCurve(segment, 1, painter);
+                break;
+
+            default:
+                assert(false);
+                break;
+            }
+        }
+
+        painter->setTransform(trasf);
+        idx++;
     }
-    else
-    {
-      glColor3f(0.8f, 0.8f, 0.8f);
-    }
-
-    if(!m_stateData.powerOn)
-    {
-      glColor3f(1.0f, 0.0f, 0.0f); // Red if not powered for better contrast
-
-      if(idx == m_hoverSegmentIdx)
-      {
-        glColor3f(0.0f, 1.0f, 0.0f); // Green on hover
-      }
-      else if(segment.hasSensor() && segment.sensor.index == m_hoverSensorIdx)
-      {
-        glColor3f(0.5f, 0.0f, 1.0f); // Blue on same hovered sensor
-      }
-    }
-
-    glPushMatrix();
-    glTranslatef(segment.origin().x, segment.origin().y, 0);
-    glRotatef(qRadiansToDegrees(segment.rotation), 0, 0, 1);
-
-    if(segment.type == Simulator::TrackSegment::Type::Straight)
-    {
-      drawStraight(segment);
-    }
-    else if(segment.type == Simulator::TrackSegment::Type::Curve)
-    {
-      drawCurve(segment, 0);
-    }
-    else if(segment.type == Simulator::TrackSegment::Type::Turnout)
-    {
-      assert(segment.turnout.index < m_stateData.turnouts.size());
-      const auto state = m_stateData.turnouts[segment.turnout.index].state;
-
-      switch(state)
-      {
-        case Simulator::TurnoutState::State::Unknown:
-          // Blink cyan or normal
-          if(turnoutBlinkState)
-            glColor3f(0.0f, 1.0f, 1.0f);
-          drawCurve(segment, 0);
-          drawStraight(segment);
-          break;
-
-        case Simulator::TurnoutState::State::Closed:
-          drawCurve(segment, 0);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawStraight(segment);
-          break;
-
-        case Simulator::TurnoutState::State::Thrown:
-          drawStraight(segment);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawCurve(segment, 0);
-          break;
-
-        default:
-          assert(false);
-          break;
-      }
-    }
-    else if(segment.type == Simulator::TrackSegment::Type::TurnoutCurved)
-    {
-      assert(segment.turnout.index < m_stateData.turnouts.size());
-      const auto state = m_stateData.turnouts[segment.turnout.index].state;
-
-      switch(state)
-      {
-        case Simulator::TurnoutState::State::Closed:
-          drawCurve(segment, 1);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawCurve(segment, 0);
-          break;
-
-        case Simulator::TurnoutState::State::Thrown:
-          drawCurve(segment, 0);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawCurve(segment, 1);
-          break;
-
-        default:
-          assert(false);
-          break;
-      }
-    }
-    else if(segment.type == Simulator::TrackSegment::Type::Turnout3Way)
-    {
-      assert(segment.turnout.index < m_stateData.turnouts.size());
-      const auto state = m_stateData.turnouts[segment.turnout.index].state;
-
-      switch(state)
-      {
-        case Simulator::TurnoutState::State::Closed:
-          drawCurve(segment, 0);
-          drawCurve(segment, 1);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawStraight(segment);
-          break;
-
-        case Simulator::TurnoutState::State::ThrownLeft:
-          drawStraight(segment);
-          drawCurve(segment, 1);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawCurve(segment, 0);
-          break;
-
-        case Simulator::TurnoutState::State::ThrownRight:
-          drawStraight(segment);
-          drawCurve(segment, 0);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawCurve(segment, 1);
-          break;
-
-        default:
-          assert(false);
-          break;
-      }
-    }
-    glPopMatrix();
-    idx++;
-  }
 }
 
-void SimulatorView::drawTrackObjects()
+void SimulatorView::drawTrackObjects(QPainter *painter)
 {
     assert(m_simulator);
 
@@ -743,37 +762,37 @@ void SimulatorView::drawTrackObjects()
     }
 }
 
-void SimulatorView::drawTrains()
+void SimulatorView::drawTrains(QPainter *painter)
 {
-  assert(m_simulator);
+    assert(m_simulator);
 
-  const float trainWidth = m_simulator->staticData.trainWidth;
+    const QTransform trasf = painter->transform();
 
-  for(auto it : m_stateData.vehicles)
-  {
-    const auto* vehicle = it.second;
-    const auto& vehicleState = vehicle->state;
-    const float length = vehicle->length;
+    const float trainWidth = m_simulator->staticData.trainWidth;
 
-    const auto center = (vehicleState.front.position + vehicleState.rear.position) / 2;
-    const auto delta = vehicleState.front.position - vehicleState.rear.position;
-    const float angle = atan2f(delta.y, delta.x);
+    painter->setPen(Qt::NoPen);
 
-    glPushMatrix();
-    glTranslatef(center.x, center.y, 0);
-    glRotatef(qRadiansToDegrees(angle), 0, 0, 1);
+    for(auto it : m_stateData.vehicles)
+    {
+        const auto* vehicle = it.second;
+        const auto& vehicleState = vehicle->state;
+        const float length = vehicle->length;
 
-    const auto& color = colors[static_cast<size_t>(vehicle->color)];
-    glColor3f(color.red, color.green, color.blue);
-    glBegin(GL_QUADS);
-    glVertex2f(-length / 2, -trainWidth / 2);
-    glVertex2f(length / 2, -trainWidth / 2);
-    glVertex2f(length / 2, trainWidth / 2);
-    glVertex2f(-length / 2, trainWidth / 2);
-    glEnd();
+        const auto center = (vehicleState.front.position + vehicleState.rear.position) / 2;
+        const auto delta = vehicleState.front.position - vehicleState.rear.position;
+        const float angle = atan2f(delta.y, delta.x);
 
-    glPopMatrix();
-  }
+        painter->translate(center.x, center.y);
+        painter->rotate(qRadiansToDegrees(angle));
+
+        const auto& color = colors[static_cast<size_t>(vehicle->color)];
+        QRectF veichleRect(-length / 2, -trainWidth / 2,
+                           length, trainWidth);
+        painter->fillRect(veichleRect,
+                          QColor(color.red * 255, color.green * 255, color.blue * 255));
+
+        painter->setTransform(trasf);
+    }
 }
 
 void SimulatorView::drawMisc()
