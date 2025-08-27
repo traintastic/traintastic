@@ -24,6 +24,8 @@
 #include <ranges>
 #include "protocol.hpp"
 
+#include <bit>
+
 void Simulator::updateView(Simulator::StaticData::View& view, Simulator::Point point)
 {
   if(point.x < view.left)
@@ -780,6 +782,17 @@ void Simulator::doReceive()
                     if(!m_serverLocalHostOnly || m_remoteEndpoint.address().is_loopback())
                     {
                         uint16_t response[3] = {0, 0, serverPort()};
+
+                        // Send in big endian format
+                        if constexpr (std::endian::native == std::endian::little)
+                        {
+                            // Swap bytes
+                            uint8_t b[2] = {};
+                            *reinterpret_cast<uint16_t *>(b) = serverPort();
+                            std::swap(b[0], b[1]);
+                            response[2] = *reinterpret_cast<uint16_t *>(b);
+                        }
+
                         std::memcpy(&response, &ResponseMessage, sizeof(ResponseMessage));
                         m_socketUDP.async_send_to(boost::asio::buffer(response, sizeof(response)), m_remoteEndpoint,
                                                   [this](const boost::system::error_code& /*ec*/, std::size_t /*bytesTransferred*/)

@@ -784,7 +784,6 @@ void SimulatorView::drawTrackObjects(QPainter *painter)
 
     const QTransform trasf = painter->transform();
 
-    size_t idx = 0;
     for(const auto& segment : m_simulator->staticData.trackSegments)
     {
         using Object = Simulator::TrackSegment::Object;
