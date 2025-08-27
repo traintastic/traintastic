@@ -6809,5 +6809,9 @@
     {
         "term": "throttle.controlled_by_x",
         "definition": "Controlled by %1"
+    },
+    {
+        "term": "board_tile.rail.block:zones",
+        "definition": "Zones"
     }
 ]
