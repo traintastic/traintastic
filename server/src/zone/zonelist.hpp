@@ -1,9 +1,9 @@
 /**
- * server/test/main.cpp
+ * server/src/zone/zonelist.hpp
  *
- * This file is part of the traintastic test suite.
+ * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,3 +19,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
+#ifndef TRAINTASTIC_SERVER_ZONE_ZONELIST_HPP
+#define TRAINTASTIC_SERVER_ZONE_ZONELIST_HPP
+
+#include "../core/objectlist.hpp"
+#include "../core/method.hpp"
+
+class Zone;
+
+class ZoneList : public ObjectList<Zone>
+{
+  CLASS_ID("list.zone")
+
+protected:
+  void worldEvent(WorldState state, WorldEvent event) final;
+  bool isListedProperty(std::string_view name) final;
+
+public:
+  Method<std::shared_ptr<Zone>()> create;
+  Method<void(const std::shared_ptr<Zone>&)> delete_;
+
+  ZoneList(Object& _parent, std::string_view parentPropertyName);
+
+  TableModelPtr getModel() final;
+};
+
+#endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023-2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,6 +42,7 @@ const BoardColorScheme BoardColorScheme::dark = {
   /*.turnoutState =*/ {Qt::blue},
   /*.decouplerDeactivated =*/ {0x10, 0x10, 0x10},
   /*.decouplerActivated =*/ {0x00, 0xBF, 0xFF},
+  /*.blockHighlightAlpha =*/ 0.2,
 };
 
 const BoardColorScheme BoardColorScheme::light = {
@@ -64,4 +65,5 @@ const BoardColorScheme BoardColorScheme::light = {
   /*.turnoutState =*/ {Qt::cyan},
   /*.decouplerDeactivated =*/ {0xF5, 0xF5, 0xF5},
   /*.decouplerActivated =*/ {0x00, 0xBF, 0xFF},
+  /*.blockHighlightAlpha =*/ 0.3,
 };

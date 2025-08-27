@@ -104,8 +104,11 @@
 
 #include "../train/train.hpp"
 #include "../train/trainlist.hpp"
+#include "../train/trainzonestatus.hpp"
 
 #include "../world/world.hpp"
+
+#include "../zone/zone.hpp"
 
 namespace Lua {
 
@@ -228,8 +231,11 @@ void Class::registerValues(lua_State* L)
 
   registerValue<Train>(L, "TRAIN");
   registerValue<TrainList>(L, "TRAIN_LIST");
+  registerValue<TrainZoneStatus>(L, "TRAIN_ZONE_STATUS");
 
   registerValue<World>(L, "WORLD");
+
+  registerValue<Zone>(L, "ZONE");
 }
 
 void Class::push(lua_State* L, std::string_view classId)

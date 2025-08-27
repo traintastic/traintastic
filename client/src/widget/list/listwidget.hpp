@@ -25,6 +25,7 @@
 
 #include <QWidget>
 #include "../../network/objectptr.hpp"
+#include "../../network/tablemodelptr.hpp"
 
 class TableWidget;
 
@@ -39,6 +40,7 @@ protected:
 
   const ObjectPtr& object() const { return m_object; }
 
+  virtual void setTableModel(const TableModelPtr& tableModel);
   virtual void tableSelectionChanged() {}
   virtual void tableDoubleClicked(const QModelIndex& /*index*/) {}
 

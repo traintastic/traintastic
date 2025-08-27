@@ -31,6 +31,8 @@
 #include "boardwidget.hpp"
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
+#include "blockhighlight.hpp"
+#include "../mainwindow.hpp"
 #include "../network/board.hpp"
 #include "../network/callmethod.hpp"
 #include "../network/object.tpp"
@@ -76,6 +78,7 @@ BoardAreaWidget::BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent) 
   m_boardBottom{m_board->getProperty("bottom")},
   m_grid{Grid::Dot},
   m_zoomLevel{0},
+  m_blockHighlight{MainWindow::instance->blockHighlight()},
   m_mouseLeftButtonPressed{false},
   m_mouseRightButtonPressed{false},
   m_mouseMoveAction{MouseMoveAction::None},
@@ -98,6 +101,12 @@ BoardAreaWidget::BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent) 
     connect(m_boardBottom, &AbstractProperty::valueChanged, this, &BoardAreaWidget::updateMinimumSize);
 
   connect(&BoardSettings::instance(), &SettingsBase::changed, this, &BoardAreaWidget::settingsChanged);
+
+  connect(&m_blockHighlight, &BlockHighlight::colorsChanged, this,
+    [this](const QString& /*blockId*/, const QVector<Color>& /*colors*/)
+    {
+      update();
+    });
 
   for(const auto& [l, object] : m_board->tileObjects())
     tileObjectAdded(l.x, l.y, object);
@@ -731,9 +740,32 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           break;
 
         case TileId::RailBlock:
-          tilePainter.drawBlock(id, r, a, state & 0x01, state & 0x02, m_board->getTileObject(it.first));
+        {
+          auto block = m_board->getTileObject(it.first);
+          tilePainter.drawBlock(id, r, a, state & 0x01, state & 0x02, block);
+          if(auto itColors = m_blockHighlight.blockColors().find(block->getPropertyValueString("id"));
+              itColors != m_blockHighlight.blockColors().end() && !itColors->isEmpty())
+          {
+            for(int i = 0; i < itColors->size(); ++i)
+            {
+              QColor color = toQColor((*itColors)[i]);
+              painter.setPen({});
+              color.setAlphaF(m_colorScheme->blockHighlightAlpha);
+              painter.setBrush(color);
+              if(a == TileRotate::Deg0)
+              {
+                const auto h = r.height() / itColors->size();
+                painter.drawRect(r.left(), r.top() + i * h, r.width(), h);
+              }
+              else
+              {
+                const auto w = r.width() / itColors->size();
+                painter.drawRect(r.left() + i * w, r.top(), w, r.height());
+              }
+            }
+          }
           break;
-
+        }
         case TileId::RailDirectionControl:
           tilePainter.drawDirectionControl(id, r, a, isReserved, getDirectionControlState(it.first));
           break;

@@ -40,7 +40,9 @@ if(BUILD_TESTING)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_options(Catch2 PRIVATE -Wno-restrict) # workaround GCC bug
   endif()
-  add_executable(traintastic-server-test test/main.cpp)
+  add_executable(traintastic-server-test
+    test/zone.cpp
+  )
   add_dependencies(traintastic-server-test traintastic-lang)
   target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
   set_target_properties(traintastic-server-test PROPERTIES
@@ -183,6 +185,8 @@ file(GLOB SOURCES
   "src/utils/*.cpp"
   "src/world/*.hpp"
   "src/world/*.cpp"
+  "src/zone/*.hpp"
+  "src/zone/*.cpp"
   "../shared/src/traintastic/locale/locale.cpp"
   "../shared/src/traintastic/utils/standardpaths.cpp")
 

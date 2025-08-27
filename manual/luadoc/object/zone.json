@@ -1,0 +1,66 @@
+{
+  "name": {},
+  "mute": {},
+  "no_smoke": {},
+  "trains": {},
+  "on_train_assigned": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "zone"
+      }
+    ]
+  },
+  "on_train_entering": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "zone"
+      }
+    ]
+  },
+  "on_train_entered": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "zone"
+      }
+    ]
+  },
+  "on_train_leaving": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "zone"
+      }
+    ]
+  },
+  "on_train_left": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "zone"
+      }
+    ]
+  },
+  "on_train_removed": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "zone"
+      }
+    ]
+  }
+}

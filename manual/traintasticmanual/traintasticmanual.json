@@ -62,6 +62,10 @@
   },
   {
     "type": "chapter",
+    "markdown": "zone.md"
+  },
+  {
+    "type": "chapter",
     "markdown": "clock.md"
   },
   {

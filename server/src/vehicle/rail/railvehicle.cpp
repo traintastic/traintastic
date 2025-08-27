@@ -55,8 +55,10 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
   lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
   speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](double /*value*/, WeightUnit /*unit*/){ updateTotalWeight(); }},
-  totalWeight{*this, "total_weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
-  activeTrain{this, "active_train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::StoreState}
+  totalWeight{*this, "total_weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , mute{this, "mute", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , noSmoke{this, "no_smoke", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , activeTrain{this, "active_train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::StoreState}
   , trains{*this, "trains", {}, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::NoStore}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
@@ -82,12 +84,59 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
   Attributes::addDisplayName(totalWeight, DisplayName::Vehicle::Rail::totalWeight);
   m_interfaceItems.insertBefore(totalWeight, notes);
 
+  Attributes::addObjectEditor(mute, false);
+  m_interfaceItems.add(mute);
+
+  Attributes::addObjectEditor(noSmoke, false);
+  m_interfaceItems.add(noSmoke);
+
   Attributes::addDisplayName(activeTrain, DisplayName::Vehicle::Rail::train); //TODO: "Active"
   Attributes::addEnabled(activeTrain, true);
   m_interfaceItems.insertBefore(activeTrain, notes);
 
   Attributes::addObjectEditor(trains, false);
   m_interfaceItems.insertBefore(trains, notes);
+}
+
+void RailVehicle::setActiveTrain(const std::shared_ptr<Train>& train)
+{
+  activeTrain.setValueInternal(train);
+  updateMute();
+  updateNoSmoke();
+}
+
+void RailVehicle::updateMute()
+{
+  bool value = contains(m_world.state, WorldState::NoSmoke);
+  if(!value && activeTrain)
+  {
+    value |= activeTrain->mute;
+  }
+  if(value != mute)
+  {
+    mute.setValueInternal(value);
+    if(decoder)
+    {
+      decoder->updateMute();
+    }
+  }
+}
+
+void RailVehicle::updateNoSmoke()
+{
+  bool value = contains(m_world.state, WorldState::NoSmoke);
+  if(!value && activeTrain)
+  {
+    value |= activeTrain->noSmoke;
+  }
+  if(value != noSmoke)
+  {
+    noSmoke.setValueInternal(value);
+    if(decoder)
+    {
+      decoder->updateNoSmoke();
+    }
+  }
 }
 
 void RailVehicle::addToWorld()
@@ -125,12 +174,31 @@ void RailVehicle::worldEvent(WorldState state, WorldEvent event)
 {
   Vehicle::worldEvent(state, event);
 
-  const bool editable = contains(state, WorldState::Edit);
+  switch(event)
+  {
+    case WorldEvent::EditEnabled:
+    case WorldEvent::EditDisabled:
+    {
+      const bool editable = contains(state, WorldState::Edit);
+      Attributes::setEnabled(decoder, editable);
+      Attributes::setEnabled(lob, editable);
+      Attributes::setEnabled(speedMax, editable);
+      Attributes::setEnabled(weight, editable);
+      break;
+    }
+    case WorldEvent::Mute:
+    case WorldEvent::Unmute:
+      updateMute();
+      break;
 
-  Attributes::setEnabled(decoder, editable);
-  Attributes::setEnabled(lob, editable);
-  Attributes::setEnabled(speedMax, editable);
-  Attributes::setEnabled(weight, editable);
+    case WorldEvent::NoSmoke:
+    case WorldEvent::Smoke:
+      updateNoSmoke();
+      break;
+
+    default:
+      break;
+  }
 }
 
 double RailVehicle::calcTotalWeight(WeightUnit unit) const

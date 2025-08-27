@@ -54,6 +54,21 @@ QString TableWidget::getRowObjectId(int row) const
   return m_model ? m_model->getRowObjectId(row) : "";
 }
 
+QStringList TableWidget::getObjectIds() const
+{
+  assert(m_fetchAll);
+  QStringList ids;
+  if(m_model)
+  {
+    ids.reserve(m_model->rowCount());
+    for(int row = 0; row < m_model->rowCount(); ++row)
+    {
+      ids.append(m_model->getRowObjectId(row));
+    }
+  }
+  return ids;
+}
+
 void TableWidget::setTableModel(const TableModelPtr& model)
 {
   Q_ASSERT(!m_model);
@@ -88,10 +103,33 @@ void TableWidget::setTableModel(const TableModelPtr& model)
   updateRegion();
 }
 
+void TableWidget::setFetchAll(bool value)
+{
+  if(m_fetchAll != value)
+  {
+    m_fetchAll = value;
+    if(m_model)
+    {
+      updateRegion();
+    }
+  }
+}
+
 void TableWidget::updateRegion()
 {
+  assert(m_model);
+
   const int columnCount = m_model->columnCount();
   const int rowCount = m_model->rowCount();
+
+  if(columnCount == 0 || rowCount == 0)
+    return;
+
+  if(m_fetchAll)
+  {
+    m_model->setRegion(0, columnCount - 1, 0, rowCount - 1);
+    return;
+  }
 
   const QRect r = viewport()->rect();
   const QModelIndex topLeft = indexAt(r.topLeft());

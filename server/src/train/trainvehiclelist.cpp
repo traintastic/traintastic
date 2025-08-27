@@ -47,13 +47,13 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
         vehicle->trains.appendInternal(parent().shared_ptr<Train>());
 
         if(train().active)
-          vehicle->activeTrain.setValueInternal(parent().shared_ptr<Train>());
+          vehicle->setActiveTrain(parent().shared_ptr<Train>());
       }}
   , remove{*this, "remove",
       [this](const std::shared_ptr<RailVehicle>& vehicle)
       {
         if(vehicle->activeTrain.value() == train().shared_ptr<Train>())
-          vehicle->activeTrain.setValueInternal(nullptr);
+          vehicle->setActiveTrain(nullptr);
 
         vehicle->trains.removeInternal(parent().shared_ptr<Train>());
         removeObject(vehicle);

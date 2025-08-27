@@ -6543,6 +6543,30 @@
         "fuzzy": 0
     },
     {
+        "term": "world:zones",
+        "definition": "Zones"
+    },
+    {
+        "term": "zone:blocks",
+        "definition": "Blocks"
+    },
+    {
+        "term": "zone:mute",
+        "definition": "Mute"
+    },
+    {
+        "term": "zone:no_smoke",
+        "definition": "No smoke"
+    },
+    {
+        "term": "list.zone:highlight_zone",
+        "definition": "Highlight zone"
+    },
+    {
+        "term": "zone:speed_limit",
+        "definition": "Speed limit"
+    },
+    {
         "term": "message:I9003",
         "definition": "Cleared persistent variables",
         "context": "",
@@ -6785,5 +6809,9 @@
     {
         "term": "throttle.controlled_by_x",
         "definition": "Controlled by %1"
+    },
+    {
+        "term": "board_tile.rail.block:zones",
+        "definition": "Zones"
     }
 ]

@@ -38,6 +38,7 @@
 #include "../throttle/throttle.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
+#include "../zone/zone.hpp"
 
 CREATE_IMPL(Train)
 
@@ -78,6 +79,7 @@ Train::Train(World& world, std::string_view _id) :
   isStopped{this, "is_stopped", true, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   speed{*this, "speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
   speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
+  speedLimit{*this, "speed_limit", SpeedLimitProperty::noLimitValue, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
     [this](double value, SpeedUnit unit)
     {
@@ -148,17 +150,26 @@ Train::Train(World& world, std::string_view _id) :
         m_throttle->release();
       }
     },
-    std::bind(&Train::setTrainActive, this, std::placeholders::_1)},
-  mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
-  hasThrottle{this, "has_throttle", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
-  throttleName{this, "throttle_name", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
-  blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
-  notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
+    std::bind(&Train::setTrainActive, this, std::placeholders::_1)}
+  , mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
+  , mute{this, "mute", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , noSmoke{this, "no_smoke", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , hasThrottle{this, "has_throttle", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , throttleName{this, "throttle_name", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , blocks{*this, "blocks", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
+  , zones{*this, "zones", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
+  , notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , onBlockAssigned{*this, "on_block_assigned", EventFlags::Scriptable}
   , onBlockReserved{*this, "on_block_reserved", EventFlags::Scriptable}
   , onBlockEntered{*this, "on_block_entered", EventFlags::Scriptable}
   , onBlockLeft{*this, "on_block_left", EventFlags::Scriptable}
   , onBlockRemoved{*this, "on_block_removed", EventFlags::Scriptable}
+  , onZoneAssigned{*this, "on_zone_assigned", EventFlags::Scriptable}
+  , onZoneEntering{*this, "on_zone_entering", EventFlags::Scriptable}
+  , onZoneEntered{*this, "on_zone_entered", EventFlags::Scriptable}
+  , onZoneLeaving{*this, "on_zone_leaving", EventFlags::Scriptable}
+  , onZoneLeft{*this, "on_zone_left", EventFlags::Scriptable}
+  , onZoneRemoved{*this, "on_zone_removed", EventFlags::Scriptable}
 {
   vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));
 
@@ -180,6 +191,10 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addMinMax(speed, 0., 0., SpeedUnit::KiloMeterPerHour);
   m_interfaceItems.add(speed);
   m_interfaceItems.add(speedMax);
+
+  Attributes::addObjectEditor(speedLimit, false);
+  m_interfaceItems.add(speedLimit);
+
   Attributes::addMinMax(throttleSpeed, 0., 0., SpeedUnit::KiloMeterPerHour);
   Attributes::addEnabled(throttleSpeed, false);
   Attributes::addObjectEditor(throttleSpeed, false);
@@ -204,6 +219,12 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addValues(mode, trainModeValues);
   m_interfaceItems.add(mode);
 
+  Attributes::addObjectEditor(mute, false);
+  m_interfaceItems.add(mute);
+
+  Attributes::addObjectEditor(noSmoke, false);
+  m_interfaceItems.add(noSmoke);
+
   Attributes::addObjectEditor(hasThrottle, false);
   m_interfaceItems.add(hasThrottle);
 
@@ -212,6 +233,9 @@ Train::Train(World& world, std::string_view _id) :
 
   Attributes::addObjectEditor(blocks, false);
   m_interfaceItems.add(blocks);
+
+  Attributes::addObjectEditor(zones, false);
+  m_interfaceItems.add(zones);
 
   Attributes::addObjectEditor(powered, false);
   m_interfaceItems.add(powered);
@@ -223,8 +247,90 @@ Train::Train(World& world, std::string_view _id) :
   m_interfaceItems.add(onBlockEntered);
   m_interfaceItems.add(onBlockLeft);
   m_interfaceItems.add(onBlockRemoved);
+  m_interfaceItems.add(onZoneAssigned);
+  m_interfaceItems.add(onZoneEntering);
+  m_interfaceItems.add(onZoneEntered);
+  m_interfaceItems.add(onZoneLeaving);
+  m_interfaceItems.add(onZoneLeft);
+  m_interfaceItems.add(onZoneRemoved);
 
   updateEnabled();
+  updateMute();
+  updateNoSmoke();
+}
+
+void Train::updateMute()
+{
+  bool value = contains(m_world.state, WorldState::Mute);
+  if(!value)
+  {
+    for(const auto& zoneStatus : zones)
+    {
+      if(zoneStatus->zone->mute)
+      {
+        value = true;
+        break;
+      }
+    }
+  }
+  if(value != mute)
+  {
+    mute.setValueInternal(value);
+    if(active)
+    {
+      for(const auto& vehicle : *vehicles)
+      {
+        vehicle->updateMute();
+      }
+    }
+  }
+}
+
+void Train::updateNoSmoke()
+{
+  bool value = contains(m_world.state, WorldState::NoSmoke);
+  if(!value)
+  {
+    for(const auto& zoneStatus : zones)
+    {
+      if(zoneStatus->zone->noSmoke)
+      {
+        value = true;
+        break;
+      }
+    }
+  }
+  if(value != noSmoke)
+  {
+    noSmoke.setValueInternal(value);
+    if(active)
+    {
+      for(const auto& vehicle : *vehicles)
+      {
+        vehicle->updateNoSmoke();
+      }
+    }
+  }
+}
+
+void Train::updateSpeedLimit()
+{
+  double value = SpeedLimitProperty::noLimitValue;
+  SpeedUnit unit = speedLimit.unit();
+  for(const auto& zoneStatus : zones)
+  {
+    const auto& zoneSpeedLimit = zoneStatus->zone->speedLimit;
+    if(zoneSpeedLimit.getValue(unit) < value)
+    {
+      unit = zoneSpeedLimit.unit();
+      value = zoneSpeedLimit.getValue(unit);
+    }
+  }
+  if(value != speedLimit.getValue(unit))
+  {
+    speedLimit.setValueInternal(value, unit);
+    //! \todo Apply to train
+  }
 }
 
 void Train::addToWorld()
@@ -258,13 +364,34 @@ void Train::loaded()
   }
 
   vehiclesChanged();
+  updateMute();
+  updateNoSmoke();
 }
 
 void Train::worldEvent(WorldState state, WorldEvent event)
 {
   IdObject::worldEvent(state, event);
 
-  updateEnabled();
+  switch(event)
+  {
+    case WorldEvent::EditEnabled:
+    case WorldEvent::EditDisabled:
+      updateEnabled();
+      break;
+
+    case WorldEvent::Mute:
+    case WorldEvent::Unmute:
+      updateMute();
+      break;
+
+    case WorldEvent::NoSmoke:
+    case WorldEvent::Smoke:
+      updateNoSmoke();
+      break;
+
+    default:
+      break;
+  }
 }
 
 void Train::setSpeed(const double kmph)
@@ -438,7 +565,7 @@ bool Train::setTrainActive(bool val)
     //Register this train as activeTrain
     for(const auto& vehicle : *vehicles)
     {
-      vehicle->activeTrain.setValueInternal(self);
+      vehicle->setActiveTrain(self);
     }
 
     //Sync Emergency Stop state
@@ -456,7 +583,7 @@ bool Train::setTrainActive(bool val)
     for(const auto& vehicle : *vehicles)
     {
       assert(vehicle->activeTrain.value() == self);
-      vehicle->activeTrain.setValueInternal(nullptr);
+      vehicle->setActiveTrain(nullptr);
     }
   }
 
@@ -604,4 +731,34 @@ void Train::fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block)
     onBlockRemoved,
     shared_ptr<Train>(),
     block);
+}
+
+void Train::fireZoneAssigned(const std::shared_ptr<Zone>& zone)
+{
+  fireEvent(onZoneAssigned, shared_ptr<Train>(), zone);
+}
+
+void Train::fireZoneEntering(const std::shared_ptr<Zone>& zone)
+{
+  fireEvent(onZoneEntering, shared_ptr<Train>(), zone);
+}
+
+void Train::fireZoneEntered(const std::shared_ptr<Zone>& zone)
+{
+  fireEvent(onZoneEntered, shared_ptr<Train>(), zone);
+}
+
+void Train::fireZoneLeaving(const std::shared_ptr<Zone>& zone)
+{
+  fireEvent(onZoneLeaving, shared_ptr<Train>(), zone);
+}
+
+void Train::fireZoneLeft(const std::shared_ptr<Zone>& zone)
+{
+  fireEvent(onZoneLeft, shared_ptr<Train>(), zone);
+}
+
+void Train::fireZoneRemoved(const std::shared_ptr<Zone>& zone)
+{
+  fireEvent(onZoneRemoved, shared_ptr<Train>(), zone);
 }

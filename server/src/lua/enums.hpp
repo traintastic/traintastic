@@ -42,6 +42,7 @@
 #include "../../src/enum/signalaspect.hpp"
 #include <traintastic/enum/worldevent.hpp>
 #include "../../src/enum/worldscale.hpp"
+#include <traintastic/enum/zonetrainstate.hpp>
 
 #define LUA_ENUMS \
   BlockTrainDirection, \
@@ -60,7 +61,8 @@
   TurnoutPosition, \
   SignalAspect, \
   WorldEvent, \
-  WorldScale
+  WorldScale, \
+  ZoneTrainState
 
 namespace Lua {
 

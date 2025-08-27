@@ -39,6 +39,7 @@
 #include <traintastic/utils/standardpaths.hpp>
 #include "mdiarea.hpp"
 #include "mainwindow/mainwindowstatusbar.hpp"
+#include "board/blockhighlight.hpp"
 #include "clock/clock.hpp"
 #include "dialog/connectdialog.hpp"
 #include "settings/settingsdialog.hpp"
@@ -111,6 +112,7 @@ MainWindow::MainWindow(QWidget* parent) :
   m_mdiArea{new MdiArea(m_splitter)},
   m_statusBar{new MainWindowStatusBar(*this)},
   m_serverLog{nullptr},
+  m_blockHighlight{new BlockHighlight(this)},
   m_toolbar{new QToolBar(this)}
 {
   instance = this;
@@ -406,6 +408,14 @@ MainWindow::MainWindow(QWidget* parent) :
     menu->addAction(Locale::tr("world:outputs") + "...", [this](){ showObject("world.outputs", Locale::tr("world:outputs")); });
     menu->addAction(Locale::tr("hardware:identifications") + "...", [this](){ showObject("world.identifications", Locale::tr("hardware:identifications")); });
     boardsAction = m_menuObjects->addAction(Theme::getIcon("board"), Locale::tr("world:boards") + "...", [this](){ showObject("world.boards", Locale::tr("world:boards")); });
+    m_menuObjects->addAction(
+      Theme::getIcon("zone"),
+      Locale::tr("world:zones") + "...",
+      [this]()
+      {
+        showObject("world.zones", Locale::tr("world:zones"));
+      }
+    );
     m_menuObjects->addAction(Theme::getIcon("clock"), Locale::tr("world:clock") + "...", [this](){ showObject("world.clock", Locale::tr("world:clock")); });
     trainsAction = m_menuObjects->addAction(Theme::getIcon("train"), Locale::tr("world:trains") + "...",
       [this]()

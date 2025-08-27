@@ -45,6 +45,7 @@
 #include "../train/train.hpp"
 #include "../train/trainblockstatus.hpp"
 #include "../lua/script.hpp"
+#include "../zone/zone.hpp"
 
 using nlohmann::json;
 
@@ -276,8 +277,20 @@ void WorldLoader::createObject(ObjectData& objectData)
       }
     }
   }
+  else if(classId == TrainZoneStatus::classId)
+  {
+    if(auto zone = std::dynamic_pointer_cast<Zone>(getObject(objectData.json["zone"].get<std::string_view>()))) /*[[likely]]*/
+    {
+      auto train = std::dynamic_pointer_cast<Train>(getObject(objectData.json["train"].get<std::string_view>()));
+      objectData.object = TrainZoneStatus::create(*zone, *train, to<ZoneTrainState>(objectData.json["state"]), id);
+    }
+  }
   else if(classId == Lua::Script::classId)
     objectData.object = Lua::Script::create(*m_world, id);
+  else if(classId == Zone::classId)
+  {
+    objectData.object = Zone::create(*m_world, id);
+  }
 
   if(!objectData.object)
     throw LogMessageException(LogMessage::C1012_UNKNOWN_CLASS_X_CANT_RECREATE_OBJECT_X, classId, id);

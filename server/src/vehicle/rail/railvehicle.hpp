@@ -52,9 +52,16 @@ class RailVehicle : public Vehicle
     SpeedProperty speedMax;
     WeightProperty weight;
     WeightProperty totalWeight;
+    Property<bool> mute;
+    Property<bool> noSmoke;
 
     ObjectProperty<Train> activeTrain;
     ObjectVectorProperty<Train> trains;
+
+    void setActiveTrain(const std::shared_ptr<Train>& train);
+
+    void updateMute();
+    void updateNoSmoke();
 };
 
 #endif

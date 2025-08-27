@@ -38,6 +38,8 @@
 #include "../network/abstractproperty.hpp"
 #include "../network/objectptr.hpp"
 
+class BoardWidget;
+class BlockHighlight;
 class Board;
 
 class BoardAreaWidget : public QWidget
@@ -73,6 +75,8 @@ class BoardAreaWidget : public QWidget
     AbstractProperty* m_boardBottom;
     Grid m_grid;
     int m_zoomLevel;
+
+    BlockHighlight& m_blockHighlight;
 
     bool m_mouseLeftButtonPressed;
     TileLocation m_mouseLeftButtonPressedTileLocation;

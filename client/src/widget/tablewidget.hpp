@@ -34,6 +34,7 @@ class TableWidget : public QTableView
     TableModelPtr m_model;
     int m_selectedRow = -1;
     QPoint m_dragStartPosition;
+    bool m_fetchAll = false;
 
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
@@ -46,8 +47,10 @@ class TableWidget : public QTableView
     ~TableWidget() override;
 
     QString getRowObjectId(int row) const;
+    QStringList getObjectIds() const;
 
     void setTableModel(const TableModelPtr& model);
+    void setFetchAll(bool value);
 
   signals:
     void rowDragged(int row);

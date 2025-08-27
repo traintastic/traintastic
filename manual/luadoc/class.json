@@ -202,6 +202,10 @@
   "TRAIN_LIST": {
     "type": "constant"
   },
+  "TRAIN_ZONE_STATUS": {
+    "type": "constant",
+    "since": "0.3"
+  },
   "WORLD": {
     "type": "constant",
     "since": "0.1"
@@ -210,6 +214,10 @@
     "type": "constant"
   },
   "NX_BUTTON_RAIL_TILE": {
+    "type": "constant",
+    "since": "0.3"
+  },
+  "ZONE": {
     "type": "constant",
     "since": "0.3"
   }

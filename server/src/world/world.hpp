@@ -50,6 +50,8 @@ class InputList;
 class OutputList;
 class IdentificationList;
 class BoardList;
+class ZoneList;
+class BlockRailTileList;
 class LinkRailTileList;
 class NXManager;
 class Clock;
@@ -122,12 +124,14 @@ class World : public Object
     ObjectProperty<OutputList> outputs;
     ObjectProperty<IdentificationList> identifications;
     ObjectProperty<BoardList> boards;
+    ObjectProperty<ZoneList> zones;
     ObjectProperty<Clock> clock;
     ObjectProperty<ThrottleList> throttles;
     ObjectProperty<TrainList> trains;
     ObjectProperty<RailVehicleList> railVehicles;
     ObjectProperty<Lua::ScriptList> luaScripts;
 
+    ObjectProperty<BlockRailTileList> blockRailTiles;
     ObjectProperty<LinkRailTileList> linkRailTiles;
     ObjectProperty<NXManager> nxManager;
 

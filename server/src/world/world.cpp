@@ -59,9 +59,13 @@
 
 #include "../board/board.hpp"
 #include "../board/boardlist.hpp"
+#include "../board/list/blockrailtilelist.hpp"
 #include "../board/list/linkrailtilelist.hpp"
 #include "../board/nx/nxmanager.hpp"
 #include "../board/tile/rail/nxbuttonrailtile.hpp"
+
+#include "../zone/zone.hpp"
+#include "../zone/zonelist.hpp"
 
 #include "../throttle/list/throttlelist.hpp"
 #include "../train/train.hpp"
@@ -126,12 +130,14 @@ void World::init(World& world)
   world.outputs.setValueInternal(std::make_shared<OutputList>(world, world.outputs.name(), outputListColumns));
   world.identifications.setValueInternal(std::make_shared<IdentificationList>(world, world.outputs.name(), identificationListColumns));
   world.boards.setValueInternal(std::make_shared<BoardList>(world, world.boards.name()));
+  world.zones.setValueInternal(std::make_shared<ZoneList>(world, world.zones.name()));
   world.clock.setValueInternal(std::make_shared<Clock>(world, world.clock.name()));
   world.throttles.setValueInternal(std::make_shared<ThrottleList>(world, world.throttles.name(), throttleListColumns));
   world.trains.setValueInternal(std::make_shared<TrainList>(world, world.trains.name()));
   world.railVehicles.setValueInternal(std::make_shared<RailVehicleList>(world, world.railVehicles.name()));
   world.luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(world, world.luaScripts.name()));
 
+  world.blockRailTiles.setValueInternal(std::make_shared<BlockRailTileList>(world, world.blockRailTiles.name()));
   world.linkRailTiles.setValueInternal(std::make_shared<LinkRailTileList>(world, world.linkRailTiles.name()));
   world.nxManager.setValueInternal(std::make_shared<NXManager>(world, world.nxManager.name()));
 
@@ -174,11 +180,13 @@ World::World(Private /*unused*/) :
   outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   identifications{this, "identifications", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   boards{this, "boards", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
+  zones{this, "zones", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   throttles{this, "throttles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   trains{this, "trains", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  blockRailTiles{this, "block_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   linkRailTiles{this, "link_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   nxManager{this, "nx_manager", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   statuses(*this, "statuses", {}, PropertyFlags::ReadOnly | PropertyFlags::Store),
@@ -377,6 +385,10 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(throttles);
   Attributes::addObjectEditor(boards, false);
   m_interfaceItems.add(boards);
+
+  Attributes::addObjectEditor(zones, false);
+  m_interfaceItems.add(zones);
+
   Attributes::addObjectEditor(clock, false);
   m_interfaceItems.add(clock);
   Attributes::addObjectEditor(trains, false);
@@ -385,6 +397,9 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(railVehicles);
   Attributes::addObjectEditor(luaScripts, false);
   m_interfaceItems.add(luaScripts);
+
+  Attributes::addObjectEditor(blockRailTiles, false);
+  m_interfaceItems.add(blockRailTiles);
 
   Attributes::addObjectEditor(linkRailTiles, false);
   m_interfaceItems.add(linkRailTiles);
@@ -443,6 +458,7 @@ World::~World()
   deleteAll(*inputs);
   deleteAll(*identifications);
   deleteAll(*boards);
+  deleteAll(*zones);
   deleteAll(*throttles);
   deleteAll(*trains);
   deleteAll(*railVehicles);

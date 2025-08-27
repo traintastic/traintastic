@@ -26,6 +26,7 @@
 #include "objectlist/interfacelistwidget.hpp"
 #include "objectlist/throttleobjectlistwidget.hpp"
 #include "objectlist/trainlistwidget.hpp"
+#include "objectlist/zoneblocklistwidget.hpp"
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
 #include "object/itemseditwidget.hpp"
@@ -69,6 +70,10 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
   if(classId == "list.train")
   {
     return new TrainListWidget(object, parent);
+  }
+  if(classId == "list.zone_block")
+  {
+    return new ZoneBlockListWidget(object, parent);
   }
   else if(object->classId().startsWith("list."))
     return new ObjectListWidget(object, parent);
