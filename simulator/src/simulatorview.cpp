@@ -567,6 +567,7 @@ void SimulatorView::paintGL()
   {
     drawMisc();
     drawTracks();
+    drawTrackObjects();
     drawTrains();
   }
 }
@@ -705,6 +706,41 @@ void SimulatorView::drawTracks()
     glPopMatrix();
     idx++;
   }
+}
+
+void SimulatorView::drawTrackObjects()
+{
+    assert(m_simulator);
+
+    size_t idx = 0;
+    for(const auto& segment : m_simulator->staticData.trackSegments)
+    {
+        for(const auto& obj : segment.objects)
+        {
+            glPushMatrix();
+            glTranslatef(obj.pos.x, obj.pos.y, 0);
+            glRotatef(qRadiansToDegrees(obj.rotation), 0, 0, 1);
+
+            if(m_stateData.sensors[obj.sensorIndex].value)
+            {
+                glColor3f(1.0f, 0.0f, 0.0f); // Red if active
+            }
+            else
+            {
+                // Yellow inactive
+                glColor3f(1.0f, 1.0f, 0.0f);
+            }
+
+            glBegin(GL_LINES);
+            glVertex2f(0, obj.lateralDiff);
+            glVertex2f(obj.dirForward ? 5 : -5, obj.lateralDiff);
+            glEnd();
+
+            glPopMatrix();
+        }
+
+        idx++;
+    }
 }
 
 void SimulatorView::drawTrains()

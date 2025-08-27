@@ -837,6 +837,44 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float spee
     const auto& segment = staticData.trackSegments[face.segmentIndex];
     const auto segmentLength = getSegmentLength(segment, m_stateData);
 
+    const bool dirFwd = !face.segmentDirectionInverted && speed > 0;
+    if(dirFwd)
+    {
+        for(const TrackSegment::Object& obj : segment.objects)
+        {
+            if(obj.position < face.distance)
+                continue;
+
+            if(obj.position > distance)
+                break;
+
+            if(obj.onlyDir != 1 && obj.onlyDir != 0)
+                continue;
+
+            SensorState& sensor = m_stateData.sensors[obj.sensorIndex];
+            sensor.curTime = sensor.maxTime;
+            sensor.occupied = 1;
+        }
+    }
+    else
+    {
+        for(const auto & obj : std::ranges::reverse_view(segment.objects))
+        {
+            if(obj.position > face.distance)
+                continue;
+
+            if(obj.position < distance)
+                break;
+
+            if(obj.onlyDir != 2 && obj.onlyDir != 0)
+                continue;
+
+            SensorState& sensor = m_stateData.sensors[obj.sensorIndex];
+            sensor.curTime = sensor.maxTime;
+            sensor.occupied = 1;
+        }
+    }
+
     if(distance >= segmentLength)
     {
       const auto nextSegmentIndex = getNextSegmentIndex(segment, true, m_stateData);
@@ -953,7 +991,20 @@ void Simulator::updateSensors()
   {
     const auto& sensor = staticData.sensors[i];
     auto& sensorState = m_stateData.sensors[i];
-    const bool sensorValue = m_stateData.powerOn && (sensorState.occupied != 0);
+    bool sensorValue = m_stateData.powerOn && (sensorState.occupied != 0);
+
+    if(sensorValue && sensorState.curTime > 0)
+    {
+        // Delay going down
+        sensorState.curTime--;
+
+        if(sensorState.curTime == 0)
+        {
+            sensorState.occupied = 0;
+            sensorValue = false;
+        }
+    }
+
     if(sensorState.value != sensorValue)
     {
       sensorState.value = sensorValue;
@@ -1061,6 +1112,562 @@ bool Simulator::isCurve(const TrackSegment& segment, size_t& curveIndex)
   return false;
 }
 
+void Simulator::loadTrackObjects(const nlohmann::json &track, StaticData &data, StateData &stateData, TrackSegment &segment)
+{
+    // Objects:
+    if(auto trackObjects = track.find("objects"); trackObjects != track.end() && trackObjects->is_array())
+    {
+        segment.objects.reserve(trackObjects->size());
+
+        float totLen = 0;
+        if(segment.type == TrackSegment::Type::Straight)
+            totLen = segment.straight.length;
+        else if(segment.type == TrackSegment::Type::Curve)
+            totLen = segment.curves[0].length;
+
+        if(totLen > 0)
+        {
+            for(const auto& item : *trackObjects)
+            {
+                if(!item.is_object())
+                {
+                    continue;
+                }
+
+                TrackSegment::Object trackObj;
+                trackObj.position = item.value("pos", std::numeric_limits<float>::quiet_NaN());
+                if(!std::isfinite(trackObj.position))
+                    continue;
+
+                if(trackObj.position < 0)
+                    trackObj.position = totLen + trackObj.position;
+
+                if(trackObj.position < 0 || trackObj.position >= totLen)
+                    continue;
+
+                if(segment.type == TrackSegment::Type::Straight)
+                {
+                    trackObj.rotation = segment.rotation;
+                    trackObj.pos.x = segment.points[0].x + trackObj.position * std::cos(segment.rotation);
+                    trackObj.pos.y = segment.points[0].y + trackObj.position * std::sin(segment.rotation);
+                }
+                else if(segment.type == Simulator::TrackSegment::Type::Curve)
+                {
+                    const auto& curve = segment.curves[0];
+
+                    float angle = segment.rotation + (trackObj.position / curve.length) * curve.angle;
+                    if(curve.angle < 0)
+                    {
+                        angle += pi;
+                    }
+
+                    trackObj.rotation = angle;
+                    trackObj.pos.x = curve.center.x + curve.radius * std::sin(angle);
+                    trackObj.pos.y = curve.center.y - curve.radius * std::cos(angle);
+                }
+
+                trackObj.dirForward = item.value("dir", true);
+                trackObj.lateralDiff = item.value("lat_delta", 3.0f);
+                trackObj.onlyDir = item.value("only_dir", 0);
+
+                if(const uint16_t sensorAddress = item.value("sensor_address", invalidAddress); sensorAddress != invalidAddress)
+                {
+                    const uint16_t sensorChannel = item.value("sensor_channel", defaultChannel);
+
+                    for(size_t i = 0; i < data.sensors.size(); ++i)
+                    {
+                        if(data.sensors[i].channel == sensorChannel && data.sensors[i].address == sensorAddress)
+                        {
+                            trackObj.sensorIndex = i;
+                            break;
+                        }
+                    }
+
+                    if(trackObj.sensorIndex == invalidIndex) // new sensor
+                    {
+                        trackObj.sensorIndex = data.sensors.size();
+                        data.sensors.emplace_back(Sensor{sensorChannel, sensorAddress});
+                        stateData.sensors.emplace_back(SensorState{0, false});
+                    }
+
+                    stateData.sensors[trackObj.sensorIndex].maxTime = 90; // 3 seconds
+                }
+
+                if(trackObj.sensorIndex == invalidIndex) // new sensor
+                    continue;
+
+                segment.objects.push_back(trackObj);
+            }
+
+            std::stable_sort(segment.objects.begin(),
+                             segment.objects.end(),
+                             [](const TrackSegment::Object& a, const TrackSegment::Object& b) -> bool
+                             {
+                                 return a.position < b.position;
+                             });
+        }
+    }
+}
+
+void Simulator::loadTrackplan(const nlohmann::json& world, StaticData &data, StateData& stateData)
+{
+    if(auto trackPlan = world.find("trackplan"); trackPlan != world.end() && trackPlan->is_array())
+    {
+        data.trackSegments.reserve(trackPlan->size());
+
+        size_t fromPointIndex = invalidIndex;
+        size_t fromSegmentIndex = invalidIndex;
+        Point curPoint{0.0f, 0.0f};
+        float curRotation = 0;
+
+        for(const auto& obj : *trackPlan)
+        {
+            if(!obj.is_object())
+            {
+                continue;
+            }
+
+            size_t startPointIndex = 0;
+            size_t nextPointIndex = 1;
+            TrackSegment segment;
+
+            if(auto id = obj.value<std::string_view>("id", {}); !id.empty())
+            {
+                segment.m_id = id;
+                data.trackSegmentId.emplace(std::move(id), data.trackSegments.size());
+            }
+
+            const auto type = obj.value<std::string_view>("type", {});
+            if(type == "straight")
+            {
+                segment.type = TrackSegment::Type::Straight;
+            }
+            else if(type == "curve")
+            {
+                segment.type = TrackSegment::Type::Curve;
+            }
+            else if(type == "turnout")
+            {
+                segment.type = TrackSegment::Type::Turnout;
+            }
+            else if(type == "turnout_curved")
+            {
+                segment.type = TrackSegment::Type::TurnoutCurved;
+            }
+            else if(type == "turnout_3way")
+            {
+                segment.type = TrackSegment::Type::Turnout3Way;
+            }
+            else if(type == "turnout_single_slip")
+            {
+                segment.type = TrackSegment::Type::SingleSlipTurnout;
+            }
+            else if(type == "turnout_double_slip")
+            {
+                segment.type = TrackSegment::Type::DoubleSlipTurnout;
+            }
+            else
+            {
+                throw std::runtime_error("unknown track element type");
+            }
+
+            if(segment.type == TrackSegment::Type::Straight || segment.type == TrackSegment::Type::Turnout || segment.type == TrackSegment::Type::Turnout3Way)
+            {
+                segment.straight.length = obj.value("length", segment.straight.length);
+            }
+            if(segment.type == TrackSegment::Type::Curve ||
+                segment.type == TrackSegment::Type::Turnout ||
+                segment.type == TrackSegment::Type::TurnoutCurved ||
+                segment.type == TrackSegment::Type::SingleSlipTurnout ||
+                segment.type == TrackSegment::Type::DoubleSlipTurnout)
+            {
+                segment.curves[0].radius = obj.value("radius", 100.0f);
+                segment.curves[0].angle = deg2rad(obj.value("angle", 45.0f));
+            }
+            if(segment.type == TrackSegment::Type::TurnoutCurved)
+            {
+                segment.curves[1].radius = obj.value("radius_2", 100.0f);
+                segment.curves[1].angle = deg2rad(obj.value("angle_2", 45.0f));
+            }
+            if(segment.type == TrackSegment::Type::Turnout3Way)
+            {
+                const float angleMin = 0.0f;
+                const float angleMax = 90.0f;
+                const float radius = std::max(1.0f, obj.value("radius", 100.0f));
+                const float angle = std::clamp(obj.value("angle", 45.0f), angleMin, angleMax);
+
+                segment.curves[0].radius = std::max(1.0f,obj.value("radius_left", radius));
+                segment.curves[0].angle = deg2rad(-std::clamp(obj.value("angle_left", angle), angleMin, angleMax));
+
+                segment.curves[1].radius = std::max(1.0f,obj.value("radius_right", radius));
+                segment.curves[1].angle = deg2rad(std::clamp(obj.value("angle_right", angle), angleMin, angleMax));
+            }
+            if(segment.type == TrackSegment::Type::Turnout ||
+                segment.type == TrackSegment::Type::TurnoutCurved ||
+                segment.type == TrackSegment::Type::Turnout3Way ||
+                segment.type == TrackSegment::Type::SingleSlipTurnout ||
+                segment.type == TrackSegment::Type::DoubleSlipTurnout)
+            {
+                segment.turnout.channel = obj.value("channel", defaultChannel);
+
+                if(segment.type == TrackSegment::Type::Turnout3Way ||
+                    segment.type == TrackSegment::Type::SingleSlipTurnout ||
+                    segment.type == TrackSegment::Type::DoubleSlipTurnout)
+                {
+                    const auto address = obj.value("address", invalidAddress);
+                    segment.turnout.addresses[0] = obj.value("address_left", address);
+                    segment.turnout.addresses[1] = obj.value("address_right", (address != invalidAddress) ? static_cast<uint16_t>(address + 1) : invalidAddress);
+                }
+                else
+                {
+                    segment.turnout.addresses[0] = obj.value("address", invalidAddress);
+                }
+                segment.turnout.index = stateData.turnouts.size();
+                auto& turnoutState = stateData.turnouts.emplace_back(TurnoutState{});
+                if(segment.type == TrackSegment::Type::Turnout3Way ||
+                    segment.type == TrackSegment::Type::SingleSlipTurnout ||
+                    segment.type == TrackSegment::Type::DoubleSlipTurnout)
+                {
+                    turnoutState.coils = 0x0A; // both closed
+                }
+            }
+
+            if(getPointCount(segment.type) > 2)
+            {
+                if(const size_t n = obj.value("side", invalidIndex); n < getPointCount(segment.type))
+                {
+                    startPointIndex = n;
+                }
+            }
+
+            if(const auto fromId = obj.value<std::string>("from_id", {}); !fromId.empty())
+            {
+                const size_t fromPoint = obj.value("from_point", invalidIndex);
+
+                if(auto it = data.trackSegmentId.find(fromId); it != data.trackSegmentId.end())
+                {
+                    auto& fromSegment = data.trackSegments[it->second];
+                    const auto pointCount = getPointCount(fromSegment.type);
+                    bool unconnectedPointFound = false;
+                    for(size_t i = 0; i < pointCount; ++i)
+                    {
+                        if((fromSegment.nextSegmentIndex[i] == invalidIndex && fromPoint == invalidIndex) || fromPoint == i)
+                        {
+                            if(fromSegment.nextSegmentIndex[i] != invalidIndex)
+                            {
+                                throw std::runtime_error("point already connected");
+                            }
+                            curPoint = fromSegment.points[i];
+                            curRotation = getPointRotation(fromSegment, i);
+                            fromPointIndex = i;
+                            fromSegmentIndex = it->second;
+                            unconnectedPointFound = true;
+                            break;
+                        }
+                    }
+
+                    if(!unconnectedPointFound)
+                    {
+                        throw std::runtime_error("track element is already fully connected");
+                    }
+                }
+                else
+                {
+                    throw std::runtime_error("from_id contains unknown id");
+                }
+            }
+            else if(const auto fromSide = obj.value("from_side", invalidIndex);
+                     fromSide != invalidIndex &&
+                     fromSegmentIndex != invalidIndex &&
+                     getPointCount(data.trackSegments[fromSegmentIndex].type) > 2 &&
+                     fromSide < getPointCount(data.trackSegments[fromSegmentIndex].type) &&
+                     data.trackSegments[fromSegmentIndex].nextSegmentIndex[fromSide] == invalidIndex)
+            {
+                const auto& fromSegment = data.trackSegments[fromSegmentIndex];
+                curPoint = fromSegment.points[fromSide];
+                curRotation = getPointRotation(fromSegment, fromSide);
+                fromPointIndex = fromSide;
+            }
+            else
+            {
+                if(obj.contains("x"))
+                {
+                    curPoint.x = obj.value("x", 0.0f);
+                    fromSegmentIndex = invalidIndex;
+                }
+                if(obj.contains("y"))
+                {
+                    curPoint.y = obj.value("y", 0.0f);
+                    fromSegmentIndex = invalidIndex;
+                }
+                if(obj.contains("rotation"))
+                {
+                    curRotation = deg2rad(obj.value("rotation", 0.0f));
+                    fromSegmentIndex = invalidIndex;
+                }
+                updateView(data.view, curPoint);
+            }
+
+            if((segment.type == TrackSegment::Type::Turnout ||
+                 segment.type == TrackSegment::Type::Turnout3Way ||
+                 segment.type == TrackSegment::Type::SingleSlipTurnout ||
+                 segment.type == TrackSegment::Type::DoubleSlipTurnout) &&
+                startPointIndex == 1)
+            {
+                segment.rotation = curRotation + pi;
+                if(segment.rotation >= 2 * pi)
+                {
+                    segment.rotation -= 2 * pi;
+                }
+                segment.points[0].x = curPoint.x + segment.straight.length * std::cos(curRotation);
+                segment.points[0].y = curPoint.y + segment.straight.length * std::sin(curRotation);
+                nextPointIndex = 0;
+            }
+            else if((segment.type == TrackSegment::Type::Turnout && startPointIndex == 2) ||
+                     (segment.type == TrackSegment::Type::TurnoutCurved && (startPointIndex == 1 || startPointIndex == 2)) ||
+                     (segment.type == TrackSegment::Type::Turnout3Way && (startPointIndex == 2 || startPointIndex == 3)) ||
+                     (segment.type == TrackSegment::Type::SingleSlipTurnout && startPointIndex == 2) ||
+                     (segment.type == TrackSegment::Type::DoubleSlipTurnout && startPointIndex == 2))
+            {
+                const size_t curveIndex = ((segment.type == TrackSegment::Type::TurnoutCurved && startPointIndex == 2) || (segment.type == TrackSegment::Type::Turnout3Way && startPointIndex == 3)) ? 1 : 0;
+                auto& curve = segment.curves[curveIndex];
+
+                const float curAngle = (curve.angle > 0) ? (curRotation + pi) : curRotation;
+
+                // Calc circle center:
+                curve.center.x = curPoint.x - curve.radius * std::sin(curAngle);
+                curve.center.y = curPoint.y + curve.radius * std::cos(curAngle);
+
+                // Calc origin:
+                segment.points[0].x = curve.center.x - curve.radius * std::sin(curAngle - curve.angle + pi);
+                segment.points[0].y = curve.center.y + curve.radius * std::cos(curAngle - curve.angle + pi);
+
+                curRotation -= curve.angle;
+
+                segment.rotation = curRotation + pi;
+                if(segment.rotation >= 2 * pi)
+                {
+                    segment.rotation -= 2 * pi;
+                }
+
+                nextPointIndex = 0;
+            }
+            else
+            {
+                segment.points[0] = curPoint;
+                segment.rotation = curRotation;
+
+                if(segment.type == TrackSegment::Type::Curve || segment.type == TrackSegment::Type::TurnoutCurved)
+                {
+                    curRotation += segment.curves[0].angle;
+                }
+            }
+
+            assert(segment.points[0].isFinite()); // origin must be known now
+
+            // Calculate center/length of curves:
+            for(size_t i = 0; i < getCurveCount(segment.type); ++i)
+            {
+                auto& curve = segment.curves[i];
+                if(!curve.center.isFinite()) // skip if already known
+                {
+                    const float startAngle = (curve.angle < 0) ? (segment.rotation + pi) : segment.rotation;
+                    curve.center.x = segment.points[0].x - curve.radius * std::sin(startAngle);
+                    curve.center.y = segment.points[0].y + curve.radius * std::cos(startAngle);
+                }
+                curve.length = std::abs(curve.radius * curve.angle);
+                assert(curve.center.isFinite());
+            }
+
+            // Calculate points if not known:
+            switch(segment.type)
+            {
+            case TrackSegment::Type::Straight:
+                if(!segment.points[1].isFinite())
+                {
+                    segment.points[1] = straightEnd(segment);
+                    updateView(data.view, segment.points[1]);
+                }
+                break;
+
+            case TrackSegment::Type::Curve:
+                if(!segment.points[1].isFinite())
+                {
+                    segment.points[1] = curveEnd(segment, 0);
+                    updateView(data.view, segment.curves[0], segment.rotation);
+                }
+                break;
+
+            case TrackSegment::Type::Turnout:
+                if(!segment.points[1].isFinite())
+                {
+                    segment.points[1] = straightEnd(segment);
+                    updateView(data.view, segment.points[1]);
+                }
+                if(!segment.points[2].isFinite())
+                {
+                    segment.points[2] = curveEnd(segment, 0);
+                    updateView(data.view, segment.curves[0], segment.rotation);
+                }
+                break;
+
+            case TrackSegment::Type::TurnoutCurved:
+                if(!segment.points[1].isFinite())
+                {
+                    segment.points[1] = curveEnd(segment, 0);
+                    updateView(data.view, segment.curves[0], segment.rotation);
+                }
+                if(!segment.points[2].isFinite())
+                {
+                    segment.points[2] = curveEnd(segment, 1);
+                    updateView(data.view, segment.curves[1], segment.rotation);
+                }
+                break;
+
+            case TrackSegment::Type::Turnout3Way:
+                if(!segment.points[1].isFinite())
+                {
+                    segment.points[1] = straightEnd(segment);
+                    updateView(data.view, segment.points[1]);
+                }
+                if(!segment.points[2].isFinite())
+                {
+                    segment.points[2] = curveEnd(segment, 0);
+                    updateView(data.view, segment.curves[0], segment.rotation);
+                }
+                if(!segment.points[3].isFinite())
+                {
+                    segment.points[3] = curveEnd(segment, 1);
+                    updateView(data.view, segment.curves[1], segment.rotation);
+                }
+                break;
+
+            default:
+                assert(false);
+                break;
+            }
+#ifndef NDEBUG
+            for(size_t i = 1; i < getPointCount(segment.type); ++i)
+            {
+                assert(segment.points[i].isFinite()); // all points must be known now
+            }
+#endif
+
+            // Set current point:
+            assert(nextPointIndex < getPointCount(segment.type));
+            curPoint = segment.points[nextPointIndex];
+
+            // Sensors:
+            if(const uint16_t sensorAddress = obj.value("sensor_address", invalidAddress); sensorAddress != invalidAddress)
+            {
+                const uint16_t sensorChannel = obj.value("sensor_channel", defaultChannel);
+
+                for(size_t i = 0; i < data.sensors.size(); ++i)
+                {
+                    if(data.sensors[i].channel == sensorChannel && data.sensors[i].address == sensorAddress)
+                    {
+                        segment.sensor.index = i;
+                        break;
+                    }
+                }
+
+                if(segment.sensor.index == invalidIndex) // new sensor
+                {
+                    segment.sensor.index = data.sensors.size();
+                    data.sensors.emplace_back(Sensor{sensorChannel, sensorAddress});
+                    stateData.sensors.emplace_back(SensorState{0, false});
+                }
+            }
+
+            loadTrackObjects(obj, data, stateData, segment);
+
+            if(fromSegmentIndex != invalidIndex)
+            {
+                assert(startPointIndex < getPointCount(segment.type));
+                segment.nextSegmentIndex[startPointIndex] = fromSegmentIndex;
+
+                assert(fromPointIndex < getPointCount(data.trackSegments[fromSegmentIndex].type));
+                data.trackSegments[fromSegmentIndex].nextSegmentIndex[fromPointIndex] = data.trackSegments.size();
+            }
+
+            data.trackSegments.emplace_back(std::move(segment));
+
+            switch(startPointIndex)
+            {
+            case 0:
+                fromPointIndex = 1;
+                if(segment.type == TrackSegment::Type::Turnout || segment.type == TrackSegment::Type::TurnoutCurved)
+                {
+                    if(segment.nextSegmentIndex[1] != invalidIndex)
+                    {
+                        fromPointIndex = 2;
+                    }
+                }
+                if(segment.type == TrackSegment::Type::Turnout3Way)
+                {
+                    if(segment.nextSegmentIndex[1] != invalidIndex)
+                    {
+                        fromPointIndex = 2;
+                    }
+                    if(segment.nextSegmentIndex[2] != invalidIndex)
+                    {
+                        fromPointIndex = 3;
+                    }
+                }
+                break;
+
+            case 1:
+            case 2:
+            case 3:
+                fromPointIndex = 0;
+                break;
+
+            default:
+                assert(false);
+                break;
+            }
+
+            fromSegmentIndex = data.trackSegments.size() - 1;
+        }
+
+        // Connect open ends:
+        {
+            auto findSegment = [&data](size_t start, Point point, size_t& index)
+            {
+                const size_t count = data.trackSegments.size();
+                for(size_t i = start + 1; i < count; ++i)
+                {
+                    auto& segment = data.trackSegments[i];
+                    const auto pointCount = getPointCount(segment.type);
+                    for(size_t j = 0; j < pointCount; ++j)
+                    {
+                        if(segment.nextSegmentIndex[j] == invalidIndex && pointsClose(point, segment.points[j]))
+                        {
+                            segment.nextSegmentIndex[j] = start;
+                            index = i;
+                            return;
+                        }
+                    }
+                }
+            };
+
+            const size_t count = data.trackSegments.size() - 1;
+            for(size_t i = 0; i < count; ++i)
+            {
+                auto& segment = data.trackSegments[i];
+                const auto pointCount = getPointCount(segment.type);
+                for(size_t j = 0; j < pointCount; ++j)
+                {
+                    if(segment.nextSegmentIndex[j] == invalidIndex)
+                    {
+                        findSegment(i, segment.points[j], segment.nextSegmentIndex[j]);
+                    }
+                }
+            }
+        }
+    }
+}
+
 Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& stateData)
 {
   StaticData data;
@@ -1073,459 +1680,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
   data.trainWidth = world.value("train_width", data.trainWidth);
   data.trainCouplingLength = world.value("train_coupling_length", data.trainCouplingLength);
 
-  if(auto trackPlan = world.find("trackplan"); trackPlan != world.end() && trackPlan->is_array())
-  {
-    data.trackSegments.reserve(trackPlan->size());
-
-    size_t fromPointIndex = invalidIndex;
-    size_t fromSegmentIndex = invalidIndex;
-    Point curPoint{0.0f, 0.0f};
-    float curRotation = 0;
-
-    for(const auto& obj : *trackPlan)
-    {
-      if(!obj.is_object())
-      {
-        continue;
-      }
-
-      size_t startPointIndex = 0;
-      size_t nextPointIndex = 1;
-      TrackSegment segment;
-
-      if(auto id = obj.value<std::string_view>("id", {}); !id.empty())
-      {
-        segment.m_id = id;
-        data.trackSegmentId.emplace(std::move(id), data.trackSegments.size());
-      }
-
-      const auto type = obj.value<std::string_view>("type", {});
-      if(type == "straight")
-      {
-        segment.type = TrackSegment::Type::Straight;
-      }
-      else if(type == "curve")
-      {
-        segment.type = TrackSegment::Type::Curve;
-      }
-      else if(type == "turnout")
-      {
-        segment.type = TrackSegment::Type::Turnout;
-      }
-      else if(type == "turnout_curved")
-      {
-        segment.type = TrackSegment::Type::TurnoutCurved;
-      }
-      else if(type == "turnout_3way")
-      {
-        segment.type = TrackSegment::Type::Turnout3Way;
-      }
-      else if(type == "turnout_single_slip")
-      {
-        segment.type = TrackSegment::Type::SingleSlipTurnout;
-      }
-      else if(type == "turnout_double_slip")
-      {
-        segment.type = TrackSegment::Type::DoubleSlipTurnout;
-      }
-      else
-      {
-        throw std::runtime_error("unknown track element type");
-      }
-
-      if(segment.type == TrackSegment::Type::Straight || segment.type == TrackSegment::Type::Turnout || segment.type == TrackSegment::Type::Turnout3Way)
-      {
-        segment.straight.length = obj.value("length", segment.straight.length);
-      }
-      if(segment.type == TrackSegment::Type::Curve ||
-          segment.type == TrackSegment::Type::Turnout ||
-          segment.type == TrackSegment::Type::TurnoutCurved ||
-          segment.type == TrackSegment::Type::SingleSlipTurnout ||
-          segment.type == TrackSegment::Type::DoubleSlipTurnout)
-      {
-        segment.curves[0].radius = obj.value("radius", 100.0f);
-        segment.curves[0].angle = deg2rad(obj.value("angle", 45.0f));
-      }
-      if(segment.type == TrackSegment::Type::TurnoutCurved)
-      {
-        segment.curves[1].radius = obj.value("radius_2", 100.0f);
-        segment.curves[1].angle = deg2rad(obj.value("angle_2", 45.0f));
-      }
-      if(segment.type == TrackSegment::Type::Turnout3Way)
-      {
-        const float angleMin = 0.0f;
-        const float angleMax = 90.0f;
-        const float radius = std::max(1.0f, obj.value("radius", 100.0f));
-        const float angle = std::clamp(obj.value("angle", 45.0f), angleMin, angleMax);
-
-        segment.curves[0].radius = std::max(1.0f,obj.value("radius_left", radius));
-        segment.curves[0].angle = deg2rad(-std::clamp(obj.value("angle_left", angle), angleMin, angleMax));
-
-        segment.curves[1].radius = std::max(1.0f,obj.value("radius_right", radius));
-        segment.curves[1].angle = deg2rad(std::clamp(obj.value("angle_right", angle), angleMin, angleMax));
-      }
-      if(segment.type == TrackSegment::Type::Turnout ||
-           segment.type == TrackSegment::Type::TurnoutCurved ||
-           segment.type == TrackSegment::Type::Turnout3Way ||
-           segment.type == TrackSegment::Type::SingleSlipTurnout ||
-           segment.type == TrackSegment::Type::DoubleSlipTurnout)
-      {
-        segment.turnout.channel = obj.value("channel", defaultChannel);
-
-        if(segment.type == TrackSegment::Type::Turnout3Way ||
-             segment.type == TrackSegment::Type::SingleSlipTurnout ||
-             segment.type == TrackSegment::Type::DoubleSlipTurnout)
-        {
-          const auto address = obj.value("address", invalidAddress);
-          segment.turnout.addresses[0] = obj.value("address_left", address);
-          segment.turnout.addresses[1] = obj.value("address_right", (address != invalidAddress) ? static_cast<uint16_t>(address + 1) : invalidAddress);
-        }
-        else
-        {
-          segment.turnout.addresses[0] = obj.value("address", invalidAddress);
-        }
-        segment.turnout.index = stateData.turnouts.size();
-        auto& turnoutState = stateData.turnouts.emplace_back(TurnoutState{});
-        if(segment.type == TrackSegment::Type::Turnout3Way ||
-             segment.type == TrackSegment::Type::SingleSlipTurnout ||
-             segment.type == TrackSegment::Type::DoubleSlipTurnout)
-        {
-          turnoutState.coils = 0x0A; // both closed
-        }
-      }
-
-      if(getPointCount(segment.type) > 2)
-      {
-        if(const size_t n = obj.value("side", invalidIndex); n < getPointCount(segment.type))
-        {
-          startPointIndex = n;
-        }
-      }
-
-      if(const auto fromId = obj.value<std::string>("from_id", {}); !fromId.empty())
-      {
-        const size_t fromPoint = obj.value("from_point", invalidIndex);
-
-        if(auto it = data.trackSegmentId.find(fromId); it != data.trackSegmentId.end())
-        {
-          auto& fromSegment = data.trackSegments[it->second];
-          const auto pointCount = getPointCount(fromSegment.type);
-          bool unconnectedPointFound = false;
-          for(size_t i = 0; i < pointCount; ++i)
-          {
-            if((fromSegment.nextSegmentIndex[i] == invalidIndex && fromPoint == invalidIndex) || fromPoint == i)
-            {
-              if(fromSegment.nextSegmentIndex[i] != invalidIndex)
-              {
-                throw std::runtime_error("point already connected");
-              }
-              curPoint = fromSegment.points[i];
-              curRotation = getPointRotation(fromSegment, i);
-              fromPointIndex = i;
-              fromSegmentIndex = it->second;
-              unconnectedPointFound = true;
-              break;
-            }
-          }
-
-          if(!unconnectedPointFound)
-          {
-            throw std::runtime_error("track element is already fully connected");
-          }
-        }
-        else
-        {
-          throw std::runtime_error("from_id contains unknown id");
-        }
-      }
-      else if(const auto fromSide = obj.value("from_side", invalidIndex);
-          fromSide != invalidIndex &&
-          fromSegmentIndex != invalidIndex &&
-          getPointCount(data.trackSegments[fromSegmentIndex].type) > 2 &&
-          fromSide < getPointCount(data.trackSegments[fromSegmentIndex].type) &&
-          data.trackSegments[fromSegmentIndex].nextSegmentIndex[fromSide] == invalidIndex)
-      {
-        const auto& fromSegment = data.trackSegments[fromSegmentIndex];
-        curPoint = fromSegment.points[fromSide];
-        curRotation = getPointRotation(fromSegment, fromSide);
-        fromPointIndex = fromSide;
-      }
-      else
-      {
-        if(obj.contains("x"))
-        {
-          curPoint.x = obj.value("x", 0.0f);
-          fromSegmentIndex = invalidIndex;
-        }
-        if(obj.contains("y"))
-        {
-          curPoint.y = obj.value("y", 0.0f);
-          fromSegmentIndex = invalidIndex;
-        }
-        if(obj.contains("rotation"))
-        {
-          curRotation = deg2rad(obj.value("rotation", 0.0f));
-          fromSegmentIndex = invalidIndex;
-        }
-        updateView(data.view, curPoint);
-      }
-
-      if((segment.type == TrackSegment::Type::Turnout ||
-          segment.type == TrackSegment::Type::Turnout3Way ||
-          segment.type == TrackSegment::Type::SingleSlipTurnout ||
-          segment.type == TrackSegment::Type::DoubleSlipTurnout) &&
-              startPointIndex == 1)
-      {
-        segment.rotation = curRotation + pi;
-        if(segment.rotation >= 2 * pi)
-        {
-          segment.rotation -= 2 * pi;
-        }
-        segment.points[0].x = curPoint.x + segment.straight.length * std::cos(curRotation);
-        segment.points[0].y = curPoint.y + segment.straight.length * std::sin(curRotation);
-        nextPointIndex = 0;
-      }
-      else if((segment.type == TrackSegment::Type::Turnout && startPointIndex == 2) ||
-          (segment.type == TrackSegment::Type::TurnoutCurved && (startPointIndex == 1 || startPointIndex == 2)) ||
-          (segment.type == TrackSegment::Type::Turnout3Way && (startPointIndex == 2 || startPointIndex == 3)) ||
-          (segment.type == TrackSegment::Type::SingleSlipTurnout && startPointIndex == 2) ||
-          (segment.type == TrackSegment::Type::DoubleSlipTurnout && startPointIndex == 2))
-      {
-        const size_t curveIndex = ((segment.type == TrackSegment::Type::TurnoutCurved && startPointIndex == 2) || (segment.type == TrackSegment::Type::Turnout3Way && startPointIndex == 3)) ? 1 : 0;
-        auto& curve = segment.curves[curveIndex];
-
-        const float curAngle = (curve.angle > 0) ? (curRotation + pi) : curRotation;
-
-        // Calc circle center:
-        curve.center.x = curPoint.x - curve.radius * std::sin(curAngle);
-        curve.center.y = curPoint.y + curve.radius * std::cos(curAngle);
-
-        // Calc origin:
-        segment.points[0].x = curve.center.x - curve.radius * std::sin(curAngle - curve.angle + pi);
-        segment.points[0].y = curve.center.y + curve.radius * std::cos(curAngle - curve.angle + pi);
-
-        curRotation -= curve.angle;
-
-        segment.rotation = curRotation + pi;
-        if(segment.rotation >= 2 * pi)
-        {
-          segment.rotation -= 2 * pi;
-        }
-
-        nextPointIndex = 0;
-      }
-      else
-      {
-        segment.points[0] = curPoint;
-        segment.rotation = curRotation;
-
-        if(segment.type == TrackSegment::Type::Curve || segment.type == TrackSegment::Type::TurnoutCurved)
-        {
-          curRotation += segment.curves[0].angle;
-        }
-      }
-
-      assert(segment.points[0].isFinite()); // origin must be known now
-
-      // Calculate center/length of curves:
-      for(size_t i = 0; i < getCurveCount(segment.type); ++i)
-      {
-        auto& curve = segment.curves[i];
-        if(!curve.center.isFinite()) // skip if already known
-        {
-          const float startAngle = (curve.angle < 0) ? (segment.rotation + pi) : segment.rotation;
-          curve.center.x = segment.points[0].x - curve.radius * std::sin(startAngle);
-          curve.center.y = segment.points[0].y + curve.radius * std::cos(startAngle);
-        }
-        curve.length = std::abs(curve.radius * curve.angle);
-        assert(curve.center.isFinite());
-      }
-
-      // Calculate points if not known:
-      switch(segment.type)
-      {
-        case TrackSegment::Type::Straight:
-          if(!segment.points[1].isFinite())
-          {
-            segment.points[1] = straightEnd(segment);
-            updateView(data.view, segment.points[1]);
-          }
-          break;
-
-        case TrackSegment::Type::Curve:
-          if(!segment.points[1].isFinite())
-          {
-            segment.points[1] = curveEnd(segment, 0);
-            updateView(data.view, segment.curves[0], segment.rotation);
-          }
-          break;
-
-        case TrackSegment::Type::Turnout:
-          if(!segment.points[1].isFinite())
-          {
-            segment.points[1] = straightEnd(segment);
-            updateView(data.view, segment.points[1]);
-          }
-          if(!segment.points[2].isFinite())
-          {
-            segment.points[2] = curveEnd(segment, 0);
-            updateView(data.view, segment.curves[0], segment.rotation);
-          }
-          break;
-
-        case TrackSegment::Type::TurnoutCurved:
-          if(!segment.points[1].isFinite())
-          {
-            segment.points[1] = curveEnd(segment, 0);
-            updateView(data.view, segment.curves[0], segment.rotation);
-          }
-          if(!segment.points[2].isFinite())
-          {
-            segment.points[2] = curveEnd(segment, 1);
-            updateView(data.view, segment.curves[1], segment.rotation);
-          }
-          break;
-
-        case TrackSegment::Type::Turnout3Way:
-          if(!segment.points[1].isFinite())
-          {
-            segment.points[1] = straightEnd(segment);
-            updateView(data.view, segment.points[1]);
-          }
-          if(!segment.points[2].isFinite())
-          {
-            segment.points[2] = curveEnd(segment, 0);
-            updateView(data.view, segment.curves[0], segment.rotation);
-          }
-          if(!segment.points[3].isFinite())
-          {
-            segment.points[3] = curveEnd(segment, 1);
-            updateView(data.view, segment.curves[1], segment.rotation);
-          }
-          break;
-
-        default:
-          assert(false);
-          break;
-      }
-#ifndef NDEBUG
-      for(size_t i = 1; i < getPointCount(segment.type); ++i)
-      {
-        assert(segment.points[i].isFinite()); // all points must be known now
-      }
-#endif
-
-      // Set current point:
-      assert(nextPointIndex < getPointCount(segment.type));
-      curPoint = segment.points[nextPointIndex];
-
-      // Sensors:
-      if(const uint16_t sensorAddress = obj.value("sensor_address", invalidAddress); sensorAddress != invalidAddress)
-      {
-        const uint16_t sensorChannel = obj.value("sensor_channel", defaultChannel);
-
-        for(size_t i = 0; i < data.sensors.size(); ++i)
-        {
-          if(data.sensors[i].channel == sensorChannel && data.sensors[i].address == sensorAddress)
-          {
-            segment.sensor.index = i;
-            break;
-          }
-        }
-
-        if(segment.sensor.index == invalidIndex) // new sensor
-        {
-          segment.sensor.index = data.sensors.size();
-          data.sensors.emplace_back(Sensor{sensorChannel, sensorAddress});
-          stateData.sensors.emplace_back(SensorState{0, false});
-        }
-      }
-
-      if(fromSegmentIndex != invalidIndex)
-      {
-        assert(startPointIndex < getPointCount(segment.type));
-        segment.nextSegmentIndex[startPointIndex] = fromSegmentIndex;
-
-        assert(fromPointIndex < getPointCount(data.trackSegments[fromSegmentIndex].type));
-        data.trackSegments[fromSegmentIndex].nextSegmentIndex[fromPointIndex] = data.trackSegments.size();
-      }
-
-      data.trackSegments.emplace_back(std::move(segment));
-
-      switch(startPointIndex)
-      {
-        case 0:
-          fromPointIndex = 1;
-          if(segment.type == TrackSegment::Type::Turnout || segment.type == TrackSegment::Type::TurnoutCurved)
-          {
-            if(segment.nextSegmentIndex[1] != invalidIndex)
-            {
-              fromPointIndex = 2;
-            }
-          }
-          if(segment.type == TrackSegment::Type::Turnout3Way)
-          {
-            if(segment.nextSegmentIndex[1] != invalidIndex)
-            {
-              fromPointIndex = 2;
-            }
-            if(segment.nextSegmentIndex[2] != invalidIndex)
-            {
-              fromPointIndex = 3;
-            }
-          }
-          break;
-
-        case 1:
-        case 2:
-        case 3:
-          fromPointIndex = 0;
-          break;
-
-        default:
-          assert(false);
-          break;
-      }
-
-      fromSegmentIndex = data.trackSegments.size() - 1;
-    }
-
-    // Connect open ends:
-    {
-      auto findSegment = [&data](size_t start, Point point, size_t& index)
-      {
-        const size_t count = data.trackSegments.size();
-        for(size_t i = start + 1; i < count; ++i)
-        {
-          auto& segment = data.trackSegments[i];
-          const auto pointCount = getPointCount(segment.type);
-          for(size_t j = 0; j < pointCount; ++j)
-          {
-            if(segment.nextSegmentIndex[j] == invalidIndex && pointsClose(point, segment.points[j]))
-            {
-              segment.nextSegmentIndex[j] = start;
-              index = i;
-              return;
-            }
-          }
-        }
-      };
-
-      const size_t count = data.trackSegments.size() - 1;
-      for(size_t i = 0; i < count; ++i)
-      {
-        auto& segment = data.trackSegments[i];
-        const auto pointCount = getPointCount(segment.type);
-        for(size_t j = 0; j < pointCount; ++j)
-        {
-          if(segment.nextSegmentIndex[j] == invalidIndex)
-          {
-            findSegment(i, segment.points[j], segment.nextSegmentIndex[j]);
-          }
-        }
-      }
-    }
-  }
+  loadTrackplan(world, data, stateData);
 
   if(auto vehicles = world.find("vehicles"); vehicles != world.end() && vehicles->is_array())
   {

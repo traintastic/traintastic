@@ -112,6 +112,19 @@ public:
       std::array<uint16_t, 2> addresses{{invalidAddress, invalidAddress}};
     } turnout;
 
+    struct Object
+    {
+        Point pos;
+        float rotation;
+        float position = 0.0f;
+        float lateralDiff = 0.0f;
+
+        size_t sensorIndex = invalidIndex;
+        int8_t onlyDir = 0;
+        bool dirForward = true;
+    };
+    std::vector<Object> objects;
+
     Point origin() const
     {
       return points[0];
@@ -186,6 +199,8 @@ public:
   {
     size_t occupied = 0;
     bool value = false;
+    size_t maxTime = 0;
+    size_t curTime = 0;
   };
 
   struct TurnoutState
@@ -348,7 +363,14 @@ private:
   bool isCurve(const TrackSegment& segment, size_t& curveIndex);
 
   static StaticData load(const nlohmann::json& world, StateData& stateData);
+  static void loadTrackplan(const nlohmann::json &world,
+                            StaticData &data, StateData &stateData);
+  static void loadTrackObjects(const nlohmann::json &track,
+                               StaticData &data, StateData &stateData,
+                               TrackSegment &segment);
 };
+
+
 
 constexpr Simulator::Point operator+(const Simulator::Point lhs, const Simulator::Point rhs)
 {
