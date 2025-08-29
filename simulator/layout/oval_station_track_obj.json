@@ -1,0 +1,180 @@
+{
+  "trackplan": [
+    {
+      "type": "straight",
+      "x": 150,
+      "y": 100,
+      "length": 50,
+      "sensor_address": 1
+    },
+    {
+      "id": "top",
+      "type": "straight",
+      "length": 400,
+      "sensor_address": 2,
+      "objects": [
+        {
+          "type": "sensor",
+          "pos": 20,
+          "sensor_address": 100
+        },
+        {
+          "type": "sensor",
+          "pos": -20,
+          "sensor_address": 101,
+          "allowed_dir": "forward"
+        },
+        {
+          "type": "main_signal",
+          "name": "ciao",
+          "pos": -30,
+          "allowed_dir": "forward",
+          "n_lights": 3
+        }
+      ]
+    },
+    {
+      "type": "straight",
+      "length": 50,
+      "sensor_address": 3
+    },
+    {
+      "type": "curve",
+      "radius": 100,
+      "angle": 180,
+      "sensor_address": 4
+    },
+    {
+      "type": "turnout_3way",
+      "id": "turnout_1",
+      "length": 50,
+      "radius": 200,
+      "angle": 15,
+      "address": 1
+    },
+    {
+      "type": "straight",
+      "length": 50,
+      "sensor_address": 5
+    },
+    {
+      "type": "straight",
+      "length": 300,
+      "sensor_address": 6
+    },
+    {
+      "type": "straight",
+      "length": 50,
+      "sensor_address": 7
+    },
+    {
+      "type": "turnout_3way",
+      "side": 1,
+      "length": 50,
+      "radius": 200,
+      "angle": 15,
+      "address": 3
+    },
+    {
+      "type": "curve",
+      "radius": 100,
+      "angle": 180,
+      "sensor_address": 8
+    },
+    {
+      "type": "curve",
+      "from_id": "turnout_1",
+      "radius": 200,
+      "angle": 15,
+      "sensor_address": 12
+    },
+    {
+      "type": "straight",
+      "length": 293,
+      "sensor_address": 13
+    },
+    {
+      "type": "curve",
+      "radius": 200,
+      "angle": 15,
+      "sensor_address": 14
+    },
+    {
+      "type": "curve",
+      "from_id": "turnout_1",
+      "radius": 200,
+      "angle": -15,
+      "sensor_address": 9
+    },
+    {
+      "type": "straight",
+      "length": 293,
+      "sensor_address": 10
+    },
+    {
+      "type": "curve",
+      "radius": 200,
+      "angle": -15,
+      "sensor_address": 11
+    }
+  ],
+  "vehicles": [
+    {
+      "name": "1",
+      "length": 40.0,
+      "color": "green"
+    },
+    {
+      "name": "2",
+      "length": 30.0,
+      "color": "olive"
+    },
+    {
+      "name": "3",
+      "length": 30.0,
+      "color": "olive"
+    },
+    {
+      "name": "4",
+      "length": 30.0,
+      "color": "olive"
+    },
+    {
+      "name": "5",
+      "length": 30.0,
+      "color": "olive"
+    },
+    {
+      "name": "6",
+      "length": 30.0,
+      "color": "olive"
+    }
+  ],
+  "trains": [
+    {
+      "name": "REG1",
+      "address": 3,
+      "track_id": "top",
+      "vehicles": [
+        {
+          "name": "1"
+        },
+        {
+          "name": "2"
+        },
+        {
+          "name": "3"
+        },
+        {
+          "name": "4"
+        },
+        {
+          "name": "5"
+        },
+        {
+          "name": "6"
+        }
+      ]
+    }
+  ]
+}

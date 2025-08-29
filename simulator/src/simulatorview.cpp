@@ -795,8 +795,8 @@ void SimulatorView::drawTrackObjects(QPainter *painter)
     QColor positionSensorActive = Qt::red;
     QColor positionSensorInactive = Qt::darkGreen;
 
-    const QPen signalMastPen(Qt::gray, 1.1);
-    const QPen signalLightPen(Qt::gray, 0.5);
+    const QPen signalMastPen(Qt::lightGray, 0.6);
+    const QPen signalLightPen(Qt::lightGray, 0.2);
 
     const QTransform trasf = painter->transform();
 
@@ -831,27 +831,31 @@ void SimulatorView::drawTrackObjects(QPainter *painter)
             }
             case Object::Type::MainSignal:
             {
+                const qreal mustBaseLength = 3.0;
+                const qreal lightDiameter = 2.0;
+
                 auto signIt = m_stateData.mainSignals.find(obj.signalName);
                 if(signIt == m_stateData.mainSignals.end())
                     continue;
 
                 Simulator::MainSignal *signal = signIt->second;
-                const int mastLength = 8 + 6 * (signal->lights.size() - 1);
+                const int mastLength = mustBaseLength + lightDiameter * (signal->lights.size() - 1);
 
                 painter->setPen(signalMastPen);
                 painter->drawLine(QLineF(0, obj.lateralDiff,
                                          mastLength, obj.lateralDiff));
 
                 QRectF lightRect;
-                lightRect.setSize(QSizeF(5, 5));
-                lightRect.moveCenter(QPointF(10, obj.lateralDiff));
+                lightRect.setSize(QSizeF(lightDiameter, lightDiameter));
+                lightRect.moveCenter(QPointF(mustBaseLength + lightDiameter / 2.0, obj.lateralDiff));
 
+                painter->setPen(signalLightPen);
                 for(size_t i = 0; i < signal->lights.size(); i++)
                 {
                     painter->setBrush(Qt::red);
                     painter->drawEllipse(lightRect);
 
-                    lightRect.moveLeft(lightRect.left() + 6);
+                    lightRect.moveLeft(lightRect.left() + lightDiameter);
                 }
 
                 break;

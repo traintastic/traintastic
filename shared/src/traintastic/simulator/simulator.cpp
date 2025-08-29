@@ -1325,7 +1325,7 @@ void Simulator::loadTrackObjects(const nlohmann::json &track, StaticData &data, 
                     trackObj.allowedDirection = trackObj.dirForward ?
                                                     TrackSegment::Object::AllowedDirections::Forward :
                                                     TrackSegment::Object::AllowedDirections::Backwards;
-                    trackObj.lateralDiff = -5.0; // Default on opposite side
+                    trackObj.lateralDiff = -1.7; // Default on left side
 
                     std::string_view signalName = item.value<std::string_view>("name", {});
                     if(signalName.empty())
@@ -1345,7 +1345,7 @@ void Simulator::loadTrackObjects(const nlohmann::json &track, StaticData &data, 
 
                     trackObj.signalName = signal->name;
 
-                    size_t nLights = item.value("n_lights", signal->lights.size());
+                    size_t nLights = item.value("n_lights", std::max(size_t(1), signal->lights.size()));
                     nLights = std::clamp(size_t(1), size_t(3), nLights);
                     signal->lights.resize(nLights);
 
