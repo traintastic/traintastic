@@ -209,9 +209,10 @@ size_t getSegmentAt(const Simulator::Point &point, const Simulator::StaticData &
       {
         const Simulator::Point center = segment.curves[0].center;
         const Simulator::Point diff = point - center;
-        const float distance = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+        const float radius = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+        const float distance = std::abs(radius - segment.curves[0].radius);
 
-        if (std::abs(distance - segment.curves[0].radius) > 5)
+        if (distance > 5)
           continue;
 
         if (bestIdx != Simulator::invalidIndex && distance > bestDistance)
