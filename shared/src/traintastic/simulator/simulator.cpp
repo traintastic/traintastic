@@ -450,11 +450,16 @@ void Simulator::start()
 
 void Simulator::stop()
 {
-    std::cout << "Stopping server...";
+  std::cout << "Stopping server...";
 
-  m_socketUDP.close();
+  try
+  {
+    m_socketUDP.close();
+  }
+  catch(...)
+  {
+  }
 
-  m_acceptor.cancel();
   while(!m_connections.empty())
   {
     auto connection =  m_connections.back();
@@ -462,7 +467,13 @@ void Simulator::stop()
     connection->stop();
   }
 
-  m_acceptor.close();
+  try
+  {
+    m_acceptor.close();
+  }
+  catch(...)
+  {
+  }
 
   m_tickTimer.cancel();
   if(m_thread.joinable())
