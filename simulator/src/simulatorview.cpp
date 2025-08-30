@@ -618,8 +618,8 @@ void SimulatorView::drawTracks(QPainter *painter)
         trackPenCyan.setCosmetic(true);
     }
 
-    QPen trackPenYellow = trackPenCyan;
-    trackPenYellow.setColor(Qt::darkYellow);
+    QPen trackPenMagenta = trackPenCyan;
+    trackPenMagenta.setColor(Qt::magenta);
 
     const QTransform trasf = painter->transform();
 
@@ -706,7 +706,7 @@ void SimulatorView::drawTracks(QPainter *painter)
         else
         {
             // Dark yellow contrast on white
-            painter->setPen(trackPenYellow);
+            painter->setPen(trackPenMagenta);
         }
 
         if(segment.type == Simulator::TrackSegment::Type::Turnout)
