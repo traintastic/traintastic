@@ -300,7 +300,7 @@ size_t getSegmentAt(const Simulator::Point &point, const Simulator::StaticData &
 
 void drawStraight(const Simulator::TrackSegment& segment, QPainter *painter)
 {
-  painter->drawLine(0, 0, segment.straight.length, 0);
+  painter->drawLine(QPointF(0, 0), QPointF(segment.straight.length, 0));
 }
 
 void drawCurve(const Simulator::TrackSegment& segment, size_t curveIndex, QPainter *painter)
