@@ -867,8 +867,6 @@ void SimulatorView::drawTrackObjects(QPainter *painter)
 
             painter->setTransform(trasf);
         }
-
-        idx++;
     }
 }
 
