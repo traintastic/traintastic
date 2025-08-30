@@ -387,7 +387,7 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
         QMetaObject::invokeMethod(this, "tick", Qt::QueuedConnection);
       }));
 
-    m_simulator->enableServer();
+    m_simulator->enableServer(false);
     m_simulator->start();
 
     for(const auto &imgRef : m_simulator->staticData.images)

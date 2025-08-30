@@ -29,6 +29,7 @@ SimulatorConnection::SimulatorConnection(std::shared_ptr<Simulator> simulator, b
   , m_socket{std::move(socket)}
   , m_connectionId(connId)
 {
+    m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
 }
 
 void SimulatorConnection::start()

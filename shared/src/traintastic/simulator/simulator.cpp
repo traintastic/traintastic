@@ -25,6 +25,7 @@
 #include "protocol.hpp"
 
 #include <bit>
+#include <iostream>
 
 void Simulator::updateView(Simulator::StaticData::View& view, Simulator::Point point)
 {
@@ -348,18 +349,7 @@ Simulator::Simulator(const nlohmann::json& world)
   , m_acceptor{m_ioContext}
   , m_socketUDP{m_ioContext}
 {
-    boost::system::error_code ec;
-    m_socketUDP.open(boost::asio::ip::udp::v4(), ec);
-    if(ec)
-        assert(false);
 
-    m_socketUDP.set_option(boost::asio::socket_base::reuse_address(true), ec);
-    if(ec)
-        assert(false);
-
-    m_socketUDP.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), defaultPort), ec);
-    if(ec)
-        assert(false);
 }
 
 Simulator::~Simulator()
@@ -414,6 +404,8 @@ void Simulator::start()
     {
       if(m_serverEnabled)
       {
+        std::cout << "Starting server..." << std::endl;
+
         boost::system::error_code ec;
         boost::asio::ip::tcp::endpoint endpoint(m_serverLocalHostOnly ? boost::asio::ip::address_v4::loopback() : boost::asio::ip::address_v4::any(), m_serverPort);
 
@@ -422,6 +414,22 @@ void Simulator::start()
         m_acceptor.bind(endpoint, ec);
 
         m_acceptor.listen(5, ec);
+
+        m_socketUDP.open(boost::asio::ip::udp::v4(), ec);
+        if(ec)
+            assert(false);
+
+        m_socketUDP.set_option(boost::asio::socket_base::reuse_address(true), ec);
+        if(ec)
+            assert(false);
+
+        m_socketUDP.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), defaultPort), ec);
+        if(ec)
+        {
+            std::cout << "UDP cannot bind" << std::endl;
+        }
+
+        std::cout << ec.message() << " END" << std::endl << std::flush;
 
         doReceive();
         accept();
@@ -433,6 +441,8 @@ void Simulator::start()
 
 void Simulator::stop()
 {
+    std::cout << "Stopping server...";
+
   m_socketUDP.close();
 
   m_acceptor.cancel();
@@ -442,6 +452,8 @@ void Simulator::stop()
     m_connections.pop_back();
     connection->stop();
   }
+
+  m_acceptor.close();
 
   m_tickTimer.cancel();
   if(m_thread.joinable())
@@ -798,6 +810,10 @@ void Simulator::doReceive()
                             std::swap(b[0], b[1]);
                             response[2] = *reinterpret_cast<uint16_t *>(b);
                         }
+
+                        std::cout << "UDP Sending to: " << m_remoteEndpoint.address().to_string()
+                                                        << " port: " << m_remoteEndpoint.port()
+                                                        << std::endl << std::flush;
 
                         std::memcpy(&response, &ResponseMessage, sizeof(ResponseMessage));
                         m_socketUDP.async_send_to(boost::asio::buffer(response, sizeof(response)), m_remoteEndpoint,
