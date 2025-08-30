@@ -350,10 +350,16 @@ Simulator::Simulator(const nlohmann::json& world)
 {
     boost::system::error_code ec;
     m_socketUDP.open(boost::asio::ip::udp::v4(), ec);
+    if(ec)
+        assert(false);
 
     m_socketUDP.set_option(boost::asio::socket_base::reuse_address(true), ec);
+    if(ec)
+        assert(false);
 
     m_socketUDP.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), defaultPort), ec);
+    if(ec)
+        assert(false);
 }
 
 Simulator::~Simulator()
@@ -777,7 +783,7 @@ void Simulator::doReceive()
             if(!ec)
             {
                 const char *recvMsg = reinterpret_cast<char*>(m_udpBuffer.data());
-                if(bytesReceived == sizeof(RequestMessage) && std::memcmp(recvMsg, &RequestMessage, bytesReceived) == 0)
+                if(bytesReceived >= sizeof(RequestMessage) && std::memcmp(recvMsg, &RequestMessage, sizeof(RequestMessage)) == 0)
                 {
                     if(!m_serverLocalHostOnly || m_remoteEndpoint.address().is_loopback())
                     {
@@ -795,9 +801,10 @@ void Simulator::doReceive()
 
                         std::memcpy(&response, &ResponseMessage, sizeof(ResponseMessage));
                         m_socketUDP.async_send_to(boost::asio::buffer(response, sizeof(response)), m_remoteEndpoint,
-                                                  [this](const boost::system::error_code& /*ec*/, std::size_t /*bytesTransferred*/)
+                                                  [this](const boost::system::error_code& ec2, std::size_t bytesTransferred)
                                                   {
-                                                      doReceive();
+                                                     assert(!ec2 && bytesTransferred == 6);
+                                                     doReceive();
                                                   });
                         return;
                     }
