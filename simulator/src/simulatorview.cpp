@@ -791,7 +791,13 @@ void SimulatorView::drawTrackObjects(QPainter *painter)
         for(const Object& obj : segment.objects)
         {
             painter->translate(obj.pos.x, obj.pos.y);
-            painter->rotate(qRadiansToDegrees(obj.rotation + obj.dirForward ? 0 : pi));
+
+            float objRot = obj.rotation;
+            if(!obj.dirForward)
+                objRot += pi;
+
+            const qreal deg = qRadiansToDegrees(objRot);
+            painter->rotate(deg);
 
             switch (obj.type)
             {

@@ -1242,6 +1242,12 @@ void Simulator::loadTrackObjects(const nlohmann::json &track, StaticData &data, 
                     trackObj.pos.y = curve.center.y - curve.radius * std::cos(angle);
                 }
 
+                while(trackObj.rotation > 2 * pi)
+                    trackObj.rotation -= 2 * pi;
+
+                while(trackObj.rotation < 0)
+                    trackObj.rotation += 2 * pi;
+
                 trackObj.dirForward = item.value("dir", true);
 
                 std::string_view type = item.value<std::string_view>("type", {});
@@ -1324,9 +1330,6 @@ void Simulator::loadTrackObjects(const nlohmann::json &track, StaticData &data, 
                     trackObj.allowedDirection = TrackSegment::Object::AllowedDirections::Forward;
                 if(allowedDir == "backwards")
                     trackObj.allowedDirection = TrackSegment::Object::AllowedDirections::Backwards;
-
-                if(!trackObj.dirForward)
-                    trackObj.lateralDiff *= -1; // Switch side
 
                 trackObj.lateralDiff = item.value("lat_delta", trackObj.lateralDiff);
 
