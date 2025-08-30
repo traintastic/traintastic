@@ -368,6 +368,9 @@ public:
   void applyTrainSpeedDelta(Train *train, float delta);
   void stopAllTrains();
 
+  bool trainExists(const std::string_view &name) const;
+  bool segmentOccupied(size_t segmentIdx) const;
+
   void setTurnoutState(size_t segmentIndex, TurnoutState::State state);
   void toggleTurnoutState(size_t segmentIndex, bool setUnknown);
 
@@ -376,6 +379,24 @@ public:
   void removeConnection(const std::shared_ptr<SimulatorConnection>& connection);
 
   inline std::recursive_mutex& stateMutex() { return m_stateMutex; }
+
+  static bool addTrain(const std::string_view &name,
+                DecoderProtocol proto, uint16_t addr,
+                const std::vector<Train::VehicleItem> &vehicles, size_t segmentIndex,
+                const StaticData &data, StateData &stateData);
+
+  bool addTrain(const std::string_view& name, DecoderProtocol proto, uint16_t addr,
+                           const std::vector<Train::VehicleItem> &vehicles, size_t segmentIndex)
+  {
+      std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+      return addTrain(name, proto, addr, vehicles,
+                      segmentIndex, staticData, m_stateData);
+  }
+
+  bool removeTrain(const std::string_view& name, bool removeWagons);
+
+  Vehicle *addVehicle(const std::string_view &baseName, float length, Color color);
+  bool removeVehicle(Vehicle *vehicle);
 
 private:
   constexpr static auto tickRate = std::chrono::milliseconds(1000 / 30);
@@ -422,7 +443,6 @@ private:
                                StaticData &data, StateData &stateData,
                                TrackSegment &segment);
 };
-
 
 
 constexpr Simulator::Point operator+(const Simulator::Point lhs, const Simulator::Point rhs)

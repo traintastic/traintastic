@@ -579,6 +579,26 @@ void Simulator::stopAllTrains()
   }
 }
 
+bool Simulator::trainExists(const std::string_view &name) const
+{
+    std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+    return m_stateData.trains.contains(name);
+}
+
+bool Simulator::segmentOccupied(size_t segmentIdx) const
+{
+    if(segmentIdx >= staticData.trackSegments.size())
+        return false;
+
+    const auto& segment = staticData.trackSegments.at(segmentIdx);
+    if(!segment.hasSensor())
+        return false;
+
+    std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+    const auto &sensor = m_stateData.sensors.at(segment.sensor.index);
+    return sensor.value;
+}
+
 void Simulator::setTurnoutState(size_t segmentIndex, TurnoutState::State state)
 {
   using Type = TrackSegment::Type;
@@ -1916,13 +1936,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         }
       }
 
-      std::unique_ptr<Train> train(new Train);
-      train->name = name;
-      train->protocol = stringToEnum<DecoderProtocol>(object.value<std::string_view>("protocol", {})).value_or(DecoderProtocol::None);
-      train->address = object.value("address", train->address);
-
-      float lastDistance = 0;
-
+      std::vector<Train::VehicleItem> vehicles;
       for(const auto& vehicleObj : object["vehicles"])
       {
         if(!vehicleObj.is_object())
@@ -1941,62 +1955,18 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         if(!vehicle || vehicle->activeTrain)
           continue;
 
-        const float distance = train->vehicles.empty() ? 0.0f : lastDistance - data.trainCouplingLength;
-        train->length += vehicle->length + (train->vehicles.empty() ? 0.0f : data.trainCouplingLength);
-
         Train::VehicleItem item{vehicle, false};
         item.reversed = vehicleObj.value("reversed", item.reversed);
 
-        auto& vehicleState = vehicle->state;
-        vehicleState.front.segmentIndex = segmentIndex;
-        vehicleState.front.distance = distance;
-        vehicleState.rear.segmentIndex = segmentIndex;
-        vehicleState.rear.distance = distance - vehicle->length;
-
-        lastDistance = vehicleState.rear.distance;
-        if(item.reversed)
-        {
-          std::swap(vehicleState.front, vehicleState.rear);
-        }
-
-        train->vehicles.push_back(item);
+        vehicles.push_back(item);
       }
 
-      if(!train->vehicles.empty())
-      {
-        // center train in segment and mark it occupied:
-        auto& segment = data.trackSegments[segmentIndex];
-        if(segment.sensor.index != invalidIndex)
-        {
-          auto& sensor = stateData.sensors[segment.sensor.index];
-          sensor.occupied = train->vehicles.size() * 2;
-          sensor.value = (sensor.occupied != 0);
-        }
-
-        const float segmentLength = getSegmentLength(segment, stateData);
-        const float move = segmentLength - (segmentLength - train->length) / 2;
-        for(const auto& vehicleItem : train->vehicles)
-        {
-          auto* vehicle = vehicleItem.vehicle;
-          if(vehicleItem.reversed)
-          {
-            vehicle->state.front.distance -= move;
-            vehicle->state.rear.distance -= move;
-          }
-          else
-          {
-            vehicle->state.front.distance += move;
-            vehicle->state.rear.distance += move;
-          }
-
-          vehicle->activeTrain = train.get();
-        }
-
-        if(train->speedMax < 0.0001)
-          train->speedMax = defaultSpeedTickRate * data.worldScale;
-
-        stateData.trains.insert({train->name, train.release()});
-      }
+      addTrain(name,
+               stringToEnum<DecoderProtocol>(object.value<std::string_view>("protocol", {})).value_or(DecoderProtocol::None),
+               object.value("address", 3),
+               vehicles,
+               segmentIndex,
+               data, stateData);
     }
   }
 
@@ -2097,8 +2067,150 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
   return data;
 }
 
+bool Simulator::addTrain(const std::string_view& name, DecoderProtocol proto, uint16_t addr,
+                         const std::vector<Train::VehicleItem> &vehicles, size_t segmentIndex,
+                         const StaticData& data, StateData &stateData)
+{
+    if(name.empty() || stateData.trains.contains(name))
+      return false;
+
+    std::unique_ptr<Train> train(new Train);
+    train->name = name;
+    train->protocol = proto;
+    train->address = addr;
+
+    float lastDistance = 0;
+
+    for(const auto& item : vehicles)
+    {
+      if(!item.vehicle || item.vehicle->activeTrain)
+        continue;
+
+      const float distance = train->vehicles.empty() ? 0.0f : lastDistance - data.trainCouplingLength;
+      train->length += item.vehicle->length + (train->vehicles.empty() ? 0.0f : data.trainCouplingLength);
+
+      auto& vehicleState = item.vehicle->state;
+      vehicleState.front.segmentIndex = segmentIndex;
+      vehicleState.front.distance = distance;
+      vehicleState.rear.segmentIndex = segmentIndex;
+      vehicleState.rear.distance = distance - item.vehicle->length;
+
+      lastDistance = vehicleState.rear.distance;
+      if(item.reversed)
+      {
+        std::swap(vehicleState.front, vehicleState.rear);
+      }
+
+      item.vehicle->activeTrain = train.get();
+      train->vehicles.push_back(item);
+    }
+
+    if(!train->vehicles.empty())
+    {
+      // center train in segment and mark it occupied:
+      auto& segment = data.trackSegments[segmentIndex];
+      if(segment.sensor.index != invalidIndex)
+      {
+        auto& sensor = stateData.sensors[segment.sensor.index];
+        sensor.occupied = train->vehicles.size() * 2;
+        sensor.value = (sensor.occupied != 0);
+      }
+
+      const float segmentLength = getSegmentLength(segment, stateData);
+      if(train->length >= segmentLength)
+          return false;
+
+      const float move = segmentLength - (segmentLength - train->length) / 2;
+      for(const auto& vehicleItem : train->vehicles)
+      {
+        auto* vehicle = vehicleItem.vehicle;
+        if(vehicleItem.reversed)
+        {
+          vehicle->state.front.distance -= move;
+          vehicle->state.rear.distance -= move;
+        }
+        else
+        {
+          vehicle->state.front.distance += move;
+          vehicle->state.rear.distance += move;
+        }
+      }
+
+      if(train->speedMax < 0.0001)
+        train->speedMax = defaultSpeedTickRate * data.worldScale;
+
+      stateData.trains.insert({train->name, train.release()});
+
+      return true;
+    }
+
+    return false;
+}
+
+bool Simulator::removeTrain(const std::string_view &name, bool removeWagons)
+{
+    std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+
+    auto it = m_stateData.trains.find(name);
+    if(it == m_stateData.trains.end())
+        return false;
+
+    Train *train = it->second;
+    for(const auto &item : train->vehicles)
+    {
+        item.vehicle->activeTrain = nullptr;
+        if(removeWagons)
+            removeVehicle(item.vehicle);
+    }
+    train->vehicles.clear();
+
+    m_stateData.trains.erase(it);
+    return true;
+}
+
+Simulator::Vehicle *Simulator::addVehicle(const std::string_view &baseName, float length, Color color)
+{    
+    std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+
+    Vehicle *vehicle = new Vehicle;
+    vehicle->length = length;
+    vehicle->color = color;
+
+    size_t num = 0;
+    vehicle->name = baseName;
+    while(m_stateData.vehicles.contains(vehicle->name))
+    {
+        num++;
+        vehicle->name = baseName;
+        vehicle->name += '_';
+        vehicle->name += std::to_string(num);
+    }
+
+    m_stateData.vehicles.insert({vehicle->name, vehicle});
+    return vehicle;
+}
+
+bool Simulator::removeVehicle(Vehicle *vehicle)
+{
+    std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+    auto it = m_stateData.vehicles.find(vehicle->name);
+    if(it == m_stateData.vehicles.end())
+        return false;
+
+    if(it->second != vehicle)
+        return false;
+
+    if(vehicle->activeTrain)
+        return false;
+
+    m_stateData.vehicles.erase(it);
+    return true;
+}
+
 void Simulator::sendInitialState(const std::shared_ptr<SimulatorConnection> &connection)
 {
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+
   // Send current sensor state
   const size_t count = staticData.sensors.size();
   for(size_t i = 0; i < count; ++i)

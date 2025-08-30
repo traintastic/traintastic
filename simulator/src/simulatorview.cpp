@@ -1163,6 +1163,9 @@ void SimulatorView::contextMenuEvent(QContextMenuEvent *e)
 
   QMenu *m = new QMenu(this);
   QAction *copySegData = m->addAction(tr("Copy segment data"));
+  copySegData->setEnabled(!m_stateData.powerOn);
+  copySegData->setVisible(!m_stateData.powerOn);
+
   QAction *result = m->exec(e->globalPos());
   if(result == copySegData)
   {
