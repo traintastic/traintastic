@@ -184,7 +184,9 @@ void MainWindow::load(const QString& filename)
   {
     try
     {
-      m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString())));
+      m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString(),
+                                                                             nullptr,
+                                                                             true, true)));
     }
     catch(std::exception &e)
     {
@@ -204,7 +206,9 @@ void MainWindow::loadExtraImages(const QString& filename)
   QFile file(filename);
   if(file.open(QIODeviceBase::ReadOnly))
   {
-    m_view->loadExtraImages(nlohmann::json::parse(file.readAll().toStdString()),
+    m_view->loadExtraImages(nlohmann::json::parse(file.readAll().toStdString(),
+                                                  nullptr,
+                                                  true, true),
                             filename,
                             imageNames);
   }
