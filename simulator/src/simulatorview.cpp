@@ -770,6 +770,21 @@ void SimulatorView::drawTracks(QPainter *painter)
         painter->setTransform(trasf);
         idx++;
     }
+
+    if(!m_stateData.powerOn && m_hoverSegmentIdx != Simulator::invalidIndex)
+    {
+        const Simulator::TrackSegment& segment = m_simulator->staticData.trackSegments[m_hoverSegmentIdx];
+        if(segment.type == Simulator::TrackSegment::Type::Curve)
+        {
+            // Draw hovered curve center on top
+            QPen p = trackPenGreen;
+            p.setWidthF(8);
+            painter->setPen(p);
+
+            const Simulator::Point c = segment.curves[0].center;
+            painter->drawPoint(QPointF(c.x, c.y));
+        }
+    }
 }
 
 void SimulatorView::drawTrackObjects(QPainter *painter)
