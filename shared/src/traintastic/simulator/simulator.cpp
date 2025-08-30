@@ -376,6 +376,15 @@ Simulator::~Simulator()
         it = m_stateData.vehicles.erase(it);
       }
     }
+
+    {
+        auto it = m_stateData.mainSignals.begin();
+        while(it != m_stateData.mainSignals.end())
+        {
+            delete it->second;
+            it = m_stateData.mainSignals.erase(it);
+        }
+    }
   }
 }
 
