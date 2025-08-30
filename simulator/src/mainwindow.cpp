@@ -26,6 +26,9 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QFileInfo>
+#include <QStatusBar>
+#include <QLabel>
+#include <QKeyEvent>
 #include "simulatorview.hpp"
 #include <version.hpp>
 #include <traintastic/copyright.hpp>
@@ -39,8 +42,6 @@
 
 void convertJS()
 {
-    constexpr auto pi = std::numbers::pi_v<double>;
-
     QFile f("/home/filippo/Documenti/SVF - PADOVA/CIRCUITI/Padova_sim/piazzale/um.json");
     f.open(QFile::ReadOnly);
 
@@ -78,9 +79,37 @@ void convertJS()
     f.close();
 }
 
+namespace
+{
+
+QString formatDuration(float value)
+{
+  if(value < 1e-3f)
+  {
+    return QString(u8"%1 \u00B5s").arg(value * 1e6f, 0, 'f', 0);
+  }
+  else if(value < 1e-2f)
+  {
+    return QString("%1 ms").arg(value * 1e3f, 0, 'f', 2);
+  }
+  else if(value < 1e-1f)
+  {
+    return QString("%1 ms").arg(value * 1e3f, 0, 'f', 1);
+  }
+  return QString("%1 ms").arg(value * 1e3f, 0, 'f', 0);
+}
+
+float mean(const std::vector<float>& values)
+{
+  return std::accumulate(values.begin(), values.end(), 0.0f) / values.size();
+}
+
+}
+
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
   , m_view{new SimulatorView(this)}
+  , m_tickActive{new QLabel(this)}
 {
   //convertJS();
 
@@ -127,6 +156,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     menu->addAction("Quit", this, &MainWindow::close);
 
     menu = menuBar()->addMenu("View");
+    m_actFullScreen = menu->addAction("Fullscreen", this, &MainWindow::toggleFullScreen);
+    m_actFullScreen->setCheckable(true);
+    m_actFullScreen->setShortcut(Qt::Key_F11);
     act = menu->addAction("Show track occupancy");
     act->setCheckable(true);
     act->setChecked(m_view->showTrackOccupancy());
@@ -172,6 +204,23 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     addToolBar(Qt::TopToolBarArea, toolbar);
   }
 
+  // Status bar:
+  {
+    auto* statusBar = new QStatusBar(this);
+    statusBar->addPermanentWidget(m_tickActive);
+    setStatusBar(statusBar);
+  }
+
+  connect(m_view, &SimulatorView::tickActiveChanged,
+    [this](float value)
+    {
+      m_tickActiveFilter.push_back(value);
+      if(m_tickActiveFilter.size() >= 15)
+      {
+        m_tickActive->setText(formatDuration(mean(m_tickActiveFilter)));
+        m_tickActiveFilter.clear();
+      }
+    });
   connect(m_view, &SimulatorView::powerOnChanged, m_power, &QAction::setChecked);
 }
 
@@ -234,7 +283,13 @@ void MainWindow::loadExtraImages(const QString& filename)
 
 void MainWindow::keyPressEvent(QKeyEvent *ev)
 {
-  if(ev->modifiers() == Qt::ControlModifier && ev->key() == Qt::Key_L)
+  if(ev->key() == Qt::Key_F11) // Once fullscreen the QAction does't receive the key press because it is hidden.
+  {
+    m_actFullScreen->setChecked(!m_actFullScreen->isChecked());
+    toggleFullScreen();
+    return;
+  }
+  else if(ev->modifiers() == Qt::ControlModifier && ev->key() == Qt::Key_L)
   {
     // Reload if not power on
     if(windowFilePath().isEmpty() || m_power->isChecked())
@@ -250,7 +305,50 @@ void MainWindow::keyPressEvent(QKeyEvent *ev)
 
     return;
   }
+
   QMainWindow::keyPressEvent(ev);
+}
+
+void MainWindow::setFullScreen(bool value)
+{
+  m_actFullScreen->setChecked(value);
+  toggleFullScreen();
+}
+
+void MainWindow::toggleFullScreen()
+{
+  if(m_actFullScreen->isChecked() == isFullScreen())
+    return;
+
+  if(m_actFullScreen->isChecked())
+  {
+    m_beforeFullScreenGeometry = saveGeometry();
+    showFullScreen();
+    menuBar()->hide();
+    for (auto* toolbar : findChildren<QToolBar*>())
+    {
+      toolbar->hide();
+    }
+    statusBar()->hide();
+  }
+  else
+  {
+    showNormal();
+    if(!m_beforeFullScreenGeometry.isEmpty())
+    {
+      restoreGeometry(m_beforeFullScreenGeometry);
+    }
+    else
+    {
+      showMaximized();
+    }
+    menuBar()->show();
+    for (auto* toolbar : findChildren<QToolBar*>())
+    {
+      toolbar->show();
+    }
+    statusBar()->show();
+  }
 }
 
 void MainWindow::showAbout()

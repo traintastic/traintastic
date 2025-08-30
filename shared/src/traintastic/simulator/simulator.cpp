@@ -74,8 +74,8 @@ void Simulator::updateView(Simulator::StaticData::View& view, const Simulator::T
   }
 
   // Check critical angles (0, 90, 180, 270 degrees):
-  const int start = std::ceil(startAngle / (0.5f * pi));
-  const int end = std::floor(endAngle / (0.5f * pi));
+  const int start = static_cast<int>(std::ceil(startAngle / (0.5f * pi)));
+  const int end = static_cast<int>(std::floor(endAngle / (0.5f * pi)));
 
   for(int i = start; i <= end; ++i)
   {
@@ -469,10 +469,13 @@ void Simulator::stop()
 
   try
   {
-    m_acceptor.close();
+    boost::system::error_code ec;
+    m_acceptor.cancel(ec);
+    m_acceptor.close(ec);
   }
-  catch(...)
+  catch(std::exception &e)
   {
+      std::cout << "Error while closing TCP: " << e.what() << std::endl << std::flush;
   }
 
   m_tickTimer.cancel();

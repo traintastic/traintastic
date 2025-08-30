@@ -89,12 +89,14 @@ public:
   void setThinTracks(bool newThinTracks);
 
 signals:
+  void tickActiveChanged(float value);
   void powerOnChanged(bool value);
 
 protected:
   void initializeGL() override;
   void resizeGL(int w, int h) override;
   void paintGL() override;
+  void resizeEvent(QResizeEvent* event) override;
 
   bool event(QEvent *e) override;
   void keyPressEvent(QKeyEvent* event) override;
@@ -142,8 +144,10 @@ private:
   float m_cameraX = 0.0f;
   float m_cameraY = 0.0f;
   float m_zoomLevel = 1.0f;
+
   bool m_showTrackOccupancy = true;
   bool m_thinTracks = false;
+  bool m_zoomFit = false;
 
   QPoint m_leftClickMousePos;
   QPoint m_rightMousePos;

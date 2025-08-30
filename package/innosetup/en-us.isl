@@ -8,7 +8,4 @@ firewall_allow_traintastic_client=Allow Traintastic client
 add_firewall_rule_traintastic_client=Add firewall rule for Traintastic client
 firewall_allow_wlanmaus_z21=Allow WLANmaus/Z21
 add_firewall_rule_wlanmaus_z21=Add firewall rule for WLANmaus/Z21
-firewall_allow_traintastic_simulator=Allow Traintastic simulator
-add_firewall_rule_traintastic_simualtor=Add firewall rule for Traintastic simulator
-simulator=Simulator
-simulator_desc=For training and development only.
+

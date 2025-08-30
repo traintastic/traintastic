@@ -10,7 +10,6 @@
 #define URL "https://traintastic.org"
 #define ServerExeName "traintastic-server.exe"
 #define ClientExeName "traintastic-client.exe"
-#define SimulatorExeName "traintastic-simulator.exe"
 
 #define CompanySubKey "SOFTWARE\traintastic.org"
 #define AppSubKey CompanySubKey + "\Traintastic"
@@ -51,7 +50,6 @@ Name: fr; MessagesFile: "compiler:Languages\French.isl,fr-fr.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: "firewall_traintastic"; Description: "{cm:firewall_allow_traintastic_client}"; GroupDescription: "{cm:windows_firewall}"; Check: InstallServer
 Name: "firewall_wlanmaus"; Description: "{cm:firewall_allow_wlanmaus_z21}"; GroupDescription: "{cm:windows_firewall}"; Check: InstallServer
-Name: "firewall_traintastic_simulator"; Description: "{cm:firewall_allow_traintastic_simulator}"; GroupDescription: "{cm:windows_firewall}"; Check: InstallSimulator
 
 [Files]
 ; Server
@@ -66,16 +64,6 @@ Source: "..\..\client\build\Release\networkinformation\*.dll"; DestDir: "{app}\c
 Source: "..\..\client\build\Release\platforms\*.dll"; DestDir: "{app}\client\platforms"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\styles\*.dll"; DestDir: "{app}\client\styles"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\tls\*.dll"; DestDir: "{app}\client\tls"; Flags: ignoreversion; Check: InstallClient
-; Simulator
-Source: "..\..\simulator\build\Release\{#SimulatorExeName}"; DestDir: "{app}\simulator"; Flags: ignoreversion; Check: InstallSimulator
-Source: "..\..\simulator\build\Release\*.dll"; DestDir: "{app}\simulator"; Flags: ignoreversion; Check: InstallSimulator
-Source: "..\..\simulator\build\Release\generic\*.dll"; DestDir: "{app}\simulator\generic"; Flags: ignoreversion; Check: InstallSimulator
-Source: "..\..\simulator\build\Release\iconengines\*.dll"; DestDir: "{app}\simulator\iconengines"; Flags: ignoreversion; Check: InstallSimulator
-Source: "..\..\simulator\build\Release\imageformats\*.dll"; DestDir: "{app}\simulator\imageformats"; Flags: ignoreversion; Check: InstallSimulator
-Source: "..\..\simulator\build\Release\networkinformation\*.dll"; DestDir: "{app}\simulator\networkinformation"; Flags: ignoreversion; Check: InstallSimulator
-Source: "..\..\simulator\build\Release\platforms\*.dll"; DestDir: "{app}\simulator\platforms"; Flags: ignoreversion; Check: InstallSimulator
-Source: "..\..\simulator\build\Release\styles\*.dll"; DestDir: "{app}\simulator\styles"; Flags: ignoreversion; Check: InstallSimulator
-Source: "..\..\simulator\build\Release\tls\*.dll"; DestDir: "{app}\simulator\tls"; Flags: ignoreversion; Check: InstallSimulator
 ; Shared
 Source: "..\..\shared\translations\*.lang"; DestDir: "{commonappdata}\traintastic\translations"; Flags: ignoreversion;
 ; Manual
@@ -84,8 +72,6 @@ Source: "..\..\manual\build.luadoc\*"; DestDir: "{commonappdata}\traintastic\man
 ; LNCV XML
 Source: "..\..\shared\data\lncv\xml\*.xml"; DestDir: "{commonappdata}\traintastic\lncv"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\shared\data\lncv\xml\lncvmodule.xsd"; DestDir: "{commonappdata}\traintastic\lncv"; Flags: ignoreversion; Check: InstallClient
-; Simulator layouts
-Source: "..\..\simulator\layout\*.json"; DestDir: "{commonappdata}\traintastic\layout"; Flags: ignoreversion; Check: InstallSimulator
 ; VC++ redistributable runtime. Extracted by VC2019RedistNeedsInstall(), if needed.
 Source: "..\..\client\build\Release\vc_redist.x64.exe"; DestDir: {tmp}; Flags: dontcopy
 
@@ -94,7 +80,6 @@ Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "Installing VC++ redistributable
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (TCP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=TCP localport=5740 action=allow"; StatusMsg: "{cm:add_firewall_rule_traintastic_client} (TCP)"; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (UDP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=5740 action=allow"; StatusMsg: "{cm:add_firewall_rule_traintastic_client} (UDP)"; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (WLANmaus/Z21)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=21105 action=allow"; StatusMsg: "{cm:add_firewall_rule_wlanmaus_z21}"; Flags: runhidden; Check: InstallServer; Tasks: firewall_wlanmaus
-Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic simulator (TCP)"" dir=in program=""{app}\simulator\{#SimulatorExeName}"" protocol=TCP localport=5741 action=allow"; StatusMsg: "{cm:add_firewall_rule_traintastic_simualtor} (TCP)"; Flags: runhidden; Check: InstallSimulator; Tasks: firewall_traintastic_simulator
 
 [InstallDelete]
 ; Delete old translation files (TODO: remove in 0.4)
@@ -128,7 +113,6 @@ Type: files; Name: "{app}\client\imageformats\qtga.dll"
 Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic server (TCP)"""; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
 Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic server (UDP)"""; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
 Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic server (WLANmaus/Z21)"""; Flags: runhidden; Check: InstallServer; Tasks: firewall_wlanmaus
-Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic simulator (TCP)"""; Flags: runhidden; Check: InstallSimulator; Tasks: firewall_traintastic_simulator
 
 [Icons]
 ; Server
@@ -137,8 +121,6 @@ Name: "{autodesktop}\{#Name} server"; Filename: "{app}\server\{#ServerExeName}";
 ; Client
 Name: "{autoprograms}\{#Name}\{#Name} client"; Filename: "{app}\client\{#ClientExeName}"; Check: InstallClient
 Name: "{autodesktop}\{#Name} client"; Filename: "{app}\client\{#ClientExeName}"; Tasks: desktopicon; Check: InstallClient
-; Simulator
-Name: "{autoprograms}\{#Name}\{#Name} simulator"; Filename: "{app}\simulator\{#SimulatorExeName}"; Check: InstallSimulator
 
 [Registry]
 Root: HKLM; Subkey: "{#CompanySubKey}"; Flags: uninsdeletekeyifempty
@@ -152,13 +134,11 @@ const
   ComponentsValueName = 'Components';
   ComponentServer = $1;
   ComponentClient = $2;
-  ComponentSimulator = $4;
 var
   Components : DWORD;
   ComponentsPage : TWizardPage;
   ClientAndServerRadioButton : TRadioButton;
   ClientOnlyRadioButton : TRadioButton;
-  SimulatorCheckBox : TCheckBox;
 
 function InstallClient : Boolean;
 begin
@@ -168,11 +148,6 @@ end;
 function InstallServer : Boolean;
 begin
   Result := (Components and ComponentClient) <> 0;
-end;
-
-function InstallSimulator : Boolean;
-begin
-  Result := (Components and ComponentSimulator) <> 0;
 end;
 
 procedure RegWriteTraintasticComponents(Value: DWORD);
@@ -213,14 +188,10 @@ begin
     else if ClientOnlyRadioButton.Checked then
       Components := Components or ComponentClient;
     
-    if SimulatorCheckBox.Checked then
-      Components := Components or ComponentSimulator;
-    
     RegWriteTraintasticComponents(Components);
   end;
   Result := True;
 end;
-
 procedure InitializeWizard;
 var
   Lbl: TLabel;
@@ -258,22 +229,6 @@ begin
   Lbl := TLabel.Create(ComponentsPage);
   Lbl.Caption := ExpandConstant('{cm:client_only_desc}');
   Lbl.Top := ClientOnlyRadioButton.Top + ClientOnlyRadioButton.Height;
-  Lbl.Left := ScaleX(17);
-  Lbl.Height := ScaleY(23);
-  Lbl.Parent := ComponentsPage.Surface;
-  
-  SimulatorCheckBox := TNewCheckBox.Create(ComponentsPage);
-  SimulatorCheckBox.Caption := ExpandConstant('{cm:simulator}');
-  SimulatorCheckBox.Checked := InstallSimulator;
-  SimulatorCheckBox.Font.Style := [fsBold];
-  SimulatorCheckBox.Top := Lbl.Top + Lbl.Height + ScaleY(30);
-  SimulatorCheckBox.Height := ScaleY(23);
-  SimulatorCheckBox.Width := ComponentsPage.SurfaceWidth;
-  SimulatorCheckBox.Parent := ComponentsPage.Surface;
-  
-  Lbl := TLabel.Create(ComponentsPage);
-  Lbl.Caption := ExpandConstant('{cm:simulator_desc}');
-  Lbl.Top := SimulatorCheckBox.Top + SimulatorCheckBox.Height;
   Lbl.Left := ScaleX(17);
   Lbl.Height := ScaleY(23);
   Lbl.Parent := ComponentsPage.Surface;

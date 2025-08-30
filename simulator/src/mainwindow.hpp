@@ -23,7 +23,9 @@
 #define TRAINTASTIC_SIMULATOR_MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <vector>
 
+class QLabel;
 class SimulatorView;
 
 class MainWindow : public QMainWindow
@@ -32,19 +34,25 @@ public:
   explicit MainWindow(QWidget* parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
   void load(const QString& filename);
+  void setFullScreen(bool value);
 
   void loadExtraImages(const QString &filename);
+
+  void toggleFullScreen();
+  void showAbout();
 
 protected:
   void keyPressEvent(QKeyEvent *ev) override;
 
 private:
   SimulatorView* m_view;
+  QAction* m_actFullScreen;
+  QByteArray m_beforeFullScreenGeometry;
   QAction* m_power;
+  QLabel* m_tickActive;
+  std::vector<float> m_tickActiveFilter;
 
   QMenu *imagesMenu;
-
-  void showAbout();
 };
 
 #endif

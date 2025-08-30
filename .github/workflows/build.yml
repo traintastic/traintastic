@@ -620,7 +620,7 @@ jobs:
   package-innosetup:
     name: package innosetup
     runs-on: windows-latest
-    needs: [build-client, build-server, build-simulator, build-lang, build-manual, build-manual-lua]
+    needs: [build-client, build-server, build-lang, build-manual, build-manual-lua]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -660,12 +660,6 @@ jobs:
         name: traintastic-manual-lua
         path: ${{github.workspace}}/manual/build.luadoc
 
-    - name: "Download artifact: traintastic-simulator"
-      uses: actions/download-artifact@v4
-      with:
-        name: traintastic-simulator-windows
-        path: ${{github.workspace}}/simulator/build/Release
-
     - name: Build installer
       shell: cmd
       run: |
@@ -677,11 +671,41 @@ jobs:
         name: package-innosetup
         path: ${{github.workspace}}/package/innosetup/output
 
+  package-innosetup-simulator:
+    name: package innosetup-simulator
+    runs-on: windows-latest
+    needs: [build-simulator]
+
+    steps:
+    - uses: FranzDiebold/github-env-vars-action@v2
+
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: "Download artifact: traintastic-simulator"
+      uses: actions/download-artifact@v4
+      with:
+        name: traintastic-simulator-windows
+        path: ${{github.workspace}}/simulator/build/Release
+
+    - name: Build installer
+      shell: cmd
+      run: |
+        "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic-simulator.iss
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: package-innosetup-simulator
+        path: ${{github.workspace}}/package/innosetup/output
+
   deploy:
     name: Deploy to website
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
-    needs: [package-innosetup, build-server, build-client, build-data, build-manual, build-manual-lua]
+    needs: [package-innosetup, package-innosetup-simulator, build-server, build-client, build-data, build-manual, build-manual-lua]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -736,6 +760,12 @@ jobs:
       with:
         pattern: traintastic-simulator-deb-*
         merge-multiple: true
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
+
+    - name: "Download artifacts: package-innosetup-simulator"
+      uses: actions/download-artifact@v4
+      with:
+        name: package-innosetup-simulator
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
     - uses: easingthemes/ssh-deploy@v2.2.11
