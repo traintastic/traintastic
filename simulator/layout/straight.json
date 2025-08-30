@@ -1,0 +1,45 @@
+{
+  "trackplan": [
+    {
+      "type": "straight",
+      "x": 150,
+      "y": 100,
+      "length": 50,
+      "sensor_address": 1,
+
+      "objects": [
+        {
+          "type": "main_signal",
+          "dir": true,
+          "name": "A",
+          "n_lights": 3,
+          "pos": 2
+        }
+      ]
+    }
+  ],
+  "trains": [
+    {
+      "address": 3,
+      "track_id": "top",
+      "vehicles": [
+        {
+          "length": 40.0,
+          "color": "red"
+        },
+        {
+          "length": 20.0,
+          "color": "green"
+        },
+        {
+          "length": 20.0,
+          "color": "green"
+        },
+        {
+          "length": 30.0,
+          "color": "blue"
+        }
+      ]
+    }
+  ]
+}
