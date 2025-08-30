@@ -132,6 +132,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     act->setChecked(m_view->showTrackOccupancy());
     connect(act, &QAction::toggled, m_view, &SimulatorView::setShowTrackOccupancy);
 
+    act = menu->addAction("Thin tracks");
+    act->setCheckable(true);
+    act->setChecked(m_view->thinTracks());
+    connect(act, &QAction::toggled, m_view, &SimulatorView::setThinTracks);
+
     menu = menuBar()->addMenu("Help");
     menu->addAction("About...", this, &MainWindow::showAbout);
 
