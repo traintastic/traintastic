@@ -794,7 +794,7 @@ void Simulator::doReceive()
                         {
                             // Swap bytes
                             uint8_t b[2] = {};
-                            *reinterpret_cast<uint16_t *>(b) = serverPort();
+                            *reinterpret_cast<uint16_t *>(b) = response[2];
                             std::swap(b[0], b[1]);
                             response[2] = *reinterpret_cast<uint16_t *>(b);
                         }

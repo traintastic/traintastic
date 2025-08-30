@@ -350,7 +350,7 @@ public:
 
   StateData stateData() const;
 
-  void enableServer(bool localhostOnly = true, uint16_t port = 5741);
+  void enableServer(bool localhostOnly = true, uint16_t port = 5742);
 
   uint16_t serverPort() const;
 
