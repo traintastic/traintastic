@@ -939,7 +939,7 @@ void Simulator::updateTrainPositions()
     }
     else // reverse
     {
-      for(auto& vehicleItem : train->vehicles)
+      for(auto& vehicleItem : train->vehicles | std::views::reverse)
       {
         auto& vehicleState = vehicleItem.vehicle->state;
         if(!updateVehiclePosition(vehicleState.rear, -speed) || !updateVehiclePosition(vehicleState.front, -speed))
