@@ -953,6 +953,29 @@ void Simulator::updateTrainPositions()
   }
 }
 
+inline bool isTurnoutUnknownState(const Simulator::TrackSegment& segment,
+                                  const Simulator::StateData& stateData)
+{
+    switch (segment.type)
+    {
+    case Simulator::TrackSegment::Type::Straight:
+    case Simulator::TrackSegment::Type::Curve:
+        return false;
+    case Simulator::TrackSegment::Type::Turnout:
+    case Simulator::TrackSegment::Type::TurnoutCurved:
+    case Simulator::TrackSegment::Type::Turnout3Way:
+    {
+        return stateData.turnouts.at(segment.turnout.index).state
+                == Simulator::TurnoutState::State::Unknown;
+    }
+    default:
+        assert(false);
+        break;
+    }
+
+    return false;
+}
+
 bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float speed)
 {
   using Object = Simulator::TrackSegment::Object;
@@ -1018,6 +1041,11 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float spee
         return false; // no next segment
       }
 
+      auto& nextSegment = staticData.trackSegments[nextSegmentIndex];
+
+      if(isTurnoutUnknownState(nextSegment, m_stateData))
+          return false;
+
       if(segment.sensor.index != invalidIndex)
       {
         auto& sensor = m_stateData.sensors[segment.sensor.index];
@@ -1026,7 +1054,6 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float spee
       }
 
       face.segmentIndex = nextSegmentIndex;
-      auto& nextSegment = staticData.trackSegments[face.segmentIndex];
 
       if(nextSegment.nextSegmentIndex[0] == faceSegmentIndexBefore)
       {
@@ -1052,6 +1079,11 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float spee
         return false; // no next segment
       }
 
+      auto& nextSegment = staticData.trackSegments[nextSegmentIndex];
+
+      if(isTurnoutUnknownState(nextSegment, m_stateData))
+          return false;
+
       if(segment.sensor.index != invalidIndex)
       {
         auto& sensor = m_stateData.sensors[segment.sensor.index];
@@ -1060,7 +1092,6 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float spee
       }
 
       face.segmentIndex = nextSegmentIndex;
-      auto& nextSegment = staticData.trackSegments[face.segmentIndex];
 
       if(nextSegment.nextSegmentIndex[0] == faceSegmentIndexBefore)
       {
