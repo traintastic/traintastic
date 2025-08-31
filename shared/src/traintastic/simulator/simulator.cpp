@@ -922,14 +922,24 @@ void Simulator::updateTrainPositions()
       trainState.speedOrDirectionChanged = false;
     }
 
+    auto updateHelper = [this](Simulator::Train::VehicleItem& item, float speed, bool reverse) -> bool
+    {
+        if(reverse)
+            speed = -speed;
+
+        if(item.reversed == reverse)
+            return updateVehiclePosition(item.vehicle->state.front, speed) && updateVehiclePosition(item.vehicle->state.rear, speed);
+        else
+            return updateVehiclePosition(item.vehicle->state.rear, speed) && updateVehiclePosition(item.vehicle->state.front, speed);
+    };
+
     const float speed = m_stateData.powerOn ? trainState.speed : 0.0f;
 
     if(!trainState.reverse)
     {
       for(auto& vehicleItem : train->vehicles)
       {
-        auto& vehicleState = vehicleItem.vehicle->state;
-        if(!updateVehiclePosition(vehicleState.front, speed) || !updateVehiclePosition(vehicleState.rear, speed))
+        if(!updateHelper(vehicleItem, speed, trainState.reverse))
         {
           trainState.speed = 0.0f;
           trainState.speedOrDirectionChanged = true;
@@ -941,8 +951,7 @@ void Simulator::updateTrainPositions()
     {
       for(auto& vehicleItem : train->vehicles | std::views::reverse)
       {
-        auto& vehicleState = vehicleItem.vehicle->state;
-        if(!updateVehiclePosition(vehicleState.rear, -speed) || !updateVehiclePosition(vehicleState.front, -speed))
+        if(!updateHelper(vehicleItem, speed, trainState.reverse))
         {
           trainState.speed = 0.0f;
           trainState.speedOrDirectionChanged = true;
