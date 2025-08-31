@@ -23,6 +23,7 @@ add_executable(traintastic-simulator
   src/mainwindow.cpp
   src/simulatorview.cpp
   src/trainsmodel.cpp
+  src/addtraindialog.h src/addtraindialog.cpp
   ../shared/src/traintastic/simulator/simulator.cpp
   ../shared/src/traintastic/simulator/simulatorconnection.cpp
   ../shared/src/traintastic/utils/standardpaths.cpp

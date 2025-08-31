@@ -134,7 +134,7 @@ bool TrainsModel::addTrain(const QString &name, Color c, size_t numWagons, size_
 
 bool TrainsModel::removeTrain(const QString &name)
 {
-    if(!mTrains.contains(name))
+    if(!mSimulator || !mTrains.contains(name))
         return false;
 
     if(!mSimulator->removeTrain(name.toStdString(), true))
@@ -144,4 +144,30 @@ bool TrainsModel::removeTrain(const QString &name)
     mTrains.remove(name);
     endResetModel();
     return true;
+}
+
+void TrainsModel::setSimulator(Simulator *sim)
+{
+    beginResetModel();
+    mTrains.clear();
+
+    mSimulator = sim;
+
+    if(mSimulator)
+    {
+        for(const auto& it : mSimulator->stateData().trains)
+        {
+            Train train;
+            train.name = QString::fromStdString(it.second->name);
+            train.speedKmH = it.second->state.speed;
+            if(it.second->state.reverse)
+                train.speedKmH = -train.speedKmH;
+
+            train.color = it.second->vehicles.front().vehicle->color;
+
+            mTrains.insert(train.name, train);
+        }
+    }
+
+    endResetModel();
 }

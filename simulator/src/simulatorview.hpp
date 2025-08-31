@@ -30,6 +30,8 @@
 #include <QBasicTimer>
 #include <QImage>
 
+class TrainsModel;
+
 class QHelpEvent;
 
 class SimulatorView
@@ -140,6 +142,9 @@ private:
   std::vector<boost::signals2::connection> m_simulatorConnections;
   Turnouts m_turnouts;
 
+  // Trains
+  TrainsModel *mTrainsModel = nullptr;
+
   // View
   float m_cameraX = 0.0f;
   float m_cameraY = 0.0f;
@@ -180,6 +185,8 @@ private:
     m_hoverSensorIdx = Simulator::invalidIndex;
     segmentHoverTimer.stop();
   }
+
+  void showAddTrainDialog(size_t segmentIndex);
 
 private slots:
   void tick();

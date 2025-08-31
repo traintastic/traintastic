@@ -37,6 +37,8 @@ public:
 
     bool removeTrain(const QString& name);
 
+    void setSimulator(Simulator *sim);
+
 private:
     Simulator *mSimulator = nullptr;
 
