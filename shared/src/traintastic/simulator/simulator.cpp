@@ -2148,17 +2148,18 @@ bool Simulator::addTrain(const std::string_view& name, DecoderProtocol proto, ui
     if(!train->vehicles.empty())
     {
       // center train in segment and mark it occupied:
-      auto& segment = data.trackSegments[segmentIndex];
-      if(segment.sensor.index != invalidIndex)
-      {
-        auto& sensor = stateData.sensors[segment.sensor.index];
-        sensor.occupied = train->vehicles.size() * 2;
-        sensor.value = (sensor.occupied != 0);
-      }
+      const auto& segment = data.trackSegments[segmentIndex];
 
       const float segmentLength = getSegmentLength(segment, stateData);
       if(train->length >= segmentLength)
           return false;
+
+      if(segment.sensor.index != invalidIndex)
+      {
+        auto& sensor = stateData.sensors[segment.sensor.index];
+        sensor.occupied += train->vehicles.size() * 2;
+        sensor.value = (sensor.occupied != 0);
+      }
 
       const float move = segmentLength - (segmentLength - train->length) / 2;
       for(const auto& vehicleItem : train->vehicles)
