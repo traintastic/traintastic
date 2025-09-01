@@ -1331,12 +1331,15 @@ void Simulator::loadTrackObjects(const nlohmann::json &track, StaticData &data, 
                     const auto& curve = segment.curves[0];
 
                     float angle = segment.rotation + (trackObj.position / curve.length) * curve.angle;
+
+                    // Rotation must not be adjusted by 180 degrees
+                    trackObj.rotation = angle;
+
                     if(curve.angle < 0)
                     {
                         angle += pi;
                     }
 
-                    trackObj.rotation = angle;
                     trackObj.pos.x = curve.center.x + curve.radius * std::sin(angle);
                     trackObj.pos.y = curve.center.y - curve.radius * std::cos(angle);
                 }
