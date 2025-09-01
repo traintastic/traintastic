@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODER_HPP
 
 #include <type_traits>
+#include <boost/asio/steady_timer.hpp>
 #include "../../core/idobject.hpp"
 #include "../../core/objectproperty.hpp"
 #include <traintastic/enum/decoderprotocol.hpp>
@@ -49,6 +50,10 @@ class Decoder : public IdObject
     bool m_noSmoke = false;
     std::shared_ptr<Throttle> m_driver;
 
+    boost::asio::steady_timer m_functionLatchTimer;
+    uint32_t m_currentLatchedFunction;
+    static constexpr uint32_t NO_FUNCTION = std::numeric_limits<uint32_t>::max();
+
   protected:
     void loaded() final;
     void destroying() override;
@@ -73,9 +78,21 @@ class Decoder : public IdObject
 
     void updateEditable();
     void updateEditable(bool editable);
-    void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);
+    void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0, bool fromInterface = false);
 
-  public:
+    void checkLatchedTimer(uint32_t functionNumber);
+
+    //! \brief Schedule timer to turn off latched momentary function
+    //! This function cancels current active timer and searches for other active
+    //! momentary functions. If no momentary function is active no timer is scheduled.
+    void rescheduleLatchedFunctionTimer();
+
+    //! \brief Timer handler which actually turns off the function
+    //! If not cancelled then it calls \ref rescheduleLatchedFunctionTimer() to check
+    //! for other active momentary functions.
+    void onLatchFunctionTimeout(const boost::system::error_code &ec);
+
+public:
     CLASS_ID("decoder")
     CREATE_DEF(Decoder)
 
@@ -127,7 +144,12 @@ class Decoder : public IdObject
     const std::shared_ptr<DecoderFunction>& getFunction(DecoderFunctionFunction function);
     bool getFunctionValue(uint32_t number) const;
     bool getFunctionValue(const std::shared_ptr<const DecoderFunction>& function) const;
-    void setFunctionValue(uint32_t number, bool value);
+
+    // Methods for changes coming from interface kernel
+    void updateFunctionValue(uint32_t number, bool value);
+    void updateDirection(Direction newDirection);
+    void updateThrottle(float newThrottle);
+    void updateEmergencyStop(bool newEmergencyStop);
 
     bool acquire(Throttle& driver, bool steal = false);
     void release(Throttle& driver);

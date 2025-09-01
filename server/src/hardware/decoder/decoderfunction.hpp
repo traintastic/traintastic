@@ -23,6 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTION_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_DECODER_DECODERFUNCTION_HPP
 
+#include <chrono>
 #include "../../core/object.hpp"
 #include "../../core/property.hpp"
 #include "../../enum/decoderfunctiontype.hpp"
@@ -33,10 +34,17 @@ class Decoder;
 class DecoderFunction : public Object
 {
   private:
+    static constexpr uint16_t timeoutMillisMin = 0;
+    static constexpr uint16_t timeoutMillisMax = 60000; // 1 minute
+    static constexpr uint16_t timeoutMillisStep = 100;
+
     void typeChanged();
+    void checkTimer();
 
   protected:
     Decoder& m_decoder;
+
+    std::chrono::steady_clock::time_point m_scheduledTimeout;
 
     void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) final;
@@ -52,12 +60,30 @@ class DecoderFunction : public Object
     Property<DecoderFunctionFunction> function;
     Property<bool> value;
 
+    //! \brief Timeout in seconds to unlatch (turn off) active momentary functions
+    //! If set to zero, functions will not be automatically turned off
+    //! Active only for \ref DecoderFunctionType::Momentary and \ref DecoderFunctionType::Hold
+    Property<uint16_t> timeoutMillis;
+
     DecoderFunction(Decoder& decoder, uint8_t _number);
 
     std::string getObjectId() const final;
 
     const Decoder& decoder() const { return m_decoder; }
     Decoder& decoder() { return m_decoder; }
+
+    inline const std::chrono::steady_clock::time_point& getScheduledTimeout() const
+    {
+      return m_scheduledTimeout;
+    }
+
+    inline bool hasTimeout() const
+    {
+      return (type == DecoderFunctionType::Momentary || type == DecoderFunctionType::Hold)
+              && timeoutMillis.value() > 0;
+    }
+
+    void updateValue(bool newValue);
 };
 
 #endif

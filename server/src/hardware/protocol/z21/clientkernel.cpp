@@ -256,30 +256,24 @@ void ClientKernel::receive(const Message& message)
 
                     if(has(changes, DecoderChangeFlags::EmergencyStop))
                     {
-                      m_isUpdatingDecoderFromKernel = true;
-                      decoder->emergencyStop = isEStop;
+                      decoder->updateEmergencyStop(isEStop);
                     }
 
                     if(has(changes, DecoderChangeFlags::Direction))
                     {
-                      m_isUpdatingDecoderFromKernel = true;
-                      decoder->direction = dir;
+                      decoder->updateDirection(dir);
                     }
 
                     if(has(changes, DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps))
                     {
-                      m_isUpdatingDecoderFromKernel = true;
-                      decoder->throttle = throttle;
+                      decoder->updateThrottle(throttle);
                     }
-
-                    //Reset flag guard at end
-                    m_isUpdatingDecoderFromKernel = false;
 
                     //Function get always updated because we do not store a copy in cache
                     //so there is no way to tell in advance if they changed
                     for(int i = 0; i <= functionIndexMax; i++)
                     {
-                      decoder->setFunctionValue(i, val[i]);
+                      decoder->updateFunctionValue(i, val[i]);
                     }
                   }
                 }
@@ -515,18 +509,6 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
   TriState funcVal = TriState::Undefined;
   if(const auto& f = decoder.getFunction(functionNumber))
     funcVal = toTriState(f->value);
-
-  if(m_isUpdatingDecoderFromKernel)
-  {
-    //This change was caused by Z21 message so there is not point
-    //on informing back Z21 with another message
-    //Skip updating LocoCache again which might already be
-    //at a new value (EventLoop is slower to process callbacks)
-    //But reset the guard to allow Train and other parts of code
-    //to react to this change and further edit decoder state
-    m_isUpdatingDecoderFromKernel = false;
-    return;
-  }
 
   m_ioContext.post([this, address, longAddress, direction, throttle, speedSteps, isEStop, changes, functionNumber, funcVal]()
     {
