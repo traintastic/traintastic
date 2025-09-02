@@ -345,6 +345,8 @@ SimulatorView::SimulatorView(QWidget* parent)
   // 800 ms turnout blink
   turnoutBlinkTimer.start(std::chrono::milliseconds(800), Qt::PreciseTimer, this);
 
+  signalBlinkTimer.start(std::chrono::milliseconds(1100), Qt::PreciseTimer, this);
+
   setContextMenuPolicy(Qt::DefaultContextMenu);
 
   setMouseTracking(true);
@@ -892,10 +894,53 @@ void SimulatorView::drawTrackObjects(QPainter *painter)
         painter->setPen(signalLightPen);
         for(size_t i = 0; i < signal->lights.size(); i++)
         {
-          painter->setBrush(Qt::red);
-          painter->drawEllipse(lightRect);
+            bool on = false;
+            switch (signal->lights.at(i).state)
+            {
+            case Simulator::MainSignal::Light::State::Off:
+                on = false;
+                break;
 
-          lightRect.moveLeft(lightRect.left() + lightDiameter);
+            case Simulator::MainSignal::Light::State::On:
+                on = true;
+                break;
+
+            case Simulator::MainSignal::Light::State::BlikOn:
+                on = signalBlinkState;
+                break;
+
+            case Simulator::MainSignal::Light::State::BlinkReverseOn:
+                on = !signalBlinkState;
+                break;
+            default:
+                break;
+            }
+
+            if(on)
+            {
+                switch (signal->lights.at(i).color)
+                {
+                case Simulator::MainSignal::Light::Color::Red:
+                    painter->setBrush(Qt::red);
+                    break;
+                case Simulator::MainSignal::Light::Color::Yellow:
+                    painter->setBrush(Qt::yellow);
+                    break;
+                case Simulator::MainSignal::Light::Color::Green:
+                    painter->setBrush(Qt::green);
+                    break;
+                default:
+                    break;
+                }
+            }
+            else
+            {
+                painter->setBrush(Qt::black);
+            }
+
+            painter->drawEllipse(lightRect);
+
+            lightRect.moveLeft(lightRect.left() + lightDiameter);
         }
 
         break;
@@ -1143,6 +1188,12 @@ void SimulatorView::timerEvent(QTimerEvent *e)
     turnoutBlinkState = !turnoutBlinkState;
     update();
     return;
+  }
+  else if(e->timerId() == signalBlinkTimer.timerId())
+  {
+      signalBlinkState = !signalBlinkState;
+      update();
+      return;
   }
   else if(e->timerId() == segmentHoverTimer.timerId())
   {

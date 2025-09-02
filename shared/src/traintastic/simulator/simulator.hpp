@@ -238,6 +238,8 @@ public:
 
   struct MainSignal
   {
+    uint16_t channel = defaultChannel;
+    uint16_t address = invalidAddress;
     std::string name;
     size_t ownerConnectionId = invalidIndex;
     double maxSpeed = 0;
@@ -375,7 +377,7 @@ public:
   void toggleTurnoutState(size_t segmentIndex, bool setUnknown);
 
   void send(const SimulatorProtocol::Message& message);
-  void receive(const SimulatorProtocol::Message& message);
+  void receive(const SimulatorProtocol::Message& message, size_t fromConnId);
   void removeConnection(const std::shared_ptr<SimulatorConnection>& connection);
 
   inline std::recursive_mutex& stateMutex() { return m_stateMutex; }

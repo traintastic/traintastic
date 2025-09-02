@@ -692,7 +692,7 @@ void Simulator::send(const SimulatorProtocol::Message& message)
   }
 }
 
-void Simulator::receive(const SimulatorProtocol::Message& message)
+void Simulator::receive(const SimulatorProtocol::Message& message, size_t fromConnId)
 {
   using namespace SimulatorProtocol;
 
@@ -707,13 +707,13 @@ void Simulator::receive(const SimulatorProtocol::Message& message)
     case OpCode::LocomotiveSpeedDirection:
     {
       const auto &m = static_cast<const LocomotiveSpeedDirection &>(message);
+      std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
       for(auto it : m_stateData.trains)
       {
         Train *train = it.second;
 
         if(m.address == train->address && (m.protocol == train->protocol || train->protocol == DecoderProtocol::None))
         {
-          std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
           const float speed = std::clamp(train->speedMax * (m.speed / 255.0f), 0.0f, train->speedMax);
           const bool reverse = m.direction == Direction::Reverse;
 
@@ -794,14 +794,74 @@ void Simulator::receive(const SimulatorProtocol::Message& message)
     }
     case OpCode::SensorChanged:
       break; // only sent by simulator
+    case OpCode::SignalSetState:
+    {
+      const auto& m = static_cast<const SignalSetState&>(message);
+      std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+      for(auto it : m_stateData.mainSignals)
+      {
+        MainSignal *s = it.second;
+        if(s->ownerConnectionId != fromConnId || s->address != m.address || s->channel != m.channel)
+          continue;
+
+        for(size_t i = 0; i < s->lights.size(); i++)
+        {
+            if(i < (sizeof(m.lights) / sizeof(m.lights[0])))
+            {
+                s->lights[i].color = MainSignal::Light::Color(m.lights[i].color);
+                s->lights[i].state = MainSignal::Light::State(m.lights[i].state);
+            }
+            else
+            {
+                s->lights[i].color = MainSignal::Light::Color::Red;
+                s->lights[i].state = MainSignal::Light::State::Off;
+            }
+        }
+        break;
+      }
+      break;
+    }
+    case OpCode::OwnSignal:
+    {
+        const auto& m = static_cast<const OwnSignal&>(message);
+        std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+        for(auto it : m_stateData.mainSignals)
+        {
+            MainSignal *s = it.second;
+            if(s->ownerConnectionId != invalidIndex || s->address != m.address || s->channel != m.channel)
+                continue;
+
+            s->ownerConnectionId = fromConnId;
+            break;
+        }
+    }
   }
 }
 
 void Simulator::removeConnection(const std::shared_ptr<SimulatorConnection>& connection)
 {
+  const size_t connId = connection->connectionId();
   if(auto it = std::find(m_connections.begin(), m_connections.end(), connection); it != m_connections.end())
   {
+
     m_connections.erase(it);
+  }
+
+  // Turn off owned signals
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+  for(auto it : m_stateData.mainSignals)
+  {
+    MainSignal *s = it.second;
+    if(s->ownerConnectionId != connId)
+      continue;
+
+    s->ownerConnectionId = invalidIndex;
+    s->maxSpeed = 0.0f;
+    for(MainSignal::Light& l : s->lights)
+    {
+        l.color = MainSignal::Light::Color::Red;
+        l.state = MainSignal::Light::State::Off;
+    }
   }
 }
 
@@ -1352,7 +1412,7 @@ void Simulator::loadTrackObjects(const nlohmann::json &track, StaticData &data, 
 
                 trackObj.dirForward = item.value("dir", true);
 
-                std::string_view type = item.value<std::string_view>("type", {});
+                const std::string_view type = item.value<std::string_view>("type", {});
                 if(type == "sensor")
                 {
                     trackObj.type = TrackSegment::Object::Type::PositionSensor;
@@ -1393,8 +1453,10 @@ void Simulator::loadTrackObjects(const nlohmann::json &track, StaticData &data, 
                                                     TrackSegment::Object::AllowedDirections::Backwards;
                     trackObj.lateralDiff = -1.7; // Default on left side
 
-                    std::string_view signalName = item.value<std::string_view>("name", {});
-                    if(signalName.empty())
+                    const std::string_view signalName = item.value<std::string_view>("name", {});
+                    const uint16_t signalAddress = item.value("address", invalidAddress);
+                    const uint16_t signalChannel = item.value("channel", defaultChannel);
+                    if(signalName.empty() || signalAddress == invalidAddress)
                         continue;
 
                     MainSignal *signal = nullptr;
@@ -1403,6 +1465,8 @@ void Simulator::loadTrackObjects(const nlohmann::json &track, StaticData &data, 
                     {
                         signal = new MainSignal;
                         signal->name = signalName;
+                        signal->address = signalAddress;
+                        signal->channel = signalChannel;
                         signal->lights.push_back({});
                         stateData.mainSignals.insert({signal->name, signal});
                     }
@@ -1415,8 +1479,7 @@ void Simulator::loadTrackObjects(const nlohmann::json &track, StaticData &data, 
                     nLights = std::clamp(size_t(1), size_t(3), nLights);
                     signal->lights.resize(nLights);
 
-                    // TODO
-                    signal->lights[0].state = MainSignal::Light::State::On;
+                    signal->lights[0].state = MainSignal::Light::State::Off;
                     signal->maxSpeed = 30;
                 }
                 else

@@ -84,7 +84,7 @@ void SimulatorConnection::read()
             break;
           }
 
-          m_simulator->receive(*message);
+          m_simulator->receive(*message, m_connectionId);
           pos += message->size;
           bytesTransferred -= message->size;
         }
