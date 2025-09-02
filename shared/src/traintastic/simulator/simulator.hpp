@@ -386,6 +386,7 @@ public:
   void setTrainDirection(Train *train, bool reverse);
   void setTrainSpeed(Train *train, float speed);
   void applyTrainSpeedDelta(Train *train, float delta);
+  void setTrainMode(Train *train, TrainState::Mode m);
   void stopAllTrains();
 
   bool trainExists(const std::string_view &name) const;
@@ -419,7 +420,11 @@ public:
   Vehicle *addVehicle(const std::string_view &baseName, float length, Color color);
   bool removeVehicle(Vehicle *vehicle);
 
-  bool checkNextSignal(Train *train);
+  void liftRestrictions(bool val)
+  {
+    for(auto it : m_stateData.mainSignals)
+      it.second->maxSpeed = val ? 150 : 0;
+  }
 
 private:
   constexpr static auto tickRate = std::chrono::milliseconds(1000 / 30);
@@ -455,7 +460,7 @@ private:
   void updateTrainPositions();
   bool updateVehiclePosition(VehicleState::Face& face,
                              const float speed, bool isFirst_,
-                             TrainState &trainState_);
+                             Train &train);
   void updateSensors();
 
   bool isStraight(const TrackSegment& segment);
@@ -469,6 +474,7 @@ private:
                                TrackSegment &segment);
 
   void updateTrainNextSignal(Train *train);
+  bool checkNextSignal(Train *train);
 };
 
 
