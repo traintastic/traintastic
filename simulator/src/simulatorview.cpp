@@ -837,8 +837,22 @@ void SimulatorView::drawTrackObjects(QPainter *painter)
   QColor positionSensorActive = Qt::red;
   QColor positionSensorInactive = Qt::darkGreen;
 
-  const QPen signalMastPen(Qt::lightGray, 0.6);
-  const QPen signalLightPen(Qt::lightGray, 0.2);
+  // Make signals more visible at low zoom levels
+  qreal factor = 1.0;
+  const float ZoomPoints[] = {10.0, 4.0, 2.5, 1.5, 0.8, 0.6, 0.4, 0.2};
+  for(float level : ZoomPoints)
+  {
+    if(m_zoomLevel > level)
+      break;
+
+    factor *= 1.6;
+  }
+
+  const QPen signalMastPen(Qt::lightGray, 0.6 * factor);
+  const QPen signalLightPen(Qt::lightGray, 0.2 * factor);
+
+  const qreal mustBaseLength = 3.0 * factor;
+  const qreal lightDiameter = 2.0 * factor;
 
   const QTransform trasf = painter->transform();
 
@@ -873,9 +887,6 @@ void SimulatorView::drawTrackObjects(QPainter *painter)
       }
       case Object::Type::MainSignal:
       {
-        const qreal mustBaseLength = 3.0;
-        const qreal lightDiameter = 2.0;
-
         auto signIt = m_stateData.mainSignals.find(obj.signalName);
         if(signIt == m_stateData.mainSignals.end())
           continue;
