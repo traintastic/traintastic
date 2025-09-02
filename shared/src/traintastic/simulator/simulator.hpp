@@ -219,6 +219,8 @@ public:
     size_t curTime = 0;
   };
 
+  struct Train;
+
   struct TurnoutState
   {
     enum class State : uint8_t
@@ -234,6 +236,8 @@ public:
 
     State state = State::Closed;
     uint8_t coils = 0;
+
+    std::vector<Train *> watchingTrains;
   };
 
   struct MainSignal
@@ -270,7 +274,21 @@ public:
     float speed = 0.0f;
     bool reverse = false;
     bool speedOrDirectionChanged = false;
+
+    enum class Mode
+    {
+      Manual = 0,
+      SemiAutomatic = 1,
+      Automatic = 2
+    };
+
+    Mode mode = Mode::Manual;
+    MainSignal *nextSignal = nullptr;
+    std::vector<size_t> nextTurnouts;
+    bool nextSignalDirty = false;
   };
+
+  struct Train;
 
   struct VehicleState
   {
@@ -285,8 +303,6 @@ public:
     Face front;
     Face rear;
   };
-
-  struct Train;
 
   struct Vehicle
   {
@@ -404,8 +420,8 @@ private:
   constexpr static auto tickRate = std::chrono::milliseconds(1000 / 30);
 
   constexpr static float defaultSpeedKmH = 200;
-  constexpr static float defaultSpeedMeterPerSecond = defaultSpeedKmH / 3.6;
-  constexpr static float defaultSpeedTickRate = defaultSpeedMeterPerSecond / 1000 * tickRate.count();
+  constexpr static float SpeedKmHtoTick = tickRate.count() / 3600.0;
+  constexpr static float defaultSpeedTickRate = defaultSpeedKmH * SpeedKmHtoTick;
 
   boost::asio::io_context m_ioContext;
   boost::asio::steady_timer m_tickTimer;
@@ -432,7 +448,9 @@ private:
   void tick();
 
   void updateTrainPositions();
-  bool updateVehiclePosition(VehicleState::Face& face, const float speed);
+  bool updateVehiclePosition(VehicleState::Face& face,
+                             const float speed, bool isFirst_,
+                             TrainState &trainState_);
   void updateSensors();
 
   bool isStraight(const TrackSegment& segment);
@@ -444,6 +462,8 @@ private:
   static void loadTrackObjects(const nlohmann::json &track,
                                StaticData &data, StateData &stateData,
                                TrackSegment &segment);
+
+  void updateTrainNextSignal(Train *train);
 };
 
 
