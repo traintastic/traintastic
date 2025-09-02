@@ -1127,11 +1127,13 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float spee
       if(nextSegment.nextSegmentIndex[0] == faceSegmentIndexBefore)
       {
         distance -= segmentLength;
+        face.distance = 0.0f;
         face.segmentDirectionInverted = (speed < 0);
       }
       else
       {
-        distance = (getSegmentLength(nextSegment, m_stateData) + segmentLength) - distance;
+        face.distance = getSegmentLength(nextSegment, m_stateData);
+        distance = (face.distance + segmentLength) - distance;
         face.segmentDirectionInverted = (speed > 0);
       }
 
@@ -1165,11 +1167,13 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float spee
       if(nextSegment.nextSegmentIndex[0] == faceSegmentIndexBefore)
       {
         distance = -distance;
+        face.distance = 0.0f;
         face.segmentDirectionInverted = (speed < 0);
       }
       else
       {
-        distance += getSegmentLength(nextSegment, m_stateData);
+        face.distance = getSegmentLength(nextSegment, m_stateData);
+        distance += face.distance;
         face.segmentDirectionInverted = (speed > 0);
       }
 
