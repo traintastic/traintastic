@@ -892,7 +892,10 @@ void SimulatorView::drawTrackObjects(QPainter *painter)
         lightRect.moveCenter(QPointF(mustBaseLength + lightDiameter / 2.0, obj.lateralDiff));
 
         painter->setPen(signalLightPen);
-        for(size_t i = 0; i < signal->lights.size(); i++)
+
+        // Draw in reverse order, light 0 is always topmost
+        size_t i = signal->lights.size() - 1;
+        while(true)
         {
             bool on = false;
             switch (signal->lights.at(i).state)
@@ -941,6 +944,10 @@ void SimulatorView::drawTrackObjects(QPainter *painter)
             painter->drawEllipse(lightRect);
 
             lightRect.moveLeft(lightRect.left() + lightDiameter);
+
+            if(i == 0)
+                break;
+            i--;
         }
 
         break;
