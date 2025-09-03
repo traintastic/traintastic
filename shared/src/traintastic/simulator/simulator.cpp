@@ -1088,13 +1088,13 @@ inline bool isTurnoutUnknownState(const Simulator::TrackSegment& segment,
 
 bool Simulator::updateVehiclePosition(VehicleState::Face& face,
                                       const float speed, bool isFirst_,
-                                      Train &train_)
+                                      Train &train)
 {
   using Object = Simulator::TrackSegment::Object;
 
   auto objHelper = [this](const TrackSegment::Object& obj,
       const float facePos, const float targetPos,
-      Train &train, bool dirFwd_, bool isFirst, bool &stop) -> bool
+      Train &train_, bool dirFwd_, bool isFirst, bool &stop) -> bool
   {
     if(dirFwd_)
     {
@@ -1124,7 +1124,7 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face,
         sensor.curTime = sensor.maxTime;
         sensor.occupied = 1;
     }
-    else if (isFirst && obj.type == Object::Type::MainSignal && train.state.mode != TrainState::Mode::Manual)
+    else if (isFirst && obj.type == Object::Type::MainSignal && train_.state.mode != TrainState::Mode::Manual)
     {
       auto it = m_stateData.mainSignals.find(obj.signalName);
       if(it == m_stateData.mainSignals.end())
@@ -1140,13 +1140,13 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face,
         return false;
       }
 
-      if(train.state.mode == TrainState::Mode::SemiAutomatic && train.state.speed == 0)
+      if(train_.state.mode == TrainState::Mode::SemiAutomatic && train_.state.speed == 0)
         return true;
 
       // Apply signal speed on next tick
       // TODO: train max speed
-      setTrainSpeed(&train, tickSpeed);
-      train.state.nextSignalDirty = true;
+      setTrainSpeed(&train_, tickSpeed);
+      train_.state.nextSignalDirty = true;
     }
 
     return true;
@@ -1168,7 +1168,7 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face,
         {
           bool stop = false;
           if(objHelper(obj, face.distance, distance,
-                       train_, true, isFirst_, stop))
+                       train, true, isFirst_, stop))
             continue;
 
           if(stop)
@@ -1182,7 +1182,7 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face,
       {
         bool stop = false;
         if(objHelper(obj, face.distance, distance,
-                     train_, false, isFirst_, stop))
+                     train, false, isFirst_, stop))
           continue;
 
         if(stop)
@@ -1200,8 +1200,8 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face,
       }
 
       // If no signal was found rescan on segment change
-      if(!train_.state.nextSignal)
-        train_.state.nextSignalDirty = true;
+      if(!train.state.nextSignal)
+        train.state.nextSignalDirty = true;
 
       auto& nextSegment = staticData.trackSegments[nextSegmentIndex];
 
@@ -1244,8 +1244,8 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face,
       }
 
       // If no signal was found rescan on segment change
-      if(!train_.state.nextSignal)
-        train_.state.nextSignalDirty = true;
+      if(!train.state.nextSignal)
+        train.state.nextSignalDirty = true;
 
       auto& nextSegment = staticData.trackSegments[nextSegmentIndex];
 
@@ -2606,7 +2606,7 @@ bool Simulator::checkNextSignal(Train *train)
   if(!train->state.nextSignal)
   {
     const float length = getSegmentLength(staticData.trackSegments[face.segmentIndex], m_stateData);
-    if(length >= 400)
+    if(length >= 100)
     {
       // Long segments do not find signal and also do not set dirty
       // Set dirty near to end to re-trigger signal scan
