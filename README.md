@@ -30,6 +30,20 @@ The project goal is to develop open source software that can control everything 
 
 See [BUILDING.md](BUILDING.md).
 
+## Legal Notes
+
+This project includes an independent implementation of the LocoNet® protocol,
+based on reverse engineering and publicly observable behavior.
+It does not use or include Digitrax’s confidential documentation.
+
+If you have signed an NDA with Digitrax regarding LocoNet, **you cannot
+contribute to the LocoNet-related parts of this project**, as that would risk
+contaminating the open source implementation with NDA-covered information.
+
+## Trademarks
+
+LocoNet® is a registered trademark of Digitrax, Inc.
+This project is not affiliated with, endorsed by, or connected to Digitrax.
 
 ## Contributors
 
