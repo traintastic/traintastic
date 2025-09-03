@@ -1021,6 +1021,8 @@ void Simulator::updateTrainPositions()
     const float speed = m_stateData.powerOn ? trainState.speed : 0.0f;
     bool isFirst = true;
 
+    bool wasStopped = false;
+
     if(!trainState.reverse)
     {
       for(auto& vehicleItem : train->vehicles)
@@ -1028,6 +1030,9 @@ void Simulator::updateTrainPositions()
         if(!updateHelper(vehicleItem, speed, trainState.reverse, isFirst, *train))
         {
           setTrainSpeed(train, 0.0f);
+          if(isFirst)
+            wasStopped = true;
+
           break;
         }
 
@@ -1042,6 +1047,9 @@ void Simulator::updateTrainPositions()
         if(!updateHelper(vehicleItem, speed, trainState.reverse, isFirst, *train))
         {
           setTrainSpeed(train, 0.0f);
+          if(isFirst)
+            wasStopped = true;
+
           break;
         }
 
@@ -1049,6 +1057,9 @@ void Simulator::updateTrainPositions()
           isFirst = false;
       }
     }
+
+    if(!wasStopped && train->state.nextSignal)
+      train->state.nextSignalDistance -= speed;
   }
 }
 
@@ -2450,8 +2461,9 @@ void Simulator::updateTrainNextSignal(Train *train)
   const VehicleState::Face& face = (firstItem.reversed == train->state.reverse) ? firstItem.vehicle->state.front : firstItem.vehicle->state.rear;
 
   float totalDistance = 0.0f;
+  float signalPositionInSegment = 0.0f;
 
-  auto helper = [&totalDistance, train, this](bool dirFwd, size_t segmentId, float startPos) -> MainSignal *
+  auto helper = [&totalDistance, &signalPositionInSegment, train, this](bool dirFwd, size_t segmentId, float startPos) -> MainSignal *
   {
     const auto &curSegment = staticData.trackSegments[segmentId];
 
@@ -2486,7 +2498,8 @@ void Simulator::updateTrainNextSignal(Train *train)
         if(it == m_stateData.mainSignals.end())
           continue;
 
-        totalDistance = trackObj.position;
+        signalPositionInSegment = trackObj.position;
+        totalDistance += getSegmentLength(curSegment, m_stateData) - startPos - trackObj.position;
         return it->second;
       }
 
@@ -2509,7 +2522,8 @@ void Simulator::updateTrainNextSignal(Train *train)
         if(it == m_stateData.mainSignals.end())
           continue;
 
-        totalDistance = trackObj.position;
+        signalPositionInSegment = trackObj.position;
+        totalDistance += startPos - trackObj.position;
         return it->second;
       }
 
@@ -2529,7 +2543,8 @@ void Simulator::updateTrainNextSignal(Train *train)
     {
       train->state.nextSignal = s;
       train->state.nextSignalSegmentIdx = segmentIndex;
-      train->state.nextSignalPosition = totalDistance;
+      train->state.nextSignalDistance = totalDistance;
+      train->state.nextSignalPosInSegment = signalPositionInSegment;
       return;
     }
 
@@ -2588,20 +2603,15 @@ bool Simulator::checkNextSignal(Train *train)
   const Train::VehicleItem& firstItem = train->state.reverse ? train->vehicles.back() : train->vehicles.front();
   const VehicleState::Face& face = (firstItem.reversed == train->state.reverse) ? firstItem.vehicle->state.front : firstItem.vehicle->state.rear;
 
-  float totalDistance = 0.0f;
-
-  size_t segmentIndex = face.segmentIndex;
-  bool dirFwd = face.segmentDirectionInverted == train->state.reverse;
-  float startPos = face.distance;
-
   if(!train->state.nextSignal)
   {
-    const float length = getSegmentLength(staticData.trackSegments[segmentIndex], m_stateData);
+    const float length = getSegmentLength(staticData.trackSegments[face.segmentIndex], m_stateData);
     if(length >= 400)
     {
       // Long segments do not find signal and also do not set dirty
       // Set dirty near to end to re-trigger signal scan
-      if((dirFwd && (length - startPos) < 400) || (!dirFwd && startPos < 400))
+      const bool dirFwd = face.segmentDirectionInverted == train->state.reverse;
+      if((dirFwd && (length - face.distance) < 400) || (!dirFwd && face.distance < 400))
       {
         train->state.nextSignalDirty = true;
       }
@@ -2609,11 +2619,19 @@ bool Simulator::checkNextSignal(Train *train)
     return true;
   }
 
+
+
+  float totalDistance = 0.0f;
+
+  size_t segmentIndex = face.segmentIndex;
+  bool dirFwd = face.segmentDirectionInverted == train->state.reverse;
+  float startPos = face.distance;
+
   while(totalDistance < 500)
   {
     if(segmentIndex == train->state.nextSignalSegmentIdx)
     {
-      totalDistance += std::abs(train->state.nextSignalPosition - startPos);
+      totalDistance += std::abs(train->state.nextSignalPosInSegment - startPos);
       break;
     }
 
@@ -2640,8 +2658,11 @@ bool Simulator::checkNextSignal(Train *train)
 
     startPos = 0.0;
     if(!dirFwd)
-      startPos = getSegmentLength(curSegment, m_stateData);
+      startPos = getSegmentLength(nextSegment, m_stateData);
   }
+
+  if(std::abs(totalDistance - train->state.nextSignalDistance) > 0.01)
+    std::cout << "ROUNDING ERROR!" << std::endl << std::flush;
 
   if(totalDistance >= 500)
     return true;

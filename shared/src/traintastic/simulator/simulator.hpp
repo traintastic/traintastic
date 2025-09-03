@@ -285,7 +285,8 @@ public:
     Mode mode = Mode::SemiAutomatic;
     MainSignal *nextSignal = nullptr;
     size_t nextSignalSegmentIdx = invalidIndex;
-    float nextSignalPosition = 0.0f;
+    float nextSignalDistance = 0.0f;
+    float nextSignalPosInSegment = 0.0f;
     std::vector<size_t> nextTurnouts;
     bool nextSignalDirty = false;
   };
