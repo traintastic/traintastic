@@ -2520,10 +2520,8 @@ void Simulator::updateTrainNextSignal(Train *train)
   };
 
   size_t segmentIndex = face.segmentIndex;
-  bool inverted = face.segmentDirectionInverted;
+  bool dirFwd = face.segmentDirectionInverted == train->state.reverse;
   float startPos = face.distance;
-
-  bool dirFwd = inverted == train->state.reverse;
 
   while(totalDistance < 500)
   {
@@ -2537,36 +2535,19 @@ void Simulator::updateTrainNextSignal(Train *train)
 
     const auto &curSegment = staticData.trackSegments[segmentIndex];
 
-    if(dirFwd)
+    const auto nextSegmentIndex = getNextSegmentIndex(curSegment, dirFwd, m_stateData);
+    if(nextSegmentIndex == invalidIndex)
     {
-      const auto nextSegmentIndex = getNextSegmentIndex(curSegment, true, m_stateData);
-      if(nextSegmentIndex == invalidIndex)
-      {
-        return; // no next segment
-      }
-
-      auto& nextSegment = staticData.trackSegments[nextSegmentIndex];
-      inverted = nextSegment.nextSegmentIndex[0] != segmentIndex;
-      segmentIndex = nextSegmentIndex;
-    }
-    else
-    {
-      const auto nextSegmentIndex = getNextSegmentIndex(curSegment, false, m_stateData);
-      if(nextSegmentIndex == invalidIndex)
-      {
-        return; // no next segment
-      }
-
-      auto& nextSegment = staticData.trackSegments[nextSegmentIndex];
-      inverted = nextSegment.nextSegmentIndex[0] == segmentIndex;
-      segmentIndex = nextSegmentIndex;
+      return; // no next segment
     }
 
-    dirFwd = inverted == train->state.reverse;
+    auto& nextSegment = staticData.trackSegments[nextSegmentIndex];
+    dirFwd = nextSegment.nextSegmentIndex[0] == segmentIndex;
+    segmentIndex = nextSegmentIndex;
 
     startPos = 0.0;
     if(!dirFwd)
-      startPos = getSegmentLength(staticData.trackSegments[segmentIndex], m_stateData);
+      startPos = getSegmentLength(curSegment, m_stateData);
   }
 }
 
@@ -2610,10 +2591,8 @@ bool Simulator::checkNextSignal(Train *train)
   float totalDistance = 0.0f;
 
   size_t segmentIndex = face.segmentIndex;
-  bool inverted = face.segmentDirectionInverted;
+  bool dirFwd = face.segmentDirectionInverted == train->state.reverse;
   float startPos = face.distance;
-
-  bool dirFwd = inverted == train->state.reverse;
 
   if(!train->state.nextSignal)
   {
@@ -2643,37 +2622,25 @@ bool Simulator::checkNextSignal(Train *train)
     if(dirFwd)
     {
       totalDistance += getSegmentLength(curSegment, m_stateData) - startPos;
-
-      const auto nextSegmentIndex = getNextSegmentIndex(curSegment, true, m_stateData);
-      if(nextSegmentIndex == invalidIndex)
-      {
-        return true; // no next segment
-      }
-
-      auto& nextSegment = staticData.trackSegments[nextSegmentIndex];
-      inverted = nextSegment.nextSegmentIndex[0] != segmentIndex;
-      segmentIndex = nextSegmentIndex;
     }
     else
     {
       totalDistance += startPos;
-
-      const auto nextSegmentIndex = getNextSegmentIndex(curSegment, false, m_stateData);
-      if(nextSegmentIndex == invalidIndex)
-      {
-        return true; // no next segment
-      }
-
-      auto& nextSegment = staticData.trackSegments[nextSegmentIndex];
-      inverted = nextSegment.nextSegmentIndex[0] == segmentIndex;
-      segmentIndex = nextSegmentIndex;
     }
 
-    dirFwd = inverted == train->state.reverse;
+    const auto nextSegmentIndex = getNextSegmentIndex(curSegment, dirFwd, m_stateData);
+    if(nextSegmentIndex == invalidIndex)
+    {
+      return true; // no next segment
+    }
+
+    auto& nextSegment = staticData.trackSegments[nextSegmentIndex];
+    dirFwd = nextSegment.nextSegmentIndex[0] == segmentIndex;
+    segmentIndex = nextSegmentIndex;
 
     startPos = 0.0;
     if(!dirFwd)
-      startPos = getSegmentLength(staticData.trackSegments[segmentIndex], m_stateData);
+      startPos = getSegmentLength(curSegment, m_stateData);
   }
 
   if(totalDistance >= 500)
