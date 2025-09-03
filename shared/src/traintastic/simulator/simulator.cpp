@@ -543,11 +543,7 @@ void Simulator::applyTrainSpeedDelta(Train *train, float delta)
   std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
 
   const float speed = std::clamp(train->state.speed + delta, 0.0f, train->speedMax);
-  if(train->state.speed != speed)
-  {
-    train->state.speed = speed;
-    train->state.speedOrDirectionChanged = true;
-  }
+  setTrainSpeed(train, speed);
 }
 
 void Simulator::stopAllTrains()
@@ -558,8 +554,7 @@ void Simulator::stopAllTrains()
     auto *train = it.second;
     if(train->state.speed != 0.0f)
     {
-      train->state.speed = 0.0f;
-      train->state.speedOrDirectionChanged = true;
+      setTrainSpeed(train, 0.0f);
     }
   }
 }
@@ -685,8 +680,8 @@ void Simulator::receive(const SimulatorProtocol::Message& message, size_t fromCo
           auto &trainState = train->state;
           if(trainState.speed != speed || trainState.reverse != reverse)
           {
-            trainState.speed = speed;
-            trainState.reverse = reverse;
+            setTrainSpeed(train, speed);
+            setTrainDirection(train, reverse);
           }
           break;
         }
@@ -952,9 +947,11 @@ void Simulator::updateTrainPositions()
         speed = -speed;
 
       if(item.reversed == reverse)
-        return updateVehiclePosition(item.vehicle->state.front, speed) && updateVehiclePosition(item.vehicle->state.rear, speed);
+        return updateVehiclePosition(item.vehicle->state.front, speed) &&
+            updateVehiclePosition(item.vehicle->state.rear, speed);
       else
-        return updateVehiclePosition(item.vehicle->state.rear, speed) && updateVehiclePosition(item.vehicle->state.front, speed);
+        return updateVehiclePosition(item.vehicle->state.rear, speed) &&
+            updateVehiclePosition(item.vehicle->state.front, speed);
     };
 
     const float speed = m_stateData.powerOn ? trainState.speed : 0.0f;
@@ -965,8 +962,7 @@ void Simulator::updateTrainPositions()
       {
         if(!updateHelper(vehicleItem, speed, trainState.reverse))
         {
-          trainState.speed = 0.0f;
-          trainState.speedOrDirectionChanged = true;
+          setTrainSpeed(train, 0.0f);
           break;
         }
       }
@@ -977,8 +973,7 @@ void Simulator::updateTrainPositions()
       {
         if(!updateHelper(vehicleItem, speed, trainState.reverse))
         {
-          trainState.speed = 0.0f;
-          trainState.speedOrDirectionChanged = true;
+          setTrainSpeed(train, 0.0f);
           break;
         }
       }
