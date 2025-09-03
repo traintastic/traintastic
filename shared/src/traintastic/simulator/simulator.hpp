@@ -386,6 +386,7 @@ public:
   void setTrainDirection(Train *train, bool reverse);
   void setTrainSpeed(Train *train, float speed);
   void applyTrainSpeedDelta(Train *train, float delta);
+  void setTrainMode(Train *train, TrainState::Mode mode);
   void stopAllTrains();
 
   bool trainExists(const std::string_view &name) const;

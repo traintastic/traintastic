@@ -556,6 +556,17 @@ void Simulator::setTrainSpeed(Train *train, float speed)
   }
 }
 
+void Simulator::setTrainMode(Train *train, TrainState::Mode mode)
+{
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+
+  if(train->state.mode != mode)
+  {
+    train->state.mode = mode;
+    train->state.nextSignalDirty = true;
+  }
+}
+
 void Simulator::applyTrainSpeedDelta(Train *train, float delta)
 {
   std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
@@ -570,11 +581,8 @@ void Simulator::stopAllTrains()
   for(auto& it : m_stateData.trains)
   {
     auto *train = it.second;
-    if(train->state.speed != 0.0f)
-    {
-      train->state.speed = 0.0f;
-      train->state.speedOrDirectionChanged = true;
-    }
+    setTrainSpeed(train, 0.0f);
+    setTrainMode(train, TrainState::Mode::Manual);
   }
 }
 
@@ -2415,7 +2423,7 @@ void Simulator::sendInitialState(const std::shared_ptr<SimulatorConnection> &con
 
 void Simulator::updateTrainNextSignal(Train *train)
 {
-  if(!train->state.nextSignalDirty)
+  if(!train->state.nextSignalDirty && train->state.mode != TrainState::Mode::Manual)
     return;
 
   // De-register
