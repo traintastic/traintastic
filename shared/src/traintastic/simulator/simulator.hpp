@@ -87,15 +87,15 @@ public:
 
     struct Straight
     {
-      float length;
+      float length = 0.0f;
     } straight, straight2; // TODO: make array
 
     struct Curve
     {
       Point center = invalidPoint;
-      float radius;
-      float angle;
-      float length;
+      float radius = 0.0f;
+      float angle = 0.0f;
+      float length = 0.0f;
     };
     std::array<Curve, 2> curves;
 
