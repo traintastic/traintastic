@@ -2327,7 +2327,6 @@ bool Simulator::addTrain(const std::string_view& name, DecoderProtocol proto, ui
       {
         auto& sensor = stateData.sensors[segment.sensor.index];
         sensor.occupied += train->vehicles.size() * 2;
-        sensor.value = (sensor.occupied != 0);
       }
 
       const float move = segmentLength - (segmentLength - train->length) / 2;
