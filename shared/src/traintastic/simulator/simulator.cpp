@@ -2646,7 +2646,7 @@ bool Simulator::checkNextSignal(Train *train)
   if(totalDistance >= 500)
     return true;
 
-  if(train->state.speed > train->state.nextSignal->maxSpeed * SpeedKmHtoTick)
+  if(train->state.speed >= train->state.nextSignal->maxSpeed * SpeedKmHtoTick)
   {
     // Decrease speed
     float targetSpeed = train->speedMax;
