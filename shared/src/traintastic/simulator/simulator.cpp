@@ -540,6 +540,7 @@ void Simulator::setTrainDirection(Train *train, bool reverse)
   {
     train->state.reverse = reverse;
     train->state.speedOrDirectionChanged = true;
+    train->state.nextSignalDirty = true;
   }
 }
 
@@ -2414,7 +2415,7 @@ void Simulator::sendInitialState(const std::shared_ptr<SimulatorConnection> &con
 
 void Simulator::updateTrainNextSignal(Train *train)
 {
-  if(!train->state.nextSignalDirty && !train->state.speedOrDirectionChanged)
+  if(!train->state.nextSignalDirty)
     return;
 
   // De-register
