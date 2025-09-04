@@ -827,6 +827,8 @@ void Simulator::receive(const SimulatorProtocol::Message& message, size_t fromCo
                 s->lights[i].state = MainSignal::Light::State::Off;
             }
         }
+
+        s->maxSpeed = m.speed;
         break;
       }
       break;
