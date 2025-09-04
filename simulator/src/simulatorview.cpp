@@ -1112,7 +1112,10 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
       std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
       Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
       if(train)
+      {
+        m_simulator->setTrainMode(train, Simulator::TrainState::Mode::Manual);
         m_simulator->setTrainSpeed(train, 0.0f);
+      }
       break;
     }
     case Qt::Key_Escape:
