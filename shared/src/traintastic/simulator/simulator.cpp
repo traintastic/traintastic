@@ -1575,11 +1575,6 @@ void Simulator::loadTrackObjects(const nlohmann::json &track, StaticData &data, 
 
                     trackObj.signalName = signal->name;
 
-                    if(trackObj.signalName.ends_with("A"))
-                      signal->maxSpeed = 60;
-                    if(trackObj.signalName.ends_with("B"))
-                      signal->maxSpeed = 0;
-
                     size_t nLights = item.value("n_lights", std::max(size_t(1), signal->lights.size()));
                     nLights = std::clamp(size_t(1), size_t(3), nLights);
                     signal->lights.resize(nLights);

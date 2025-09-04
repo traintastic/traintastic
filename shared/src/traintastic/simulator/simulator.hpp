@@ -424,7 +424,10 @@ public:
   void liftRestrictions(bool val)
   {
     for(auto it : m_stateData.mainSignals)
-      it.second->maxSpeed = val ? 150 : 0;
+    {
+      MainSignal *s = it.second;
+      s->maxSpeed = val ? 150 : 0;
+    }
   }
 
 private:
