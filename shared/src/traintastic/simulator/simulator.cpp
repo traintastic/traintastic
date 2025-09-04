@@ -2533,7 +2533,7 @@ void Simulator::updateTrainNextSignal(Train *train)
   bool dirFwd = face.segmentDirectionInverted == train->state.reverse;
   float startPos = face.distance;
 
-  while(totalDistance < 500)
+  while(totalDistance < 800)
   {
     if(MainSignal *s = helper(dirFwd, segmentIndex, startPos))
     {
@@ -2607,7 +2607,7 @@ bool Simulator::checkNextSignal(Train *train)
       // Long segments do not find signal and also do not set dirty
       // Set dirty near to end to re-trigger signal scan
       const bool dirFwd = face.segmentDirectionInverted == train->state.reverse;
-      if((dirFwd && (length - face.distance) < 400) || (!dirFwd && face.distance < 400))
+      if((dirFwd && (length - face.distance) < 600) || (!dirFwd && face.distance < 600))
       {
         train->state.nextSignalDirty = true;
       }
@@ -2617,50 +2617,9 @@ bool Simulator::checkNextSignal(Train *train)
 
 
 
-  float totalDistance = 0.0f;
+  const float totalDistance = train->state.nextSignalDistance;
 
-  size_t segmentIndex = face.segmentIndex;
-  bool dirFwd = face.segmentDirectionInverted == train->state.reverse;
-  float startPos = face.distance;
-
-  while(totalDistance < 500)
-  {
-    if(segmentIndex == train->state.nextSignalSegmentIdx)
-    {
-      totalDistance += std::abs(train->state.nextSignalPosInSegment - startPos);
-      break;
-    }
-
-    const auto &curSegment = staticData.trackSegments[segmentIndex];
-
-    if(dirFwd)
-    {
-      totalDistance += getSegmentLength(curSegment, m_stateData) - startPos;
-    }
-    else
-    {
-      totalDistance += startPos;
-    }
-
-    const auto nextSegmentIndex = getNextSegmentIndex(curSegment, dirFwd, m_stateData);
-    if(nextSegmentIndex == invalidIndex)
-    {
-      return true; // no next segment
-    }
-
-    auto& nextSegment = staticData.trackSegments[nextSegmentIndex];
-    dirFwd = nextSegment.nextSegmentIndex[0] == segmentIndex;
-    segmentIndex = nextSegmentIndex;
-
-    startPos = 0.0;
-    if(!dirFwd)
-      startPos = getSegmentLength(nextSegment, m_stateData);
-  }
-
-  if(std::abs(totalDistance - train->state.nextSignalDistance) > 0.01)
-    std::cout << "ROUNDING ERROR!" << std::endl << std::flush;
-
-  if(totalDistance >= 500)
+  if(totalDistance > 650)
     return true;
 
   if(train->state.speed >= train->state.nextSignal->maxSpeed * SpeedKmHtoTick)
@@ -2669,22 +2628,24 @@ bool Simulator::checkNextSignal(Train *train)
     float targetSpeed = train->speedMax;
 
     static const std::pair<float, float> SpeedCurve[] = {
-      {10, 0},
-      {12, 1},
-      {15, 3},
-      {20, 7},
-      {30, 15},
-      {40, 22},
-      {50, 30},
-      {80, 50},
-      {120, 70},
-      {250, 100},
-      {300, 130},
-      {350, 140},
-      {400, 150},
-      {425, 170},
-      {450, 200},
-      {500, 250}
+      {30, 0},
+      {32, 1},
+      {35, 3},
+      {50, 7},
+      {60, 15},
+      {70, 22},
+      {80, 30},
+      {110, 50},
+      {150, 70},
+      {280, 100},
+      {320, 130},
+      {380, 140},
+      {430, 150},
+      {450, 170},
+      {500, 190},
+      {550, 210},
+      {600, 230},
+      {650, 250}
     };
 
     for(const auto& entry : SpeedCurve)
