@@ -22,6 +22,8 @@ add_executable(traintastic-simulator
   src/main.cpp
   src/mainwindow.cpp
   src/simulatorview.cpp
+  src/trainsmodel.cpp
+  src/addtraindialog.h src/addtraindialog.cpp
   ../shared/src/traintastic/simulator/simulator.cpp
   ../shared/src/traintastic/simulator/simulatorconnection.cpp
   ../shared/src/traintastic/utils/standardpaths.cpp
@@ -58,6 +60,7 @@ target_link_libraries(traintastic-simulator PRIVATE Qt6::Core Qt6::Widgets Qt6::
 if(WIN32)
   target_compile_definitions(traintastic-simulator PRIVATE WIN32_LEAN_AND_MEAN _WIN32_WINNT=0x1000)
   target_link_libraries(traintastic-simulator PRIVATE OpenGL32)
+  target_link_libraries(traintastic-simulator PRIVATE wsock32)
   target_sources(traintastic-simulator PRIVATE ../shared/gfx/appicon.rc src/version.rc)
   set_property(TARGET traintastic-simulator PROPERTY WIN32_EXECUTABLE true)
 endif()

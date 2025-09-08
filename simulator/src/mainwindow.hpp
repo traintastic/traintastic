@@ -36,8 +36,13 @@ public:
   void load(const QString& filename);
   void setFullScreen(bool value);
 
+  void loadExtraImages(const QString &filename);
+
+  void toggleFullScreen();
+  void showAbout();
+
 protected:
-  void keyPressEvent(QKeyEvent *event) final;
+  void keyPressEvent(QKeyEvent *ev) override;
 
 private:
   SimulatorView* m_view;
@@ -47,8 +52,7 @@ private:
   QLabel* m_tickActive;
   std::vector<float> m_tickActiveFilter;
 
-  void toggleFullScreen();
-  void showAbout();
+  QMenu *imagesMenu;
 };
 
 #endif

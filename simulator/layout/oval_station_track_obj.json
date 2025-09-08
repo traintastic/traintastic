@@ -11,7 +11,27 @@
       "id": "top",
       "type": "straight",
       "length": 400,
-      "sensor_address": 2
+      "sensor_address": 2,
+      "objects": [
+        {
+          "type": "sensor",
+          "pos": 20,
+          "sensor_address": 100
+        },
+        {
+          "type": "sensor",
+          "pos": -20,
+          "sensor_address": 101,
+          "allowed_dir": "forward"
+        },
+        {
+          "type": "main_signal",
+          "name": "ciao",
+          "pos": -30,
+          "allowed_dir": "forward",
+          "n_lights": 3
+        }
+      ]
     },
     {
       "type": "straight",
