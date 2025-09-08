@@ -23,20 +23,19 @@
 #define TRAINTASTIC_SIMULATOR_SIMULATORVIEW_HPP
 
 #include <span>
-#include <QOpenGLWidget>
-#include <QOpenGLFunctions>
-#include <traintastic/simulator/simulator.hpp>
+#include <QWidget>
 
 #include <QBasicTimer>
 #include <QImage>
+
+#include <traintastic/simulator/simulator.hpp>
 
 class TrainsModel;
 
 class QHelpEvent;
 
 class SimulatorView
-  : public QOpenGLWidget
-  , protected QOpenGLFunctions
+  : public QWidget
 {
   Q_OBJECT
 
@@ -95,17 +94,15 @@ signals:
   void powerOnChanged(bool value);
 
 protected:
-  void initializeGL() override;
-  void resizeGL(int w, int h) override;
-  void paintGL() override;
+  void paintEvent(QPaintEvent *e) override;
   void resizeEvent(QResizeEvent* event) override;
 
   bool event(QEvent *e) override;
-  void keyPressEvent(QKeyEvent* event) override;
-  void mousePressEvent(QMouseEvent* event) override;
-  void mouseMoveEvent(QMouseEvent* event) override;
-  void mouseReleaseEvent(QMouseEvent* event) override;
-  void wheelEvent(QWheelEvent* event) override;
+  void keyPressEvent(QKeyEvent* e) override;
+  void mousePressEvent(QMouseEvent* e) override;
+  void mouseMoveEvent(QMouseEvent* e) override;
+  void mouseReleaseEvent(QMouseEvent* e) override;
+  void wheelEvent(QWheelEvent* e) override;
   void timerEvent(QTimerEvent *e) override;
   void contextMenuEvent(QContextMenuEvent *e) override;
 
@@ -180,8 +177,6 @@ private:
   void drawTrackObjects(QPainter *painter);
   void drawTrains(QPainter *painter);
   void drawMisc(QPainter *painter);
-
-  void updateProjection();
 
   inline void resetSegmentHover()
   {

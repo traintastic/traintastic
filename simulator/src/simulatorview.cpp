@@ -338,7 +338,7 @@ void drawCurve(const Simulator::TrackSegment& segment, size_t curveIndex, QPaint
 }
 
 SimulatorView::SimulatorView(QWidget* parent)
-  : QOpenGLWidget(parent)
+  : QWidget(parent)
 {
   setFocusPolicy(Qt::StrongFocus); // for key stuff
 
@@ -352,6 +352,12 @@ SimulatorView::SimulatorView(QWidget* parent)
   setMouseTracking(true);
 
   mTrainsModel = new TrainsModel(this);
+
+  // Dark gray background
+  QPalette p = palette();
+  p.setColor(QPalette::Window, QColor(25, 25, 25));
+  setPalette(p);
+  setAutoFillBackground(true);
 }
 
 SimulatorView::~SimulatorView()
@@ -526,26 +532,11 @@ void SimulatorView::setCamera(const Simulator::Point &cameraPt)
 {
   m_cameraX = cameraPt.x;
   m_cameraY = cameraPt.y;
-  updateProjection();
+  update();
 }
 
-void SimulatorView::initializeGL()
+void SimulatorView::paintEvent(QPaintEvent */*e*/)
 {
-  initializeOpenGLFunctions();
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-}
-
-void SimulatorView::resizeGL(int w, int h)
-{
-  makeCurrent();
-  glViewport(0, 0, w, h);
-  updateProjection();
-}
-
-void SimulatorView::paintGL()
-{
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
   QPainter painter(this);
   painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -591,9 +582,9 @@ void SimulatorView::paintGL()
   }
 }
 
-void SimulatorView::resizeEvent(QResizeEvent* event)
+void SimulatorView::resizeEvent(QResizeEvent* e)
 {
-  QOpenGLWidget::resizeEvent(event);
+  QWidget::resizeEvent(e);
   if(m_zoomFit)
   {
     zoomToFit();
@@ -1045,17 +1036,17 @@ bool SimulatorView::event(QEvent *e)
     return true;
   }
 
-  return QOpenGLWidget::event(e);
+  return QWidget::event(e);
 }
 
-void SimulatorView::keyPressEvent(QKeyEvent* event)
+void SimulatorView::keyPressEvent(QKeyEvent* e)
 {
   if(!m_simulator) [[unlikely]]
   {
-    return QWidget::keyPressEvent(event);
+    return QWidget::keyPressEvent(e);
   }
 
-    switch(event->key())
+    switch(e->key())
     {
     case Qt::Key_1:
     case Qt::Key_2:
@@ -1067,12 +1058,12 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
     case Qt::Key_8:
     case Qt::Key_9:
     {
-      const size_t trainIndex = static_cast<size_t>(event->key() - Qt::Key_1);
+      const size_t trainIndex = static_cast<size_t>(e->key() - Qt::Key_1);
       std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
       Simulator::Train *train = m_simulator->getTrainAt(trainIndex);
       if(train)
       {
-        m_trainIndex = event->key() - Qt::Key_1;
+        m_trainIndex = e->key() - Qt::Key_1;
       }
       break;
     }
@@ -1099,7 +1090,7 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
       Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
       if(train)
       {
-        bool dir = (event->key() == Qt::Key_Left);
+        bool dir = (e->key() == Qt::Key_Left);
         if(m_simulator->isTrainDirectionInverted(train))
           dir = !dir;
         m_simulator->setTrainDirection(train, dir);
@@ -1167,72 +1158,72 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
       break;
 
     default:
-      return QWidget::keyPressEvent(event);
+      return QWidget::keyPressEvent(e);
     }
 }
 
-void SimulatorView::mousePressEvent(QMouseEvent* event)
+void SimulatorView::mousePressEvent(QMouseEvent* e)
 {
-  if(event->button() == Qt::LeftButton)
+  if(e->button() == Qt::LeftButton)
   {
-    m_leftClickMousePos = event->pos();
+    m_leftClickMousePos = e->pos();
     resetSegmentHover();
   }
-  if(event->button() == Qt::RightButton)
+  if(e->button() == Qt::RightButton)
   {
-    m_rightMousePos = event->pos();
+    m_rightMousePos = e->pos();
 
-    if(event->modifiers() != Qt::ControlModifier)
+    if(e->modifiers() != Qt::ControlModifier)
       setCursor(Qt::ClosedHandCursor);
 
     resetSegmentHover();
   }
 }
 
-void SimulatorView::mouseMoveEvent(QMouseEvent* event)
+void SimulatorView::mouseMoveEvent(QMouseEvent* e)
 {
-  if(event->buttons() & Qt::RightButton && event->modifiers() != Qt::ControlModifier)
+  if(e->buttons() & Qt::RightButton && e->modifiers() != Qt::ControlModifier)
   {
     m_zoomFit = false;
 
-    const auto diff = m_rightMousePos - event->pos();
+    const auto diff = m_rightMousePos - e->pos();
 
     m_cameraX += diff.x() / m_zoomLevel;
     m_cameraY += diff.y() / m_zoomLevel;
 
-    m_rightMousePos = event->pos();
-    updateProjection();
+    m_rightMousePos = e->pos();
+    update();
   }
-  else if(event->buttons() == Qt::NoButton && m_simulator)
+  else if(e->buttons() == Qt::NoButton && m_simulator)
   {
     // Refresh hovered segment every 100 ms
-    m_lastHoverPos = mapToSim(event->pos());
+    m_lastHoverPos = mapToSim(e->pos());
     if(!segmentHoverTimer.isActive())
       segmentHoverTimer.start(std::chrono::milliseconds(100), this);
   }
 }
 
-void SimulatorView::mouseReleaseEvent(QMouseEvent* event)
+void SimulatorView::mouseReleaseEvent(QMouseEvent* e)
 {
-  if(event->button() == Qt::LeftButton)
+  if(e->button() == Qt::LeftButton)
   {
-    auto diff = m_leftClickMousePos - event->pos();
+    auto diff = m_leftClickMousePos - e->pos();
     if(std::abs(diff.x()) <= 2 && std::abs(diff.y()) <= 2)
     {
-      const bool shiftPressed = event->modifiers().testFlag(Qt::ShiftModifier);
+      const bool shiftPressed = e->modifiers().testFlag(Qt::ShiftModifier);
       mouseLeftClick(mapToSim(m_leftClickMousePos), shiftPressed);
     }
   }
-  if(event->button() == Qt::RightButton)
+  if(e->button() == Qt::RightButton)
   {
     setCursor(Qt::ArrowCursor);
   }
 }
 
-void SimulatorView::wheelEvent(QWheelEvent* event)
+void SimulatorView::wheelEvent(QWheelEvent* e)
 {
   m_zoomFit = false;
-  if(event->angleDelta().y() < 0)
+  if(e->angleDelta().y() < 0)
   {
     zoomOut();
   }
@@ -1275,7 +1266,7 @@ void SimulatorView::timerEvent(QTimerEvent *e)
     }
   }
 
-  QOpenGLWidget::timerEvent(e);
+  QWidget::timerEvent(e);
 }
 
 void SimulatorView::contextMenuEvent(QContextMenuEvent *e)
@@ -1489,7 +1480,7 @@ void SimulatorView::showItemTooltip(const Simulator::Point &point, QHelpEvent *e
 void SimulatorView::setZoomLevel(float value)
 {
   m_zoomLevel = std::clamp(value, zoomLevelMin, zoomLevelMax);
-  updateProjection();
+  update();
 }
 
 void SimulatorView::setImageVisible(int idx, bool val)
@@ -1514,24 +1505,6 @@ nlohmann::json SimulatorView::copySegmentData(size_t segmentIdx) const
   obj["rotation"] = qRadiansToDegrees(segment.rotation);
 
   return obj;
-}
-
-void SimulatorView::updateProjection()
-{
-  makeCurrent();
-
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-
-  const float viewWidth = width() / m_zoomLevel;
-  const float viewHeight = height() / m_zoomLevel;
-
-  glOrtho(m_cameraX, m_cameraX + viewWidth, m_cameraY + viewHeight, m_cameraY, -1, 1);
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-
-  update();
 }
 
 void SimulatorView::showAddTrainDialog(size_t segmentIndex)
