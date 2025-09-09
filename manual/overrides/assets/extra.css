@@ -1,0 +1,18 @@
+.md-typeset .admonition.footnote,
+.md-typeset details.footnote {
+  font-size: 0.85em;
+  color: var(--md-default-fg-color--light);
+  border: none;
+  background: none;
+  box-shadow: none;
+  padding-left: 0.6em;
+  margin: 0;
+}
+
+.md-typeset .admonition.footnote > p {
+  margin: 0;
+}
+
+.md-typeset .admonition.footnote>.admonition-title {
+  display: none;
+}

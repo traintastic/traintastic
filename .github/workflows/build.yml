@@ -458,45 +458,23 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Install python packages
-      run: sudo pip3 install cmarkgfm
+    - name: Install python requirements
+      run: sudo pip3 install -r requirements.txt
 
     - name: Build manual
       working-directory: ${{github.workspace}}/manual
-      run: ./builddoc.py html-single-page --output-dir build
+      run: ./build.py
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: traintastic-manual
-        path: ${{github.workspace}}/manual/build/*
-
-  build-manual-lua:
-    name: manual lua
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: FranzDiebold/github-env-vars-action@v2
-
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive
-
-    - name: Build manual
-      working-directory: ${{github.workspace}}/manual
-      run: ./buildluadoc.py
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: traintastic-manual-lua
-        path: ${{github.workspace}}/manual/build.luadoc/*
+        path: ${{github.workspace}}/manual/output/*
 
   package-innosetup:
     name: package innosetup
     runs-on: windows-latest
-    needs: [build-client, build-server, build-lang, build-manual, build-manual-lua]
+    needs: [build-client, build-server, build-lang, build-manual]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -528,13 +506,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: traintastic-manual
-        path: ${{github.workspace}}/manual/build
-
-    - name: "Download artifact: manual-lua"
-      uses: actions/download-artifact@v4
-      with:
-        name: traintastic-manual-lua
-        path: ${{github.workspace}}/manual/build.luadoc
+        path: ${{github.workspace}}/manual/output
 
     - name: Build installer
       shell: cmd
@@ -551,7 +523,7 @@ jobs:
     name: Deploy to website
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
-    needs: [package-innosetup, build-server, build-client, build-data, build-manual, build-manual-lua]
+    needs: [package-innosetup, build-server, build-client, build-data, build-manual]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -594,12 +566,6 @@ jobs:
         pattern: traintastic-data-deb-*
         merge-multiple: true
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
-
-    - name: "Download artifact: manual-lua"
-      uses: actions/download-artifact@v4
-      with:
-        name: traintastic-manual-lua
-        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/manual-lua
 
     - uses: easingthemes/ssh-deploy@v2.2.11
       env:

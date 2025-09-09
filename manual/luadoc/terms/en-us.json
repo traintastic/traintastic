@@ -56,6 +56,10 @@
     "definition": "Events"
   },
   {
+    "term": "arguments",
+    "definition": "Arguments"
+  },
+  {
     "term": "functions",
     "definition": "Functions"
   },
@@ -432,6 +436,102 @@
     "definition": "Globals"
   },
   {
+    "term": "globals:description",
+    "definition": "Global environment containing built-in constants, libraries, objects, and functions available in Traintastics Lua."
+  },
+  {
+    "term": "globals.assert:description",
+    "definition": "Raises an error if the given condition is false or nil; otherwise returns its argument(s)."
+  },
+  {
+    "term": "globals.assert.parameter.condition:description",
+    "definition": "A value that is tested for truth; if false or nil, the function errors."
+  },
+  {
+    "term": "globals.assert.parameter.message:description",
+    "definition": "Optional error message (string) to use if the assertion fails."
+  },
+  {
+    "term": "globals.ipairs:description",
+    "definition": "Returns an iterator function for array-like tables, iterating in order of numerical indices starting from 1."
+  },
+  {
+    "term": "globals.ipairs.parameter.table:description",
+    "definition": "A numerically indexed table."
+  },
+  {
+    "term": "globals.ipairs:return_values",
+    "definition": "Three values: an iterator function, the table itself, and the initial index (0)."
+  },
+  {
+    "term": "globals.next:description",
+    "definition": "Allows traversal of all key–value pairs in a table; returns the next key and its value."
+  },
+  {
+    "term": "globals.next.parameter.table:description",
+    "definition": "The table to iterate."
+  },
+  {
+    "term": "globals.next.parameter.index:description",
+    "definition": "The last key returned; iteration resumes after this key (optional, use nil to start)."
+  },
+  {
+    "term": "globals.next:return_values",
+    "definition": "The next key and its corresponding value in the table, or nil when no more entries."
+  },
+  {
+    "term": "globals.pairs:description",
+    "definition": "Returns an iterator function to traverse all key–value pairs in a table in no particular order."
+  },
+  {
+    "term": "globals.pairs.parameter.table:description",
+    "definition": "The table to iterate over."
+  },
+  {
+    "term": "globals.pairs:return_values",
+    "definition": "Three values: an iterator function, the table itself, and an initial nil key."
+  },
+  {
+    "term": "globals.tonumber:description",
+    "definition": "Tries to convert its argument to a number; returns the number or nil if conversion fails."
+  },
+  {
+    "term": "globals.tonumber.parameter.value:description",
+    "definition": "A string or number to convert."
+  },
+  {
+    "term": "globals.tonumber.parameter.base:description",
+    "definition": "An optional base (2–36) to interpret the string in (default is base 10)."
+  },
+  {
+    "term": "globals.tonumber:return_values",
+    "definition": "The converted number, or nil if the input is not a valid numeric representation."
+  },
+  {
+    "term": "globals.tostring:description",
+    "definition": "Returns a string representation of its argument."
+  },
+  {
+    "term": "globals.tostring.parameter.value:description",
+    "definition": "The value to convert to string."
+  },
+  {
+    "term": "globals.tostring:return_values",
+    "definition": "A string representation of the given value."
+  },
+  {
+    "term": "globals.type:description",
+    "definition": "Returns the type name of its argument as a string (such as 'nil', 'number', 'string', 'boolean', 'table', 'function', etc.)."
+  },
+  {
+    "term": "globals.type.parameter.value:description",
+    "definition": "The value whose type is to be returned."
+  },
+  {
+    "term": "globals.type:return_values",
+    "definition": "A string describing the type of the input value, or 'nil' if the value is nil."
+  },
+  {
     "term": "class:title",
     "definition": "Class library"
   },
@@ -466,6 +566,214 @@
   {
     "term": "math.abs:return_values",
     "definition": "The absolute value of `number`."
+  },
+  {
+    "term": "math:description",
+    "definition": "Provides mathematical functions and constants. This library includes trigonometric, exponential, logarithmic, and other standard math operations, along with constants such as π."
+  },
+  {
+    "term": "math.huge:description",
+    "definition": "A special value representing positive infinity."
+  },
+  {
+    "term": "math.maxinteger:description",
+    "definition": "The maximum value that can be represented by an integer in Lua."
+  },
+  {
+    "term": "math.mininteger:description",
+    "definition": "The minimum value that can be represented by an integer in Lua."
+  },
+  {
+    "term": "math.pi:description",
+    "definition": "The value of π (pi), the ratio of a circle's circumference to its diameter."
+  },
+  {
+    "term": "math.acos.parameter.number:description",
+    "definition": "A number between -1 and 1."
+  },
+  {
+    "term": "math.acos:return_values",
+    "definition": "The arc cosine of the input number, in radians."
+  },
+  {
+    "term": "math.asin.parameter.number:description",
+    "definition": "A number between -1 and 1."
+  },
+  {
+    "term": "math.asin:return_values",
+    "definition": "The arc sine of the input number, in radians."
+  },
+  {
+    "term": "math.atan:description",
+    "definition": "Returns the arc tangent of a number, in radians."
+  },
+  {
+    "term": "math.atan.parameter.number:description",
+    "definition": "A numeric value representing a tangent."
+  },
+  {
+    "term": "math.atan:return_values",
+    "definition": "The arc tangent of the input number, in radians."
+  },
+  {
+    "term": "math.ceil.parameter.number:description",
+    "definition": "A numeric value to round up."
+  },
+  {
+    "term": "math.ceil:return_values",
+    "definition": "The smallest integer greater than or equal to the given number."
+  },
+  {
+    "term": "math.cos.parameter.number:description",
+    "definition": "An angle in radians."
+  },
+  {
+    "term": "math.cos:return_values",
+    "definition": "The cosine of the angle."
+  },
+  {
+    "term": "math.deg:description",
+    "definition": "Converts an angle from radians to degrees."
+  },
+  {
+    "term": "math.deg.parameter.number:description",
+    "definition": "An angle in radians."
+  },
+  {
+    "term": "math.deg:return_values",
+    "definition": "The angle converted to degrees."
+  },
+  {
+    "term": "math.exp:description",
+    "definition": "Returns the value of the constant e raised to the power of the given number."
+  },
+  {
+    "term": "math.exp.parameter.number:description",
+    "definition": "The exponent to raise e to."
+  },
+  {
+    "term": "math.exp:return_values",
+    "definition": "The result of e^number."
+  },
+  {
+    "term": "math.floor:description",
+    "definition": "Returns the largest integral value less than or equal to the given number."
+  },
+  {
+    "term": "math.floor.parameter.number:description",
+    "definition": "A numeric value to round down."
+  },
+  {
+    "term": "math.floor:return_values",
+    "definition": "The largest integer less than or equal to the given number."
+  },
+  {
+    "term": "math.fmod:description",
+    "definition": "Returns the remainder of the division of the first number by the second."
+  },
+  {
+    "term": "math.fmod.parameter.divided:description",
+    "definition": "The dividend."
+  },
+  {
+    "term": "math.fmod.parameter.divisor:description",
+    "definition": "The divisor."
+  },
+  {
+    "term": "math.fmod:return_values",
+    "definition": "The remainder of the division."
+  },
+  {
+    "term": "math.log:description",
+    "definition": "Returns the logarithm of a number in a given base. Defaults to natural logarithm if base is not provided."
+  },
+  {
+    "term": "math.log.parameter.number:description",
+    "definition": "The number to compute the logarithm for."
+  },
+  {
+    "term": "math.log.parameter.base:description",
+    "definition": "The logarithmic base. Optional; defaults to e."
+  },
+  {
+    "term": "math.max:description",
+    "definition": "Returns the largest value among its arguments."
+  },
+  {
+    "term": "math.max.parameter.number:description",
+    "definition": "The first number to compare."
+  },
+  {
+    "term": "math.max.parameter....:description",
+    "definition": "Additional numbers to compare."
+  },
+  {
+    "term": "math.min:description",
+    "definition": "Returns the smallest value among its arguments."
+  },
+  {
+    "term": "math.min.parameter.number:description",
+    "definition": "The first number to compare."
+  },
+  {
+    "term": "math.min.parameter....:description",
+    "definition": "Additional numbers to compare."
+  },
+  {
+    "term": "math.modf:description",
+    "definition": "Splits a number into its integer and fractional parts."
+  },
+  {
+    "term": "math.modf.parameter.number:description",
+    "definition": "The number to split."
+  },
+  {
+    "term": "math.modf:return_values",
+    "definition": "Two numbers: the integer part and the fractional part."
+  },
+  {
+    "term": "math.rad:description",
+    "definition": "Converts an angle from degrees to radians."
+  },
+  {
+    "term": "math.random:description",
+    "definition": "Generates a pseudo-random number. The behavior depends on the provided arguments."
+  },
+  {
+    "term": "math.random.parameter.m:description",
+    "definition": "The lower limit of the random number range (optional)."
+  },
+  {
+    "term": "math.random.parameter.n:description",
+    "definition": "The upper limit of the random number range (optional)."
+  },
+  {
+    "term": "math.randomseed:description",
+    "definition": "Sets the seed for the random number generator."
+  },
+  {
+    "term": "math.sin:description",
+    "definition": "Returns the sine of an angle (in radians)."
+  },
+  {
+    "term": "math.sqrt:description",
+    "definition": "Returns the square root of a number."
+  },
+  {
+    "term": "math.tan:description",
+    "definition": "Returns the tangent of an angle (in radians)."
+  },
+  {
+    "term": "math.tointeger:description",
+    "definition": "Converts a number to an integer if it is exactly representable."
+  },
+  {
+    "term": "math.type:description",
+    "definition": "Returns the type of a number: 'integer', 'float', or nil if not a number."
+  },
+  {
+    "term": "math.ult:description",
+    "definition": "Compares two unsigned integers and returns true if the first is less than the second."
   },
   {
     "term": "globals:description",
@@ -1153,7 +1461,7 @@
   },
   {
     "term": "event.parameter.user_data:description",
-    "definition": "User data that was set or `nil` if no user data was set during connect."
+    "definition": "optional user-provided value (see [Events](../events.md#user_data))."
   },
   {
     "term": "object:title",
@@ -1321,7 +1629,7 @@
   },
   {
     "term": "object.idobject.id:description",
-    "definition": "Object id, each object has a unique id."
+    "definition": "Unique object identifier. Each object in Traintastic has a globally unique id that can be used in scripts (see {ref:object.world#get_object|`world.get_object`})."
   },
   {
     "term": "object.board.name:description",
@@ -2037,83 +2345,87 @@
   },
   {
     "term": "object.zone:description",
-    "definition": "A group of blocks, this can for example be used to create a station or a staging area."
+    "definition": "A zone groups multiple blocks into a logical area, such as a station, yard, or staging area. Zones make it easier to script behaviors that depend on a train’s location within a larger area, rather than tracking individual blocks."
   },
   {
     "term": "object.zone.name:description",
-    "definition": "Zone name."
+    "definition": "The configured name of the zone."
+  },
+  {
+    "term": "object.zone:events_overview",
+    "definition": "Zone events fall into two categories:\n\n- **Assignment events**: `on_train_assigned` and `on_train_removed` are triggered when a train is manually linked to or unlinked from a block in the zone. These indicate identification changes made by the operator, not movement.\n\n- **Movement events**: `on_train_entering`, `on_train_entered`, `on_train_leaving`, and `on_train_left` are triggered as a train moves through the zone. They represent the lifecycle of a train entering, being inside, leaving, and fully leaving the zone."
   },
   {
     "term": "object.zone.on_train_entering:description",
-    "definition": "Fired when a train reserves or enters the first block in the zone."
+    "definition": "Fired when a train starts moving into the zone by reserving or occupying its first block. This marks the point where the train begins to interact with the zone but is not yet fully inside it (see `on_train_entered`).\n\nUnlike `on_train_assigned`, which is triggered when a train is manually linked to a block (e.g., placed on the track and assigned by the operator), `on_train_entering` reflects actual movement or reservation during operation."
   },
   {
     "term": "object.zone.on_train_entering.parameter.train:description",
-    "definition": "The {ref:object.train|train} that is entering the zone."
+    "definition": "the {ref:object.train|train} that is entering the zone."
   },
   {
     "term": "object.zone.on_train_entering.parameter.zone:description",
-    "definition": "The zone."
+    "definition": "the {ref:object.zone|zone} firing the event."
   },
   {
     "term": "object.zone.on_train_assigned:description",
-    "definition": "Fired when a train is assigned to the first block in the zone."
+    "definition": "Fired when a train is manually assigned to the first block of the zone. This happens after a train has been placed on the track and the operator links it to the block, allowing Traintastic to recognize which train it is.\n\nThis event is about train identification, not movement."
   },
   {
     "term": "object.zone.on_train_assigned.parameter.train:description",
-    "definition": "The {ref:object.train|train} that is assigned to a block in the zone."
+    "definition": "the {ref:object.train|train} that is assigned to a block in the zone."
   },
   {
     "term": "object.zone.on_train_assigned.parameter.zone:description",
-    "definition": "The zone."
+    "definition": "the {ref:object.zone|zone} firing the event."
   },
   {
     "term": "object.zone.on_train_leaving:description",
-    "definition": "Fired when a train reserves or enters a block that is not part of the zone."
+    "definition": "Fired when a train starts to leave the zone by reserving or occupying a block that is not part of the zone. At this point the train still has blocks in the zone, but it is extending beyond its boundaries."
   },
   {
     "term": "object.zone.on_train_leaving.parameter.train:description",
-    "definition": "The {ref:object.train|train} that is leaving the zone."
+    "definition": "the {ref:object.train|train} that is leaving the zone."
   },
   {
     "term": "object.zone.on_train_leaving.parameter.zone:description",
-    "definition": "The zone."
+    "definition": "the {ref:object.zone|zone} firing the event."
   },
   {
     "term": "object.zone.on_train_entered:description",
-    "definition": "Fired when a train is in the zone, a train is in the zone when it only occupies blocks that are part of the zone."
+    "definition": "Fired when a train is fully inside the zone. A train is considered 'in the zone' only if it exclusively occupies blocks that belong to the zone.\n\n!!! note\n    If a zone is too small or the train too long, it may happen that while entering, the train simultaneously starts leaving the zone. In this case, the train is never fully inside, and `on_train_entered` will not be fired (only `on_train_entering` and `on_train_leaving` apply)."
   },
   {
     "term": "object.zone.on_train_entered.parameter.train:description",
-    "definition": "The {ref:object.train|train} that is in the zone."
+    "definition": "the {ref:object.train|train} that is in the zone."
   },
   {
     "term": "object.zone.on_train_entered.parameter.zone:description",
-    "definition": "The zone."
+    "definition": "the {ref:object.zone|zone} firing the event."
   },
   {
     "term": "object.zone.on_train_left:description",
-    "definition": "Fired when a train is no longer in the zone, a train is not longer in the zone when it doesn't occupy any block that are part of the zone."
+    "definition": "Fired when a train is no longer in the zone, a train is no longer in the zone when it doesn't occupy any block that are part of the zone."
   },
   {
     "term": "object.zone.on_train_left.parameter.train:description",
-    "definition": "The {ref:object.train|train} that has left the zone."
+    "definition": "the {ref:object.train|train} that has left the zone."
   },
   {
     "term": "object.zone.on_train_left.parameter.zone:description",
-    "definition": "The zone."
+    "definition": "the {ref:object.zone|zone} firing the event."
   },
   {
     "term": "object.zone.on_train_removed:description",
-    "definition": "Fired when a train is removed from the last block in the zone."
+    "definition": "Fired when a train is manually removed from the last block of the zone. This is the opposite of `on_train_assigned` and indicates the train is no longer linked to the zone.\n\nThis event is about train identification, not movement."
   },
   {
     "term": "object.zone.on_train_removed.parameter.train:description",
-    "definition": "The {ref:object.train|train} that is removed from the zone."
+    "definition": "the {ref:object.train|train} that is removed from the zone."
   },
   {
     "term": "object.zone.on_train_removed.parameter.zone:description",
-    "definition": "The zone."
+    "definition": "the {ref:object.zone|zone} firing the event."
   },
   {
     "term": "object.trainzonestatus:title",
@@ -2209,7 +2521,7 @@
   },
   {
     "term": "object.zone.mute:description",
-    "definition": "If `true`, all trains in the zone are muted."
+    "definition": "If `true`, all sounds of trains in the zone are muted."
   },
   {
     "term": "object.zone.no_smoke:description",
@@ -2229,7 +2541,7 @@
   },
   {
     "term": "pv:paragraph_1",
-    "definition": "Persistent variables allow you to store and retrieve data that remains available across multiple executions of the Lua script. This can be particularly useful for maintaining state information that needs to be retained beyond the current script's lifetime."
+    "definition": "Persistent variables allow you to store data that survives script restarts and world save/load. They are useful for keeping state between sessions, such as counters, configuration values, or custom train data."
   },
   {
     "term": "pv:paragraph_2",
@@ -2241,7 +2553,11 @@
   },
   {
     "term": "pv.storing:paragraph_1",
-    "definition": "You can store data in {ref:globals#pv|`pv`} just like you would with a regular Lua table. Supported data types are numbers, strings, booleans, tables, {ref:enum|enums}, {ref:set|sets}, {ref:object|objects} and object methods."
+    "definition": "You can store data in {ref:globals#pv|`pv`} just like you would with a regular Lua table."
+  },
+  {
+    "term": "pv:storing_note",
+    "definition": "Persistent variables supports storing booleans, numbers, strings, tables, {ref:enum|enums}, {ref:set|sets}, {ref:object|objects} and object methods."
   },
   {
     "term": "pv.retrieving:title",
@@ -2261,11 +2577,11 @@
   },
   {
     "term": "pv.checking:title",
-    "definition": "Checking for persistent data"
+    "definition": "Checking if data exists"
   },
   {
     "term": "pv.checking:paragraph_1",
-    "definition": "To determine if a persistent variable has been set, use an `if` statement with `nil` checks. Variables in {ref:globals#pv|`pv`} that haven't been initialized or have been deleted will return `nil`. This pattern is useful for initializing default values or handling cases where the persistent variables are cleared."
+    "definition": "To determine if a persistent variable has been set, use a `nil` checks. This pattern is useful for initializing default values or handling cases where the persistent variables are cleared."
   },
   {
     "term": "enum.zone_train_state:description",
@@ -2293,11 +2609,11 @@
   },
   {
     "term": "object.train.mute:description",
-    "definition": "`true` if the train is currently muted by the {ref:object.world|world} mute or a muted {ref:object.zone|zone}, `false` otherwise."
+    "definition": "If `true`, mutes all trains in the zone."
   },
   {
     "term": "object.train.no_smoke:description",
-    "definition": "`true` if the train's smoke generators are disabled by the {ref:object.world|world} no smoke or a non smoking {ref:object.zone|zone}, `false` otherwise."
+    "definition": "If `true`, disables smoke generators of all trains in the zone.s"
   },
   {
     "term": "object.train.zones:description",
