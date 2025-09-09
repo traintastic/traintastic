@@ -16,7 +16,7 @@ def detect_version():
         import codecs
         import re
 
-        with codecs.open(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'shared', 'traintastic.cmake')), 'r', 'utf-8') as file:
+        with codecs.open(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'shared', 'traintastic.cmake')), 'r', 'utf-8') as file:
             version = re.findall(r'^set\(TRAINTASTIC_VERSION ([0-9\.]+)\)$', file.read(), re.MULTILINE)[0]
 
         if os.environ['GITHUB_REF_TYPE'] == 'branch':
