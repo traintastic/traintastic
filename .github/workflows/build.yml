@@ -459,6 +459,7 @@ jobs:
         submodules: recursive
 
     - name: Install python requirements
+      working-directory: ${{github.workspace}}/manual
       run: sudo pip3 install -r requirements.txt
 
     - name: Build manual
