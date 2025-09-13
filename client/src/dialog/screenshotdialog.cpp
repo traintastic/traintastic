@@ -55,7 +55,7 @@ ScreenShotDialog::ScreenShotDialog(MainWindow& mainWindow)
   , m_progressBar{new QProgressBar(this)}
   , m_label{new QLabel(this)}
   , m_start{new QPushButton("Start", this)}
-  , m_languageCode{GeneralSettings::instance().language.value().first(2)}
+  , m_languageCode{GeneralSettings::instance().language.value().left(2)}
 {
   setWindowTitle("Screenshot creator");
 
@@ -67,7 +67,7 @@ ScreenShotDialog::ScreenShotDialog(MainWindow& mainWindow)
     [this]()
     {
       QSettings settings;
-      m_outputDir = QFileDialog::getExistingDirectory(this, "Select output directory", settings.value("ScreenshotCreator/OutputDirectory", QDir::homePath()).toString());
+      m_outputDir.setPath(QFileDialog::getExistingDirectory(this, "Select output directory", settings.value("ScreenshotCreator/OutputDirectory", QDir::homePath()).toString()));
       if(m_outputDir.exists())
       {
         m_start->setEnabled(false);
