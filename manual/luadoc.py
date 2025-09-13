@@ -1,6 +1,7 @@
 import sys
 import string
 import os
+import posixpath
 import codecs
 import re
 import json
@@ -57,7 +58,7 @@ class LuaDoc:
 
     def _load_terms(language: str) -> dict:
         terms = {}
-        for item in json.loads(LuaDoc._read_file(os.path.join(os.path.dirname(__file__), 'luadoc', 'terms', language + '.json'))):
+        for item in json.loads(LuaDoc._read_file(posixpath.join(os.path.dirname(__file__), 'luadoc', 'terms', language + '.json'))):
             if item['definition'] is not None and item['definition'] != '':
                 terms[item['term']] = item['definition']
         return terms
@@ -166,12 +167,12 @@ class LuaDoc:
 
     def _copy_file(src: str, dst: str) -> None:
         os.makedirs(dst, mode=0o755, exist_ok=True)
-        shutil.copyfile(src, os.path.join(dst, os.path.basename(src)))
+        shutil.copyfile(src, posixpath.join(dst, os.path.basename(src)))
 
     def _find_globals(project_root: str) -> dict:
         globals = []
 
-        sandbox_cpp = LuaDoc._read_file(os.path.join(project_root, 'server', 'src', 'lua', 'sandbox.cpp'))
+        sandbox_cpp = LuaDoc._read_file(posixpath.join(project_root, 'server', 'src', 'lua', 'sandbox.cpp'))
 
         # lua base lib:
         for args in re.findall(r'addBaseLib\(\s*L\s*,[^{]*{(.+?)}\);', sandbox_cpp, flags=re.DOTALL):
@@ -185,17 +186,17 @@ class LuaDoc:
         for name in re.findall(r'lua_setfield\(\s*L\s*,\s*-2\s*,\s*"([A-Za-z][A-Za-z_]*)"\s*\);', sandbox_cpp):
             globals.append(name)
 
-        globals = LuaDoc._load_data(globals, os.path.join(os.path.dirname(__file__), 'luadoc', 'globals.json'))
+        globals = LuaDoc._load_data(globals, posixpath.join(os.path.dirname(__file__), 'luadoc', 'globals.json'))
 
         return globals
 
     def _find_enums(project_root: str) -> list:
-        enums_hpp = LuaDoc._read_file(os.path.join(project_root, 'server', 'src', 'lua', 'enums.hpp'))
+        enums_hpp = LuaDoc._read_file(posixpath.join(project_root, 'server', 'src', 'lua', 'enums.hpp'))
         m = re.findall(r'#define LUA_ENUMS([ \nA-Za-z0-9_,\\]+)\n\n', enums_hpp)
         m = re.sub(r'[ \\\n]+', '', m[0])
         enums = []
         for cpp_name in m.split(','):
-            filename = os.path.join(project_root, 'shared', 'src', 'traintastic', 'enum', cpp_name.lower() + '.hpp')
+            filename = posixpath.join(project_root, 'shared', 'src', 'traintastic', 'enum', cpp_name.lower() + '.hpp')
             hpp = LuaDoc._read_file(filename)
             enum = re.search(r'enum class ' + cpp_name + r'[ ]*(:[ ]*[A-Za-z0-9_]+|)[ \n]*{(.+?)};', hpp, re.DOTALL)
             items = [{'cpp_name': m[0], 'description': m[3], 'type': 'constant'} for m in re.findall(r'^[ ]*([A-Za-z0-9_]+)[ ]*=[ ]*.+?[ ]*(,|)[ ]*(//!< (.+)|)\n', enum.group(2), flags=re.MULTILINE)] if enum is not None else None
@@ -212,7 +213,7 @@ class LuaDoc:
             items = filter(lambda item: 'lua_name' in item, items)
 
             enums.append({
-                'filename': os.path.join('enum', info.group(1).lower() + '.md'),
+                'filename': posixpath.join('enum', info.group(1).lower() + '.md'),
                 'name': 'enum.' + info.group(1).lower() + ':title',
                 'cpp_name': cpp_name,
                 'lua_name': info.group(1),
@@ -223,12 +224,12 @@ class LuaDoc:
         return enums
 
     def _find_sets(project_root: str) -> list:
-        sets_hpp = LuaDoc._read_file(os.path.join(project_root, 'server', 'src', 'lua', 'sets.hpp'))
+        sets_hpp = LuaDoc._read_file(posixpath.join(project_root, 'server', 'src', 'lua', 'sets.hpp'))
         m = re.findall(r'#define LUA_SETS([ \nA-Za-z0-9_,\\]+)\n\n', sets_hpp)
         m = re.sub(r'[ \\\n]+', '', m[0])
         sets = []
         for cpp_name in m.split(','):
-            filename = os.path.join(project_root, 'shared', 'src', 'traintastic', 'set', cpp_name.lower() + '.hpp')
+            filename = posixpath.join(project_root, 'shared', 'src', 'traintastic', 'set', cpp_name.lower() + '.hpp')
             hpp = LuaDoc._read_file(filename)
             set = re.search(r'enum class ' + cpp_name + r'[ ]*(:[ ]*[A-Za-z0-9_]+|)[ \n]*{(.+?)};', hpp, re.DOTALL)
             items = [{'cpp_name': m[0], 'description': m[3], 'type': 'constant'} for m in re.findall(r'\b([A-Za-z0-9_]+)[ ]*=[ ]*.+?[ ]*(,|)[ ]*(//!< (.+)|)\n', set.group(2))] if set is not None else None
@@ -243,7 +244,7 @@ class LuaDoc:
                     item['lua_name'] = m.group(1).upper()
 
             sets.append({
-                'filename': os.path.join('set', info.group(1).lower() + '.md'),
+                'filename': posixpath.join('set', info.group(1).lower() + '.md'),
                 'name': 'set.' + info.group(1).lower() + ':title',
                 'cpp_name': cpp_name,
                 'lua_name': info.group(1),
@@ -257,7 +258,7 @@ class LuaDoc:
         libs = {}
 
         # lua libs:
-        sandbox_cpp = LuaDoc._read_file(os.path.join(project_root, 'server', 'src', 'lua', 'sandbox.cpp'))
+        sandbox_cpp = LuaDoc._read_file(posixpath.join(project_root, 'server', 'src', 'lua', 'sandbox.cpp'))
         for name, args in re.findall(r'addLib\(\s*L\s*,\s*LUA_[A-Z]+\s*,\s*luaopen_([a-z]+)\s*,\s*{(.+?)}\);', sandbox_cpp, flags=re.DOTALL):
             items = []
             for item_name in re.findall(r'"([a-z0-9_]+)"', args):
@@ -271,7 +272,7 @@ class LuaDoc:
         # log lib:
         name = 'log'
         items = []
-        log_hpp = LuaDoc._read_file(os.path.join(project_root, 'server', 'src', 'lua', 'log.hpp'))
+        log_hpp = LuaDoc._read_file(posixpath.join(project_root, 'server', 'src', 'lua', 'log.hpp'))
         for item_name in re.findall(r'static\s+int\s+([a-z]+)\(\s*lua_State\s*\*\s*L\s*\)', log_hpp):
             items.append(item_name)
         libs[name] = {
@@ -283,12 +284,12 @@ class LuaDoc:
         # class lib:
         name = 'class'
         items = []
-        class_hpp = LuaDoc._read_file(os.path.join(project_root, 'server', 'src', 'lua', 'class.hpp'))
+        class_hpp = LuaDoc._read_file(posixpath.join(project_root, 'server', 'src', 'lua', 'class.hpp'))
         for item_name in re.findall(r'static\s+int\s+([a-zA-Z]+)\(\s*lua_State\s*\*\s*L\s*\)', class_hpp):
             if item_name == 'getClass':
                 item_name = 'get'
             items.append(item_name)
-        class_cpp = LuaDoc._read_file(os.path.join(project_root, 'server', 'src', 'lua', 'class.cpp'))
+        class_cpp = LuaDoc._read_file(posixpath.join(project_root, 'server', 'src', 'lua', 'class.cpp'))
         for item_name in re.findall(r'registerValue<[a-zA-Z0-9]+>\(\s*L\s*,\s*"([A-Z_]+)"\s*\);', class_cpp):
             if item_name == 'getClass':
                 item_name = 'get'
@@ -301,7 +302,7 @@ class LuaDoc:
 
         # load meta data:
         for name, lib in libs.items():
-            filename = os.path.join(os.path.dirname(__file__), 'luadoc', name + '.json')
+            filename = posixpath.join(os.path.dirname(__file__), 'luadoc', name + '.json')
             lib_json = json.loads(LuaDoc._read_file(filename))
 
             items = []
@@ -321,11 +322,11 @@ class LuaDoc:
 
         # index all cpp classes:
         cpp_classes = {}
-        for root, dirs, files in os.walk(os.path.join(project_root, 'server', 'src')):
+        for root, dirs, files in os.walk(posixpath.join(project_root, 'server', 'src')):
             for file in files:
                 if not file.endswith('.hpp'):
                     continue
-                filename_hpp = os.path.join(root, file)
+                filename_hpp = posixpath.join(root, file)
                 hpp = LuaDoc._read_file(filename_hpp)
                 m = re.search(r'class\s*([A-Za-z0-9]+)\s*(final|)\s*(:[^;]+?|){', hpp, flags=re.DOTALL)
                 if m is None:
@@ -334,7 +335,7 @@ class LuaDoc:
                 for base_class, _ in re.findall(r'public\s*([A-Za-z0-9]+)(<[A-Za-z0-9]+>|)', m.group(3)):
                     if not base_class.startswith('std'):
                         base_classes.append(base_class)
-                lua_filename_hpp = os.path.join(project_root, 'server', 'src', 'lua', 'object', os.path.basename(filename_hpp))
+                lua_filename_hpp = posixpath.join(project_root, 'server', 'src', 'lua', 'object', os.path.basename(filename_hpp))
                 lua_filename_cpp = os.path.splitext(lua_filename_hpp)[0] + '.cpp'
                 cpp_classes[m.group(1)] = {
                     'filename_hpp': filename_hpp,
@@ -343,7 +344,7 @@ class LuaDoc:
                     'base_classes': base_classes}
 
         # indentify those that can be used in Lua:
-        class_cpp = LuaDoc._read_file(os.path.join(project_root, 'server', 'src', 'lua', 'class.cpp'))
+        class_cpp = LuaDoc._read_file(posixpath.join(project_root, 'server', 'src', 'lua', 'class.cpp'))
         for cpp_name in re.findall(r'registerValue<([a-zA-Z0-9]+)>\(\s*L\s*,\s*"[A-Z0-9_]+"\s*\);', class_cpp):
             if cpp_name not in cpp_classes:
                 raise RuntimeError('class {:s} not found'.format(cpp_name))
@@ -352,7 +353,7 @@ class LuaDoc:
             items = LuaDoc._find_object_items(cpp_classes, cpp_name)
 
             objects.append({
-                'filename': os.path.join('object', cpp_name.lower() + '.md'),
+                'filename': posixpath.join('object', cpp_name.lower() + '.md'),
                 'lua_name': lua_name,
                 'name': lua_name + ':title',
                 'cpp_name': cpp_name,
@@ -417,7 +418,7 @@ class LuaDoc:
                         }
                 items.append(item)
 
-        item = LuaDoc._load_data(items, os.path.join(os.path.join(os.path.dirname(__file__), 'luadoc', 'object', cpp_name.lower() + '.json')))
+        item = LuaDoc._load_data(items, posixpath.join(posixpath.join(os.path.dirname(__file__), 'luadoc', 'object', cpp_name.lower() + '.json')))
 
         # get special items that aren't detected:
         items += LuaDoc._get_special_object_items(cpp_name, term_prefix)
@@ -429,7 +430,7 @@ class LuaDoc:
 
     def _find_examples(project_root: str) -> dict:
         examples = {}
-        for root, dirs, files in os.walk(os.path.join(project_root, 'manual', 'luadoc', 'example')):
+        for root, dirs, files in os.walk(posixpath.join(project_root, 'manual', 'luadoc', 'example')):
             for file in files:
                 if not file.endswith('.lua'):
                     continue
@@ -438,8 +439,8 @@ class LuaDoc:
                 examples[id] = {
                     'id': id,
                     'name': 'example.' + id + ':title',
-                    'filename': os.path.join('example', id + '.md'),
-                    'code': LuaDoc._read_file(os.path.join(root,file))}
+                    'filename': posixpath.join('example', id + '.md'),
+                    'code': LuaDoc._read_file(posixpath.join(root,file))}
 
         return examples
 
@@ -614,13 +615,13 @@ class LuaDoc:
         md += '  <li><a href="' + LuaDoc.FILENAME_INDEX_AZ + '">' + self._get_term('index-az:title') + '</a></li>' + os.linesep
         md += '</ul>' + os.linesep
         md += '</div>' + os.linesep
-        LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_INDEX), md)
+        LuaDoc._write_file(posixpath.join(output_dir, LuaDoc.FILENAME_INDEX), md)
 
     def _build_globals(self, output_dir: str) -> None:
         md = '# ' + self._get_term('globals:title') + os.linesep + os.linesep
         md += self._get_term('globals:description') + os.linesep + os.linesep
         md += self._build_items_md(self._globals, 'globals.')
-        LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_GLOBALS), md)
+        LuaDoc._write_file(posixpath.join(output_dir, LuaDoc.FILENAME_GLOBALS), md)
 
     def _build_pv(self, output_dir: str) -> None:
         md = '# ' + self._get_term('pv:title') + os.linesep + os.linesep
@@ -629,23 +630,23 @@ class LuaDoc:
 
         md += '## ' + self._get_term('pv.storing:title') + os.linesep + os.linesep
         md += LuaDoc._md_paragraph(self._get_term('pv.storing:paragraph_1'))
-        md += LuaDoc._md_lua_code(LuaDoc._read_file(os.path.join(self._project_root, 'manual', 'luadoc', 'example', 'pv', 'storingpersistentdata.lua')))
+        md += LuaDoc._md_lua_code(LuaDoc._read_file(posixpath.join(self._project_root, 'manual', 'luadoc', 'example', 'pv', 'storingpersistentdata.lua')))
         md += '!!! note' + os.linesep
         md += '    ' + LuaDoc._md_paragraph(self._get_term('pv:storing_note'))
 
         md += '## ' + self._get_term('pv.retrieving:title') + os.linesep + os.linesep
         md += LuaDoc._md_paragraph(self._get_term('pv.retrieving:paragraph_1'))
-        md += LuaDoc._md_lua_code(LuaDoc._read_file(os.path.join(self._project_root, 'manual', 'luadoc', 'example', 'pv', 'retrievingpersistentdata.lua')))
+        md += LuaDoc._md_lua_code(LuaDoc._read_file(posixpath.join(self._project_root, 'manual', 'luadoc', 'example', 'pv', 'retrievingpersistentdata.lua')))
 
         md += '## ' + self._get_term('pv.deleting:title') + os.linesep + os.linesep
         md += LuaDoc._md_paragraph(self._get_term('pv.deleting:paragraph_1'))
-        md += LuaDoc._md_lua_code(LuaDoc._read_file(os.path.join(self._project_root, 'manual', 'luadoc', 'example', 'pv', 'deletingpersistentdata.lua')))
+        md += LuaDoc._md_lua_code(LuaDoc._read_file(posixpath.join(self._project_root, 'manual', 'luadoc', 'example', 'pv', 'deletingpersistentdata.lua')))
 
         md += '## ' + self._get_term('pv.checking:title') + os.linesep + os.linesep
         md += LuaDoc._md_paragraph(self._get_term('pv.checking:paragraph_1'))
-        md += LuaDoc._md_lua_code(LuaDoc._read_file(os.path.join(self._project_root, 'manual', 'luadoc', 'example', 'pv', 'checkingforpersistentdata.lua')))
+        md += LuaDoc._md_lua_code(LuaDoc._read_file(posixpath.join(self._project_root, 'manual', 'luadoc', 'example', 'pv', 'checkingforpersistentdata.lua')))
 
-        LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_PV), md)
+        LuaDoc._write_file(posixpath.join(output_dir, LuaDoc.FILENAME_PV), md)
 
     def _build_enums(self, output_dir: str) -> None:
         md = '# ' + self._get_term('enum:title') + os.linesep + os.linesep
@@ -656,7 +657,7 @@ class LuaDoc:
             md += '  <dt id="' + enum['lua_name'] + '"><a href="' + enum['filename'] + '"><code>enum.' + enum['lua_name'] + '</code></a></dt>' + os.linesep
             md += '  <dd>' + self._get_term(enum['name']) + '</dd>' + os.linesep
         md += '</dl>' + os.linesep
-        LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_ENUM), md)
+        LuaDoc._write_file(posixpath.join(output_dir, LuaDoc.FILENAME_ENUM), md)
 
         for enum in self._enums:
             self._build_lib(output_dir, enum, 'enum.')
@@ -670,7 +671,7 @@ class LuaDoc:
             md += '  <dt id="' + set['lua_name'] + '"><a href="' + set['filename'] + '"><code>' + set['lua_name'] + '</code></a></dt>' + os.linesep
             md += '  <dd>' + self._get_term(set['name']) + '</dd>' + os.linesep
         md += '</dl>' + os.linesep
-        LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_SET), md)
+        LuaDoc._write_file(posixpath.join(output_dir, LuaDoc.FILENAME_SET), md)
 
         for set in self._sets:
             self._build_lib(output_dir, set, 'set.')
@@ -681,7 +682,7 @@ class LuaDoc:
         md += self._build_items_md(lib['items'], parent_lib + lib['lua_name'] + '.', parent_lib + lib['lua_name'] + '.')
         if 'see_also' in lib:
             md += self._build_see_also_md(lib['see_also'])
-        LuaDoc._write_file(os.path.join(output_dir, lib['filename']), LuaDoc._fix_links(md, os.path.dirname(lib['filename'])))
+        LuaDoc._write_file(posixpath.join(output_dir, lib['filename']), LuaDoc._fix_links(md, os.path.dirname(lib['filename'])))
 
     def _build_objects(self, output_dir: str) -> None:
         md = '# ' + self._get_term('object:title') + os.linesep + os.linesep
@@ -691,7 +692,7 @@ class LuaDoc:
         for object in self._objects:
             items.append({'id': object['cpp_name'].lower(), 'href': object['filename'], 'title': self._get_term(object['name'])})
 
-        categories = json.loads(LuaDoc._read_file(os.path.join(os.path.dirname(__file__), 'luadoc', 'object.categories.json')))
+        categories = json.loads(LuaDoc._read_file(posixpath.join(os.path.dirname(__file__), 'luadoc', 'object.categories.json')))
 
         for key, category in categories.items():
             category['id'] = key
@@ -716,7 +717,7 @@ class LuaDoc:
                 md += '- [' + item['title'] + '](' + item['href'] + ')' + os.linesep
             md += os.linesep
 
-        LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_OBJECT), LuaDoc._fix_links(md, os.path.dirname(LuaDoc.FILENAME_OBJECT)))
+        LuaDoc._write_file(posixpath.join(output_dir, LuaDoc.FILENAME_OBJECT), LuaDoc._fix_links(md, os.path.dirname(LuaDoc.FILENAME_OBJECT)))
 
         for object in self._objects:
             self._build_object(output_dir, object)
@@ -725,7 +726,7 @@ class LuaDoc:
         md = '# ' + self._get_term(object['name']) + os.linesep + os.linesep
         md += self._get_term(object['term_prefix'].rstrip('.') + ':description') + os.linesep + os.linesep
         md += self._build_items_md(object['items'], object['term_prefix'])
-        LuaDoc._write_file(os.path.join(output_dir, object['filename']), LuaDoc._fix_links(md, os.path.dirname(object['filename'])))
+        LuaDoc._write_file(posixpath.join(output_dir, object['filename']), LuaDoc._fix_links(md, os.path.dirname(object['filename'])))
 
     def _build_examples(self, output_dir: str) -> None:
         md = '# ' + self._get_term('example:title') + os.linesep + os.linesep
@@ -736,7 +737,7 @@ class LuaDoc:
         for item in sorted(items, key=operator.itemgetter('title')):
             md += '- [' + item['title'] + '](' + item['href'] + ')' + os.linesep
         md += os.linesep
-        LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_EXAMPLES), md)
+        LuaDoc._write_file(posixpath.join(output_dir, LuaDoc.FILENAME_EXAMPLES), md)
 
         for example in self._examples.values():
             self._build_example(output_dir, example)
@@ -745,7 +746,7 @@ class LuaDoc:
         md = '# ' + self._get_term(example['name']) + os.linesep + os.linesep
         md += self._get_term('example.' + example['id'] + ':description') + os.linesep + os.linesep
         md += LuaDoc._md_lua_code(example['code']) + os.linesep + os.linesep
-        LuaDoc._write_file(os.path.join(output_dir, example['filename']), md)
+        LuaDoc._write_file(posixpath.join(output_dir, example['filename']), md)
 
     def _build_index_az(self, output_dir: str) -> None:
         alphabet = list(string.ascii_uppercase)
@@ -806,7 +807,7 @@ class LuaDoc:
                     md += '  <li><a href="' + item['href'] + '">' + item['title'] + '</a> <small class="dim">' + item['sub_title'] + '</small></li>' + os.linesep
                 md += '</ul>' + os.linesep
         md += '</div>' + os.linesep
-        LuaDoc._write_file(os.path.join(output_dir, LuaDoc.FILENAME_INDEX_AZ), md)
+        LuaDoc._write_file(posixpath.join(output_dir, LuaDoc.FILENAME_INDEX_AZ), md)
 
     def _md_paragraph(text: str) -> str:
         return text + os.linesep + os.linesep
