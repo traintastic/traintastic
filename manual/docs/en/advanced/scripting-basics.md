@@ -21,7 +21,7 @@ In Traintastic, Lua is embedded directly into the application, so you can write 
 To create or edit a script, open the **Lua scripts list** by selecting
 **Objects → Lua scripts** from the main menu.
 
-![Lua script list](../assets/images/lua/lua-scripts-list.png)
+![Lua script list](../assets/images/lua/lua-script-list-empty.png)
 
 From this dialog you can:
 
