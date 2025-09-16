@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SERVER_UTILS_ENDSWITH_HPP
 
 #include <string_view>
+#include <span>
 
 constexpr bool endsWith(std::string_view sv, std::string_view suffix)
 {
