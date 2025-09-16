@@ -379,7 +379,7 @@ jobs:
   build-data:
     name: shared data ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
-    needs: [build-lang]
+    needs: [build-lang, build-manual]
     strategy:
       fail-fast: false
       matrix:
@@ -405,6 +405,12 @@ jobs:
       with:
         name: traintastic-lang
         path: ${{github.workspace}}/shared/translations
+
+    - name: "Download artifact: manual"
+      uses: actions/download-artifact@v4
+      with:
+        name: traintastic-manual
+        path: ${{github.workspace}}/manual/output
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/shared/build
