@@ -324,7 +324,7 @@ if(WIN32 AND NOT MSVC)
 endif()
 
 # boost
-find_package(Boost 1.81 REQUIRED COMPONENTS program_options)
+find_package(Boost 1.81 REQUIRED COMPONENTS program_options url)
 target_include_directories(traintastic-server SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
 target_link_libraries(traintastic-server PRIVATE ${Boost_LIBRARIES})
 if(BUILD_TESTING)

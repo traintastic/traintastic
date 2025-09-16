@@ -511,13 +511,25 @@ MainWindow::MainWindow(QWidget* parent) :
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
     menu->addAction(Theme::getIcon("help"), Locale::tr("qtapp.mainmenu:help"),
-      []()
+      [this]()
       {
-        const auto manual = QString::fromStdString((getManualPath() / "en-us.html").string());
-        if(QFile::exists(manual))
+        if(m_connection)
+        {
+          QUrl url;
+          url.setScheme("http");
+          url.setHost(m_connection->peerAddress().toString());
+          url.setPort(m_connection->peerPort());
+          url.setPath("/manual/en/index.html");
+          QDesktopServices::openUrl(url);
+        }
+        else if(const auto manual = QString::fromStdString((getManualPath() / "en" / "index.html").string()); QFile::exists(manual))
+        {
           QDesktopServices::openUrl(QUrl::fromLocalFile(manual));
+        }
         else
+        {
           QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL));
+        }
       })->setShortcut(QKeySequence::HelpContents);
     auto* subMenu = menu->addMenu(Locale::tr("qtapp.mainmenu:wizards"));
     subMenu->addAction(Locale::tr("wizard.introduction:title"), this, &MainWindow::showIntroductionWizard);
