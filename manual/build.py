@@ -100,6 +100,9 @@ class TraintasticHelp:
                 'name': 'material',
                 'custom_dir': '../../overrides/',
                 'language': self.language,
+                'icon': {
+                    'logo': 'traintastic/logo'
+                },
                 'palette': [
                     {
                         'scheme': 'default',
