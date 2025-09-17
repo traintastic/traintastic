@@ -531,6 +531,11 @@ MainWindow::MainWindow(QWidget* parent) :
           QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL));
         }
       })->setShortcut(QKeySequence::HelpContents);
+    menu->addAction(Locale::tr("qtapp.mainmenu:community_forum"),
+      [this]()
+      {
+        QDesktopServices::openUrl(QStringLiteral("https://discourse.traintastic.org"));
+      });
     auto* subMenu = menu->addMenu(Locale::tr("qtapp.mainmenu:wizards"));
     subMenu->addAction(Locale::tr("wizard.introduction:title"), this, &MainWindow::showIntroductionWizard);
     m_actionAddInterfaceWizard = subMenu->addAction(Locale::tr("wizard.add_interface.welcome:title"), this, &MainWindow::showAddInterfaceWizard);

@@ -6813,5 +6813,9 @@
     {
         "term": "board_tile.rail.block:zones",
         "definition": "Zones"
+    },
+    {
+        "term": "qtapp.mainmenu:community_forum",
+        "definition": "Community forum"
     }
 ]
