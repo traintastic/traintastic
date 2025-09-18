@@ -532,7 +532,7 @@ MainWindow::MainWindow(QWidget* parent) :
         }
       })->setShortcut(QKeySequence::HelpContents);
     menu->addAction(Locale::tr("qtapp.mainmenu:community_forum"),
-      [this]()
+      []()
       {
         QDesktopServices::openUrl(QStringLiteral("https://discourse.traintastic.org"));
       });
