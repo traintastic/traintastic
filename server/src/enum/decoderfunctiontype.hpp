@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,15 +24,6 @@
 #define TRAINTASTIC_SERVER_ENUM_DECODERFUNCTIONTYPE_HPP
 
 #include <traintastic/enum/decoderfunctiontype.hpp>
-#include <array>
-
-inline constexpr std::array<DecoderFunctionType, 5> decoderFunctionTypeValues{{
-  DecoderFunctionType::OnOff,
-  DecoderFunctionType::Momentary,
-  DecoderFunctionType::Hold,
-  DecoderFunctionType::AlwaysOff,
-  DecoderFunctionType::AlwaysOn,
-}};
 
 constexpr bool isAlwaysOffOrOn(DecoderFunctionType type)
 {
