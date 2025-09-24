@@ -71,6 +71,7 @@ file(GLOB SOURCES
   "src/utils/*.cpp"
   "src/widget/*.hpp"
   "src/widget/*.cpp"
+  "src/widget/decoder/*.cpp"
   "src/widget/list/*.hpp"
   "src/widget/list/*.cpp"
   "src/widget/object/*.hpp"

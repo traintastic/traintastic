@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic test suite.
  *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -122,48 +122,90 @@ TEMPLATE_TEST_CASE("Create world and interface => destroy interface", "[object-c
   REQUIRE(worldWeak.expired());
 }
 
-TEST_CASE("Create world and decoder => destroy world", "[object-create-destroy]")
+TEST_CASE("Create world, locomotive and decoder => destroy world", "[object-create-destroy]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
 
-  std::weak_ptr<Decoder> decoderWeak = world->decoders->create();
+  std::weak_ptr<Locomotive> locomotiveWeak = std::static_pointer_cast<Locomotive>(world->railVehicles->create(Locomotive::classId));
+  REQUIRE_FALSE(locomotiveWeak.expired());
+  REQUIRE(locomotiveWeak.lock()->getClassId() == Locomotive::classId);
+
+  std::weak_ptr<Decoder> decoderWeak = locomotiveWeak.lock()->decoder.value();
   REQUIRE_FALSE(decoderWeak.expired());
   REQUIRE(decoderWeak.lock()->getClassId() == Decoder::classId);
 
   world.reset();
   REQUIRE(decoderWeak.expired());
+  REQUIRE(locomotiveWeak.expired());
   REQUIRE(worldWeak.expired());
 }
 
-TEST_CASE("Create world and decoder => destroy decoder", "[object-create-destroy]")
+TEST_CASE("Create world, locomotive and decoder => destroy locomotive", "[object-create-destroy]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
   REQUIRE(worldWeak.lock()->decoders->length == 0);
 
-  std::weak_ptr<Decoder> decoderWeak = world->decoders->create();
-  REQUIRE_FALSE(decoderWeak.expired());
-  REQUIRE(worldWeak.lock()->decoders->length == 1);
+  std::weak_ptr<Locomotive> locomotiveWeak = std::static_pointer_cast<Locomotive>(world->railVehicles->create(Locomotive::classId));
+  REQUIRE_FALSE(locomotiveWeak.expired());
+  REQUIRE(world->railVehicles->length == 1);
 
-  world->decoders->delete_(decoderWeak.lock());
+  std::weak_ptr<Decoder> decoderWeak = locomotiveWeak.lock()->decoder.value();
+  REQUIRE_FALSE(decoderWeak.expired());
+  REQUIRE(world->decoders->length == 1);
+
+  world->railVehicles->delete_(locomotiveWeak.lock());
+  REQUIRE(locomotiveWeak.expired());
   REQUIRE(decoderWeak.expired());
-  REQUIRE(worldWeak.lock()->decoders->length == 0);
+  REQUIRE(world->railVehicles->length == 0);
+  REQUIRE(world->decoders->length == 0);
 
   world.reset();
   REQUIRE(worldWeak.expired());
 }
 
-TEST_CASE("Create world, decoder and function => destroy world", "[object-create-destroy]")
+TEST_CASE("Create world, locomotive and decoder => delete decoder", "[object-create-destroy]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
   REQUIRE(worldWeak.lock()->decoders->length == 0);
 
-  std::weak_ptr<Decoder> decoderWeak = world->decoders->create();
+  std::weak_ptr<Locomotive> locomotiveWeak = std::static_pointer_cast<Locomotive>(world->railVehicles->create(Locomotive::classId));
+  REQUIRE_FALSE(locomotiveWeak.expired());
+  REQUIRE(world->railVehicles->length == 1);
+
+  std::weak_ptr<Decoder> decoderWeak = locomotiveWeak.lock()->decoder.value();
+  REQUIRE_FALSE(decoderWeak.expired());
+  REQUIRE(world->decoders->length == 1);
+
+  locomotiveWeak.lock()->deleteDecoder();
+  REQUIRE_FALSE(locomotiveWeak.expired());
+  REQUIRE(decoderWeak.expired());
+  REQUIRE_FALSE(locomotiveWeak.lock()->decoder);
+  REQUIRE(world->railVehicles->length == 1);
+  REQUIRE(world->decoders->length == 0);
+
+  world.reset();
+  REQUIRE(locomotiveWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEST_CASE("Create world, locomotive, decoder and function => destroy world", "[object-create-destroy]")
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->decoders->length == 0);
+
+  std::weak_ptr<Locomotive> locomotiveWeak = std::static_pointer_cast<Locomotive>(world->railVehicles->create(Locomotive::classId));
+  REQUIRE_FALSE(locomotiveWeak.expired());
+  REQUIRE(world->railVehicles->length == 1);
+
+  std::weak_ptr<Decoder> decoderWeak = locomotiveWeak.lock()->decoder.value();
   REQUIRE_FALSE(decoderWeak.expired());
   REQUIRE(worldWeak.lock()->decoders->length == 1);
 
@@ -181,17 +223,22 @@ TEST_CASE("Create world, decoder and function => destroy world", "[object-create
   REQUIRE(functionWeak.expired());
   REQUIRE(functionsWeak.expired());
   REQUIRE(decoderWeak.expired());
+  REQUIRE(locomotiveWeak.expired());
   REQUIRE(worldWeak.expired());
 }
 
-TEST_CASE("Create world, decoder and function => destroy function", "[object-create-destroy]")
+TEST_CASE("Create world, locomotive, decoder and function => destroy function", "[object-create-destroy]")
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
   REQUIRE(worldWeak.lock()->decoders->length == 0);
 
-  std::weak_ptr<Decoder> decoderWeak = world->decoders->create();
+  std::weak_ptr<Locomotive> locomotiveWeak = std::static_pointer_cast<Locomotive>(world->railVehicles->create(Locomotive::classId));
+  REQUIRE_FALSE(locomotiveWeak.expired());
+  REQUIRE(world->railVehicles->length == 1);
+
+  std::weak_ptr<Decoder> decoderWeak = locomotiveWeak.lock()->decoder.value();
   REQUIRE_FALSE(decoderWeak.expired());
   REQUIRE(worldWeak.lock()->decoders->length == 1);
 
@@ -210,10 +257,11 @@ TEST_CASE("Create world, decoder and function => destroy function", "[object-cre
   world.reset();
   REQUIRE(functionsWeak.expired());
   REQUIRE(decoderWeak.expired());
+  REQUIRE(locomotiveWeak.expired());
   REQUIRE(worldWeak.expired());
 }
 
-TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy interface", "[object-create-destroy]", INTERFACES_DECODER)
+TEMPLATE_TEST_CASE("Create world, interface, locomotive and decoder => destroy interface", "[object-create-destroy]", INTERFACES_DECODER)
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
@@ -227,7 +275,11 @@ TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy interface", "
   REQUIRE(worldWeak.lock()->decoders->length == 0);
   REQUIRE(interfaceWeak.lock()->decoders->length == 0);
 
-  std::weak_ptr<Decoder> decoderWeak = interfaceWeak.lock()->decoders->create();
+  std::weak_ptr<Locomotive> locomotiveWeak = std::static_pointer_cast<Locomotive>(world->railVehicles->create(Locomotive::classId));
+  REQUIRE_FALSE(locomotiveWeak.expired());
+  REQUIRE(world->railVehicles->length == 1);
+
+  std::weak_ptr<Decoder> decoderWeak = locomotiveWeak.lock()->decoder.value();
   REQUIRE_FALSE(decoderWeak.expired());
   REQUIRE(decoderWeak.lock()->interface.value() == std::dynamic_pointer_cast<DecoderController>(interfaceWeak.lock()));
   REQUIRE(worldWeak.lock()->interfaces->length == 1);
@@ -243,10 +295,11 @@ TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy interface", "
 
   world.reset();
   REQUIRE(decoderWeak.expired());
+  REQUIRE(locomotiveWeak.expired());
   REQUIRE(worldWeak.expired());
 }
 
-TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy decoder", "[object-create-destroy]", INTERFACES_DECODER)
+TEMPLATE_TEST_CASE("Create world, interface, locomotive and decoder => destroy locomotive", "[object-create-destroy]", INTERFACES_DECODER)
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
@@ -260,14 +313,58 @@ TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy decoder", "[o
   REQUIRE(worldWeak.lock()->decoders->length == 0);
   REQUIRE(interfaceWeak.lock()->decoders->length == 0);
 
-  std::weak_ptr<Decoder> decoderWeak = interfaceWeak.lock()->decoders->create();
+  std::weak_ptr<Locomotive> locomotiveWeak = std::static_pointer_cast<Locomotive>(world->railVehicles->create(Locomotive::classId));
+  REQUIRE_FALSE(locomotiveWeak.expired());
+  REQUIRE(world->railVehicles->length == 1);
+
+  std::weak_ptr<Decoder> decoderWeak = locomotiveWeak.lock()->decoder.value();
   REQUIRE_FALSE(decoderWeak.expired());
   REQUIRE(decoderWeak.lock()->interface.value() == std::dynamic_pointer_cast<DecoderController>(interfaceWeak.lock()));
   REQUIRE(worldWeak.lock()->interfaces->length == 1);
   REQUIRE(worldWeak.lock()->decoders->length == 1);
   REQUIRE(interfaceWeak.lock()->decoders->length == 1);
 
-  world->decoders->delete_(decoderWeak.lock());
+  world->railVehicles->delete_(locomotiveWeak.lock());
+  REQUIRE_FALSE(interfaceWeak.expired());
+  REQUIRE(locomotiveWeak.expired());
+  REQUIRE(decoderWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
+  REQUIRE(worldWeak.lock()->railVehicles->length == 0);
+  REQUIRE(worldWeak.lock()->decoders->length == 0);
+  REQUIRE(interfaceWeak.lock()->decoders->length == 0);
+
+  world.reset();
+  REQUIRE(interfaceWeak.expired());
+  REQUIRE(worldWeak.expired());
+}
+
+TEMPLATE_TEST_CASE("Create world, interface, locomotive and decoder => delete decoder", "[object-create-destroy]", INTERFACES_DECODER)
+{
+  auto world = World::create();
+  std::weak_ptr<World> worldWeak = world;
+  REQUIRE_FALSE(worldWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 0);
+  REQUIRE(worldWeak.lock()->decoders->length == 0);
+
+  std::weak_ptr<TestType> interfaceWeak = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
+  REQUIRE_FALSE(interfaceWeak.expired());
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
+  REQUIRE(worldWeak.lock()->decoders->length == 0);
+  REQUIRE(interfaceWeak.lock()->decoders->length == 0);
+
+  std::weak_ptr<Locomotive> locomotiveWeak = std::static_pointer_cast<Locomotive>(world->railVehicles->create(Locomotive::classId));
+  REQUIRE_FALSE(locomotiveWeak.expired());
+  REQUIRE(world->railVehicles->length == 1);
+
+  std::weak_ptr<Decoder> decoderWeak = locomotiveWeak.lock()->decoder.value();
+  REQUIRE_FALSE(decoderWeak.expired());
+  REQUIRE(decoderWeak.lock()->interface.value() == std::dynamic_pointer_cast<DecoderController>(interfaceWeak.lock()));
+  REQUIRE(worldWeak.lock()->interfaces->length == 1);
+  REQUIRE(worldWeak.lock()->decoders->length == 1);
+  REQUIRE(interfaceWeak.lock()->decoders->length == 1);
+
+  locomotiveWeak.lock()->deleteDecoder();
+  REQUIRE_FALSE(locomotiveWeak.lock()->decoder.value());
   REQUIRE_FALSE(interfaceWeak.expired());
   REQUIRE(decoderWeak.expired());
   REQUIRE(worldWeak.lock()->interfaces->length == 1);
@@ -275,6 +372,7 @@ TEMPLATE_TEST_CASE("Create world, interface and decoder => destroy decoder", "[o
   REQUIRE(interfaceWeak.lock()->decoders->length == 0);
 
   world.reset();
+  REQUIRE(locomotiveWeak.expired());
   REQUIRE(interfaceWeak.expired());
   REQUIRE(worldWeak.expired());
 }
@@ -394,7 +492,7 @@ TEMPLATE_TEST_CASE("Create world and rail vehicle => destroy world", "[object-cr
   REQUIRE(worldWeak.expired());
 }
 
-TEMPLATE_TEST_CASE("Create world and rail vehicle => destroy interface", "[object-create-destroy]", RAIL_VEHICLES)
+TEMPLATE_TEST_CASE("Create world and rail vehicle => destroy rail vehicle", "[object-create-destroy]", RAIL_VEHICLES)
 {
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;

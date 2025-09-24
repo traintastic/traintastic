@@ -454,7 +454,6 @@ World::World(Private /*unused*/) :
 World::~World()
 {
   deleteAll(*interfaces);
-  deleteAll(*decoders);
   deleteAll(*inputs);
   deleteAll(*identifications);
   deleteAll(*boards);

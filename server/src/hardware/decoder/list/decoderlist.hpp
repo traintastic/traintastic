@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,17 +29,13 @@
 
 class DecoderList : public ObjectList<Decoder>
 {
-  CLASS_ID("decoder_list")
+  CLASS_ID("list.decoder")
 
   protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
     bool isListedProperty(std::string_view name) final;
 
   public:
     const DecoderListColumn columns;
-
-    Method<std::shared_ptr<Decoder>()> create;
-    Method<void(const std::shared_ptr<Decoder>&)> delete_;
 
     DecoderList(Object& _parent, std::string_view parentPropertyName, DecoderListColumn _columns);
 

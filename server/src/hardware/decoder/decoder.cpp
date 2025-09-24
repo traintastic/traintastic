@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023,2025 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,11 +39,15 @@
 
 CREATE_IMPL(Decoder)
 
+std::shared_ptr<Decoder> Decoder::create(World& world)
+{
+  return create(world, world.getUniqueId(defaultId));
+}
+
 const std::shared_ptr<Decoder> Decoder::null;
 
 Decoder::Decoder(World& world, std::string_view _id) :
   IdObject(world, _id),
-  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},
   interface{this, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](const std::shared_ptr<DecoderController>& value)
     {
@@ -110,14 +114,9 @@ Decoder::Decoder(World& world, std::string_view _id) :
       changed(DecoderChangeFlags::Throttle);
       updateEditable();
     }},
-  functions{this, "functions", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
-  notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
+  functions{this, "functions", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   functions.setValueInternal(std::make_shared<DecoderFunctions>(*this, functions.name()));
-
-  Attributes::addDisplayName(name, DisplayName::Object::name);
-  Attributes::addEnabled(name, false);
-  m_interfaceItems.add(name);
 
   Attributes::addDisplayName(interface, DisplayName::Hardware::interface);
   Attributes::addEnabled(interface, false);
@@ -162,8 +161,6 @@ Decoder::Decoder(World& world, std::string_view _id) :
   Attributes::addObjectEditor(throttle, false);
   m_interfaceItems.add(throttle);
   m_interfaceItems.add(functions);
-  Attributes::addDisplayName(notes, DisplayName::Object::notes);
-  m_interfaceItems.add(notes);
 
   updateEditable();
   updateMute();
@@ -361,6 +358,11 @@ void Decoder::destroying()
     m_driver->release();
     assert(!m_driver);
   }
+  if(vehicle)
+  {
+    assert(vehicle->decoder.value().get() == this);
+    vehicle->decoder.setValueInternal(nullptr);
+  }
   if(interface.value())
     interface = nullptr;
   m_world.decoders->removeObject(shared_ptr<Decoder>());
@@ -473,7 +475,6 @@ void Decoder::updateEditable()
 void Decoder::updateEditable(bool editable)
 {
   const bool stopped = editable && almostZero(throttle.value());
-  Attributes::setEnabled(name, editable);
   Attributes::setEnabled(interface, stopped);
   Attributes::setEnabled(protocol, stopped && protocol.getSpanAttribute<DecoderProtocol>(AttributeName::Values).length() > 1);
   Attributes::setEnabled(address, stopped);

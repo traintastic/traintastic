@@ -24,34 +24,21 @@
 #include "railvehiclelist.hpp"
 #include "railvehiclelisttablemodel.hpp"
 #include "../../hardware/decoder/decoder.hpp"
+#include "../../hardware/decoder/list/decoderlist.hpp"
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../core/objectvectorproperty.tpp"
 #include "../../core/method.tpp"
+#include "../../core/controllerlist.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../train/train.hpp"
 #include "../../train/trainvehiclelist.hpp"
+#include "../../hardware/decoder/decodercontroller.hpp"
 
 RailVehicle::RailVehicle(World& world, std::string_view _id) :
   Vehicle(world, _id),
-  decoder{this, "decoder", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
-    [this](const std::shared_ptr<Decoder>& value)
-    {
-      if(decoder)
-      {
-        decoder->vehicle.setValueInternal(nullptr);
-      }
-      if(value)
-      {
-        if(value->vehicle)
-        {
-          value->vehicle->decoder = nullptr;
-        }
-        value->vehicle.setValueInternal(shared_ptr<RailVehicle>());
-      }
-      return true;
-    }},
+  decoder{this, "decoder", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store},
   lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
   speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](double /*value*/, WeightUnit /*unit*/){ updateTotalWeight(); }},
@@ -60,6 +47,28 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
   , noSmoke{this, "no_smoke", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , activeTrain{this, "active_train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::StoreState}
   , trains{*this, "trains", {}, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::NoStore}
+  , createDecoder{*this, "create_decoder", MethodFlags::NoScript,
+      [this]()
+      {
+        if(!decoder)
+        {
+          decoder.setValueInternal(Decoder::create(m_world));
+          decoder->vehicle.setValueInternal(shared_ptr<RailVehicle>());
+          if(m_world.decoderControllers->length == 1)
+          {
+            decoder->interface = std::dynamic_pointer_cast<DecoderController>(m_world.decoderControllers->getObject(0));
+          }
+        }
+      }}
+  , deleteDecoder{*this, "delete_decoder", MethodFlags::NoScript,
+      [this]()
+      {
+        if(decoder)
+        {
+          decoder->destroy();
+          assert(!decoder);
+        }
+      }}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -96,6 +105,12 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
 
   Attributes::addObjectEditor(trains, false);
   m_interfaceItems.insertBefore(trains, notes);
+
+  Attributes::addObjectEditor(createDecoder, false);
+  m_interfaceItems.add(createDecoder);
+
+  Attributes::addObjectEditor(deleteDecoder, false);
+  m_interfaceItems.add(deleteDecoder);
 }
 
 void RailVehicle::setActiveTrain(const std::shared_ptr<Train>& train)
@@ -149,7 +164,10 @@ void RailVehicle::destroying()
 {
   auto self = shared_ptr<RailVehicle>();
   if(decoder)
-    decoder = nullptr;
+  {
+    decoder->destroy();
+    assert(!decoder);
+  }
   for(const auto& train : trains)
   {
     train->vehicles->remove(self);

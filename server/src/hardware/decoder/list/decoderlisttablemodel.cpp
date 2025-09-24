@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "decoderlisttablemodel.hpp"
 #include "decoderlist.hpp"
 #include "../../../core/objectproperty.tpp"
+#include "../../../vehicle/rail/railvehicle.hpp"
 #include "../../../utils/displayname.hpp"
 
 static std::string_view displayName(DecoderListColumn column)
@@ -88,7 +89,11 @@ std::string DecoderListTableModel::getText(uint32_t column, uint32_t row) const
         return decoder.id;
 
       case DecoderListColumn::Name:
-        return decoder.name;
+        if(decoder.vehicle) [[likely]]
+        {
+          return decoder.vehicle->name;
+        }
+        return {};
 
       case DecoderListColumn::Interface:
         if(const auto& interface = std::dynamic_pointer_cast<Object>(decoder.interface.value()))
