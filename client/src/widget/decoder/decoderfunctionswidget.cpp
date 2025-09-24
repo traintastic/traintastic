@@ -20,6 +20,7 @@
  */
 
 #include "decoderfunctionswidget.hpp"
+#include <span>
 #include <QVBoxLayout>
 #include <QToolBar>
 #include <QTableView>
