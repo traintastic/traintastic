@@ -67,6 +67,7 @@ class MainWindow final : public QMainWindow
     } m_wizard;
     int m_clockRequest;
     ObjectPtr m_clock;
+    QString m_windowTitle;
     QSplitter* m_splitter;
     MdiArea* m_mdiArea;
     MainWindowStatusBar* m_statusBar;

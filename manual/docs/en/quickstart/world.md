@@ -15,13 +15,18 @@ If the server has no world loaded (the default on a fresh installation), the cli
 - *Load world* – open an existing world saved on this server
 - *Import world* – import a world file previously exported
 
+![Traintastic startup screen with options: New world, Load world, Import world](../assets/images/getting-started/traintastic-startup-no-world.png)
+
 ## Step 2: Create a new world
 
 Click *New world* to launch the wizard:
 
-1. Enter a **name** for your world (for example *My First Layout*).
+1. Enter a **name** for your world (for example *My First World*).
+    ![New world wizard: Set world name](../assets/images/getting-started/new-world-wizard-set-name.png)
 2. Choose the **scale** (H0, N, Z, etc.).
+    ![New world wizard: Select world scale](../assets/images/getting-started/new-world-wizard-select-scale.png)
 3. Finish the wizard to create your new, empty world.
+    ![New world wizard: Finish](../assets/images/getting-started/new-world-wizard-finish.png)
 
 ## Step 3: Edit and operate modes
 
@@ -37,7 +42,7 @@ Many properties can only be changed in edit mode. This prevents making accidenta
 
 - Worlds are always saved on the **server** in a standard location.
 - When saving a world, a backup is made automatically.
-- To share your world (for example on the community forum or to use it on another system), use the *Export* function.
+- To share your world (for example on the community forum or to use it on another system), use the *File* -> *Export world* function.
   - The exported file can later be imported on any server.
 
 ---

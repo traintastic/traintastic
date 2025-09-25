@@ -51,6 +51,7 @@ private:
 
     NewWorldWizard,
     NewWorldWizardSetWorldName,
+    NewWorldWizardSetWorldNameShoot,
     NewWorldWizardSetWorldScale,
     NewWorldWizardFinish,
 
@@ -75,7 +76,9 @@ private:
   void step();
   void next();
 
-  void saveImage(QMdiSubWindow* subWindow, const QString& filename);
+  void savePixmap(QPixmap pixmap, const QString& filename);
+  void saveWidgetImage(QWidget* widget, const QString& filename);
+  void saveMainWindowImage(const QString& filename);
 
   static QString getStepLabel(Step step);
 };

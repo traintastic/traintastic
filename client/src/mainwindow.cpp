@@ -108,6 +108,7 @@ static SubWindow* createSubWindow(SubWindowType type, Args... args)
 
 MainWindow::MainWindow(QWidget* parent) :
   QMainWindow(parent),
+  m_windowTitle{QStringLiteral("Traintastic v" TRAINTASTIC_VERSION_FULL)},
   m_splitter{new QSplitter(Qt::Vertical, this)},
   m_mdiArea{new MdiArea(m_splitter)},
   m_statusBar{new MainWindowStatusBar(*this)},
@@ -779,7 +780,7 @@ void MainWindow::worldChanged()
 
 void MainWindow::updateWindowTitle()
 {
-  QString title = "Traintastic v" TRAINTASTIC_VERSION_FULL;
+  QString title = m_windowTitle;
   if(m_world)
     title = m_world->getProperty("name")->toString() + " - " + title;
   setWindowTitle(title);

@@ -23,12 +23,15 @@
 #include <QToolBar>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QFormLayout>
 #include <QTimerEvent>
 #include <QMenu>
 #include <QProgressBar>
 #include <QPushButton>
+#include <QLineEdit>
 #include <QFileDialog>
 #include <QSettings>
+#include <QScreen>
 #include "../mainwindow.hpp"
 #include "../mdiarea.hpp"
 #include "../network/method.hpp"
@@ -38,6 +41,7 @@
 #include "../widget/object/abstracteditwidget.hpp"
 #include "../widget/objectlist/objectlistwidget.hpp"
 #include "../wizard/newworldwizard.hpp"
+#include "../wizard/page/propertypage.hpp"
 
 /*
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -58,6 +62,8 @@ ScreenShotDialog::ScreenShotDialog(MainWindow& mainWindow)
   , m_languageCode{GeneralSettings::instance().language.value().left(2)}
 {
   setWindowTitle("Screenshot creator");
+
+  m_mainWindow.m_windowTitle = QStringLiteral("Traintastic"); // Get rid of version number
 
   m_progressBar->setRange(static_cast<int>(Step::Start), static_cast<uint>(Step::Done));
 
@@ -136,6 +142,7 @@ void ScreenShotDialog::step()
       }
       else
       {
+        saveMainWindowImage(QStringLiteral("getting-started/traintastic-startup-no-world.png"));
         m_mainWindow.m_actionNewWorld->trigger();
       }
       return;
@@ -149,17 +156,25 @@ void ScreenShotDialog::step()
       return;
 
     case NewWorldWizardSetWorldName:
-      m_mainWindow.m_world->setProperty("name", "My First World");
+      m_mainWindow.m_wizard.newWorld->button(QWizard::NextButton)->setFocus();
+      m_mainWindow.m_world->setPropertyValue("name", QStringLiteral("My First World"));
+      next();
+      return;
+
+    case NewWorldWizardSetWorldNameShoot:
+      saveWidgetImage(m_mainWindow.m_wizard.newWorld.get(), QStringLiteral("getting-started/new-world-wizard-set-name.png"));
       m_mainWindow.m_wizard.newWorld->next();
       next();
       return;
 
     case NewWorldWizardSetWorldScale:
+      saveWidgetImage(m_mainWindow.m_wizard.newWorld.get(), QStringLiteral("getting-started/new-world-wizard-select-scale.png"));
       m_mainWindow.m_wizard.newWorld->next();
       next();
       return;
 
     case NewWorldWizardFinish:
+      saveWidgetImage(m_mainWindow.m_wizard.newWorld.get(), QStringLiteral("getting-started/new-world-wizard-finish.png"));
       m_mainWindow.m_wizard.newWorld->accept();
       next();
       return;
@@ -170,7 +185,7 @@ void ScreenShotDialog::step()
         auto* w = it.value();
         w->move(10, 10);
         w->resize(400, 300);
-        saveImage(w, QStringLiteral("interface/interface-list-empty.png"));
+        saveWidgetImage(w, QStringLiteral("interface/interface-list-empty.png"));
         w->close();
         next();
       }
@@ -186,7 +201,7 @@ void ScreenShotDialog::step()
         auto* w = it.value();
         w->move(10, 10);
         w->resize(400, 300);
-        saveImage(w, QStringLiteral("lua/lua-script-list-empty.png"));
+        saveWidgetImage(w, QStringLiteral("lua/lua-script-list-empty.png"));
         static_cast<ObjectListWidget*>(w->widget())->m_actionCreate->trigger();
         next();
       }
@@ -202,7 +217,7 @@ void ScreenShotDialog::step()
         auto* w = it.value();
         w->move(420, 10);
         w->resize(400, 300);
-        saveImage(w, QStringLiteral("lua/lua-script-editor.png"));
+        saveWidgetImage(w, QStringLiteral("lua/lua-script-editor.png"));
         m_mainWindow.m_mdiArea->closeAllSubWindows();
         next();
       }
@@ -225,11 +240,21 @@ void ScreenShotDialog::next()
   m_label->setText(getStepLabel(m_step));
 }
 
-void ScreenShotDialog::saveImage(QMdiSubWindow* subWindow, const QString& filename)
+void ScreenShotDialog::savePixmap(QPixmap pixmap, const QString& filename)
 {
   const QString outputPath = m_outputDir.filePath(QString("docs/%1/assets/images/%2").arg(m_languageCode).arg(filename));
   QDir().mkpath(QFileInfo(outputPath).absolutePath());
-  subWindow->grab().save(outputPath);
+  pixmap.save(outputPath);
+}
+
+void ScreenShotDialog::saveWidgetImage(QWidget* widget, const QString& filename)
+{
+  savePixmap(widget->grab(), filename);
+}
+
+void ScreenShotDialog::saveMainWindowImage(const QString& filename)
+{
+  savePixmap(m_mainWindow.screen()->grabWindow(0).copy(m_mainWindow.frameGeometry()), filename);
 }
 
 QString ScreenShotDialog::getStepLabel(Step step)
