@@ -20,6 +20,7 @@
  */
 
 #include "decoderfunctionsmodel.hpp"
+#include <array>
 #include <traintastic/locale/locale.hpp>
 #include "../../network/connection.hpp"
 #include "../../network/error.hpp"
