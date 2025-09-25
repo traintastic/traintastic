@@ -275,6 +275,8 @@ QString ScreenShotDialog::getStepLabel(Step step)
       return "NewWorldWizard";
     case NewWorldWizardSetWorldName:
       return "NewWorldWizardSetWorldName";
+    case NewWorldWizardSetWorldNameShoot:
+      return "NewWorldWizardSetWorldNameShoot";
     case NewWorldWizardSetWorldScale:
       return "NewWorldWizardSetWorldScale";
     case NewWorldWizardFinish:
