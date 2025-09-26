@@ -24,13 +24,15 @@
 
 #include <QDialog>
 #include <QDir>
-#include <QStack>
+#include <queue>
+#include <functional>
+#include "../subwindow/subwindowtype.hpp"
 
 class QLabel;
 class QProgressBar;
 class QPushButton;
-class QMdiSubWindow;
 class MainWindow;
+class SubWindow;
 
 class ScreenShotDialog final : public QDialog
 {
@@ -41,46 +43,23 @@ protected:
   void timerEvent(QTimerEvent *event) override;
 
 private:
-  enum class Step : uint
-  {
-    Start, // keep first!
-
-    ConnectToServer,
-    CloseWorld,
-    NewWorld,
-
-    NewWorldWizard,
-    NewWorldWizardSetWorldName,
-    NewWorldWizardSetWorldNameShoot,
-    NewWorldWizardSetWorldScale,
-    NewWorldWizardFinish,
-
-    InterfaceListEmpty,
-
-    LuaScriptListEmpty,
-    LuaScriptEditor,
-
-    Done // keep last!
-  };
-
   MainWindow& m_mainWindow;
   QProgressBar* m_progressBar;
   QLabel* m_label;
   QPushButton* m_start;
   const QString m_languageCode;
   QDir m_outputDir;
-  Step m_step = Step::Start;
-  QStack<QMdiSubWindow*> m_dialogsToClose;
+  std::queue<std::function<bool()>> m_steps;
   int m_stepTimer = 0;
 
-  void step();
-  void next();
+  void start();
+
+  SubWindow* getSubWindow(const QString& id, SubWindowType type = SubWindowType::Object);
 
   void savePixmap(QPixmap pixmap, const QString& filename);
   void saveWidgetImage(QWidget* widget, const QString& filename);
+  void saveDialogImage(QDialog* dialog, const QString& filename);
   void saveMainWindowImage(const QString& filename);
-
-  static QString getStepLabel(Step step);
 };
 
 #endif

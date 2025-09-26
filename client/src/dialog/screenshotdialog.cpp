@@ -65,23 +65,9 @@ ScreenShotDialog::ScreenShotDialog(MainWindow& mainWindow)
 
   m_mainWindow.m_windowTitle = QStringLiteral("Traintastic"); // Get rid of version number
 
-  m_progressBar->setRange(static_cast<int>(Step::Start), static_cast<uint>(Step::Done));
-
   m_label->setAlignment(Qt::AlignCenter);
 
-  connect(m_start, &QPushButton::clicked,
-    [this]()
-    {
-      QSettings settings;
-      m_outputDir.setPath(QFileDialog::getExistingDirectory(this, "Select output directory", settings.value("ScreenshotCreator/OutputDirectory", QDir::homePath()).toString()));
-      if(m_outputDir.exists())
-      {
-        m_start->setEnabled(false);
-        settings.setValue("ScreenshotCreator/OutputDirectory", m_outputDir.path());
-        using namespace std::chrono_literals;
-        m_stepTimer = startTimer(500ms);
-      }
-    });
+  connect(m_start, &QPushButton::clicked, this, &ScreenShotDialog::start);
 
   auto* mainLayout = new QVBoxLayout();
   mainLayout->addWidget(m_progressBar);
@@ -98,147 +84,178 @@ void ScreenShotDialog::timerEvent(QTimerEvent* event)
 {
   if(event->timerId() == m_stepTimer)
   {
-    step();
+    if(m_steps.empty())
+    {
+      killTimer(m_stepTimer);
+      m_stepTimer = 0;
+      m_label->setText(QStringLiteral("Done!"));
+    }
+    else if(m_steps.front()())
+    {
+      m_steps.pop();
+      m_progressBar->setValue(m_progressBar->value() + 1);
+      m_label->setText(QString("%1 / %2").arg(m_progressBar->value()).arg(m_progressBar->maximum()));
+    }
   }
 }
 
-void ScreenShotDialog::step()
+void ScreenShotDialog::start()
 {
-  while(!m_dialogsToClose.isEmpty())
+  QSettings settings;
+  m_outputDir.setPath(QFileDialog::getExistingDirectory(this, "Select output directory", settings.value("ScreenshotCreator/OutputDirectory", QDir::homePath()).toString()));
+  if(!m_outputDir.exists())
   {
-    m_dialogsToClose.pop()->close();
+    return;
   }
 
-  switch(m_step)
-  {
-    using enum Step;
-
-    case Start:
-      next();
-      return;
-
-    case ConnectToServer:
-      if(m_mainWindow.connection())
-      {
-        next();
-      }
-      return;
-
-    case CloseWorld:
-      if(!m_mainWindow.world())
-      {
-        next();
-      }
-      else
-      {
-        m_mainWindow.m_actionCloseWorld->trigger();
-      }
-      return;
-
-    case NewWorld:
+  settings.setValue("ScreenshotCreator/OutputDirectory", m_outputDir.path());
+ 
+  // Startup:
+  m_steps.push(
+    [this]()
+    {
+      return m_mainWindow.connection().operator bool();
+    });
+  m_steps.push(
+    [this]()
+    {
       if(m_mainWindow.world())
       {
-        next();
+        m_mainWindow.m_actionCloseWorld->trigger();
+        return false;
       }
-      else
-      {
-        saveMainWindowImage(QStringLiteral("getting-started/traintastic-startup-no-world.png"));
-        m_mainWindow.m_actionNewWorld->trigger();
-      }
-      return;
+      return true;
+    });
 
-    case NewWorldWizard:
-      if(m_mainWindow.m_wizard.newWorld)
-      {
-        m_mainWindow.m_wizard.newWorld->next();
-        next();
-      }
-      return;
+  // No world:
+  m_steps.push(
+    [this]()
+    {
+      saveMainWindowImage(QStringLiteral("getting-started/traintastic-startup-no-world.png"));
+      return true;
+    });
 
-    case NewWorldWizardSetWorldName:
+  // Create new world:
+  m_steps.push(
+    [this]()
+    {
+       m_mainWindow.m_actionNewWorld->trigger();
+      return true;
+    });
+  m_steps.push(
+    [this]()
+    {
+      return m_mainWindow.world().operator bool();
+    });
+
+  // New world wizard:
+  m_steps.push(
+    [this]()
+    {
+      m_mainWindow.m_wizard.newWorld->next();
+      return true;
+    });
+  m_steps.push(
+    [this]()
+    {
       m_mainWindow.m_wizard.newWorld->button(QWizard::NextButton)->setFocus();
       m_mainWindow.m_world->setPropertyValue("name", QStringLiteral("My First World"));
-      next();
-      return;
-
-    case NewWorldWizardSetWorldNameShoot:
-      saveWidgetImage(m_mainWindow.m_wizard.newWorld.get(), QStringLiteral("getting-started/new-world-wizard-set-name.png"));
+      return true;
+    });
+  m_steps.push(
+    [this]()
+    {
+      saveDialogImage(m_mainWindow.m_wizard.newWorld.get(), QStringLiteral("getting-started/new-world-wizard-set-name.png"));
       m_mainWindow.m_wizard.newWorld->next();
-      next();
-      return;
-
-    case NewWorldWizardSetWorldScale:
-      saveWidgetImage(m_mainWindow.m_wizard.newWorld.get(), QStringLiteral("getting-started/new-world-wizard-select-scale.png"));
+      return true;
+    });
+  m_steps.push(
+    [this]()
+    {
+      saveDialogImage(m_mainWindow.m_wizard.newWorld.get(), QStringLiteral("getting-started/new-world-wizard-select-scale.png"));
       m_mainWindow.m_wizard.newWorld->next();
-      next();
-      return;
-
-    case NewWorldWizardFinish:
-      saveWidgetImage(m_mainWindow.m_wizard.newWorld.get(), QStringLiteral("getting-started/new-world-wizard-finish.png"));
+      return true;
+    });
+  m_steps.push(
+    [this]()
+    {
+      saveDialogImage(m_mainWindow.m_wizard.newWorld.get(), QStringLiteral("getting-started/new-world-wizard-finish.png"));
       m_mainWindow.m_wizard.newWorld->accept();
-      next();
-      return;
+      return true;
+    });
 
-    case InterfaceListEmpty:
-      if(auto it = m_mainWindow.m_subWindows.find(SubWindow::windowId(SubWindowType::Object, "world.interfaces")); it != m_mainWindow.m_subWindows.end())
+  // Interface list:
+  m_steps.push(
+    [this]()
+    {
+      m_mainWindow.m_menuObjects->actions()[0]->menu()->actions()[0]->trigger(); // Object -> Hardware -> Interfaces
+      return true;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("world.interfaces")))
       {
-        auto* w = it.value();
         w->move(10, 10);
         w->resize(400, 300);
         saveWidgetImage(w, QStringLiteral("interface/interface-list-empty.png"));
         w->close();
-        next();
+        return true;
       }
-      else
-      {
-        m_mainWindow.m_menuObjects->actions()[0]->menu()->actions()[0]->trigger(); // Object -> Hardware -> Interfaces
-      }
-      return;
+      return false;
+    });
 
-    case LuaScriptListEmpty:
-      if(auto it = m_mainWindow.m_subWindows.find(SubWindow::windowId(SubWindowType::Object, "world.lua_scripts")); it != m_mainWindow.m_subWindows.end())
+  // Lua scripts list:
+  m_steps.push(
+    [this]()
+    {
+      m_mainWindow.m_menuObjects->actions()[5]->trigger(); // Object -> Lua scripts
+      return true;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("world.lua_scripts")))
       {
-        auto* w = it.value();
         w->move(10, 10);
         w->resize(400, 300);
         saveWidgetImage(w, QStringLiteral("lua/lua-script-list-empty.png"));
         static_cast<ObjectListWidget*>(w->widget())->m_actionCreate->trigger();
-        next();
+        return true;
       }
-      else
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("script_1")))
       {
-        m_mainWindow.m_menuObjects->actions()[5]->trigger(); // Object -> Lua scripts
-      }
-      return;
-
-    case LuaScriptEditor:
-      if(auto it = m_mainWindow.m_subWindows.find(SubWindow::windowId(SubWindowType::Object, "script_1")); it != m_mainWindow.m_subWindows.end())
-      {
-        auto* w = it.value();
         w->move(420, 10);
         w->resize(400, 300);
         saveWidgetImage(w, QStringLiteral("lua/lua-script-editor.png"));
         m_mainWindow.m_mdiArea->closeAllSubWindows();
-        next();
+        return true;
       }
-      return;
+      return false;
+    });
 
-    case Done:
-      killTimer(m_stepTimer);
-      m_stepTimer = 0;
-      return;
-  }
+  m_start->setEnabled(false);
+  m_progressBar->setRange(0, static_cast<int>(m_steps.size()));
+  m_progressBar->setValue(0);
+  m_label->setText(QString("%1 / %2").arg(m_progressBar->value()).arg(m_progressBar->maximum()));
+
+  using namespace std::chrono_literals;
+  m_stepTimer = startTimer(500ms);
 }
 
-void ScreenShotDialog::next()
+SubWindow* ScreenShotDialog::getSubWindow(const QString& id, SubWindowType type)
 {
-  if(m_step < Step::Done) [[likely]]
+  if(auto it = m_mainWindow.m_subWindows.find(SubWindow::windowId(type, id)); it != m_mainWindow.m_subWindows.end())
   {
-    m_step = static_cast<Step>(static_cast<uint>(m_step) + 1);
+    return it.value();
   }
-  m_progressBar->setValue(static_cast<int>(m_step));
-  m_label->setText(getStepLabel(m_step));
-}
+  return nullptr;
+} 
 
 void ScreenShotDialog::savePixmap(QPixmap pixmap, const QString& filename)
 {
@@ -252,44 +269,12 @@ void ScreenShotDialog::saveWidgetImage(QWidget* widget, const QString& filename)
   savePixmap(widget->grab(), filename);
 }
 
+void ScreenShotDialog::saveDialogImage(QDialog* dialog, const QString& filename)
+{
+  savePixmap(dialog->screen()->grabWindow(0).copy(dialog->frameGeometry()), filename);
+}
+
 void ScreenShotDialog::saveMainWindowImage(const QString& filename)
 {
   savePixmap(m_mainWindow.screen()->grabWindow(0).copy(m_mainWindow.frameGeometry()), filename);
-}
-
-QString ScreenShotDialog::getStepLabel(Step step)
-{
-  switch(step)
-  {
-    using enum Step;
-
-    case Start:
-      return "Start";
-    case ConnectToServer:
-      return "ConnectToServer";
-    case CloseWorld:
-      return "CloseWorld";
-    case NewWorld:
-      return "NewWorld";
-    case NewWorldWizard:
-      return "NewWorldWizard";
-    case NewWorldWizardSetWorldName:
-      return "NewWorldWizardSetWorldName";
-    case NewWorldWizardSetWorldNameShoot:
-      return "NewWorldWizardSetWorldNameShoot";
-    case NewWorldWizardSetWorldScale:
-      return "NewWorldWizardSetWorldScale";
-    case NewWorldWizardFinish:
-      return "NewWorldWizardFinish";
-    case InterfaceListEmpty:
-      return "InterfaceListEmpty";
-    case LuaScriptListEmpty:
-      return "LuaScriptListEmpty";
-    case LuaScriptEditor:
-      return "LuaScriptEditor";
-    case Done:
-      return "Done";
-  }
-  //assert(false);
-  return QString("Step %1").arg(static_cast<uint>(step));
 }
