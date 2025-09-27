@@ -480,7 +480,7 @@ jobs:
 
   package-innosetup:
     name: package innosetup
-    runs-on: windows-latest
+    runs-on: windows-2022
     needs: [build-client, build-server, build-lang, build-manual]
 
     steps:
