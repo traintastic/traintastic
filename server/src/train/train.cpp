@@ -50,7 +50,7 @@ static inline bool isPowered(const RailVehicle& vehicle)
 Train::Train(World& world, std::string_view _id) :
   IdObject(world, _id),
   m_speedTimer{EventLoop::ioContext},
-  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
+  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
   overrideLength{this, "override_length", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool value)
