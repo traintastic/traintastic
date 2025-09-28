@@ -46,6 +46,13 @@ ControllerListBaseTableModel::ControllerListBaseTableModel(ControllerListBase& l
     });
 }
 
+ControllerListBaseTableModel::~ControllerListBaseTableModel()
+{
+  auto it = std::find(m_list->m_models.begin(), m_list->m_models.end(), this);
+  assert(it != m_list->m_models.end());
+  m_list->m_models.erase(it);
+}
+
 std::string ControllerListBaseTableModel::getText(uint32_t column, uint32_t row) const
 {
   if(row < rowCount())
