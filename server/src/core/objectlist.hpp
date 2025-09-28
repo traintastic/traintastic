@@ -159,13 +159,13 @@ class ObjectList : public AbstractObjectList
       auto it = std::find(m_items.begin(), m_items.end(), object);
       if(it != m_items.end())
       {
+        const uint32_t row = std::distance(m_items.begin(), it);
         m_propertyChanged[object.get()].disconnect();
         m_propertyChanged.erase(object.get());
         m_items.erase(it);
         objectRemoved(object);
         rowCountChanged();
-
-        uint32_t row = std::distance(m_items.begin(), it);
+        
         for(auto& model : m_models)
         {
           model->rowRemovedHack(row);
