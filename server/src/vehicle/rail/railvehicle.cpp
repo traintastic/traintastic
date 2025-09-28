@@ -58,6 +58,7 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
           {
             decoder->interface = std::dynamic_pointer_cast<DecoderController>(m_world.decoderControllers->getObject(0));
           }
+          decoder->functions->create(); // add FL/F0 light function
         }
       }}
   , deleteDecoder{*this, "delete_decoder", MethodFlags::NoScript,
@@ -101,6 +102,7 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
 
   Attributes::addDisplayName(activeTrain, DisplayName::Vehicle::Rail::train); //TODO: "Active"
   Attributes::addEnabled(activeTrain, true);
+  Attributes::addObjectEditor(activeTrain, false);
   m_interfaceItems.insertBefore(activeTrain, notes);
 
   Attributes::addObjectEditor(trains, false);
