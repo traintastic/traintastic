@@ -187,6 +187,9 @@ ThrottleWidget::ThrottleWidget(ObjectPtr train, QWidget* parent)
     });
 
   auto* main = new QVBoxLayout();
+  QPalette palette = m_nameLabel->palette();
+  palette.setColor(m_nameLabel->foregroundRole(), ThrottleStyle::textColor);
+  m_nameLabel->setPalette(palette);
   QFont font = m_nameLabel->font();
   font.setBold(true);
   m_nameLabel->setFont(font);
@@ -209,6 +212,9 @@ ThrottleWidget::ThrottleWidget(ObjectPtr train, QWidget* parent)
   main->addLayout(columns, 1);
 
   auto* bottom = new QHBoxLayout();
+  palette = m_throttleStatus->palette();
+  palette.setColor(m_throttleStatus->foregroundRole(), ThrottleStyle::textColor);
+  m_throttleStatus->setPalette(palette);  
   bottom->addWidget(m_throttleStatus, 1);
   bottom->addWidget(m_throttleAction);
   main->addLayout(bottom);
@@ -612,6 +618,9 @@ void ThrottleWidget::createDecoderFunctionWidgets(size_t vehicleIndex)
   if(auto* name = m_trainVehicles[vehicleIndex]->getProperty("name"))
   {
     auto* nameLabel = new QLabel(name->toString(), this);
+    QPalette palette = nameLabel->palette();
+    palette.setColor(nameLabel->foregroundRole(), ThrottleStyle::textColor);
+    nameLabel->setPalette(palette);
     connect(name, &AbstractProperty::valueChangedString, nameLabel, &QLabel::setText);
     grid->addWidget(nameLabel, 0, 0, 1, functionButtonsPerRow + 1);
   }

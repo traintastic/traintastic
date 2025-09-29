@@ -32,6 +32,7 @@ struct ThrottleStyle
   inline static const QColor buttonDisabledColor{0x80, 0x80, 0x80};
   inline static const QColor buttonEStopColor{0xCF, 0x66, 0x79};
   inline static const QColor buttonTextColor{0x00, 0x00, 0x00};
+  inline static const QColor textColor{0xFF, 0xFF, 0xFF};
 };
 
 #endif
