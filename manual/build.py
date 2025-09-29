@@ -133,7 +133,12 @@ class TraintasticHelp:
                 },
                 'pymdownx.inlinehilite',
                 'pymdownx.snippets',
-                'pymdownx.superfences'
+                'pymdownx.superfences',
+                {
+                    'pymdownx.escapeall': {
+                        'hardbreak': True
+                    }
+                }
             ],
             'plugins': {
                 'search': {
@@ -150,7 +155,8 @@ class TraintasticHelp:
                     {'Quick start': [
                         {'Introduction': 'quickstart/index.md'},
                         {'Create your first world': 'quickstart/world.md'},
-                        {'Connect to your command station': 'quickstart/command-station.md'}
+                        {'Connect to your command station': 'quickstart/command-station.md'},
+                        {'Add and control a train': 'quickstart/trains.md'}
                         # TODO: Draw board
                         # TODO: setup turnouts
                     ]}
