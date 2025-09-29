@@ -28,7 +28,9 @@
 #include <QMenu>
 #include <QProgressBar>
 #include <QPushButton>
+#include <QToolButton>
 #include <QLineEdit>
+#include <QTableView>
 #include <QFileDialog>
 #include <QSettings>
 #include <QScreen>
@@ -39,7 +41,12 @@
 #include "../settings/generalsettings.hpp"
 #include "../subwindow/subwindow.hpp"
 #include "../widget/object/abstracteditwidget.hpp"
+#include "../widget/object/objecteditwidget.hpp"
 #include "../widget/objectlist/objectlistwidget.hpp"
+#include "../widget/objectlist/interfacelistwidget.hpp"
+#include "../widget/objectlist/throttleobjectlistwidget.hpp"
+#include "../widget/throttle/throttlebutton.hpp"
+#include "../widget/throttle/throttlewidget.hpp"
 #include "../wizard/newworldwizard.hpp"
 #include "../wizard/page/propertypage.hpp"
 
@@ -199,10 +206,169 @@ void ScreenShotDialog::start()
         w->move(10, 10);
         w->resize(400, 300);
         saveWidgetImage(w, QStringLiteral("interface/interface-list-empty.png"));
+        auto* list = static_cast<InterfaceListWidget*>(w->widget());
+        list->m_createMenu->actions()[3]->trigger();
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("world.interfaces")))
+      {
         w->close();
         return true;
       }
       return false;
+    });
+
+  // Trains and Rail vehicles:
+  m_steps.push(
+    [this]()
+    {
+      m_mainWindow.m_menuObjects->actions()[4]->trigger(); // Object -> Trains
+      return true;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = m_mainWindow.m_trainAndRailVehiclesSubWindow)
+      {
+        w->move(10, 10);
+        w->resize(500, 300);
+        saveWidgetImage(w, QStringLiteral("getting-started/train-list-empty.png"));
+        static_cast<QTabWidget*>(w->widget())->setCurrentIndex(1);
+        saveWidgetImage(w, QStringLiteral("getting-started/rail-vehicle-list-empty.png"));
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = m_mainWindow.m_trainAndRailVehiclesSubWindow)
+      {
+        auto* list = static_cast<ObjectListWidget*>(static_cast<QTabWidget*>(w->widget())->currentWidget()->layout()->itemAt(0)->widget());
+        list->m_buttonCreate->menu()->actions()[0]->trigger(); // create locomotive
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("vehicle_1")))
+      {
+        w->move(10, 10);
+        w->resize(400, 300);
+        saveWidgetImage(w, QStringLiteral("getting-started/locomotive-general.png"));
+        static_cast<QTabWidget*>(w->widget()->layout()->itemAt(0)->widget())->setCurrentIndex(1);
+        saveWidgetImage(w, QStringLiteral("getting-started/locomotive-decoder.png"));
+        static_cast<QTabWidget*>(w->widget()->layout()->itemAt(0)->widget())->setCurrentIndex(2);
+        saveWidgetImage(w, QStringLiteral("getting-started/locomotive-functions.png"));
+        w->close();
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = m_mainWindow.m_trainAndRailVehiclesSubWindow)
+      {
+        static_cast<QTabWidget*>(w->widget())->setCurrentIndex(0);
+        auto* list = static_cast<ObjectListWidget*>(static_cast<QTabWidget*>(w->widget())->currentWidget()->layout()->itemAt(0)->widget());
+        list->m_actionCreate->trigger(); // create train
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("train_1")))
+      {
+        w->move(400, 10);
+        w->resize(400, 300);
+        saveWidgetImage(w, QStringLiteral("getting-started/train-general.png"));
+        static_cast<QTabWidget*>(w->widget()->layout()->itemAt(0)->widget())->setCurrentIndex(1);
+        saveWidgetImage(w, QStringLiteral("getting-started/train-vehicles.png"));
+        auto* list = static_cast<ObjectListWidget*>(static_cast<QTabWidget*>(w->widget()->layout()->itemAt(0)->widget())->currentWidget()->layout()->itemAt(0)->widget());
+        list->object()->getMethod("add")->call("vehicle_1");
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("train_1")))
+      {
+        w->close();
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      m_mainWindow.m_worldEditAction->setChecked(false); // switch to operate mode
+      return true;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = m_mainWindow.m_trainAndRailVehiclesSubWindow)
+      {
+        auto* list = static_cast<ThrottleObjectListWidget*>(static_cast<QTabWidget*>(w->widget())->currentWidget()->layout()->itemAt(0)->widget());
+        auto* table = static_cast<QTableView*>(list->layout()->itemAt(1)->widget());
+        table->selectRow(0);
+        list->m_actionThrottle->trigger();
+        w->close();
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("train_1"), SubWindowType::Throttle))
+      {
+        m_mainWindow.m_mdiArea->setActiveSubWindow(w);
+        w->move(10, 10);
+        w->resize(350, 350);
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("train_1"), SubWindowType::Throttle))
+      {
+        saveWidgetImage(w, QStringLiteral("getting-started/train-throttle.png"));
+        emit static_cast<ThrottleWidget*>(w->widget())->m_throttleAction->clicked(); // acquire
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("train_1"), SubWindowType::Throttle))
+      {
+        saveWidgetImage(w, QStringLiteral("getting-started/train-throttle-acquired.png"));
+        w->close();
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      m_mainWindow.m_worldEditAction->setChecked(true); // switch to edit mode
+      return true;
     });
 
   // Lua scripts list:
