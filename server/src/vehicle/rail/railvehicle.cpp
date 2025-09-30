@@ -39,7 +39,7 @@
 RailVehicle::RailVehicle(World& world, std::string_view _id) :
   Vehicle(world, _id),
   decoder{this, "decoder", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store},
-  lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  length{*this, "length", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
   speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::Store},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store, [this](double /*value*/, WeightUnit /*unit*/){ updateTotalWeight(); }},
   totalWeight{*this, "total_weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
@@ -78,9 +78,9 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
   Attributes::addObjectList(decoder, m_world.decoders);
   m_interfaceItems.insertBefore(decoder, notes);
 
-  Attributes::addDisplayName(lob, DisplayName::Vehicle::Rail::lob);
-  Attributes::addEnabled(lob, editable);
-  m_interfaceItems.insertBefore(lob, notes);
+  Attributes::addDisplayName(length, DisplayName::Vehicle::Rail::length);
+  Attributes::addEnabled(length, editable);
+  m_interfaceItems.insertBefore(length, notes);
 
   Attributes::addDisplayName(speedMax, DisplayName::Vehicle::Rail::speedMax);
   Attributes::addEnabled(speedMax, editable);
@@ -201,7 +201,7 @@ void RailVehicle::worldEvent(WorldState state, WorldEvent event)
     {
       const bool editable = contains(state, WorldState::Edit);
       Attributes::setEnabled(decoder, editable);
-      Attributes::setEnabled(lob, editable);
+      Attributes::setEnabled(length, editable);
       Attributes::setEnabled(speedMax, editable);
       Attributes::setEnabled(weight, editable);
       break;

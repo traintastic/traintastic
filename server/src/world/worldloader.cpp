@@ -256,10 +256,22 @@ void WorldLoader::createObject(ObjectData& objectData)
   else if(startsWith(classId, RailVehicles::classIdPrefix))
   {
     if(classId == "vehicle.rail.freight_car") { classId = FreightWagon::classId; } //! \todo Remove in v0.4
+    if(objectData.json.contains("lob") && !objectData.json.contains("length")) //! \todo Remove in v0.4
+    {
+      objectData.json["length"] = objectData.json["lob"];
+      objectData.json.erase("lob");
+    }
     objectData.object = RailVehicles::create(*m_world, classId, id);
   }
   else if(classId == Train::classId)
+  {
+    if(objectData.json.contains("lob") && !objectData.json.contains("length")) //! \todo Remove in v0.4
+    {
+      objectData.json["length"] = objectData.json["lob"];
+      objectData.json.erase("lob");
+    }
     objectData.object = Train::create(*m_world, id);
+  }
   else if(classId == TrainBlockStatus::classId)
   {
     auto block = std::dynamic_pointer_cast<BlockRailTile>(getObject(objectData.json["block"].get<std::string_view>()));

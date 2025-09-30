@@ -4041,8 +4041,8 @@
         "fuzzy": 0
     },
     {
-        "term": "train:lob",
-        "definition": "L\u00e4nge \u00fcber Puffer",
+        "term": "train:length",
+        "definition": "L\u00e4nge",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4203,8 +4203,8 @@
         "fuzzy": 0
     },
     {
-        "term": "vehicle.rail:lob",
-        "definition": "LOB",
+        "term": "vehicle.rail:length",
+        "definition": "L\u00e4nge",
         "context": "",
         "term_plural": "",
         "reference": "",

@@ -51,11 +51,11 @@ Train::Train(World& world, std::string_view _id) :
   IdObject(world, _id),
   m_speedTimer{EventLoop::ioContext},
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
-  lob{*this, "lob", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  length{*this, "length", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
   overrideLength{this, "override_length", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool value)
     {
-      Attributes::setEnabled(lob, value);
+      Attributes::setEnabled(length, value);
       if(!value)
         updateLength();
     }},
@@ -176,8 +176,8 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, false);
   m_interfaceItems.add(name);
-  Attributes::addEnabled(lob, overrideLength);
-  m_interfaceItems.add(lob);
+  Attributes::addEnabled(length, overrideLength);
+  m_interfaceItems.add(length);
   m_interfaceItems.add(overrideLength);
   Attributes::addEnabled(direction, false);
   Attributes::addValues(direction, DirectionValues);
@@ -354,7 +354,7 @@ void Train::loaded()
 {
   IdObject::loaded();
 
-  Attributes::setEnabled(lob, overrideLength);
+  Attributes::setEnabled(length, overrideLength);
   Attributes::setEnabled(weight, overrideWeight);
 
   auto self = shared_ptr<Train>();
@@ -471,8 +471,8 @@ void Train::updateLength()
 
   double mm = 0;
   for(const auto& vehicle : *vehicles)
-    mm += vehicle->lob.getValue(LengthUnit::MilliMeter);
-  lob.setValueInternal(convertUnit(mm, LengthUnit::MilliMeter, lob.unit()));
+    mm += vehicle->length.getValue(LengthUnit::MilliMeter);
+  length.setValueInternal(convertUnit(mm, LengthUnit::MilliMeter, length.unit()));
 }
 
 void Train::updateWeight()

@@ -49,7 +49,7 @@ class RailVehicle : public Vehicle
 
   public:
     ObjectProperty<Decoder> decoder;
-    LengthProperty lob;
+    LengthProperty length;
     SpeedProperty speedMax;
     WeightProperty weight;
     WeightProperty totalWeight;

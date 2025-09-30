@@ -4041,8 +4041,8 @@
         "fuzzy": 0
     },
     {
-        "term": "train:lob",
-        "definition": "Length over buffers",
+        "term": "train:length",
+        "definition": "Length",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4203,8 +4203,8 @@
         "fuzzy": 0
     },
     {
-        "term": "vehicle.rail:lob",
-        "definition": "LOB",
+        "term": "vehicle.rail:length",
+        "definition": "Length",
         "context": "",
         "term_plural": "",
         "reference": "",

@@ -4113,8 +4113,8 @@
         "fuzzy": 0
     },
     {
-        "term": "train:lob",
-        "definition": "Longitud entre topes",
+        "term": "train:length",
+        "definition": "Longitud",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4275,8 +4275,8 @@
         "fuzzy": 0
     },
     {
-        "term": "vehicle.rail:lob",
-        "definition": "LOB, longitud entre topes",
+        "term": "vehicle.rail:length",
+        "definition": "Longitud",
         "context": "",
         "term_plural": "",
         "reference": "",

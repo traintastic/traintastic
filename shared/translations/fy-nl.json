@@ -3303,8 +3303,8 @@
         "fuzzy": 0
     },
     {
-        "term": "vehicle.rail:lob",
-        "definition": "LOB",
+        "term": "vehicle.rail:length",
+        "definition": "Lingte",
         "context": "",
         "term_plural": "",
         "reference": "",

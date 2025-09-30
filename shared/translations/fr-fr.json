@@ -4041,8 +4041,8 @@
         "fuzzy": 0
     },
     {
-        "term": "train:lob",
-        "definition": "Longueur avec tampons",
+        "term": "train:length",
+        "definition": "Longueur",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4203,8 +4203,8 @@
         "fuzzy": 0
     },
     {
-        "term": "vehicle.rail:lob",
-        "definition": "Longueur avec tampons",
+        "term": "vehicle.rail:length",
+        "definition": "Longueur",
         "context": "",
         "term_plural": "",
         "reference": "",

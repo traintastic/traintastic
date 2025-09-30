@@ -4065,8 +4065,8 @@
         "fuzzy": 0
     },
     {
-        "term": "train:lob",
-        "definition": "Lunghezza con respingenti",
+        "term": "train:length",
+        "definition": "Lunghezza",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4227,8 +4227,8 @@
         "fuzzy": 0
     },
     {
-        "term": "vehicle.rail:lob",
-        "definition": "Lunghezza veicolo",
+        "term": "vehicle.rail:length",
+        "definition": "Lunghezza",
         "context": "",
         "term_plural": "",
         "reference": "",

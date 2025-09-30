@@ -96,7 +96,7 @@ class Train : public IdObject
     CREATE_DEF(Train)
 
     Property<std::string> name;
-    LengthProperty lob;
+    LengthProperty length;
     Property<bool> overrideLength;
     Property<Direction> direction;
     Property<bool> isStopped;

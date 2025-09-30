@@ -117,7 +117,7 @@ bool TrainVehicleList::isListedProperty(std::string_view name)
 
 void TrainVehicleList::propertyChanged(BaseProperty& property)
 {
-  if(property.name() == "lob")
+  if(property.name() == "length")
     train().updateLength();
   else if(property.name() == "total_weight")
     train().updateWeight();

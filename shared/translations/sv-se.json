@@ -4041,8 +4041,8 @@
         "fuzzy": 0
     },
     {
-        "term": "train:lob",
-        "definition": "L\u00e4ngd \u00f6ver buffertar",
+        "term": "train:length",
+        "definition": "L\u00e4ngd",
         "context": "",
         "term_plural": "",
         "reference": "",
@@ -4203,8 +4203,8 @@
         "fuzzy": 0
     },
     {
-        "term": "vehicle.rail:lob",
-        "definition": "LOBB",
+        "term": "vehicle.rail:length",
+        "definition": "L\u00e4ngd",
         "context": "",
         "term_plural": "",
         "reference": "",
