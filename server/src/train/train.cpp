@@ -217,6 +217,7 @@ Train::Train(World& world, std::string_view _id) :
   m_interfaceItems.add(active);
 
   Attributes::addValues(mode, trainModeValues);
+  Attributes::addObjectEditor(mode, false);
   m_interfaceItems.add(mode);
 
   Attributes::addObjectEditor(mute, false);
