@@ -41,6 +41,7 @@ PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
 
   Attributes::addDisplayName(power, DisplayName::Vehicle::Rail::power);
   Attributes::addEnabled(power, editable);
+  Attributes::addObjectEditor(power, false); // FIXME: remove once used
   m_interfaceItems.add(power);
 }
 
