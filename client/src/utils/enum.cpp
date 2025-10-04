@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -137,6 +137,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(XpressNetInterfaceType)
   TRANSLATE_ENUM(XpressNetSerialInterfaceType)
   TRANSLATE_ENUM(BoardSettings::ColorScheme)
+  TRANSLATE_ENUM(BoardAreaGrid)
   return enumName + "@" + QString::number(value);
 }
 

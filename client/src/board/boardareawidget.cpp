@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -76,7 +76,7 @@ BoardAreaWidget::BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent) 
   m_boardTop{m_board->getProperty("top")},
   m_boardRight{m_board->getProperty("right")},
   m_boardBottom{m_board->getProperty("bottom")},
-  m_grid{Grid::Dot},
+  m_grid{BoardAreaGrid::None},
   m_zoomLevel{0},
   m_blockHighlight{MainWindow::instance->blockHighlight()},
   m_mouseLeftButtonPressed{false},
@@ -213,34 +213,6 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
       tryConnect("text");
       tryConnect("text_align");
       tryConnect("text_color");
-      break;
-  }
-}
-
-void BoardAreaWidget::setGrid(Grid value)
-{
-  if(m_grid != value)
-  {
-    m_grid = value;
-    update();
-    emit gridChanged(m_grid);
-  }
-}
-
-void BoardAreaWidget::nextGrid()
-{
-  switch(grid())
-  {
-    case Grid::None:
-      setGrid(Grid::Dot);
-      break;
-
-    case Grid::Dot:
-      setGrid(Grid::Line);
-      break;
-
-    case Grid::Line:
-      setGrid(Grid::None);
       break;
   }
 }
@@ -532,9 +504,7 @@ void BoardAreaWidget::leaveEvent(QEvent* event)
 
 void BoardAreaWidget::keyPressEvent(QKeyEvent* event)
 {
-  if(event->key() == Qt::Key_G && event->modifiers() == Qt::ControlModifier)
-    nextGrid();
-  else if(event->matches(QKeySequence::ZoomIn))
+  if(event->matches(QKeySequence::ZoomIn))
     zoomIn();
   else if(event->matches(QKeySequence::ZoomOut))
     zoomOut();
@@ -650,10 +620,10 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
   // draw grid:
   switch(m_grid)
   {
-    case Grid::None:
+    case BoardAreaGrid::None:
       break;
 
-    case Grid::Line:
+    case BoardAreaGrid::Line:
       painter.setPen(gridColor);
       for(int y = viewport.top(); y <= viewport.bottom(); y += gridSize)
         painter.drawLine(viewport.left(), y, viewport.right(), y);
@@ -661,7 +631,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
         painter.drawLine(x, viewport.top(), x, viewport.bottom());
       break;
 
-    case Grid::Dot:
+    case BoardAreaGrid::Dot:
       painter.setPen(gridColor);
       for(int y = viewport.top(); y <= viewport.bottom(); y += gridSize)
         for(int x = viewport.left(); x <= viewport.right(); x += gridSize)
@@ -938,6 +908,8 @@ void BoardAreaWidget::settingsChanged()
 
   m_colorScheme = getBoardColorScheme(s.colorScheme.value());
 
+  updateGrid();
+
   update();
 }
 
@@ -949,4 +921,17 @@ void BoardAreaWidget::updateMinimumSize()
 
   setMinimumSize(width, height);
   update();
+}
+
+void BoardAreaWidget::updateGrid()
+{
+  const bool editMode = m_board->connection()->world()->getPropertyValueBool(QStringLiteral("edit"), false);
+  const auto& s = BoardSettings::instance();
+  const auto grid = editMode ? s.gridEditMode.value() : s.gridOperateMode.value();
+
+  if(m_grid != grid)
+  {
+    m_grid = grid;
+    update();
+  }
 }

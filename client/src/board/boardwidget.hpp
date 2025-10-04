@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020,2022-2023 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,10 +56,6 @@ class BoardWidget : public QWidget
     QLabel* m_statusBarZoom;
     QAction* m_actionZoomIn;
     QAction* m_actionZoomOut;
-    QToolButton* m_toolButtonGrid;
-    QAction* m_actionGridNone;
-    QAction* m_actionGridDot;
-    QAction* m_actionGridLine;
     QToolBar* m_toolbarEdit;
     QVector<QAction*> m_addActions; // all tile add actions
     QActionGroup* m_editActions;
@@ -99,7 +95,6 @@ class BoardWidget : public QWidget
 
   protected slots:
     void worldEditChanged(bool value);
-    void gridChanged(BoardAreaWidget::Grid value);
     void zoomLevelChanged(int value);
     void tileClicked(int16_t x, int16_t y);
     void rightClicked();

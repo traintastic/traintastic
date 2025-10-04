@@ -3681,7 +3681,7 @@
         "fuzzy": 0
     },
     {
-        "term": "qtapp:grid_dot",
+        "term": "board_area_grid:dot",
         "definition": "Dot",
         "context": "",
         "term_plural": "",
@@ -3690,7 +3690,7 @@
         "fuzzy": 0
     },
     {
-        "term": "qtapp:grid_line",
+        "term": "board_area_grid:line",
         "definition": "Line",
         "context": "",
         "term_plural": "",
@@ -3699,7 +3699,7 @@
         "fuzzy": 0
     },
     {
-        "term": "qtapp:grid_none",
+        "term": "board_area_grid:none",
         "definition": "None",
         "context": "",
         "term_plural": "",
@@ -6817,5 +6817,13 @@
     {
         "term": "qtapp.mainmenu:community_forum",
         "definition": "Community forum"
+    },
+    {
+        "term": "qtapp.settings.board:grid_operate_mode",
+        "definition": "Grid (operate mode)"
+    },
+    {
+        "term": "qtapp.settings.board:grid_edit_mode",
+        "definition": "Grid (edit mode)"
     }
 ]

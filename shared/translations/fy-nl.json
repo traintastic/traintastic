@@ -3042,7 +3042,7 @@
         "fuzzy": 0
     },
     {
-        "term": "qtapp:grid_dot",
+        "term": "board_area_grid:dot",
         "definition": "Stip",
         "context": "",
         "term_plural": "",
@@ -3051,7 +3051,7 @@
         "fuzzy": 0
     },
     {
-        "term": "qtapp:grid_line",
+        "term": "board_area_grid:line",
         "definition": "Rigel",
         "context": "",
         "term_plural": "",
@@ -3060,7 +3060,7 @@
         "fuzzy": 0
     },
     {
-        "term": "qtapp:grid_none",
+        "term": "board_area_grid:none",
         "definition": "Gjin",
         "context": "",
         "term_plural": "",

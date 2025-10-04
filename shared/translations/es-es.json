@@ -3744,7 +3744,7 @@
         "fuzzy": 0
     },
     {
-        "term": "qtapp:grid_dot",
+        "term": "board_area_grid:dot",
         "definition": "Punto",
         "context": "",
         "term_plural": "",
@@ -3753,7 +3753,7 @@
         "fuzzy": 0
     },
     {
-        "term": "qtapp:grid_line",
+        "term": "board_area_grid:line",
         "definition": "L\u00ednea",
         "context": "",
         "term_plural": "",
@@ -3762,7 +3762,7 @@
         "fuzzy": 0
     },
     {
-        "term": "qtapp:grid_none",
+        "term": "board_area_grid:none",
         "definition": "Ninguno",
         "context": "",
         "term_plural": "",

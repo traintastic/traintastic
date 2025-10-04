@@ -1,9 +1,8 @@
 /**
- * client/src/settings/boardsettingswidget.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,19 +19,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "boardsettingswidget.hpp"
-#include "boardsettings.hpp"
+#ifndef TRAINTASTIC_CLIENT_BOARD_BOARDAREAGRID_HPP
+#define TRAINTASTIC_CLIENT_BOARD_BOARDAREAGRID_HPP
 
-BoardSettingsWidget::BoardSettingsWidget(QWidget* parent)
-  : SettingsBaseWidget("qtapp.settings.board", parent)
+#include <traintastic/enum/enum.hpp>
+
+enum class BoardAreaGrid
 {
-  BoardSettings& s = BoardSettings::instance();
+  None = 0,
+  Line,
+  Dot,
+};
 
-  addSetting(s.colorScheme);
-  addSetting(s.gridOperateMode);
-  addSetting(s.gridEditMode);
-  addSetting(s.turnoutDrawState);
-  addSetting(s.showBlockSensorStates);
+TRAINTASTIC_ENUM(BoardAreaGrid, "board_area_grid", 3,
+{
+  {BoardAreaGrid::None, "none"},
+  {BoardAreaGrid::Dot, "dot"},
+  {BoardAreaGrid::Line, "line"}
+});
 
-  done();
-}
+#endif
