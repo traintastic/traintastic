@@ -148,7 +148,8 @@ void SimulatorIOHandler::receive(const SimulatorProtocol::Message& message)
       break;
 
   case OpCode::HandshakeResponse:
-    // This is never sent by simulator, only by us in response
+  case OpCode::RequestChannel:
+    // This is never sent by simulator, only by simulator clients
     break;
   }
 }

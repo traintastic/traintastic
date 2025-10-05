@@ -41,6 +41,7 @@ private:
   size_t m_readBufferOffset = 0;
   std::array<std::byte, 1024> m_writeBuffer;
   size_t m_writeBufferOffset = 0;
+  size_t m_connectionId = 0;
   bool m_handShakeResponseReceived = true;
 
   void read();
@@ -48,7 +49,8 @@ private:
   void close();
 
 public:
-  SimulatorConnection(std::shared_ptr<Simulator> simulator, boost::asio::ip::tcp::socket&& socket);
+  SimulatorConnection(std::shared_ptr<Simulator> simulator, boost::asio::ip::tcp::socket&& socket,
+                      size_t connId);
 
   void start();
   void stop();
@@ -61,6 +63,8 @@ public:
   {
     m_handShakeResponseReceived = newHandShakeResponseReceived;
   }
+
+  inline size_t connectionId() const { return m_connectionId; }
 };
 
 #endif

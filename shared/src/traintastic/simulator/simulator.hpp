@@ -263,7 +263,7 @@ public:
   void toggleTurnoutState(size_t segmentIndex);
 
   void send(const SimulatorProtocol::Message& message);
-  void receive(const SimulatorProtocol::Message& message);
+  void receive(const SimulatorProtocol::Message& message, size_t fromConnId);
   void removeConnection(const std::shared_ptr<SimulatorConnection>& connection);
 
 private:
@@ -291,8 +291,6 @@ private:
   void accept();
   void doReceive();
   void onConnectionRemoved(const std::shared_ptr<SimulatorConnection> &);
-
-  void sendInitialState(const std::shared_ptr<SimulatorConnection>& connection);
 
   void tick();
   void handShake();

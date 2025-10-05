@@ -565,7 +565,7 @@ void Simulator::send(const SimulatorProtocol::Message& message)
   }
 }
 
-void Simulator::receive(const SimulatorProtocol::Message& message)
+void Simulator::receive(const SimulatorProtocol::Message& message, size_t fromConnId)
 {
   using namespace SimulatorProtocol;
 
@@ -669,6 +669,30 @@ void Simulator::receive(const SimulatorProtocol::Message& message)
     case OpCode::Handshake:
     case OpCode::HandshakeResponse:
       break; // handled by SimulatorConnection already
+    case OpCode::RequestChannel:
+    {
+      const auto& m = static_cast<const RequestChannel&>(message);
+      std::lock_guard<std::mutex> lock(m_stateMutex);
+
+      const size_t count = staticData.sensors.size();
+      for(size_t i = 0; i < count; ++i)
+      {
+        const auto& sensor = staticData.sensors[i];
+        if(m.channel != invalidAddress && m.channel != sensor.channel)
+          continue;
+
+        auto& sensorState = m_stateData.sensors[i];
+
+        for(const auto& connection : m_connections)
+        {
+          if(connection->connectionId() != fromConnId)
+            continue;
+          connection->send(SimulatorProtocol::SensorChanged(sensor.channel, sensor.address, sensorState.value));
+          break;
+        }
+      }
+      break;
+    }
   }
 }
 
@@ -693,8 +717,13 @@ void Simulator::accept()
     {
       if(!ec)
       {
-        m_connections.emplace_back(std::make_shared<SimulatorConnection>(shared_from_this(), std::move(socket)))->start();
-        sendInitialState(*m_connections.rbegin());
+        lastConnectionId++;
+        if(lastConnectionId == invalidIndex)
+          lastConnectionId = 0;
+
+        m_connections.emplace_back(std::make_shared<SimulatorConnection>(
+                                     shared_from_this(), std::move(socket),
+                                     lastConnectionId))->start();
         accept();
       }
     });
@@ -1642,16 +1671,4 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
   assert(data.vehicles.size() == stateData.vehicles.size());
 
   return data;
-}
-
-void Simulator::sendInitialState(const std::shared_ptr<SimulatorConnection> &connection)
-{
-  // Send current sensor state
-  const size_t count = staticData.sensors.size();
-  for(size_t i = 0; i < count; ++i)
-  {
-    const auto& sensor = staticData.sensors[i];
-    auto& sensorState = m_stateData.sensors[i];
-    connection->send(SimulatorProtocol::SensorChanged(sensor.channel, sensor.address, sensorState.value));
-  }
 }

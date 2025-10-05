@@ -36,7 +36,9 @@ enum class OpCode : uint8_t
   SensorChanged = 3,
   AccessorySetState = 4,
   Handshake = 5,
-  HandshakeResponse = 6
+  HandshakeResponse = 6,
+  // Other messages
+  RequestChannel = 9
 };
 
 struct Message
@@ -127,6 +129,19 @@ struct AccessorySetState : Message
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(AccessorySetState) == 7);
+
+struct RequestChannel : Message
+{
+  //! NOTE: pass invalidAddress to get all channels state
+  uint16_t channel;
+
+  RequestChannel(uint16_t ch)
+    : Message(OpCode::RequestChannel, sizeof(RequestChannel))
+    , channel{ch}
+  {
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(RequestChannel) == 4);
 
 PRAGMA_PACK_POP
 
