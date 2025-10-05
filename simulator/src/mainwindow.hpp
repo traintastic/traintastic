@@ -27,6 +27,7 @@
 
 class QLabel;
 class SimulatorView;
+class QSpinBox;
 
 class MainWindow : public QMainWindow
 {
@@ -53,6 +54,7 @@ private:
   std::vector<float> m_tickActiveFilter;
 
   QMenu *imagesMenu;
+  QSpinBox *mSignalZoomSpin;
 };
 
 #endif

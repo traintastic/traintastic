@@ -28,6 +28,7 @@
 #include <QFileInfo>
 #include <QStatusBar>
 #include <QLabel>
+#include <QSpinBox>
 #include <QKeyEvent>
 #include "simulatorview.hpp"
 #include <version.hpp>
@@ -208,6 +209,20 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
   {
     auto* statusBar = new QStatusBar(this);
     statusBar->addPermanentWidget(m_tickActive);
+
+    mSignalZoomSpin = new QSpinBox;
+    mSignalZoomSpin->setRange(100, 4000);
+    mSignalZoomSpin->setValue(m_view->signalsScaleFactor() * 100);
+    mSignalZoomSpin->setSuffix(QLatin1StringView("%"));
+    mSignalZoomSpin->setToolTip(tr("Signals scale factor"));
+    statusBar->addPermanentWidget(mSignalZoomSpin);
+    connect(mSignalZoomSpin, &QSpinBox::editingFinished,
+            this, [this]()
+    {
+      m_view->setSignalsScaleFactor(mSignalZoomSpin->value() / 100.0f);
+    });
+
+
     setStatusBar(statusBar);
   }
 

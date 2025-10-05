@@ -828,22 +828,12 @@ void SimulatorView::drawTrackObjects(QPainter *painter)
   QColor positionSensorActive = Qt::red;
   QColor positionSensorInactive = Qt::darkGreen;
 
-  // Make signals more visible at low zoom levels
-  qreal factor = 1.0;
-  const float ZoomPoints[] = {10.0, 4.0, 2.5, 1.5, 0.8, 0.6, 0.4, 0.2};
-  for(float level : ZoomPoints)
-  {
-    if(m_zoomLevel > level)
-      break;
+  // Make signals more visible at low zoom levels by scaling
+  const QPen signalMastPen(Qt::lightGray, 0.6 * m_signalsScaleFactor);
+  const QPen signalLightPen(Qt::lightGray, 0.2 * m_signalsScaleFactor);
 
-    factor *= 1.6;
-  }
-
-  const QPen signalMastPen(Qt::lightGray, 0.6 * factor);
-  const QPen signalLightPen(Qt::lightGray, 0.2 * factor);
-
-  const qreal mustBaseLength = 3.0 * factor;
-  const qreal lightDiameter = 2.0 * factor;
+  const qreal mustBaseLength = 3.0 * m_signalsScaleFactor;
+  const qreal lightDiameter = 2.0 * m_signalsScaleFactor;
 
   const QTransform trasf = painter->transform();
 
@@ -1296,6 +1286,20 @@ void SimulatorView::contextMenuEvent(QContextMenuEvent *e)
   {
     showAddTrainDialog(idx);
   }
+}
+
+float SimulatorView::signalsScaleFactor() const
+{
+  return m_signalsScaleFactor;
+}
+
+void SimulatorView::setSignalsScaleFactor(float newSignalsScaleFactor)
+{
+  if(m_signalsScaleFactor == newSignalsScaleFactor)
+    return;
+
+  m_signalsScaleFactor = newSignalsScaleFactor;
+  update();
 }
 
 bool SimulatorView::thinTracks() const
