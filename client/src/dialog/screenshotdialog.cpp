@@ -36,6 +36,9 @@
 #include <QScreen>
 #include "../mainwindow.hpp"
 #include "../mdiarea.hpp"
+#include "../board/boardwidget.hpp"
+#include "../network/abstractproperty.hpp"
+#include "../network/error.hpp"
 #include "../network/method.hpp"
 #include "../network/object.hpp"
 #include "../settings/generalsettings.hpp"
@@ -47,6 +50,7 @@
 #include "../widget/objectlist/throttleobjectlistwidget.hpp"
 #include "../widget/throttle/throttlebutton.hpp"
 #include "../widget/throttle/throttlewidget.hpp"
+#include "../wizard/newboardwizard.hpp"
 #include "../wizard/newworldwizard.hpp"
 #include "../wizard/page/propertypage.hpp"
 
@@ -116,7 +120,7 @@ void ScreenShotDialog::start()
   }
 
   settings.setValue("ScreenshotCreator/OutputDirectory", m_outputDir.path());
- 
+
   // Startup:
   m_steps.push(
     [this]()
@@ -371,6 +375,185 @@ void ScreenShotDialog::start()
       return true;
     });
 
+  // Board list:
+  m_steps.push(
+    [this]()
+    {
+      m_mainWindow.m_menuObjects->actions()[1]->trigger(); // Object -> Trains
+      return true;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("world.boards")))
+      {
+        w->move(10, 10);
+        w->resize(400, 300);
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("world.boards")))
+      {
+        saveWidgetImage(w, QStringLiteral("getting-started/board-list-empty.png"));
+        static_cast<ObjectListWidget*>(w->widget())->m_actionCreate->trigger();
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("world.boards")))
+      {
+        w->close();
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(!m_mainWindow.m_wizard.newBoardWizards.empty())
+      {
+        m_mainWindow.m_wizard.newBoardWizards.front()->next();
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(!m_mainWindow.m_wizard.newBoardWizards.empty())
+      {
+        m_mainWindow.m_wizard.newBoardWizards.front()->next();
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(!m_mainWindow.m_wizard.newBoardWizards.empty())
+      {
+        auto* wizard = m_mainWindow.m_wizard.newBoardWizards.front();
+        wizard->button(QWizard::NextButton)->setFocus();
+        wizard->m_name->setValueString(QStringLiteral("Example layout"));
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(!m_mainWindow.m_wizard.newBoardWizards.empty())
+      {
+        m_mainWindow.m_wizard.newBoardWizards.front()->next();
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(!m_mainWindow.m_wizard.newBoardWizards.empty())
+      {
+        m_mainWindow.m_wizard.newBoardWizards.front()->accept();
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("board_1"), SubWindowType::Board))
+      {
+        w->move(10, 10);
+        w->resize(600, 500);
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("board_1"), SubWindowType::Board))
+      {
+        auto* boardWidget = static_cast<BoardWidget*>(w->layout()->itemAt(0)->widget());
+        auto& board = boardWidget->board();
+
+        static auto ignoreCallback = [](const bool&, std::optional<const Error>){};
+        static const QString straight{QStringLiteral("board_tile.rail.straight")};
+        static const QString curve45{QStringLiteral("board_tile.rail.curve_45")};
+        static const QString turnoutLeft45{QStringLiteral("board_tile.rail.turnout_left_45")};
+        static const QString turnoutRight45{QStringLiteral("board_tile.rail.turnout_right_45")};
+        static const QString block{QStringLiteral("board_tile.rail.block")};
+
+        (void)board.addTile(0, 2, TileRotate::Deg0, straight, false, ignoreCallback);
+        (void)board.addTile(0, 1, TileRotate::Deg225, curve45, false, ignoreCallback);
+        (void)board.addTile(1, 0, TileRotate::Deg270, curve45, false, ignoreCallback);
+        (void)board.addTile(2, 0, TileRotate::Deg90, turnoutRight45, false, ignoreCallback);
+        (void)board.addTile(3, 0, TileRotate::Deg90, straight, false, ignoreCallback);
+        (void)board.addTile(4, 0, TileRotate::Deg90, straight, false, ignoreCallback);
+        (void)board.addTile(5, 0, TileRotate::Deg90, block, false, ignoreCallback);
+        (void)board.resizeTile(5, 0, 5, 1, ignoreCallback);
+        (void)board.addTile(10, 0, TileRotate::Deg90, straight, false, ignoreCallback);
+        (void)board.addTile(11, 0, TileRotate::Deg90, straight, false, ignoreCallback);
+        (void)board.addTile(12, 0, TileRotate::Deg270, turnoutLeft45, false, ignoreCallback);
+        (void)board.addTile(13, 0, TileRotate::Deg315, curve45, false, ignoreCallback);
+        (void)board.addTile(14, 1, TileRotate::Deg0, curve45, false, ignoreCallback);
+        (void)board.addTile(14, 2, TileRotate::Deg0, straight, false, ignoreCallback);
+        (void)board.addTile(14, 3, TileRotate::Deg0, block, false, ignoreCallback);
+        (void)board.resizeTile(14, 3, 1, 5, ignoreCallback);
+        (void)board.addTile(14, 8, TileRotate::Deg0, straight, false, ignoreCallback);
+        (void)board.addTile(14, 9, TileRotate::Deg45, curve45, false, ignoreCallback);
+        (void)board.addTile(13, 10, TileRotate::Deg90, curve45, false, ignoreCallback);
+        (void)board.addTile(12, 10, TileRotate::Deg270, turnoutRight45, false, ignoreCallback);
+        (void)board.addTile(11, 10, TileRotate::Deg90, straight, false, ignoreCallback);
+        (void)board.addTile(10, 10, TileRotate::Deg90, straight, false, ignoreCallback);
+        (void)board.addTile(5, 10, TileRotate::Deg90, block, false, ignoreCallback);
+        (void)board.resizeTile(5, 10, 5, 1, ignoreCallback);
+        (void)board.addTile(4, 10, TileRotate::Deg90, straight, false, ignoreCallback);
+        (void)board.addTile(3, 10, TileRotate::Deg90, straight, false, ignoreCallback);
+        (void)board.addTile(2, 10, TileRotate::Deg90, straight, false, ignoreCallback);
+        (void)board.addTile(1, 10, TileRotate::Deg135, curve45, false, ignoreCallback);
+        (void)board.addTile(0, 9, TileRotate::Deg180, curve45, false, ignoreCallback);
+        (void)board.addTile(0, 8, TileRotate::Deg0, straight, false, ignoreCallback);
+        (void)board.addTile(0, 3, TileRotate::Deg0, block, false, ignoreCallback);
+        (void)board.resizeTile(0, 3, 1, 5, ignoreCallback);
+
+        (void)board.addTile(3, 1, TileRotate::Deg135, curve45, false, ignoreCallback);
+        (void)board.addTile(4, 1, TileRotate::Deg90, straight, false, ignoreCallback);
+        (void)board.addTile(5, 1, TileRotate::Deg90, block, false, ignoreCallback);
+        (void)board.resizeTile(5, 1, 5, 1, ignoreCallback);
+        (void)board.addTile(10, 1, TileRotate::Deg90, straight, false, ignoreCallback);
+        (void)board.addTile(11, 1, TileRotate::Deg90, curve45, false, ignoreCallback);
+
+        (void)board.addTile(4, 9, TileRotate::Deg270, QStringLiteral("board_tile.rail.buffer_stop"), false, ignoreCallback);
+        (void)board.addTile(5, 9, TileRotate::Deg90, block, false, ignoreCallback);
+        (void)board.resizeTile(5, 9, 5, 1, ignoreCallback);
+        (void)board.addTile(10, 9, TileRotate::Deg90, straight, false, ignoreCallback);
+        (void)board.addTile(11, 9, TileRotate::Deg315, curve45, false, ignoreCallback);
+
+        return true;
+      }
+      return false;
+    });
+  m_steps.push(
+    [this]()
+    {
+      if(auto* w = getSubWindow(QStringLiteral("board_1"), SubWindowType::Board))
+      {
+        saveWidgetImage(w, QStringLiteral("getting-started/board-example.png"));
+        w->close();
+        return true;
+      }
+      return false;
+    });
+
   // Lua scripts list:
   m_steps.push(
     [this]()
@@ -421,7 +604,7 @@ SubWindow* ScreenShotDialog::getSubWindow(const QString& id, SubWindowType type)
     return it.value();
   }
   return nullptr;
-} 
+}
 
 void ScreenShotDialog::savePixmap(QPixmap pixmap, const QString& filename)
 {

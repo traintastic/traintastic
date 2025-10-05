@@ -47,6 +47,8 @@ class BoardAreaWidget : public QWidget
 {
   Q_OBJECT
 
+  friend class ScreenShotDialog;
+
   public:
     enum class MouseMoveAction
     {

@@ -41,6 +41,8 @@ class BoardWidget : public QWidget
 {
   Q_OBJECT
 
+  friend class ScreenShotDialog;
+
   private:
     static constexpr unsigned int nxButtonHoldTime = 3000; // ms
     static constexpr unsigned int nxButtonReleaseDelay = 200; // ms

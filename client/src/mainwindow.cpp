@@ -989,7 +989,16 @@ NewBoardWizard* MainWindow::showNewBoardWizard(const ObjectPtr& board)
   }
 
   auto* newBoardWizard = new NewBoardWizard(board, this);
-  newBoardWizard->setAttribute(Qt::WA_DeleteOnClose);
+  m_wizard.newBoardWizards.emplace_back(newBoardWizard);
+  connect(newBoardWizard, &NewBoardWizard::finished,
+    [this, newBoardWizard]()
+    {
+      if(auto it = std::find(m_wizard.newBoardWizards.begin(), m_wizard.newBoardWizards.end(), newBoardWizard); it != m_wizard.newBoardWizards.end()) [[likely]]
+      {
+        m_wizard.newBoardWizards.erase(it);
+      }
+      newBoardWizard->deleteLater();
+    });
   newBoardWizard->open();
   return newBoardWizard;
 }

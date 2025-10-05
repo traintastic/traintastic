@@ -64,6 +64,7 @@ class MainWindow final : public QMainWindow
     {
       std::unique_ptr<AddInterfaceWizard> addInterface;
       std::unique_ptr<NewWorldWizard> newWorld;
+      std::vector<NewBoardWizard*> newBoardWizards;
     } m_wizard;
     int m_clockRequest;
     ObjectPtr m_clock;
