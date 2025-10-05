@@ -28,11 +28,57 @@
 #include <QFileInfo>
 #include <QStatusBar>
 #include <QLabel>
+#include <QSpinBox>
 #include <QKeyEvent>
 #include "simulatorview.hpp"
 #include <version.hpp>
 #include <traintastic/copyright.hpp>
 #include <traintastic/utils/standardpaths.hpp>
+
+#include <QMessageBox>
+#include <QKeyEvent>
+
+#include <QJsonObject>
+#include <QJsonDocument>
+
+void convertJS()
+{
+    QFile f("/home/filippo/Documenti/SVF - PADOVA/CIRCUITI/Padova_sim/piazzale/um.json");
+    f.open(QFile::ReadOnly);
+
+    QJsonObject result;
+    QJsonParseError err;
+
+    const QJsonObject root = QJsonDocument::fromJson(f.readAll(), &err).object();
+    f.close();
+
+    qDebug() << err.errorString();
+
+    for(auto it = root.begin(); it != root.end(); it++)
+    {
+        QJsonObject obj = it.value().toObject();
+
+        double angle = obj.value("a").toDouble();
+        angle = angle / pi * 180;
+        obj["a"] = angle;
+
+        double x = obj.value("x").toDouble();
+        x += 84.3746816367;
+        obj["x"] = x;
+
+        double y = obj.value("y").toDouble();
+        y += -76.4459306046;
+        obj["y"] = y;
+
+        result.insert(it.key(), obj);
+    }
+
+    f.setFileName("/home/filippo/Documenti/SVF - PADOVA/CIRCUITI/Padova_sim/piazzale/um2.json");
+    f.open(QFile::WriteOnly);
+    f.write(QJsonDocument(result).toJson());
+    f.flush();
+    f.close();
+}
 
 namespace
 {
@@ -66,6 +112,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
   , m_view{new SimulatorView(this)}
   , m_tickActive{new QLabel(this)}
 {
+  //convertJS();
+
   setWindowIcon(QIcon(":/appicon.svg"));
   setWindowTitle("Traintastic simulator v" TRAINTASTIC_VERSION_FULL);
 
@@ -91,6 +139,19 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         {
           settings.setValue("LastLoadDir", QFileInfo(filename).absoluteFilePath());
           load(filename);
+          QMetaObject::invokeMethod(m_view, &SimulatorView::zoomToFit, Qt::QueuedConnection);
+        }
+      });
+    menu->addAction("Load Images",
+      [this]()
+      {
+        QSettings settings;
+        const QString dir = settings.value("LastLoadImagesDir", QString::fromStdString(getSimulatorLayoutPath().string())).toString();
+        const auto filename = QFileDialog::getOpenFileName(this, "Load images", dir, "*.json");
+        if(QFile::exists(filename))
+        {
+          settings.setValue("LastLoadImagesDir", QFileInfo(filename).absoluteFilePath());
+          loadExtraImages(filename);
         }
       });
     menu->addAction("Quit", this, &MainWindow::close);
@@ -104,8 +165,15 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     act->setChecked(m_view->showTrackOccupancy());
     connect(act, &QAction::toggled, m_view, &SimulatorView::setShowTrackOccupancy);
 
+    act = menu->addAction("Thin tracks");
+    act->setCheckable(true);
+    act->setChecked(m_view->thinTracks());
+    connect(act, &QAction::toggled, m_view, &SimulatorView::setThinTracks);
+
     menu = menuBar()->addMenu("Help");
     menu->addAction("About...", this, &MainWindow::showAbout);
+
+    imagesMenu = menuBar()->addMenu("Images");
   }
 
   // Toolbar:
@@ -141,6 +209,20 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
   {
     auto* statusBar = new QStatusBar(this);
     statusBar->addPermanentWidget(m_tickActive);
+
+    mSignalZoomSpin = new QSpinBox;
+    mSignalZoomSpin->setRange(100, 4000);
+    mSignalZoomSpin->setValue(m_view->signalsScaleFactor() * 100);
+    mSignalZoomSpin->setSuffix(QLatin1StringView("%"));
+    mSignalZoomSpin->setToolTip(tr("Signals scale factor"));
+    statusBar->addPermanentWidget(mSignalZoomSpin);
+    connect(mSignalZoomSpin, &QSpinBox::editingFinished,
+            this, [this]()
+    {
+      m_view->setSignalsScaleFactor(mSignalZoomSpin->value() / 100.0f);
+    });
+
+
     setStatusBar(statusBar);
   }
 
@@ -159,31 +241,93 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
 void MainWindow::load(const QString& filename)
 {
+  setWindowFilePath(filename);
+
   QFile file(filename);
   if(file.open(QIODeviceBase::ReadOnly))
   {
-    m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString())));
-    QMetaObject::invokeMethod(m_view, &SimulatorView::zoomToFit, Qt::QueuedConnection);
+    try
+    {
+      m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString(),
+                                                                             nullptr,
+                                                                             true, true)));
+    }
+    catch(std::exception &e)
+    {
+      qDebug() << "Error loading:" << filename << e.what();
+      QMessageBox::warning(this, tr("Load Error"),
+                           e.what());
+      return;
+    }
+
   }
+}
+
+void MainWindow::loadExtraImages(const QString& filename)
+{
+  QStringList imageNames;
+
+  QFile file(filename);
+  if(file.open(QIODeviceBase::ReadOnly))
+  {
+    m_view->loadExtraImages(nlohmann::json::parse(file.readAll().toStdString(),
+                                                  nullptr,
+                                                  true, true),
+                            filename,
+                            imageNames);
+  }
+
+  imagesMenu->clear();
+
+  int idx = 0;
+  for(const QString &img : imageNames)
+  {
+    QAction *act = imagesMenu->addAction(img);
+    act->setCheckable(true);
+    act->setChecked(true);
+
+    connect(act, &QAction::toggled,
+            m_view, [idx, view=m_view](bool val)
+    {
+        view->setImageVisible(idx, val);
+    });
+
+    idx++;
+  }
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *ev)
+{
+  if(ev->key() == Qt::Key_F11) // Once fullscreen the QAction does't receive the key press because it is hidden.
+  {
+    m_actFullScreen->setChecked(!m_actFullScreen->isChecked());
+    toggleFullScreen();
+    return;
+  }
+  else if(ev->modifiers() == Qt::ControlModifier && ev->key() == Qt::Key_L)
+  {
+    // Reload if not power on
+    if(windowFilePath().isEmpty() || m_power->isChecked())
+      return;
+
+    const float zoomLevel = m_view->getZoomLevel();
+    const auto &cameraPt = m_view->getCamera();
+
+    load(windowFilePath());
+
+    m_view->setZoomLevel(zoomLevel);
+    m_view->setCamera(cameraPt);
+
+    return;
+  }
+
+  QMainWindow::keyPressEvent(ev);
 }
 
 void MainWindow::setFullScreen(bool value)
 {
   m_actFullScreen->setChecked(value);
   toggleFullScreen();
-}
-
-void MainWindow::keyPressEvent(QKeyEvent* event)
-{
-  if(event->key() == Qt::Key_F11) // Once fullscreen the QAction does't receive the key press because it is hidden.
-  {
-    m_actFullScreen->setChecked(!m_actFullScreen->isChecked());
-    toggleFullScreen();
-  }
-  else
-  {
-    QMainWindow::keyPressEvent(event);
-  }
 }
 
 void MainWindow::toggleFullScreen()

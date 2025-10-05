@@ -35,6 +35,8 @@ enum class OpCode : uint8_t
   LocomotiveSpeedDirection = 2,
   SensorChanged = 3,
   AccessorySetState = 4,
+  SignalSetState = 5,
+  OwnSignal = 6
 };
 
 struct Message
@@ -115,6 +117,61 @@ struct AccessorySetState : Message
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(AccessorySetState) == 7);
+
+struct SignalSetState : Message
+{
+    uint16_t channel;
+    uint16_t address;
+
+    enum Color
+    {
+        Red = 0,
+        Yellow,
+        Green
+    };
+
+    enum State
+    {
+        Off = 0,
+        On,
+        Blink,
+        BlinkReverse
+    };
+
+    struct LightState
+    {
+        uint8_t color;
+        uint8_t state;
+    };
+
+    LightState lights[3];
+    float speed;
+
+    SignalSetState(uint16_t ch, uint16_t addr)
+        : Message(OpCode::SignalSetState, sizeof(SignalSetState))
+        , channel{ch}
+        , address{addr}
+    {
+        lights[0] = {Color::Red, State::Off};
+        lights[1] = {Color::Red, State::Off};
+        lights[2] = {Color::Red, State::Off};
+    }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(SignalSetState) == 16);
+
+struct OwnSignal : Message
+{
+    uint16_t channel;
+    uint16_t address;
+
+    OwnSignal(uint16_t ch, uint16_t addr)
+        : Message(OpCode::OwnSignal, sizeof(OwnSignal))
+        , channel{ch}
+        , address{addr}
+    {
+    }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(OwnSignal) == 6);
 
 PRAGMA_PACK_POP
 

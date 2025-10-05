@@ -20,15 +20,30 @@
  */
 
 #include "simulatorview.hpp"
-#include <numbers>
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <cmath>
 
+#include <QPainter>
+#include <QToolTip>
+#include <QGuiApplication>
+
+#include <QDir>
+#include <QFileInfo>
+
+#include <QMenu>
+#include <QClipboard>
+
+#include <QVector>
+
+#include "trainsmodel.h"
+
+#include "addtraindialog.h"
+
+#include <QPointer>
+
 namespace
 {
-
-constexpr auto pi = std::numbers::pi_v<float>;
 
 struct ColorF
 {
@@ -38,24 +53,24 @@ struct ColorF
 };
 
 inline static const std::array<ColorF, 17> colors{{
-  {0.00f, 0.00f, 0.00f}, //	None
-  {0.00f, 0.00f, 0.00f}, //	Black
-  {0.75f, 0.75f, 0.75f}, //	Silver
-  {0.50f, 0.50f, 0.50f}, //	Gray
-  {1.00f, 1.00f, 1.00f}, // White
-  {0.50f, 0.00f, 0.00f}, // Maroon
-  {1.00f, 0.00f, 0.00f}, // Red
-  {0.50f, 0.00f, 0.50f}, // Purple
-  {1.00f, 0.00f, 1.00f}, // Fuchsia
-  {0.00f, 0.50f, 0.00f}, // Green
-  {0.00f, 1.00f, 0.00f}, // Lime
-  {0.50f, 0.50f, 0.00f}, // Olive
-  {1.00f, 1.00f, 0.00f}, // Yellow
-  {0.00f, 0.00f, 0.50f}, // Navy
-  {0.00f, 0.00f, 1.00f}, // Blue
-  {0.00f, 0.50f, 0.50f}, // Teal
-  {0.00f, 1.00f, 1.00f}, // Aqua
-}};
+    {0.00f, 0.00f, 0.00f}, //	None
+    {0.00f, 0.00f, 0.00f}, //	Black
+    {0.75f, 0.75f, 0.75f}, //	Silver
+    {0.50f, 0.50f, 0.50f}, //	Gray
+    {1.00f, 1.00f, 1.00f}, // White
+    {0.50f, 0.00f, 0.00f}, // Maroon
+    {1.00f, 0.00f, 0.00f}, // Red
+    {0.50f, 0.00f, 0.50f}, // Purple
+    {1.00f, 0.00f, 1.00f}, // Fuchsia
+    {0.00f, 0.50f, 0.00f}, // Green
+    {0.00f, 1.00f, 0.00f}, // Lime
+    {0.50f, 0.50f, 0.00f}, // Olive
+    {1.00f, 1.00f, 0.00f}, // Yellow
+    {0.00f, 0.00f, 0.50f}, // Navy
+    {0.00f, 0.00f, 1.00f}, // Blue
+    {0.00f, 0.50f, 0.50f}, // Teal
+    {0.00f, 1.00f, 1.00f}, // Aqua
+                                                  }};
 
 float crossProduct(Simulator::Point p1, Simulator::Point p2, Simulator::Point p3)
 {
@@ -74,47 +89,283 @@ bool isPointInTriangle(std::span<const Simulator::Point, 3> triangle, const Simu
   return !(hasNeg && hasPos);
 }
 
-void drawStraight(const Simulator::TrackSegment& segment)
+bool lineContains(const QPointF& pos,
+                  const QPointF& a, const QPointF& b,
+                  float &distanceOut,
+                  const float tolerance = 1.0)
 {
-  glBegin(GL_LINES);
-  glVertex2f(0, 0);
-  glVertex2f(segment.straight.length, 0);
-  glEnd();
+  QPointF topLeft = a, bottomRight = b;
+  if(topLeft.x() > bottomRight.x())
+    std::swap(topLeft.rx(), bottomRight.rx());
+  if(topLeft.y() < bottomRight.y())
+    std::swap(topLeft.ry(), bottomRight.ry());
+
+
+  if(std::abs(a.y() - b.y()) < 0.0001)
+  {
+    // Horizontal
+    const float yDist = std::abs(a.y() - pos.y());
+    const float leftDist = topLeft.x() - pos.x();
+    const float rightDist = pos.x() - bottomRight.x();
+    if(yDist < tolerance &&
+       (topLeft.x() - tolerance) <= pos.x() && (bottomRight.x() + tolerance) >= pos.x())
+    {
+      const float minOutDist = -std::min(leftDist, rightDist);
+      distanceOut = yDist;
+      if(minOutDist > yDist)
+        distanceOut = minOutDist;
+      return true;
+    }
+
+    return false;
+  }
+
+  if(std::abs(a.x() - b.x()) < 0.0001)
+  {
+    // Vertical
+    return std::abs(a.x() - pos.x()) < tolerance &&
+        (a.y() - tolerance) <= pos.y() && (b.y() + tolerance) >= pos.y();
+
+    const float xDist = std::abs(a.x() - pos.x());
+    const float leftDist = pos.y() - topLeft.y();
+    const float rightDist = bottomRight.y() - pos.y();
+    if(xDist < tolerance &&
+       (a.y() - tolerance) <= pos.y() && (b.y() + tolerance) >= pos.y())
+    {
+      const float minOutDist = -std::min(leftDist, rightDist);
+      distanceOut = xDist;
+      if(minOutDist > xDist)
+        distanceOut = minOutDist;
+      return true;
+    }
+
+    return false;
+  }
+
+  // Diagonal
+  const float resultingY  = a.y() + (pos.x() - a.x()) * (b.y() - a.y()) / (b.x() - a.x());
+  distanceOut = std::abs(resultingY - pos.y());
+  return distanceOut <= tolerance;
 }
 
-void drawCurve(const Simulator::TrackSegment& segment, size_t curveIndex)
+size_t getSegmentAt(const Simulator::Point &point, const Simulator::StaticData &data)
+{
+  size_t bestIdx = Simulator::invalidIndex;
+  float bestDistance = 0.0;
+
+  for (size_t idx = 0; idx < data.trackSegments.size(); idx++)
+  {
+    const auto &segment = data.trackSegments.at(idx);
+
+    switch (segment.type)
+    {
+    case Simulator::TrackSegment::Type::Turnout:
+    case Simulator::TrackSegment::Type::TurnoutCurved:
+    case Simulator::TrackSegment::Type::Turnout3Way:
+    {
+      std::span<const Simulator::Point, 3> points(
+            {segment.points[0], segment.points[1], segment.points[2]});
+
+      if (isPointInTriangle(points, point))
+        return idx;
+
+      if (segment.type == Simulator::TrackSegment::Type::Turnout3Way)
+      {
+        // Check also other curve
+        const Simulator::Point arr[3] = {segment.points[0],
+                                         segment.points[1],
+                                         segment.points[3]};
+        if (isPointInTriangle(arr, point))
+          return idx;
+      }
+
+      continue;
+    }
+    case Simulator::TrackSegment::Type::Straight:
+    {
+      QPointF pos(point.x, point.y);
+
+      QPointF a(segment.points[0].x, segment.points[0].y);
+      QPointF b(segment.points[1].x, segment.points[1].y);
+
+      QRectF br;
+      br.setTop(segment.points[0].y);
+      br.setLeft(segment.points[0].x);
+      br.setBottom(segment.points[1].y);
+      br.setRight(segment.points[1].x);
+      br = br.normalized();
+
+      const QRectF brAdj = br.adjusted(-2.5, -2.5, 2.5, 2.5);
+
+      if (br.width() > 0.0001 && br.height() > 0.0001 && !brAdj.contains(pos))
+        continue;
+
+      float segDistance = 0;
+      if (!lineContains(pos, a, b, segDistance, 5))
+        continue;
+
+      if (bestIdx == Simulator::invalidIndex || segDistance < bestDistance)
+      {
+        bestIdx = idx;
+        bestDistance = segDistance;
+      }
+      continue;
+    }
+    case Simulator::TrackSegment::Type::Curve:
+    {
+      const Simulator::Point center = segment.curves[0].center;
+      const Simulator::Point diff = point - center;
+      const float radius = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+      const float distance = std::abs(radius - segment.curves[0].radius);
+
+      if (distance > 5)
+        continue;
+
+      if (bestIdx != Simulator::invalidIndex && distance > bestDistance)
+        continue;
+
+      // Y coordinate is swapped
+      float angle = std::atan2(-diff.y, diff.x);
+
+      float rotation = segment.rotation;
+      if (rotation < 0)
+        rotation += 2 * pi;
+
+      const float curveAngle = segment.curves[0].angle;
+      float angleMax = -rotation + pi / 2.0 * (curveAngle > 0 ? 1 : -1);
+      float angleMin = -rotation - curveAngle + pi / 2.0 * (curveAngle > 0 ? 1 : -1);
+
+      if (curveAngle < 0)
+        std::swap(angleMin, angleMax);
+
+      if (angleMin < 0)
+      {
+        angleMin += 2 * pi;
+        angleMax += 2 * pi;
+      }
+
+      if (angleMin < 0 && angle < 0)
+      {
+        angleMin += 2 * pi;
+        angleMax += 2 * pi;
+      }
+
+      if (angle < 0)
+      {
+        angle += 2 * pi;
+      }
+
+      // TODO: really ugly...
+      if (angleMin <= angleMax)
+      {
+        // min -> max
+        if (angle < angleMin || angle > angleMax)
+        {
+          // Try again with + 2 * pi
+          const float angleBis = angle += 2 * pi;
+          if (angleBis < angleMin || angleBis > angleMax)
+          {
+            // Try again with - 2 * pi
+            const float angleTer = angle -= 2 * pi;
+            if (angleTer < angleMin || angleTer > angleMax)
+            {
+              continue;
+            }
+          }
+        }
+      }
+      else
+      {
+        // 0 -> min, max -> 2 * pi
+        if (angle > angleMin && angle < angleMax)
+        {
+          // Try again with + 2 * pi
+          const float angleBis = angle += 2 * pi;
+          if (angleBis > angleMin && angleBis < angleMax)
+          {
+            // Try again with - 2 * pi
+            const float angleTer = angle -= 2 * pi;
+            if (angleTer > angleMin && angleTer < angleMax)
+            {
+              continue;
+            }
+          }
+        }
+      }
+
+      bestIdx = idx;
+      bestDistance = distance;
+      continue;
+    }
+    default:
+      break;
+    }
+  }
+
+  return bestIdx;
+}
+
+void drawStraight(const Simulator::TrackSegment& segment, QPainter *painter)
+{
+  painter->drawLine(QPointF(0, 0), QPointF(segment.straight.length, 0));
+}
+
+void drawCurve(const Simulator::TrackSegment& segment, size_t curveIndex, QPainter *painter)
 {
   const auto& curve = segment.curves[curveIndex];
   const float rotation = curve.angle < 0 ? 0.0f : pi;
 
-  int numSegments = qCeil(std::abs(curve.angle) / (pi / 36.0f)); // Smooth curve
+  int numSegments = qCeil(curve.length / 10.0); // Smooth curve
   float step = curve.angle / numSegments;
   const float cx = curve.radius * sinf(rotation);
   const float cy = curve.radius * -cosf(rotation);
 
-  glBegin(GL_LINE_STRIP);
-  glVertex2f(0.0f, 0.0f);
+  QVector<QPointF> pointVec;
+  pointVec.reserve(numSegments + 1);
+  pointVec.append({0, 0});
+
   for(int i = 1; i <= numSegments; i++)
   {
     float angle = rotation + i * step;
     float x = cx - curve.radius * sinf(angle);
     float y = cy - curve.radius * -cosf(angle);
-    glVertex2f(x, y);
+    pointVec.append({x, y});
   }
-  glEnd();
+
+  painter->drawPolyline(pointVec.data(), pointVec.size());
 }
 
 }
 
 SimulatorView::SimulatorView(QWidget* parent)
-  : QOpenGLWidget(parent)
+  : QWidget(parent)
 {
   setFocusPolicy(Qt::StrongFocus); // for key stuff
+
+  // 800 ms turnout blink
+  turnoutBlinkTimer.start(std::chrono::milliseconds(800), Qt::PreciseTimer, this);
+
+  signalBlinkTimer.start(std::chrono::milliseconds(1100), Qt::PreciseTimer, this);
+
+  setContextMenuPolicy(Qt::DefaultContextMenu);
+
+  setMouseTracking(true);
+
+  mTrainsModel = new TrainsModel(this);
+
+  // Dark gray background
+  QPalette p = palette();
+  p.setColor(QPalette::Window, QColor(25, 25, 25));
+  setPalette(p);
+  setAutoFillBackground(true);
 }
 
 SimulatorView::~SimulatorView()
 {
   setSimulator({});
+
+  delete mTrainsModel;
+  mTrainsModel = nullptr;
 }
 
 Simulator* SimulatorView::simulator() const
@@ -132,6 +383,9 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
 
   m_simulator = std::move(value);
   m_turnouts.clear();
+  m_images.clear();
+
+  mTrainsModel->setSimulator(m_simulator.get());
 
   if(m_simulator)
   {
@@ -149,13 +403,93 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
     emit powerOnChanged(m_stateData.powerOn);
 
     m_simulatorConnections.emplace_back(m_simulator->onTick.connect(
-      [this]()
-      {
-        QMetaObject::invokeMethod(this, "tick", Qt::QueuedConnection);
-      }));
+                                          [this]()
+    {
+      QMetaObject::invokeMethod(this, "tick", Qt::QueuedConnection);
+    }));
 
-    m_simulator->enableServer();
+    m_simulator->enableServer(false);
     m_simulator->start();
+
+    for(const auto &imgRef : m_simulator->staticData.images)
+    {
+      Image item;
+      item.ref = imgRef;
+
+      if(!item.img.load(QString::fromStdString(item.ref.fileName)))
+        continue;
+
+      m_images.push_back(item);
+
+      // const QSizeF imgSize = QSizeF(item.img.size()) * item.ref.ratio;
+
+      // const float cosRotation = std::cos(item.ref.rotation);
+      // const float sinRotation = std::sin(item.ref.rotation);
+      // Simulator::updateView(m_simulator->staticData.view,
+      //                       {item.ref.origin.x + imgSize.width() * cosRotation, item.ref.origin.y + imgSize.width() * sinRotation}); // top right
+      // Simulator::updateView(m_simulator->staticData.view,
+      //            {item.ref.origin.x - imgSize.height() * sinRotation, item.ref.origin.y + imgSize.height() * cosRotation}); // bottom left
+      // Simulator::updateView(m_simulator->staticData.view,
+      //            {item.ref.origin.x - imgSize.height() * sinRotation + imgSize.width() * cosRotation, item.ref.origin.y + imgSize.height() * cosRotation + imgSize.width() * sinRotation}); // bottom right
+    }
+  }
+
+  update();
+}
+
+void SimulatorView::loadExtraImages(const nlohmann::json& world,
+                                    const QString& imagesFile,
+                                    QStringList &namesOut)
+{
+  m_extraImages.clear();
+
+  const QDir fileDir = QFileInfo(imagesFile).absoluteDir();
+
+  if(auto images = world.find("images"); images != world.end() && images->is_array())
+  {
+    for(const auto& object : *images)
+    {
+      if(!object.is_object())
+      {
+        continue;
+      }
+
+      Simulator::ImageRef item;
+
+      item.origin.x = object.value("x", std::numeric_limits<float>::quiet_NaN());
+      item.origin.y = object.value("y", std::numeric_limits<float>::quiet_NaN());
+      item.fileName = object.value<std::string_view>("file", {});
+      item.rotation = deg2rad(object.value("rotation", 0.0f));
+      item.opacity = object.value("opacity", 1.0);
+
+      const float pxCount = object.value("n_px", std::numeric_limits<float>::quiet_NaN());
+      const float mtCount = object.value("n_mt", std::numeric_limits<float>::quiet_NaN());
+
+      if(!item.origin.isFinite() || item.fileName.empty() || pxCount == 0)
+      {
+        continue;
+      }
+
+      item.ratio = mtCount / pxCount;
+
+      Image img;
+      img.ref = item;
+
+      QString fileName = QString::fromStdString(img.ref.fileName);
+      QFileInfo info(fileName);
+      if(info.isRelative())
+      {
+        // Treat as relative to image JSON file
+        fileName = fileDir.absoluteFilePath(fileName);
+      }
+
+      if(!img.img.load(fileName))
+        continue;
+
+      m_extraImages.push_back(img);
+
+      namesOut.append(info.fileName());
+    }
   }
 
   update();
@@ -180,7 +514,7 @@ void SimulatorView::zoomToFit()
     return;
   }
 
-  m_zoomFit = true;
+    m_zoomFit = true;
 
   // Make it fit:
   const float zoomLevelX = width() / m_simulator->staticData.view.width();
@@ -194,221 +528,516 @@ void SimulatorView::zoomToFit()
   setZoomLevel(zoomLevel);
 }
 
-void SimulatorView::initializeGL()
+void SimulatorView::setCamera(const Simulator::Point &cameraPt)
 {
-  initializeOpenGLFunctions();
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  m_cameraX = cameraPt.x;
+  m_cameraY = cameraPt.y;
+  update();
 }
 
-void SimulatorView::resizeGL(int w, int h)
+void SimulatorView::paintEvent(QPaintEvent */*e*/)
 {
-  makeCurrent();
-  glViewport(0, 0, w, h);
-  updateProjection();
-}
+  QPainter painter(this);
+  painter.setRenderHint(QPainter::Antialiasing, true);
 
-void SimulatorView::paintGL()
-{
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glLoadIdentity();
+  painter.scale(m_zoomLevel, m_zoomLevel);
+  painter.translate(-m_cameraX, -m_cameraY);
+
+  const QTransform trasf = painter.transform();
+
+  if(!m_images.empty() || !m_extraImages.empty())
+  {
+    for(const auto &image : m_extraImages)
+    {
+      if(!image.visible)
+        continue;
+      painter.setOpacity(image.ref.opacity);
+      painter.translate(image.ref.origin.x, image.ref.origin.y);
+      painter.rotate(qRadiansToDegrees(image.ref.rotation));
+      painter.scale(image.ref.ratio, image.ref.ratio);
+      painter.drawImage(QPoint(), image.img);
+      painter.setTransform(trasf);
+    }
+
+    for(const auto &image : m_images)
+    {
+      painter.setOpacity(image.ref.opacity);
+      painter.translate(image.ref.origin.x, image.ref.origin.y);
+      painter.rotate(qRadiansToDegrees(image.ref.rotation));
+      painter.scale(image.ref.ratio, image.ref.ratio);
+      painter.drawImage(QPoint(), image.img);
+      painter.setTransform(trasf);
+    }
+
+    painter.setOpacity(1);
+  }
+
 
   if(m_simulator) [[likely]]
   {
-    drawMisc();
-    drawTracks();
-    drawTrains();
+    drawMisc(&painter);
+    drawTracks(&painter);
+    drawTrackObjects(&painter);
+    drawTrains(&painter);
   }
 }
 
-void SimulatorView::resizeEvent(QResizeEvent* event)
+void SimulatorView::resizeEvent(QResizeEvent* e)
 {
-  QOpenGLWidget::resizeEvent(event);
+  QWidget::resizeEvent(e);
   if(m_zoomFit)
   {
     zoomToFit();
   }
 }
 
-void SimulatorView::drawTracks()
+void SimulatorView::drawTracks(QPainter *painter)
 {
   assert(m_simulator);
+
+  QPen trackPen(QColor(204, 204, 204), 1.1);
+  trackPen.setCapStyle(Qt::FlatCap);
+
+  if(m_thinTracks)
+  {
+    trackPen.setWidth(1);
+    trackPen.setCosmetic(true);
+  }
+
+  QPen trackPenOccupied = trackPen;
+  trackPenOccupied.setColor(QColor(255, 0, 0));
+
+  QPen trackPenGreen = trackPen;
+  trackPenGreen.setColor(QColor(0, 255, 0));
+
+  QPen trackPenPurple = trackPen;
+  trackPenPurple.setColor(QColor(128, 0, 255));
+
+  QPen trackPenCyan = trackPen;
+  trackPenCyan.setColor(QColor(0, 255, 255));
+  trackPenCyan.setWidthF(0.5);
+  trackPenCyan.setCosmetic(false);
+
+  if(m_thinTracks)
+  {
+    trackPenCyan.setWidth(1);
+    trackPenCyan.setCosmetic(true);
+  }
+
+  QPen trackPenMagenta = trackPenCyan;
+  trackPenMagenta.setColor(Qt::magenta);
+
+  const QTransform trasf = painter->transform();
+
+  size_t idx = 0;
   for(const auto& segment : m_simulator->staticData.trackSegments)
   {
-    if(m_showTrackOccupancy && segment.hasSensor() && m_stateData.sensors[segment.sensor.index].value)
+    const bool occupied = segment.hasSensor() && m_stateData.sensors[segment.sensor.index].value;
+    if(m_showTrackOccupancy && occupied)
     {
-      glColor3f(1.0f, 0.0f, 0.0f); // Red if occupied
+      // Red if occupied
+      painter->setPen(trackPenOccupied);
     }
     else
     {
-      glColor3f(0.8f, 0.8f, 0.8f);
+      painter->setPen(trackPen);
     }
 
-    glPushMatrix();
-    glTranslatef(segment.origin().x, segment.origin().y, 0);
-    glRotatef(qRadiansToDegrees(segment.rotation), 0, 0, 1);
+    if(!m_stateData.powerOn)
+    {
+      // Red if not powered for better contrast
+      painter->setPen(trackPenOccupied);
+
+      if(segment.hasSensor() && segment.sensor.index == m_hoverSensorIdx)
+      {
+        // Blue on same hovered sensor
+        painter->setPen(trackPenPurple);
+      }
+    }
+
+    if((!m_stateData.powerOn || !occupied) && idx == m_hoverSegmentIdx)
+    {
+      // Green on hover
+      painter->setPen(trackPenGreen);
+    }
+
+    painter->translate(segment.origin().x, segment.origin().y);
+    painter->rotate(qRadiansToDegrees(segment.rotation));
 
     if(segment.type == Simulator::TrackSegment::Type::Straight)
     {
-      drawStraight(segment);
+      drawStraight(segment, painter);
     }
     else if(segment.type == Simulator::TrackSegment::Type::Curve)
     {
-      drawCurve(segment, 0);
+      drawCurve(segment, 0, painter);
     }
     else if(segment.type == Simulator::TrackSegment::Type::Turnout)
     {
-      assert(segment.turnout.index < m_stateData.turnouts.size());
-      const auto state = m_stateData.turnouts[segment.turnout.index].state;
+      drawCurve(segment, 0, painter);
+      drawStraight(segment, painter);
+    }
+    else if(segment.type == Simulator::TrackSegment::Type::TurnoutCurved)
+    {
+      drawCurve(segment, 1, painter);
+      drawCurve(segment, 0, painter);
+    }
+    else if(segment.type == Simulator::TrackSegment::Type::Turnout3Way)
+    {
+      drawCurve(segment, 0, painter);
+      drawCurve(segment, 1, painter);
+      drawStraight(segment, painter);
+    }
 
+    painter->setTransform(trasf);
+    idx++;
+  }
+
+  // Redraw on top turnout current state
+  for(const auto& segment : m_simulator->staticData.trackSegments)
+  {
+    if(segment.type == Simulator::TrackSegment::Type::Straight ||
+       segment.type == Simulator::TrackSegment::Type::Curve)
+      continue;
+
+    painter->translate(segment.origin().x, segment.origin().y);
+    painter->rotate(qRadiansToDegrees(segment.rotation));
+
+    assert(segment.turnout.index < m_stateData.turnouts.size());
+    const auto state = m_stateData.turnouts[segment.turnout.index].state;
+
+    if(!m_stateData.powerOn || (m_showTrackOccupancy && segment.hasSensor() && m_stateData.sensors[segment.sensor.index].value))
+    {
+      // Cyan contrast on red
+      painter->setPen(trackPenCyan);
+    }
+    else
+    {
+      // Dark yellow contrast on white
+      painter->setPen(trackPenMagenta);
+    }
+
+    if(segment.type == Simulator::TrackSegment::Type::Turnout)
+    {
       switch(state)
       {
-        case Simulator::TurnoutState::State::Closed:
-          drawCurve(segment, 0);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawStraight(segment);
-          break;
+      case Simulator::TurnoutState::State::Unknown:
+        // Blink cyan or normal
+        if(turnoutBlinkState)
+        {
+          drawCurve(segment, 0, painter);
+          drawStraight(segment, painter);
+        }
+        break;
 
-        case Simulator::TurnoutState::State::Thrown:
-          drawStraight(segment);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawCurve(segment, 0);
-          break;
+      case Simulator::TurnoutState::State::Closed:
+        drawStraight(segment, painter);
+        break;
 
-        default:
-          assert(false);
-          break;
+      case Simulator::TurnoutState::State::Thrown:
+        drawCurve(segment, 0, painter);
+        break;
+
+      default:
+        assert(false);
+        break;
       }
     }
     else if(segment.type == Simulator::TrackSegment::Type::TurnoutCurved)
     {
-      assert(segment.turnout.index < m_stateData.turnouts.size());
-      const auto state = m_stateData.turnouts[segment.turnout.index].state;
-
       switch(state)
       {
-        case Simulator::TurnoutState::State::Closed:
-          drawCurve(segment, 1);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawCurve(segment, 0);
-          break;
+      case Simulator::TurnoutState::State::Unknown:
+        // Blink cyan or normal
+        if(turnoutBlinkState)
+        {
+          drawCurve(segment, 0, painter);
+          drawCurve(segment, 1, painter);
+        }
+        break;
 
-        case Simulator::TurnoutState::State::Thrown:
-          drawCurve(segment, 0);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawCurve(segment, 1);
-          break;
+      case Simulator::TurnoutState::State::Closed:
+        drawCurve(segment, 0, painter);
+        break;
 
-        default:
-          assert(false);
-          break;
+      case Simulator::TurnoutState::State::Thrown:
+        drawCurve(segment, 1, painter);
+        break;
+
+      default:
+        assert(false);
+        break;
       }
     }
     else if(segment.type == Simulator::TrackSegment::Type::Turnout3Way)
     {
-      assert(segment.turnout.index < m_stateData.turnouts.size());
-      const auto state = m_stateData.turnouts[segment.turnout.index].state;
-
       switch(state)
       {
-        case Simulator::TurnoutState::State::Closed:
-          drawCurve(segment, 0);
-          drawCurve(segment, 1);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawStraight(segment);
-          break;
+      case Simulator::TurnoutState::State::Unknown:
+        // Blink cyan or normal
+        if(turnoutBlinkState)
+        {
+          drawCurve(segment, 0, painter);
+          drawCurve(segment, 1, painter);
+          drawStraight(segment, painter);
+        }
+        break;
 
-        case Simulator::TurnoutState::State::ThrownLeft:
-          drawStraight(segment);
-          drawCurve(segment, 1);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawCurve(segment, 0);
-          break;
+      case Simulator::TurnoutState::State::Closed:
+        drawStraight(segment, painter);
+        break;
 
-        case Simulator::TurnoutState::State::ThrownRight:
-          drawStraight(segment);
-          drawCurve(segment, 0);
-          glColor3f(0.0f, 1.0f, 1.0f);
-          drawCurve(segment, 1);
-          break;
+      case Simulator::TurnoutState::State::ThrownLeft:
+        drawCurve(segment, 0, painter);
+        break;
 
-        default:
-          assert(false);
-          break;
+      case Simulator::TurnoutState::State::ThrownRight:
+        drawCurve(segment, 1, painter);
+        break;
+
+      default:
+        assert(false);
+        break;
       }
     }
-    glPopMatrix();
+
+    painter->setTransform(trasf);
+    idx++;
+  }
+
+  if(!m_stateData.powerOn && m_hoverSegmentIdx != Simulator::invalidIndex)
+  {
+    const Simulator::TrackSegment& segment = m_simulator->staticData.trackSegments[m_hoverSegmentIdx];
+    if(segment.type == Simulator::TrackSegment::Type::Curve)
+    {
+      // Draw hovered curve center on top
+      QPen p = trackPenGreen;
+      p.setWidthF(8);
+      painter->setPen(p);
+
+      const Simulator::Point c = segment.curves[0].center;
+      painter->drawPoint(QPointF(c.x, c.y));
+    }
   }
 }
 
-void SimulatorView::drawTrains()
+void SimulatorView::drawTrackObjects(QPainter *painter)
 {
   assert(m_simulator);
+
+  QColor positionSensorActive = Qt::red;
+  QColor positionSensorInactive = Qt::darkGreen;
+
+  // Make signals more visible at low zoom levels by scaling
+  const QPen signalMastPen(Qt::lightGray, 0.6 * m_signalsScaleFactor);
+  const QPen signalLightPen(Qt::lightGray, 0.2 * m_signalsScaleFactor);
+
+  const qreal mustBaseLength = 3.0 * m_signalsScaleFactor;
+  const qreal lightDiameter = 2.0 * m_signalsScaleFactor;
+
+  const QTransform trasf = painter->transform();
+
+  for(const auto& segment : m_simulator->staticData.trackSegments)
+  {
+    using Object = Simulator::TrackSegment::Object;
+
+    for(const Object& obj : segment.objects)
+    {
+      painter->translate(obj.pos.x, obj.pos.y);
+
+      float objRot = obj.rotation;
+      if(!obj.dirForward)
+        objRot += pi;
+
+      const qreal deg = qRadiansToDegrees(objRot);
+      painter->rotate(deg);
+
+      switch (obj.type)
+      {
+      case Object::Type::PositionSensor:
+      {
+        QColor color = positionSensorInactive;
+        if(m_stateData.sensors[obj.sensorIndex].value)
+          color = positionSensorActive;
+
+        QRectF r;
+        r.setSize(QSizeF(4, 2));
+        r.moveCenter(QPointF(0, obj.lateralDiff));
+        painter->fillRect(r, color);
+        break;
+      }
+      case Object::Type::MainSignal:
+      {
+        auto signIt = m_stateData.mainSignals.find(obj.signalName);
+        if(signIt == m_stateData.mainSignals.end())
+          continue;
+
+        Simulator::MainSignal *signal = signIt->second;
+        const int mastLength = mustBaseLength + lightDiameter * (signal->lights.size() - 1);
+
+        painter->setPen(signalMastPen);
+        painter->drawLine(QLineF(0, obj.lateralDiff,
+                                 mastLength, obj.lateralDiff));
+
+        QRectF lightRect;
+        lightRect.setSize(QSizeF(lightDiameter, lightDiameter));
+        lightRect.moveCenter(QPointF(mustBaseLength + lightDiameter / 2.0, obj.lateralDiff));
+
+        painter->setPen(signalLightPen);
+
+        // Draw in reverse order, light 0 is always topmost
+        size_t i = signal->lights.size() - 1;
+        while(true)
+        {
+            bool on = false;
+            switch (signal->lights.at(i).state)
+            {
+            case Simulator::MainSignal::Light::State::Off:
+                on = false;
+                break;
+
+            case Simulator::MainSignal::Light::State::On:
+                on = true;
+                break;
+
+            case Simulator::MainSignal::Light::State::BlikOn:
+                on = signalBlinkState;
+                break;
+
+            case Simulator::MainSignal::Light::State::BlinkReverseOn:
+                on = !signalBlinkState;
+                break;
+            default:
+                break;
+            }
+
+            if(on)
+            {
+                switch (signal->lights.at(i).color)
+                {
+                case Simulator::MainSignal::Light::Color::Red:
+                    painter->setBrush(Qt::red);
+                    break;
+                case Simulator::MainSignal::Light::Color::Yellow:
+                    painter->setBrush(Qt::yellow);
+                    break;
+                case Simulator::MainSignal::Light::Color::Green:
+                    painter->setBrush(Qt::green);
+                    break;
+                default:
+                    break;
+                }
+            }
+            else
+            {
+                painter->setBrush(Qt::black);
+            }
+
+            painter->drawEllipse(lightRect);
+
+            lightRect.moveLeft(lightRect.left() + lightDiameter);
+
+            if(i == 0)
+                break;
+            i--;
+        }
+
+        break;
+      }
+      default:
+        break;
+      }
+
+
+      painter->setTransform(trasf);
+    }
+  }
+}
+
+void SimulatorView::drawTrains(QPainter *painter)
+{
+  assert(m_simulator);
+
+  const QTransform trasf = painter->transform();
 
   const float trainWidth = m_simulator->staticData.trainWidth;
 
-  const size_t railVehicleCount = m_simulator->staticData.vehicles.size();
-  for(size_t i = 0; i < railVehicleCount; ++i)
-  {
-    const auto& vehicle = m_stateData.vehicles[i];
-    const float length = m_simulator->staticData.vehicles[i].length;
+  painter->setPen(Qt::NoPen);
 
-    const auto center = (vehicle.front.position + vehicle.rear.position) / 2;
-    const auto delta = vehicle.front.position - vehicle.rear.position;
+  for(auto it : m_stateData.vehicles)
+  {
+    const auto* vehicle = it.second;
+    const auto& vehicleState = vehicle->state;
+    const float length = vehicle->length;
+
+    const auto center = (vehicleState.front.position + vehicleState.rear.position) / 2;
+    const auto delta = vehicleState.front.position - vehicleState.rear.position;
     const float angle = atan2f(delta.y, delta.x);
 
-    glPushMatrix();
-    glTranslatef(center.x, center.y, 0);
-    glRotatef(qRadiansToDegrees(angle), 0, 0, 1);
+    painter->translate(center.x, center.y);
+    painter->rotate(qRadiansToDegrees(angle));
 
-    const auto& color = colors[static_cast<size_t>(m_simulator->staticData.vehicles[i].color)];
-    glColor3f(color.red, color.green, color.blue);
-    glBegin(GL_QUADS);
-    glVertex2f(-length / 2, -trainWidth / 2);
-    glVertex2f(length / 2, -trainWidth / 2);
-    glVertex2f(length / 2, trainWidth / 2);
-    glVertex2f(-length / 2, trainWidth / 2);
-    glEnd();
+    const auto& color = colors[static_cast<size_t>(vehicle->color)];
+    QRectF veichleRect(-length / 2, -trainWidth / 2,
+                       length, trainWidth);
+    painter->fillRect(veichleRect,
+                      QColor(color.red * 255, color.green * 255, color.blue * 255));
 
-    glPopMatrix();
+    painter->setTransform(trasf);
   }
 }
 
-void SimulatorView::drawMisc()
+void SimulatorView::drawMisc(QPainter *painter)
 {
   assert(m_simulator);
+
+  QPen miscPen;
+  miscPen.setWidth(1);
+  miscPen.setCosmetic(false);
+
+  const QTransform trasf = painter->transform();
 
   for(const auto& item : m_simulator->staticData.misc)
   {
     const auto& color = colors[static_cast<size_t>(item.color)];
-    glColor3f(color.red, color.green, color.blue);
+    miscPen.setColor(QColor(color.red * 255, color.green * 255, color.blue * 255));
+    painter->setPen(miscPen);
 
     switch(item.type)
     {
-      case Simulator::Misc::Type::Rectangle:
-        glPushMatrix();
-        glTranslatef(item.origin.x, item.origin.y, 0.0f);
-        glRotatef(qRadiansToDegrees(item.rotation), 0.0f, 0.0f, 1.0f);
-        glBegin(GL_LINE_LOOP);
-        glVertex2f(0.0f, 0.0f);
-        glVertex2f(item.width, 0.0f);
-        glVertex2f(item.width, item.height);
-        glVertex2f(0.0f, item.height);
-        glEnd();
-        glPopMatrix();
-        break;
+    case Simulator::Misc::Type::Rectangle:
+      painter->translate(item.origin.x, item.origin.y);
+      painter->rotate(qRadiansToDegrees(item.rotation));
+
+      painter->drawRect(QRectF(0, 0, item.width, item.height));
+
+      painter->setTransform(trasf);
+      break;
     }
   }
 }
 
-void SimulatorView::keyPressEvent(QKeyEvent* event)
+bool SimulatorView::event(QEvent *e)
+{
+  if(e->type() == QEvent::ToolTip)
+  {
+    QHelpEvent *ev = static_cast<QHelpEvent *>(e);
+    showItemTooltip(mapToSim(ev->pos()), ev);
+    return true;
+  }
+
+  return QWidget::event(e);
+}
+
+void SimulatorView::keyPressEvent(QKeyEvent* e)
 {
   if(!m_simulator) [[unlikely]]
   {
-    return QWidget::keyPressEvent(event);
+    return QWidget::keyPressEvent(e);
   }
 
-  switch(event->key())
-  {
+    switch(e->key())
+    {
     case Qt::Key_1:
     case Qt::Key_2:
     case Qt::Key_3:
@@ -418,94 +1047,173 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
     case Qt::Key_7:
     case Qt::Key_8:
     case Qt::Key_9:
-      if(static_cast<size_t>(event->key() - Qt::Key_1) < m_simulator->staticData.trains.size())
+    {
+      const size_t trainIndex = static_cast<size_t>(e->key() - Qt::Key_1);
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(trainIndex);
+      if(train)
       {
-        m_trainIndex = event->key() - Qt::Key_1;
+        m_trainIndex = e->key() - Qt::Key_1;
       }
       break;
-
+    }
     case Qt::Key_Up:
-      m_simulator->applyTrainSpeedDelta(m_trainIndex, m_simulator->staticData.trains[m_trainIndex].speedMax / 20);
+    {
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
+      if(train)
+        m_simulator->applyTrainSpeedDelta(train, train->speedMax / 20);
       break;
-
+    }
     case Qt::Key_Down:
-      m_simulator->applyTrainSpeedDelta(m_trainIndex, -m_simulator->staticData.trains[m_trainIndex].speedMax / 20);
+    {
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
+      if(train)
+        m_simulator->applyTrainSpeedDelta(train, -train->speedMax / 20);
       break;
-
+    }
     case Qt::Key_Right:
-      m_simulator->setTrainDirection(m_trainIndex, false);
-      break;
-
     case Qt::Key_Left:
-      m_simulator->setTrainDirection(m_trainIndex, true);
+    {
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
+      if(train)
+      {
+        bool dir = (e->key() == Qt::Key_Left);
+        if(m_simulator->isTrainDirectionInverted(train))
+          dir = !dir;
+        m_simulator->setTrainDirection(train, dir);
+      }
       break;
+    }
 
     case Qt::Key_Space:
-      m_simulator->setTrainSpeed(m_trainIndex, 0.0f);
+    {
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
+      if(train)
+      {
+        m_simulator->setTrainMode(train, Simulator::TrainState::Mode::Manual);
+        m_simulator->setTrainSpeed(train, 0.0f);
+      }
       break;
-
+    }
     case Qt::Key_Escape:
       m_simulator->stopAllTrains();
       break;
+
+    case Qt::Key_A:
+    {
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
+      if(train)
+        m_simulator->setTrainMode(train, Simulator::TrainState::Mode::Automatic);
+      break;
+    }
+
+    case Qt::Key_S:
+    {
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
+      if(train)
+        m_simulator->setTrainMode(train, Simulator::TrainState::Mode::SemiAutomatic);
+      break;
+    }
+
+    case Qt::Key_M:
+    {
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
+      if(train)
+        m_simulator->setTrainMode(train, Simulator::TrainState::Mode::Manual);
+      break;
+    }
+
+    case Qt::Key_B:
+    {
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      m_simulator->liftRestrictions(true);
+      break;
+    }
+    case Qt::Key_N:
+    {
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      m_simulator->liftRestrictions(false);
+      break;
+    }
 
     case Qt::Key_P:
       m_simulator->togglePowerOn();
       break;
 
     default:
-      return QWidget::keyPressEvent(event);
+      return QWidget::keyPressEvent(e);
+    }
+}
+
+void SimulatorView::mousePressEvent(QMouseEvent* e)
+{
+  if(e->button() == Qt::LeftButton)
+  {
+    m_leftClickMousePos = e->pos();
+    resetSegmentHover();
+  }
+  if(e->button() == Qt::RightButton)
+  {
+    m_rightMousePos = e->pos();
+
+    if(e->modifiers() != Qt::ControlModifier)
+      setCursor(Qt::ClosedHandCursor);
+
+    resetSegmentHover();
   }
 }
 
-void SimulatorView::mousePressEvent(QMouseEvent* event)
+void SimulatorView::mouseMoveEvent(QMouseEvent* e)
 {
-  if(event->button() == Qt::LeftButton)
-  {
-    m_leftClickMousePos = event->pos();
-  }
-  if(event->button() == Qt::RightButton)
-  {
-    m_rightMousePos = event->pos();
-    setCursor(Qt::ClosedHandCursor);
-  }
-}
-
-void SimulatorView::mouseMoveEvent(QMouseEvent* event)
-{
-  if(event->buttons() & Qt::RightButton)
+  if(e->buttons() & Qt::RightButton && e->modifiers() != Qt::ControlModifier)
   {
     m_zoomFit = false;
 
-    const auto diff = m_rightMousePos - event->pos();
+    const auto diff = m_rightMousePos - e->pos();
 
     m_cameraX += diff.x() / m_zoomLevel;
     m_cameraY += diff.y() / m_zoomLevel;
 
-    m_rightMousePos = event->pos();
-    updateProjection();
+    m_rightMousePos = e->pos();
+    update();
+  }
+  else if(e->buttons() == Qt::NoButton && m_simulator)
+  {
+    // Refresh hovered segment every 100 ms
+    m_lastHoverPos = mapToSim(e->pos());
+    if(!segmentHoverTimer.isActive())
+      segmentHoverTimer.start(std::chrono::milliseconds(100), this);
   }
 }
 
-void SimulatorView::mouseReleaseEvent(QMouseEvent* event)
+void SimulatorView::mouseReleaseEvent(QMouseEvent* e)
 {
-  if(event->button() == Qt::LeftButton)
+  if(e->button() == Qt::LeftButton)
   {
-    auto diff = m_leftClickMousePos - event->pos();
-    if(qAbs(diff.x()) <= 2 && qAbs(diff.y()) <= 2)
+    auto diff = m_leftClickMousePos - e->pos();
+    if(std::abs(diff.x()) <= 2 && std::abs(diff.y()) <= 2)
     {
-      mouseLeftClick({m_cameraX + m_leftClickMousePos.x() / m_zoomLevel, m_cameraY + m_leftClickMousePos.y() / m_zoomLevel});
+      const bool shiftPressed = e->modifiers().testFlag(Qt::ShiftModifier);
+      mouseLeftClick(mapToSim(m_leftClickMousePos), shiftPressed);
     }
   }
-  if(event->button() == Qt::RightButton)
+  if(e->button() == Qt::RightButton)
   {
     setCursor(Qt::ArrowCursor);
   }
 }
 
-void SimulatorView::wheelEvent(QWheelEvent* event)
+void SimulatorView::wheelEvent(QWheelEvent* e)
 {
   m_zoomFit = false;
-  if(event->angleDelta().y() < 0)
+  if(e->angleDelta().y() < 0)
   {
     zoomOut();
   }
@@ -515,42 +1223,305 @@ void SimulatorView::wheelEvent(QWheelEvent* event)
   }
 }
 
-void SimulatorView::mouseLeftClick(QPointF pos)
+void SimulatorView::timerEvent(QTimerEvent *e)
 {
-  const Simulator::Point point(pos.x(), pos.y());
+  if(e->timerId() == turnoutBlinkTimer.timerId())
+  {
+    turnoutBlinkState = !turnoutBlinkState;
+    update();
+    return;
+  }
+  else if(e->timerId() == signalBlinkTimer.timerId())
+  {
+      signalBlinkState = !signalBlinkState;
+      update();
+      return;
+  }
+  else if(e->timerId() == segmentHoverTimer.timerId())
+  {
+    size_t newHoverSegment = getSegmentAt(m_lastHoverPos, m_simulator->staticData);
+    if(m_hoverSegmentIdx != newHoverSegment)
+    {
+      m_hoverSegmentIdx = newHoverSegment;
+      if(m_hoverSegmentIdx != Simulator::invalidIndex)
+      {
+        const auto& segment = m_simulator->staticData.trackSegments[m_hoverSegmentIdx];
+        m_hoverSensorIdx = segment.sensor.index;
+      }
+      else
+      {
+        // Reset also sensor if not hover
+        m_hoverSensorIdx = Simulator::invalidIndex;
+      }
+    }
+  }
+
+  QWidget::timerEvent(e);
+}
+
+void SimulatorView::contextMenuEvent(QContextMenuEvent *e)
+{
+  if(e->modifiers() != Qt::ControlModifier)
+    return; // Use control to distinguish from right click pan
+
+  const Simulator::Point point = mapToSim(e->pos());
+  const size_t idx = getSegmentAt(point, m_simulator->staticData);
+  if(idx == Simulator::invalidIndex)
+    return;
+
+  QMenu *m = new QMenu(this);
+  QAction *copySegData = m->addAction(tr("Copy segment data"));
+  copySegData->setEnabled(!m_stateData.powerOn);
+  copySegData->setVisible(!m_stateData.powerOn);
+
+  QAction *addTrain = m->addAction(tr("Add Train"));
+
+  const QAction *result = m->exec(e->globalPos());
+  if(result == copySegData)
+  {
+    const auto obj = copySegmentData(idx);
+    QGuiApplication::clipboard()->setText(QString::fromStdString(obj.dump(2)));
+  }
+  else if(result == addTrain)
+  {
+    showAddTrainDialog(idx);
+  }
+}
+
+float SimulatorView::signalsScaleFactor() const
+{
+  return m_signalsScaleFactor;
+}
+
+void SimulatorView::setSignalsScaleFactor(float newSignalsScaleFactor)
+{
+  if(m_signalsScaleFactor == newSignalsScaleFactor)
+    return;
+
+  m_signalsScaleFactor = newSignalsScaleFactor;
+  update();
+}
+
+bool SimulatorView::thinTracks() const
+{
+  return m_thinTracks;
+}
+
+void SimulatorView::setThinTracks(bool newThinTracks)
+{
+  m_thinTracks = newThinTracks;
+  update();
+}
+
+void SimulatorView::mouseLeftClick(const Simulator::Point &point, bool shiftPressed)
+{
   for(const auto& turnout : m_turnouts)
   {
     if(isPointInTriangle(turnout.points, point))
     {
-      m_simulator->toggleTurnoutState(turnout.segmentIndex);
+      m_simulator->toggleTurnoutState(turnout.segmentIndex, shiftPressed);
       update();
       break;
     }
   }
 }
 
+void SimulatorView::showItemTooltip(const Simulator::Point &point, QHelpEvent *ev)
+{
+  if (QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier))
+  {
+    // Cursor position tooltip
+    QString text = tr("X: %1\n"
+                      "Y: %2")
+        .arg(point.x)
+        .arg(point.y);
+    QToolTip::showText(ev->globalPos(), text, this);
+    return;
+  }
+
+  const auto &data_ = m_simulator->staticData;
+  QString text;
+
+  int ptCount = 0;
+  auto addPt = [&ptCount, &text](const QString &name, const Simulator::Point &p)
+  {
+    ptCount++;
+    QString ptText
+        = tr("%1: %2; %3").arg(name.isEmpty() ? QString::number(ptCount) : name).arg(p.x).arg(p.y);
+    text.append("<br>");
+    text.append(ptText);
+  };
+
+  const size_t idx = getSegmentAt(point, data_);
+  if (idx == Simulator::invalidIndex)
+  {
+    QToolTip::hideText();
+    return;
+  }
+
+  const auto &segment = data_.trackSegments.at(idx);
+  switch (segment.type)
+  {
+  case Simulator::TrackSegment::Type::Straight:
+  {
+    text = tr("Straight: <b>%1</b><br>").arg(QString::fromStdString(segment.m_id));
+    addPt("orig", segment.points[0]);
+    addPt("end", segment.points[1]);
+    text.append("<br>");
+    text.append(tr("rotation: %1<br>").arg(qRadiansToDegrees(segment.rotation)));
+    text.append("<br>");
+    text.append(tr("strai_l: %1<br>").arg(segment.straight.length));
+    break;
+  }
+  case Simulator::TrackSegment::Type::Curve:
+  {
+    text = tr("Curve: <b>%1</b><br>").arg(QString::fromStdString(segment.m_id));
+    addPt("orig", segment.points[0]);
+    addPt("end", segment.points[1]);
+    addPt("center", segment.curves[0].center);
+    text.append("<br>");
+    text.append(tr("rotation: %1<br>").arg(qRadiansToDegrees(segment.rotation)));
+    text.append("<br>");
+    text.append(tr("radius: %1<br>").arg(segment.curves[0].radius));
+    text.append(tr("angle: %1<br>").arg(qRadiansToDegrees(segment.curves[0].angle)));
+    text.append(tr("curve_l: %1<br>").arg(segment.curves[0].length));
+    break;
+  }
+  case Simulator::TrackSegment::Type::Turnout:
+  case Simulator::TrackSegment::Type::Turnout3Way:
+  case Simulator::TrackSegment::Type::TurnoutCurved:
+  {
+    QLatin1String segTypeName = QLatin1String("Turnout");
+    if(segment.type == Simulator::TrackSegment::Type::Turnout3Way)
+      segTypeName = QLatin1String("Turnout 3 Way");
+    else if(segment.type == Simulator::TrackSegment::Type::TurnoutCurved)
+      segTypeName = QLatin1String("Turnout Curved");
+
+    text = tr("%1: <b>%2</b><br>").arg(segTypeName, QString::fromStdString(segment.m_id));
+    addPt("orig", segment.points[0]);
+
+    if(segment.type == Simulator::TrackSegment::Type::Turnout3Way)
+    {
+      addPt("straight", segment.points[1]);
+      addPt("curve 0", segment.points[2]);
+      addPt("curve 1", segment.points[3]);
+    }
+    else if(segment.type == Simulator::TrackSegment::Type::TurnoutCurved)
+    {
+      addPt("curve 0", segment.points[1]);
+      addPt("curve 1", segment.points[2]);
+    }
+    else
+    {
+      addPt("straight", segment.points[1]);
+      addPt("curve", segment.points[2]);
+    }
+
+    text.append("<br>");
+    text.append(tr("rotation: %1<br>").arg(qRadiansToDegrees(segment.rotation)));
+    text.append("<br>");
+
+    if(segment.type == Simulator::TrackSegment::Type::Turnout3Way)
+    {
+      text.append(tr("radius 0: %1<br>").arg(segment.curves[0].radius));
+      text.append(tr("angle 0: %1<br>").arg(qRadiansToDegrees(segment.curves[0].angle)));
+      text.append(tr("curve_l 0: %1<br>").arg(segment.curves[0].length));
+      text.append("<br>");
+      text.append(tr("radius 1: %1<br>").arg(segment.curves[1].radius));
+      text.append(tr("angle 1: %1<br>").arg(qRadiansToDegrees(segment.curves[1].angle)));
+      text.append(tr("curve_l 1: %1<br>").arg(segment.curves[1].length));
+      text.append("<br>");
+      text.append(tr("strai_l: %1<br>").arg(segment.straight.length));
+    }
+    else if(segment.type == Simulator::TrackSegment::Type::TurnoutCurved)
+    {
+      text.append(tr("radius 0: %1<br>").arg(segment.curves[0].radius));
+      text.append(tr("angle 0: %1<br>").arg(qRadiansToDegrees(segment.curves[0].angle)));
+      text.append(tr("curve_l 0: %1<br>").arg(segment.curves[0].length));
+      text.append("<br>");
+      text.append(tr("radius 1: %1<br>").arg(segment.curves[1].radius));
+      text.append(tr("angle 1: %1<br>").arg(qRadiansToDegrees(segment.curves[1].angle)));
+      text.append(tr("curve_l 1: %1<br>").arg(segment.curves[1].length));
+    }
+    else
+    {
+      text.append(tr("radius: %1<br>").arg(segment.curves[0].radius));
+      text.append(tr("angle: %1<br>").arg(qRadiansToDegrees(segment.curves[0].angle)));
+      text.append(tr("curve_l: %1<br>").arg(segment.curves[0].length));
+      text.append("<br>");
+      text.append(tr("strai_l: %1<br>").arg(segment.straight.length));
+    }
+
+    text.append("<br>");
+    text.append(tr("turnout addr: <b>%1</b><br>"
+                   "turnout chan: <b><i>%2</i></b>")
+                .arg(segment.turnout.addresses[0])
+                .arg(segment.turnout.channel));
+    break;
+  }
+  case Simulator::TrackSegment::Type::SingleSlipTurnout:
+  case Simulator::TrackSegment::Type::DoubleSlipTurnout:
+  {
+    // TODO
+    text = "TODO";
+    break;
+  }
+  }
+
+  if (segment.hasSensor())
+  {
+    const auto &sensor = data_.sensors.at(segment.sensor.index);
+    text.append("<br>");
+    text.append(tr("sensor addr: <b>%1</b><br>"
+                   "sensor channel: <b>%2</b><br>")
+                .arg(sensor.address)
+                .arg(sensor.channel));
+  }
+
+  QToolTip::showText(ev->globalPos(), text, this);
+}
+
 void SimulatorView::setZoomLevel(float value)
 {
   m_zoomLevel = std::clamp(value, zoomLevelMin, zoomLevelMax);
-  updateProjection();
+  update();
 }
 
-void SimulatorView::updateProjection()
+void SimulatorView::setImageVisible(int idx, bool val)
 {
-  makeCurrent();
+  if(idx < 0 || size_t(idx) >= m_extraImages.size())
+    return;
 
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
+  m_extraImages[idx].visible = val;
+}
 
-  const float viewWidth = width() / m_zoomLevel;
-  const float viewHeight = height() / m_zoomLevel;
+nlohmann::json SimulatorView::copySegmentData(size_t segmentIdx) const
+{
+  if(segmentIdx == Simulator::invalidIndex)
+    return {};
 
-  glOrtho(m_cameraX, m_cameraX + viewWidth, m_cameraY + viewHeight, m_cameraY, -1, 1);
+  const auto& segment = m_simulator->staticData.trackSegments[segmentIdx];
 
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
+  nlohmann::json obj;
+  obj["id"] = segment.m_id;
+  obj["x"] = segment.origin().x;
+  obj["y"] = segment.origin().y;
+  obj["rotation"] = qRadiansToDegrees(segment.rotation);
 
-  update();
+  return obj;
+}
+
+void SimulatorView::showAddTrainDialog(size_t segmentIndex)
+{
+  QString segName;
+  if(segmentIndex != Simulator::invalidIndex &&
+     segmentIndex < m_simulator->staticData.trackSegments.size())
+    segName = QString::fromStdString(m_simulator->staticData.trackSegments.at(segmentIndex).m_id);
+
+  QPointer<AddTrainDialog> dlg = new AddTrainDialog(segmentIndex, segName,
+                                                    mTrainsModel, this);
+  dlg->exec();
+  delete dlg;
 }
 
 void SimulatorView::tick()

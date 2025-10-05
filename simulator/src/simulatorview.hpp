@@ -23,13 +23,19 @@
 #define TRAINTASTIC_SIMULATOR_SIMULATORVIEW_HPP
 
 #include <span>
-#include <QOpenGLWidget>
-#include <QOpenGLFunctions>
+#include <QWidget>
+
+#include <QBasicTimer>
+#include <QImage>
+
 #include <traintastic/simulator/simulator.hpp>
 
+class TrainsModel;
+
+class QHelpEvent;
+
 class SimulatorView
-  : public QOpenGLWidget
-  , protected QOpenGLFunctions
+  : public QWidget
 {
   Q_OBJECT
 
@@ -39,6 +45,10 @@ public:
 
   Simulator* simulator() const;
   void setSimulator(std::shared_ptr<Simulator> value);
+
+  void loadExtraImages(const nlohmann::json &world,
+                       const QString &imagesFile,
+                       QStringList &namesOut);
 
   bool showTrackOccupancy() const
   {
@@ -55,21 +65,49 @@ public:
   void zoomOut();
   void zoomToFit();
 
+  inline Simulator::Point getCamera() const
+  {
+      return {m_cameraX, m_cameraY};
+  }
+
+  void setCamera(const Simulator::Point& cameraPt);
+
+  inline Simulator::Point mapToSim(const QPointF& p)
+  {
+    return {m_cameraX + float(p.x()) / m_zoomLevel,
+            m_cameraY + float(p.y()) / m_zoomLevel};
+  }
+
+  inline float getZoomLevel() const { return m_zoomLevel; }
+
+  void setZoomLevel(float zoomLevel);
+
+  void setImageVisible(int idx, bool val);
+
+  nlohmann::json copySegmentData(size_t segmentIdx) const;
+
+  bool thinTracks() const;
+  void setThinTracks(bool newThinTracks);
+
+  float signalsScaleFactor() const;
+  void setSignalsScaleFactor(float newSignalsScaleFactor);
+
 signals:
   void tickActiveChanged(float value);
   void powerOnChanged(bool value);
 
 protected:
-  void initializeGL() override;
-  void resizeGL(int w, int h) override;
-  void paintGL() override;
+  void paintEvent(QPaintEvent *e) override;
   void resizeEvent(QResizeEvent* event) override;
 
-  void keyPressEvent(QKeyEvent* event) override;
-  void mousePressEvent(QMouseEvent* event) override;
-  void mouseMoveEvent(QMouseEvent* event) override;
-  void mouseReleaseEvent(QMouseEvent* event) override;
-  void wheelEvent(QWheelEvent* event) override;
+  bool event(QEvent *e) override;
+  void keyPressEvent(QKeyEvent* e) override;
+  void mousePressEvent(QMouseEvent* e) override;
+  void mouseMoveEvent(QMouseEvent* e) override;
+  void mouseReleaseEvent(QMouseEvent* e) override;
+  void wheelEvent(QWheelEvent* e) override;
+  void timerEvent(QTimerEvent *e) override;
+  void contextMenuEvent(QContextMenuEvent *e) override;
 
 private:
   struct Turnout
@@ -80,36 +118,78 @@ private:
   using Turnouts = std::vector<Turnout>;
 
   static constexpr float zoomLevelMin =  0.1f;
-  static constexpr float zoomLevelMax = 10.0f;
+  static constexpr float zoomLevelMax = 15.0f;
   static constexpr float zoomFactorIn = 1.1f;
   static constexpr float zoomFactorOut = 0.9f;
 
   std::shared_ptr<Simulator> m_simulator;
   Simulator::StateData m_stateData;
+
+  struct Image
+  {
+    QImage img;
+    Simulator::ImageRef ref;
+    bool visible = true;
+  };
+
+  std::vector<Image> m_images;
+  std::vector<Image> m_extraImages;
+
   struct
   {
     bool powerOn = false;
   } m_stateDataPrevious;
   std::vector<boost::signals2::connection> m_simulatorConnections;
   Turnouts m_turnouts;
+
+  // Trains
+  TrainsModel *mTrainsModel = nullptr;
+
+  // View
   float m_cameraX = 0.0f;
   float m_cameraY = 0.0f;
   float m_zoomLevel = 1.0f;
+  float m_signalsScaleFactor = 1.0f;
+
+  bool m_showTrackOccupancy = true;
+  bool m_thinTracks = false;
   bool m_zoomFit = false;
+
   QPoint m_leftClickMousePos;
   QPoint m_rightMousePos;
-  bool m_showTrackOccupancy = true;
+
   size_t m_trainIndex = 0;
 
-  void mouseLeftClick(QPointF pos);
+  // Turnout blink
+  QBasicTimer turnoutBlinkTimer;
+  bool turnoutBlinkState = false;
 
-  void drawTracks();
-  void drawTrains();
-  void drawMisc();
+  // Signal Blink TODO: per signal?
+  QBasicTimer signalBlinkTimer;
+  bool signalBlinkState = false;
 
-  void setZoomLevel(float zoomLevel);
+  // Mouse hover
+  QBasicTimer segmentHoverTimer;
+  Simulator::Point m_lastHoverPos;
+  size_t m_hoverSegmentIdx = Simulator::invalidIndex;
+  size_t m_hoverSensorIdx = Simulator::invalidIndex;
 
-  void updateProjection();
+  void mouseLeftClick(const Simulator::Point &point, bool shiftPressed);
+  void showItemTooltip(const Simulator::Point &point, QHelpEvent *ev);
+
+  void drawTracks(QPainter *painter);
+  void drawTrackObjects(QPainter *painter);
+  void drawTrains(QPainter *painter);
+  void drawMisc(QPainter *painter);
+
+  inline void resetSegmentHover()
+  {
+    m_hoverSegmentIdx = Simulator::invalidIndex;
+    m_hoverSensorIdx = Simulator::invalidIndex;
+    segmentHoverTimer.stop();
+  }
+
+  void showAddTrainDialog(size_t segmentIndex);
 
 private slots:
   void tick();
