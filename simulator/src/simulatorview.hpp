@@ -80,7 +80,7 @@ private:
   using Turnouts = std::vector<Turnout>;
 
   static constexpr float zoomLevelMin =  0.1f;
-  static constexpr float zoomLevelMax = 10.0f;
+  static constexpr float zoomLevelMax = 15.0f;
   static constexpr float zoomFactorIn = 1.1f;
   static constexpr float zoomFactorOut = 0.9f;
 
