@@ -37,10 +37,12 @@
 #include "../mainwindow.hpp"
 #include "../mdiarea.hpp"
 #include "../board/boardwidget.hpp"
+#include "../board/tilepainter.hpp"
 #include "../network/abstractproperty.hpp"
 #include "../network/error.hpp"
 #include "../network/method.hpp"
 #include "../network/object.hpp"
+#include "../settings/boardsettings.hpp"
 #include "../settings/generalsettings.hpp"
 #include "../subwindow/subwindow.hpp"
 #include "../widget/object/abstracteditwidget.hpp"
@@ -552,6 +554,89 @@ void ScreenShotDialog::start()
         return true;
       }
       return false;
+    });
+
+  // Board tiles:
+  m_steps.push(
+    [this]()
+    {
+      static const std::array<std::tuple<const BoardColorScheme&, const char*>, 2> schemes{
+        std::make_tuple<const BoardColorScheme&, const char*>(BoardColorScheme::light, "light"),
+        std::make_tuple<const BoardColorScheme&, const char*>(BoardColorScheme::dark, "dark")
+      };
+
+      static constexpr std::array<std::tuple<TileId, const char*>, 32> tiles{
+        std::make_tuple(TileId::RailStraight, "rail/straight.png"),
+        std::make_tuple(TileId::RailCurve45, "rail/curve45.png"),
+        std::make_tuple(TileId::RailCurve90, "rail/curve90.png"),
+        std::make_tuple(TileId::RailCross45, "rail/cross45.png"),
+        std::make_tuple(TileId::RailCross90, "rail/cross90.png"),
+        std::make_tuple(TileId::RailTurnoutLeft45, "rail/turnoutleft45.png"),
+        std::make_tuple(TileId::RailTurnoutRight45, "rail/turnoutright45.png"),
+        std::make_tuple(TileId::RailTurnoutWye, "rail/turnoutwye.png"),
+        std::make_tuple(TileId::RailTurnout3Way, "rail/turnout3way.png"),
+        std::make_tuple(TileId::RailTurnoutSingleSlip, "rail/turnoutsingleslip.png"),
+        std::make_tuple(TileId::RailTurnoutDoubleSlip, "rail/turnoutdoubleslip.png"),
+        std::make_tuple(TileId::RailSignal2Aspect, "rail/signal2aspect.png"),
+        std::make_tuple(TileId::RailSignal3Aspect, "rail/signal3aspect.png"),
+        std::make_tuple(TileId::RailBufferStop, "rail/bufferstop.png"),
+        std::make_tuple(TileId::RailSensor, "rail/sensor.png"),
+        std::make_tuple(TileId::RailBlock, "rail/block.png"),
+        std::make_tuple(TileId::RailTurnoutLeft90, "rail/turnoutleft90.png"),
+        std::make_tuple(TileId::RailTurnoutRight90, "rail/turnoutright90.png"),
+        std::make_tuple(TileId::RailTurnoutLeftCurved, "rail/turnoutleftcurved.png"),
+        std::make_tuple(TileId::RailTurnoutRightCurved, "rail/turnoutrightcurved.png"),
+        std::make_tuple(TileId::RailBridge45Left, "rail/bridge45left.png"),
+        std::make_tuple(TileId::RailBridge45Right, "rail/bridge45right.png"),
+        std::make_tuple(TileId::RailBridge90, "rail/bridge90.png"),
+        std::make_tuple(TileId::RailTunnel, "rail/tunnel.png"),
+        std::make_tuple(TileId::RailOneWay, "rail/oneway.png"),
+        std::make_tuple(TileId::RailDirectionControl, "rail/directioncontrol.png"),
+        std::make_tuple(TileId::PushButton, "misc/pushbutton.png"),
+        std::make_tuple(TileId::RailLink, "rail/link.png"),
+        std::make_tuple(TileId::RailDecoupler, "rail/decoupler.png"),
+        std::make_tuple(TileId::RailNXButton, "rail/nxbutton.png"),
+        std::make_tuple(TileId::Label, "misc/label.png"),
+        std::make_tuple(TileId::Switch, "misc/switch.png"),
+      };
+
+      const bool turnoutDrawStateOrg = BoardSettings::instance().turnoutDrawState;
+      BoardSettings::instance().turnoutDrawState = true;
+
+      QPixmap pixmap(QSize{24, 24});
+      const QRectF rect{{0, 0}, pixmap.size()};
+      for(auto& [scheme, schemeName] : schemes)
+      {
+        for(auto& [tileId, filename] : tiles)
+        {
+          pixmap.fill(Qt::transparent);
+          QPainter painter(&pixmap);
+          painter.setRenderHint(QPainter::Antialiasing, true);
+          TilePainter tilePainter{painter, pixmap.size().width(), scheme};
+          switch(tileId)
+          {
+            case TileId::RailBlock:
+              tilePainter.draw(tileId, rect, TileRotate::Deg90);
+              break;
+
+            case TileId::RailSignal2Aspect:
+            case TileId::RailSignal3Aspect:
+              tilePainter.drawSignal(tileId, rect, TileRotate::Deg0, false, SignalAspect::Stop);
+              break;
+
+            default:
+              tilePainter.draw(tileId, rect, TileRotate::Deg0);
+              break;
+          }
+          const QString outputPath = m_outputDir.filePath(QString("overrides/assets/images/board/tiles/%1/%2").arg(schemeName).arg(filename));
+          QDir().mkpath(QFileInfo(outputPath).absolutePath());
+          pixmap.save(outputPath);
+        }
+      }
+
+      BoardSettings::instance().turnoutDrawState = turnoutDrawStateOrg;
+
+      return true;
     });
 
   // Lua scripts list:
