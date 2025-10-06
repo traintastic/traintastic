@@ -161,6 +161,11 @@ class TraintasticHelp:
                         # TODO: setup turnouts
                     ]}
                 ]},
+                {'User guide': [
+                    {'Board': [
+                        {'Tile reference': 'user-guide/board/tile-reference.md'}
+                    ]}
+                ]},
                 {'Advanced topics': [
                     {'Interface configuration': [
                         {'Introduction': 'advanced/interface/index.md'},
@@ -192,7 +197,6 @@ class TraintasticHelp:
                     {'Decoder function': 'wip/decoder-function.md'},
                     {'Input monitor': 'wip/input-monitor.md'},
                     {'Log messages': 'wip/log-messages.md'},
-                    {'Board tiles': 'wip/board-tiles.md'},
                     {'Trains': 'wip/trains.md'},
                     {'Zones': 'wip/zones.md'}
                 ]}
