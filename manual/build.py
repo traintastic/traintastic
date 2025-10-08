@@ -132,6 +132,7 @@ class TraintasticHelp:
                     }
                 },
                 'pymdownx.inlinehilite',
+                'pymdownx.keys',
                 'pymdownx.snippets',
                 'pymdownx.superfences',
                 {
@@ -156,9 +157,14 @@ class TraintasticHelp:
                         {'Introduction': 'quickstart/index.md'},
                         {'Create your first world': 'quickstart/world.md'},
                         {'Connect to your command station': 'quickstart/command-station.md'},
-                        {'Add and control a train': 'quickstart/trains.md'}
-                        # TODO: Draw board
-                        # TODO: setup turnouts
+                        {'Add and control a train': 'quickstart/trains.md'},
+                        {'Create a schematic layout': [
+                            {'Introduction': 'quickstart/layout/index.md'},
+                            {'Drawing basics': 'quickstart/layout/drawing-basics.md'},
+                            {'Turnout control': 'quickstart/layout/turnouts.md'},
+                            {'Blocks and sensors': 'quickstart/layout/blocks-sensors.md'},
+                            {'Signals': 'quickstart/layout/signals.md'}
+                        ]}
                     ]}
                 ]},
                 {'User guide': [
