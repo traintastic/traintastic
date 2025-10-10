@@ -708,6 +708,50 @@ void ScreenShotDialog::start()
       return false;
     });
 
+  // Icons:
+  m_steps.push(
+    [this]()
+    {
+      static constexpr std::array<const char*, 2> schemes{"light", "dark"};
+      static constexpr std::array<const char*, 22> icons{
+        "circle/add",
+        "add",
+        "board",
+        "delete",
+        "down",
+        "edit",
+        "highlight_zone",
+        "interface_state.error",
+        "interface_state.initializing",
+        "interface_state.offline",
+        "interface_state.online",
+        "mouse",
+        "move_tile",
+        "offline",
+        "online",
+        "power_off",
+        "power_on",
+        "remove",
+        "resize_tile",
+        "swap",
+        "train",
+        "up",
+      };
+
+      const QSize sz{24, 24};
+      for(const char* scheme : schemes)
+      {
+        for(const char* icon : icons)
+        {
+          const QString outputPath = m_outputDir.filePath(QString("overrides/assets/images/icons/%1/%2.png").arg(scheme).arg(icon));
+          QDir().mkpath(QFileInfo(outputPath).absolutePath());
+          QIcon(QString(":/%1/%2.svg").arg(scheme).arg(icon)).pixmap(sz).save(outputPath);
+        }
+      }
+
+      return true;
+    });
+
   m_start->setEnabled(false);
   m_progressBar->setRange(0, static_cast<int>(m_steps.size()));
   m_progressBar->setValue(0);
