@@ -31,7 +31,7 @@ Click *New world* to launch the wizard:
 ## Step 3: Edit and operate modes
 
 When a new world is created it opens in **edit mode**.
-You can switch between modes using the pencil button in the top right corner:
+You can switch between modes using the ![pencil](../assets/images/icons/light/edit.png#only-light)![pencil](../assets/images/icons/dark/edit.png#only-dark) button in the top right corner:
 
 - **Edit mode** – add or change objects and properties
 - **Operate mode** – run trains and interact with the layout

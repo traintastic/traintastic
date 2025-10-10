@@ -5,8 +5,8 @@ Once configured, Traintastic can switch the turnout directly and automatically u
 
 ## Step 1: Configure a turnout
 
-- Make sure you are in **edit mode** (pencil button top right).
-- On the toolbar, select the **mouse pointer** tool.
+- Make sure you are in **edit mode** (![pencil](../../assets/images/icons/light/edit.png#only-light)![pencil](../../assets/images/icons/dark/edit.png#only-dark) button in the top right).
+- On the toolbar, select the ![mouse pointer](../../assets/images/icons/light/mouse.png#only-light)![mouse pointer](../../assets/images/icons/dark/mouse.png#only-dark) tool.
 - Click on a **turnout tile** on your board — the turnout properties dialog opens. \
     ![Turnout general tab](../../assets/images/getting-started/turnout-general.png)
 - On the **General** tab:
@@ -18,7 +18,7 @@ Once configured, Traintastic can switch the turnout directly and automatically u
     - **Interface** – The command station or interface that controls this turnout.
     - **Channel** – Usually set to *Accessory*.
     - **Address** – The digital address for the turnout output on your command station.
-- If the turnout has multiple addresses (e.g. **3-way**, **single slip**, or **double slip**), click **+** to add the additional addresses.
+- If the turnout has multiple addresses (e.g. **3-way**, **single slip**, or **double slip**), click ![plus](../../assets/images/icons/light/add.png#only-light)![plus](../../assets/images/icons/dark/add.png#only-dark) to add the additional addresses.
 - The **Output mapping** defines how Traintastic translates turnout states (e.g. *straight* / *left* / *right*) to output commands.
   For most standard turnouts, the default mapping is correct.
 

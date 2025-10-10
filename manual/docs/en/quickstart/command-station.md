@@ -5,13 +5,13 @@ This is done by creating an **interface**, which acts as the bridge between Trai
 
 ## Step 1: Open the interfaces list
 
-1. Make sure you are in **edit mode** (pencil button in the top right).
+1. Make sure you are in **edit mode** (![pencil](../assets/images/icons/light/edit.png#only-light)![pencil](../assets/images/icons/dark/edit.png#only-dark) button in the top right).
 2. In the main menu, go to **Objects → Hardware → Interfaces**.
 3. An *Interfaces* dialog will appear. On a new installation, this list is empty.
 
 ## Step 2: Start the setup wizard
 
-1. Click the **+** button to add a new interface.
+1. Click the ![plus](../assets/images/icons/dark/circle/add.png) button to add a new interface.
 2. In the menu that opens, select **Setup using wizard**.
    - The menu also lists all supported interface types directly, but those entries are intended for experienced users who already know how to configure them manually.
 
@@ -37,16 +37,16 @@ When you finish the wizard:
 
 - The new interface will appear in the *Interfaces* list.
 - A **status icon** will show in the status bar (right side of the window).
-    - Gray = offline
-    - Purple = initializing
-    - Green = online/connected
-    - Red = error
+    - ![Gray](../assets/images/icons/dark/interface_state.offline.png) - Offline
+    - ![Purple](../assets/images/icons/dark/interface_state.initializing.png) - Initializing
+    - ![Green](../assets/images/icons/dark/interface_state.online.png) - Online/connected
+    - ![Red](../assets/images/icons/dark/interface_state.error.png) - Error
 
 If you add multiple interfaces, each has its own status icon.
 
 ## Step 4: Connect and test
 
-1. Press the **Connect** button (double arrow icon, top left on the toolbar)
+1. Press the ![connect](../assets/images/icons/light/offline.png#only-light)![connect](../assets/images/icons/dark/offline.png#only-dark) button (double arrow icon, top left on the toolbar)
    or use the menu: **World → Connection → Connect**.
 2. The status icon will change:
      - Purple while initializing (up to a few seconds).
@@ -55,13 +55,16 @@ If you add multiple interfaces, each has its own status icon.
 
 If an error occurs:
 
-- Open the **server log** (hotkey `F12` or **View → Server log**) to see details.
+- Open the **server log** (hotkey ++F12++ or **View → Server log**) to see details.
 - See [Common interface connection errors](../troubleshooting/interface-connection-errors.md) for steps to resolve typical issues.
 - If you’re unsure whether your system is supported, check the [Supported hardware appendix](../appendix/supported-hardware.md).
 
 When the connection succeeds:
 
-Toggle the track power using the **Power** button (left of *Connect* button).
+Toggle the track power using the
+![power off](../assets/images/icons/light/power_off.png#only-light)![power off](../assets/images/icons/dark/power_off.png#only-dark) /
+![power on](../assets/images/icons/light/power_on.png#only-light)![power on](../assets/images/icons/dark/power_on.png#only-dark)
+button (left of *Connect* button).
 If the command station responds, your connection is working!
 
 ---

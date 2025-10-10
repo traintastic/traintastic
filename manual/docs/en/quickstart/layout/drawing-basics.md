@@ -6,7 +6,7 @@ You can create multiple boards, for example one for the **main layout** and anot
 
 ## Step 1: Open the board list
 
-1. Make sure you are in **edit mode** (pencil button top right).
+1. Make sure you are in **edit mode** (![pencil](../../assets/images/icons/light/edit.png#only-light)![pencil](../../assets/images/icons/dark/edit.png#only-dark) button in the top right).
 2. Open the board list:
    - From the main menu: **Objects → Boards**
    - Or click the **Board icon** on the toolbar (next to the Train icon).
@@ -15,7 +15,7 @@ You can create multiple boards, for example one for the **main layout** and anot
 
 ## Step 2: Create a new board
 
-1. In the board list, click the **+** button to create a new board.
+1. In the board list, click the ![plus](../../assets/images/icons/light/add.png#only-light)![plus](../../assets/images/icons/dark/add.png#only-dark) button to create a new board.
 2. The **Board setup wizard** opens.
    Currently it asks only for a **board name** (e.g. *Main Layout* or *Hidden Yard*).
 3. Finish the wizard to setup your board.
@@ -26,13 +26,13 @@ You can now start drawing.
 
 1. Select a **tile** from the toolbar (straight, curve, turnout, etc.).
 2. Click on the board where you want to place it.
-3. To **rotate** a tile (before or after placing it):
+3. To **rotate** a tile (before placing it):
     - **Right-click** → rotate clockwise
     - **Shift + Right-click** → rotate counter-clockwise
 
 ## Step 4: Move tiles
 
-1. On the toolbar, select **Move**.
+1. On the toolbar, select ![move](../../assets/images/icons/light/move_tile.png#only-light)![move](../../assets/images/icons/dark/move_tile.png#only-dark).
 2. Click on the tile you want to move.
    The tile will follow your mouse cursor.
 3. Click again to place it in the new location.
@@ -43,13 +43,13 @@ You can now start drawing.
 
 Some tiles, such as blocks, can be **resized** to change their length.
 
-1. On the toolbar, select **Resize**.
+1. On the toolbar, select ![resize](../../assets/images/icons/light/resize_tile.png#only-light)![resize](../../assets/images/icons/dark/resize_tile.png#only-dark).
 2. Click on the tile you want to resize.
 3. Drag the edge to increase or decrease its length.
 
 ## Step 6: Delete tiles
 
-1. On the toolbar, select **Delete**.
+1. On the toolbar, select ![bin](../../assets/images/icons/light/delete.png#only-light)![bin](../../assets/images/icons/dark/delete.png#only-dark).
 2. Click on the tile you want to remove.
    The tile will be deleted immediately.
 
