@@ -170,7 +170,8 @@ class TraintasticHelp:
                 {'User guide': [
                     {'Board': [
                         {'Tile reference': 'user-guide/board/tile-reference.md'}
-                    ]}
+                    ]},
+                    {'Zones': 'user-guide/zones.md'}
                 ]},
                 {'Advanced topics': [
                     {'Interface configuration': [
@@ -203,8 +204,7 @@ class TraintasticHelp:
                     {'Decoder function': 'wip/decoder-function.md'},
                     {'Input monitor': 'wip/input-monitor.md'},
                     {'Log messages': 'wip/log-messages.md'},
-                    {'Trains': 'wip/trains.md'},
-                    {'Zones': 'wip/zones.md'}
+                    {'Trains': 'wip/trains.md'}
                 ]}
             ]
         }
