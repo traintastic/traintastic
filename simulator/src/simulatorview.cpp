@@ -155,7 +155,9 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
       }));
 
     m_simulator->enableServer(false);
-    m_simulator->start();
+
+    bool discoverable = true; // TODO: shell argument
+    m_simulator->start(discoverable);
   }
 
   update();

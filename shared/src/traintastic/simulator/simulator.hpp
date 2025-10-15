@@ -248,7 +248,7 @@ public:
 
   uint16_t serverPort() const;
 
-  void start();
+  void start(bool discoverable = false);
   void stop();
 
   void setPowerOn(bool powerOn);

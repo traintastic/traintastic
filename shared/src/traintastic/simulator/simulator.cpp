@@ -345,10 +345,10 @@ uint16_t Simulator::serverPort() const
   return m_acceptor.local_endpoint().port();
 }
 
-void Simulator::start()
+void Simulator::start(bool discoverable)
 {
   m_thread = std::thread(
-    [this]()
+    [this, discoverable]()
     {
       if(m_serverEnabled)
       {
@@ -361,19 +361,23 @@ void Simulator::start()
 
         m_acceptor.listen(5, ec);
 
-        m_socketUDP.open(boost::asio::ip::udp::v4(), ec);
-        if(ec)
+        if(discoverable)
+        {
+          m_socketUDP.open(boost::asio::ip::udp::v4(), ec);
+          if(ec)
+              assert(false);
+
+          m_socketUDP.set_option(boost::asio::socket_base::reuse_address(true), ec);
+          if(ec)
+              assert(false);
+
+          m_socketUDP.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), defaultPort), ec);
+          if(ec)
             assert(false);
 
-        m_socketUDP.set_option(boost::asio::socket_base::reuse_address(true), ec);
-        if(ec)
-            assert(false);
+          doReceive();
+        }
 
-        m_socketUDP.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), defaultPort), ec);
-        if(ec)
-          assert(false);
-
-        doReceive();
         accept();
       }
       tick();
@@ -689,43 +693,43 @@ constexpr char ResponseMessage[] = {'s', 'i', 'm', '!'};
 
 void Simulator::doReceive()
 {
-    m_socketUDP.async_receive_from(
+  m_socketUDP.async_receive_from(
         boost::asio::buffer(m_udpBuffer),
         m_remoteEndpoint,
         [this](const boost::system::error_code& ec, std::size_t bytesReceived)
+  {
+    if(!ec)
+    {
+      const char *recvMsg = reinterpret_cast<char*>(m_udpBuffer.data());
+      if(bytesReceived >= sizeof(RequestMessage) && std::memcmp(recvMsg, &RequestMessage, sizeof(RequestMessage)) == 0)
+      {
+        if(!m_serverLocalHostOnly || m_remoteEndpoint.address().is_loopback())
         {
-            if(!ec)
-            {
-                const char *recvMsg = reinterpret_cast<char*>(m_udpBuffer.data());
-                if(bytesReceived >= sizeof(RequestMessage) && std::memcmp(recvMsg, &RequestMessage, sizeof(RequestMessage)) == 0)
-                {
-                    if(!m_serverLocalHostOnly || m_remoteEndpoint.address().is_loopback())
-                    {
-                        uint16_t response[3] = {0, 0, serverPort()};
+          uint16_t response[3] = {0, 0, serverPort()};
 
-                        // Send in big endian format
-                        if constexpr (std::endian::native == std::endian::little)
-                        {
-                            // Swap bytes
-                            uint8_t b[2] = {};
-                            *reinterpret_cast<uint16_t *>(b) = response[2];
-                            std::swap(b[0], b[1]);
-                            response[2] = *reinterpret_cast<uint16_t *>(b);
-                        }
+          // Send in big endian format
+          if constexpr (std::endian::native == std::endian::little)
+          {
+            // Swap bytes
+            uint8_t b[2] = {};
+            *reinterpret_cast<uint16_t *>(b) = response[2];
+            std::swap(b[0], b[1]);
+            response[2] = *reinterpret_cast<uint16_t *>(b);
+          }
 
-                        std::memcpy(&response, &ResponseMessage, sizeof(ResponseMessage));
-                        m_socketUDP.async_send_to(boost::asio::buffer(response, sizeof(response)), m_remoteEndpoint,
-                                                  [this](const boost::system::error_code& ec2, std::size_t bytesTransferred)
-                                                  {
-                                                     assert(!ec2 && bytesTransferred == 6);
-                                                     doReceive();
-                                                  });
-                        return;
-                    }
-                }
-                doReceive();
-            }
-        });
+          std::memcpy(&response, &ResponseMessage, sizeof(ResponseMessage));
+          m_socketUDP.async_send_to(boost::asio::buffer(response, sizeof(response)), m_remoteEndpoint,
+                                    [this](const boost::system::error_code& ec2, std::size_t bytesTransferred)
+          {
+            assert(!ec2 && bytesTransferred == 6);
+            doReceive();
+          });
+          return;
+        }
+      }
+      doReceive();
+    }
+  });
 }
 
 void Simulator::tick()
