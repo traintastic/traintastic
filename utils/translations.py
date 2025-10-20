@@ -1,6 +1,8 @@
 import sys
 import os
 import json
+from collections import OrderedDict
+from operator import itemgetter
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 POEDITOR_PROJECT_ID = 622757
@@ -25,8 +27,12 @@ def read_innosetup_isl(language: str) -> dict:
 
 def write_innosetup_isl(language: str, terms: dict) -> None:
     import configparser
+
+    # remove empty
+    terms = {k: v for k, v in terms.items() if v}
+
     isl = configparser.ConfigParser(delimiters=['='])
-    isl['CustomMessages'] = terms
+    isl['CustomMessages'] = OrderedDict(sorted(terms.items(), key=lambda t: t[0]))
 
     isl_file = innosetup_isl_path(language)
     with open(isl_file, 'w', encoding='utf-8-sig') as f:
@@ -45,6 +51,17 @@ def read_traintastic_terms(language: str) -> list:
 
 def write_traintastic_json(language: str, terms: list) -> None:
     file = traintastic_json_path(language)
+
+    # remove empty stuff
+    for term in terms:
+        for k in ['context', 'term_plural', 'reference', 'comment']:
+            if k in term and term[k] == '':
+                del term[k]
+        if 'fuzzy' in term and term['fuzzy'] == 0:
+            del term['fuzzy']
+
+    terms = sorted(terms, key=itemgetter('term'))
+
     with open(file, 'w', encoding='utf8') as f:
         json.dump(terms, f, indent=4)
     print('Wrote: {:s}'.format(file))
