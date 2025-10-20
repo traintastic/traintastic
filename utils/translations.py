@@ -4,10 +4,7 @@ import json
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 POEDITOR_PROJECT_ID = 622757
-
-
-def languages() -> list:
-    return ['en-us', 'de-de', 'fr-fr', 'it-it', 'nl-nl', 'sv-se']
+LANGUAGES = ['en-us', 'de-de', 'es-es', 'fr-fr', 'fy-nl', 'it-it', 'nl-nl', 'sv-se']
 
 
 def poeditor_language_code(code: str) -> str:
@@ -58,7 +55,12 @@ def pull(args: list):
 
     api = POEditorAPI(api_token=os.environ['POEDITOR_TOKEN'])
 
-    for language in languages():
+    if len(args) > 0:
+        languages = args
+    else:
+        languages = LANGUAGES
+
+    for language in languages:
         url, filename = api.export(
             project_id=POEDITOR_PROJECT_ID,
             language_code=poeditor_language_code(language),
@@ -91,8 +93,13 @@ def push(args: list):
 
     api = POEditorAPI(api_token=os.environ['POEDITOR_TOKEN'])
 
+    if len(args) > 0:
+        languages = args
+    else:
+        languages = LANGUAGES
+
     wait = False
-    for language in languages():
+    for language in languages:
         if wait:
             print('API rate limit, sleeping...')
             time.sleep(30)  # API has rate limit
@@ -123,7 +130,7 @@ def push(args: list):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: {:s} <command> [args...]".format(sys.argv[0]), file=sys.stderr)
+        print("Usage: {:s} <command> [languages...]".format(sys.argv[0]), file=sys.stderr)
         sys.exit(1)
 
     for sub_command in [pull, push]:
