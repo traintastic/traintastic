@@ -38,7 +38,8 @@ public:
   ~SimulatorView() override;
 
   Simulator* simulator() const;
-  void setSimulator(std::shared_ptr<Simulator> value);
+  void setSimulator(std::shared_ptr<Simulator> value,
+                    bool localOnly, bool discoverable);
 
   bool showTrackOccupancy() const
   {

@@ -30,6 +30,8 @@
 struct Options
 {
   bool fullscreen = false;
+  bool localOnly = false;
+  bool discoverable = false;
   QString filename;
 };
 
@@ -43,11 +45,20 @@ void parseOptions(QCoreApplication& app, Options& options)
   QCommandLineOption fullscreen("fullscreen", "Start application fullscreen.");
   parser.addOption(fullscreen);
 
+  QCommandLineOption localOnly("local", "Accept localhost only.");
+  parser.addOption(localOnly);
+
+  QCommandLineOption discoverable("discoverable", "Enable UDP discovery");
+  parser.addOption(discoverable);
+
   parser.addPositionalArgument("filename", "File to load.");
 
   parser.process(app);
 
   options.fullscreen = parser.isSet(fullscreen);
+  options.localOnly = !parser.isSet(localOnly);
+  options.discoverable = parser.isSet(discoverable);
+
   if(!parser.positionalArguments().isEmpty())
   {
     options.filename = parser.positionalArguments().first();
@@ -74,7 +85,7 @@ int main(int argc, char* argv[])
   mw.show();
   if(!options.filename.isEmpty())
   {
-    mw.load(options.filename);
+    mw.load(options.filename, options.localOnly, options.discoverable);
   }
   if(options.fullscreen)
   {

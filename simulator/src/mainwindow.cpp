@@ -90,7 +90,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         if(QFile::exists(filename))
         {
           settings.setValue("LastLoadDir", QFileInfo(filename).absoluteFilePath());
-          load(filename);
+          load(filename, mLocalOnly, mDiscoverable);
         }
       });
     menu->addAction("Quit", this, &MainWindow::close);
@@ -157,14 +157,19 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
   connect(m_view, &SimulatorView::powerOnChanged, m_power, &QAction::setChecked);
 }
 
-void MainWindow::load(const QString& filename)
+void MainWindow::load(const QString& filename,
+                      bool localOnly, bool discoverable)
 {
+  mLocalOnly = localOnly;
+  mDiscoverable = discoverable;
+
   QFile file(filename);
   if(file.open(QIODeviceBase::ReadOnly))
   {
     m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString(),
                                                                            nullptr,
-                                                                           true, true)));
+                                                                           true, true)),
+                         mLocalOnly, mDiscoverable);
     QMetaObject::invokeMethod(m_view, &SimulatorView::zoomToFit, Qt::QueuedConnection);
   }
 }

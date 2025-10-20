@@ -114,7 +114,7 @@ SimulatorView::SimulatorView(QWidget* parent)
 
 SimulatorView::~SimulatorView()
 {
-  setSimulator({});
+  setSimulator({}, false, false);
 }
 
 Simulator* SimulatorView::simulator() const
@@ -122,7 +122,8 @@ Simulator* SimulatorView::simulator() const
   return m_simulator.get();
 }
 
-void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
+void SimulatorView::setSimulator(std::shared_ptr<Simulator> value,
+                                 bool localOnly, bool discoverable)
 {
   if(m_simulator)
   {
@@ -154,9 +155,8 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
         QMetaObject::invokeMethod(this, "tick", Qt::QueuedConnection);
       }));
 
-    m_simulator->enableServer(false);
+    m_simulator->enableServer(localOnly);
 
-    bool discoverable = true; // TODO: shell argument
     m_simulator->start(discoverable);
   }
 
