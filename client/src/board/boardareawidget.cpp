@@ -605,7 +605,6 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
   const QColor backgroundColor50{0x10, 0x10, 0x10, 0x80};
   const QColor backgroundColorError50{0xff, 0x00, 0x00, 0x80};
-  const QColor gridColor{0x40, 0x40, 0x40};
   const QColor gridColorHighlight{Qt::white};
   const QColor gridColorError{Qt::red};
   const int tileSize = getTileSize();
@@ -624,7 +623,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
       break;
 
     case BoardAreaGrid::Line:
-      painter.setPen(gridColor);
+      painter.setPen(m_colorScheme->grid);
       for(int y = viewport.top(); y <= viewport.bottom(); y += gridSize)
         painter.drawLine(viewport.left(), y, viewport.right(), y);
       for(int x = viewport.left(); x <= viewport.right(); x += gridSize)
@@ -632,7 +631,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
       break;
 
     case BoardAreaGrid::Dot:
-      painter.setPen(gridColor);
+      painter.setPen(m_colorScheme->grid);
       for(int y = viewport.top(); y <= viewport.bottom(); y += gridSize)
         for(int x = viewport.left(); x <= viewport.right(); x += gridSize)
           painter.drawPoint(x, y);
