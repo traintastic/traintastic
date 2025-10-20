@@ -6825,5 +6825,9 @@
     {
         "term": "qtapp.settings.board:grid_edit_mode",
         "definition": "Grid (edit mode)"
+    },
+    {
+        "term": "category:options",
+        "definition": "Options"
     }
 ]

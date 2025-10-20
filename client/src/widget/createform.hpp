@@ -1,9 +1,8 @@
 /**
- * server/src/utils/category.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +19,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_CATEGORY_HPP
-#define TRAINTASTIC_SERVER_UTILS_CATEGORY_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_CREATEFORM_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_CREATEFORM_HPP
 
-#include <string_view>
+#include <initializer_list>
+#include <QString>
 
-namespace Category
-{
-  constexpr std::string_view cargo = "category:cargo";
-  constexpr std::string_view developer = "category:developer";
-  constexpr std::string_view info = "category:info";
-  constexpr std::string_view log = "category:log";
-  constexpr std::string_view network = "category:network";
-  constexpr std::string_view options = "category:options";
-  constexpr std::string_view trains = "category:trains";
-}
+class QLayout;
+class QWidget;
+class Object;
+
+QLayout* createFormLayout(Object& object, std::initializer_list<QString> items, QWidget* parent = nullptr);
+QWidget* createFormWidget(Object& object, std::initializer_list<QString> items, QWidget* parent = nullptr);
 
 #endif

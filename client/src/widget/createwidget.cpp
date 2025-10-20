@@ -30,9 +30,11 @@
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
 #include "object/itemseditwidget.hpp"
+#include "tile/turnouttilewidget.hpp"
 #include "inputmonitorwidget.hpp"
 #include "outputkeyboardwidget.hpp"
 #include "outputmapwidget.hpp"
+#include "propertycheckbox.hpp"
 #include "propertycombobox.hpp"
 #include "propertydoublespinbox.hpp"
 #include "propertyspinbox.hpp"
@@ -85,6 +87,10 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return new ListWidget(object, parent);
   else if(classId == "marklin_can_locomotive_list")
     return new MarklinCANLocomotiveListWidget(object, parent);
+  else if(object->classId().startsWith("board_tile.rail.turnout"))
+  {
+    return new TurnoutTileWidget(object, parent);
+  }
   else
     return nullptr;
 }
@@ -126,7 +132,7 @@ QWidget* createWidget(Property& property, QWidget* parent)
   switch(property.type())
   {
     case ValueType::Boolean:
-      break; // TODO
+      return new PropertyCheckBox(property, parent);
 
     case ValueType::Enum:
       if(property.enumName() == "pair_output_action")

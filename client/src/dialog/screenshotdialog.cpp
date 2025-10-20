@@ -52,6 +52,7 @@
 #include "../widget/objectlist/interfacelistwidget.hpp"
 #include "../widget/objectlist/throttleobjectlistwidget.hpp"
 #include "../widget/outputmapwidget.hpp"
+#include "../widget/tile/tilewidget.hpp"
 #include "../widget/throttle/throttlebutton.hpp"
 #include "../widget/throttle/throttlewidget.hpp"
 #include "../wizard/newboardwizard.hpp"
@@ -570,8 +571,8 @@ void ScreenShotDialog::start()
     {
       if(auto* w = getSubWindow(QStringLiteral("turnout_1")))
       {
-        w->resize(400, 300);
-        auto* map = static_cast<OutputMapWidget*>(static_cast<QTabWidget*>(w->widget()->layout()->itemAt(0)->widget())->widget(1)->layout()->itemAt(0)->widget());
+        w->resize(400, 350);
+        auto* map = static_cast<OutputMapWidget*>(static_cast<TileWidget*>(w->widget())->m_tabs->widget(0));
         map->m_object->getObjectProperty("interface")->setByObjectId("loconet_1");
         return true;
       }
@@ -582,11 +583,13 @@ void ScreenShotDialog::start()
     {
       if(auto* w = getSubWindow(QStringLiteral("turnout_1")))
       {
-        saveWidgetImage(w, QStringLiteral("getting-started/turnout-general.png"));
-        static_cast<QTabWidget*>(w->widget()->layout()->itemAt(0)->widget())->setCurrentIndex(1);
-        saveWidgetImage(w, QStringLiteral("getting-started/turnout-output-mapping.png"));
-        w->close();
-        return true;
+        auto* map = static_cast<OutputMapWidget*>(static_cast<TileWidget*>(w->widget())->m_tabs->widget(0));
+        if(map->m_object->getObjectProperty("interface")->hasObject())
+        {
+          saveWidgetImage(w, QStringLiteral("getting-started/turnout-general.png"));
+          w->close();
+          return true;
+        }
       }
       return false;
     });

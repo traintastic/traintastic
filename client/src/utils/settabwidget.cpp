@@ -1,9 +1,8 @@
 /**
- * server/src/utils/category.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +19,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_CATEGORY_HPP
-#define TRAINTASTIC_SERVER_UTILS_CATEGORY_HPP
+#include "settabwidget.hpp"
+#include <cassert>
+#include <QTabWidget>
 
-#include <string_view>
-
-namespace Category
+void setTabWidget(QTabWidget* tabWidget, int tabIndex, QWidget* widget)
 {
-  constexpr std::string_view cargo = "category:cargo";
-  constexpr std::string_view developer = "category:developer";
-  constexpr std::string_view info = "category:info";
-  constexpr std::string_view log = "category:log";
-  constexpr std::string_view network = "category:network";
-  constexpr std::string_view options = "category:options";
-  constexpr std::string_view trains = "category:trains";
+  assert(tabWidget);
+  assert(tabIndex >= 0 && tabIndex < tabWidget->count());
+  assert(widget);
+  const int currentIndex = tabWidget->currentIndex();
+  const auto tabIcon = tabWidget->tabIcon(tabIndex);
+  const auto tabText = tabWidget->tabText(tabIndex);
+  tabWidget->removeTab(tabIndex);
+  tabWidget->insertTab(tabIndex, widget, tabIcon, tabText);
+  tabWidget->setCurrentIndex(currentIndex);
 }
-
-#endif

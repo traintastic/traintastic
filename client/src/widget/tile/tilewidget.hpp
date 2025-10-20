@@ -1,9 +1,8 @@
 /**
- * server/src/utils/category.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +19,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_CATEGORY_HPP
-#define TRAINTASTIC_SERVER_UTILS_CATEGORY_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_TILE_TILEWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_TILE_TILEWIDGET_HPP
 
-#include <string_view>
+#include <QWidget>
+#include "../../network/objectptr.hpp"
 
-namespace Category
+class QTabWidget;
+class TileImageWidget;
+
+class TileWidget : public QWidget
 {
-  constexpr std::string_view cargo = "category:cargo";
-  constexpr std::string_view developer = "category:developer";
-  constexpr std::string_view info = "category:info";
-  constexpr std::string_view log = "category:log";
-  constexpr std::string_view network = "category:network";
-  constexpr std::string_view options = "category:options";
-  constexpr std::string_view trains = "category:trains";
-}
+  friend class ScreenShotDialog;
+
+protected:
+  ObjectPtr m_object;
+  QTabWidget* m_tabs;
+  TileImageWidget* m_image;
+
+public:
+  explicit TileWidget(ObjectPtr object, QWidget* parent = nullptr);
+};
 
 #endif
