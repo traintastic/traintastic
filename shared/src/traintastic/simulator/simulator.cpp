@@ -316,6 +316,7 @@ std::optional<T> stringToEnum(std::string_view value)
 Simulator::Simulator(const nlohmann::json& world)
   : staticData(load(world, m_stateData))
   , m_tickTimer{m_ioContext}
+  , m_handShakeTimer{m_ioContext}
   , m_acceptor{m_ioContext}
   , m_socketUDP{m_ioContext}
 {
@@ -381,6 +382,7 @@ void Simulator::start(bool discoverable)
         accept();
       }
       tick();
+      handShake();
       m_ioContext.run();
     });
 }
@@ -403,6 +405,7 @@ void Simulator::stop()
   m_acceptor.close(ec);
 
   m_tickTimer.cancel();
+  m_handShakeTimer.cancel();
   if(m_thread.joinable())
   {
     m_thread.join();
@@ -663,6 +666,9 @@ void Simulator::receive(const SimulatorProtocol::Message& message)
     }
     case OpCode::SensorChanged:
       break; // only sent by simulator
+    case OpCode::Handshake:
+    case OpCode::HandshakeResponse:
+      break; // handled by SimulatorConnection already
   }
 }
 
@@ -671,7 +677,13 @@ void Simulator::removeConnection(const std::shared_ptr<SimulatorConnection>& con
   if(auto it = std::find(m_connections.begin(), m_connections.end(), connection); it != m_connections.end())
   {
     m_connections.erase(it);
+    onConnectionRemoved(connection);
   }
+}
+
+void Simulator::onConnectionRemoved(const std::shared_ptr<SimulatorConnection>&)
+{
+
 }
 
 void Simulator::accept()
@@ -743,6 +755,46 @@ void Simulator::tick()
         tick();
       }
     });
+
+  {
+    std::lock_guard<std::mutex> lock(m_stateMutex);
+    const auto start = std::chrono::high_resolution_clock::now();
+    updateTrainPositions();
+    updateSensors();
+    const auto duration = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start);
+    m_stateData.tickActive = duration.count() / 1e6f;
+    m_stateData.tickLoad = static_cast<float>(100 * duration.count()) / static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(tickRate).count());
+  }
+
+  onTick();
+}
+
+void Simulator::handShake()
+{
+  m_handShakeTimer.expires_after(handShakeRate);
+  m_handShakeTimer.async_wait(
+    [this](std::error_code ec)
+    {
+      if(!ec)
+      {
+        handShake();
+      }
+    });
+
+  auto it = m_connections.begin();
+  while(it != m_connections.end())
+  {
+    if(!(*it)->handShakeResponseReceived())
+    {
+      std::shared_ptr<SimulatorConnection> conn = *it;
+      it = m_connections.erase(it);
+      onConnectionRemoved(conn);
+      continue;
+    }
+
+    (*it)->setHandShakeResponseReceived(false);
+    (*it)->send(SimulatorProtocol::HandShake(false));
+  }
 
   {
     std::lock_guard<std::mutex> lock(m_stateMutex);

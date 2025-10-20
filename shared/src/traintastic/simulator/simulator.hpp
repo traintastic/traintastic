@@ -268,9 +268,11 @@ public:
 
 private:
   constexpr static auto tickRate = std::chrono::milliseconds(1000 / 30);
+  constexpr static auto handShakeRate = std::chrono::milliseconds(1000);
 
   boost::asio::io_context m_ioContext;
   boost::asio::steady_timer m_tickTimer;
+  boost::asio::steady_timer m_handShakeTimer;
   boost::asio::ip::tcp::acceptor m_acceptor;
   boost::asio::ip::udp::socket m_socketUDP;
   std::array<char, 8> m_udpBuffer;
@@ -288,10 +290,12 @@ private:
 
   void accept();
   void doReceive();
+  void onConnectionRemoved(const std::shared_ptr<SimulatorConnection> &);
 
   void sendInitialState(const std::shared_ptr<SimulatorConnection>& connection);
 
   void tick();
+  void handShake();
 
   void updateTrainPositions();
   bool updateVehiclePosition(VehicleState::Face& face, const float speed);

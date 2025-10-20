@@ -63,7 +63,6 @@ bool SimulatorConnection::send(const SimulatorProtocol::Message& message)
   return true;
 }
 
-
 void SimulatorConnection::read()
 {
   m_socket.async_read_some(boost::asio::buffer(m_readBuffer.data() + m_readBufferOffset, m_readBuffer.size() - m_readBufferOffset),
@@ -83,7 +82,17 @@ void SimulatorConnection::read()
             break;
           }
 
-          m_simulator->receive(*message);
+          if(message->opCode == SimulatorProtocol::OpCode::HandshakeResponse &&
+             message->size == sizeof(SimulatorProtocol::HandShake))
+          {
+            // Eat message
+            m_handShakeResponseReceived = true;
+          }
+          else
+          {
+            m_simulator->receive(*message);
+          }
+
           pos += message->size;
           bytesTransferred -= message->size;
         }
