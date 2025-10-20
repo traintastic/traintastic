@@ -169,6 +169,9 @@ World::World(Private /*unused*/) :
   correctOutputPosWhenLocked{this, "correct_output_pos_when_locked", true, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   extOutputChangeAction{this, "ext_output_change_action", ExternalOutputChangeAction::EmergencyStopTrain, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   pathReleaseDelay{this, "path_release_delay", 5000, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
+  debugBlockEvents{this, "debug_block_events", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
+  debugTrainEvents{this, "debug_train_events", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
+  debugZoneEvents{this, "debug_zone_events", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   decoderControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -359,6 +362,14 @@ World::World(Private /*unused*/) :
   Attributes::addEnabled(pathReleaseDelay, true);
   Attributes::addMinMax(pathReleaseDelay, {0, 15000}); // Up to 15 seconds
   m_interfaceItems.add(pathReleaseDelay);
+
+  // Debug options:
+  Attributes::addCategory(debugBlockEvents, Category::debug);
+  m_interfaceItems.add(debugBlockEvents);
+  Attributes::addCategory(debugTrainEvents, Category::debug);
+  m_interfaceItems.add(debugTrainEvents);
+  Attributes::addCategory(debugZoneEvents, Category::debug);
+  m_interfaceItems.add(debugZoneEvents);
 
   Attributes::addObjectEditor(decoderControllers, false);
   m_interfaceItems.add(decoderControllers);

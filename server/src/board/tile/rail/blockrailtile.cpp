@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -673,11 +673,19 @@ void BlockRailTile::updateHeightWidthMax()
 
 void BlockRailTile::fireTrainAssigned(const std::shared_ptr<Train>& train)
 {
+  if(m_world.debugBlockEvents)
+  {
+    Log::log(*this, LogMessage::D3010_TRAIN_X_ASSIGNED_TO_BLOCK_X, train->name.value(), name.value());
+  }
   fireEvent(onTrainAssigned, train, shared_ptr<BlockRailTile>());
 }
 
 void BlockRailTile::fireTrainReserved(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection)
 {
+  if(m_world.debugBlockEvents)
+  {
+    Log::log(*this, LogMessage::D3011_TRAIN_X_RESERVED_BLOCK_X, train->name.value(), name.value());
+  }
   fireEvent(
     onTrainReserved,
     train,
@@ -687,6 +695,10 @@ void BlockRailTile::fireTrainReserved(const std::shared_ptr<Train>& train, Block
 
 void BlockRailTile::fireTrainEntered(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection)
 {
+  if(m_world.debugBlockEvents)
+  {
+    Log::log(*this, LogMessage::D3012_TRAIN_X_ENTERED_BLOCK_X, train->name.value(), name.value());
+  }
   fireEvent(
     onTrainEntered,
     train,
@@ -696,6 +708,10 @@ void BlockRailTile::fireTrainEntered(const std::shared_ptr<Train>& train, BlockT
 
 void BlockRailTile::fireTrainLeft(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection)
 {
+  if(m_world.debugBlockEvents)
+  {
+    Log::log(*this, LogMessage::D3013_TRAIN_X_LEFT_BLOCK_X, train->name.value(), name.value());
+  }
   fireEvent(
     onTrainLeft,
     train,
@@ -705,5 +721,9 @@ void BlockRailTile::fireTrainLeft(const std::shared_ptr<Train>& train, BlockTrai
 
 void BlockRailTile::fireTrainRemoved(const std::shared_ptr<Train>& train)
 {
+  if(m_world.debugBlockEvents)
+  {
+    Log::log(*this, LogMessage::D3014_TRAIN_X_REMOVED_FROM_BLOCK_X, train->name.value(), name.value());
+  }
   fireEvent(onTrainRemoved, train, shared_ptr<BlockRailTile>());
 }

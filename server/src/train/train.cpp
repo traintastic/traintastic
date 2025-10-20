@@ -35,6 +35,7 @@
 #include "../board/tile/rail/blockrailtile.hpp"
 #include "../vehicle/rail/poweredrailvehicle.hpp"
 #include "../hardware/decoder/decoder.hpp"
+#include "../log/log.hpp"
 #include "../throttle/throttle.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
@@ -693,6 +694,10 @@ std::error_code Train::setDirection(Throttle& throttle, Direction value)
 
 void Train::fireBlockAssigned(const std::shared_ptr<BlockRailTile>& block)
 {
+  if(m_world.debugTrainEvents)
+  {
+    Log::log(*this, LogMessage::D3010_TRAIN_X_ASSIGNED_TO_BLOCK_X, name.value(), block->name.value());
+  }
   fireEvent(
     onBlockAssigned,
     shared_ptr<Train>(),
@@ -701,6 +706,10 @@ void Train::fireBlockAssigned(const std::shared_ptr<BlockRailTile>& block)
 
 void Train::fireBlockReserved(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection)
 {
+  if(m_world.debugTrainEvents)
+  {
+    Log::log(*this, LogMessage::D3011_TRAIN_X_RESERVED_BLOCK_X, name.value(), block->name.value());
+  }
   fireEvent(
     onBlockReserved,
     shared_ptr<Train>(),
@@ -710,6 +719,10 @@ void Train::fireBlockReserved(const std::shared_ptr<BlockRailTile>& block, Block
 
 void Train::fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection)
 {
+  if(m_world.debugTrainEvents)
+  {
+    Log::log(*this, LogMessage::D3012_TRAIN_X_ENTERED_BLOCK_X, name.value(), block->name.value());
+  }
   fireEvent(
     onBlockEntered,
     shared_ptr<Train>(),
@@ -719,6 +732,10 @@ void Train::fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockT
 
 void Train::fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection)
 {
+  if(m_world.debugTrainEvents)
+  {
+    Log::log(*this, LogMessage::D3013_TRAIN_X_LEFT_BLOCK_X, name.value(), block->name.value());
+  }
   fireEvent(
     onBlockLeft,
     shared_ptr<Train>(),
@@ -728,6 +745,10 @@ void Train::fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrai
 
 void Train::fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block)
 {
+  if(m_world.debugTrainEvents)
+  {
+    Log::log(*this, LogMessage::D3014_TRAIN_X_REMOVED_FROM_BLOCK_X, name.value(), block->name.value());
+  }
   fireEvent(
     onBlockRemoved,
     shared_ptr<Train>(),
@@ -736,30 +757,54 @@ void Train::fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block)
 
 void Train::fireZoneAssigned(const std::shared_ptr<Zone>& zone)
 {
+  if(m_world.debugTrainEvents)
+  {
+    Log::log(*this, LogMessage::D3020_TRAIN_X_ASSIGNED_TO_ZONE_X, name.value(), zone->name.value());
+  }
   fireEvent(onZoneAssigned, shared_ptr<Train>(), zone);
 }
 
 void Train::fireZoneEntering(const std::shared_ptr<Zone>& zone)
 {
+  if(m_world.debugTrainEvents)
+  {
+    Log::log(*this, LogMessage::D3021_TRAIN_X_ENTERING_ZONE_X, name.value(), zone->name.value());
+  }
   fireEvent(onZoneEntering, shared_ptr<Train>(), zone);
 }
 
 void Train::fireZoneEntered(const std::shared_ptr<Zone>& zone)
 {
+  if(m_world.debugTrainEvents)
+  {
+    Log::log(*this, LogMessage::D3022_TRAIN_X_ENTERED_ZONE_X, name.value(), zone->name.value());
+  }
   fireEvent(onZoneEntered, shared_ptr<Train>(), zone);
 }
 
 void Train::fireZoneLeaving(const std::shared_ptr<Zone>& zone)
 {
+  if(m_world.debugTrainEvents)
+  {
+    Log::log(*this, LogMessage::D3023_TRAIN_X_LEAVING_ZONE_X, name.value(), zone->name.value());
+  }
   fireEvent(onZoneLeaving, shared_ptr<Train>(), zone);
 }
 
 void Train::fireZoneLeft(const std::shared_ptr<Zone>& zone)
 {
+  if(m_world.debugTrainEvents)
+  {
+    Log::log(*this, LogMessage::D3024_TRAIN_X_LEFT_ZONE_X, name.value(), zone->name.value());
+  }
   fireEvent(onZoneLeft, shared_ptr<Train>(), zone);
 }
 
 void Train::fireZoneRemoved(const std::shared_ptr<Zone>& zone)
 {
+  if(m_world.debugTrainEvents)
+  {
+    Log::log(*this, LogMessage::D3025_TRAIN_X_REMOVED_FROM_ZONE_X, name.value(), zone->name.value());
+  }
   fireEvent(onZoneRemoved, shared_ptr<Train>(), zone);
 }

@@ -112,6 +112,10 @@ class World : public Object
     Property<ExternalOutputChangeAction> extOutputChangeAction;
     Property<uint16_t> pathReleaseDelay;
 
+    Property<bool> debugBlockEvents;
+    Property<bool> debugTrainEvents;
+    Property<bool> debugZoneEvents;
+
     ObjectProperty<ControllerList<DecoderController>> decoderControllers;
     ObjectProperty<ControllerList<InputController>> inputControllers;
     ObjectProperty<ControllerList<OutputController>> outputControllers;

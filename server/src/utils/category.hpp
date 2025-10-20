@@ -28,6 +28,7 @@
 namespace Category
 {
   constexpr std::string_view cargo = "category:cargo";
+  constexpr std::string_view debug = "category:debug";
   constexpr std::string_view developer = "category:developer";
   constexpr std::string_view info = "category:info";
   constexpr std::string_view log = "category:log";

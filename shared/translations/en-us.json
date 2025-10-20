@@ -6829,5 +6829,65 @@
     {
         "term": "category:options",
         "definition": "Options"
+    },
+    {
+        "term": "category:debug",
+        "definition": "Debug"
+    },
+    {
+        "term": "world:debug_block_events",
+        "definition": "Block events"
+    },
+    {
+        "term": "world:debug_train_events",
+        "definition": "Train events"
+    },
+    {
+        "term": "world:debug_zone_events",
+        "definition": "Zone events"
+    },
+    {
+        "term": "message:D3010",
+        "definition": "Train '%1' assinged to block '%2'"
+    },
+    {
+        "term": "message:D3011",
+        "definition": "Train '%1' reserved block '%2'"
+    },
+    {
+        "term": "message:D3012",
+        "definition": "Train '%1' entered block '%2'"
+    },
+    {
+        "term": "message:D3013",
+        "definition": "Train '%1' left block '%2'"
+    },
+    {
+        "term": "message:D3014",
+        "definition": "Train '%1' removed from block '%2'"
+    },
+    {
+        "term": "message:D3020",
+        "definition": "Train '%1' assigned to zone '%2'"
+    },
+    {
+        "term": "message:D3021",
+        "definition": "Train '%1' entering zone '%2'"
+    },
+    {
+        "term": "message:D3022",
+        "definition": "Train '%1' entered zone '%2'"
+    },
+    {
+        "term": "message:D3023",
+        "definition": "Train '%1' leaving zone '%2'"
+    },
+    {
+        "term": "message:D3024",
+        "definition": "Train '%1' left zone '%2'"
+    },
+    {
+        "term": "message:D3025",
+        "definition": "Train '%1' removed from zone '%2'"
     }
 ]

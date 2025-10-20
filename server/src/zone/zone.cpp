@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
 #include "../core/objectvectorproperty.tpp"
+#include "../log/log.hpp"
 #include "../train/train.hpp"
 #include "../utils/displayname.hpp"
 #include "../world/world.hpp"
@@ -141,30 +142,54 @@ void Zone::destroying()
 
 void Zone::fireTrainAssigned(const std::shared_ptr<Train>& train)
 {
+  if(m_world.debugZoneEvents)
+  {
+    Log::log(*this, LogMessage::D3020_TRAIN_X_ASSIGNED_TO_ZONE_X, train->name.value(), name.value());
+  }
   fireEvent(onTrainAssigned, train, shared_ptr<Zone>());
 }
 
 void Zone::fireTrainEntering(const std::shared_ptr<Train>& train)
 {
+  if(m_world.debugZoneEvents)
+  {
+    Log::log(*this, LogMessage::D3021_TRAIN_X_ENTERING_ZONE_X, train->name.value(), name.value());
+  }
   fireEvent(onTrainEntering, train, shared_ptr<Zone>());
 }
 
 void Zone::fireTrainEntered(const std::shared_ptr<Train>& train)
 {
+  if(m_world.debugZoneEvents)
+  {
+    Log::log(*this, LogMessage::D3022_TRAIN_X_ENTERED_ZONE_X, train->name.value(), name.value());
+  }
   fireEvent(onTrainEntered, train, shared_ptr<Zone>());
 }
 
 void Zone::fireTrainLeaving(const std::shared_ptr<Train>& train)
 {
+  if(m_world.debugZoneEvents)
+  {
+    Log::log(*this, LogMessage::D3023_TRAIN_X_LEAVING_ZONE_X, train->name.value(), name.value());
+  }
   fireEvent(onTrainLeaving, train, shared_ptr<Zone>());
 }
 
 void Zone::fireTrainLeft(const std::shared_ptr<Train>& train)
 {
+  if(m_world.debugZoneEvents)
+  {
+    Log::log(*this, LogMessage::D3024_TRAIN_X_LEFT_ZONE_X, train->name.value(), name.value());
+  }
   fireEvent(onTrainLeft, train, shared_ptr<Zone>());
 }
 
 void Zone::fireTrainRemoved(const std::shared_ptr<Train>& train)
 {
+  if(m_world.debugZoneEvents)
+  {
+    Log::log(*this, LogMessage::D3025_TRAIN_X_REMOVED_FROM_ZONE_X, train->name.value(), name.value());
+  }
   fireEvent(onTrainRemoved, train, shared_ptr<Zone>());
 }

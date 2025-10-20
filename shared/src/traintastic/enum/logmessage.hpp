@@ -72,6 +72,17 @@ enum class LogMessage : uint32_t
   D2009_SLOT_X_IS_X = LogMessageOffset::debug + 2009,
   D2010_SLOT_X_IS_FREE = LogMessageOffset::debug + 2010,
   D3001_ACQUIRING_TRAIN_X_FAILED_X = LogMessageOffset::debug + 3001,
+  D3010_TRAIN_X_ASSIGNED_TO_BLOCK_X = LogMessageOffset::debug + 3010,
+  D3011_TRAIN_X_RESERVED_BLOCK_X = LogMessageOffset::debug + 3011,
+  D3012_TRAIN_X_ENTERED_BLOCK_X = LogMessageOffset::debug + 3012,
+  D3013_TRAIN_X_LEFT_BLOCK_X = LogMessageOffset::debug + 3013,
+  D3014_TRAIN_X_REMOVED_FROM_BLOCK_X = LogMessageOffset::debug + 3014,
+  D3020_TRAIN_X_ASSIGNED_TO_ZONE_X = LogMessageOffset::debug + 3020,
+  D3021_TRAIN_X_ENTERING_ZONE_X = LogMessageOffset::debug + 3021,
+  D3022_TRAIN_X_ENTERED_ZONE_X = LogMessageOffset::debug + 3022,
+  D3023_TRAIN_X_LEAVING_ZONE_X = LogMessageOffset::debug + 3023,
+  D3024_TRAIN_X_LEFT_ZONE_X = LogMessageOffset::debug + 3024,
+  D3025_TRAIN_X_REMOVED_FROM_ZONE_X = LogMessageOffset::debug + 3025,
   D9999_X = LogMessageOffset::debug + 9999,
 
   // Info:
