@@ -99,6 +99,10 @@ def push(args: list):
 
         fd, tmp_file = tempfile.mkstemp(suffix='.json')
         try:
+            terms = read_traintastic_terms(language)
+            for k, v in read_innosetup_isl(language).items():
+                terms.append({'term': 'innosetup:' + k, 'definition': v})
+
             with os.fdopen(fd, 'w', encoding='utf8') as f:
                 json.dump(terms, f, indent=4)
 
@@ -108,7 +112,7 @@ def push(args: list):
                 language_code=poeditor_language_code(language),
                 file_path=tmp_file,
                 overwrite=True,
-                sync_terms=(language == 'en_us'))
+                sync_terms=(language == 'en-us'))
         finally:
             os.unlink(tmp_file)
 
