@@ -33,7 +33,8 @@ class MainWindow : public QMainWindow
 public:
   explicit MainWindow(QWidget* parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
-  void load(const QString& filename);
+  void load(const QString& filename,
+            bool localOnly, bool discoverable);
   void setFullScreen(bool value);
 
 protected:
@@ -46,6 +47,9 @@ private:
   QAction* m_power;
   QLabel* m_tickActive;
   std::vector<float> m_tickActiveFilter;
+
+  bool mLocalOnly = false;
+  bool mDiscoverable = false;
 
   void toggleFullScreen();
   void showAbout();

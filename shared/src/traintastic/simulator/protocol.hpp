@@ -35,6 +35,8 @@ enum class OpCode : uint8_t
   LocomotiveSpeedDirection = 2,
   SensorChanged = 3,
   AccessorySetState = 4,
+  Handshake = 5,
+  HandshakeResponse = 6
 };
 
 struct Message
@@ -49,6 +51,16 @@ struct Message
   }
 };
 static_assert(sizeof(Message) == 2);
+
+struct HandShake : Message
+{
+  HandShake(bool reply)
+    : Message(reply ? OpCode::HandshakeResponse : OpCode::Handshake,
+              sizeof(HandShake))
+  {
+  }
+};
+static_assert(sizeof(HandShake) == 2);
 
 struct Power : Message
 {
