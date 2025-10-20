@@ -38,7 +38,7 @@ TurnoutTileWidget::TurnoutTileWidget(ObjectPtr object, QWidget* parent)
   if(auto* position = m_object->getProperty("position")) [[likely]]
   {
     m_image->setTurnoutPosition(position->toEnum<TurnoutPosition>());
-    connect(position, &Property::valueChanged,
+    connect(position, &Property::valueChanged, this,
       [this, position]()
       {
         m_image->setTurnoutPosition(position->toEnum<TurnoutPosition>());
