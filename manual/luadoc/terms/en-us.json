@@ -2618,5 +2618,125 @@
   {
     "term": "object.train.zones:description",
     "definition": "List of {ref:object.trainzonestatus|train zone status} objects of all zones that the train is entering, has entered and/or is leaving."
+  },
+  {
+    "term": "object.scriptthrottle:title",
+    "definition": "Script throttle"
+  },
+  {
+    "term": "object.scriptthrottle:description",
+    "definition": "Represents a script-accessible throttle object that can control a {ref:object.train|train} when acquired.\nThrottle objects can be created using the `class.create_throttle()` function."
+  },
+  {
+    "term": "object.throttle.name:description",
+    "definition": "The name assigned to this throttle."
+  },
+  {
+    "term": "object.throttle.train:description",
+    "definition": "the {ref:object.train|train} currently controlled by this throttle, if any."
+  },
+  {
+    "term": "object.scriptthrottle.acquire:description",
+    "definition": "Attempts to acquire control of {ref:object.train|train} for this throttle."
+  },
+  {
+    "term": "object.scriptthrottle.acquire.parameter.train:description",
+    "definition": "The {ref:object.train|train} to acquire."
+  },
+  {
+    "term": "object.scriptthrottle.acquire.parameter.steal:description",
+    "definition": "Optional flag allowing the throttle to steal control from another throttle, default is `false`."
+  },
+  {
+    "term": "object.scriptthrottle.acquire:return_values",
+    "definition": "Returns `true` if the {ref:object.train|train} was successfully acquired, `false` otherwise."
+  },
+  {
+    "term": "object.scriptthrottle.change_direction:description",
+    "definition": "Reverses the current direction of the {ref:object.train|train} controlled by this throttle. The train can only change direcition if stopped."
+  },
+  {
+    "term": "object.scriptthrottle.change_direction:return_values",
+    "definition": "Returns `true` if the direction was changed successfully, `false` otherwise."
+  },
+  {
+    "term": "object.scriptthrottle.emergency_stop:description",
+    "definition": "Immediately stops the {ref:object.train|train} controlled by this throttle, bypassing any deceleration logic."
+  },
+  {
+    "term": "object.scriptthrottle.emergency_stop:return_values",
+    "definition": "Returns `true`, only returns `false` if throttle is not acquired."
+  },
+  {
+    "term": "object.scriptthrottle.release:description",
+    "definition": "Releases control of the currently controlled {ref:object.train|train}."
+  },
+  {
+    "term": "object.scriptthrottle.release.parameter.stop:description",
+    "definition": "Optional boolean indicating whether the {ref:object.train|train} should stop when released, default is `true`."
+  },
+  {
+    "term": "object.scriptthrottle.set_direction:description",
+    "definition": "Sets the direction of the {ref:object.train|train}. The train can only change direcition if stopped."
+  },
+  {
+    "term": "object.scriptthrottle.set_direction.parameter.direction:description",
+    "definition": "The desired {ref:enum.direction|direction} for the {ref:object.train|train} (`enum.direction.FORWARD` or `enum.direction.REVERSE`)."
+  },
+  {
+    "term": "object.scriptthrottle.set_direction:return_values",
+    "definition": "Returns true if the direction was successfully set."
+  },
+  {
+    "term": "object.scriptthrottle.set_speed:description",
+    "definition": "Sets the current speed of the {ref:object.train|train} directly."
+  },
+  {
+    "term": "object.scriptthrottle.set_speed.parameter.speed:description",
+    "definition": "The train speed in *unit*."
+  },
+  {
+    "term": "object.scriptthrottle.set_speed.parameter.unit:description",
+    "definition": "The {ref:enum.speed_unit|speed unit} (e.g. `enum.speed_unit.KMPH` or `enum.speed_unit.MPH`)."
+  },
+  {
+    "term": "object.scriptthrottle.set_speed:return_values",
+    "definition": "Returns `true` if the speed was successfully set, `false` otherwise."
+  },
+  {
+    "term": "object.scriptthrottle.set_target_speed:description",
+    "definition": "Sets the target speed for the {ref:object.train|train}, allowing gradual acceleration or deceleration."
+  },
+  {
+    "term": "object.scriptthrottle.set_target_speed.parameter.target_speed:description",
+    "definition": "The desired target speed for the train in *unit*."
+  },
+  {
+    "term": "object.scriptthrottle.set_target_speed.parameter.unit:description",
+    "definition": "The {ref:enum.speed_unit|speed unit} (e.g. `enum.speed_unit.KMPH` or `enum.speed_unit.MPH`)."
+  },
+  {
+    "term": "object.scriptthrottle.set_target_speed:return_values",
+    "definition": "Returns `true` if the target speed was successfully applied, `false` otherwise."
+  },
+  {
+    "term": "object.scriptthrottle.on_acquire:description",
+    "definition": "Event triggered when the throttle successfully acquires a {ref:object.train|train}."
+  },
+  {
+    "term": "object.throttle.on_acquire.parameter.throttle:description",
+    "definition": "the throttle that is acquired control of the {ref:object.train|train}."
+  },
+  {
+    "term": "object.throttle.on_acquire.parameter.train:description",
+    "definition": "the {ref:object.train|train} that is acquired by the throttle."
+  },
+  {
+    "term": "object.scriptthrottle.on_release:description",
+    "definition": "Event triggered when the throttle releases control of its {ref:object.train|train}."
+  },
+  {
+    "term": "object.throttle.on_release.parameter.throttle:description",
+    "definition": "the throttle that released control."
   }
 ]
