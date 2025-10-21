@@ -56,6 +56,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   RailTile(world, _id, TileId::RailBlock),
   m_node{*this, 2},
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
+  length{*this, "length", 0.0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   inputMap{this, "input_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   state{this, "state", BlockState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState},
   sensorStates{*this, "sensor_states", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
@@ -182,6 +183,10 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   Attributes::addDisplayName(name, DisplayName::Object::name);
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
+
+  Attributes::addDisplayName(length, DisplayName::Vehicle::Rail::length);
+  Attributes::addEnabled(length, editable);
+  m_interfaceItems.add(length);
 
   m_interfaceItems.add(inputMap);
 
@@ -545,6 +550,7 @@ void BlockRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
   const bool editable = contains(worldState, WorldState::Edit);
 
   Attributes::setEnabled(name, editable);
+  Attributes::setEnabled(length, editable);
 }
 
 void BlockRailTile::addToWorld()

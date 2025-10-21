@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <array>
 #include <traintastic/enum/blocktraindirection.hpp>
 #include "../../map/node.hpp"
+#include "../../../core/lengthproperty.hpp"
 #include "../../../core/method.hpp"
 #include "../../../core/objectproperty.hpp"
 #include "../../../core/vectorproperty.hpp"
@@ -83,6 +84,7 @@ class BlockRailTile : public RailTile
     boost::signals2::signal<void (const BlockRailTile&, BlockState)> stateChanged;
 
     Property<std::string> name;
+    LengthProperty length;
     ObjectProperty<BlockInputMap> inputMap;
     Property<BlockState> state;
     VectorProperty<SensorState> sensorStates;
