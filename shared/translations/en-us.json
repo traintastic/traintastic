@@ -24,6 +24,10 @@
         "definition": "Reserved"
     },
     {
+        "term": "block_state:unknown",
+        "definition": "Unknown"
+    },
+    {
         "term": "board:delete_tile",
         "definition": "Delete tile"
     },
