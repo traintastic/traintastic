@@ -32,6 +32,7 @@
 #include "../interfaceitemnamelabel.hpp"
 #include "../propertycheckbox.hpp"
 #include "../propertycombobox.hpp"
+#include "../objectpropertycombobox.hpp"
 #include "../propertyspinbox.hpp"
 #include "../propertydoublespinbox.hpp"
 #include "../propertylineedit.hpp"
@@ -106,6 +107,10 @@ void ObjectEditWidget::buildForm()
             {
               tabs.append(new ObjectEditWidget(*property, this));
               continue;
+            }
+            else if(property->name() == "interface")
+            {
+              w = new ObjectPropertyComboBox(*property, this);
             }
             else
             {
