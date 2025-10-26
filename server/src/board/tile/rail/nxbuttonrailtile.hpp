@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,11 +27,12 @@
 #include <boost/signals2/connection.hpp>
 #include "../../map/node.hpp"
 #include "../../../core/objectproperty.hpp"
+#include "../../../hardware/input/inputconsumer.hpp"
 
 class BlockRailTile;
 class Input;
 
-class NXButtonRailTile final : public StraightRailTile
+class NXButtonRailTile final : public StraightRailTile, public InputConsumer
 {
   CLASS_ID("board_tile.rail.nx_button")
   CREATE(NXButtonRailTile)
@@ -39,11 +40,6 @@ class NXButtonRailTile final : public StraightRailTile
 
   private:
     Node m_node;
-    boost::signals2::connection m_inputDestroying;
-    boost::signals2::connection m_inputValueChanged;
-
-    void connectInput(Input& object);
-    void disconnectInput(Input& object);
 
     void updateEnabled();
 
@@ -52,15 +48,14 @@ class NXButtonRailTile final : public StraightRailTile
     void destroying() final;
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
     void boardModified() final;
+    void inputValueChanged(bool value, const std::shared_ptr<Input>& input) final;
 
   public:
     Property<std::string> name;
     Property<bool> enabled;
     ObjectProperty<BlockRailTile> block;
-    ObjectProperty<Input> input;
 
     NXButtonRailTile(World& world, std::string_view id_);
-    ~NXButtonRailTile() final;
 
     std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }

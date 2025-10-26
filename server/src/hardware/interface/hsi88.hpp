@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,25 +52,6 @@ class HSI88Interface final
     static constexpr uint32_t inputAddressMin = 1;
     static constexpr uint32_t inputAddressMax = modulesMax * 16;
 
-    struct InputChannel
-    {
-      static constexpr uint32_t left = 1;
-      static constexpr uint32_t middle = 2;
-      static constexpr uint32_t right = 3;
-    };
-
-    inline static const std::vector<uint32_t> channels = {
-      InputChannel::left,
-      InputChannel::middle,
-      InputChannel::right,
-    };
-
-    inline static const std::vector<std::string_view> channelNames = {
-      "$hsi88:s88_left$",
-      "$hsi88:s88_middle$",
-      "$hsi88:s88_right$",
-    };
-
     static constexpr std::string_view versionInquiry = "v\r";
     static constexpr std::string_view terminalModeOff = "t0\r";
 
@@ -117,10 +98,9 @@ class HSI88Interface final
     HSI88Interface(World& world, std::string_view _id);
 
     // InputController:
-    const std::vector<uint32_t>* inputChannels() const final { return &channels; }
-    const std::vector<std::string_view>* inputChannelNames() const final { return &channelNames; }
-    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
-    void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
+    std::span<const InputChannel> inputChannels() const final;
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
+    void inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action) final;
 };
 
 #endif

@@ -77,10 +77,9 @@ class Z21Interface final
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    const std::vector<uint32_t>* inputChannels() const final;
-    const std::vector<std::string_view>* inputChannelNames() const final;
-    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
-    void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
+    std::span<const InputChannel> inputChannels() const final;
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
+    void inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
     std::span<const OutputChannel> outputChannels() const final;

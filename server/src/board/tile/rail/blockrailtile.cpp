@@ -26,6 +26,7 @@
 #include "../../../core/objectvectorproperty.tpp"
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
+#include "../../../hardware/input/input.hpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
 #include "../../../train/train.hpp"
@@ -109,10 +110,10 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
             // TODO: use train length if block has multiple occupancy sensors, center train in block
             for(const auto& item : *inputMap)
             {
-              if(item->input && item->input->interface)
+              if(item->input())
               {
                 if(item->type == SensorType::OccupancyDetector)
-                  item->input->simulateChange(item->invert.value() ? SimulateInputAction::SetFalse : SimulateInputAction::SetTrue);
+                  item->input()->simulateChange(item->invert.value() ? SimulateInputAction::SetFalse : SimulateInputAction::SetTrue);
                 else
                   assert(false); // not yet implemented
               }
@@ -482,10 +483,10 @@ bool BlockRailTile::removeTrainInternal(const std::shared_ptr<TrainBlockStatus> 
   {
     for(const auto& item : *inputMap)
     {
-      if(item->input && item->input->interface)
+      if(item->input())
       {
         if(item->type == SensorType::OccupancyDetector)
-          item->input->simulateChange(item->invert.value() ? SimulateInputAction::SetTrue : SimulateInputAction::SetFalse);
+          item->input()->simulateChange(item->invert.value() ? SimulateInputAction::SetTrue : SimulateInputAction::SetFalse);
         else
           assert(false); // not yet implemented
       }

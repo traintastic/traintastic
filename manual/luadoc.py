@@ -36,6 +36,7 @@ class LuaDoc:
         self._libs = LuaDoc._find_libs(project_root)
         self._objects = LuaDoc._find_objects(project_root)
         self._examples = LuaDoc._find_examples(project_root)
+        self._patch()
         self._add_cross_references()
         self.set_language(LuaDoc.DEFAULT_LANGUAGE)
 
@@ -456,6 +457,19 @@ class LuaDoc:
                 })
         return items
 
+    def _patch(self) -> None:
+        """ Patch stuff that is hard to determine with a bit of regex magic """
+        for object in self._objects:
+            # remove get_output output_channels:
+            if object['cpp_name'] in ['HSI88Interface']:
+                object['items'] = [item for item in object['items'] if item['lua_name'] not in ['get_output', 'output_channels']]
+
+            # make get_input() channel arg non optional:
+            if object['cpp_name'] in ['ECoSInterface', 'HSI88Interface', 'Z21Interface']:
+                for item in object['items']:
+                    if item['lua_name'] == 'get_input':
+                        item['parameters'][0]['optional'] = False
+
     def build(self, output_dir: str) -> None:
         # reset missing terms
         self.missing_terms = []
@@ -532,7 +546,12 @@ class LuaDoc:
                             md += '[' if is_first else ' ['
                             optional += 1
                         if not is_first:
-                            md += ', '
+                            md += ','
+                        if not is_optional and optional > 0:
+                            md += ']' * optional
+                            optional = 0
+                        if not is_first:
+                            md += ' '
                         md += p['name']
                         if is_optional and 'default' in p:
                             md += ' = ' + str(p['default'])

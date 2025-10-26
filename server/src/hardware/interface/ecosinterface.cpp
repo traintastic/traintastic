@@ -45,7 +45,7 @@
 #include "../../world/worldsaver.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 CREATE_IMPL(ECoSInterface)
@@ -88,34 +88,31 @@ void ECoSInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags ch
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-const std::vector<uint32_t> *ECoSInterface::inputChannels() const
+std::span<const InputChannel> ECoSInterface::inputChannels() const
 {
-  return &ECoS::Kernel::inputChannels;
+  static const auto values = makeArray(InputChannel::S88, InputChannel::ECoSDetector);
+  return values;
 }
 
-const std::vector<std::string_view> *ECoSInterface::inputChannelNames() const
-{
-  return &ECoS::Kernel::inputChannelNames;
-}
-
-std::pair<uint32_t, uint32_t> ECoSInterface::inputAddressMinMax(uint32_t channel) const
+std::pair<uint32_t, uint32_t> ECoSInterface::inputAddressMinMax(InputChannel channel) const
 {
   using namespace ECoS;
 
   switch(channel)
   {
-    case Kernel::InputChannel::s88:
+    case InputChannel::S88:
       return {Kernel::s88AddressMin, Kernel::s88AddressMax};
 
-    case Kernel::InputChannel::ecosDetector:
+    case InputChannel::ECoSDetector:
       return {Kernel::ecosDetectorAddressMin, Kernel::ecosDetectorAddressMax};
-  }
 
-  assert(false);
-  return {0, 0};
+    default: [[unlikely]]
+      assert(false);
+      return {0, 0};
+  }
 }
 
-void ECoSInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void ECoSInterface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(channel, address, action);

@@ -568,7 +568,7 @@ bool Session::processMessage(const Message& message)
         for(auto& info : inputInfo)
         {
           response->write(info.address);
-          response->write(info.id);
+          response->write(info.used);
           response->write(info.value);
         }
         m_connection->sendMessage(std::move(response));
@@ -795,12 +795,7 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
     m_objectSignals.emplace(handle, object->propertyChanged.connect(std::bind(&Session::objectPropertyChanged, this, std::placeholders::_1)));
     m_objectSignals.emplace(handle, object->attributeChanged.connect(std::bind(&Session::objectAttributeChanged, this, std::placeholders::_1)));
 
-    if(auto* inputMonitor = dynamic_cast<InputMonitor*>(object.get()))
-    {
-      m_objectSignals.emplace(handle, inputMonitor->inputIdChanged.connect(std::bind(&Session::inputMonitorInputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-      m_objectSignals.emplace(handle, inputMonitor->inputValueChanged.connect(std::bind(&Session::inputMonitorInputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-    }
-    else if(auto* board = dynamic_cast<Board*>(object.get()))
+    if(auto* board = dynamic_cast<Board*>(object.get()))
     {
       m_objectSignals.emplace(handle, board->tileDataChanged.connect(std::bind(&Session::boardTileDataChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
     }
@@ -1191,24 +1186,6 @@ void Session::writeTypeInfo(Message& message, const TypeInfo& typeInfo)
     message.write(typeInfo.enumName);
   else if(typeInfo.type == ValueType::Set)
     message.write(typeInfo.setName);
-}
-
-void Session::inputMonitorInputIdChanged(InputMonitor& inputMonitor, const uint32_t address, std::string_view id)
-{
-  auto event = Message::newEvent(Message::Command::InputMonitorInputIdChanged);
-  event->write(m_handles.getHandle(inputMonitor.shared_from_this()));
-  event->write(address);
-  event->write(id);
-  m_connection->sendMessage(std::move(event));
-}
-
-void Session::inputMonitorInputValueChanged(InputMonitor& inputMonitor, const uint32_t address, const TriState value)
-{
-  auto event = Message::newEvent(Message::Command::InputMonitorInputValueChanged);
-  event->write(m_handles.getHandle(inputMonitor.shared_from_this()));
-  event->write(address);
-  event->write(value);
-  m_connection->sendMessage(std::move(event));
 }
 
 void Session::boardTileDataChanged(Board& board, const TileLocation& location, const TileData& data)

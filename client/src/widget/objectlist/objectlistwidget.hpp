@@ -51,7 +51,6 @@ class ObjectListWidget : public ListWidget
     MethodAction* m_actionMoveDown = nullptr;
     MethodAction* m_actionReverse = nullptr;
     MethodAction* m_actionInputMonitor = nullptr;
-    MethodAction* m_actionInputMonitorChannel = nullptr;
     MethodAction* m_actionOutputKeyboard = nullptr;
 
     bool hasEdit() const;

@@ -78,7 +78,7 @@
 using nlohmann::json;
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Interface | DecoderListColumn::Protocol | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Interface | InputListColumn::Channel | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Interface | InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Interface | OutputListColumn::Channel | OutputListColumn::Address;
 constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface /*| IdentificationListColumn::Channel*/ | IdentificationListColumn::Address;
 constexpr auto throttleListColumns = ThrottleListColumn::Name | ThrottleListColumn::Train | ThrottleListColumn::Interface;
@@ -465,7 +465,6 @@ World::World(Private /*unused*/) :
 World::~World()
 {
   deleteAll(*interfaces);
-  deleteAll(*inputs);
   deleteAll(*identifications);
   deleteAll(*boards);
   deleteAll(*zones);

@@ -92,48 +92,6 @@ TEMPLATE_TEST_CASE("Assign decoder to another interface", "[interface]", INTERFA
   REQUIRE(decoderWeak.expired());
 }
 
-TEMPLATE_TEST_CASE("Assign input to another interface", "[interface]", INTERFACES_INPUT)
-{
-  auto world = World::create();
-  std::weak_ptr<World> worldWeak = world;
-  REQUIRE_FALSE(worldWeak.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 0);
-  REQUIRE(worldWeak.lock()->inputs->length == 0);
-
-  std::weak_ptr<TestType> interfaceWeak1 = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
-  REQUIRE_FALSE(interfaceWeak1.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 1);
-  REQUIRE(worldWeak.lock()->inputs->length == 0);
-  REQUIRE(interfaceWeak1.lock()->inputs->length == 0);
-
-  std::weak_ptr<TestType> interfaceWeak2 = std::dynamic_pointer_cast<TestType>(world->interfaces->create(TestType::classId));
-  REQUIRE_FALSE(interfaceWeak2.expired());
-  REQUIRE(worldWeak.lock()->interfaces->length == 2);
-  REQUIRE(worldWeak.lock()->inputs->length == 0);
-  REQUIRE(interfaceWeak2.lock()->inputs->length == 0);
-
-  std::weak_ptr<Input> inputWeak = interfaceWeak1.lock()->inputs->create();
-  REQUIRE_FALSE(inputWeak.expired());
-  REQUIRE(inputWeak.lock()->interface.value() == std::dynamic_pointer_cast<InputController>(interfaceWeak1.lock()));
-  REQUIRE(worldWeak.lock()->interfaces->length == 2);
-  REQUIRE(worldWeak.lock()->inputs->length == 1);
-  REQUIRE(interfaceWeak1.lock()->inputs->length == 1);
-  REQUIRE(interfaceWeak2.lock()->inputs->length == 0);
-
-  inputWeak.lock()->interface = interfaceWeak2.lock();
-  REQUIRE_FALSE(inputWeak.expired());
-  REQUIRE(inputWeak.lock()->interface.value() == std::dynamic_pointer_cast<InputController>(interfaceWeak2.lock()));
-  REQUIRE(worldWeak.lock()->interfaces->length == 2);
-  REQUIRE(worldWeak.lock()->inputs->length == 1);
-  REQUIRE(interfaceWeak1.lock()->inputs->length == 0);
-  REQUIRE(interfaceWeak2.lock()->inputs->length == 1);
-
-  world.reset();
-  REQUIRE(worldWeak.expired());
-  REQUIRE(interfaceWeak1.expired());
-  REQUIRE(interfaceWeak2.expired());
-  REQUIRE(inputWeak.expired());
-}
 
 #ifndef __APPLE__
 

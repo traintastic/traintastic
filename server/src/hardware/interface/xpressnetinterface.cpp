@@ -45,7 +45,7 @@
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Address;
 
 CREATE_IMPL(XpressNetInterface)
@@ -202,12 +202,18 @@ void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFla
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(uint32_t /*channel*/) const
+std::span<const InputChannel> XpressNetInterface::inputChannels() const
+{
+  static const auto values = makeArray(InputChannel::Input);
+  return values;
+}
+
+std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(InputChannel /*channel*/) const
 {
   return {XpressNet::Kernel::inputAddressMin, XpressNet::Kernel::inputAddressMax};
 }
 
-void XpressNetInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void XpressNetInterface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);

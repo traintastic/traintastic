@@ -191,6 +191,133 @@ void WorldLoader::load()
       throw std::runtime_error("id missing");
   }
 
+  //! \todo Remove in v0.4
+  {
+    // patch for input refactor:
+    for(auto& objectData : m_objects)
+    {
+      if(!objectData.second.json.contains("class_id"))
+      {
+        continue;
+      }
+      auto classId = objectData.second.json["class_id"].get<std::string_view>();
+      if(classId == "board_tile.rail.sensor" ||
+          classId == "board_tile.rail.nx_button" ||
+          classId == "input_map_item.block")
+      {
+        const auto& input = objectData.second.json["input"];
+        if(input.is_string())
+        {
+          if(auto it = m_objects.find(input.get<std::string>()); it != m_objects.end()) [[likely]]
+          {
+            objectData.second.json["interface"] = it->second.json["interface"];
+            objectData.second.json["channel"] = it->second.json["channel"];
+            objectData.second.json["address"] = it->second.json["address"];
+          }
+        }
+        objectData.second.json.erase("input");
+      }
+      else if(classId == "board_tile.rail.block")
+      {
+        auto& inputMap = objectData.second.json["input_map"];
+        if(inputMap.is_object())
+        {
+          auto& items = inputMap["items"];
+          if(items.is_array())
+          {
+            for(auto& item : items)
+            {
+              const auto& input = item["input"];
+              if(input.is_string())
+              {
+                if(auto it = m_objects.find(input.get<std::string>()); it != m_objects.end()) [[likely]]
+                {
+                  item["interface"] = it->second.json["interface"];
+                  const int ch = it->second.json["channel"].get<int>();
+                  if(ch == 0)
+                  {
+                    item["channel"] = "input";
+                  }
+                  else if(auto interface = m_objects.find(item["interface"].get<std::string>()); it != m_objects.end()) [[likely]]
+                  {
+                    const auto interfaceClassId = interface->second.json["class_id"].get<std::string_view>();
+                    if(interfaceClassId == "interface.ecos")
+                    {
+                      if(ch == 1)
+                      {
+                        item["channel"] = "s88";
+                      }
+                      else if(ch == 2)
+                      {
+                        item["channel"] = "ecos_detector";
+                      }
+                      else [[unlikely]]
+                      {
+                        assert(false);
+                      }
+                    }
+                    else if(interfaceClassId == "interface.hsi88")
+                    {
+                      if(ch == 1)
+                      {
+                        item["channel"] = "s88_left";
+                      }
+                      else if(ch == 2)
+                      {
+                        item["channel"] = "s88_middle";
+                      }
+                      else if(ch == 3)
+                      {
+                        item["channel"] = "s88_middle";
+                      }
+                      else [[unlikely]]
+                      {
+                        assert(false);
+                      }
+                    }
+                    else if(interfaceClassId == "interface.z21")
+                    {
+                      if(ch == 1)
+                      {
+                        item["channel"] = "rbus";
+                      }
+                      else if(ch == 2)
+                      {
+                        item["channel"] = "loconet";
+                      }
+                      else [[unlikely]]
+                      {
+                        assert(false);
+                      }
+                    }
+                    else [[unlikely]]
+                    {
+                      assert(false);
+                    }
+                  }
+                  item["address"] = it->second.json["address"];
+                }
+              }
+              item.erase("input");
+            }
+          }
+        }
+      }
+    }
+    // remove all input objects:
+    for(auto it = m_objects.begin(); it != m_objects.end();)
+    {
+      if(it->second.json.contains("class_id") && it->second.json["class_id"].get<std::string_view>() == "input")
+      {
+        it = m_objects.erase(it);
+      }
+      else
+      {
+        it++;
+      }
+    }
+  }
+
   // then create all objects
   for(auto& it : m_objects)
     if(!it.second.object)
@@ -235,8 +362,6 @@ void WorldLoader::createObject(ObjectData& objectData)
     }
     objectData.object = Decoder::create(*m_world, id);
   }
-  else if(classId == Input::classId)
-    objectData.object = Input::create(*m_world, id);
   else if(classId == Identification::classId)
     objectData.object = Identification::create(*m_world, id);
   else if(classId == Board::classId)

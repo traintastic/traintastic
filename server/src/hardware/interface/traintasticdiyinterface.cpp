@@ -39,7 +39,7 @@
 #include "../../utils/makearray.hpp"
 #include "../../world/world.hpp"
 
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Address;
 
 CREATE_IMPL(TraintasticDIYInterface)
@@ -104,12 +104,18 @@ TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view 
 
 TraintasticDIYInterface::~TraintasticDIYInterface() = default;
 
-std::pair<uint32_t, uint32_t> TraintasticDIYInterface::inputAddressMinMax(uint32_t /*channel*/) const
+std::span<const InputChannel> TraintasticDIYInterface::inputChannels() const
+{
+  static const auto values = makeArray(InputChannel::Input);
+  return values;
+}
+
+std::pair<uint32_t, uint32_t> TraintasticDIYInterface::inputAddressMinMax(InputChannel /*channel*/) const
 {
   return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax};
 }
 
-void TraintasticDIYInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void TraintasticDIYInterface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);

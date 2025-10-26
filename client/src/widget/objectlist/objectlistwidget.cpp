@@ -25,6 +25,7 @@
 #include <QToolBar>
 #include <QTableView>
 #include <traintastic/locale/locale.hpp>
+#include <traintastic/enum/inputchannel.hpp>
 #include <traintastic/enum/outputchannel.hpp>
 #include "../tablewidget.hpp"
 #include "../../network/connection.hpp"
@@ -248,52 +249,51 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
 
   if(Method* method = object()->getMethod("input_monitor"))
   {
-    m_actionInputMonitor = new MethodAction(Theme::getIcon("input_monitor"), *method,
-      [this]()
-      {
-        m_requestIdInputMonitor = m_actionInputMonitor->method().call(
-          [](const ObjectPtr& inputMonitor, std::optional<const Error>)
-          {
-            if(inputMonitor)
-              MainWindow::instance->showObject(inputMonitor);
-          });
-      });
-  }
-
-  if(Method* method = object()->getMethod("input_monitor_channel"))
-  {
-    if(const auto values = method->getAttribute(AttributeName::Values, QVariant()).toList(); !values.isEmpty())
+    const auto values = method->getAttribute(AttributeName::Values, QVariant()).toList();
+    if(values.size() > 1)
     {
-      const QVariantList aliasKeys = method->getAttribute(AttributeName::AliasKeys, QVariant()).toList();
-      const QVariantList aliasValues = method->getAttribute(AttributeName::AliasValues, QVariant()).toList();
-
       QMenu* menu = new QMenu(this);
       for(const auto& value : values)
       {
-        QString text;
-        if(int index = aliasKeys.indexOf(value); index != -1)
-          text = Locale::instance->parse(aliasValues[index].toString());
-        else
-          text = value.toString();
-
-        menu->addAction(text, this,
-          [this, channel=value.toUInt()]()
+        menu->addAction(translateEnum(EnumName<InputChannel>::value, value.toLongLong()), this,
+          [this, channel=static_cast<InputChannel>(value.toUInt())]()
           {
             //cancelRequest(m_requestIdInputMonitor);
 
-            m_requestIdInputMonitor = callMethodR<ObjectPtr>(m_actionInputMonitorChannel->method(),
+            m_requestIdInputMonitor = callMethodR<ObjectPtr>(m_actionInputMonitor->method(),
               [this](const ObjectPtr& inputMonitor, std::optional<const Error> /*error*/)
               {
                 m_requestIdInputMonitor = Connection::invalidRequestId;
                 if(inputMonitor)
+                {
                   MainWindow::instance->showObject(inputMonitor);
+                }
               },
               channel);
           });
       }
 
-      m_actionInputMonitorChannel = new MethodAction(Theme::getIcon("input_monitor"), *method);
-      m_actionInputMonitorChannel->setMenu(menu);
+      m_actionInputMonitor = new MethodAction(Theme::getIcon("input_monitor"), *method);
+      m_actionInputMonitor->setMenu(menu);
+    }
+    else if(!values.empty())
+    {
+      m_actionInputMonitor = new MethodAction(Theme::getIcon("input_monitor"), *method,
+          [this, channel=static_cast<InputChannel>(values.first().toUInt())]()
+          {
+            //cancelRequest(m_requestIdInputMonitor);
+
+            m_requestIdInputMonitor = callMethodR<ObjectPtr>(m_actionInputMonitor->method(),
+              [this](const ObjectPtr& inputMonitor, std::optional<const Error> /*error*/)
+              {
+                m_requestIdInputMonitor = Connection::invalidRequestId;
+                if(inputMonitor)
+                {
+                  MainWindow::instance->showObject(inputMonitor);
+                }
+              },
+              channel);
+          });
     }
   }
 
@@ -358,19 +358,17 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
     m_toolbar->addAction(m_actionReverse);
   }
 
-  if(m_actionInputMonitor || m_actionInputMonitorChannel || m_actionOutputKeyboard)
+  if(m_actionInputMonitor || m_actionOutputKeyboard)
   {
     if(!m_toolbar->actions().empty())
     {
       m_toolbar->addSeparator();
     }
     if(m_actionInputMonitor)
-      m_toolbar->addAction(m_actionInputMonitor);
-    if(m_actionInputMonitorChannel)
     {
-      m_toolbar->addAction(m_actionInputMonitorChannel);
-      if(auto* button = qobject_cast<QToolButton*>(m_toolbar->widgetForAction(m_actionInputMonitorChannel)))
-        connect(m_actionInputMonitorChannel, &QAction::triggered, button, &QToolButton::showMenu);
+      m_toolbar->addAction(m_actionInputMonitor);
+      if(auto* button = qobject_cast<QToolButton*>(m_toolbar->widgetForAction(m_actionInputMonitor)))
+        connect(m_actionInputMonitor, &QAction::triggered, button, &QToolButton::showMenu);
     }
     if(m_actionOutputKeyboard)
     {
@@ -484,7 +482,9 @@ void ObjectListWidget::tableSelectionChanged(bool hasSelection)
 
 bool ObjectListWidget::hasEdit() const
 {
-  if(object()->classId() == "list.decoder" || object()->classId() == "list.output")
+  if(object()->classId() == "list.decoder" ||
+      object()->classId() == "list.input" ||
+      object()->classId() == "list.output")
   {
     return false;
   }

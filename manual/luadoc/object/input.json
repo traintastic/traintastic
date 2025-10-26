@@ -1,5 +1,7 @@
 {
-  "name": {},
+  "interface": {},
+  "channel": {},
+  "address": {},
   "value": {},
   "on_value_changed": {
     "parameters": [

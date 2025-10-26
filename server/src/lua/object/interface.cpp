@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@
 #include "../push.hpp"
 #include "../to.hpp"
 #include "../metatable.hpp"
+#include "../../hardware/input/inputcontroller.hpp"
+#include "../../hardware/input/input.hpp"
 #include "../../hardware/output/outputcontroller.hpp"
 #include "../../hardware/output/output.hpp"
 
@@ -47,6 +49,23 @@ void Interface::registerType(lua_State* L)
 int Interface::index(lua_State* L, ::Interface& object)
 {
   const auto key = to<std::string_view>(L, 2);
+  if(auto* inputController = dynamic_cast<::InputController*>(&object))
+  {
+    LUA_OBJECT_PROPERTY(input_channels)
+    {
+      auto channels = inputController->inputChannels();
+      lua_createtable(L, static_cast<int>(channels.size()), 0);
+      lua_Integer n = 1;
+      for(auto channel : channels)
+      {
+        Enum<std::remove_const_t<decltype(channels)::element_type>>::push(L, channel);
+        lua_rawseti(L, -2, n);
+        n++;
+      }
+      return 1;
+    }
+    LUA_OBJECT_METHOD(get_input)
+  }
   if(auto* outputController = dynamic_cast<::OutputController*>(&object))
   {
     LUA_OBJECT_PROPERTY(output_channels)
@@ -70,6 +89,30 @@ int Interface::index(lua_State* L, ::Interface& object)
 int Interface::__index(lua_State* L)
 {
   return index(L, *check<::Interface>(L, 1));
+}
+
+int Interface::get_input(lua_State* L)
+{
+  auto inputController = std::dynamic_pointer_cast<::InputController>(check<::Interface>(L, lua_upvalueindex(1)));
+  assert(inputController);
+  const auto inputChannels = inputController->inputChannels();
+  assert(!inputChannels.empty());
+  const bool channelOptional = inputChannels.size() == 1;
+  const int argc = checkArguments(L, channelOptional ? 1 : 2, 2);
+  const auto channel = (argc == 2) ? check<InputChannel>(L, 1) : inputChannels.front();
+  const auto address = check<uint32_t>(L, argc);
+  auto& stateData = Lua::Sandbox::getStateData(L);
+  auto input = inputController->getInput(channel, address, stateData.script());
+  if(input)
+  {
+    stateData.registerInput(inputController, input);
+    Lua::push(L, input);
+  }
+  else
+  {
+    Lua::push(L, nullptr);
+  }
+  return 1;
 }
 
 int Interface::get_output(lua_State* L)

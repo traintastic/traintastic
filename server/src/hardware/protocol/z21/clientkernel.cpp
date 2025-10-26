@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -355,7 +355,7 @@ void ClientKernel::receive(const Message& message)
             EventLoop::call(
               [this, address=rbusAddressMin + index, value]()
               {
-                m_inputController->updateInputValue(InputChannel::rbus, address, value);
+                m_inputController->updateInputValue(InputChannel::RBus, address, value);
               });
           }
         }
@@ -379,7 +379,7 @@ void ClientKernel::receive(const Message& message)
               EventLoop::call(
                 [this, address=loconetAddressMin + index, value]()
                 {
-                  m_inputController->updateInputValue(InputChannel::loconet, address, value);
+                  m_inputController->updateInputValue(InputChannel::LocoNet, address, value);
                 });
             }
             break;
@@ -631,7 +631,7 @@ bool ClientKernel::setOutput(OutputChannel channel, uint16_t address, OutputValu
   return false;
 }
 
-void ClientKernel::simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void ClientKernel::simulateInputChange(InputChannel channel, uint32_t address, SimulateInputAction action)
 {
   if(!m_simulation)
     return;
@@ -642,7 +642,7 @@ void ClientKernel::simulateInputChange(uint32_t channel, uint32_t address, Simul
       (void)address;
       switch(channel)
       {
-        case InputChannel::rbus:
+        case InputChannel::RBus:
         {
           if((action == SimulateInputAction::SetFalse && m_rbusFeedbackStatus[address - rbusAddressMin] == TriState::False) ||
               (action == SimulateInputAction::SetTrue && m_rbusFeedbackStatus[address - rbusAddressMin] == TriState::True))
@@ -679,7 +679,7 @@ void ClientKernel::simulateInputChange(uint32_t channel, uint32_t address, Simul
 
           break;
         }
-        case InputChannel::loconet:
+        case InputChannel::LocoNet:
         {
           const uint16_t feedbackAddress = address - loconetAddressMin;
           bool occupied;
@@ -708,6 +708,9 @@ void ClientKernel::simulateInputChange(uint32_t channel, uint32_t address, Simul
           receive(LanLocoNetDetectorOccupancyDetector(feedbackAddress, occupied));
           break;
         }
+        default: [[unlikely]]
+          assert(false);
+          break;
       }
     });
 }

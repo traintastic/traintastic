@@ -83,7 +83,8 @@ class MarklinCANInterface final
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final;
+    std::span<const InputChannel> inputChannels() const final;
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
 
     // OutputController:
     std::span<const OutputChannel> outputChannels() const final;

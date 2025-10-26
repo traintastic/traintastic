@@ -43,7 +43,7 @@
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 CREATE_IMPL(Z21Interface)
@@ -113,34 +113,31 @@ void Z21Interface::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-const std::vector<uint32_t> *Z21Interface::inputChannels() const
+std::span<const InputChannel> Z21Interface::inputChannels() const
 {
-  return &Z21::ClientKernel::inputChannels;
+  static const auto values = makeArray(InputChannel::RBus, InputChannel::LocoNet);
+  return values;
 }
 
-const std::vector<std::string_view> *Z21Interface::inputChannelNames() const
-{
-  return &Z21::ClientKernel::inputChannelNames;
-}
-
-std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(uint32_t channel) const
+std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(InputChannel channel) const
 {
   using namespace Z21;
 
   switch(channel)
   {
-    case ClientKernel::InputChannel::rbus:
+    case InputChannel::RBus:
       return {ClientKernel::rbusAddressMin, ClientKernel::rbusAddressMax};
 
-    case ClientKernel::InputChannel::loconet:
+    case InputChannel::LocoNet:
       return {ClientKernel::loconetAddressMin, ClientKernel::loconetAddressMax};
-  }
 
-  assert(false);
-  return {0, 0};
+    default: [[unlikely]]
+      assert(false);
+      return {0, 0};
+  }
 }
 
-void Z21Interface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void Z21Interface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(channel, address, action);

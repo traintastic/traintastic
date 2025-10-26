@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,24 +25,18 @@
 
 #include "straightrailtile.hpp"
 #include "../../../core/method.hpp"
-#include "../../../core/objectproperty.hpp"
 #include "../../../hardware/input/input.hpp"
+#include "../../../hardware/input/inputconsumer.hpp"
 #include "../../../enum/sensortype.hpp"
 #include "../../../enum/sensorstate.hpp"
 
-class SensorRailTile : public StraightRailTile
+class SensorRailTile : public StraightRailTile, public InputConsumer
 {
   CLASS_ID("board_tile.rail.sensor")
   DEFAULT_ID("sensor")
   CREATE(SensorRailTile)
 
   private:
-    boost::signals2::connection m_inputDestroying;
-    boost::signals2::connection m_inputPropertyChanged;
-
-    void connectInput(Input& object);
-    void disconnectInput(Input& object);
-    void inputPropertyChanged(BaseProperty& property);
     void updateSimulateTriggerEnabled();
 
   protected:
@@ -50,17 +44,16 @@ class SensorRailTile : public StraightRailTile
     void loaded() override;
     void destroying() override;
     void worldEvent(WorldState worldState, WorldEvent worldEvent) override;
+    void inputValueChanged(bool value, const std::shared_ptr<Input>& input) override;
 
   public:
     Property<std::string> name;
-    ObjectProperty<Input> input;
     Property<SensorType> type;
     Property<bool> invert;
     Property<SensorState> state;
     Method<void()> simulateTrigger;
 
     SensorRailTile(World& world, std::string_view _id);
-    ~SensorRailTile() override;
 };
 
 #endif

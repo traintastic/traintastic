@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,6 +39,7 @@
 #include <version.hpp>
 #include <traintastic/utils/str.hpp>
 #include "../world/world.hpp"
+#include "../hardware/input/inputcontroller.hpp"
 #include "../hardware/output/outputcontroller.hpp"
 #include "../throttle/scriptthrottle.hpp"
 
@@ -397,6 +398,21 @@ Sandbox::StateData::~StateData()
     auto handler = m_eventHandlers.begin()->second;
     m_eventHandlers.erase(m_eventHandlers.begin());
     handler->disconnect();
+  }
+
+  // Release inputs:
+  for(auto& it : m_inputs)
+  {
+    if(auto inputController = it.first.lock())
+    {
+      for(const auto& inputWeak : it.second)
+      {
+        if(auto input = inputWeak.lock())
+        {
+          inputController->releaseInput(*input, m_script);
+        }
+      }
+    }
   }
 
   // Release outputs:

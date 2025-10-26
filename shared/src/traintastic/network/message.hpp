@@ -70,8 +70,6 @@ class Message
       TableModelUpdateRegion = 24,
 
       InputMonitorGetInputInfo = 30,
-      InputMonitorInputIdChanged = 31,
-      InputMonitorInputValueChanged = 32,
 
       OutputKeyboardGetOutputInfo = 33,
 

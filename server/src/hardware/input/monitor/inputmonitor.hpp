@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,8 +25,10 @@
 
 #include "../../../core/object.hpp"
 #include <vector>
+#include <traintastic/enum/inputchannel.hpp>
 #include "../../../core/property.hpp"
 #include "../../../core/method.hpp"
+#include "../../../core/event.hpp"
 #include "../../../enum/tristate.hpp"
 
 class InputController;
@@ -37,35 +39,29 @@ class InputMonitor : public Object
 
   private:
     InputController& m_controller;
-    const uint32_t m_channel;
+    const InputChannel m_channel;
 
   public:
-    boost::signals2::signal<void(InputMonitor&, uint32_t, std::string_view)> inputIdChanged;
-    boost::signals2::signal<void(InputMonitor&, uint32_t, TriState)> inputValueChanged;
-
     struct InputInfo
     {
       uint32_t address;
-      std::string id;
+      bool used;
       TriState value;
-
-      InputInfo(uint32_t _address, std::string _id, TriState _value) :
-        address{_address},
-        id{std::move(_id)},
-        value{_value}
-      {
-      }
     };
 
     Property<uint32_t> addressMin;
     Property<uint32_t> addressMax;
     Method<void(uint32_t)> simulateInputChange;
+    Event<uint32_t, bool> inputUsedChanged;
+    Event<uint32_t, TriState> inputValueChanged;
 
-    InputMonitor(InputController& controller, uint32_t channel);
+    InputMonitor(InputController& controller, InputChannel channel);
 
     std::string getObjectId() const final;
 
     virtual std::vector<InputInfo> getInputInfo() const;
+    void fireInputUsedChanged(uint32_t address, bool used);
+    void fireInputValueChanged(uint32_t address, TriState value);
 };
 
 #endif

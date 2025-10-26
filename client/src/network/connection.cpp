@@ -1047,8 +1047,6 @@ void Connection::processMessage(const std::shared_ptr<Message> message)
         break;
 
       case Message::Command::ObjectEventFired:
-      case Message::Command::InputMonitorInputIdChanged:
-      case Message::Command::InputMonitorInputValueChanged:
       case Message::Command::BoardTileDataChanged:
       {
         const auto handle = message->read<Handle>();

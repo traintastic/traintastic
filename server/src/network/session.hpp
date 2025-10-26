@@ -83,9 +83,6 @@ class Session : public std::enable_shared_from_this<Session>
     void objectAttributeChanged(AbstractAttribute& attribute);
     void objectEventFired(const AbstractEvent& event, const Arguments& arguments);
 
-    void inputMonitorInputIdChanged(InputMonitor& inputMonitor, uint32_t address, std::string_view id);
-    void inputMonitorInputValueChanged(InputMonitor& inputMonitor, uint32_t address, TriState value);
-
     void boardTileDataChanged(Board& board, const TileLocation& location, const TileData& data);
 
   public:

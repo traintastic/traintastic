@@ -45,7 +45,7 @@
 #include "../../utils/makearray.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
@@ -144,7 +144,13 @@ void MarklinCANInterface::decoderChanged(const Decoder& decoder, DecoderChangeFl
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-std::pair<uint32_t, uint32_t> MarklinCANInterface::inputAddressMinMax(uint32_t /*channel*/) const
+std::span<const InputChannel> MarklinCANInterface::inputChannels() const
+{
+  static const auto values = makeArray(InputChannel::Input);
+  return values;
+}
+
+std::pair<uint32_t, uint32_t> MarklinCANInterface::inputAddressMinMax(InputChannel /*channel*/) const
 {
   return {MarklinCAN::Kernel::s88AddressMin, MarklinCAN::Kernel::s88AddressMax};
 }

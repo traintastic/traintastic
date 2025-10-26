@@ -49,7 +49,7 @@
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface | IdentificationListColumn::Address;
 
@@ -157,12 +157,18 @@ void LocoNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-std::pair<uint32_t, uint32_t> LocoNetInterface::inputAddressMinMax(uint32_t /*channel*/) const
+std::span<const InputChannel> LocoNetInterface::inputChannels() const
+{
+  static const auto values = makeArray(InputChannel::Input);
+  return values;
+}
+
+std::pair<uint32_t, uint32_t> LocoNetInterface::inputAddressMinMax(InputChannel /*channel*/) const
 {
   return {LocoNet::Kernel::inputAddressMin, LocoNet::Kernel::inputAddressMax};
 }
 
-void LocoNetInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void LocoNetInterface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);
