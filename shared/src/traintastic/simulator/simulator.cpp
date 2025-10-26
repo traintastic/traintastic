@@ -795,18 +795,6 @@ void Simulator::handShake()
     (*it)->setHandShakeResponseReceived(false);
     (*it)->send(SimulatorProtocol::HandShake(false));
   }
-
-  {
-    std::lock_guard<std::mutex> lock(m_stateMutex);
-    const auto start = std::chrono::high_resolution_clock::now();
-    updateTrainPositions();
-    updateSensors();
-    const auto duration = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start);
-    m_stateData.tickActive = duration.count() / 1e6f;
-    m_stateData.tickLoad = static_cast<float>(100 * duration.count()) / static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(tickRate).count());
-  }
-
-  onTick();
 }
 
 void Simulator::updateTrainPositions()
