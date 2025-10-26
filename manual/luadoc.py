@@ -560,7 +560,7 @@ class LuaDoc:
                         md += ']'
                     else:
                         md += ')'
-                    md += '`' + os.linesep + os.linesep
+                    md += '` {#' + item['lua_name'] + '}' + os.linesep + os.linesep
 
                     md += self._get_term(item_term_prefix + item['lua_name'].lower() + ':description') + os.linesep + os.linesep
 

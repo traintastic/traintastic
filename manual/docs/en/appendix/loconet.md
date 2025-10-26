@@ -87,8 +87,8 @@ This is useful for:
 
 Through [**Lua scripting**](../advanced/scripting-basics.md), it is also possible to:
 
-- Send **raw LocoNet messages**, see [`send()`](lua/object/loconetinterface.md#sendpacket).
-- Send **raw DCC track commands** (`OPC_IMM_PACKET`), see [`imm_packet()`](lua/object/loconetinterface.md#imm_packetdcc_packet--repeat--2).
+- Send **raw LocoNet messages**, see [`send()`](lua/object/loconetinterface.md#send).
+- Send **raw DCC track commands** (`OPC_IMM_PACKET`), see [`imm_packet()`](lua/object/loconetinterface.md#imm_packet).
 
 !!! warning
     Use this with caution.
