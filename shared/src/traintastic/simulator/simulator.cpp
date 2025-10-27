@@ -788,12 +788,14 @@ void Simulator::handShake()
     {
       std::shared_ptr<SimulatorConnection> conn = *it;
       it = m_connections.erase(it);
+      conn->stop();
       onConnectionRemoved(conn);
       continue;
     }
 
     (*it)->setHandShakeResponseReceived(false);
     (*it)->send(SimulatorProtocol::HandShake(false));
+    it++;
   }
 }
 
