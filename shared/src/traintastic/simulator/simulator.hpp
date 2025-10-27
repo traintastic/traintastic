@@ -30,6 +30,7 @@
 #include <vector>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ip/udp.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/signal.hpp>
 #include <nlohmann/json.hpp>
@@ -247,7 +248,7 @@ public:
 
   uint16_t serverPort() const;
 
-  void start();
+  void start(bool discoverable = false);
   void stop();
 
   void setPowerOn(bool powerOn);
@@ -267,20 +268,34 @@ public:
 
 private:
   constexpr static auto tickRate = std::chrono::milliseconds(1000 / 30);
+  constexpr static auto handShakeRate = std::chrono::milliseconds(1000);
 
   boost::asio::io_context m_ioContext;
   boost::asio::steady_timer m_tickTimer;
+  boost::asio::steady_timer m_handShakeTimer;
   boost::asio::ip::tcp::acceptor m_acceptor;
+  boost::asio::ip::udp::socket m_socketUDP;
+  std::array<char, 8> m_udpBuffer;
+  boost::asio::ip::udp::endpoint m_remoteEndpoint;
+
   std::thread m_thread;
   mutable std::mutex m_stateMutex;
   bool m_serverEnabled = false;
   bool m_serverLocalHostOnly = true;
+  static constexpr uint16_t defaultPort = 5741; // UDP Discovery
   uint16_t m_serverPort = 5741;
+
+  size_t lastConnectionId = 0;
   std::list<std::shared_ptr<SimulatorConnection>> m_connections;
 
   void accept();
+  void doReceive();
+  void onConnectionRemoved(const std::shared_ptr<SimulatorConnection> &);
+
+  void sendInitialState(const std::shared_ptr<SimulatorConnection>& connection);
 
   void tick();
+  void handShake();
 
   void updateTrainPositions();
   bool updateVehiclePosition(VehicleState::Face& face, const float speed);

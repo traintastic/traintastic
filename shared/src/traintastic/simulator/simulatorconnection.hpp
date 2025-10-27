@@ -41,6 +41,7 @@ private:
   size_t m_readBufferOffset = 0;
   std::array<std::byte, 1024> m_writeBuffer;
   size_t m_writeBufferOffset = 0;
+  bool m_handShakeResponseReceived = true;
 
   void read();
   void write();
@@ -53,6 +54,13 @@ public:
   void stop();
 
   bool send(const SimulatorProtocol::Message& message);
+
+  bool handShakeResponseReceived() const { return m_handShakeResponseReceived; }
+
+  void setHandShakeResponseReceived(bool newHandShakeResponseReceived)
+  {
+    m_handShakeResponseReceived = newHandShakeResponseReceived;
+  }
 };
 
 #endif

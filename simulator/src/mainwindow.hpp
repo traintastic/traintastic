@@ -36,6 +36,12 @@ public:
   void load(const QString& filename);
   void setFullScreen(bool value);
 
+  inline void setOptions(bool localOnly, bool discoverable)
+  {
+    mLocalOnly = localOnly;
+    mDiscoverable = discoverable;
+  }
+
 protected:
   void keyPressEvent(QKeyEvent *event) final;
 
@@ -46,6 +52,9 @@ private:
   QAction* m_power;
   QLabel* m_tickActive;
   std::vector<float> m_tickActiveFilter;
+
+  bool mLocalOnly = false;
+  bool mDiscoverable = false;
 
   void toggleFullScreen();
   void showAbout();
