@@ -90,7 +90,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         if(QFile::exists(filename))
         {
           settings.setValue("LastLoadDir", QFileInfo(filename).absoluteFilePath());
-          load(filename, mLocalOnly, mDiscoverable);
+          load(filename);
         }
       });
     menu->addAction("Quit", this, &MainWindow::close);
@@ -157,11 +157,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
   connect(m_view, &SimulatorView::powerOnChanged, m_power, &QAction::setChecked);
 }
 
-void MainWindow::load(const QString& filename,
-                      bool localOnly, bool discoverable)
+void MainWindow::load(const QString& filename)
 {
-  mLocalOnly = localOnly;
-  mDiscoverable = discoverable;
+  setWindowFilePath(filename);
 
   QFile file(filename);
   if(file.open(QIODeviceBase::ReadOnly))

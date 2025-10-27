@@ -82,10 +82,12 @@ int main(int argc, char* argv[])
   parseOptions(app, options);
 
   MainWindow mw;
+  mw.setOptions(options.localOnly, options.discoverable);
+
   mw.show();
   if(!options.filename.isEmpty())
   {
-    mw.load(options.filename, options.localOnly, options.discoverable);
+    mw.load(options.filename);
   }
   if(options.fullscreen)
   {

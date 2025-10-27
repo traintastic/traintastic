@@ -33,9 +33,14 @@ class MainWindow : public QMainWindow
 public:
   explicit MainWindow(QWidget* parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
-  void load(const QString& filename,
-            bool localOnly, bool discoverable);
+  void load(const QString& filename);
   void setFullScreen(bool value);
+
+  inline void setOptions(bool localOnly, bool discoverable)
+  {
+    mLocalOnly = localOnly;
+    mDiscoverable = discoverable;
+  }
 
 protected:
   void keyPressEvent(QKeyEvent *event) final;
