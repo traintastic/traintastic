@@ -69,9 +69,7 @@ SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
   Attributes::addValues(type, sensorTypeValues);
   m_interfaceItems.add(type);
 
-  m_interfaceItems.add(interface);
-  m_interfaceItems.add(channel);
-  m_interfaceItems.add(address);
+  InputConsumer::addInterfaceItems(m_interfaceItems);
 
   Attributes::addEnabled(invert, editable);
   m_interfaceItems.add(invert);

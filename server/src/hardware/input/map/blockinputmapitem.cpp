@@ -65,9 +65,7 @@ BlockInputMapItem::BlockInputMapItem(BlockInputMap& parent, uint32_t itemId) :
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
 
-  m_interfaceItems.add(interface);
-  m_interfaceItems.add(channel);
-  m_interfaceItems.add(address);
+  InputConsumer::addInterfaceItems(m_interfaceItems);
 
   Attributes::addEnabled(type, false/*editable && stopped*/);
   Attributes::addValues(type, sensorTypeValues);

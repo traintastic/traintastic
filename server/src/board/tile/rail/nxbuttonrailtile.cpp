@@ -79,9 +79,7 @@ NXButtonRailTile::NXButtonRailTile(World& world, std::string_view id_)
 
   m_interfaceItems.add(block);
 
-  m_interfaceItems.add(interface);
-  m_interfaceItems.add(channel);
-  m_interfaceItems.add(address);
+  InputConsumer::addInterfaceItems(m_interfaceItems);
 }
 
 void NXButtonRailTile::loaded()

@@ -696,6 +696,14 @@
         "definition": "OPC_MULTI_SENSE direction"
     },
     {
+        "term": "input:off_delay",
+        "definition": "Off delay"
+    },
+    {
+        "term": "input:on_delay",
+        "definition": "On delay"
+    },
+    {
         "term": "input_list:bus",
         "definition": "Bus"
     },

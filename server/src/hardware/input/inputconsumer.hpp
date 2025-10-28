@@ -22,6 +22,7 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTCONSUMER_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUTCONSUMER_HPP
 
+#include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/connection.hpp>
 #include "../../core/property.hpp"
 #include "../../core/objectproperty.hpp"
@@ -32,6 +33,7 @@ enum class WorldEvent : uint64_t;
 
 class World;
 class Object;
+class InterfaceItems;
 class Input;
 class InputController;
 
@@ -39,6 +41,7 @@ class InputConsumer
 {
 private:
   Object& m_object;
+  boost::asio::steady_timer m_inputFilterTimer;
   std::shared_ptr<Input> m_input;
   boost::signals2::connection m_inputDestroying;
   boost::signals2::connection m_inputValueChanged;
@@ -53,6 +56,8 @@ protected:
   void loaded();
   void worldEvent(WorldState worldState, WorldEvent worldEvent);
 
+  void addInterfaceItems(InterfaceItems& items);
+
   const std::shared_ptr<Input>& input()
   {
     return m_input;
@@ -61,9 +66,16 @@ protected:
   virtual void inputValueChanged(bool value, const std::shared_ptr<Input>& input) = 0;
 
 public:
+  static constexpr uint16_t delayMin = 0;
+  static constexpr uint16_t delayMax = 20'000;
+  static constexpr uint16_t delayStep = 50;
+  static constexpr std::string_view delayUnit = "ms";
+
   ObjectProperty<InputController> interface;
   Property<InputChannel> channel;
   Property<uint32_t> address;
+  Property<uint16_t> onDelay;
+  Property<uint16_t> offDelay;
 
   InputConsumer(Object& object, const World& world);
   virtual ~InputConsumer();

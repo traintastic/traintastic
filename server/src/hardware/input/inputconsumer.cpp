@@ -23,14 +23,27 @@
 #include "input.hpp"
 #include "inputcontroller.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/eventloop.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
+#include "../../utils/valuestep.hpp"
 #include "../../world/world.hpp"
+
+namespace {
+
+bool roundToDelayStep(uint16_t& value)
+{
+  value = valueStepRound(value, InputConsumer::delayStep);
+  return true;
+}
+
+}
 
 InputConsumer::InputConsumer(Object& object, const World& world)
   : m_object{object}
+  , m_inputFilterTimer{EventLoop::ioContext}
   , interface{&object, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript,
       [this](const std::shared_ptr<InputController>& /*newValue*/)
       {
@@ -85,9 +98,12 @@ InputConsumer::InputConsumer(Object& object, const World& world)
         }
         return false;
       }}
+  , onDelay{&object, "on_delay", delayMin, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr, roundToDelayStep}
+  , offDelay{&object, "off_delay", delayMin, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr, roundToDelayStep}
 {
   const auto worldState = world.state.value();
-  const bool editableAndStopped = contains(worldState, WorldState::Edit) && !contains(worldState, WorldState::Run);
+  const bool editable = contains(worldState, WorldState::Edit);
+  const bool editableAndStopped = editable && !contains(worldState, WorldState::Run);
 
   Attributes::addDisplayName(interface, DisplayName::Hardware::interface);
   Attributes::addEnabled(interface, editableAndStopped);
@@ -102,6 +118,20 @@ InputConsumer::InputConsumer(Object& object, const World& world)
   Attributes::addEnabled(address, editableAndStopped);
   Attributes::addVisible(address, false);
   Attributes::addMinMax<uint32_t>(address, Input::addressMinDefault, Input::addressMaxDefault);
+
+  Attributes::addDisplayName(onDelay, "input:on_delay");
+  Attributes::addEnabled(onDelay, editable);
+  Attributes::addMinMax(onDelay, delayMin, delayMax);
+  Attributes::addStep(onDelay, delayStep);
+  Attributes::addUnit(onDelay, delayUnit);
+  Attributes::addVisible(onDelay, false);
+
+  Attributes::addDisplayName(offDelay, "input:off_delay");
+  Attributes::addEnabled(offDelay, editable);
+  Attributes::addMinMax(offDelay, delayMin, delayMax);
+  Attributes::addStep(offDelay, delayStep);
+  Attributes::addUnit(offDelay, delayUnit);
+  Attributes::addVisible(offDelay, false);
 }
 
 InputConsumer::~InputConsumer()
@@ -128,11 +158,23 @@ void InputConsumer::loaded()
 
 void InputConsumer::worldEvent(WorldState worldState, WorldEvent /*worldEvent*/)
 {
-  const bool editableAndStopped = contains(worldState, WorldState::Edit) && !contains(worldState, WorldState::Run);
+  const bool editable = contains(worldState, WorldState::Edit);
+  const bool editableAndStopped = editable && !contains(worldState, WorldState::Run);
 
   Attributes::setEnabled(interface, editableAndStopped);
   Attributes::setEnabled(channel, editableAndStopped);
   Attributes::setEnabled(address, editableAndStopped);
+  Attributes::setEnabled(onDelay, editable);
+  Attributes::setEnabled(offDelay, editable);
+}
+
+void InputConsumer::addInterfaceItems(InterfaceItems& items)
+{
+  items.add(interface);
+  items.add(channel);
+  items.add(address);
+  items.add(onDelay);
+  items.add(offDelay);
 }
 
 void InputConsumer::setInput(std::shared_ptr<Input> value)
@@ -149,7 +191,24 @@ void InputConsumer::setInput(std::shared_ptr<Input> value)
         assert(m_input.get() == &object);
         interface.setValue(nullptr);
       });
-    m_inputValueChanged = m_input->onValueChanged.connect(std::bind_front(&InputConsumer::inputValueChanged, this));
+    m_inputValueChanged = m_input->onValueChanged.connect(
+      [this](bool inputValue, const std::shared_ptr<Input>& /*input*/)
+      {
+        {
+          boost::system::error_code ec;
+          m_inputFilterTimer.cancel(ec);
+        }
+        m_inputFilterTimer.expires_after(std::chrono::milliseconds(inputValue ? onDelay.value() : offDelay.value()));
+        m_inputFilterTimer.async_wait(
+          [this, inputValue](const boost::system::error_code& ec)
+          {
+            if(ec == boost::asio::error::operation_aborted)
+              return;
+
+            inputValueChanged(inputValue, m_input);
+          });
+      });
+
     if(m_input->value != TriState::Undefined)
     {
       inputValueChanged(m_input->value == TriState::True, m_input);
@@ -161,6 +220,8 @@ void InputConsumer::releaseInput()
 {
   if(m_input)
   {
+    boost::system::error_code ec;
+    m_inputFilterTimer.cancel(ec);
     m_inputDestroying.disconnect();
     m_inputValueChanged.disconnect();
     if(m_input->interface)
@@ -175,7 +236,7 @@ void InputConsumer::interfaceChanged()
 {
   Attributes::setValues(channel, interface ? interface->inputChannels() : std::span<const InputChannel>());
   Attributes::setVisible(channel, interface && interface->inputChannels().size() > 1);
-  Attributes::setVisible(address, interface);
+  Attributes::setVisible({address, offDelay, onDelay}, interface);
 
   channelChanged();
 }
