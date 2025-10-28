@@ -274,6 +274,14 @@ struct Attributes
     setMinMax(property, range.first, range.second);
   }
 
+  template<typename T>
+  requires(std::is_integral_v<T> || std::is_floating_point_v<T>)
+  static inline void addStep(Property<T>& property, T value)
+  {
+    assert(value > 0);
+    property.addAttribute(AttributeName::Step, value);
+  }
+
   static inline void addVisible(InterfaceItem& item, bool value)
   {
     item.addAttribute(AttributeName::Visible, value);
