@@ -52,6 +52,7 @@ class SensorRailTile : public StraightRailTile, public InputConsumer
     Property<bool> invert;
     Property<SensorState> state;
     Method<void()> simulateTrigger;
+    Event<SensorState, const std::shared_ptr<SensorRailTile>&> onStateChanged;
 
     SensorRailTile(World& world, std::string_view _id);
 };

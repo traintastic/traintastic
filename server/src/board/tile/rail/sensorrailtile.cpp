@@ -58,6 +58,7 @@ SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
           input()->interface->inputSimulateChange(input()->channel, input()->address, SimulateInputAction::Toggle);
         }
       }}
+  , onStateChanged{*this, "on_state_changed", EventFlags::Scriptable}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -81,6 +82,8 @@ SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
   Attributes::addEnabled(simulateTrigger, false);
   Attributes::addObjectEditor(simulateTrigger, false);
   m_interfaceItems.add(simulateTrigger);
+
+  m_interfaceItems.add(onStateChanged);
 }
 
 //! \todo Remove in v0.4
@@ -125,7 +128,12 @@ void SensorRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
 
 void SensorRailTile::inputValueChanged(bool value, const std::shared_ptr<Input>& /*input*/)
 {
-  state.setValueInternal(toSensorState(type, toTriState(value != invert.value())));
+  const auto newState = toSensorState(type, toTriState(value != invert.value()));
+  if(state != newState)
+  {
+    state.setValueInternal(newState);
+    fireEvent(onStateChanged, newState, shared_ptr<SensorRailTile>());
+  }
 }
 
 void SensorRailTile::updateSimulateTriggerEnabled()

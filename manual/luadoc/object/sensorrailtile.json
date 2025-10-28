@@ -1,1 +1,13 @@
-{}
+{
+  "on_state_changed": {
+    "parameters": [
+      {
+        "name": "state"
+      },
+      {
+        "name": "sensor"
+      }
+    ],
+    "since": "0.3"
+  }
+}
