@@ -17,11 +17,15 @@
     },
     {
         "term": "block_state:occupied",
-        "definition": ""
+        "definition": "Besetzt"
     },
     {
         "term": "block_state:reserved",
-        "definition": ""
+        "definition": "Reserviert"
+    },
+    {
+        "term": "block_state:unknown",
+        "definition": "Unbekannt"
     },
     {
         "term": "board:delete_tile",
@@ -29,11 +33,11 @@
     },
     {
         "term": "board:move_tile",
-        "definition": "Fliese verschieben"
+        "definition": "Kachel verschieben"
     },
     {
         "term": "board:resize_tile",
-        "definition": "Gr\u00f6\u00dfe der Kachel \u00e4ndern"
+        "definition": "Kachelgr\u00f6\u00dfe anpassen"
     },
     {
         "term": "board:resize_to_contents",
@@ -41,15 +45,15 @@
     },
     {
         "term": "board_area_grid:dot",
-        "definition": ""
+        "definition": "Punkt"
     },
     {
         "term": "board_area_grid:line",
-        "definition": ""
+        "definition": "Linie"
     },
     {
         "term": "board_area_grid:none",
-        "definition": ""
+        "definition": "Nichts"
     },
     {
         "term": "board_settings.color_scheme:dark",
@@ -57,7 +61,7 @@
     },
     {
         "term": "board_settings.color_scheme:light",
-        "definition": "Licht"
+        "definition": "Hell"
     },
     {
         "term": "board_tile.misc.label:background_color",
@@ -81,15 +85,15 @@
     },
     {
         "term": "board_tile.misc.switch:color_off",
-        "definition": ""
+        "definition": "Farbe Ausgeschaltet"
     },
     {
         "term": "board_tile.misc.switch:color_on",
-        "definition": ""
+        "definition": "Farbe Angeschaltet"
     },
     {
         "term": "board_tile.misc.switch:value",
-        "definition": ""
+        "definition": "Wert"
     },
     {
         "term": "board_tile.rail.block:assign_train",
@@ -97,7 +101,7 @@
     },
     {
         "term": "board_tile.rail.block:flip_train",
-        "definition": "Flipper-Zug"
+        "definition": "Zug Wenden"
     },
     {
         "term": "board_tile.rail.block:input_map",
@@ -109,35 +113,35 @@
     },
     {
         "term": "board_tile.rail.block:state",
-        "definition": ""
+        "definition": "Status"
     },
     {
         "term": "board_tile.rail.block:zones",
-        "definition": ""
+        "definition": "Bereiche"
     },
     {
         "term": "board_tile.rail.direction_control:state",
-        "definition": "Staat"
+        "definition": "Status"
     },
     {
         "term": "board_tile.rail.direction_control:use_a_to_b",
-        "definition": "Use: A \u2192 B"
+        "definition": "Benutze: A \u2192 B"
     },
     {
         "term": "board_tile.rail.direction_control:use_b_to_a",
-        "definition": "Use: A \u2190 B"
+        "definition": "Benutze: A \u2190 B"
     },
     {
         "term": "board_tile.rail.direction_control:use_both",
-        "definition": "Use: A \u21c4 B"
+        "definition": "Benutze: A \u21c4 B"
     },
     {
         "term": "board_tile.rail.direction_control:use_none",
-        "definition": "Use: A \ud83d\udec7 B"
+        "definition": "Benutze: A \ud83d\udec7 B"
     },
     {
         "term": "board_tile.rail.link:link",
-        "definition": "Link"
+        "definition": "Verkn\u00fcpfung"
     },
     {
         "term": "board_tile.rail.sensor:input",
@@ -149,7 +153,7 @@
     },
     {
         "term": "board_tile.rail.sensor:state",
-        "definition": ""
+        "definition": "Status"
     },
     {
         "term": "board_tile.rail.sensor:type",
@@ -165,11 +169,11 @@
     },
     {
         "term": "board_tile.rail.turnout_slip:dual_motor",
-        "definition": ""
+        "definition": "Doppel Motor/Spule"
     },
     {
         "term": "board_tile.turnout:position",
-        "definition": ""
+        "definition": "Position"
     },
     {
         "term": "board_tile:output_map",
@@ -177,11 +181,11 @@
     },
     {
         "term": "category:cargo",
-        "definition": "Fracht"
+        "definition": "G\u00fcter"
     },
     {
         "term": "category:debug",
-        "definition": ""
+        "definition": "Debug"
     },
     {
         "term": "category:developer",
@@ -205,11 +209,11 @@
     },
     {
         "term": "category:options",
-        "definition": ""
+        "definition": "Optionen"
     },
     {
         "term": "category:trains",
-        "definition": ""
+        "definition": "Z\u00fcge"
     },
     {
         "term": "class_id:board_tile.misc.label",
@@ -217,11 +221,11 @@
     },
     {
         "term": "class_id:board_tile.misc.push_button",
-        "definition": "Druckknopf"
+        "definition": "Schalter"
     },
     {
         "term": "class_id:board_tile.misc.switch",
-        "definition": ""
+        "definition": "Weiche"
     },
     {
         "term": "class_id:board_tile.rail.block",
@@ -269,7 +273,7 @@
     },
     {
         "term": "class_id:board_tile.rail.link",
-        "definition": "Link"
+        "definition": "Verkn\u00fcpfung"
     },
     {
         "term": "class_id:board_tile.rail.nx_button",
@@ -277,15 +281,15 @@
     },
     {
         "term": "class_id:board_tile.rail.nx_button:block",
-        "definition": ""
+        "definition": "Block"
     },
     {
         "term": "class_id:board_tile.rail.nx_button:input",
-        "definition": ""
+        "definition": "Eingang"
     },
     {
         "term": "class_id:board_tile.rail.one_way",
-        "definition": "Ein Weg"
+        "definition": "Einbahn"
     },
     {
         "term": "class_id:board_tile.rail.sensor",
@@ -309,11 +313,11 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_3way",
-        "definition": "Weiche 3-fach"
+        "definition": "3-fach Weiche"
     },
     {
         "term": "class_id:board_tile.rail.turnout_doubleslip",
-        "definition": "Doppelter Schlupf"
+        "definition": "Einseitige Kreuzungsweiche"
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_45",
@@ -329,7 +333,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_45",
-        "definition": "Abzweigung rechts 45\u00b0"
+        "definition": "Weiche rechts 45\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_90",
@@ -341,11 +345,11 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_singleslip",
-        "definition": "Einzelner Beleg"
+        "definition": "Zweiseitige Kreuzungsweiche"
     },
     {
         "term": "class_id:board_tile.rail.turnout_wye",
-        "definition": "Weichen-Achse"
+        "definition": "Y-Weiche"
     },
     {
         "term": "class_id:vehicle.rail.freight_wagon",
@@ -397,7 +401,7 @@
     },
     {
         "term": "color:aqua",
-        "definition": "Aqua"
+        "definition": "T\u00fcrkis"
     },
     {
         "term": "color:black",
@@ -409,7 +413,7 @@
     },
     {
         "term": "color:fuchsia",
-        "definition": "Fuchsie"
+        "definition": "Fuchsiarot"
     },
     {
         "term": "color:gray",
@@ -421,27 +425,27 @@
     },
     {
         "term": "color:lime",
-        "definition": "Lime"
+        "definition": "Limettengr\u00fcn"
     },
     {
         "term": "color:maroon",
-        "definition": "Maroon"
+        "definition": "Kastanienbraun"
     },
     {
         "term": "color:navy",
-        "definition": "Navy"
+        "definition": "Marieneblau"
     },
     {
         "term": "color:none",
-        "definition": "Keine"
+        "definition": "Kein"
     },
     {
         "term": "color:olive",
-        "definition": "Olive"
+        "definition": "Olivgr\u00fcn"
     },
     {
         "term": "color:purple",
-        "definition": "Violett"
+        "definition": "Lila"
     },
     {
         "term": "color:red",
@@ -477,11 +481,11 @@
     },
     {
         "term": "dccex_interface_type:network_tcp",
-        "definition": ""
+        "definition": "Netzwerk (TCP)"
     },
     {
         "term": "dccex_interface_type:serial",
-        "definition": ""
+        "definition": "Serial"
     },
     {
         "term": "dccex_settings:startup_delay",
@@ -537,7 +541,7 @@
     },
     {
         "term": "decoder_function_type:always_on",
-        "definition": "Immer eingeschaltet"
+        "definition": "Immer an"
     },
     {
         "term": "decoder_function_type:hold",
@@ -553,7 +557,7 @@
     },
     {
         "term": "decoder_protocol:auto",
-        "definition": "Auto"
+        "definition": "Automatisch"
     },
     {
         "term": "decoder_protocol:custom",
@@ -561,7 +565,7 @@
     },
     {
         "term": "decoder_protocol:dcc_long",
-        "definition": "DCC (Lange Adresse)"
+        "definition": "DCC (Langadresse)"
     },
     {
         "term": "decoder_protocol:dcc_short",
@@ -589,7 +593,7 @@
     },
     {
         "term": "direction:reverse",
-        "definition": "R\u00fcckg\u00e4ng"
+        "definition": "R\u00fcckw\u00e4rts"
     },
     {
         "term": "ecos_channel:ecos_detector",
@@ -597,19 +601,19 @@
     },
     {
         "term": "ext_output_change_action:do_nothing",
-        "definition": ""
+        "definition": "Nichts machen"
     },
     {
         "term": "ext_output_change_action:estop_train",
-        "definition": ""
+        "definition": "Nothalt Zug im Blockabschnitt"
     },
     {
         "term": "ext_output_change_action:estop_world",
-        "definition": ""
+        "definition": "Welt Nothalt"
     },
     {
         "term": "ext_output_change_action:poweroff_world",
-        "definition": ""
+        "definition": "Welt ausschalten"
     },
     {
         "term": "hardware:address",
@@ -625,23 +629,23 @@
     },
     {
         "term": "hardware:command_station",
-        "definition": "Zentrale"
+        "definition": "Befehls Zentrale"
     },
     {
         "term": "hardware:debug_log_input",
-        "definition": "Eingabe\u00e4nderungen protokollieren"
+        "definition": "Eingangs\u00e4nderungen protokollieren"
     },
     {
         "term": "hardware:debug_log_output",
-        "definition": "\u00c4nderungen der Protokollausgabe"
+        "definition": "Ausgangs\u00e4nderungen protokollieren"
     },
     {
         "term": "hardware:debug_log_rx_tx",
-        "definition": "Protokollierung der gesamten Kommunikation"
+        "definition": "Gesamte Kommunikation protokollieren"
     },
     {
         "term": "hardware:decoders",
-        "definition": "Dekodierer"
+        "definition": "Dekoder"
     },
     {
         "term": "hardware:identifications",
@@ -692,6 +696,14 @@
         "definition": "OPC_MULTI_SENSE Richtung"
     },
     {
+        "term": "input:off_delay",
+        "definition": "Aus Verz\u00fcgerung"
+    },
+    {
+        "term": "input:on_delay",
+        "definition": "An Verz\u00fcgerung"
+    },
+    {
         "term": "input_list:bus",
         "definition": "Bus"
     },
@@ -733,7 +745,7 @@
     },
     {
         "term": "interface.marklin_can:marklin_can_locomotive_list",
-        "definition": "M\u00e4rklin CAN: Lokomotivliste"
+        "definition": "M\u00e4rklin CAN: Lokomotivenliste"
     },
     {
         "term": "interface.marklin_can:marklin_can_node_list",
@@ -777,11 +789,11 @@
     },
     {
         "term": "interface_list:create",
-        "definition": ""
+        "definition": "Neue Schnittstelle erstellen."
     },
     {
         "term": "interface_list:list_is_empty",
-        "definition": ""
+        "definition": "Schnittstelle ist nicht leer.\nDr\u00fccke dem Plus-Knopf um eine neue Schnittstelle zu erstellen."
     },
     {
         "term": "interface_state:error",
@@ -825,7 +837,7 @@
     },
     {
         "term": "language:fy-nl",
-        "definition": ""
+        "definition": "Friesisch"
     },
     {
         "term": "language:it-it",
@@ -841,23 +853,23 @@
     },
     {
         "term": "list.train_vehicle:move",
-        "definition": "Verschieben"
+        "definition": "Verschiebe"
     },
     {
         "term": "list.train_vehicle:reverse",
-        "definition": "Umgekehrt"
+        "definition": "R\u00fcckw\u00e4rts"
     },
     {
         "term": "list.zone:highlight_zone",
-        "definition": ""
+        "definition": "hervorgehobenen Bereich"
     },
     {
         "term": "list:add",
-        "definition": "Addieren"
+        "definition": "Hinzuf\u00fcgen"
     },
     {
         "term": "list:create",
-        "definition": "erstellen."
+        "definition": "Erstellen"
     },
     {
         "term": "list:delete",
@@ -869,19 +881,19 @@
     },
     {
         "term": "list:move_down",
-        "definition": "Nach unten gehen"
+        "definition": "Hoch bewegen"
     },
     {
         "term": "list:move_up",
-        "definition": "Nachr\u00fccken"
+        "definition": "Runter bewegen"
     },
     {
         "term": "list:remove",
-        "definition": "entfernen"
+        "definition": "Entfernen"
     },
     {
         "term": "list:setup_using_wizard",
-        "definition": ""
+        "definition": "Einrichtung benutzt Assistenten"
     },
     {
         "term": "lncv_programmer:description",
@@ -913,7 +925,7 @@
     },
     {
         "term": "lncv_programmer:sending_start",
-        "definition": "Start der Sendung"
+        "definition": "Senden gestartet"
     },
     {
         "term": "lncv_programmer:start",
@@ -957,7 +969,7 @@
     },
     {
         "term": "loconet_fastclock:master",
-        "definition": "Meister (Traintatic steuert die Uhr)"
+        "definition": "Master (Traintastic steuert die Uhr)"
     },
     {
         "term": "loconet_fastclock:off",
@@ -965,7 +977,7 @@
     },
     {
         "term": "loconet_interface_type:serial",
-        "definition": "Serielle"
+        "definition": "Serielle Schnittstelle"
     },
     {
         "term": "loconet_interface_type:tcp_binary",
@@ -977,15 +989,15 @@
     },
     {
         "term": "loconet_settings:command_station",
-        "definition": "Zentrale"
+        "definition": "Befehlszentrale"
     },
     {
         "term": "loconet_settings:echo_timeout",
-        "definition": "Echo-Timeout"
+        "definition": "Echo-Zeit\u00fcberschreitung"
     },
     {
         "term": "loconet_settings:fast_clock",
-        "definition": "Schnelle Uhr"
+        "definition": "Schneller Takt"
     },
     {
         "term": "loconet_settings:fast_clock_sync_enabled",
@@ -1001,7 +1013,7 @@
     },
     {
         "term": "loconet_settings:locomotive_slots",
-        "definition": "Lokomotiv-Steckpl\u00e4tze"
+        "definition": "Lokomotiv-Stellen"
     },
     {
         "term": "loconet_settings:pcap_output",
@@ -1013,7 +1025,7 @@
     },
     {
         "term": "lua.script:clear_persistent_variables",
-        "definition": ""
+        "definition": "Feste Variablen l\u00f6schen"
     },
     {
         "term": "lua.script:disabled",
@@ -1037,7 +1049,7 @@
     },
     {
         "term": "lua_script:state",
-        "definition": "Staat"
+        "definition": "Status"
     },
     {
         "term": "lua_script_state:disabled",
@@ -1049,7 +1061,7 @@
     },
     {
         "term": "lua_script_state:running",
-        "definition": "Laufen"
+        "definition": "Ausf\u00fchren"
     },
     {
         "term": "lua_script_state:stopped",
@@ -1057,11 +1069,11 @@
     },
     {
         "term": "luadoc:index:nav",
-        "definition": ""
+        "definition": "Index"
     },
     {
         "term": "luadoc:index:title",
-        "definition": ""
+        "definition": "Traintastic Lua Skripterstellung"
     },
     {
         "term": "marklin_can_interface_type:network_tcp",
@@ -1077,11 +1089,11 @@
     },
     {
         "term": "marklin_can_locomotive_list:import_or_sync",
-        "definition": "Importieren/Synchronisieren"
+        "definition": "Importieren/synchronisieren"
     },
     {
         "term": "marklin_can_locomotive_list:import_or_sync_all",
-        "definition": "Alle importieren/synchronisieren"
+        "definition": "alle Importieren/synchronisieren"
     },
     {
         "term": "marklin_can_locomotive_list:reload",
@@ -1089,7 +1101,7 @@
     },
     {
         "term": "marklincan_settings:debug_config_stream",
-        "definition": "Debuggen: Konfig-Strom"
+        "definition": "Debuggen: Konfig-fluss"
     },
     {
         "term": "marklincan_settings:debug_status_data_config",
@@ -1113,7 +1125,7 @@
     },
     {
         "term": "message:C1002",
-        "definition": "Erstellen des Clients fehlgeschlagen (%1)"
+        "definition": "Erstellen der Verbindung fehlgeschlagen (%1)"
     },
     {
         "term": "message:C1003",
@@ -1133,7 +1145,7 @@
     },
     {
         "term": "message:C1007",
-        "definition": "Erstellen des Welt-Backup-Verzeichnisses fehlgeschlagen (%1)"
+        "definition": "Erstellen des Weltsicherungs-Verzeichnisses fehlgeschlagen (%1)"
     },
     {
         "term": "message:C1008",
@@ -1153,11 +1165,11 @@
     },
     {
         "term": "message:C1012",
-        "definition": "Unbekannte Klasse '%1', kann Objekt '%2' nicht neu erstellen"
+        "definition": "Unbekannte Klasse '%1', Objekt '%2' kann nicht neu erstellet werden"
     },
     {
         "term": "message:C1013",
-        "definition": "Kann die Welt nicht laden, die mit einer neueren Version gespeichert wurde, ben\u00f6tigt mindestens: %1"
+        "definition": "Welt kann nicht geladen, die mit einer neueren Version gespeichert wurde, ben\u00f6tigt mindestens: %1"
     },
     {
         "term": "message:C1014",
@@ -1185,11 +1197,11 @@
     },
     {
         "term": "message:C2001",
-        "definition": "Adresse bereits verwendet bei #%1"
+        "definition": "Adresse bereits in Verwendung bei #%1"
     },
     {
         "term": "message:C2004",
-        "definition": "Kann keinen freien Slot bekommen"
+        "definition": "Kann keine freie Stelle bekommen"
     },
     {
         "term": "message:C2005",
@@ -1213,7 +1225,7 @@
     },
     {
         "term": "message:D2002",
-        "definition": "RX: %1"
+        "definition": "EMPFANGEN: %1"
     },
     {
         "term": "message:D2003",
@@ -1225,7 +1237,7 @@
     },
     {
         "term": "message:D2005",
-        "definition": "%1 RX: %2"
+        "definition": "%1 EMPFANGEN: %2"
     },
     {
         "term": "message:D2006",
@@ -1241,59 +1253,59 @@
     },
     {
         "term": "message:D2009",
-        "definition": "Steckplatz %1 = %2"
+        "definition": "Stelle %1 = %2"
     },
     {
         "term": "message:D2010",
-        "definition": "Steckplatz %1 = Frei"
+        "definition": "Stelle %1 = Frei"
     },
     {
         "term": "message:D3001",
-        "definition": ""
+        "definition": "\u00dcbernahme von Zug %1 fehlgeschlagen: %2"
     },
     {
         "term": "message:D3010",
-        "definition": ""
+        "definition": "Zug \"%1\" zugewiesen zum Blockbereich \"%2\""
     },
     {
         "term": "message:D3011",
-        "definition": ""
+        "definition": "Zug \"%1\" reserviert Blockbereich \"%2\""
     },
     {
         "term": "message:D3012",
-        "definition": ""
+        "definition": "Zug \"%1\" betrat Blockbereich \"%2\""
     },
     {
         "term": "message:D3013",
-        "definition": ""
+        "definition": "Zug \"%1\" hat dem Blockbereich \"%2\" verlassen"
     },
     {
         "term": "message:D3014",
-        "definition": ""
+        "definition": "Zug \"%1\" vom Blockbereich \"%2\" entfernt"
     },
     {
         "term": "message:D3020",
-        "definition": ""
+        "definition": "Zug \"%1\" zugewiesen zum Bereich \"%2\""
     },
     {
         "term": "message:D3021",
-        "definition": ""
+        "definition": "Zug \"%1\" betretet Bereich \"%2\""
     },
     {
         "term": "message:D3022",
-        "definition": ""
+        "definition": "Zug \"%1\" betrat Bereich \"%2\""
     },
     {
         "term": "message:D3023",
-        "definition": ""
+        "definition": "Zug \"%1\"verl\u00e4sst Bereich \"%2\""
     },
     {
         "term": "message:D3024",
-        "definition": ""
+        "definition": "Zug \"%1\" verlies Bereich \"%2\""
     },
     {
         "term": "message:D3025",
-        "definition": ""
+        "definition": "Zug \"%1\" aus Bereich \"%2\" entfernt"
     },
     {
         "term": "message:E1001",
@@ -1313,19 +1325,19 @@
     },
     {
         "term": "message:E1005",
-        "definition": "Socket-Shutdown fehlgeschlagen (%1)"
+        "definition": "Herunterfahren der Schnittstelle fehlgeschlagen (%1)"
     },
     {
         "term": "message:E1006",
-        "definition": "Socket-Schreiben fehlgeschlagen (%1)"
+        "definition": "Schnittstelle schreiben fehlgeschlagen (%1)"
     },
     {
         "term": "message:E1007",
-        "definition": "Socket-Lesen fehlgeschlagen (%1)"
+        "definition": "Schnittstelle lesen fehlgeschlagen (%1)"
     },
     {
         "term": "message:E1008",
-        "definition": "Socket Acceptor Cancel fehlgeschlagen (%1)"
+        "definition": "Schnittstellen Annahmen-abbruch fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2001",
@@ -1337,31 +1349,31 @@
     },
     {
         "term": "message:E2003",
-        "definition": "Adresse herstellen fehlgeschlagen (%1)"
+        "definition": "Adressen erschaffung fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2004",
-        "definition": "Socket \u00f6ffnen fehlgeschlagen (%1)"
+        "definition": "Schnittstelle \u00f6ffnen fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2005",
-        "definition": "Socket-Verbindung fehlgeschlagen (%1)"
+        "definition": "Schnittstellen-Verbindung fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2006",
-        "definition": "Socket-Bindung fehlgeschlagen (%1)"
+        "definition": "Schnittstellen-Bindung fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2007",
-        "definition": "Socket-Schreiben fehlgeschlagen (%1)"
+        "definition": "Schnittstellen-Schreiben fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2008",
-        "definition": "Socket-Lesen fehlgeschlagen (%1)"
+        "definition": "Schnittstellen-Lesen fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2009",
-        "definition": "Socket-Empfang fehlgeschlagen (%1)"
+        "definition": "Schnittstellen-Empfang fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2010",
@@ -1369,43 +1381,43 @@
     },
     {
         "term": "message:E2011",
-        "definition": "Socket-Sendung fehlgeschlagen (%1)"
+        "definition": "Schnittstellen-Senden fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2012",
-        "definition": "Bereits verwendete Funktionsnummer"
+        "definition": "Funktionsnummer wird bereits verwendet"
     },
     {
         "term": "message:E2013",
-        "definition": "Baudrate der seriellen Schnittstelle falsch eingestellt (%1)"
+        "definition": "Einstellen der Baudrate der seriellen Schnittstelle fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2014",
-        "definition": "Datenbits der seriellen Schnittstelle nicht gesetzt (%1)"
+        "definition": "Einstellen der Databits der seriellen Schnittstelle fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2015",
-        "definition": "Stoppbits der seriellen Schnittstelle nicht gesetzt (%1)"
+        "definition": "Einstellen der Stoppbits der seriellen Schnittstelle fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2016",
-        "definition": "Parit\u00e4tseinstellung der seriellen Schnittstelle fehlgeschlagen (%1)"
+        "definition": "Einstellen der Parit\u00e4t der seriellen Schnittstelle fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2017",
-        "definition": "Flusskontrolle der seriellen Schnittstelle fehlgeschlagen (%1)"
+        "definition": "Einstellen der Flusskontrolle der seriellen Schnittstelle fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2018",
-        "definition": "Zeit\u00fcberschreitung, kein Echo innerhalb von %1ms"
+        "definition": "Zeit\u00fcberschreitung, keine \"echo\" Antwort innerhalb von %1ms"
     },
     {
         "term": "message:E2019",
-        "definition": "Timeout, keine Antwort innerhalb von %1ms"
+        "definition": "Zeit\u00fcberschreitung, keine Antwort innerhalb von %1ms"
     },
     {
         "term": "message:E2020",
-        "definition": "Die Gesamtzahl der Module darf %1 nicht \u00fcberschreiten."
+        "definition": "Die Gesamtanzahl der Module darf %1 nicht \u00fcberschreiten."
     },
     {
         "term": "message:E2021",
@@ -1425,7 +1437,7 @@
     },
     {
         "term": "message:E3001",
-        "definition": "Schienenfahrzeug kann nicht gel\u00f6scht werden, wenn es sich in einem aktiven Zug befindet"
+        "definition": "Schienenfahrzeug kann nicht gel\u00f6scht werden, w\u00e4hrend es sich in einem aktiven Zug befindet"
     },
     {
         "term": "message:E3002",
@@ -1433,35 +1445,35 @@
     },
     {
         "term": "message:E3003",
-        "definition": ""
+        "definition": "Zug wurde wegen externer \u00c4nderung der Weichenstellung %1 notgestoppt."
     },
     {
         "term": "message:E3004",
-        "definition": ""
+        "definition": "Zug wurde wegen externer \u00c4nderung der Signalstellung %1 notgestoppt."
     },
     {
         "term": "message:E3005",
-        "definition": ""
+        "definition": "Zug kann nicht entfernt werden, Zug muss zuerst halten."
     },
     {
         "term": "message:E3006",
-        "definition": ""
+        "definition": "Zug kann nicht entfernt werden, Zug kann nur vom Kopf oder Fu\u00df des Blockabschnitts entfern werden"
     },
     {
         "term": "message:E3007",
-        "definition": ""
+        "definition": "Welt wurde wegen externer \u00c4nderung der Weichenstellung %1 notgestoppt."
     },
     {
         "term": "message:E3008",
-        "definition": ""
+        "definition": "Welt wurde wegen externer \u00c4nderung der Signalstellung %1 notgestoppt."
     },
     {
         "term": "message:E3009",
-        "definition": ""
+        "definition": "Welt wurde wegen externer \u00c4nderung der Weichenstellung %1 notausgeschaltet."
     },
     {
         "term": "message:E3010",
-        "definition": ""
+        "definition": "Welt wurde wegen externer \u00c4nderung der Signalstellung %1 notausgeschaltet."
     },
     {
         "term": "message:E9001",
@@ -1481,7 +1493,7 @@
     },
     {
         "term": "message:F1004",
-        "definition": "TCP-Socket-Listening fehlgeschlagen (%1)"
+        "definition": "Abh\u00f6ren des TCP-Socket fehlgeschlagen (%1)"
     },
     {
         "term": "message:F1005",
@@ -1501,7 +1513,7 @@
     },
     {
         "term": "message:F9001",
-        "definition": "Erstellen des Lua-Status fehlgeschlagen"
+        "definition": "Erstellen des Lua-Zustands fehlgeschlagen"
     },
     {
         "term": "message:F9002",
@@ -1517,7 +1529,7 @@
     },
     {
         "term": "message:I1003",
-        "definition": "Client verbunden"
+        "definition": "Neue Verbindung"
     },
     {
         "term": "message:I1004",
@@ -1541,11 +1553,11 @@
     },
     {
         "term": "message:I3001",
-        "definition": ""
+        "definition": "Fahrregler %1 hat Zug %2 \u00fcbernommen"
     },
     {
         "term": "message:I3002",
-        "definition": ""
+        "definition": "Fahrregler %1 hat Zug %2 abgegeben"
     },
     {
         "term": "message:I9001",
@@ -1553,7 +1565,7 @@
     },
     {
         "term": "message:I9003",
-        "definition": ""
+        "definition": "Feste Variablen gel\u00f6scht"
     },
     {
         "term": "message:N1001",
@@ -1561,11 +1573,11 @@
     },
     {
         "term": "message:N1002",
-        "definition": "Eine neue Welt geschaffen"
+        "definition": "Neue Welt erschaffen"
     },
     {
         "term": "message:N1003",
-        "definition": "Restaring"
+        "definition": "Neustarten"
     },
     {
         "term": "message:N1004",
@@ -1633,11 +1645,11 @@
     },
     {
         "term": "message:N1020",
-        "definition": "Rauchen: aktiviert"
+        "definition": "Rauch: aktiviert"
     },
     {
         "term": "message:N1021",
-        "definition": "Rauchen: deaktiviert"
+        "definition": "Rauch: deaktiviert"
     },
     {
         "term": "message:N1022",
@@ -1661,11 +1673,11 @@
     },
     {
         "term": "message:N1027",
-        "definition": "Geladene Welt: %1"
+        "definition": "Welt geladen: %1"
     },
     {
         "term": "message:N1028",
-        "definition": "Geschlossene Welt"
+        "definition": "Welt geschlossen"
     },
     {
         "term": "message:N2001",
@@ -1685,7 +1697,7 @@
     },
     {
         "term": "message:N2005",
-        "definition": "PCAP-Log-Pipe wird gestartet: %1"
+        "definition": "PCAP-Protokoll-Leitung wird gestartet: %1"
     },
     {
         "term": "message:N2006",
@@ -1697,27 +1709,27 @@
     },
     {
         "term": "message:N3001",
-        "definition": "Zug %1 dem Block %2 zugewiesen"
+        "definition": "Zug %1 wurde dem Block %2 zugewiesen"
     },
     {
         "term": "message:N3002",
-        "definition": "Zug %1 aus Block %2 entfernt"
+        "definition": "Zug %1 wurde aus Block %2 entfernt"
     },
     {
         "term": "message:N3003",
-        "definition": ""
+        "definition": "Weichenstellung wurde auf reserviert resetet"
     },
     {
         "term": "message:N3004",
-        "definition": ""
+        "definition": "Signalstellung wurde auf reserviert resetet"
     },
     {
         "term": "message:N3005",
-        "definition": ""
+        "definition": "Fahrregler %1 hat Zug %2 gestohlen"
     },
     {
         "term": "message:N3006",
-        "definition": ""
+        "definition": "Fahrregler %1 hat Zug %2 abgegeben ohne ihm zu stoppen"
     },
     {
         "term": "message:N9001",
@@ -1737,15 +1749,15 @@
     },
     {
         "term": "message:W2001",
-        "definition": "Empfangene fehlerhafte Daten haben %1 Bytes verloren"
+        "definition": "Fehlerhafte Daten empfangen %1 Bytes verloren"
     },
     {
         "term": "message:W2002",
-        "definition": "Die Kommandozentrale unterst\u00fctzt keine Funktionen \u00fcber F%1"
+        "definition": "Die Befehlszentrale unterst\u00fctzt keine Funktionen \u00fcber F%1"
     },
     {
         "term": "message:W2003",
-        "definition": "Die Zentrale unterst\u00fctzt nicht %1 Geschwindigkeitsschritte mit %2"
+        "definition": "Fehlerhafte Daten empfangen %1 Bytes verloren [%2]"
     },
     {
         "term": "message:W2004",
@@ -1757,19 +1769,19 @@
     },
     {
         "term": "message:W2006",
-        "definition": "Die Zentrale unterst\u00fctzt den Lokschacht %1 nicht"
+        "definition": "Die Befehlszentrale unterst\u00fctzt den Lokstelle %1 nicht"
     },
     {
         "term": "message:W2007",
-        "definition": "Die Zentrale unterst\u00fctzt den Fast-Clock-Slot nicht"
+        "definition": "Die Befehlszentrale unterst\u00fctzt die Schnelle-Takt-Schnittstelle nicht"
     },
     {
         "term": "message:W2018",
-        "definition": "Zeit\u00fcberschreitung, kein Echo innerhalb von %1ms"
+        "definition": "Zeit\u00fcberschreitung, kein \"Echo\" Antwort innerhalb von %1ms"
     },
     {
         "term": "message:W2019",
-        "definition": "Z21-Rundfunkflags stimmen nicht mit den angeforderten Flags \u00fcberein"
+        "definition": "Die Z21-\u00dcbertragungs-Flags stimmen nicht mit den angeforderten \u00fcberein"
     },
     {
         "term": "message:W2020",
@@ -1781,15 +1793,15 @@
     },
     {
         "term": "message:W3002",
-        "definition": "NX-Taste nicht mit einem Block verbunden"
+        "definition": "NX-Taste mit keinem Block verbunden"
     },
     {
         "term": "message:W3003",
-        "definition": ""
+        "definition": "Die Weichenstellung wurde extern ge\u00e4ndert, w\u00e4hrend sie in einem Fahrweg gesperrt war"
     },
     {
         "term": "message:W3004",
-        "definition": ""
+        "definition": "Die Signalstellung wurde extern ge\u00e4ndert, w\u00e4hrend sie in einem Fahrweg gesperrt war"
     },
     {
         "term": "message:W9001",
@@ -1817,15 +1829,15 @@
     },
     {
         "term": "opc_multi_sense_direction:none",
-        "definition": "Keiner"
+        "definition": "keine"
     },
     {
         "term": "output.ecos_object:state",
-        "definition": "Staat"
+        "definition": "Status"
     },
     {
         "term": "output_action:none",
-        "definition": "Kein"
+        "definition": "Keine"
     },
     {
         "term": "output_action:off",
@@ -1833,7 +1845,7 @@
     },
     {
         "term": "output_action:on",
-        "definition": "Auf"
+        "definition": "An"
     },
     {
         "term": "output_action:pulse",
@@ -1857,11 +1869,11 @@
     },
     {
         "term": "output_channel:output",
-        "definition": ""
+        "definition": "Ausgang"
     },
     {
         "term": "output_channel:turnout",
-        "definition": ""
+        "definition": "Weiche"
     },
     {
         "term": "output_list:bus",
@@ -1869,15 +1881,15 @@
     },
     {
         "term": "output_map.decoupler:key",
-        "definition": "Staat"
+        "definition": "Status"
     },
     {
         "term": "output_map.signal:key",
-        "definition": "Aspekt"
+        "definition": "Verh\u00e4ltnis"
     },
     {
         "term": "output_map.switch:key",
-        "definition": ""
+        "definition": "Wert"
     },
     {
         "term": "output_map.turnout:key",
@@ -1901,7 +1913,7 @@
     },
     {
         "term": "output_map:swap_outputs",
-        "definition": ""
+        "definition": "Ausg\u00e4nge vertauschen"
     },
     {
         "term": "output_map:use",
@@ -1913,7 +1925,7 @@
     },
     {
         "term": "output_map_item.switch.key:on",
-        "definition": ""
+        "definition": "An"
     },
     {
         "term": "pair_output_action:first",
@@ -1933,11 +1945,11 @@
     },
     {
         "term": "pcap_output:pipe",
-        "definition": "Rohrleitung"
+        "definition": "Leitung"
     },
     {
         "term": "protocol.loconet:command_station",
-        "definition": "Zentrale"
+        "definition": "Befehlszentrale"
     },
     {
         "term": "qtapp.about:traintastic_server",
@@ -1965,11 +1977,11 @@
     },
     {
         "term": "qtapp.connect_dialog:creating_session",
-        "definition": "Sitzung erstellen"
+        "definition": "Sitzung wird erstellt"
     },
     {
         "term": "qtapp.connect_dialog:fetching_world",
-        "definition": "Welt abrufen"
+        "definition": "Welt wird abgerufen"
     },
     {
         "term": "qtapp.connect_dialog:password",
@@ -1985,7 +1997,7 @@
     },
     {
         "term": "qtapp.error:cant_read_from_file_x",
-        "definition": "Kann nicht aus der Datei gelesen werden: %1"
+        "definition": "Kann nicht von Datei lesen: %1"
     },
     {
         "term": "qtapp.error:cant_write_to_file_x",
@@ -2005,11 +2017,11 @@
     },
     {
         "term": "qtapp.mainmenu:close_world",
-        "definition": "Welt der N\u00e4he"
+        "definition": "Welt schlie\u00dfen"
     },
     {
         "term": "qtapp.mainmenu:community_forum",
-        "definition": ""
+        "definition": "Gemeinschafts Forum"
     },
     {
         "term": "qtapp.mainmenu:connect_to_server",
@@ -2021,7 +2033,7 @@
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
-        "definition": "Trennen Sie die Verbindung zum Server"
+        "definition": "Serververbindung trennen"
     },
     {
         "term": "qtapp.mainmenu:export_world",
@@ -2069,7 +2081,7 @@
     },
     {
         "term": "qtapp.mainmenu:quit",
-        "definition": "Beenden Sie"
+        "definition": "Beenden"
     },
     {
         "term": "qtapp.mainmenu:restart_server",
@@ -2077,7 +2089,7 @@
     },
     {
         "term": "qtapp.mainmenu:restart_server_question",
-        "definition": "M\u00f6chten Sie den Server wirklich neu starten?"
+        "definition": "Sind sie sicher dass sie den Server neustarten wollen?"
     },
     {
         "term": "qtapp.mainmenu:save_world",
@@ -2105,11 +2117,11 @@
     },
     {
         "term": "qtapp.mainmenu:shutdown_server_question",
-        "definition": "M\u00f6chten Sie den Server wirklich herunterfahren?"
+        "definition": "Sind sie sicher dass sie den Server herunterfahren wollen?"
     },
     {
         "term": "qtapp.mainmenu:toolbar",
-        "definition": "Symbolleiste"
+        "definition": "Werkzeugsleiste"
     },
     {
         "term": "qtapp.mainmenu:tools",
@@ -2117,7 +2129,7 @@
     },
     {
         "term": "qtapp.mainmenu:view",
-        "definition": "Siehe"
+        "definition": "Ansicht"
     },
     {
         "term": "qtapp.mainmenu:wizards",
@@ -2137,7 +2149,7 @@
     },
     {
         "term": "qtapp.message_box:yes",
-        "definition": "Jawohl"
+        "definition": "Ja"
     },
     {
         "term": "qtapp.object_select_list_dialog:cancel",
@@ -2145,7 +2157,7 @@
     },
     {
         "term": "qtapp.object_select_list_dialog:ok",
-        "definition": "OK"
+        "definition": "Best\u00e4tigen"
     },
     {
         "term": "qtapp.object_select_list_dialog:select_object",
@@ -2157,11 +2169,11 @@
     },
     {
         "term": "qtapp.settings.board:grid_edit_mode",
-        "definition": ""
+        "definition": "Raster (Bearbeitungsmodus)"
     },
     {
         "term": "qtapp.settings.board:grid_operate_mode",
-        "definition": ""
+        "definition": "Raster (Betriebsmodus)"
     },
     {
         "term": "qtapp.settings.board:show_block_sensor_states",
@@ -2169,7 +2181,7 @@
     },
     {
         "term": "qtapp.settings.board:turnout_draw_state",
-        "definition": "Auslosung Weichenstatus"
+        "definition": "Zeichne Weichenstatus"
     },
     {
         "term": "qtapp.settings.developer:dont_load_fallback_language",
@@ -2229,23 +2241,23 @@
     },
     {
         "term": "qtapp.world_list_dialog:load",
-        "definition": "Laden Sie"
+        "definition": "Laden"
     },
     {
         "term": "qtapp.world_list_dialog:search",
-        "definition": ""
+        "definition": "Suche"
     },
     {
         "term": "qtapp.world_list_dialog:world_list",
-        "definition": "Weltweite Liste"
+        "definition": "Welt Liste"
     },
     {
         "term": "qtapp:board_properties",
-        "definition": "Eigenschaften des Vorstands"
+        "definition": "Tafel eigenschften"
     },
     {
         "term": "qtapp:export_world_failed",
-        "definition": "Exportwelt gescheitert"
+        "definition": "Weltexport fehlgeschlagen"
     },
     {
         "term": "qtapp:grid",
@@ -2253,7 +2265,7 @@
     },
     {
         "term": "qtapp:import_world_failed",
-        "definition": "Importwelt gescheitert"
+        "definition": "Weltimport fehlgeschlagen"
     },
     {
         "term": "qtapp:next",
@@ -2261,7 +2273,7 @@
     },
     {
         "term": "qtapp:previous",
-        "definition": "Vorherige"
+        "definition": "Zur\u00fcck"
     },
     {
         "term": "qtapp:toggle_mute",
@@ -2273,7 +2285,7 @@
     },
     {
         "term": "qtapp:toggle_power",
-        "definition": "Leistung umschalten"
+        "definition": "Strom umschalten"
     },
     {
         "term": "qtapp:toggle_smoke",
@@ -2285,11 +2297,11 @@
     },
     {
         "term": "qtapp:zoom_in",
-        "definition": "Hineinzoomen"
+        "definition": "vergr\u00f6\u00dfern"
     },
     {
         "term": "qtapp:zoom_out",
-        "definition": "Rauszoomen"
+        "definition": "verkleinern"
     },
     {
         "term": "rail_vehicle_list:type",
@@ -2301,19 +2313,19 @@
     },
     {
         "term": "sensor_state:occupied",
-        "definition": ""
+        "definition": "Besetzt"
     },
     {
         "term": "sensor_state:unknown",
-        "definition": ""
+        "definition": "Unbekannt"
     },
     {
         "term": "sensor_type:occupancy_detector",
-        "definition": "Detektor besetzen"
+        "definition": "Belegtmelder"
     },
     {
         "term": "sensor_type:reed_switch",
-        "definition": "Reed-Schalter"
+        "definition": "Reed-Kontakt"
     },
     {
         "term": "serial:baudrate",
@@ -2337,7 +2349,7 @@
     },
     {
         "term": "serial_flow_control:none",
-        "definition": "Kein"
+        "definition": "nichts"
     },
     {
         "term": "server_log:code",
@@ -2373,11 +2385,11 @@
     },
     {
         "term": "settings:enable_file_logger",
-        "definition": "Dateilogger einschalten"
+        "definition": "Dateiprotokollierer einschalten"
     },
     {
         "term": "settings:load_last_world_on_startup",
-        "definition": ""
+        "definition": "Lade letzte Welt beim Start"
     },
     {
         "term": "settings:localhost_only",
@@ -2401,11 +2413,11 @@
     },
     {
         "term": "signal_aspect:proceed",
-        "definition": "Weiter"
+        "definition": "Weiterfahren"
     },
     {
         "term": "signal_aspect:proceed_reduced_speed",
-        "definition": "Weiterfahren, reduzierte Geschwindigkeit"
+        "definition": "Weiterfahren, Langsamfahrt"
     },
     {
         "term": "signal_aspect:stop",
@@ -2413,35 +2425,35 @@
     },
     {
         "term": "single_output_action:none",
-        "definition": ""
+        "definition": "Keine"
     },
     {
         "term": "single_output_action:off",
-        "definition": ""
+        "definition": "Aus"
     },
     {
         "term": "single_output_action:on",
-        "definition": ""
+        "definition": "An"
     },
     {
         "term": "single_output_action:pulse",
-        "definition": ""
+        "definition": "Puls"
     },
     {
         "term": "speed_limit_property:no_limit",
-        "definition": ""
+        "definition": "Keine Begrenzung"
     },
     {
         "term": "stacked_object_list:back",
-        "definition": ""
+        "definition": "Zur\u00fcck"
     },
     {
         "term": "stacked_object_list:click_to_edit_ctrl_click_to_open_in_a_new_window",
-        "definition": ""
+        "definition": "Klicken zum Bearbeiten.\nStrg-Klick, um in einem neuen Fenster zu \u00f6ffnen"
     },
     {
         "term": "stacked_object_list:list_is_empty",
-        "definition": ""
+        "definition": "Liste ist leer"
     },
     {
         "term": "status.lua:x_in_error",
@@ -2461,7 +2473,7 @@
     },
     {
         "term": "table_model.marklin_can_node_list:device_name",
-        "definition": "Name des Ger\u00e4ts"
+        "definition": "Ger\u00e4tename"
     },
     {
         "term": "table_model.marklin_can_node_list:serial_number",
@@ -2485,7 +2497,7 @@
     },
     {
         "term": "text_align:center",
-        "definition": "Zentrum"
+        "definition": "Mitte"
     },
     {
         "term": "text_align:center_left",
@@ -2509,35 +2521,35 @@
     },
     {
         "term": "throttle.acquire",
-        "definition": ""
+        "definition": "erwerben"
     },
     {
         "term": "throttle.controlled_by_x",
-        "definition": ""
+        "definition": "Gesteuert von %1"
     },
     {
         "term": "throttle.estop",
-        "definition": ""
+        "definition": "EStopp"
     },
     {
         "term": "throttle.in_control",
-        "definition": ""
+        "definition": "Du bist in Kontrolle"
     },
     {
         "term": "throttle.not_controlled",
-        "definition": ""
+        "definition": "Nicht gesteuert"
     },
     {
         "term": "throttle.release",
-        "definition": ""
+        "definition": "Loslassen"
     },
     {
         "term": "throttle.steal",
-        "definition": ""
+        "definition": "Stehlen"
     },
     {
         "term": "throttle_object_list:throttle",
-        "definition": "Drosselklappe"
+        "definition": "Drossel"
     },
     {
         "term": "train:active",
@@ -2549,7 +2561,7 @@
     },
     {
         "term": "train:length",
-        "definition": ""
+        "definition": "L\u00e4nge"
     },
     {
         "term": "train:mode",
@@ -2557,7 +2569,7 @@
     },
     {
         "term": "train:override_length",
-        "definition": "\u00dcberschreiten der L\u00e4nge"
+        "definition": "L\u00e4nge \u00fcberschreiten"
     },
     {
         "term": "train:override_weight",
@@ -2593,7 +2605,7 @@
     },
     {
         "term": "traintastic_diy_interface_type:serial",
-        "definition": "Serienm\u00e4\u00dfig"
+        "definition": "Seriel"
     },
     {
         "term": "traintastic_diy_settings:debug_log_heartbeat",
@@ -2601,83 +2613,83 @@
     },
     {
         "term": "traintastic_diy_settings:heartbeat_timeout",
-        "definition": "Zeit\u00fcberschreitung beim Heartbeat"
+        "definition": "Heartbeat Zeit\u00fcberschreitung"
     },
     {
         "term": "traintastic_diy_settings:startup_delay",
-        "definition": "Verz\u00f6gerung bei der Inbetriebnahme"
+        "definition": "Startverz\u00f6gerung"
     },
     {
         "term": "tray_icon.language_changed_message_box:caption",
-        "definition": ""
+        "definition": "Sprache ge\u00e4ndert"
     },
     {
         "term": "tray_icon.language_changed_message_box:text",
-        "definition": ""
+        "definition": "Tritastic server muss neu gestartet werden, damit die Sprach\u00e4nderung wirksam wird. Jetzt Neustarten?"
     },
     {
         "term": "tray_icon.menu:advanced",
-        "definition": ""
+        "definition": "Erweitert"
     },
     {
         "term": "tray_icon.menu:allow_client_to_restart_server",
-        "definition": ""
+        "definition": "Erlaube dem Client dem Server neuzustarten"
     },
     {
         "term": "tray_icon.menu:allow_client_to_shutdown_server",
-        "definition": ""
+        "definition": "Erlaube dem Client dem Server herunterzufahren"
     },
     {
         "term": "tray_icon.menu:language",
-        "definition": ""
+        "definition": "Sprache"
     },
     {
         "term": "tray_icon.menu:open_data_directory",
-        "definition": ""
+        "definition": "\u00d6ffne Inhaltsverzeichnis"
     },
     {
         "term": "tray_icon.menu:restart",
-        "definition": ""
+        "definition": "Neustart"
     },
     {
         "term": "tray_icon.menu:settings",
-        "definition": ""
+        "definition": "Einstellungen"
     },
     {
         "term": "tray_icon.menu:show_hide_console",
-        "definition": ""
+        "definition": "Zeige/Verstecke Konsole"
     },
     {
         "term": "tray_icon.menu:shutdown",
-        "definition": ""
+        "definition": "Herunterfahren"
     },
     {
         "term": "tray_icon.menu:start_automatically_at_logon",
-        "definition": ""
+        "definition": "Automatisch starten beim Anmelden"
     },
     {
         "term": "tray_icon.notify:message_restarting",
-        "definition": ""
+        "definition": "Tritastic server ist neugestartet"
     },
     {
         "term": "tray_icon.notify:message_running",
-        "definition": ""
+        "definition": "Tritastic server l\u00e4uft im hintergrund."
     },
     {
         "term": "turnout_position:crossed",
-        "definition": ""
+        "definition": "Gekreutzt"
     },
     {
         "term": "turnout_position:diverged",
-        "definition": ""
+        "definition": "Abzweigend"
     },
     {
         "term": "turnout_position:double_slip_straight_a",
-        "definition": ""
+        "definition": "Gerade A"
     },
     {
         "term": "turnout_position:double_slip_straight_b",
-        "definition": ""
+        "definition": "Gerade B"
     },
     {
         "term": "turnout_position:left",
@@ -2693,7 +2705,7 @@
     },
     {
         "term": "vehicle.rail.freight_wagon:cargo_weight",
-        "definition": "Gewicht der Ladung"
+        "definition": "G\u00fctergewicht"
     },
     {
         "term": "vehicle.rail.tank_wagon:cargo_volume",
@@ -2705,19 +2717,19 @@
     },
     {
         "term": "vehicle.rail:cargo_loaded",
-        "definition": "Ladung geladen"
+        "definition": "G\u00fcter geladen"
     },
     {
         "term": "vehicle.rail:decoder",
-        "definition": "Decoder"
+        "definition": "Dekoder"
     },
     {
         "term": "vehicle.rail:length",
-        "definition": ""
+        "definition": "L\u00e4nge"
     },
     {
         "term": "vehicle.rail:power",
-        "definition": "Strom"
+        "definition": "Kraft"
     },
     {
         "term": "vehicle.rail:speed_max",
@@ -2725,7 +2737,7 @@
     },
     {
         "term": "vehicle.rail:total_weight",
-        "definition": "Total weight"
+        "definition": "Gesamtgewicht"
     },
     {
         "term": "vehicle.rail:train",
@@ -2737,15 +2749,15 @@
     },
     {
         "term": "weight_unit:ton",
-        "definition": ""
+        "definition": "tonne"
     },
     {
         "term": "wizard.add_interface.command_station:text",
-        "definition": "Bitte w\u00e4hlen Sie Ihre Kommandozentrale:"
+        "definition": "Bitte w\u00e4hlen Sie Ihre Befehlszentrale:"
     },
     {
         "term": "wizard.add_interface.command_station:title",
-        "definition": "Kommandozentrale"
+        "definition": "Befehlszentrale"
     },
     {
         "term": "wizard.add_interface.connection:can_interface",
@@ -2841,7 +2853,7 @@
     },
     {
         "term": "wizard.add_interface.protocol_dr5000_usb:bottom_text",
-        "definition": ""
+        "definition": "Die %command_station% unterst\u00fctzt zwei verschiedne Komunikationsprotokolle. Obwohl beide von Traintastic unterst\u00fctzt werden, wird LocoNet empfohlen."
     },
     {
         "term": "wizard.add_interface.serial_port:text",
@@ -2865,7 +2877,7 @@
     },
     {
         "term": "wizard.add_interface:recommended",
-        "definition": ""
+        "definition": "Empfohlen"
     },
     {
         "term": "wizard.button:back",
@@ -2877,7 +2889,7 @@
     },
     {
         "term": "wizard.button:finish",
-        "definition": "Oberfl\u00e4che"
+        "definition": "Fertig"
     },
     {
         "term": "wizard.button:next",
@@ -2885,7 +2897,7 @@
     },
     {
         "term": "wizard.introduction.edit_mode:text",
-        "definition": "Traintastic hat zwei Betriebsmodi:\n- Bearbeitungsmodus\n- Betriebsmodus\n\nIm Betriebsmodus ist nur die Bedienung der Anlage m\u00f6glich, um akzidentelle \u00c4nderungen zu verhindern. Um z.B. eine Weichenadresse zu \u00e4ndern oder die Anlage zu modifizieren, muss der Bearbeitungsmodus aktiv sein.\n\nDas Umschalten zwischen Betriebs- und Bearbeitungsmodus erfolgt \u00fcber das Bleistiftsymbol rechts in der Hauptsymbolleiste oder \u00fcber das Hauptmen\u00fc: Welt \u2192 Welt bearbeiten."
+        "definition": "Traintastic hat zwei Betriebsmodi:\n- Bearbeitungsmodus\n- Betriebsmodus\n\nIm Betriebsmodus ist nur die Bedienung der Anlage m\u00f6glich, um versehentliche \u00c4nderungen zu verhindern. Um z.B. eine Weichenadresse zu \u00e4ndern oder die Anlage zu modifizieren, muss der Bearbeitungsmodus aktiv sein.\n\nDas Umschalten zwischen Betriebs- und Bearbeitungsmodus erfolgt \u00fcber das Bleistiftsymbol rechts in der Hauptsymbolleiste oder \u00fcber das Hauptmen\u00fc: Welt \u2192 Welt bearbeiten."
     },
     {
         "term": "wizard.introduction.edit_mode:title",
@@ -2893,7 +2905,7 @@
     },
     {
         "term": "wizard.introduction.forum:text",
-        "definition": "Wenn Sie Fragen oder Anregungen haben, besuchen Sie bitte das <a href=\"https://forum.traintastic.org\">Traintastic Forum</a>."
+        "definition": "Wenn Sie Fragen oder Vorschl\u00e4ge haben, besuchen Sie bitte das <a href=\"https://forum.traintastic.org\">Traintastic Forum</a>."
     },
     {
         "term": "wizard.introduction.forum:title",
@@ -2909,7 +2921,7 @@
     },
     {
         "term": "wizard.introduction.world:text",
-        "definition": "Die Welt enth\u00e4lt alles, was auf der Anlage vorhanden ist, wie die Zentrale, Z\u00fcge, Signale, Weichen usw. Bei Bedarf k\u00f6nnen mehrere Welten erstellt werden, aber es kann immer nur eine in Gebrauch sein.\n\nDie Welten werden auf dem PC gespeichert, auf dem der Traintastic-Server l\u00e4uft. Beim Speichern einer Welt wird automatisch ein Backup erstellt. \u00dcber das Hauptmen\u00fc: Datei \u2192 Welt exportieren ist es m\u00f6glich, eine Kopie der Welt als zus\u00e4tzliches Backup zu erhalten oder sie auf einen anderen Traintastic-Server zu \u00fcbertragen."
+        "definition": "Die Welt enth\u00e4lt alles, was auf der Anlage vorhanden ist, wie die Befehlszentrale, Z\u00fcge, Signale, Weichen usw. Bei Bedarf k\u00f6nnen mehrere Welten erstellt werden, aber es kann immer nur eine in Gebrauch sein.\n\nDie Welten werden auf dem PC gespeichert, auf dem der Traintastic-Server l\u00e4uft. Beim Speichern einer Welt wird automatisch ein Backup erstellt. \u00dcber das Hauptmen\u00fc: Datei \u2192 Welt exportieren ist es m\u00f6glich, eine Kopie der Welt als zus\u00e4tzliches Backup zu erhalten oder sie auf einen anderen Traintastic-Server zu \u00fcbertragen."
     },
     {
         "term": "wizard.introduction.world:title",
@@ -2921,7 +2933,7 @@
     },
     {
         "term": "wizard.new_board.adding:text",
-        "definition": "Das Hinzuf\u00fcgen neuer Elemente zum Spielbrett kann mit Hilfe der in verschiedenen Men\u00fcs verf\u00fcgbaren Elemente erfolgen. Klicken Sie mit der linken Maustaste, um ein Element zu platzieren, klicken Sie mit der rechten Maustaste, um ein Element zu drehen.\n\nUm ein Element durch ein anderes zu ersetzen, halten Sie die Strg-Taste gedr\u00fcckt, w\u00e4hrend Sie mit der linken Maustaste klicken, andernfalls muss das alte Element zuerst gel\u00f6scht werden."
+        "definition": "Das Hinzuf\u00fcgen neuer Elemente zum Brett kann mit Hilfe der in verschiedenen Men\u00fcs verf\u00fcgbaren Elemente erfolgen. Klicken Sie mit der linken Maustaste, um ein Element zu platzieren, klicken Sie mit der rechten Maustaste, um ein Element zu drehen.\n\nUm ein Element durch ein anderes zu ersetzen, halten Sie die Strg-Taste gedr\u00fcckt, w\u00e4hrend Sie mit der linken Maustaste klicken, andernfalls muss das alte Element zuerst gel\u00f6scht werden."
     },
     {
         "term": "wizard.new_board.adding:title",
@@ -2929,11 +2941,11 @@
     },
     {
         "term": "wizard.new_board.editing:text",
-        "definition": "Die Tafel kann nur ver\u00e4ndert werden, wenn sich die Welt im Bearbeitungsmodus befindet und angehalten ist. Die Symbolleiste mit der Bearbeitungsoption wird automatisch angezeigt, wenn die Bearbeitung m\u00f6glich ist."
+        "definition": "Das Brett kann nur ver\u00e4ndert werden, wenn sich die Welt im Bearbeitungsmodus befindet und angehalten ist. Die Symbolleiste mit der Bearbeitungsoption wird automatisch angezeigt, wenn die Bearbeitung m\u00f6glich ist."
     },
     {
         "term": "wizard.new_board.editing:title",
-        "definition": "Bearbeitung von"
+        "definition": "Bearbeitung "
     },
     {
         "term": "wizard.new_board.finalization:text",
@@ -2945,7 +2957,7 @@
     },
     {
         "term": "wizard.new_board.introduction.long:text",
-        "definition": "Dieser Assistent erkl\u00e4rt die Grundlagen des Boards."
+        "definition": "Dieser Assistent erkl\u00e4rt die Grundlagen des Bretts."
     },
     {
         "term": "wizard.new_board.introduction.short:text",
@@ -2953,19 +2965,19 @@
     },
     {
         "term": "wizard.new_board.introduction:title",
-        "definition": "Neuer Vorstand"
+        "definition": "Neues Brett"
     },
     {
         "term": "wizard.new_board.name:text",
-        "definition": "Gib der Tafel einen Namen, z. B. Traintastic, Station Awesome oder Staging area:"
+        "definition": "Gib der Tafel einen Namen, z. B. Traintastic, Station Prima oder Bereitstellungsbereich:"
     },
     {
         "term": "wizard.new_board.name:title",
-        "definition": "Name der Tafel"
+        "definition": "Name des Bretts"
     },
     {
         "term": "wizard.new_board:title",
-        "definition": "Neuer Vorstand"
+        "definition": "Neues Brett"
     },
     {
         "term": "wizard.new_world.finalization:text",
@@ -2985,7 +2997,7 @@
     },
     {
         "term": "wizard.new_world.name:text",
-        "definition": "Geben Sie der Welt einen Namen, der beim Laden einer Welt angezeigt wird."
+        "definition": "Bennenen Sie die Welt. Der Name wird beim Laden einer Welt angezeigt."
     },
     {
         "term": "wizard.new_world.name:title",
@@ -3017,23 +3029,23 @@
     },
     {
         "term": "world:correct_output_pos_when_locked",
-        "definition": ""
+        "definition": "Versuche dem Ausgangsstatus zu koregieren wenn extern w\u00e4hren speerung ge\u00e4ndert"
     },
     {
         "term": "world:debug_block_events",
-        "definition": ""
+        "definition": "Blockabschnitt Ereignis"
     },
     {
         "term": "world:debug_train_events",
-        "definition": ""
+        "definition": "Zug Ereignis"
     },
     {
         "term": "world:debug_zone_events",
-        "definition": ""
+        "definition": "Bereich Ereigniss"
     },
     {
         "term": "world:decoders",
-        "definition": "Dekodierer"
+        "definition": "Dekoder"
     },
     {
         "term": "world:edit",
@@ -3041,7 +3053,7 @@
     },
     {
         "term": "world:ext_output_change_action",
-        "definition": ""
+        "definition": " Aktion bei externer Ausgangs\u00e4nderung"
     },
     {
         "term": "world:inputs",
@@ -3081,7 +3093,7 @@
     },
     {
         "term": "world:path_release_delay",
-        "definition": ""
+        "definition": "Blockabschnitt verlass Verz\u00f6gerung"
     },
     {
         "term": "world:power_off",
@@ -3133,7 +3145,7 @@
     },
     {
         "term": "world:zones",
-        "definition": ""
+        "definition": "Bereiche"
     },
     {
         "term": "world_scale:custom",
@@ -3149,7 +3161,7 @@
     },
     {
         "term": "xpressnet_interface_type:serial",
-        "definition": "Serielle"
+        "definition": "Seriel"
     },
     {
         "term": "xpressnet_serial_interface_type:custom",
@@ -3177,22 +3189,22 @@
     },
     {
         "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
-        "definition": "Einschalten/Notabschaltung zulassen"
+        "definition": "Einschaltung erlauben/Notabschaltung ausschalten"
     },
     {
         "term": "zone:blocks",
-        "definition": ""
+        "definition": "Bl\u00f6cke"
     },
     {
         "term": "zone:mute",
-        "definition": ""
+        "definition": "Stummschalten"
     },
     {
         "term": "zone:no_smoke",
-        "definition": ""
+        "definition": "Kein Rauch"
     },
     {
         "term": "zone:speed_limit",
-        "definition": ""
+        "definition": "Geschwindigkeitbegrenzung"
     }
 ]
