@@ -45,6 +45,7 @@ Name: de; MessagesFile: "compiler:Languages\German.isl,de-de.isl"
 Name: it; MessagesFile: "compiler:Languages\Italian.isl,it-it.isl"
 Name: sv; MessagesFile: "Languages\Swedish.isl,sv-se.isl"
 Name: fr; MessagesFile: "compiler:Languages\French.isl,fr-fr.isl"
+Name: pl; MessagesFile: "compiler:Languages\Polish.isl,pl-pl.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -217,6 +218,7 @@ begin
     'it': Result := 'it-it';
     'sv': Result := 'sv-se';
     'fr': Result := 'fr-fr';
+    'pl': Result := 'pl-pl';
   else
     Result := 'en-us';
   end;

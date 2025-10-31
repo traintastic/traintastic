@@ -1,487 +1,487 @@
 [
     {
         "term": "auto_yes_no:auto",
-        "definition": "Auto detect"
+        "definition": "Wykrywanie automatyczne"
     },
     {
         "term": "auto_yes_no:no",
-        "definition": "No"
+        "definition": "Nie"
     },
     {
         "term": "auto_yes_no:yes",
-        "definition": "Yes"
+        "definition": "Tak"
     },
     {
         "term": "block_state:free",
-        "definition": "Free"
+        "definition": "Wolny"
     },
     {
         "term": "block_state:occupied",
-        "definition": "Occupied"
+        "definition": "Zaj\u0119ty"
     },
     {
         "term": "block_state:reserved",
-        "definition": "Reserved"
+        "definition": "Zaj\u0119ty"
     },
     {
         "term": "block_state:unknown",
-        "definition": "Unknown"
+        "definition": "Nieznany"
     },
     {
         "term": "board:delete_tile",
-        "definition": "Delete tile"
+        "definition": "Usu\u0144 kafelek"
     },
     {
         "term": "board:move_tile",
-        "definition": "Move tile"
+        "definition": "Przesu\u0144 kafelek"
     },
     {
         "term": "board:resize_tile",
-        "definition": "Resize tile"
+        "definition": "Dopasuj rozmiar kafelka"
     },
     {
         "term": "board:resize_to_contents",
-        "definition": "Resize to contents"
+        "definition": "Dopasuj rozmiar do zawarto\u015bci"
     },
     {
         "term": "board_area_grid:dot",
-        "definition": "Dot"
+        "definition": "Kropka"
     },
     {
         "term": "board_area_grid:line",
-        "definition": "Line"
+        "definition": "Linia"
     },
     {
         "term": "board_area_grid:none",
-        "definition": "None"
+        "definition": "Brak"
     },
     {
         "term": "board_settings.color_scheme:dark",
-        "definition": "Dark"
+        "definition": "ciemny"
     },
     {
         "term": "board_settings.color_scheme:light",
-        "definition": "Light"
+        "definition": "jasny"
     },
     {
         "term": "board_tile.misc.label:background_color",
-        "definition": "Background color"
+        "definition": "Kolor t\u0142a"
     },
     {
         "term": "board_tile.misc.label:text",
-        "definition": "Text"
+        "definition": "Tekst"
     },
     {
         "term": "board_tile.misc.label:text_align",
-        "definition": "Text align"
+        "definition": "Wyr\u00f3wnanie tekstu"
     },
     {
         "term": "board_tile.misc.label:text_color",
-        "definition": "Text color"
+        "definition": "Kolor tekstu"
     },
     {
         "term": "board_tile.misc.push_button:color",
-        "definition": "Color"
+        "definition": "kolor"
     },
     {
         "term": "board_tile.misc.switch:color_off",
-        "definition": "Color when off"
+        "definition": "Kolor wy\u0142\u0105czony"
     },
     {
         "term": "board_tile.misc.switch:color_on",
-        "definition": "Color when on"
+        "definition": "Kolor w\u0142\u0105czony"
     },
     {
         "term": "board_tile.misc.switch:value",
-        "definition": "Value"
+        "definition": "Warto\u015b\u0107"
     },
     {
         "term": "board_tile.rail.block:assign_train",
-        "definition": "Assign train"
+        "definition": "Przypisz poci\u0105g"
     },
     {
         "term": "board_tile.rail.block:flip_train",
-        "definition": "Flip train"
+        "definition": "Odwr\u00f3\u0107 poci\u0105g"
     },
     {
         "term": "board_tile.rail.block:input_map",
-        "definition": "Sensors"
+        "definition": "Czujniki"
     },
     {
         "term": "board_tile.rail.block:remove_train",
-        "definition": "Remove train"
+        "definition": "Usu\u0144 poci\u0105g"
     },
     {
         "term": "board_tile.rail.block:state",
-        "definition": "State"
+        "definition": "Stan"
     },
     {
         "term": "board_tile.rail.block:zones",
-        "definition": "Zones"
+        "definition": "Strefy"
     },
     {
         "term": "board_tile.rail.direction_control:state",
-        "definition": "State"
+        "definition": "stan"
     },
     {
         "term": "board_tile.rail.direction_control:use_a_to_b",
-        "definition": "Use: A \u2192 B"
+        "definition": "Urzywaj: A \u2192 B"
     },
     {
         "term": "board_tile.rail.direction_control:use_b_to_a",
-        "definition": "Use: A \u2190 B"
+        "definition": "Urzywaj: A \u2190 B"
     },
     {
         "term": "board_tile.rail.direction_control:use_both",
-        "definition": "Use: A \u21c4 B"
+        "definition": "Urzywaj: A \u21c4 B"
     },
     {
         "term": "board_tile.rail.direction_control:use_none",
-        "definition": "Use: A \ud83d\udec7 B"
+        "definition": "Urzywaj: A \ud83d\udec7 B"
     },
     {
         "term": "board_tile.rail.link:link",
-        "definition": "Link"
+        "definition": "\u0141\u0105cze"
     },
     {
         "term": "board_tile.rail.sensor:input",
-        "definition": "Input"
+        "definition": "Wej\u015bcie"
     },
     {
         "term": "board_tile.rail.sensor:invert",
-        "definition": "Invert"
+        "definition": "Odwr\u00f3\u0107"
     },
     {
         "term": "board_tile.rail.sensor:state",
-        "definition": "State"
+        "definition": "Stan"
     },
     {
         "term": "board_tile.rail.sensor:type",
-        "definition": "Type"
+        "definition": "Typ"
     },
     {
         "term": "board_tile.rail.signal:require_reservation",
-        "definition": "Require reservation"
+        "definition": "Wymaga rezerwacji"
     },
     {
         "term": "board_tile.rail.signal_3_aspect:require_reservation",
-        "definition": "Require reservation"
+        "definition": "Wymagana rezerwacja"
     },
     {
         "term": "board_tile.rail.turnout_slip:dual_motor",
-        "definition": "Dual motor/coil"
+        "definition": "Podw\u00f3jny silnik/cewka"
     },
     {
         "term": "board_tile.turnout:position",
-        "definition": "Position"
+        "definition": "Pozycja"
     },
     {
         "term": "board_tile:output_map",
-        "definition": "Outputs"
+        "definition": "Wyj\u015bcie"
     },
     {
         "term": "category:cargo",
-        "definition": "Cargo"
+        "definition": "Towar"
     },
     {
         "term": "category:debug",
-        "definition": "Debug"
+        "definition": "Debugowanie"
     },
     {
         "term": "category:developer",
-        "definition": "Developer"
+        "definition": "Deweloper"
     },
     {
         "term": "category:general",
-        "definition": "General"
+        "definition": "Og\u00f3lne"
     },
     {
         "term": "category:info",
-        "definition": "Info"
+        "definition": "Informacja"
     },
     {
         "term": "category:log",
-        "definition": "Log"
+        "definition": "Dziennik"
     },
     {
         "term": "category:network",
-        "definition": "Network"
+        "definition": "Sie\u0107"
     },
     {
         "term": "category:options",
-        "definition": "Options"
+        "definition": "Opcje"
     },
     {
         "term": "category:trains",
-        "definition": "Trains"
+        "definition": "Poci\u0105gi"
     },
     {
         "term": "class_id:board_tile.misc.label",
-        "definition": "Label"
+        "definition": "Etykieta"
     },
     {
         "term": "class_id:board_tile.misc.push_button",
-        "definition": "Push button"
+        "definition": "Przycisk"
     },
     {
         "term": "class_id:board_tile.misc.switch",
-        "definition": "Switch"
+        "definition": "Prze\u0142\u0105cznik"
     },
     {
         "term": "class_id:board_tile.rail.block",
-        "definition": "Block"
+        "definition": "Odcinek"
     },
     {
         "term": "class_id:board_tile.rail.bridge_45_left",
-        "definition": "Bridge 45\u00b0 (left)"
+        "definition": "Most 45\u00b0 (lewy)"
     },
     {
         "term": "class_id:board_tile.rail.bridge_45_right",
-        "definition": "Bridge 45\u00b0 (right)"
+        "definition": "Most 45\u00b0 (prawy)"
     },
     {
         "term": "class_id:board_tile.rail.bridge_90",
-        "definition": "Bridge 90\u00b0"
+        "definition": "Most 90\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.buffer_stop",
-        "definition": "Buffer stop"
+        "definition": "Zderzak"
     },
     {
         "term": "class_id:board_tile.rail.cross_45",
-        "definition": "Crossover 45\u00b0"
+        "definition": "Krzy\u017cowanie 45\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.cross_90",
-        "definition": "Crossover 90\u00b0"
+        "definition": "Krzy\u017cowanie 90\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.curve_45",
-        "definition": "Curved track 45\u00b0"
+        "definition": "\u0141uk 45\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.curve_90",
-        "definition": "Curved track 90\u00b0"
+        "definition": "\u0141uk 90\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.decoupler",
-        "definition": "Decoupler"
+        "definition": "Od\u0142\u0105czacz"
     },
     {
         "term": "class_id:board_tile.rail.direction_control",
-        "definition": "Direction control"
+        "definition": "Sterowanie kierunkiem"
     },
     {
         "term": "class_id:board_tile.rail.link",
-        "definition": "Link"
+        "definition": "\u0141\u0105cze"
     },
     {
         "term": "class_id:board_tile.rail.nx_button",
-        "definition": "NX button"
+        "definition": "Przycisk NX"
     },
     {
         "term": "class_id:board_tile.rail.nx_button:block",
-        "definition": "Block"
+        "definition": "Odcinek"
     },
     {
         "term": "class_id:board_tile.rail.nx_button:input",
-        "definition": "Input"
+        "definition": "Wej\u015bcie"
     },
     {
         "term": "class_id:board_tile.rail.one_way",
-        "definition": "One way"
+        "definition": "Jednokierunkowy"
     },
     {
         "term": "class_id:board_tile.rail.sensor",
-        "definition": "Sensor"
+        "definition": "Czujnik"
     },
     {
         "term": "class_id:board_tile.rail.signal_2_aspect",
-        "definition": "Signal (2 aspects)"
+        "definition": "Semafor (2 aspekty)"
     },
     {
         "term": "class_id:board_tile.rail.signal_3_aspect",
-        "definition": "Signal (3 aspects)"
+        "definition": "Semafor (3 aspekty)"
     },
     {
         "term": "class_id:board_tile.rail.straight",
-        "definition": "Straight track"
+        "definition": "Tor prosty"
     },
     {
         "term": "class_id:board_tile.rail.tunnel",
-        "definition": "Tunnel"
+        "definition": "Tunel"
     },
     {
         "term": "class_id:board_tile.rail.turnout_3way",
-        "definition": "Turnout 3-way"
+        "definition": "Zwrotnica tr\u00f3jtorowa"
     },
     {
         "term": "class_id:board_tile.rail.turnout_doubleslip",
-        "definition": "Double slip"
+        "definition": "Podw\u00f3jna krzy\u017cowa Zwrotnica"
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_45",
-        "definition": "Turnout left 45\u00b0"
+        "definition": "Zwrotnica lewa 45\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_90",
-        "definition": "Turnout left 90\u00b0"
+        "definition": "Zwrotnica lewa 90\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_curved",
-        "definition": "Turnout left curved"
+        "definition": "Zwrotnica lewa \u0142ukowa"
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_45",
-        "definition": "Turnout right 45\u00b0"
+        "definition": "Zwrotnica prawa 45\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_90",
-        "definition": "Turnout right 90\u00b0"
+        "definition": "Zwrotnica prawa 90\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_curved",
-        "definition": "Turnout right curved"
+        "definition": "Zwrotnica prawa \u0142ukowa"
     },
     {
         "term": "class_id:board_tile.rail.turnout_singleslip",
-        "definition": "Single slip"
+        "definition": "Pojedyncza krzy\u017cowa Zwrotnica"
     },
     {
         "term": "class_id:board_tile.rail.turnout_wye",
-        "definition": "Turnout wye"
+        "definition": "Zwrotnica Y"
     },
     {
         "term": "class_id:vehicle.rail.freight_wagon",
-        "definition": "Freight wagon"
+        "definition": "Wagon towarowy"
     },
     {
         "term": "class_id:vehicle.rail.locomotive",
-        "definition": "Locomotive"
+        "definition": "Lokomotywa"
     },
     {
         "term": "class_id:vehicle.rail.multiple_unit",
-        "definition": "Multiple unit"
+        "definition": "Poci\u0105g wielocz\u0142onowy"
     },
     {
         "term": "class_id:vehicle.rail.tank_wagon",
-        "definition": "Tank wagon"
+        "definition": "Wagon cysterna"
     },
     {
         "term": "clock:day",
-        "definition": "Day"
+        "definition": "Dzie\u0144"
     },
     {
         "term": "clock:debug_log",
-        "definition": "Debug log"
+        "definition": "Dziennik debugowania"
     },
     {
         "term": "clock:freeze",
-        "definition": "Freeze"
+        "definition": "Zamro\u017cenie"
     },
     {
         "term": "clock:hour",
-        "definition": "Hour"
+        "definition": "Godzina"
     },
     {
         "term": "clock:minute",
-        "definition": "Minute"
+        "definition": "Minuta"
     },
     {
         "term": "clock:month",
-        "definition": "Month"
+        "definition": "Miesi\u0105c"
     },
     {
         "term": "clock:multiplier",
-        "definition": "Multiplier"
+        "definition": "Mno\u017cnik"
     },
     {
         "term": "clock:year",
-        "definition": "Year"
+        "definition": "Rok"
     },
     {
         "term": "color:aqua",
-        "definition": "Aqua"
+        "definition": "Akwamaryna"
     },
     {
         "term": "color:black",
-        "definition": "Black"
+        "definition": "Czarny"
     },
     {
         "term": "color:blue",
-        "definition": "Blue"
+        "definition": "Niebieski"
     },
     {
         "term": "color:fuchsia",
-        "definition": "Fuchsia"
+        "definition": "Fuksja"
     },
     {
         "term": "color:gray",
-        "definition": "Gray"
+        "definition": "Szary"
     },
     {
         "term": "color:green",
-        "definition": "Green"
+        "definition": "Zielony"
     },
     {
         "term": "color:lime",
-        "definition": "Lime"
+        "definition": "Limonkowy"
     },
     {
         "term": "color:maroon",
-        "definition": "Maroon"
+        "definition": "Kasztanowy"
     },
     {
         "term": "color:navy",
-        "definition": "Navy"
+        "definition": "Granatowy"
     },
     {
         "term": "color:none",
-        "definition": "None"
+        "definition": "Brak"
     },
     {
         "term": "color:olive",
-        "definition": "Olive"
+        "definition": "Oliwkowy"
     },
     {
         "term": "color:purple",
-        "definition": "Purple"
+        "definition": "Fioletowy"
     },
     {
         "term": "color:red",
-        "definition": "Red"
+        "definition": "Czerwony"
     },
     {
         "term": "color:silver",
-        "definition": "Silver"
+        "definition": "Srebrny"
     },
     {
         "term": "color:teal",
-        "definition": "Teal"
+        "definition": "Morski"
     },
     {
         "term": "color:white",
-        "definition": "White"
+        "definition": "Bia\u0142y"
     },
     {
         "term": "color:yellow",
-        "definition": "Yellow"
+        "definition": "\u017b\u00f3\u0142ty"
     },
     {
         "term": "dccex_channel:dcc_accessory",
-        "definition": "DCC accessory"
+        "definition": "Akcesorium DCC"
     },
     {
         "term": "dccex_channel:output",
-        "definition": "Output"
+        "definition": "Wyj\u015bcie"
     },
     {
         "term": "dccex_channel:turnout",
-        "definition": "Turnout"
+        "definition": "Zwrotnica"
     },
     {
         "term": "dccex_interface_type:network_tcp",
-        "definition": "Network (TCP)"
+        "definition": "Sie\u0107 (TCP)"
     },
     {
         "term": "dccex_interface_type:serial",
@@ -489,87 +489,87 @@
     },
     {
         "term": "dccex_settings:startup_delay",
-        "definition": "Startup delay"
+        "definition": "Op\u00f3\u017anienie startu"
     },
     {
         "term": "decoder:functions",
-        "definition": "Functions"
+        "definition": "Funkcje"
     },
     {
         "term": "decoder:long_address",
-        "definition": "DCC long address"
+        "definition": "Adres DCC (d\u0142ugi)"
     },
     {
         "term": "decoder:protocol",
-        "definition": "Protocol"
+        "definition": "Protok\u00f3\u0142"
     },
     {
         "term": "decoder_function:function",
-        "definition": "Function"
+        "definition": "Funkcja"
     },
     {
         "term": "decoder_function:number",
-        "definition": "Number"
+        "definition": "Numer"
     },
     {
         "term": "decoder_function:type",
-        "definition": "Type"
+        "definition": "Typ"
     },
     {
         "term": "decoder_function_function:generic",
-        "definition": "Generic"
+        "definition": "Og\u00f3lny"
     },
     {
         "term": "decoder_function_function:light",
-        "definition": "Light"
+        "definition": "\u015awiat\u0142o"
     },
     {
         "term": "decoder_function_function:mute",
-        "definition": "Mute"
+        "definition": "Wycisz"
     },
     {
         "term": "decoder_function_function:smoke",
-        "definition": "Smoke"
+        "definition": "Dym"
     },
     {
         "term": "decoder_function_function:sound",
-        "definition": "Sound"
+        "definition": "D\u017awi\u0119k"
     },
     {
         "term": "decoder_function_type:always_off",
-        "definition": "Always off"
+        "definition": "Zawsze wy\u0142\u0105czone"
     },
     {
         "term": "decoder_function_type:always_on",
-        "definition": "Always on"
+        "definition": "Zawsze w\u0142\u0105czone"
     },
     {
         "term": "decoder_function_type:hold",
-        "definition": "Push 'n hold"
+        "definition": "Przytrzymaj"
     },
     {
         "term": "decoder_function_type:momentary",
-        "definition": "Momentary"
+        "definition": "Chwilowe"
     },
     {
         "term": "decoder_function_type:on_off",
-        "definition": "On/Off"
+        "definition": "W\u0142\u0105cz/Wy\u0142\u0105cz"
     },
     {
         "term": "decoder_protocol:auto",
-        "definition": "Auto"
+        "definition": "Automatyczny"
     },
     {
         "term": "decoder_protocol:custom",
-        "definition": "Custom"
+        "definition": "Niestandardowy"
     },
     {
         "term": "decoder_protocol:dcc_long",
-        "definition": "DCC (Long address)"
+        "definition": "DCC (d\u0142ugi adres)"
     },
     {
         "term": "decoder_protocol:dcc_short",
-        "definition": "DCC (Short address)"
+        "definition": "DCC (kr\u00f3tki adres)"
     },
     {
         "term": "decoder_protocol:motorola",
@@ -581,127 +581,127 @@
     },
     {
         "term": "decoupler_state:activated",
-        "definition": "Activated"
+        "definition": "Aktywny"
     },
     {
         "term": "decoupler_state:deactivated",
-        "definition": "Deactivated"
+        "definition": "Nieaktywny"
     },
     {
         "term": "direction:forward",
-        "definition": "Forward"
+        "definition": "Do przodu"
     },
     {
         "term": "direction:reverse",
-        "definition": "Reverse"
+        "definition": "Do ty\u0142u"
     },
     {
         "term": "ecos_channel:ecos_detector",
-        "definition": "ECoS Detector"
+        "definition": "Detektor ECoS"
     },
     {
         "term": "ext_output_change_action:do_nothing",
-        "definition": "Do nothing"
+        "definition": "Nie r\u00f3b nic"
     },
     {
         "term": "ext_output_change_action:estop_train",
-        "definition": "Emergency stop trains in block path"
+        "definition": "Awaryjne zatrzymanie poci\u0105g\u00f3w w bloku"
     },
     {
         "term": "ext_output_change_action:estop_world",
-        "definition": "Emergency stop world"
+        "definition": "Awaryjne zatrzymanie \u015bwiata"
     },
     {
         "term": "ext_output_change_action:poweroff_world",
-        "definition": "Power off world"
+        "definition": "Wy\u0142\u0105czenie zasilania \u015bwiata"
     },
     {
         "term": "hardware:address",
-        "definition": "Address"
+        "definition": "Adres"
     },
     {
         "term": "hardware:addresses",
-        "definition": "Addresses"
+        "definition": "Adresy"
     },
     {
         "term": "hardware:channel",
-        "definition": "Channel"
+        "definition": "Kana\u0142"
     },
     {
         "term": "hardware:command_station",
-        "definition": "Command station"
+        "definition": "Centrala steruj\u0105ca"
     },
     {
         "term": "hardware:debug_log_input",
-        "definition": "Log input changes"
+        "definition": "Rejestr zmian wej\u015b\u0107"
     },
     {
         "term": "hardware:debug_log_output",
-        "definition": "Log output changes"
+        "definition": "Rejestr zmian wyj\u015b\u0107"
     },
     {
         "term": "hardware:debug_log_rx_tx",
-        "definition": "Log all communication"
+        "definition": "Rejestr ca\u0142ej komunikacji"
     },
     {
         "term": "hardware:decoders",
-        "definition": "Decoders"
+        "definition": "Dekodery"
     },
     {
         "term": "hardware:identifications",
-        "definition": "Identifications"
+        "definition": "Identyfikacje"
     },
     {
         "term": "hardware:input_monitor",
-        "definition": "Input monitor"
+        "definition": "Monitor wej\u015b\u0107"
     },
     {
         "term": "hardware:inputs",
-        "definition": "Inputs"
+        "definition": "Wej\u015bcia"
     },
     {
         "term": "hardware:interface",
-        "definition": "Interface"
+        "definition": "Interfejs"
     },
     {
         "term": "hardware:output_keyboard",
-        "definition": "Output keyboard"
+        "definition": "Klawiatura wyj\u015b\u0107"
     },
     {
         "term": "hardware:outputs",
-        "definition": "Outputs"
+        "definition": "Wyj\u015bcia"
     },
     {
         "term": "hardware:speed_steps",
-        "definition": "Speed steps"
+        "definition": "Kroki pr\u0119dko\u015bci"
     },
     {
         "term": "hardware:throttles",
-        "definition": "Throttles"
+        "definition": "Regulator"
     },
     {
         "term": "hsi88:s88_left",
-        "definition": "S88 left"
+        "definition": "S88 lewy"
     },
     {
         "term": "hsi88:s88_middle",
-        "definition": "S88 middle"
+        "definition": "S88 \u015brodkowy"
     },
     {
         "term": "hsi88:s88_right",
-        "definition": "S88 right"
+        "definition": "S88 prawy"
     },
     {
         "term": "identification:opc_multi_sense_direction",
-        "definition": "OPC_MULTI_SENSE direction"
+        "definition": "Kierunek OPC_MULTI_SENSE"
     },
     {
         "term": "input:off_delay",
-        "definition": "Off delay"
+        "definition": "Op\u00f3\u017anienie wy\u0142\u0105czenia"
     },
     {
         "term": "input:on_delay",
-        "definition": "On delay"
+        "definition": "Op\u00f3\u017anienie w\u0142\u0105czenia"
     },
     {
         "term": "input_list:bus",
@@ -709,71 +709,71 @@
     },
     {
         "term": "input_map_item.block:identification",
-        "definition": "Identification"
+        "definition": "Identyfikacja"
     },
     {
         "term": "input_map_item.block:input",
-        "definition": "Input"
+        "definition": "Wej\u015bcie"
     },
     {
         "term": "input_map_item.block:invert",
-        "definition": "Invert"
+        "definition": "Odwr\u00f3\u0107"
     },
     {
         "term": "input_map_item.block:type",
-        "definition": "Type"
+        "definition": "Typ"
     },
     {
         "term": "interface.ecos:ecos_detector",
-        "definition": "ECoS detector"
+        "definition": "Detektor ECoS"
     },
     {
         "term": "interface.hsi88:modules_left",
-        "definition": "Modules left"
+        "definition": "Modu\u0142y lewe"
     },
     {
         "term": "interface.hsi88:modules_middle",
-        "definition": "Modules middle"
+        "definition": "Modu\u0142y \u015brodkowe"
     },
     {
         "term": "interface.hsi88:modules_right",
-        "definition": "Modules right"
+        "definition": "Modu\u0142y prawe"
     },
     {
         "term": "interface.loconet:interface",
-        "definition": "Interface"
+        "definition": "Interfejs LocoNet"
     },
     {
         "term": "interface.marklin_can:marklin_can_locomotive_list",
-        "definition": "M\u00e4rklin CAN: Locomotive list"
+        "definition": "M\u00e4rklin CAN: Lista lokomotyw"
     },
     {
         "term": "interface.marklin_can:marklin_can_node_list",
-        "definition": "M\u00e4rklin CAN: Node list"
+        "definition": "M\u00e4rklin CAN: Lista w\u0119z\u0142\u00f3w"
     },
     {
         "term": "interface.xpressnet:interface",
-        "definition": "Interface"
+        "definition": "Interfejs XpressNet"
     },
     {
         "term": "interface.xpressnet:s88_module_count",
-        "definition": "S88 module count"
+        "definition": "Liczba modu\u0142\u00f3w S88"
     },
     {
         "term": "interface.xpressnet:s88_start_address",
-        "definition": "S88 start address"
+        "definition": "Adres startowy S88"
     },
     {
         "term": "interface.z21:firmware_version",
-        "definition": "Firmware version"
+        "definition": "Wersja oprogramowania"
     },
     {
         "term": "interface.z21:hardware_type",
-        "definition": "Hardware type"
+        "definition": "Typ sprz\u0119tu"
     },
     {
         "term": "interface.z21:serial_number",
-        "definition": "Serial number"
+        "definition": "Numer seryjny"
     },
     {
         "term": "interface:online",
@@ -785,23 +785,23 @@
     },
     {
         "term": "interface:type",
-        "definition": "Type"
+        "definition": "Typ"
     },
     {
         "term": "interface_list:create",
-        "definition": "Create a new interface."
+        "definition": "Utw\u00f3rz nowy interfejs."
     },
     {
         "term": "interface_list:list_is_empty",
-        "definition": "Interface list is empty.\nClick the plus button to create a new interface."
+        "definition": "Lista interfejs\u00f3w jest pusta. Kliknij przycisk \u201e+\u201d, aby utworzy\u0107 nowy interfejs."
     },
     {
         "term": "interface_state:error",
-        "definition": "Error"
+        "definition": "B\u0142\u0105d"
     },
     {
         "term": "interface_state:initializing",
-        "definition": "Initializing"
+        "definition": "Inicjalizacja"
     },
     {
         "term": "interface_state:offline",
@@ -813,7 +813,7 @@
     },
     {
         "term": "ip:hostname",
-        "definition": "Hostname"
+        "definition": "Nazwa hosta"
     },
     {
         "term": "ip:port",
@@ -821,115 +821,111 @@
     },
     {
         "term": "language:de-de",
-        "definition": "German"
+        "definition": "Niemiecki"
     },
     {
         "term": "language:en-us",
-        "definition": "English (USA)"
+        "definition": "Angielski (USA)"
     },
     {
         "term": "language:es-es",
-        "definition": "Spanish"
+        "definition": "Hiszpa\u0144ski"
     },
     {
         "term": "language:fr-fr",
-        "definition": "French"
+        "definition": "Francuski"
     },
     {
         "term": "language:fy-nl",
-        "definition": "Frisian"
+        "definition": "Fryzyjski"
     },
     {
         "term": "language:it-it",
-        "definition": "Italian"
+        "definition": "W\u0142oski"
     },
     {
         "term": "language:nl-nl",
-        "definition": "Dutch"
-    },
-    {
-        "term": "language:pl-pl",
-        "definition": "Polish"
+        "definition": "Holenderski"
     },
     {
         "term": "language:sv-se",
-        "definition": "Swedish"
+        "definition": "Szwedzki"
     },
     {
         "term": "list.train_vehicle:move",
-        "definition": "Move"
+        "definition": "Przesu\u0144"
     },
     {
         "term": "list.train_vehicle:reverse",
-        "definition": "Reverse"
+        "definition": "Odwr\u00f3\u0107"
     },
     {
         "term": "list.zone:highlight_zone",
-        "definition": "Highlight zone"
+        "definition": "Wyr\u00f3\u017cnij stref\u0119"
     },
     {
         "term": "list:add",
-        "definition": "Add"
+        "definition": "Dodaj"
     },
     {
         "term": "list:create",
-        "definition": "Create"
+        "definition": "Utw\u00f3rz"
     },
     {
         "term": "list:delete",
-        "definition": "Delete"
+        "definition": "Usu\u0144"
     },
     {
         "term": "list:edit",
-        "definition": "Edit"
+        "definition": "Edytuj"
     },
     {
         "term": "list:move_down",
-        "definition": "Move down"
+        "definition": "Przesu\u0144 w d\u00f3\u0142"
     },
     {
         "term": "list:move_up",
-        "definition": "Move up"
+        "definition": "Przesu\u0144 w g\u00f3r\u0119"
     },
     {
         "term": "list:remove",
-        "definition": "Remove"
+        "definition": "Usu\u0144"
     },
     {
         "term": "list:setup_using_wizard",
-        "definition": "Setup using wizard"
+        "definition": "Konfiguracja za pomoc\u0105 assystenta"
     },
     {
         "term": "lncv_programmer:description",
-        "definition": "Description"
+        "definition": "Opis"
     },
     {
         "term": "lncv_programmer:lncv_programmer",
-        "definition": "LNCV programmer"
+        "definition": "Programator LNCV"
     },
     {
         "term": "lncv_programmer:module",
-        "definition": "Module"
+        "definition": "Modu\u0142"
     },
     {
         "term": "lncv_programmer:other_module",
-        "definition": "Other module"
+        "definition": "Inny modu\u0142"
     },
     {
         "term": "lncv_programmer:read",
-        "definition": "Read"
+        "definition": "Odczytaj"
     },
     {
         "term": "lncv_programmer:reading_lncv_x",
-        "definition": "Reading LNCV %1"
+        "definition": "Odczyt LNCV %1"
     },
     {
         "term": "lncv_programmer:reading_lncv_x_failed",
-        "definition": "Reading LNCV %1 failed"
+        "definition": "Odczyt LNCV %1 nie powi\u00f3d\u0142 si\u0119"
     },
     {
         "term": "lncv_programmer:sending_start",
-        "definition": "Sending start"
+        "definition": "Wysy\u0142anie startu"
     },
     {
         "term": "lncv_programmer:start",
@@ -941,43 +937,43 @@
     },
     {
         "term": "lncv_programmer:use_broadcast_address",
-        "definition": "Use broadcast address"
+        "definition": "U\u017cyj adresu broadcast"
     },
     {
         "term": "lncv_programmer:value",
-        "definition": "Value"
+        "definition": "Warto\u015b\u0107"
     },
     {
         "term": "lncv_programmer:waiting_for_module_to_respond",
-        "definition": "Waiting for module to respond"
+        "definition": "Oczekiwanie na odpowied\u017a modu\u0142u"
     },
     {
         "term": "lncv_programmer:write",
-        "definition": "Write"
+        "definition": "Zapisz"
     },
     {
         "term": "lncv_programmer:writing_lncv_x",
-        "definition": "Writing LNCV %1"
+        "definition": "Zapisz"
     },
     {
         "term": "loconet_command_station:custom",
-        "definition": "Custom"
+        "definition": "Niestandardowy"
     },
     {
         "term": "loconet_f9_f28:imm_packet",
-        "definition": "Direct (OPC_IMM_PACKET)"
+        "definition": "Bezpo\u015bredni (OPC_IMM_PACKET)"
     },
     {
         "term": "loconet_f9_f28:uhlenbrock_extended",
-        "definition": "Uhlenbrock extended (OPC_A3, OPC_D4)"
+        "definition": "Rozszerzony Uhlenbrock (OPC_A3, OPC_D4)"
     },
     {
         "term": "loconet_fastclock:master",
-        "definition": "Master (Traintastic controls the clock)"
+        "definition": "Master (Traintastic steruje zegarem)"
     },
     {
         "term": "loconet_fastclock:off",
-        "definition": "Off"
+        "definition": "Wy\u0142\u0105czony"
     },
     {
         "term": "loconet_interface_type:serial",
@@ -985,55 +981,55 @@
     },
     {
         "term": "loconet_interface_type:tcp_binary",
-        "definition": "TCP binary"
+        "definition": "TCP binarny"
     },
     {
         "term": "loconet_serial_interface:custom",
-        "definition": "Custom"
+        "definition": "Niestandardowy"
     },
     {
         "term": "loconet_settings:command_station",
-        "definition": "Command station"
+        "definition": "Centrala steruj\u0105ca"
     },
     {
         "term": "loconet_settings:echo_timeout",
-        "definition": "Echo timeout"
+        "definition": "Limit czasu echo"
     },
     {
         "term": "loconet_settings:fast_clock",
-        "definition": "Fast clock"
+        "definition": "Szybki takt"
     },
     {
         "term": "loconet_settings:fast_clock_sync_enabled",
-        "definition": "Fast clock sync enabled"
+        "definition": "Synchronizacja szybkiego taktu w\u0142\u0105czona"
     },
     {
         "term": "loconet_settings:fast_clock_sync_interval",
-        "definition": "Fast clock sync interval"
+        "definition": "Interwa\u0142 synchronizacji szybkiego taktu"
     },
     {
         "term": "loconet_settings:listen_only",
-        "definition": "Listen only"
+        "definition": "Tylko nas\u0142uch"
     },
     {
         "term": "loconet_settings:locomotive_slots",
-        "definition": "Locomotive slots"
+        "definition": "Sloty lokomotyw"
     },
     {
         "term": "loconet_settings:pcap_output",
-        "definition": "PCAP output"
+        "definition": "Wyj\u015bcie PCAP"
     },
     {
         "term": "loconet_settings:response_timeout",
-        "definition": "Response timeout"
+        "definition": "Limit czasu odpowiedzi"
     },
     {
         "term": "lua.script:clear_persistent_variables",
-        "definition": "Clear persistent variables"
+        "definition": "Wyczy\u015b\u0107 zmienne trwa\u0142e"
     },
     {
         "term": "lua.script:disabled",
-        "definition": "Disabled"
+        "definition": "Wy\u0142\u0105czony"
     },
     {
         "term": "lua.script:start",
@@ -1045,183 +1041,183 @@
     },
     {
         "term": "lua.script_list:start_all",
-        "definition": "Start all"
+        "definition": "Uruchom wszystkie"
     },
     {
         "term": "lua.script_list:stop_all",
-        "definition": "Stop all"
+        "definition": "Zatrzymaj wszystkie"
     },
     {
         "term": "lua_script:state",
-        "definition": "State"
+        "definition": "Stan"
     },
     {
         "term": "lua_script_state:disabled",
-        "definition": "Disabled"
+        "definition": "Wy\u0142\u0105czony"
     },
     {
         "term": "lua_script_state:error",
-        "definition": "Error"
+        "definition": "B\u0142\u0105d"
     },
     {
         "term": "lua_script_state:running",
-        "definition": "Running"
+        "definition": "Uruchomiony"
     },
     {
         "term": "lua_script_state:stopped",
-        "definition": "Stopped"
+        "definition": "Zatrzymany"
     },
     {
         "term": "luadoc:index:nav",
-        "definition": "Index"
+        "definition": "Indeks"
     },
     {
         "term": "luadoc:index:title",
-        "definition": "Traintastic Lua scripting"
+        "definition": "Skrypty Lua w Traintastic"
     },
     {
         "term": "marklin_can_interface_type:network_tcp",
-        "definition": "Network (TCP)"
+        "definition": "Sie\u0107 (TCP)"
     },
     {
         "term": "marklin_can_interface_type:network_udp",
-        "definition": "Network (UDP)"
+        "definition": "Sie\u0107 (UDP)"
     },
     {
         "term": "marklin_can_interface_type:socket_can",
-        "definition": "SocketCAN (Linux only)"
+        "definition": "SocketCAN (tylko Linux)"
     },
     {
         "term": "marklin_can_locomotive_list:import_or_sync",
-        "definition": "Import/sync"
+        "definition": "Import/synchronizacja"
     },
     {
         "term": "marklin_can_locomotive_list:import_or_sync_all",
-        "definition": "Import/sync all"
+        "definition": "Import/synchronizacja wszystkich"
     },
     {
         "term": "marklin_can_locomotive_list:reload",
-        "definition": "Reload"
+        "definition": "Prze\u0142aduj"
     },
     {
         "term": "marklincan_settings:debug_config_stream",
-        "definition": "Debug: Config stream"
+        "definition": "Debug: Strumie\u0144 konfiguracji"
     },
     {
         "term": "marklincan_settings:debug_status_data_config",
-        "definition": "Debug: Status data config"
+        "definition": "Debug: Konfiguracja danych statusu"
     },
     {
         "term": "marklincan_settings:default_switch_time",
-        "definition": "Default switch time"
+        "definition": "Domy\u015blny czas prze\u0142\u0105czania"
     },
     {
         "term": "marklincan_settings:node_serial_number",
-        "definition": "Node serial number"
+        "definition": "Numer seryjny w\u0119z\u0142a"
     },
     {
         "term": "marklincan_settings:node_uid",
-        "definition": "Node UID"
+        "definition": "UID w\u0119z\u0142a"
     },
     {
         "term": "message:C1001",
-        "definition": "Loading world failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 za\u0142adowa\u0107 \u015bwiata (%1)"
     },
     {
         "term": "message:C1002",
-        "definition": "Creating connection failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 utworzy\u0107 po\u0142\u0105czenia (%1)"
     },
     {
         "term": "message:C1003",
-        "definition": "Can't write to settings file (%1)"
+        "definition": "Nie mo\u017cna zapisa\u0107 pliku ustawie\u0144 (%1)"
     },
     {
         "term": "message:C1004",
-        "definition": "Reading world failed (%1) (%2)"
+        "definition": "Nie uda\u0142o si\u0119 odczyta\u0107 \u015bwiata (%1) (%2)"
     },
     {
         "term": "message:C1005",
-        "definition": "Saving world failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 zapisa\u0107 \u015bwiata (%1)"
     },
     {
         "term": "message:C1006",
-        "definition": "Creating world backup failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 utworzy\u0107 kopii zapasowej \u015bwiata (%1)"
     },
     {
         "term": "message:C1007",
-        "definition": "Creating world backup directory failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 utworzy\u0107 katalogu kopii \u015bwiata (%1)"
     },
     {
         "term": "message:C1008",
-        "definition": "Creating backup directory failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 utworzy\u0107 katalogu kopii zapasowej (%1)"
     },
     {
         "term": "message:C1009",
-        "definition": "Creating settings backup failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 utworzy\u0107 kopii ustawie\u0144 (%1)"
     },
     {
         "term": "message:C1010",
-        "definition": "Exporting world failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 wyeksportowa\u0107 \u015bwiata (%1)"
     },
     {
         "term": "message:C1011",
-        "definition": "Importing world failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 zaimportowa\u0107 \u015bwiata (%1)"
     },
     {
         "term": "message:C1012",
-        "definition": "Unknown class '%1', can't recreate object '%2'"
+        "definition": "Nieznana klasa '%1', nie mo\u017cna odtworzy\u0107 obiektu '%2'"
     },
     {
         "term": "message:C1013",
-        "definition": "Can't load world saved with newer version, requires at least: %1"
+        "definition": "Nie mo\u017cna za\u0142adowa\u0107 \u015bwiata zapisanego nowsz\u0105 wersj\u0105, wymagana co najmniej: %1"
     },
     {
         "term": "message:C1014",
-        "definition": "Invalid command"
+        "definition": "Nieprawid\u0142owa komenda"
     },
     {
         "term": "message:C1015",
-        "definition": "Unknown object"
+        "definition": "Nieznany obiekt"
     },
     {
         "term": "message:C1016",
-        "definition": "Unknown property"
+        "definition": "Nieznana w\u0142asno\u015b\u0107"
     },
     {
         "term": "message:C1017",
-        "definition": "Invalid indexes"
+        "definition": "Nieprawid\u0142owe indeksy"
     },
     {
         "term": "message:C1018",
-        "definition": "Exception: %1"
+        "definition": "Wyj\u0105tek: %1"
     },
     {
         "term": "message:C1019",
-        "definition": "Object not a table"
+        "definition": "Obiekt nie jest tabel\u0105"
     },
     {
         "term": "message:C2001",
-        "definition": "Address already used at #%1"
+        "definition": "Adres ju\u017c u\u017cywany pod #%1"
     },
     {
         "term": "message:C2004",
-        "definition": "Can't get free slot"
+        "definition": "Brak wolnego slotu"
     },
     {
         "term": "message:C2005",
-        "definition": "SocketCAN is only available on Linux"
+        "definition": "SocketCAN dost\u0119pny tylko na Linux"
     },
     {
         "term": "message:D1001",
-        "definition": "Resume %1 (multiplier: %2)"
+        "definition": "Wzn\u00f3w %1 (mno\u017cnik: %2)"
     },
     {
         "term": "message:D1002",
-        "definition": "Tick %1 (error: %2us)"
+        "definition": "Takt %1 (b\u0142\u0105d: %2 \u00b5s)"
     },
     {
         "term": "message:D1003",
-        "definition": "Freeze %1"
+        "definition": "Zatrzymaj %1"
     },
     {
         "term": "message:D2001",
@@ -1233,7 +1229,7 @@
     },
     {
         "term": "message:D2003",
-        "definition": "Unknown xHeader 0x%1"
+        "definition": "Nieznany xHeader 0x%1"
     },
     {
         "term": "message:D2004",
@@ -1245,15 +1241,15 @@
     },
     {
         "term": "message:D2006",
-        "definition": "Unknown message: %1"
+        "definition": "Nieznana wiadomo\u015b\u0107: %1"
     },
     {
         "term": "message:D2007",
-        "definition": "Input %1 = %2"
+        "definition": "Wej\u015bcie %1 = %2"
     },
     {
         "term": "message:D2008",
-        "definition": "Output %1 = %1"
+        "definition": "Wyj\u015bcie %1 = %1"
     },
     {
         "term": "message:D2009",
@@ -1261,623 +1257,623 @@
     },
     {
         "term": "message:D2010",
-        "definition": "Slot %1 = Free"
+        "definition": "Slot %1 = wolny"
     },
     {
         "term": "message:D3001",
-        "definition": "Acquiring train %1 failed: %2"
+        "definition": "Nie uda\u0142o si\u0119 przej\u0105\u0107 poci\u0105gu %1: %2"
     },
     {
         "term": "message:D3010",
-        "definition": "Train '%1' assinged to block '%2'"
+        "definition": "Poci\u0105g '%1' przypisany do odcinka '%2'"
     },
     {
         "term": "message:D3011",
-        "definition": "Train '%1' reserved block '%2'"
+        "definition": "Poci\u0105g '%1' zarezerwowa\u0142 odcinek '%2'"
     },
     {
         "term": "message:D3012",
-        "definition": "Train '%1' entered block '%2'"
+        "definition": "Poci\u0105g '%1' wjecha\u0142 na odcinek '%2'"
     },
     {
         "term": "message:D3013",
-        "definition": "Train '%1' left block '%2'"
+        "definition": "Poci\u0105g '%1' opu\u015bci\u0142 odcinek '%2'"
     },
     {
         "term": "message:D3014",
-        "definition": "Train '%1' removed from block '%2'"
+        "definition": "Poci\u0105g '%1' usuni\u0119ty z odcinka '%2'"
     },
     {
         "term": "message:D3020",
-        "definition": "Train '%1' assigned to zone '%2'"
+        "definition": "Poci\u0105g '%1' przypisany do strefy '%2'"
     },
     {
         "term": "message:D3021",
-        "definition": "Train '%1' entering zone '%2'"
+        "definition": "Poci\u0105g '%1' wje\u017cd\u017ca do strefy '%2'"
     },
     {
         "term": "message:D3022",
-        "definition": "Train '%1' entered zone '%2'"
+        "definition": "Poci\u0105g '%1' wjecha\u0142 do strefy '%2'"
     },
     {
         "term": "message:D3023",
-        "definition": "Train '%1' leaving zone '%2'"
+        "definition": "Poci\u0105g '%1' opuszcza stref\u0119 '%2'"
     },
     {
         "term": "message:D3024",
-        "definition": "Train '%1' left zone '%2'"
+        "definition": "Poci\u0105g '%1' opu\u015bci\u0142 stref\u0119 '%2'"
     },
     {
         "term": "message:D3025",
-        "definition": "Train '%1' removed from zone '%2'"
+        "definition": "Poci\u0105g '%1' usuni\u0119ty ze strefy '%2'"
     },
     {
         "term": "message:E1001",
-        "definition": "Invalid world UUID: %1"
+        "definition": "Nieprawid\u0142owy identyfikator UUID \u015bwiata: %1"
     },
     {
         "term": "message:E1002",
-        "definition": "World %1 doesn't exist"
+        "definition": "\u015awiat %1 nie istnieje"
     },
     {
         "term": "message:E1003",
-        "definition": "UDP receive error (%1)"
+        "definition": "B\u0142\u0105d odbioru UDP (%1)"
     },
     {
         "term": "message:E1004",
-        "definition": "TCP accept error (%1)"
+        "definition": "B\u0142\u0105d akceptacji TCP (%1)"
     },
     {
         "term": "message:E1005",
-        "definition": "Socket shutdown failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 zamkn\u0105\u0107 gniazda (%1)"
     },
     {
         "term": "message:E1006",
-        "definition": "Socket write failed (%1)"
+        "definition": "B\u0142\u0105d zapisu do gniazda (%1)"
     },
     {
         "term": "message:E1007",
-        "definition": "Socket read failed (%1)"
+        "definition": "B\u0142\u0105d odczytu z gniazda (%1)"
     },
     {
         "term": "message:E1008",
-        "definition": "Socket acceptor cancel failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 anulowa\u0107 akceptora gniazda (%1)"
     },
     {
         "term": "message:E2001",
-        "definition": "Serial write failed (%1)"
+        "definition": "B\u0142\u0105d zapisu przez port serial (%1)"
     },
     {
         "term": "message:E2002",
-        "definition": "Serial read failed (%1)"
+        "definition": "B\u0142\u0105d odczytu z portu serial (%1)"
     },
     {
         "term": "message:E2003",
-        "definition": "Make address failed (%1)"
+        "definition": "Tworzenie adresu nie powiod\u0142o si\u0119 (%1)"
     },
     {
         "term": "message:E2004",
-        "definition": "Socket open failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 otworzy\u0107 gniazda (%1)"
     },
     {
         "term": "message:E2005",
-        "definition": "Socket connect failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 po\u0142\u0105czy\u0107 z gniazdem (%1)"
     },
     {
         "term": "message:E2006",
-        "definition": "Socket bind failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 powi\u0105za\u0107 gniazda (%1)"
     },
     {
         "term": "message:E2007",
-        "definition": "Socket write failed (%1)"
+        "definition": "B\u0142\u0105d zapisu do gniazda (%1)"
     },
     {
         "term": "message:E2008",
-        "definition": "Socket read failed (%1)"
+        "definition": "B\u0142\u0105d odczytu z gniazda (%1)"
     },
     {
         "term": "message:E2009",
-        "definition": "Socket receive failed (%1)"
+        "definition": "B\u0142\u0105d odbioru przez gniazdo (%1)"
     },
     {
         "term": "message:E2010",
-        "definition": "Serial port open failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 otworzy\u0107 portu serial (%1)"
     },
     {
         "term": "message:E2011",
-        "definition": "Socket send failed (%1)"
+        "definition": "B\u0142\u0105d wysy\u0142ania przez gniazdo (%1)"
     },
     {
         "term": "message:E2012",
-        "definition": "Function number already in use"
+        "definition": "Numer funkcji ju\u017c u\u017cywany"
     },
     {
         "term": "message:E2013",
-        "definition": "Serial port set baudrate failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 ustawi\u0107 szybko\u015bci transmisji portu serial(%1)"
     },
     {
         "term": "message:E2014",
-        "definition": "Serial port set data bits failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 ustawi\u0107 bit\u00f3w danych portu serial(%1)"
     },
     {
         "term": "message:E2015",
-        "definition": "Serial port set stop bits failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 ustawi\u0107 bit\u00f3w stopu portu serial (%1)"
     },
     {
         "term": "message:E2016",
-        "definition": "Serial port set parity failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 ustawi\u0107 parzysto\u015bci portu serial(%1)"
     },
     {
         "term": "message:E2017",
-        "definition": "Serial port set flow control failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 ustawi\u0107 kontroli przep\u0142ywu portu serial(%1)"
     },
     {
         "term": "message:E2018",
-        "definition": "Timeout, no echo within %1ms"
+        "definition": "Przekroczono limit \u2013 brak echa w ci\u0105gu %1 ms"
     },
     {
         "term": "message:E2019",
-        "definition": "Timeout, no response within %1ms"
+        "definition": "Przekroczono limit \u2013 brak odpowiedzi w ci\u0105gu %1 ms"
     },
     {
         "term": "message:E2020",
-        "definition": "Total number of modules may not exceed %1"
+        "definition": "Ca\u0142kowita liczba modu\u0142\u00f3w nie mo\u017ce przekroczy\u0107 %1"
     },
     {
         "term": "message:E2021",
-        "definition": "Staring PCAP log failed: %1"
+        "definition": "Nie uda\u0142o si\u0119 uruchomi\u0107 logowania PCAP: %1"
     },
     {
         "term": "message:E2022",
-        "definition": "Socket create failed (%1)"
+        "definition": "Tworzenie gniazda nie powiod\u0142o si\u0119 (%1)"
     },
     {
         "term": "message:E2023",
-        "definition": "Socket ioctl failed (%1)"
+        "definition": "Gniazdo ioctl  nie powiod\u0142o si\u0119 (%1)"
     },
     {
         "term": "message:E2024",
-        "definition": "Unknown locomotive MFX UID: %1"
+        "definition": "Nieznana lokomotywa MFX UID: %1"
     },
     {
         "term": "message:E3001",
-        "definition": "Can't delete rail vehicle when in active train"
+        "definition": "Nie mo\u017cna usun\u0105\u0107 pojazdu szynowego, gdy jest w aktywnym poci\u0105gu"
     },
     {
         "term": "message:E3002",
-        "definition": "Can't delete active train"
+        "definition": "Nie mo\u017cna usun\u0105\u0107 aktywnego poci\u0105gu"
     },
     {
         "term": "message:E3003",
-        "definition": "Train was emergency stopped due to turnout %1 position externally changed"
+        "definition": "Poci\u0105g awaryjnie zatrzymany z powodu zewn\u0119trznej zmiany pozycji zwrotnicy %1"
     },
     {
         "term": "message:E3004",
-        "definition": "Train was emergency stopped due to signal %1 aspect externally changed"
+        "definition": "Poci\u0105g awaryjnie zatrzymany z powodu zewn\u0119trznej zmiany sygnalizacji %1"
     },
     {
         "term": "message:E3005",
-        "definition": "Can't remove train, train must be stopped first."
+        "definition": "Nie mo\u017cna usun\u0105\u0107 poci\u0105gu, poci\u0105g musi by\u0107 najpierw zatrzymany."
     },
     {
         "term": "message:E3006",
-        "definition": "Can't remove train, train can only be removed from head or tail block."
+        "definition": "Nie mo\u017cna usun\u0105\u0107 poci\u0105gu, mo\u017cna go usun\u0105\u0107 tylko z bloku czo\u0142owego lub ko\u0144cowego."
     },
     {
         "term": "message:E3007",
-        "definition": "World was emergency stopped due to turnout %1 position externally changed"
+        "definition": "\u015awiat awaryjnie zatrzymany z powodu zewn\u0119trznej zmiany pozycji zwrotnicy %1"
     },
     {
         "term": "message:E3008",
-        "definition": "World was emergency stopped due to signal %1 aspect externally changed"
+        "definition": "\u015awiat awaryjnie zatrzymany z powodu zewn\u0119trznej zmiany sygnalizacji %1"
     },
     {
         "term": "message:E3009",
-        "definition": "World was emergency powered off due to turnout %1 position externally changed"
+        "definition": "\u015awiat awaryjnie wy\u0142\u0105czony z powodu zewn\u0119trznej zmiany pozycji zwrotnicy %1"
     },
     {
         "term": "message:E3010",
-        "definition": "World was emergency powered off due to signal %1 aspect externally changed"
+        "definition": "\u015awiat awaryjnie wy\u0142\u0105czony z powodu zewn\u0119trznej zmiany sygnalizacji %1"
     },
     {
         "term": "message:E9001",
-        "definition": "%1 (During execution of %2 event handler)"
+        "definition": "%1 (podczas wykonywania obs\u0142ugi zdarzenia %2)"
     },
     {
         "term": "message:F1001",
-        "definition": "Opening TCP socket failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 otworzy\u0107 gniazda TCP (%1)"
     },
     {
         "term": "message:F1002",
-        "definition": "TCP socket address reuse failed (%1)"
+        "definition": "Ponowne u\u017cycie adresu TCP nie powiod\u0142o si\u0119 (%1)"
     },
     {
         "term": "message:F1003",
-        "definition": "Binding TCP socket failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 powi\u0105za\u0107 gniazda TCP (%1)"
     },
     {
         "term": "message:F1004",
-        "definition": "TCP socket listen failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 nas\u0142uchiwa\u0107 na gnie\u017adzie TCP (%1)"
     },
     {
         "term": "message:F1005",
-        "definition": "Opening UDP socket failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 otworzy\u0107 gniazda UDP (%1)"
     },
     {
         "term": "message:F1006",
-        "definition": "UDP socket address reuse failed (%1)"
+        "definition": "Ponowne u\u017cycie adresu UDP nie powiod\u0142o si\u0119 (%1)"
     },
     {
         "term": "message:F1007",
-        "definition": "Binding udp socket failed (%1)"
+        "definition": "Nie uda\u0142o si\u0119 powi\u0105za\u0107 gniazda UDP (%1)"
     },
     {
         "term": "message:F1008",
-        "definition": "Eventloop crashed (%1)"
+        "definition": "P\u0119tla zdarze\u0144 zako\u0144czona awari\u0105 (%1)"
     },
     {
         "term": "message:F9001",
-        "definition": "Creating Lua state failed"
+        "definition": "Nie uda\u0142o si\u0119 utworzy\u0107 stanu Lua"
     },
     {
         "term": "message:F9002",
-        "definition": "Running script failed (%1)"
+        "definition": "Uruchomienie skryptu nie powiod\u0142o si\u0119 (%1)"
     },
     {
         "term": "message:F9003",
-        "definition": "Calling function failed (%1)"
+        "definition": "Wywo\u0142anie funkcji nie powiod\u0142o si\u0119 (%1)"
     },
     {
         "term": "message:I1002",
-        "definition": "Settings file not found, using defaults"
+        "definition": "Nie znaleziono pliku ustawie\u0144, u\u017cyto warto\u015bci domy\u015blnych"
     },
     {
         "term": "message:I1003",
-        "definition": "New connection"
+        "definition": "Nowe po\u0142\u0105czenie"
     },
     {
         "term": "message:I1004",
-        "definition": "Connection lost"
+        "definition": "Utracono po\u0142\u0105czenie"
     },
     {
         "term": "message:I1005",
-        "definition": "Building world index"
+        "definition": "Tworzenie indeksu \u015bwiata"
     },
     {
         "term": "message:I2001",
-        "definition": "Unknown loco address: %1"
+        "definition": "Nieznany adres lokomotywy: %1"
     },
     {
         "term": "message:I2002",
-        "definition": "Hardware type: %1"
+        "definition": "Typ sprz\u0119tu: %1"
     },
     {
         "term": "message:I2003",
-        "definition": "Firmware version: %1"
+        "definition": "Wersja oprogramowania: %1"
     },
     {
         "term": "message:I3001",
-        "definition": "Throttle %1 acquired train %2"
+        "definition": "Regulator %1 przej\u0105\u0142 poci\u0105g %2"
     },
     {
         "term": "message:I3002",
-        "definition": "Throttle %1 released train %2"
+        "definition": "Regulator %1 zwolni\u0142 poci\u0105g %2"
     },
     {
         "term": "message:I9001",
-        "definition": "Stopped script"
+        "definition": "Zatrzymano skrypt"
     },
     {
         "term": "message:I9003",
-        "definition": "Cleared persistent variables"
+        "definition": "Wyczyszczono zmienne trwa\u0142e"
     },
     {
         "term": "message:N1001",
-        "definition": "Received signal: %1"
+        "definition": "Odebrano sygna\u0142: %1"
     },
     {
         "term": "message:N1002",
-        "definition": "Created new world"
+        "definition": "Utworzono nowy \u015bwiat"
     },
     {
         "term": "message:N1003",
-        "definition": "Restarting"
+        "definition": "Ponowne uruchamianie"
     },
     {
         "term": "message:N1004",
-        "definition": "Shutting down"
+        "definition": "Wy\u0142\u0105czanie"
     },
     {
         "term": "message:N1005",
-        "definition": "Discovery enabled"
+        "definition": "Wykrywanie w\u0142\u0105czone"
     },
     {
         "term": "message:N1006",
-        "definition": "Discovery disabled"
+        "definition": "Wykrywanie wy\u0142\u0105czone"
     },
     {
         "term": "message:N1007",
-        "definition": "Listening at %1:%2"
+        "definition": "Nas\u0142uchiwanie na %1:%2"
     },
     {
         "term": "message:N1008",
-        "definition": "Loaded settings"
+        "definition": "Za\u0142adowano ustawienia"
     },
     {
         "term": "message:N1009",
-        "definition": "Saved settings"
+        "definition": "Zapisano ustawienia"
     },
     {
         "term": "message:N1010",
-        "definition": "Edit mode: enabled"
+        "definition": "Tryb modyfikaci: w\u0142\u0105czony"
     },
     {
         "term": "message:N1011",
-        "definition": "Edit mode: disabled"
+        "definition": "Tryb modyfikaci: wy\u0142\u0105czony"
     },
     {
         "term": "message:N1012",
-        "definition": "Communication: enabled"
+        "definition": "Komunikacja: w\u0142\u0105czona"
     },
     {
         "term": "message:N1013",
-        "definition": "Communication: disabled"
+        "definition": "Komunikacja: wy\u0142\u0105czona"
     },
     {
         "term": "message:N1014",
-        "definition": "Power: on"
+        "definition": "Zasilanie: w\u0142\u0105czone"
     },
     {
         "term": "message:N1015",
-        "definition": "Power: off"
+        "definition": "Zasilanie: wy\u0142\u0105czone"
     },
     {
         "term": "message:N1016",
-        "definition": "Running"
+        "definition": "Uruchomione"
     },
     {
         "term": "message:N1017",
-        "definition": "Stopped"
+        "definition": "Zatrzymane"
     },
     {
         "term": "message:N1018",
-        "definition": "Mute: enabled"
+        "definition": "Wyciszenie: w\u0142\u0105czone"
     },
     {
         "term": "message:N1019",
-        "definition": "Mute: disabled"
+        "definition": "Wyciszenie: wy\u0142\u0105czone"
     },
     {
         "term": "message:N1020",
-        "definition": "Smoke: enabled"
+        "definition": "Dym: w\u0142\u0105czony"
     },
     {
         "term": "message:N1021",
-        "definition": "Smoke: disabled"
+        "definition": "Dym: wy\u0142\u0105czony"
     },
     {
         "term": "message:N1022",
-        "definition": "Saved world: %1"
+        "definition": "Zapisano \u015bwiat: %1"
     },
     {
         "term": "message:N1023",
-        "definition": "Simulation: disabled"
+        "definition": "Symulacja: wy\u0142\u0105czona"
     },
     {
         "term": "message:N1024",
-        "definition": "Simulation: enabled"
+        "definition": "Symulacja: w\u0142\u0105czona"
     },
     {
         "term": "message:N1025",
-        "definition": "Exported world successfully"
+        "definition": "Pomy\u015blnie wyeksportowano \u015bwiat"
     },
     {
         "term": "message:N1026",
-        "definition": "Imported world successfully"
+        "definition": "Pomy\u015blnie zaimportowano \u015bwiat"
     },
     {
         "term": "message:N1027",
-        "definition": "Loaded world: %1"
+        "definition": "Za\u0142adowano \u015bwiat: %1"
     },
     {
         "term": "message:N1028",
-        "definition": "Closed world"
+        "definition": "Zamkni\u0119to \u015bwiat"
     },
     {
         "term": "message:N2001",
-        "definition": "Simulation not supported"
+        "definition": "Symulacja nie jest obs\u0142ugiwana"
     },
     {
         "term": "message:N2002",
-        "definition": "No response from LNCV module %1 with address %2"
+        "definition": "Brak odpowiedzi od modu\u0142u LNCV %1 z adresem %2"
     },
     {
         "term": "message:N2003",
-        "definition": "Stopped sending fast clock sync"
+        "definition": "Zatrzymano synchronizacj\u0119 szybkiego taktu"
     },
     {
         "term": "message:N2004",
-        "definition": "Starting PCAP file log: %1"
+        "definition": "Rozpoczynanie rejestracji PCAP do pliku: %1"
     },
     {
         "term": "message:N2005",
-        "definition": "Starting PCAP log pipe: %1"
+        "definition": "Rozpoczynanie rejestracji PCAP przez przewod: %1"
     },
     {
         "term": "message:N2006",
-        "definition": "Listen only mode: activated"
+        "definition": "Tryb tylko nas\u0142uchu: aktywny"
     },
     {
         "term": "message:N2007",
-        "definition": "Listen only mode: deactivated"
+        "definition": "Tryb tylko nas\u0142uchu: nieaktywny"
     },
     {
         "term": "message:N3001",
-        "definition": "Assigned train %1 to block %2"
+        "definition": "Przypisano poci\u0105g %1 do bloku %2"
     },
     {
         "term": "message:N3002",
-        "definition": "Removed train %1 from block %2"
+        "definition": "Usuni\u0119to poci\u0105g %1 z bloku %2"
     },
     {
         "term": "message:N3003",
-        "definition": "Turnout position was reset to reserved one"
+        "definition": "Pozycja zwrotnicy zosta\u0142a przywr\u00f3cona do zarezerwowanej"
     },
     {
         "term": "message:N3004",
-        "definition": "Signal aspect was reset to reserved one"
+        "definition": "Sygnalizacja zosta\u0142a przywr\u00f3cona do zarezerwowanej"
     },
     {
         "term": "message:N3005",
-        "definition": "Throttle %1 stole train %2"
+        "definition": "Regulator %1 przej\u0105\u0142 poci\u0105g %2 si\u0142\u0105"
     },
     {
         "term": "message:N3006",
-        "definition": "Throttle %1 released train %2 without stopping it"
+        "definition": "Regulator %1 zwolni\u0142 poci\u0105g %2 bez zatrzymywania go"
     },
     {
         "term": "message:N9001",
-        "definition": "Starting script"
+        "definition": "Uruchamianie skryptu"
     },
     {
         "term": "message:W1001",
-        "definition": "Discovery disabled, only allowed on port %1"
+        "definition": "Wykrywanie wy\u0142\u0105czone, dozwolone tylko na porcie %1"
     },
     {
         "term": "message:W1002",
-        "definition": "Setting %1 doesnt exist"
+        "definition": "Ustawienie %1 nie istnieje"
     },
     {
         "term": "message:W1003",
-        "definition": "Reading world %1 failed (libarchive error %2: %3)"
+        "definition": "Nie uda\u0142o si\u0119 odczyta\u0107 \u015bwiata %1 (b\u0142\u0105d libarchive %2: %3)"
     },
     {
         "term": "message:W2001",
-        "definition": "Received malformed data dropped %1 bytes"
+        "definition": "Odebrano uszkodzone dane \u2013 odrzucono %1 bajt\u00f3w"
     },
     {
         "term": "message:W2002",
-        "definition": "Command station doesn't support functions above F%1"
+        "definition": "Stacja steruj\u0105ca nie obs\u0142uguje funkcji powy\u017cej F%1"
     },
     {
         "term": "message:W2003",
-        "definition": "Received malformed data dropped %1 bytes [%2]"
+        "definition": "Odebrano uszkodzone dane \u2013 odrzucono %1 bajt\u00f3w [%2]"
     },
     {
         "term": "message:W2004",
-        "definition": "Input address %1 is invalid"
+        "definition": "Adres wej\u015bcia %1 jest nieprawid\u0142owy"
     },
     {
         "term": "message:W2005",
-        "definition": "Output address %1 is invalid"
+        "definition": "Adres wyj\u015bcia %1 jest nieprawid\u0142owy"
     },
     {
         "term": "message:W2006",
-        "definition": "Command station does not support loco slot %1"
+        "definition": "Stacja steruj\u0105ca nie obs\u0142uguje slotu lokomotywy %1"
     },
     {
         "term": "message:W2007",
-        "definition": "Command station does not support the fast clock slot"
+        "definition": "Stacja steruj\u0105ca nie obs\u0142uguje slotu szybkiego taktu"
     },
     {
         "term": "message:W2018",
-        "definition": "Timeout, no echo within %1ms"
+        "definition": "Przekroczono limit \u2013 brak echa w ci\u0105gu %1 ms"
     },
     {
         "term": "message:W2019",
-        "definition": "Z21 broadcast flags do not match requested ones"
+        "definition": "Flagi transmisji Z21 nie zgadzaj\u0105 si\u0119 z \u017c\u0105danymi"
     },
     {
         "term": "message:W2020",
-        "definition": "DCCext (RCN-213) is not supported"
+        "definition": "DCCext (RCN-213) nie jest obs\u0142ugiwany"
     },
     {
         "term": "message:W3001",
-        "definition": "NX button connected to two blocks"
+        "definition": "Przycisk NX po\u0142\u0105czony z dwoma blokami"
     },
     {
         "term": "message:W3002",
-        "definition": "NX button not connected to any block"
+        "definition": "Przycisk NX nie po\u0142\u0105czony z \u017cadnym blokiem"
     },
     {
         "term": "message:W3003",
-        "definition": "Turnout position externally changed while locked in a path"
+        "definition": "Pozycja rozjazdu zmieniona zewn\u0119trznie podczas blokady \u015bcie\u017cki"
     },
     {
         "term": "message:W3004",
-        "definition": "Signal aspect externally changed while locked in a path"
+        "definition": "Sygnalizacja zmieniona zewn\u0119trznie podczas blokady \u015bcie\u017cki"
     },
     {
         "term": "message:W9001",
-        "definition": "Execution took %1 us"
+        "definition": "Wykonanie zaj\u0119\u0142o %1 \u03bcs"
     },
     {
         "term": "object:id",
-        "definition": "Id"
+        "definition": "Identyfikator"
     },
     {
         "term": "object:name",
-        "definition": "Name"
+        "definition": "Nazwa"
     },
     {
         "term": "object:notes",
-        "definition": "Notes"
+        "definition": "Notatki"
     },
     {
         "term": "opc_multi_sense_direction:in_sensor_address",
-        "definition": "In sensor address"
+        "definition": "Adres czujnika wej\u015bciowego"
     },
     {
         "term": "opc_multi_sense_direction:in_transponder_address",
-        "definition": "In transponder address (Bl\u00fccher GBM16XN)"
+        "definition": "Adres transpondera wej\u015bciowego (Bl\u00fccher GBM16XN)"
     },
     {
         "term": "opc_multi_sense_direction:none",
-        "definition": "None"
+        "definition": "Brak"
     },
     {
         "term": "output.ecos_object:state",
-        "definition": "State"
+        "definition": "Stan"
     },
     {
         "term": "output_action:none",
-        "definition": "None"
+        "definition": "Brak"
     },
     {
         "term": "output_action:off",
-        "definition": "Off"
+        "definition": "Wy\u0142\u0105cz"
     },
     {
         "term": "output_action:on",
-        "definition": "On"
+        "definition": "W\u0142\u0105cz"
     },
     {
         "term": "output_action:pulse",
-        "definition": "Pulse"
+        "definition": "Impuls"
     },
     {
         "term": "output_channel:accessory",
-        "definition": "Accessory"
+        "definition": "Akcesorium"
     },
     {
         "term": "output_channel:accessory_dcc",
-        "definition": "Accessory (DCC)"
+        "definition": "Akcesorium (DCC)"
     },
     {
         "term": "output_channel:accessory_motorola",
-        "definition": "Accessory (Motorola)"
+        "definition": "Akcesorium (Motorola)"
     },
     {
         "term": "output_channel:ecos_object",
-        "definition": "ECoS object"
+        "definition": "Obiekt ECoS"
     },
     {
         "term": "output_channel:output",
-        "definition": "Output"
+        "definition": "Wyj\u015bcie"
     },
     {
         "term": "output_channel:turnout",
-        "definition": "Turnout"
+        "definition": "Zwrotnica"
     },
     {
         "term": "output_list:bus",
@@ -1885,463 +1881,463 @@
     },
     {
         "term": "output_map.decoupler:key",
-        "definition": "State"
+        "definition": "Stan"
     },
     {
         "term": "output_map.signal:key",
-        "definition": "Aspect"
+        "definition": "Aspekt"
     },
     {
         "term": "output_map.switch:key",
-        "definition": "Value"
+        "definition": "Warto\u015b\u0107"
     },
     {
         "term": "output_map.turnout:key",
-        "definition": "Position"
+        "definition": "Pozycja"
     },
     {
         "term": "output_map:add_address",
-        "definition": "Add address"
+        "definition": "Dodaj adres"
     },
     {
         "term": "output_map:address_x",
-        "definition": "Address %1"
+        "definition": "Adres %1"
     },
     {
         "term": "output_map:ecos_object",
-        "definition": "ECoS object"
+        "definition": "Obiekt ECoS"
     },
     {
         "term": "output_map:remove_address",
-        "definition": "Remove address"
+        "definition": "Usu\u0144 adres"
     },
     {
         "term": "output_map:swap_outputs",
-        "definition": "Swap outputs"
+        "definition": "Zamie\u0144 wyj\u015bcia"
     },
     {
         "term": "output_map:use",
-        "definition": "Use"
+        "definition": "U\u017cyj"
     },
     {
         "term": "output_map_item.switch.key:off",
-        "definition": "Off"
+        "definition": "Wy\u0142\u0105czony"
     },
     {
         "term": "output_map_item.switch.key:on",
-        "definition": "On"
+        "definition": "W\u0142\u0105czony"
     },
     {
         "term": "pair_output_action:first",
-        "definition": "First (Red)"
+        "definition": "Pierwszy (czerwony)"
     },
     {
         "term": "pair_output_action:none",
-        "definition": "None"
+        "definition": "Brak"
     },
     {
         "term": "pair_output_action:second",
-        "definition": "Second (Green)"
+        "definition": "Drugi (zielony)"
     },
     {
         "term": "pcap_output:file",
-        "definition": "File"
+        "definition": "Plik"
     },
     {
         "term": "pcap_output:pipe",
-        "definition": "Pipe"
+        "definition": "Przewod"
     },
     {
         "term": "protocol.loconet:command_station",
-        "definition": "Command station"
+        "definition": "Centrala steruj\u0105ca"
     },
     {
         "term": "qtapp.about:traintastic_server",
-        "definition": "About Traintastic server"
+        "definition": "O serwerze Traintastic"
     },
     {
         "term": "qtapp.connect_dialog:authenticating",
-        "definition": "Authenticating"
+        "definition": "Uwierzytelnianie"
     },
     {
         "term": "qtapp.connect_dialog:connect",
-        "definition": "Connect"
+        "definition": "Po\u0142\u0105cz"
     },
     {
         "term": "qtapp.connect_dialog:connect_to_server",
-        "definition": "Connect to server"
+        "definition": "Po\u0142\u0105cz z serwerem"
     },
     {
         "term": "qtapp.connect_dialog:connected",
-        "definition": "Connected"
+        "definition": "Po\u0142\u0105czono"
     },
     {
         "term": "qtapp.connect_dialog:connecting",
-        "definition": "Connecting"
+        "definition": "\u0141\u0105czenie"
     },
     {
         "term": "qtapp.connect_dialog:creating_session",
-        "definition": "Creating session"
+        "definition": "Tworzenie sesji"
     },
     {
         "term": "qtapp.connect_dialog:fetching_world",
-        "definition": "Fetching world"
+        "definition": "Pobieranie \u015bwiata"
     },
     {
         "term": "qtapp.connect_dialog:password",
-        "definition": "Password"
+        "definition": "Has\u0142o"
     },
     {
         "term": "qtapp.connect_dialog:server",
-        "definition": "Server"
+        "definition": "Serwer"
     },
     {
         "term": "qtapp.connect_dialog:username",
-        "definition": "Username"
+        "definition": "Nazwa u\u017cytkownika"
     },
     {
         "term": "qtapp.error:cant_read_from_file_x",
-        "definition": "Can't read from file: %1"
+        "definition": "Nie mo\u017cna odczyta\u0107 z pliku: %1"
     },
     {
         "term": "qtapp.error:cant_write_to_file_x",
-        "definition": "Can't write to file: %1"
+        "definition": "Nie mo\u017cna zapisa\u0107 do pliku: %1"
     },
     {
         "term": "qtapp.error:server_error_x",
-        "definition": "Server error %1"
+        "definition": "B\u0142\u0105d serwera %1"
     },
     {
         "term": "qtapp.mainmenu:about",
-        "definition": "About"
+        "definition": "O programie"
     },
     {
         "term": "qtapp.mainmenu:about_server",
-        "definition": "About server"
+        "definition": "O serwerze"
     },
     {
         "term": "qtapp.mainmenu:close_world",
-        "definition": "Close world"
+        "definition": "Zamknij \u015bwiat"
     },
     {
         "term": "qtapp.mainmenu:community_forum",
-        "definition": "Community forum"
+        "definition": "Forum spo\u0142eczno\u015bci"
     },
     {
         "term": "qtapp.mainmenu:connect_to_server",
-        "definition": "Connect to server"
+        "definition": "Po\u0142\u0105cz z serwerem"
     },
     {
         "term": "qtapp.mainmenu:connection",
-        "definition": "Connection"
+        "definition": "Po\u0142\u0105czenie"
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
-        "definition": "Disconnect from server"
+        "definition": "Roz\u0142\u0105cz z serwera"
     },
     {
         "term": "qtapp.mainmenu:export_world",
-        "definition": "Export world"
+        "definition": "Eksportuj \u015bwiat"
     },
     {
         "term": "qtapp.mainmenu:file",
-        "definition": "File"
+        "definition": "Plik"
     },
     {
         "term": "qtapp.mainmenu:fullscreen",
-        "definition": "Fullscreen"
+        "definition": "Pe\u0142ny ekran"
     },
     {
         "term": "qtapp.mainmenu:hardware",
-        "definition": "Hardware"
+        "definition": "Sprz\u0119t"
     },
     {
         "term": "qtapp.mainmenu:help",
-        "definition": "Help"
+        "definition": "Pomoc"
     },
     {
         "term": "qtapp.mainmenu:import_world",
-        "definition": "Import world"
+        "definition": "Importuj \u015bwiat"
     },
     {
         "term": "qtapp.mainmenu:load_world",
-        "definition": "Load world"
+        "definition": "Wczytaj \u015bwiat"
     },
     {
         "term": "qtapp.mainmenu:new_world",
-        "definition": "New world"
+        "definition": "Nowy \u015bwiat"
     },
     {
         "term": "qtapp.mainmenu:objects",
-        "definition": "Objects"
+        "definition": "Obiekty"
     },
     {
         "term": "qtapp.mainmenu:power",
-        "definition": "Power"
+        "definition": "Zasilanie"
     },
     {
         "term": "qtapp.mainmenu:programming",
-        "definition": "Programming"
+        "definition": "Programowanie"
     },
     {
         "term": "qtapp.mainmenu:quit",
-        "definition": "Quit"
+        "definition": "Zako\u0144cz"
     },
     {
         "term": "qtapp.mainmenu:restart_server",
-        "definition": "Restart server"
+        "definition": "Uruchom ponownie serwer"
     },
     {
         "term": "qtapp.mainmenu:restart_server_question",
-        "definition": "Are you sure you want to restart the server?"
+        "definition": "Czy na pewno chcesz ponownie uruchomi\u0107 serwer?"
     },
     {
         "term": "qtapp.mainmenu:save_world",
-        "definition": "Save world"
+        "definition": "Zapisz \u015bwiat"
     },
     {
         "term": "qtapp.mainmenu:server",
-        "definition": "Server"
+        "definition": "Serwer"
     },
     {
         "term": "qtapp.mainmenu:server_log",
-        "definition": "Server log"
+        "definition": "Dziennik serwera"
     },
     {
         "term": "qtapp.mainmenu:server_settings",
-        "definition": "Server settings"
+        "definition": "Ustawienia serwera"
     },
     {
         "term": "qtapp.mainmenu:settings",
-        "definition": "Settings"
+        "definition": "Ustawienia"
     },
     {
         "term": "qtapp.mainmenu:shutdown_server",
-        "definition": "Shutdown server"
+        "definition": "Wy\u0142\u0105cz serwer"
     },
     {
         "term": "qtapp.mainmenu:shutdown_server_question",
-        "definition": "Are you sure you want to shutdown the server?"
+        "definition": "Czy na pewno chcesz wy\u0142\u0105czy\u0107 serwer?"
     },
     {
         "term": "qtapp.mainmenu:toolbar",
-        "definition": "Toolbar"
+        "definition": "Pasek narz\u0119dzi"
     },
     {
         "term": "qtapp.mainmenu:tools",
-        "definition": "Tools"
+        "definition": "Narz\u0119dzia"
     },
     {
         "term": "qtapp.mainmenu:view",
-        "definition": "View"
+        "definition": "Widok"
     },
     {
         "term": "qtapp.mainmenu:wizards",
-        "definition": "Wizards"
+        "definition": "Assystenty"
     },
     {
         "term": "qtapp.mainmenu:world",
-        "definition": "World"
+        "definition": "\u015awiat"
     },
     {
         "term": "qtapp.mainmenu:world_properties",
-        "definition": "World properties"
+        "definition": "W\u0142a\u015bciwo\u015bci \u015bwiata"
     },
     {
         "term": "qtapp.message_box:no",
-        "definition": "No"
+        "definition": "Nie"
     },
     {
         "term": "qtapp.message_box:yes",
-        "definition": "Yes"
+        "definition": "Tak"
     },
     {
         "term": "qtapp.object_select_list_dialog:cancel",
-        "definition": "Cancel"
+        "definition": "Anuluj"
     },
     {
         "term": "qtapp.object_select_list_dialog:ok",
-        "definition": "Ok"
+        "definition": "OK"
     },
     {
         "term": "qtapp.object_select_list_dialog:select_object",
-        "definition": "Select object"
+        "definition": "Wybierz obiekt"
     },
     {
         "term": "qtapp.settings.board:color_scheme",
-        "definition": "Color scheme"
+        "definition": "Schemat kolor\u00f3w"
     },
     {
         "term": "qtapp.settings.board:grid_edit_mode",
-        "definition": "Grid (edit mode)"
+        "definition": "Siatka (tryb edycji)"
     },
     {
         "term": "qtapp.settings.board:grid_operate_mode",
-        "definition": "Grid (operate mode)"
+        "definition": "Siatka (tryb obs\u0142ugi)"
     },
     {
         "term": "qtapp.settings.board:show_block_sensor_states",
-        "definition": "Show block sensor states"
+        "definition": "Poka\u017c stany czujnik\u00f3w blok\u00f3w"
     },
     {
         "term": "qtapp.settings.board:turnout_draw_state",
-        "definition": "Draw turnout state"
+        "definition": "Rysuj stan zwrotnic"
     },
     {
         "term": "qtapp.settings.developer:dont_load_fallback_language",
-        "definition": "Don't load fallback language"
+        "definition": "Nie \u0142aduj j\u0119zyka zapasowego"
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings",
-        "definition": "Log missing translations"
+        "definition": "Zapisuj brakuj\u0105ce t\u0142umaczenia"
     },
     {
         "term": "qtapp.settings.developer:log_missing_strings_dir",
-        "definition": "Missing translations log directory"
+        "definition": "Katalog logu brakuj\u0105cych t\u0142umacze\u0144"
     },
     {
         "term": "qtapp.settings.general:connect_automatically_to_discovered_server",
-        "definition": "Connect automatically to discovered server"
+        "definition": "Automatyczne po\u0142\u0105czenie z wykrytym serwerem"
     },
     {
         "term": "qtapp.settings.general:language",
-        "definition": "Language"
+        "definition": "J\u0119zyk"
     },
     {
         "term": "qtapp.settings.general:language_changed_restart_required",
-        "definition": "Traintastic client must be restarted for the language change to take effect."
+        "definition": "Klient Traintastic musi zosta\u0107 uruchomiony ponownie, aby zmiana j\u0119zyka wesz\u0142a w \u017cycie"
     },
     {
         "term": "qtapp.settings.statusbar:show_clock",
-        "definition": "Show clock"
+        "definition": "Poka\u017c zegar"
     },
     {
         "term": "qtapp.settings.statusbar:show_statuses",
-        "definition": "Show statuses"
+        "definition": "Poka\u017c stany"
     },
     {
         "term": "qtapp.settings:board",
-        "definition": "Board"
+        "definition": "Plansza"
     },
     {
         "term": "qtapp.settings:developer",
-        "definition": "Developer"
+        "definition": "Deweloper"
     },
     {
         "term": "qtapp.settings:general",
-        "definition": "General"
+        "definition": "Og\u00f3lne"
     },
     {
         "term": "qtapp.settings:restart_required",
-        "definition": "Restart required"
+        "definition": "Wymagany restart"
     },
     {
         "term": "qtapp.settings:statusbar",
-        "definition": "Status bar"
+        "definition": "Pasek stanu"
     },
     {
         "term": "qtapp.world_list_dialog:cancel",
-        "definition": "Cancel"
+        "definition": "Anuluj"
     },
     {
         "term": "qtapp.world_list_dialog:load",
-        "definition": "Load"
+        "definition": "Wczytaj"
     },
     {
         "term": "qtapp.world_list_dialog:search",
-        "definition": "Search"
+        "definition": "Szukaj"
     },
     {
         "term": "qtapp.world_list_dialog:world_list",
-        "definition": "World list"
+        "definition": "Lista \u015bwiat\u00f3w"
     },
     {
         "term": "qtapp:board_properties",
-        "definition": "Board properties"
+        "definition": "W\u0142a\u015bciwo\u015bci planszy"
     },
     {
         "term": "qtapp:export_world_failed",
-        "definition": "Export world failed"
+        "definition": "Eksport \u015bwiata nie powi\u00f3d\u0142 si\u0119"
     },
     {
         "term": "qtapp:grid",
-        "definition": "Grid"
+        "definition": "Siatka"
     },
     {
         "term": "qtapp:import_world_failed",
-        "definition": "Import world failed"
+        "definition": "Import \u015bwiata nie powi\u00f3d\u0142 si\u0119"
     },
     {
         "term": "qtapp:next",
-        "definition": "Next"
+        "definition": "Dalej"
     },
     {
         "term": "qtapp:previous",
-        "definition": "Previous"
+        "definition": "Wstecz"
     },
     {
         "term": "qtapp:toggle_mute",
-        "definition": "Toggle mute"
+        "definition": "Prze\u0142\u0105cz wyciszenie"
     },
     {
         "term": "qtapp:toggle_offline_online",
-        "definition": "Toggle connection"
+        "definition": "Prze\u0142\u0105cz po\u0142\u0105czenie"
     },
     {
         "term": "qtapp:toggle_power",
-        "definition": "Toggle power"
+        "definition": "Prze\u0142\u0105cz zasilanie"
     },
     {
         "term": "qtapp:toggle_smoke",
-        "definition": "Toggle smoke"
+        "definition": "Prze\u0142\u0105cz dym"
     },
     {
         "term": "qtapp:traintastic_world",
-        "definition": "Traintastic world"
+        "definition": "\u015awiat Traintastic"
     },
     {
         "term": "qtapp:zoom_in",
-        "definition": "Zoom in"
+        "definition": "Powi\u0119ksz"
     },
     {
         "term": "qtapp:zoom_out",
-        "definition": "Zoom out"
+        "definition": "Pomniejsz"
     },
     {
         "term": "rail_vehicle_list:type",
-        "definition": "Type"
+        "definition": "Typ"
     },
     {
         "term": "sensor_state:free",
-        "definition": "Free"
+        "definition": "Wolny"
     },
     {
         "term": "sensor_state:occupied",
-        "definition": "Occupied"
+        "definition": "Zaj\u0119ty"
     },
     {
         "term": "sensor_state:unknown",
-        "definition": "Unknown"
+        "definition": "Nieznany"
     },
     {
         "term": "sensor_type:occupancy_detector",
-        "definition": "Occupancy detector"
+        "definition": "Czujnik zaj\u0119to\u015bci toru"
     },
     {
         "term": "sensor_type:reed_switch",
-        "definition": "Reed switch"
+        "definition": "Czujnik kontaktronowy"
     },
     {
         "term": "serial:baudrate",
-        "definition": "Baudrate"
+        "definition": "Szybko\u015b\u0107 transmisji (baudrate)"
     },
     {
         "term": "serial:device",
-        "definition": "Device"
+        "definition": "Urz\u0105dzenie"
     },
     {
         "term": "serial:flow_control",
-        "definition": "Flow control"
+        "definition": "Kontrola przep\u0142ywu"
     },
     {
         "term": "serial:port",
@@ -2349,59 +2345,59 @@
     },
     {
         "term": "serial_flow_control:hardware",
-        "definition": "Hardware"
+        "definition": "Sprz\u0119towa"
     },
     {
         "term": "serial_flow_control:none",
-        "definition": "None"
+        "definition": "Brak"
     },
     {
         "term": "server_log:code",
-        "definition": "Code"
+        "definition": "Kod"
     },
     {
         "term": "server_log:message",
-        "definition": "Message"
+        "definition": "Wiadomo\u015b\u0107"
     },
     {
         "term": "server_log:object",
-        "definition": "Object"
+        "definition": "Obiekt"
     },
     {
         "term": "server_log:time",
-        "definition": "Time"
+        "definition": "Czas"
     },
     {
         "term": "settings:allow_client_server_restart",
-        "definition": "Allow client server restart"
+        "definition": "Zezw\u00f3l na restart serwera przez klienta"
     },
     {
         "term": "settings:allow_client_server_shutdown",
-        "definition": "Allow client server shutdown"
+        "definition": "Zezw\u00f3l na wy\u0142\u0105czenie serwera przez klienta"
     },
     {
         "term": "settings:auto_save_world_on_exit",
-        "definition": "Auto save world on exit"
+        "definition": "Automatycznie zapisuj \u015bwiat przy zamkni\u0119ciu"
     },
     {
         "term": "settings:discoverable",
-        "definition": "Discoverable"
+        "definition": "Widoczny w sieci"
     },
     {
         "term": "settings:enable_file_logger",
-        "definition": "Enable file logger"
+        "definition": "W\u0142\u0105cz logowanie do pliku"
     },
     {
         "term": "settings:load_last_world_on_startup",
-        "definition": "Load last world on startup"
+        "definition": "\u0141aduj ostatni \u015bwiat przy starcie"
     },
     {
         "term": "settings:localhost_only",
-        "definition": "Localhost only"
+        "definition": "Tylko localhost"
     },
     {
         "term": "settings:memory_logger_size",
-        "definition": "Memory logger size"
+        "definition": "Rozmiar logu w pami\u0119ci"
     },
     {
         "term": "settings:port",
@@ -2409,203 +2405,203 @@
     },
     {
         "term": "settings:save_world_uncompressed",
-        "definition": "Save world uncompressed"
+        "definition": "Zapisz \u015bwiat bez kompresji"
     },
     {
         "term": "settings:select_folder",
-        "definition": "Select folder"
+        "definition": "Wybierz folder"
     },
     {
         "term": "signal_aspect:proceed",
-        "definition": "Proceed"
+        "definition": "Jazda"
     },
     {
         "term": "signal_aspect:proceed_reduced_speed",
-        "definition": "Proceed, reduced speed"
+        "definition": "Jazda z ograniczon\u0105 pr\u0119dko\u015bci\u0105"
     },
     {
         "term": "signal_aspect:stop",
-        "definition": "Stop"
+        "definition": "St\u00f3j"
     },
     {
         "term": "single_output_action:none",
-        "definition": "None"
+        "definition": "Brak"
     },
     {
         "term": "single_output_action:off",
-        "definition": "Off"
+        "definition": "Wy\u0142\u0105czony"
     },
     {
         "term": "single_output_action:on",
-        "definition": "On"
+        "definition": "W\u0142\u0105czony"
     },
     {
         "term": "single_output_action:pulse",
-        "definition": "Pulse"
+        "definition": "Impuls"
     },
     {
         "term": "speed_limit_property:no_limit",
-        "definition": "No limit"
+        "definition": "Bez ogranicze\u0144"
     },
     {
         "term": "stacked_object_list:back",
-        "definition": "Back"
+        "definition": "Wstecz"
     },
     {
         "term": "stacked_object_list:click_to_edit_ctrl_click_to_open_in_a_new_window",
-        "definition": "Click to edit.\nCtrl click to open in a new window."
+        "definition": "Kliknij, aby edytowa\u0107. Ctrl+klik, aby otworzy\u0107 w nowym oknie."
     },
     {
         "term": "stacked_object_list:list_is_empty",
-        "definition": "List is empty."
+        "definition": "Lista jest pusta."
     },
     {
         "term": "status.lua:x_in_error",
-        "definition": "%1 in error"
+        "definition": "%1 w b\u0142\u0119dzie"
     },
     {
         "term": "status.lua:x_running",
-        "definition": "%1 running"
+        "definition": "%1 dzia\u0142a"
     },
     {
         "term": "table_model.marklin_can_node_list:article_number",
-        "definition": "Article number"
+        "definition": "Numer artyku\u0142u"
     },
     {
         "term": "table_model.marklin_can_node_list:device_id",
-        "definition": "Device Id"
+        "definition": "ID urz\u0105dzenia"
     },
     {
         "term": "table_model.marklin_can_node_list:device_name",
-        "definition": "Device name"
+        "definition": "Nazwa urz\u0105dzenia"
     },
     {
         "term": "table_model.marklin_can_node_list:serial_number",
-        "definition": "Serial number"
+        "definition": "Numer seryjny"
     },
     {
         "term": "table_model.marklin_can_node_list:software_version",
-        "definition": "Software version"
+        "definition": "Wersja oprogramowania"
     },
     {
         "term": "text_align:bottom_center",
-        "definition": "Bottom center"
+        "definition": "D\u00f3\u0142 \u015brodek"
     },
     {
         "term": "text_align:bottom_left",
-        "definition": "Bottom left"
+        "definition": "D\u00f3\u0142 lewo"
     },
     {
         "term": "text_align:bottom_right",
-        "definition": "Bottom right"
+        "definition": "D\u00f3\u0142 prawo"
     },
     {
         "term": "text_align:center",
-        "definition": "Center"
+        "definition": "\u015arodek"
     },
     {
         "term": "text_align:center_left",
-        "definition": "Center left"
+        "definition": "\u015arodek lewo"
     },
     {
         "term": "text_align:center_right",
-        "definition": "Center right"
+        "definition": "\u015arodek prawo"
     },
     {
         "term": "text_align:top_center",
-        "definition": "Top center"
+        "definition": "G\u00f3ra \u015brodek"
     },
     {
         "term": "text_align:top_left",
-        "definition": "Top left"
+        "definition": "G\u00f3ra lewo"
     },
     {
         "term": "text_align:top_right",
-        "definition": "Top right"
+        "definition": "G\u00f3ra prawo"
     },
     {
         "term": "throttle.acquire",
-        "definition": "Acquire"
+        "definition": "Przej\u0119cie"
     },
     {
         "term": "throttle.controlled_by_x",
-        "definition": "Controlled by %1"
+        "definition": "Kontrolowany przez %1"
     },
     {
         "term": "throttle.estop",
-        "definition": "EStop"
+        "definition": "Stop Awaryjny"
     },
     {
         "term": "throttle.in_control",
-        "definition": "You're in control"
+        "definition": "Jeste\u015b w kontroli"
     },
     {
         "term": "throttle.not_controlled",
-        "definition": "Not controlled"
+        "definition": "Nie kontrolowany"
     },
     {
         "term": "throttle.release",
-        "definition": "Release"
+        "definition": "Zwolnij"
     },
     {
         "term": "throttle.steal",
-        "definition": "Steal"
+        "definition": "Przej\u0119cie"
     },
     {
         "term": "throttle_object_list:throttle",
-        "definition": "Throttle"
+        "definition": "Regulator pr\u0119dko\u015bci"
     },
     {
         "term": "train:active",
-        "definition": "Active"
+        "definition": "Aktywny"
     },
     {
         "term": "train:block",
-        "definition": "Block"
+        "definition": "Blok"
     },
     {
         "term": "train:length",
-        "definition": "Length"
+        "definition": "D\u0142ugo\u015b\u0107"
     },
     {
         "term": "train:mode",
-        "definition": "Mode"
+        "definition": "Tryb"
     },
     {
         "term": "train:override_length",
-        "definition": "Override length"
+        "definition": "Nadpisz d\u0142ugo\u015b\u0107"
     },
     {
         "term": "train:override_weight",
-        "definition": "Override weight"
+        "definition": "Nadpisz wag\u0119"
     },
     {
         "term": "train:speed_max",
-        "definition": "Maximum speed"
+        "definition": "Pr\u0119dko\u015b\u0107 maksymalna"
     },
     {
         "term": "train:vehicles",
-        "definition": "Vehicles"
+        "definition": "Pojazdy"
     },
     {
         "term": "train:weight",
-        "definition": "Weight"
+        "definition": "Waga"
     },
     {
         "term": "train_mode:automatic",
-        "definition": "Automatic"
+        "definition": "Automatyczny"
     },
     {
         "term": "train_mode:manual_protected",
-        "definition": "Manual (protected)"
+        "definition": "R\u0119czny (zabezpieczony)"
     },
     {
         "term": "train_mode:manual_unprotected",
-        "definition": "Manual (unprotected)"
+        "definition": "R\u0119czny (niezabezpieczony)"
     },
     {
         "term": "traintastic_diy_interface_type:network_tcp",
-        "definition": "Network (TCP)"
+        "definition": "Sie\u0107 (TCP)"
     },
     {
         "term": "traintastic_diy_interface_type:serial",
@@ -2613,43 +2609,43 @@
     },
     {
         "term": "traintastic_diy_settings:debug_log_heartbeat",
-        "definition": "Log heartbeat communication"
+        "definition": "Loguj komunikacj\u0119 heartbeat"
     },
     {
         "term": "traintastic_diy_settings:heartbeat_timeout",
-        "definition": "Heartbeat timeout"
+        "definition": "Limit czasu heartbeat"
     },
     {
         "term": "traintastic_diy_settings:startup_delay",
-        "definition": "Startup delay"
+        "definition": "Op\u00f3\u017anienie startu"
     },
     {
         "term": "tray_icon.language_changed_message_box:caption",
-        "definition": "Language changed"
+        "definition": "Zmieniono j\u0119zyk"
     },
     {
         "term": "tray_icon.language_changed_message_box:text",
-        "definition": "Traintastic server must be restarted for the language change to take effect. Restart now?"
+        "definition": "Serwer Traintastic musi zosta\u0107 ponownie uruchomiony, aby zmiana j\u0119zyka wesz\u0142a w \u017cycie. Uruchomi\u0107 teraz?"
     },
     {
         "term": "tray_icon.menu:advanced",
-        "definition": "Advanced"
+        "definition": "Zaawansowane"
     },
     {
         "term": "tray_icon.menu:allow_client_to_restart_server",
-        "definition": "Allow client to restart server"
+        "definition": "Zezwalaj klientowi na restart serwera"
     },
     {
         "term": "tray_icon.menu:allow_client_to_shutdown_server",
-        "definition": "Allow client to shutdown server"
+        "definition": "Zezwalaj klientowi na wy\u0142\u0105czenie serwera"
     },
     {
         "term": "tray_icon.menu:language",
-        "definition": "Language"
+        "definition": "J\u0119zyk"
     },
     {
         "term": "tray_icon.menu:open_data_directory",
-        "definition": "Open data directory"
+        "definition": "Otw\u00f3rz katalog danych"
     },
     {
         "term": "tray_icon.menu:restart",
@@ -2657,491 +2653,491 @@
     },
     {
         "term": "tray_icon.menu:settings",
-        "definition": "Settings"
+        "definition": "Ustawienia"
     },
     {
         "term": "tray_icon.menu:show_hide_console",
-        "definition": "Show/hide console"
+        "definition": "Poka\u017c/ukryj konsol\u0119"
     },
     {
         "term": "tray_icon.menu:shutdown",
-        "definition": "Shutdown"
+        "definition": "Wy\u0142\u0105czenie"
     },
     {
         "term": "tray_icon.menu:start_automatically_at_logon",
-        "definition": "Start automatically at logon"
+        "definition": "Uruchamiaj automatycznie przy logowaniu"
     },
     {
         "term": "tray_icon.notify:message_restarting",
-        "definition": "Traintastic server restarted"
+        "definition": "Serwer Traintastic zosta\u0142 ponownie uruchomiony"
     },
     {
         "term": "tray_icon.notify:message_running",
-        "definition": "Traintastic server is running in the background."
+        "definition": "Serwer Traintastic dzia\u0142a w tle."
     },
     {
         "term": "turnout_position:crossed",
-        "definition": "Crossed"
+        "definition": "Przeci\u0119ta"
     },
     {
         "term": "turnout_position:diverged",
-        "definition": "Diverged"
+        "definition": "odmienny"
     },
     {
         "term": "turnout_position:double_slip_straight_a",
-        "definition": "Straight A"
+        "definition": "Prosto A"
     },
     {
         "term": "turnout_position:double_slip_straight_b",
-        "definition": "Straight B"
+        "definition": "Prosto B"
     },
     {
         "term": "turnout_position:left",
-        "definition": "Left"
+        "definition": "Lewy"
     },
     {
         "term": "turnout_position:right",
-        "definition": "Right"
+        "definition": "Prawy"
     },
     {
         "term": "turnout_position:straight",
-        "definition": "Straight"
+        "definition": "Na wprost"
     },
     {
         "term": "vehicle.rail.freight_wagon:cargo_weight",
-        "definition": "Cargo weight"
+        "definition": "Masa \u0142adunku"
     },
     {
         "term": "vehicle.rail.tank_wagon:cargo_volume",
-        "definition": "Cargo volume"
+        "definition": "Obj\u0119to\u015b\u0107 \u0142adunku"
     },
     {
         "term": "vehicle.rail:cargo_capacity",
-        "definition": "Cargo capacity"
+        "definition": "Pojemno\u015b\u0107 \u0142adunkowa"
     },
     {
         "term": "vehicle.rail:cargo_loaded",
-        "definition": "Cargo loaded"
+        "definition": "Za\u0142adunek"
     },
     {
         "term": "vehicle.rail:decoder",
-        "definition": "Decoder"
+        "definition": "Dekoder"
     },
     {
         "term": "vehicle.rail:length",
-        "definition": "Length"
+        "definition": "D\u0142ugo\u015b\u0107"
     },
     {
         "term": "vehicle.rail:power",
-        "definition": "Power"
+        "definition": "Moc"
     },
     {
         "term": "vehicle.rail:speed_max",
-        "definition": "Maximum speed"
+        "definition": "Pr\u0119dko\u015b\u0107 maksymalna"
     },
     {
         "term": "vehicle.rail:total_weight",
-        "definition": "Total weight"
+        "definition": "Ca\u0142kowita masa"
     },
     {
         "term": "vehicle.rail:train",
-        "definition": "Train"
+        "definition": "Poci\u0105g"
     },
     {
         "term": "vehicle.rail:weight",
-        "definition": "Weight"
+        "definition": "Masa"
     },
     {
         "term": "weight_unit:ton",
-        "definition": "ton"
+        "definition": "tona"
     },
     {
         "term": "wizard.add_interface.command_station:text",
-        "definition": "Please select your command station:"
+        "definition": "Wybierz swoj\u0105 central\u0119 steruj\u0105c\u0105:"
     },
     {
         "term": "wizard.add_interface.command_station:title",
-        "definition": "Command Station"
+        "definition": "Centrala steruj\u0105ca"
     },
     {
         "term": "wizard.add_interface.connection:can_interface",
-        "definition": "Additional CAN bus interface"
+        "definition": "Dodatkowy interfejs CAN"
     },
     {
         "term": "wizard.add_interface.connection:command_station_serial_port",
-        "definition": "%command_station% serial port"
+        "definition": "Port Serial %command_station%"
     },
     {
         "term": "wizard.add_interface.connection:command_station_usb_port",
-        "definition": "%command_station% USB port"
+        "definition": "Port USB %command_station%"
     },
     {
         "term": "wizard.add_interface.connection:loconet_interface",
-        "definition": "Additional LocoNet interface"
+        "definition": "Dodatkowy interfejs LocoNet"
     },
     {
         "term": "wizard.add_interface.connection:network",
-        "definition": "Network"
+        "definition": "Sie\u0107"
     },
     {
         "term": "wizard.add_interface.connection:not_yet_supported",
-        "definition": "Not yet supported"
+        "definition": "Jeszcze nieobs\u0142ugiwane"
     },
     {
         "term": "wizard.add_interface.connection:text",
-        "definition": "How is the %command_station% connected?"
+        "definition": "Jak jest pod\u0142\u0105czona %command_station%?"
     },
     {
         "term": "wizard.add_interface.connection:title",
-        "definition": "Connection"
+        "definition": "Po\u0142\u0105czenie"
     },
     {
         "term": "wizard.add_interface.connection:xpressnet_interface",
-        "definition": "Additional XpressNet interface"
+        "definition": "Dodatkowy interfejs XpressNet"
     },
     {
         "term": "wizard.add_interface.finalization:text",
-        "definition": "The %command_station% setup is now ready, you can bring it online by using the connect option on the toolbar.\n\nIf you need to make additional changes you can find the interface via the menu: Object \u2192 Hardware \u2192 Interfaces."
+        "definition": "Konfiguracja %command_station% jest gotowa. Mo\u017cesz po\u0142\u0105czy\u0107 j\u0105 z sieci\u0105, u\u017cywaj\u0105c opcji Po\u0142\u0105cz na pasku narz\u0119dzi. Je\u015bli chcesz wprowadzi\u0107 dodatkowe zmiany, interfejs znajdziesz w menu: Obiekt \u2192 Sprz\u0119t \u2192 Interfejsy."
     },
     {
         "term": "wizard.add_interface.finalization:title",
-        "definition": "Ready"
+        "definition": "Gotowe"
     },
     {
         "term": "wizard.add_interface.hostname:text",
-        "definition": "Enter the IP address of the %command_station% to connect to:"
+        "definition": "Wprowad\u017a adres IP %command_station%, aby si\u0119 po\u0142\u0105czy\u0107:"
     },
     {
         "term": "wizard.add_interface.hostname:title",
-        "definition": "IP address"
+        "definition": "Adres IP"
     },
     {
         "term": "wizard.add_interface.hostname_port:text",
-        "definition": "Enter the IP address and port number of the %command_station% to connect to:"
+        "definition": "Wprowad\u017a adres IP i numer portu %command_station%, aby si\u0119 po\u0142\u0105czy\u0107:"
     },
     {
         "term": "wizard.add_interface.hostname_port:title",
-        "definition": "IP address and port"
+        "definition": "Adres IP i port"
     },
     {
         "term": "wizard.add_interface.interface_loconet:text",
-        "definition": "Please select the LocoNet interface that is connected to the %command_station%:"
+        "definition": "Wybierz interfejs LocoNet pod\u0142\u0105czony do %command_station%:"
     },
     {
         "term": "wizard.add_interface.interface_loconet:title",
-        "definition": "LocoNet interface"
+        "definition": "Interfejs LocoNet"
     },
     {
         "term": "wizard.add_interface.interface_xpressnet:text",
-        "definition": "Please select the XpressNet interface that is connected to the %command_station%:"
+        "definition": "Wybierz interfejs XpressNet pod\u0142\u0105czony do %command_station%"
     },
     {
         "term": "wizard.add_interface.interface_xpressnet:title",
-        "definition": "XpressNet interface"
+        "definition": "Interfejs XpressNet"
     },
     {
         "term": "wizard.add_interface.name:text",
-        "definition": "Enter a name for the connection:"
+        "definition": "Wprowad\u017a nazw\u0119 po\u0142\u0105czenia:"
     },
     {
         "term": "wizard.add_interface.name:title",
-        "definition": "Name"
+        "definition": "Nazwa"
     },
     {
         "term": "wizard.add_interface.protocol:text",
-        "definition": "Please select the communication protocol for the connection:"
+        "definition": "Wybierz protok\u00f3\u0142 komunikacyjny dla po\u0142\u0105czenia:"
     },
     {
         "term": "wizard.add_interface.protocol:title",
-        "definition": "Protocol"
+        "definition": "Protok\u00f3\u0142"
     },
     {
         "term": "wizard.add_interface.protocol_dr5000_usb:bottom_text",
-        "definition": "The %command_station% supports two different protocols for communication. Although both are supported by Traintastic, using LocoNet is recommended as it is more versatile."
+        "definition": "%command_station% obs\u0142uguje dwa r\u00f3\u017cne protoko\u0142y komunikacyjne. Chocia\u017c oba s\u0105 obs\u0142ugiwane przez Traintastic, zaleca si\u0119 u\u017cywanie LocoNet, poniewa\u017c jest bardziej uniwersalny."
     },
     {
         "term": "wizard.add_interface.serial_port:text",
-        "definition": "Select the serial port where the %command_station% is connected to:"
+        "definition": "Wybierz port Serial, do kt\u00f3rego pod\u0142\u0105czona jest %command_station%:"
     },
     {
         "term": "wizard.add_interface.serial_port:title",
-        "definition": "Serial port"
+        "definition": "Port Serial"
     },
     {
         "term": "wizard.add_interface.serial_port_interface:text",
-        "definition": "Select the serial port where the %interface% is connected to:"
+        "definition": "Wybierz port szeregowy, do kt\u00f3rego pod\u0142\u0105czony jest interfejs %interface%:"
     },
     {
         "term": "wizard.add_interface.welcome:text",
-        "definition": "This wizard will guide you to the interface setup process.\n\nIf you're running Traintastic server and Traintastic client on seperate PC's, make sure the command station is connected to the PC running Traintastic server."
+        "definition": "Ten assystent poprowadzi Ci\u0119 przez proces konfiguracji interfejsu. Je\u015bli serwer i klient Traintastic dzia\u0142aj\u0105 na oddzielnych komputerach, upewnij si\u0119, \u017ce centrala steruj\u0105ca jest pod\u0142\u0105czona do komputera z serwerem Traintastic."
     },
     {
         "term": "wizard.add_interface.welcome:title",
-        "definition": "Add interface"
+        "definition": "Dodaj interfejs"
     },
     {
         "term": "wizard.add_interface:recommended",
-        "definition": "Recommended"
+        "definition": "Zalecane"
     },
     {
         "term": "wizard.button:back",
-        "definition": "Back"
+        "definition": "Wstecz"
     },
     {
         "term": "wizard.button:cancel",
-        "definition": "Cancel"
+        "definition": "Anuluj"
     },
     {
         "term": "wizard.button:finish",
-        "definition": "Finish"
+        "definition": "Zako\u0144cz"
     },
     {
         "term": "wizard.button:next",
-        "definition": "Next"
+        "definition": "Dalej"
     },
     {
         "term": "wizard.introduction.edit_mode:text",
-        "definition": "Traintastic has two modes of operation:\n\u2022 Edit mode\n\u2022 Operation mode\n\nIn operation mode only operating the layout is possible to prevent making accidential changes. e.g. to change a turnout address or modify the layout edit mode must be active.\n\nSwitching between operation and edit mode can be done using the pencil icon right on the main toolbar or via the main menu: World \u2192 Edit world."
+        "definition": "Traintastic ma dwa tryby pracy: \u2022 Tryb edycji \u2022 Tryb obs\u0142ugi W trybie obs\u0142ugi mo\u017cliwa jest tylko praca z makiet\u0105, aby zapobiec przypadkowym zmianom. Aby np. zmieni\u0107 adres rozjazdu lub modyfikowa\u0107 uk\u0142ad, tryb edycji musi by\u0107 aktywny. Prze\u0142\u0105czanie mi\u0119dzy trybem edycji a obs\u0142ugi odbywa si\u0119 ikon\u0105 o\u0142\u00f3wka na pasku narz\u0119dzi lub w menu g\u0142\u00f3wnym: \u015awiat \u2192 Edytuj \u015bwiat."
     },
     {
         "term": "wizard.introduction.edit_mode:title",
-        "definition": "Edit mode"
+        "definition": "Tryb edycji"
     },
     {
         "term": "wizard.introduction.forum:text",
-        "definition": "If you have any questions or suggestion please join the <a href=\"https://forum.traintastic.org\">Traintastic forum</a>."
+        "definition": "Je\u015bli masz pytania lub sugestie, do\u0142\u0105cz do <a href=\"https://forum.traintastic.org\">forum Traintastic</a>."
     },
     {
         "term": "wizard.introduction.forum:title",
-        "definition": "Traintastic forum"
+        "definition": "Forum Traintastic"
     },
     {
         "term": "wizard.introduction.welcome:text",
-        "definition": "This wizard will explain Traintastic's basics. The next pages will help to get you started. If you want to view this wizard again, you can open it via the main menu: Help \u2192 Wizard \u2192 Traintastic introduction."
+        "definition": "Ten assystent wyja\u015bni podstawy Traintastic. Kolejne strony pomog\u0105 Ci rozpocz\u0105\u0107 prac\u0119. Mo\u017cesz otworzy\u0107 ten kreator ponownie w menu g\u0142\u00f3wnym: Pomoc \u2192 Kreator \u2192 Wprowadzenie do Traintastic."
     },
     {
         "term": "wizard.introduction.welcome:title",
-        "definition": "Welcome!"
+        "definition": "Witamy!"
     },
     {
         "term": "wizard.introduction.world:text",
-        "definition": "The world contains everything that is on the layout, like the command station, trains, signals, turnouts etc. If required multiple worlds can be created but only one can be in use at any time.\n\nWorlds are saved on the PC running the Traintastic server. When saving a world a backup is automatically created. Via the main menu: File \u2192 Export world option it is possible to get a copy of the world as additional backup or to transfer it to another Traintastic server."
+        "definition": "\u015awiat zawiera wszystko, co jest na makiecie: central\u0119 steruj\u0105c\u0105, poci\u0105gi, semafory, rozjazdy itp. Mo\u017cna utworzy\u0107 wiele \u015bwiat\u00f3w, ale w danym momencie u\u017cywany jest tylko jeden. \u015awiaty s\u0105 zapisywane na komputerze uruchamiaj\u0105cym serwer Traintastic. Podczas zapisu tworzona jest automatyczna kopia zapasowa. W menu g\u0142\u00f3wnym: Plik \u2192 Eksportuj \u015bwiat mo\u017cna pobra\u0107 kopi\u0119 zapasow\u0105 lub przenie\u015b\u0107 \u015bwiat na inny serwer Traintastic."
     },
     {
         "term": "wizard.introduction.world:title",
-        "definition": "The world"
+        "definition": "\u015awiat"
     },
     {
         "term": "wizard.introduction:title",
-        "definition": "Traintastic introduction"
+        "definition": "Wprowadzenie do Traintastic"
     },
     {
         "term": "wizard.new_board.adding:text",
-        "definition": "Adding new elements to the board can be done using the items available in serveral menu's. Use mouse left click to place an element, use mouse right click to rotate an element.\n\nTo replace an element with another element hold ctrl while left clicking, otherwise the old element must be deleted first."
+        "definition": "Dodawanie nowych element\u00f3w do planszy mo\u017cna wykona\u0107 za pomoc\u0105 pozycji dost\u0119pnych w r\u00f3\u017cnych menu. U\u017cyj lewego przycisku myszy, aby umie\u015bci\u0107 element, u\u017cyj prawego przycisku myszy, aby obr\u00f3ci\u0107 element. Aby zamieni\u0107 element na inny, przytrzymaj Ctrl podczas lewego klikni\u0119cia, w przeciwnym razie stary element nale\u017cy najpierw usun\u0105\u0107."
     },
     {
         "term": "wizard.new_board.adding:title",
-        "definition": "Adding elements"
+        "definition": "Dodawanie element\u00f3w"
     },
     {
         "term": "wizard.new_board.editing:text",
-        "definition": "The board can only be modified if the world is in edit mode and is stopped. The toolbar with edit option will automatically appear when editing is possible."
+        "definition": "Plansza mo\u017ce by\u0107 modyfikowana tylko, gdy \u015bwiat jest w trybie edycji i zatrzymany. Pasek narz\u0119dzi z opcj\u0105 edycji pojawi si\u0119 automatycznie, gdy edycja b\u0119dzie mo\u017cliwa."
     },
     {
         "term": "wizard.new_board.editing:title",
-        "definition": "Editing"
+        "definition": "Edycja"
     },
     {
         "term": "wizard.new_board.finalization:text",
-        "definition": "Lets go build the board!"
+        "definition": "Zaczynajmy budowa\u0107 plansz\u0119!"
     },
     {
         "term": "wizard.new_board.finalization:title",
-        "definition": "Completed"
+        "definition": "Zako\u0144czono"
     },
     {
         "term": "wizard.new_board.introduction.long:text",
-        "definition": "This wizard will explain the basics of the board."
+        "definition": "Ten assystent wyja\u015bni podstawy planszy."
     },
     {
         "term": "wizard.new_board.introduction.short:text",
-        "definition": "This wizard will help to set the basic board properties."
+        "definition": "Ten assystent pomo\u017ce ustawi\u0107 podstawowe w\u0142a\u015bciwo\u015bci planszy."
     },
     {
         "term": "wizard.new_board.introduction:title",
-        "definition": "New board"
+        "definition": "Nowa plansza"
     },
     {
         "term": "wizard.new_board.name:text",
-        "definition": "Give the board a name, e.g. Traintastic, Station Awesome or Staging area:"
+        "definition": "Nadaj planszy nazw\u0119, np. Traintastic, Stacja Wspania\u0142a lub Obszar manewrowy:"
     },
     {
         "term": "wizard.new_board.name:title",
-        "definition": "Board name"
+        "definition": "Nazwa planszy"
     },
     {
         "term": "wizard.new_board:title",
-        "definition": "New board"
+        "definition": "Nowa plansza"
     },
     {
         "term": "wizard.new_world.finalization:text",
-        "definition": "Basic world properties are now set, you can always change them later via the menu: World -> Properties."
+        "definition": "Podstawowe w\u0142a\u015bciwo\u015bci \u015bwiata zosta\u0142y ustawione. Mo\u017cesz je zmieni\u0107 p\u00f3\u017aniej w menu: \u015awiat -> W\u0142a\u015bciwo\u015bci."
     },
     {
         "term": "wizard.new_world.finalization:title",
-        "definition": "World ready"
+        "definition": "\u015awiat gotowy"
     },
     {
         "term": "wizard.new_world.introduction:text",
-        "definition": "This wizard will guide you to setup the basic world properties."
+        "definition": "Ten assystent poprowadzi Ci\u0119 przez ustawienia podstawowych w\u0142a\u015bciwo\u015bci \u015bwiata."
     },
     {
         "term": "wizard.new_world.introduction:title",
-        "definition": "New world"
+        "definition": "Nowy \u015bwiat"
     },
     {
         "term": "wizard.new_world.name:text",
-        "definition": "Give the world a name, this name will be visible when loading a world."
+        "definition": "Nadaj \u015bwiatu nazw\u0119 \u2013 b\u0119dzie widoczna przy wczytywaniu \u015bwiata."
     },
     {
         "term": "wizard.new_world.name:title",
-        "definition": "World name"
+        "definition": "Nazwa \u015bwiata"
     },
     {
         "term": "wizard.new_world.scale:text",
-        "definition": "Select the world scale, Traintastic will use this for distance and speed calcualtions."
+        "definition": "Wybierz skal\u0119 \u015bwiata, Traintastic u\u017cyje jej do oblicze\u0144 odleg\u0142o\u015bci i pr\u0119dko\u015bci."
     },
     {
         "term": "wizard.new_world.scale:title",
-        "definition": "World scale"
+        "definition": "Skala \u015bwiata"
     },
     {
         "term": "wizard.new_world:title",
-        "definition": "Setup new world"
+        "definition": "Ustaw nowy \u015bwiat"
     },
     {
         "term": "wizard.page.list:search",
-        "definition": "Search"
+        "definition": "Szukaj"
     },
     {
         "term": "world:boards",
-        "definition": "Boards"
+        "definition": "Plansze"
     },
     {
         "term": "world:clock",
-        "definition": "Clock"
+        "definition": "Zegar"
     },
     {
         "term": "world:correct_output_pos_when_locked",
-        "definition": "Try to correct ouput state when externally changed while locked"
+        "definition": "Pr\u00f3buj poprawi\u0107 stan wyj\u015bcia zmieniony zewn\u0119trznie podczas blokady"
     },
     {
         "term": "world:debug_block_events",
-        "definition": "Block events"
+        "definition": "Zdarzenia odcink\u00f3w"
     },
     {
         "term": "world:debug_train_events",
-        "definition": "Train events"
+        "definition": "Zdarzenia poci\u0105g\u00f3w"
     },
     {
         "term": "world:debug_zone_events",
-        "definition": "Zone events"
+        "definition": "Zdarzenia stref"
     },
     {
         "term": "world:decoders",
-        "definition": "Decoders"
+        "definition": "Dekodery"
     },
     {
         "term": "world:edit",
-        "definition": "Edit world"
+        "definition": "Edytuj \u015bwiat"
     },
     {
         "term": "world:ext_output_change_action",
-        "definition": "External output change action"
+        "definition": "Akcja zmiany wyj\u015bcia zewn\u0119trznego"
     },
     {
         "term": "world:inputs",
-        "definition": "Inputs"
+        "definition": "Wej\u015bcia"
     },
     {
         "term": "world:interfaces",
-        "definition": "Interfaces"
+        "definition": "Interfejsy"
     },
     {
         "term": "world:lua_scripts",
-        "definition": "Lua scripts"
+        "definition": "Skrypty Lua"
     },
     {
         "term": "world:mute",
-        "definition": "Mute"
+        "definition": "Wycisz"
     },
     {
         "term": "world:no_smoke",
-        "definition": "No smoke"
+        "definition": "Bez dymu"
     },
     {
         "term": "world:offline",
-        "definition": "Disconnect"
+        "definition": "Roz\u0142\u0105cz"
     },
     {
         "term": "world:online",
-        "definition": "Connect"
+        "definition": "Po\u0142\u0105cz"
     },
     {
         "term": "world:online_when_loaded",
-        "definition": "Go online when loaded"
+        "definition": "Po\u0142\u0105cz przy jak za\u0142adowany"
     },
     {
         "term": "world:outputs",
-        "definition": "Outputs"
+        "definition": "Wyj\u015bcia"
     },
     {
         "term": "world:path_release_delay",
-        "definition": "Block path release delay"
+        "definition": "Op\u00f3\u017anienie zwolnienia \u015bcie\u017cki bloku"
     },
     {
         "term": "world:power_off",
-        "definition": "Power off"
+        "definition": "Wy\u0142\u0105cz zasilanie"
     },
     {
         "term": "world:power_on",
-        "definition": "Power on"
+        "definition": "W\u0142\u0105cz zasilanie"
     },
     {
         "term": "world:power_on_when_loaded",
-        "definition": "Power on when loaded"
+        "definition": "W\u0142\u0105cz zasilanie jak za\u0142adowany"
     },
     {
         "term": "world:rail_vehicles",
-        "definition": "Rail vehicles"
+        "definition": "Pojazdy szynowe"
     },
     {
         "term": "world:run",
-        "definition": "Run"
+        "definition": "Uruchom"
     },
     {
         "term": "world:run_when_loaded",
-        "definition": "Run when loaded"
+        "definition": "Uruchom kiedy za\u0142adowany"
     },
     {
         "term": "world:scale",
-        "definition": "Scale"
+        "definition": "Skala"
     },
     {
         "term": "world:scale_ratio",
-        "definition": "Scale ratio"
+        "definition": "Wsp\u00f3\u0142czynnik skali"
     },
     {
         "term": "world:simulation",
-        "definition": "Simulation"
+        "definition": "Symulacja"
     },
     {
         "term": "world:stop",
-        "definition": "Stop"
+        "definition": "Zatrzymaj"
     },
     {
         "term": "world:trains",
-        "definition": "Trains"
+        "definition": "Poci\u0105gi"
     },
     {
         "term": "world:uuid",
@@ -3149,19 +3145,19 @@
     },
     {
         "term": "world:zones",
-        "definition": "Zones"
+        "definition": "Strefy"
     },
     {
         "term": "world_scale:custom",
-        "definition": "Custom"
+        "definition": "Niestandardowa"
     },
     {
         "term": "xpressnet_command_station:custom",
-        "definition": "Custom"
+        "definition": "Niestandardowa"
     },
     {
         "term": "xpressnet_interface_type:network",
-        "definition": "Network"
+        "definition": "Sie\u0107"
     },
     {
         "term": "xpressnet_interface_type:serial",
@@ -3169,15 +3165,15 @@
     },
     {
         "term": "xpressnet_serial_interface_type:custom",
-        "definition": "Custom"
+        "definition": "Niestandardowy"
     },
     {
         "term": "xpressnet_settings:use_emergency_stop_locomotive_command",
-        "definition": "Use short emergency stop locomotive command"
+        "definition": "U\u017cyj kr\u00f3tkiej komendy zatrzymania awaryjnego lokomotywy"
     },
     {
         "term": "xpressnet_settings:use_roco_f13_f20_command",
-        "definition": "Use Roco F13-F20 command"
+        "definition": "U\u017cyj komend Roco F13\u2013F20"
     },
     {
         "term": "z21_channel:rbus",
@@ -3185,30 +3181,30 @@
     },
     {
         "term": "z21_settings.server:allow_emergency_stop",
-        "definition": "Allow emergency stop"
+        "definition": "Zezw\u00f3l na zatrzymanie awaryjne"
     },
     {
         "term": "z21_settings.server:allow_track_power_off",
-        "definition": "Allow power off"
+        "definition": "Zezw\u00f3l na wy\u0142\u0105czenie zasilania toru"
     },
     {
         "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
-        "definition": "Allow power on/emergency stop release"
+        "definition": "Zezw\u00f3l na w\u0142\u0105czenie zasilania / zwolnienie zatrzymania awaryjnego"
     },
     {
         "term": "zone:blocks",
-        "definition": "Blocks"
+        "definition": "Odcinki"
     },
     {
         "term": "zone:mute",
-        "definition": "Mute"
+        "definition": "Wyciszenie"
     },
     {
         "term": "zone:no_smoke",
-        "definition": "No smoke"
+        "definition": "Brak dymu"
     },
     {
         "term": "zone:speed_limit",
-        "definition": "Speed limit"
+        "definition": "Ograniczenie pr\u0119dko\u015bci"
     }
 ]

@@ -6,7 +6,17 @@ from operator import itemgetter
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 POEDITOR_PROJECT_ID = 622757
-LANGUAGES = ['en-us', 'de-de', 'es-es', 'fr-fr', 'fy-nl', 'it-it', 'nl-nl', 'sv-se']
+LANGUAGES = [
+    'en-us',
+    'de-de',
+    'es-es',
+    'fr-fr',
+    'fy-nl',
+    'it-it',
+    'nl-nl',
+    'pl-pl',
+    'sv-se',
+]
 
 
 def poeditor_language_code(code: str) -> str:
