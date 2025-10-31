@@ -24,6 +24,10 @@
         "definition": ""
     },
     {
+        "term": "block_state:unknown",
+        "definition": ""
+    },
+    {
         "term": "board:delete_tile",
         "definition": "Ta bort brickan"
     },
@@ -692,6 +696,14 @@
         "definition": "OPC_MULTI_SENSE riktning"
     },
     {
+        "term": "input:off_delay",
+        "definition": ""
+    },
+    {
+        "term": "input:on_delay",
+        "definition": ""
+    },
+    {
         "term": "input_list:bus",
         "definition": "Buss"
     },
@@ -834,6 +846,10 @@
     {
         "term": "language:nl-nl",
         "definition": "Nederl\u00e4ndska"
+    },
+    {
+        "term": "language:pl-pl",
+        "definition": ""
     },
     {
         "term": "language:sv-se",

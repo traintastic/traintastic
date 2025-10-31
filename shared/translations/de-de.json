@@ -217,15 +217,15 @@
     },
     {
         "term": "class_id:board_tile.misc.label",
-        "definition": "Etikett"
+        "definition": "Text"
     },
     {
         "term": "class_id:board_tile.misc.push_button",
-        "definition": "Schalter"
+        "definition": "Knopf"
     },
     {
         "term": "class_id:board_tile.misc.switch",
-        "definition": "Weiche"
+        "definition": "Schalter"
     },
     {
         "term": "class_id:board_tile.rail.block",
@@ -317,7 +317,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_doubleslip",
-        "definition": "Einseitige Kreuzungsweiche"
+        "definition": "Zweiseitige Kreuzungsweiche"
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_45",
@@ -345,7 +345,7 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_singleslip",
-        "definition": "Zweiseitige Kreuzungsweiche"
+        "definition": "Einseitige Kreuzungsweiche"
     },
     {
         "term": "class_id:board_tile.rail.turnout_wye",
@@ -793,7 +793,7 @@
     },
     {
         "term": "interface_list:list_is_empty",
-        "definition": "Schnittstelle ist nicht leer.\nDr\u00fccke dem Plus-Knopf um eine neue Schnittstelle zu erstellen."
+        "definition": "Schnittstelle ist nicht leer.\nDr\u00fccke dem Plus-Knopf um eine \nneue Schnittstelle zu erstellen."
     },
     {
         "term": "interface_state:error",
@@ -848,6 +848,10 @@
         "definition": "Niederl\u00e4ndisch"
     },
     {
+        "term": "language:pl-pl",
+        "definition": "Polnische"
+    },
+    {
         "term": "language:sv-se",
         "definition": "Schwedisch"
     },
@@ -893,7 +897,7 @@
     },
     {
         "term": "list:setup_using_wizard",
-        "definition": "Einrichtung benutzt Assistenten"
+        "definition": "Assistenten zur Einrichtung benutzen"
     },
     {
         "term": "lncv_programmer:description",
@@ -2217,7 +2221,7 @@
     },
     {
         "term": "qtapp.settings:board",
-        "definition": "Schalttafel"
+        "definition": "Schaltbrett"
     },
     {
         "term": "qtapp.settings:developer",
@@ -2253,7 +2257,7 @@
     },
     {
         "term": "qtapp:board_properties",
-        "definition": "Tafel eigenschften"
+        "definition": "Brett eigenschften"
     },
     {
         "term": "qtapp:export_world_failed",
@@ -2421,7 +2425,7 @@
     },
     {
         "term": "signal_aspect:stop",
-        "definition": "Stopp"
+        "definition": "Halten"
     },
     {
         "term": "single_output_action:none",
@@ -2749,7 +2753,7 @@
     },
     {
         "term": "weight_unit:ton",
-        "definition": "tonne"
+        "definition": "tonnen"
     },
     {
         "term": "wizard.add_interface.command_station:text",
@@ -2969,7 +2973,7 @@
     },
     {
         "term": "wizard.new_board.name:text",
-        "definition": "Gib der Tafel einen Namen, z. B. Traintastic, Station Prima oder Bereitstellungsbereich:"
+        "definition": "Gib dem Brett einen Namen, z. B. Traintastic, Station Prima oder Bereitstellungsbereich:"
     },
     {
         "term": "wizard.new_board.name:title",

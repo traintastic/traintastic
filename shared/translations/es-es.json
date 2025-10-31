@@ -24,6 +24,10 @@
         "definition": ""
     },
     {
+        "term": "block_state:unknown",
+        "definition": ""
+    },
+    {
         "term": "board:delete_tile",
         "definition": "Borrar mosaico"
     },
@@ -692,6 +696,14 @@
         "definition": "Direcci\u00f3n OPC_MULTI_SENSE"
     },
     {
+        "term": "input:off_delay",
+        "definition": ""
+    },
+    {
+        "term": "input:on_delay",
+        "definition": ""
+    },
+    {
         "term": "input_list:bus",
         "definition": "Bus"
     },
@@ -834,6 +846,10 @@
     {
         "term": "language:nl-nl",
         "definition": "Holand\u00e9s"
+    },
+    {
+        "term": "language:pl-pl",
+        "definition": ""
     },
     {
         "term": "language:sv-se",

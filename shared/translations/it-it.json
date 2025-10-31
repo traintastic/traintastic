@@ -24,6 +24,10 @@
         "definition": ""
     },
     {
+        "term": "block_state:unknown",
+        "definition": ""
+    },
+    {
         "term": "board:delete_tile",
         "definition": "Elimina mattonella"
     },
@@ -692,6 +696,14 @@
         "definition": "OPC_MULTI_SENSE direction"
     },
     {
+        "term": "input:off_delay",
+        "definition": ""
+    },
+    {
+        "term": "input:on_delay",
+        "definition": ""
+    },
+    {
         "term": "input_list:bus",
         "definition": "Bus"
     },
@@ -834,6 +846,10 @@
     {
         "term": "language:nl-nl",
         "definition": "Olandese"
+    },
+    {
+        "term": "language:pl-pl",
+        "definition": ""
     },
     {
         "term": "language:sv-se",

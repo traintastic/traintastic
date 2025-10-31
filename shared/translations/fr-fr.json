@@ -24,6 +24,10 @@
         "definition": "Reserv\u00e9"
     },
     {
+        "term": "block_state:unknown",
+        "definition": ""
+    },
+    {
         "term": "board:delete_tile",
         "definition": "Supprimer tuile"
     },
@@ -41,11 +45,11 @@
     },
     {
         "term": "board_area_grid:dot",
-        "definition": ""
+        "definition": "Point"
     },
     {
         "term": "board_area_grid:line",
-        "definition": ""
+        "definition": "Ligne"
     },
     {
         "term": "board_area_grid:none",
@@ -692,6 +696,14 @@
         "definition": "OPC_MULTI_SENSE direction"
     },
     {
+        "term": "input:off_delay",
+        "definition": ""
+    },
+    {
+        "term": "input:on_delay",
+        "definition": ""
+    },
+    {
         "term": "input_list:bus",
         "definition": "Bus"
     },
@@ -825,7 +837,7 @@
     },
     {
         "term": "language:fy-nl",
-        "definition": ""
+        "definition": "Frisonne"
     },
     {
         "term": "language:it-it",
@@ -834,6 +846,10 @@
     {
         "term": "language:nl-nl",
         "definition": "Allemand"
+    },
+    {
+        "term": "language:pl-pl",
+        "definition": ""
     },
     {
         "term": "language:sv-se",
@@ -2549,7 +2565,7 @@
     },
     {
         "term": "train:length",
-        "definition": ""
+        "definition": "Longueur"
     },
     {
         "term": "train:mode",
@@ -2713,7 +2729,7 @@
     },
     {
         "term": "vehicle.rail:length",
-        "definition": ""
+        "definition": "Longueur"
     },
     {
         "term": "vehicle.rail:power",
@@ -3193,6 +3209,6 @@
     },
     {
         "term": "zone:speed_limit",
-        "definition": ""
+        "definition": "Limitation de vitesse"
     }
 ]

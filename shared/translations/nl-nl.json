@@ -24,6 +24,10 @@
         "definition": "Gereserveerd"
     },
     {
+        "term": "block_state:unknown",
+        "definition": "Onbekend"
+    },
+    {
         "term": "board:delete_tile",
         "definition": "Verwijder tegel"
     },
@@ -41,15 +45,15 @@
     },
     {
         "term": "board_area_grid:dot",
-        "definition": ""
+        "definition": "Punt"
     },
     {
         "term": "board_area_grid:line",
-        "definition": ""
+        "definition": "Lijn"
     },
     {
         "term": "board_area_grid:none",
-        "definition": ""
+        "definition": "Geen"
     },
     {
         "term": "board_settings.color_scheme:dark",
@@ -692,6 +696,14 @@
         "definition": "OPC_MULTI_SENSE richting"
     },
     {
+        "term": "input:off_delay",
+        "definition": "Uit vertraging"
+    },
+    {
+        "term": "input:on_delay",
+        "definition": "Aan vertraging"
+    },
+    {
         "term": "input_list:bus",
         "definition": "Bus"
     },
@@ -781,7 +793,7 @@
     },
     {
         "term": "interface_list:list_is_empty",
-        "definition": ""
+        "definition": "De lijst van interfaces is leeg.\nKlik op de plus knop om een nieuwe interface te maken. "
     },
     {
         "term": "interface_state:error",
@@ -836,6 +848,10 @@
         "definition": "Nederlands"
     },
     {
+        "term": "language:pl-pl",
+        "definition": "Pools"
+    },
+    {
         "term": "language:sv-se",
         "definition": "Zweeds"
     },
@@ -849,7 +865,7 @@
     },
     {
         "term": "list.zone:highlight_zone",
-        "definition": ""
+        "definition": "Markeer zone"
     },
     {
         "term": "list:add",
@@ -1249,7 +1265,7 @@
     },
     {
         "term": "message:D3001",
-        "definition": ""
+        "definition": "Het nemen van trein %1 is mislukt: %2"
     },
     {
         "term": "message:D3010",
@@ -1541,11 +1557,11 @@
     },
     {
         "term": "message:I3001",
-        "definition": ""
+        "definition": "Regelaar %1 heeft controle over trein %1"
     },
     {
         "term": "message:I3002",
-        "definition": ""
+        "definition": "Regelaar %1 heeft trein %2 vrijgegeven"
     },
     {
         "term": "message:I9001",
@@ -1713,11 +1729,11 @@
     },
     {
         "term": "message:N3005",
-        "definition": ""
+        "definition": "Regelaar %1 heeft controle over trein %1 gestolen"
     },
     {
         "term": "message:N3006",
-        "definition": ""
+        "definition": "Regelaar %1 heeft trein %2 vrijgegeven zonder deze te stoppen"
     },
     {
         "term": "message:N9001",
@@ -2009,7 +2025,7 @@
     },
     {
         "term": "qtapp.mainmenu:community_forum",
-        "definition": ""
+        "definition": "Communityforum"
     },
     {
         "term": "qtapp.mainmenu:connect_to_server",
@@ -2437,7 +2453,7 @@
     },
     {
         "term": "stacked_object_list:click_to_edit_ctrl_click_to_open_in_a_new_window",
-        "definition": ""
+        "definition": "Klik om te bewerken.\nCtrl klik opent een nieuw scherm."
     },
     {
         "term": "stacked_object_list:list_is_empty",
@@ -2509,7 +2525,7 @@
     },
     {
         "term": "throttle.acquire",
-        "definition": ""
+        "definition": "Nemen"
     },
     {
         "term": "throttle.controlled_by_x",
@@ -2521,11 +2537,11 @@
     },
     {
         "term": "throttle.in_control",
-        "definition": ""
+        "definition": "Je hebt de controle"
     },
     {
         "term": "throttle.not_controlled",
-        "definition": ""
+        "definition": "Niet bestuurd"
     },
     {
         "term": "throttle.release",
@@ -2841,7 +2857,7 @@
     },
     {
         "term": "wizard.add_interface.protocol_dr5000_usb:bottom_text",
-        "definition": ""
+        "definition": "De %command_station% ondersteund twee verschillende protocollen voor communicatie. Traintastic ondersteund beide, het gebruikt van LocoNet heeft de voorkeur."
     },
     {
         "term": "wizard.add_interface.serial_port:text",
@@ -3017,7 +3033,7 @@
     },
     {
         "term": "world:correct_output_pos_when_locked",
-        "definition": ""
+        "definition": "Probeer de uitvoerstatus te corrigeren wanneer deze extern wordt gewijzigd terwijl deze vergrendeld is"
     },
     {
         "term": "world:debug_block_events",
@@ -3041,7 +3057,7 @@
     },
     {
         "term": "world:ext_output_change_action",
-        "definition": ""
+        "definition": "Actie voor externe outputwijziging"
     },
     {
         "term": "world:inputs",
@@ -3185,11 +3201,11 @@
     },
     {
         "term": "zone:mute",
-        "definition": ""
+        "definition": "Dempen"
     },
     {
         "term": "zone:no_smoke",
-        "definition": ""
+        "definition": "Geen rook"
     },
     {
         "term": "zone:speed_limit",

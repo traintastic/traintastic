@@ -24,6 +24,10 @@
         "definition": "Reservearre"
     },
     {
+        "term": "block_state:unknown",
+        "definition": ""
+    },
+    {
         "term": "board:delete_tile",
         "definition": "Wiskje tegel"
     },
@@ -317,11 +321,11 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_45",
-        "definition": ""
+        "definition": "Wiksel links 45\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_90",
-        "definition": ""
+        "definition": "Wiksel links 90\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.turnout_left_curved",
@@ -329,11 +333,11 @@
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_45",
-        "definition": ""
+        "definition": "Wiksel rjochts 45\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_90",
-        "definition": ""
+        "definition": "Wiksel rjochts 90\u00b0"
     },
     {
         "term": "class_id:board_tile.rail.turnout_right_curved",
@@ -692,6 +696,14 @@
         "definition": "OPC_MULTI_SENSE rjochting"
     },
     {
+        "term": "input:off_delay",
+        "definition": ""
+    },
+    {
+        "term": "input:on_delay",
+        "definition": ""
+    },
+    {
         "term": "input_list:bus",
         "definition": "Bus"
     },
@@ -834,6 +846,10 @@
     {
         "term": "language:nl-nl",
         "definition": "Nederl\u00e2nsk"
+    },
+    {
+        "term": "language:pl-pl",
+        "definition": ""
     },
     {
         "term": "language:sv-se",
@@ -1353,15 +1369,15 @@
     },
     {
         "term": "message:E2007",
-        "definition": ""
+        "definition": "Skriuwen nei socket mislearre (%1)"
     },
     {
         "term": "message:E2008",
-        "definition": ""
+        "definition": "Socket l\u00eazen mislearre (%1)"
     },
     {
         "term": "message:E2009",
-        "definition": ""
+        "definition": "Socket-\u00fbntfangst mislearre (%1)"
     },
     {
         "term": "message:E2010",
@@ -1369,15 +1385,15 @@
     },
     {
         "term": "message:E2011",
-        "definition": ""
+        "definition": "Socketferstjoering mislearre (%1)"
     },
     {
         "term": "message:E2012",
-        "definition": ""
+        "definition": "Funksjen\u00fbmer al yn gebr\u00fbk"
     },
     {
         "term": "message:E2013",
-        "definition": ""
+        "definition": "Ynstelle seri\u00eble poarte baudrate mislearre (%1)"
     },
     {
         "term": "message:E2014",
@@ -1473,7 +1489,7 @@
     },
     {
         "term": "message:F1002",
-        "definition": ""
+        "definition": "Iepenjen fan TCP-socket is mislearre (%1)"
     },
     {
         "term": "message:F1003",
@@ -1485,7 +1501,7 @@
     },
     {
         "term": "message:F1005",
-        "definition": ""
+        "definition": "Iepenjen fan UDP-socket is mislearre (%1)"
     },
     {
         "term": "message:F1006",
@@ -1501,7 +1517,7 @@
     },
     {
         "term": "message:F9001",
-        "definition": ""
+        "definition": "Oanmeitsjen fan Lua-steat is mislearre"
     },
     {
         "term": "message:F9002",
