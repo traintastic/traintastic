@@ -588,6 +588,66 @@
         "definition": "Nieaktywny"
     },
     {
+        "term": "default_name:block",
+        "definition": "Odcinek"
+    },
+    {
+        "term": "default_name:board",
+        "definition": "Plansza"
+    },
+    {
+        "term": "default_name:decoupler",
+        "definition": "Roz\u0142\u0105czacz"
+    },
+    {
+        "term": "default_name:direction",
+        "definition": "Kierunek"
+    },
+    {
+        "term": "default_name:link",
+        "definition": "Po\u0142\u0105czenie"
+    },
+    {
+        "term": "default_name:nx_button",
+        "definition": "Przycisk NX"
+    },
+    {
+        "term": "default_name:push_button",
+        "definition": "Przycisk"
+    },
+    {
+        "term": "default_name:script",
+        "definition": "Skrypt"
+    },
+    {
+        "term": "default_name:sensor",
+        "definition": "Czujnik"
+    },
+    {
+        "term": "default_name:signal",
+        "definition": "Semafor"
+    },
+    {
+        "term": "default_name:switch",
+        "definition": "Prze\u0142\u0105cznik"
+    },
+    {
+        "term": "default_name:train",
+        "definition": "Poci\u0105g"
+    },
+    {
+        "term": "default_name:turnout",
+        "definition": "Zwrotnica"
+    },
+    {
+        "term": "default_name:vehicle",
+        "definition": "Pojazd"
+    },
+    {
+        "term": "default_name:zone",
+        "definition": "Strefa"
+    },
+    {
         "term": "direction:forward",
         "definition": "Do przodu"
     },

@@ -588,6 +588,66 @@
         "definition": "Deaktiviert"
     },
     {
+        "term": "default_name:block",
+        "definition": "Blockabschnitt"
+    },
+    {
+        "term": "default_name:board",
+        "definition": "Brett"
+    },
+    {
+        "term": "default_name:decoupler",
+        "definition": "Entkuppler"
+    },
+    {
+        "term": "default_name:direction",
+        "definition": "Richtung"
+    },
+    {
+        "term": "default_name:link",
+        "definition": "Verkn\u00fcpfung"
+    },
+    {
+        "term": "default_name:nx_button",
+        "definition": "NX Knopf"
+    },
+    {
+        "term": "default_name:push_button",
+        "definition": "Knopf"
+    },
+    {
+        "term": "default_name:script",
+        "definition": "Skript"
+    },
+    {
+        "term": "default_name:sensor",
+        "definition": "Sensor"
+    },
+    {
+        "term": "default_name:signal",
+        "definition": "Signal"
+    },
+    {
+        "term": "default_name:switch",
+        "definition": "Schalter"
+    },
+    {
+        "term": "default_name:train",
+        "definition": "Zug"
+    },
+    {
+        "term": "default_name:turnout",
+        "definition": "Weiche"
+    },
+    {
+        "term": "default_name:vehicle",
+        "definition": "Fahrzeug"
+    },
+    {
+        "term": "default_name:zone",
+        "definition": "Bereich"
+    },
+    {
         "term": "direction:forward",
         "definition": "Vorw\u00e4rts"
     },
