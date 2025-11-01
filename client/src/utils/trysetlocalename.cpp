@@ -33,8 +33,8 @@ void trySetLocaleName(Object& object)
       auto value = id->toString();
       if(int pos = value.lastIndexOf("_"); pos >= 0)
       {
-        auto prefix = value.first(pos);
-        auto number = value.last(value.size() - pos - 1);
+        auto prefix = value.left(pos);
+        auto number = value.right(value.size() - pos - 1);
         auto term = QString("default_name:").append(prefix);
         if(Locale::instance->exists(term))
         {
