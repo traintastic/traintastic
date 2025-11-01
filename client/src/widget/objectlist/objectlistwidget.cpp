@@ -36,7 +36,7 @@
 #include "../../misc/methodaction.hpp"
 #include "../../dialog/objectselectlistdialog.hpp"
 #include "../../utils/enum.hpp"
-
+#include "../../utils/trysetlocalename.hpp"
 
 #include "../../mainwindow.hpp"
 
@@ -70,6 +70,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
               m_requestIdCreate = Connection::invalidRequestId;
               if(addedObject)
               {
+                trySetLocaleName(*addedObject);
                 objectCreated(addedObject);
               }
               // TODO: show error
@@ -109,6 +110,7 @@ ObjectListWidget::ObjectListWidget(const ObjectPtr& object_, QWidget* parent) :
                 m_requestIdCreate = Connection::invalidRequestId;
                 if(addedObject)
                 {
+                  trySetLocaleName(*addedObject);
                   objectCreated(addedObject);
                 }
                 // TODO: show error

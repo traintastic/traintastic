@@ -588,6 +588,66 @@
         "definition": "Deactivated"
     },
     {
+        "term": "default_name:block",
+        "definition": "Block"
+    },
+    {
+        "term": "default_name:board",
+        "definition": "Board"
+    },
+    {
+        "term": "default_name:decoupler",
+        "definition": "Decoupler"
+    },
+    {
+        "term": "default_name:direction",
+        "definition": "Direction"
+    },
+    {
+        "term": "default_name:link",
+        "definition": "Link"
+    },
+    {
+        "term": "default_name:nx_button",
+        "definition": "NX button"
+    },
+    {
+        "term": "default_name:push_button",
+        "definition": "Push button"
+    },
+    {
+        "term": "default_name:script",
+        "definition": "Script"
+    },
+    {
+        "term": "default_name:sensor",
+        "definition": "Sensor"
+    },
+    {
+        "term": "default_name:signal",
+        "definition": "Signal"
+    },
+    {
+        "term": "default_name:switch",
+        "definition": "Switch"
+    },
+    {
+        "term": "default_name:train",
+        "definition": "Train"
+    },
+    {
+        "term": "default_name:turnout",
+        "definition": "Turnout"
+    },
+    {
+        "term": "default_name:vehicle",
+        "definition": "Vehicle"
+    },
+    {
+        "term": "default_name:zone",
+        "definition": "Zone"
+    },
+    {
         "term": "direction:forward",
         "definition": "Forward"
     },

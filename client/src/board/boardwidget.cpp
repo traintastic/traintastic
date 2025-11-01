@@ -46,6 +46,7 @@
 #include "../network/object/nxbuttonrailtile.hpp"
 #include "../theme/theme.hpp"
 #include "../utils/enum.hpp"
+#include "../utils/trysetlocalename.hpp"
 #include "../settings/boardsettings.hpp"
 #include <traintastic/utils/clamp.hpp>
 
@@ -554,8 +555,15 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
       const Qt::KeyboardModifiers kbMod = QApplication::keyboardModifiers();
       if(kbMod == Qt::NoModifier || kbMod == Qt::ControlModifier)
         m_object->addTile(x, y, m_boardArea->mouseMoveTileRotate(), classId, kbMod == Qt::ControlModifier,
-          [](const bool& /*r*/, std::optional<const Error> /*error*/)
+          [this, x, y](const bool& r, std::optional<const Error> /*error*/)
           {
+            if(r)
+            {
+              if(auto object = m_object->getTileObject({x, y}))
+              {
+                trySetLocaleName(*object);
+              }
+            }
           });
     }
   }
