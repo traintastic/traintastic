@@ -36,6 +36,7 @@
 #include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/outputtype.hpp>
 #include <traintastic/enum/outputpairvalue.hpp>
+#include <traintastic/enum/sensorstate.hpp>
 #include <traintastic/enum/speedunit.hpp>
 #include <traintastic/enum/textalign.hpp>
 #include "../../src/enum/tristate.hpp"
@@ -61,6 +62,7 @@
   TextAlign, \
   TriState, \
   TurnoutPosition, \
+  SensorState, \
   SignalAspect, \
   WorldEvent, \
   WorldScale, \
