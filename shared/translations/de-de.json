@@ -2737,7 +2737,7 @@
     },
     {
         "term": "tray_icon.notify:message_running",
-        "definition": "Tritastic server l\u00e4uft im hintergrund."
+        "definition": "Traintastic server l\u00e4uft im hintergrund."
     },
     {
         "term": "turnout_position:crossed",
