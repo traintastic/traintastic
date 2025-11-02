@@ -42,6 +42,7 @@
 #include "../../utils/makearray.hpp"
 #include "../../world/world.hpp"
 
+#ifndef NDEBUG
 namespace
 {
 
@@ -54,6 +55,7 @@ constexpr bool isSX(InputChannel channel)
 }
 
 }
+#endif
 
 constexpr bool operator <(const SelectrixInterface::BusAddress& lhs, const SelectrixInterface::BusAddress& rhs)
 {
