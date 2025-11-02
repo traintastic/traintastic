@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023,2025 Reinder Feenstra
+ * Copyright (C) 2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,26 +68,6 @@ class SelectrixInterface final
       uint8_t mask;
     };
 
-    struct InputChannel
-    {
-      // zero is reserved for the defaultChannel
-      static constexpr uint32_t sx0 = 1;
-      static constexpr uint32_t sx1 = 2;
-      static constexpr uint32_t sx2 = 3;
-    };
-
-    inline static const std::vector<uint32_t> channels = {
-      InputChannel::sx0,
-      InputChannel::sx1,
-      InputChannel::sx2,
-    };
-
-    inline static const std::vector<std::string_view> channelNames = {
-      "SX0",
-      "SX1",
-      "SX2",
-    };
-
     std::unique_ptr<Selectrix::Kernel> m_kernel;
     boost::signals2::connection m_selectrixPropertyChanged;
     std::map<BusAddress, BusAddressUsage> m_usedBusAddresses;
@@ -95,8 +75,8 @@ class SelectrixInterface final
     void useLocomotiveAddress(uint32_t address);
     void unuseLocomotiveAddress(uint32_t address);
 
-    void useFeedbackAddress(uint32_t channel, uint32_t address);
-    void unuseFeedbackAddress(uint32_t channel, uint32_t address);
+    void useFeedbackAddress(InputChannel channel, uint32_t address);
+    void unuseFeedbackAddress(InputChannel channel, uint32_t address);
 
     void useAccessoryAddress(OutputChannel channel, uint32_t flatAddress);
     void unuseAccessoryAddress(OutputChannel channel, uint32_t flatAddress);
@@ -138,12 +118,10 @@ class SelectrixInterface final
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    const std::vector<uint32_t>* inputChannels() const final { return &channels; }
-    const std::vector<std::string_view>* inputChannelNames() const final { return &channelNames; }
-    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
-    [[nodiscard]] bool isInputAddressAvailable(uint32_t channel, uint32_t address) const final;
-    [[nodiscard]] bool changeInputChannelAddress(Input& input, uint32_t newChannel, uint32_t newAddress) final;
-    void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
+    std::span<const InputChannel> inputChannels() const final;
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
+    [[nodiscard]] bool isInputAvailable(InputChannel channel, uint32_t address) const final;
+    void inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
     std::span<const OutputChannel> outputChannels() const final;

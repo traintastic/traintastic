@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023-2025 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -367,6 +367,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
   m_interfaceItems.add(removeAddress);
 
   Attributes::addDisplayName(swapOutputs, "output_map:swap_outputs");
+  Attributes::addEnabled(swapOutputs, false);
   Attributes::addVisible(swapOutputs, false);
   m_interfaceItems.add(swapOutputs);
 
@@ -578,6 +579,7 @@ void OutputMap::updateEnabled()
   Attributes::setEnabled(addAddress, editable && addresses.size() < addressesSizeMax);
   Attributes::setEnabled(removeAddress, editable && addresses.size() > addressesSizeMin);
   Attributes::setEnabled(ecosObject, editable);
+  Attributes::setEnabled(swapOutputs, editable);
 }
 
 uint32_t OutputMap::getUnusedAddress() const

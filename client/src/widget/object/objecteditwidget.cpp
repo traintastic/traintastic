@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@
 #include "../interfaceitemnamelabel.hpp"
 #include "../propertycheckbox.hpp"
 #include "../propertycombobox.hpp"
+#include "../objectpropertycombobox.hpp"
 #include "../propertyspinbox.hpp"
 #include "../propertydoublespinbox.hpp"
 #include "../propertylineedit.hpp"
@@ -43,6 +44,8 @@
 #include "../unitpropertycombobox.hpp"
 #include "../unitpropertyedit.hpp"
 #include "../createwidget.hpp"
+#include "../decoder/decoderwidget.hpp"
+#include "../decoder/decoderfunctionswidget.hpp"
 #include "../../theme/theme.hpp"
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/locale/locale.hpp>
@@ -94,10 +97,20 @@ void ObjectEditWidget::buildForm()
           if(baseProperty->type() == ValueType::Object)
           {
             ObjectProperty* property = static_cast<ObjectProperty*>(baseProperty);
-            if(contains(baseProperty->flags(), PropertyFlags::SubObject))
+            if(property->name() == "decoder")
+            {
+              tabs.append(new DecoderWidget(*property, this));
+              tabs.append(new DecoderFunctionsWidget(*property, this));
+              continue;
+            }
+            else if(contains(baseProperty->flags(), PropertyFlags::SubObject))
             {
               tabs.append(new ObjectEditWidget(*property, this));
               continue;
+            }
+            else if(property->name() == "interface")
+            {
+              w = new ObjectPropertyComboBox(*property, this);
             }
             else
             {

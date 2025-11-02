@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@
 #include "boardwidget.hpp"
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
+#include "blockhighlight.hpp"
+#include "../mainwindow.hpp"
 #include "../network/board.hpp"
 #include "../network/callmethod.hpp"
 #include "../network/object.tpp"
@@ -74,8 +76,9 @@ BoardAreaWidget::BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent) 
   m_boardTop{m_board->getProperty("top")},
   m_boardRight{m_board->getProperty("right")},
   m_boardBottom{m_board->getProperty("bottom")},
-  m_grid{Grid::Dot},
+  m_grid{BoardAreaGrid::None},
   m_zoomLevel{0},
+  m_blockHighlight{MainWindow::instance->blockHighlight()},
   m_mouseLeftButtonPressed{false},
   m_mouseRightButtonPressed{false},
   m_mouseMoveAction{MouseMoveAction::None},
@@ -98,6 +101,12 @@ BoardAreaWidget::BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent) 
     connect(m_boardBottom, &AbstractProperty::valueChanged, this, &BoardAreaWidget::updateMinimumSize);
 
   connect(&BoardSettings::instance(), &SettingsBase::changed, this, &BoardAreaWidget::settingsChanged);
+
+  connect(&m_blockHighlight, &BlockHighlight::colorsChanged, this,
+    [this](const QString& /*blockId*/, const QVector<Color>& /*colors*/)
+    {
+      update();
+    });
 
   for(const auto& [l, object] : m_board->tileObjects())
     tileObjectAdded(l.x, l.y, object);
@@ -204,34 +213,6 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
       tryConnect("text");
       tryConnect("text_align");
       tryConnect("text_color");
-      break;
-  }
-}
-
-void BoardAreaWidget::setGrid(Grid value)
-{
-  if(m_grid != value)
-  {
-    m_grid = value;
-    update();
-    emit gridChanged(m_grid);
-  }
-}
-
-void BoardAreaWidget::nextGrid()
-{
-  switch(grid())
-  {
-    case Grid::None:
-      setGrid(Grid::Dot);
-      break;
-
-    case Grid::Dot:
-      setGrid(Grid::Line);
-      break;
-
-    case Grid::Line:
-      setGrid(Grid::None);
       break;
   }
 }
@@ -523,9 +504,7 @@ void BoardAreaWidget::leaveEvent(QEvent* event)
 
 void BoardAreaWidget::keyPressEvent(QKeyEvent* event)
 {
-  if(event->key() == Qt::Key_G && event->modifiers() == Qt::ControlModifier)
-    nextGrid();
-  else if(event->matches(QKeySequence::ZoomIn))
+  if(event->matches(QKeySequence::ZoomIn))
     zoomIn();
   else if(event->matches(QKeySequence::ZoomOut))
     zoomOut();
@@ -626,7 +605,6 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
   const QColor backgroundColor50{0x10, 0x10, 0x10, 0x80};
   const QColor backgroundColorError50{0xff, 0x00, 0x00, 0x80};
-  const QColor gridColor{0x40, 0x40, 0x40};
   const QColor gridColorHighlight{Qt::white};
   const QColor gridColorError{Qt::red};
   const int tileSize = getTileSize();
@@ -641,19 +619,19 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
   // draw grid:
   switch(m_grid)
   {
-    case Grid::None:
+    case BoardAreaGrid::None:
       break;
 
-    case Grid::Line:
-      painter.setPen(gridColor);
+    case BoardAreaGrid::Line:
+      painter.setPen(m_colorScheme->grid);
       for(int y = viewport.top(); y <= viewport.bottom(); y += gridSize)
         painter.drawLine(viewport.left(), y, viewport.right(), y);
       for(int x = viewport.left(); x <= viewport.right(); x += gridSize)
         painter.drawLine(x, viewport.top(), x, viewport.bottom());
       break;
 
-    case Grid::Dot:
-      painter.setPen(gridColor);
+    case BoardAreaGrid::Dot:
+      painter.setPen(m_colorScheme->grid);
       for(int y = viewport.top(); y <= viewport.bottom(); y += gridSize)
         for(int x = viewport.left(); x <= viewport.right(); x += gridSize)
           painter.drawPoint(x, y);
@@ -731,9 +709,32 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           break;
 
         case TileId::RailBlock:
-          tilePainter.drawBlock(id, r, a, state & 0x01, state & 0x02, m_board->getTileObject(it.first));
+        {
+          auto block = m_board->getTileObject(it.first);
+          tilePainter.drawBlock(id, r, a, state & 0x01, state & 0x02, block);
+          if(auto itColors = m_blockHighlight.blockColors().find(block->getPropertyValueString("id"));
+              itColors != m_blockHighlight.blockColors().end() && !itColors->isEmpty())
+          {
+            for(int i = 0; i < itColors->size(); ++i)
+            {
+              QColor color = toQColor((*itColors)[i]);
+              painter.setPen({});
+              color.setAlphaF(m_colorScheme->blockHighlightAlpha);
+              painter.setBrush(color);
+              if(a == TileRotate::Deg0)
+              {
+                const auto h = r.height() / itColors->size();
+                painter.drawRect(r.left(), r.top() + i * h, r.width(), h);
+              }
+              else
+              {
+                const auto w = r.width() / itColors->size();
+                painter.drawRect(r.left() + i * w, r.top(), w, r.height());
+              }
+            }
+          }
           break;
-
+        }
         case TileId::RailDirectionControl:
           tilePainter.drawDirectionControl(id, r, a, isReserved, getDirectionControlState(it.first));
           break;
@@ -906,6 +907,8 @@ void BoardAreaWidget::settingsChanged()
 
   m_colorScheme = getBoardColorScheme(s.colorScheme.value());
 
+  updateGrid();
+
   update();
 }
 
@@ -917,4 +920,17 @@ void BoardAreaWidget::updateMinimumSize()
 
   setMinimumSize(width, height);
   update();
+}
+
+void BoardAreaWidget::updateGrid()
+{
+  const bool editMode = m_board->connection()->world()->getPropertyValueBool(QStringLiteral("edit"), false);
+  const auto& s = BoardSettings::instance();
+  const auto grid = editMode ? s.gridEditMode.value() : s.gridOperateMode.value();
+
+  if(m_grid != grid)
+  {
+    m_grid = grid;
+    update();
+  }
 }

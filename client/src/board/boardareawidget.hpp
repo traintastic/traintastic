@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,24 +34,22 @@
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
 #include <traintastic/enum/color.hpp>
+#include "boardareagrid.hpp"
 #include "boardcolorscheme.hpp"
 #include "../network/abstractproperty.hpp"
 #include "../network/objectptr.hpp"
 
+class BoardWidget;
+class BlockHighlight;
 class Board;
 
 class BoardAreaWidget : public QWidget
 {
   Q_OBJECT
 
-  public:
-    enum class Grid
-    {
-      None = 0,
-      Line,
-      Dot,
-    };
+  friend class ScreenShotDialog;
 
+  public:
     enum class MouseMoveAction
     {
       None,
@@ -71,8 +69,10 @@ class BoardAreaWidget : public QWidget
     AbstractProperty* m_boardTop;
     AbstractProperty* m_boardRight;
     AbstractProperty* m_boardBottom;
-    Grid m_grid;
+    BoardAreaGrid m_grid;
     int m_zoomLevel;
+
+    BlockHighlight& m_blockHighlight;
 
     bool m_mouseLeftButtonPressed;
     TileLocation m_mouseLeftButtonPressedTileLocation;
@@ -131,8 +131,6 @@ class BoardAreaWidget : public QWidget
 
     BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent = nullptr);
 
-    Grid grid() const { return m_grid; }
-    void nextGrid();
     int zoomLevel() const { return m_zoomLevel; }
     float zoomRatio() const { return static_cast<float>(getTileSize()) / getTileSize(0); }
 
@@ -145,16 +143,15 @@ class BoardAreaWidget : public QWidget
     void setMouseMoveTileSize(uint8_t x, uint8_t y);
     void setMouseMoveHideTileLocation(TileLocation l);
     void setMouseMoveTileSizeMax(uint8_t width, uint8_t height);
+    void updateGrid();
 
   public slots:
     void tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& object);
-    void setGrid(Grid value);
     void setZoomLevel(int value);
     void zoomIn() { setZoomLevel(zoomLevel() + 1); }
     void zoomOut() { setZoomLevel(zoomLevel() - 1); }
 
   signals:
-    void gridChanged(Grid);
     void zoomLevelChanged(int);
     void tileClicked(int16_t x, int16_t y);
     void rightClicked();

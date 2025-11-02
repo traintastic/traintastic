@@ -40,7 +40,9 @@ if(BUILD_TESTING)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_options(Catch2 PRIVATE -Wno-restrict) # workaround GCC bug
   endif()
-  add_executable(traintastic-server-test test/main.cpp)
+  add_executable(traintastic-server-test
+    test/zone.cpp
+  )
   add_dependencies(traintastic-server-test traintastic-lang)
   target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
   set_target_properties(traintastic-server-test PROPERTIES
@@ -157,10 +159,6 @@ file(GLOB SOURCES
   "src/hardware/protocol/z21/*.cpp"
   "src/hardware/protocol/z21/iohandler/*.hpp"
   "src/hardware/protocol/z21/iohandler/*.cpp"
-  "src/hardware/throttle/*.hpp"
-  "src/hardware/throttle/*.cpp"
-  "src/hardware/throttle/list/*.hpp"
-  "src/hardware/throttle/list/*.cpp"
   "src/log/*.hpp"
   "src/log/*.cpp"
   "src/lua/*.hpp"
@@ -175,6 +173,10 @@ file(GLOB SOURCES
   "src/pcap/*.cpp"
   "src/status/*.hpp"
   "src/status/*.cpp"
+  "src/throttle/*.hpp"
+  "src/throttle/*.cpp"
+  "src/throttle/list/*.hpp"
+  "src/throttle/list/*.cpp"
   "src/train/*.hpp"
   "src/train/*.cpp"
   "src/traintastic/*.hpp"
@@ -187,6 +189,8 @@ file(GLOB SOURCES
   "src/utils/*.cpp"
   "src/world/*.hpp"
   "src/world/*.cpp"
+  "src/zone/*.hpp"
+  "src/zone/*.cpp"
   "../shared/src/traintastic/locale/locale.cpp"
   "../shared/src/traintastic/utils/standardpaths.cpp")
 
@@ -324,7 +328,7 @@ if(WIN32 AND NOT MSVC)
 endif()
 
 # boost
-find_package(Boost 1.81 REQUIRED COMPONENTS program_options)
+find_package(Boost 1.81 REQUIRED COMPONENTS program_options url)
 target_include_directories(traintastic-server SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
 target_link_libraries(traintastic-server PRIVATE ${Boost_LIBRARIES})
 if(BUILD_TESTING)

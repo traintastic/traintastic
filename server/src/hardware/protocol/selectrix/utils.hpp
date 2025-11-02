@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023,2025 Reinder Feenstra
+ * Copyright (C) 2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,18 +24,19 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_UTILS_HPP
 
 #include "bus.hpp"
+#include <traintastic/enum/inputchannel.hpp>
 #include <traintastic/enum/outputchannel.hpp>
 
 namespace Selectrix {
 
-constexpr Bus toBus(uint32_t channel)
+constexpr Bus toBus(InputChannel channel)
 {
-  return static_cast<Bus>(channel - 1);
+  return static_cast<Bus>(static_cast<uint8_t>(channel) - static_cast<uint8_t>(InputChannel::SX0));
 }
 
-constexpr uint32_t toChannel(Bus bus)
+constexpr InputChannel toChannel(Bus bus)
 {
-  return 1 + static_cast<uint8_t>(bus);
+  return static_cast<InputChannel>(static_cast<uint8_t>(InputChannel::SX0) + static_cast<uint8_t>(bus));
 }
 
 constexpr uint8_t toBusAddress(uint32_t flatAddress)

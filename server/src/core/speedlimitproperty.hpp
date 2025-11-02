@@ -39,6 +39,11 @@ public:
 
   SpeedLimitProperty(Object& object, std::string_view name, double value, SpeedUnit unit, PropertyFlags flags);
   SpeedLimitProperty(Object& object, std::string_view name, double value, SpeedUnit unit, PropertyFlags flags, OnChanged onChanged);
+
+  inline bool hasLimit() const
+  {
+    return (m_value < noLimitValue);
+  }
 };
 
 #endif

@@ -21,10 +21,47 @@
  */
 
 #include "standardpaths.hpp"
+#include <optional>
 #ifdef WIN32
   #include <windows.h>
   #include <shlobj.h>
 #endif
+
+namespace {
+
+#if defined(WIN32) && !(defined(__MINGW32__) || defined(__MINGW64__))
+
+#define getEnvironmentVariableAsPath(name) getEnvironmentVariableAsPathImpl(L ## name)
+
+std::optional<std::filesystem::path> getEnvironmentVariableAsPathImpl(const wchar_t* name)
+{
+  wchar_t* value = nullptr;
+  size_t valueLength = 0;
+  if(_wdupenv_s(&value, &valueLength, name) == 0 && value && valueLength != 0)
+  {
+    std::filesystem::path path(value);
+    free(value);
+    return path;
+  }
+  return std::nullopt;
+}
+
+#else
+
+#define getEnvironmentVariableAsPath(name) getEnvironmentVariableAsPathImpl(name)
+
+std::optional<std::filesystem::path> getEnvironmentVariableAsPathImpl(const char* name)
+{
+  if(const char* value = getenv(name))
+  {
+    return std::filesystem::path(value);
+  }
+  return std::nullopt;
+}
+
+#endif
+
+}
 
 #ifdef WIN32
 static std::filesystem::path getKnownFolderPath(REFKNOWNFOLDERID rfid)
@@ -52,20 +89,10 @@ std::filesystem::path getLocalAppDataPath()
 
 std::filesystem::path getLocalePath()
 {
-#if defined(WIN32) && !(defined(__MINGW32__) || defined(__MINGW64__))
-  wchar_t* path = nullptr;
-  size_t pathLength = 0;
-  if(_wdupenv_s(&path, &pathLength, L"TRAINTASTIC_LOCALE_PATH") == 0 && path && pathLength != 0)
+  if(auto path = getEnvironmentVariableAsPath("TRAINTASTIC_LOCALE_PATH"))
   {
-    std::filesystem::path p(path);
-    free(path);
-    return p;
+    return *path;
   }
-#else
-  if(const char* path = getenv("TRAINTASTIC_LOCALE_PATH"))
-    return std::filesystem::path(path);
-#endif
-
 #ifdef WIN32
   return getProgramDataPath() / "traintastic" / "translations";
 #elif defined(__linux__)
@@ -77,10 +104,16 @@ std::filesystem::path getLocalePath()
 
 std::filesystem::path getManualPath()
 {
+  if(auto path = getEnvironmentVariableAsPath("TRAINTASTIC_MANUAL_PATH"))
+  {
+    return *path;
+  }
 #ifdef WIN32
   return getProgramDataPath() / "traintastic" / "manual";
+#elif defined(__linux__)
+  return "/opt/traintastic/manual";
 #else
-  return {};
+  return std::filesystem::current_path() / "manual";
 #endif
 }
 

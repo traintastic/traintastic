@@ -10,6 +10,8 @@ install(FILES ${TRANSLATION_FILES} DESTINATION "/opt/traintastic/translations")
 file(GLOB LNCV_XML_FILES "data/lncv/xml/*.xml")
 install(FILES ${LNCV_XML_FILES} "data/lncv/xml/lncvmodule.xsd" DESTINATION "/opt/traintastic/lncv")
 
+install(DIRECTORY "../manual/output/" DESTINATION "/opt/traintastic/manual")
+
 ### DEB package ###
 
 if(NOT DEBIAN_PACKAGE_VERSION_EXTRA)

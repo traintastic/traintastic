@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,62 +31,50 @@
 
 SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
   StraightRailTile(world, _id, TileId::RailSensor),
+  InputConsumer(static_cast<Object&>(*this), world),
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
-  input{this, "input", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store,
-    [this](const std::shared_ptr<Input>& value)
-    {
-      if(value)
-        inputPropertyChanged(input->value);
-      else
-        state.setValueInternal(SensorState::Unknown);
-
-      updateSimulateTriggerEnabled();
-    },
-    [this](const std::shared_ptr<Input>& value)
-    {
-      if(input)
-        disconnectInput(*input);
-
-      if(value)
-        connectInput(*value);
-
-      return true;
-    }},
   type{this, "type", SensorType::OccupancyDetector, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](SensorType /*value*/)
     {
-      if(input)
-        inputPropertyChanged(input->value);
+      if(input() && input()->value != TriState::Undefined)
+      {
+        inputValueChanged(input()->value == TriState::True, input());
+      }
     }},
   invert{this, "invert", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](bool /*value*/)
     {
-      if(input)
-        inputPropertyChanged(input->value);
+      if(input() && input()->value != TriState::Undefined)
+      {
+        inputValueChanged(input()->value == TriState::True, input());
+      }
     }},
   state{this, "state", SensorState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
   , simulateTrigger{*this, "simulate_trigger",
       [this]()
       {
-        if(input) /*[[likely]]*/
+        if(input()) /*[[likely]]*/
         {
-          input->interface->inputSimulateChange(input->channel, input->address, SimulateInputAction::Toggle);
+          input()->interface->inputSimulateChange(input()->channel, input()->address, SimulateInputAction::Toggle);
         }
       }}
+  , onStateChanged{*this, "on_state_changed", EventFlags::Scriptable}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
   Attributes::addEnabled(name, editable);
   Attributes::addDisplayName(name, DisplayName::Object::name);
   m_interfaceItems.add(name);
-  Attributes::addEnabled(input, editable);
-  Attributes::addObjectList(input, m_world.inputs);
-  m_interfaceItems.add(input);
+
   Attributes::addEnabled(type, editable);
   Attributes::addValues(type, sensorTypeValues);
   m_interfaceItems.add(type);
+
+  InputConsumer::addInterfaceItems(m_interfaceItems);
+
   Attributes::addEnabled(invert, editable);
   m_interfaceItems.add(invert);
+
   Attributes::addObjectEditor(state, false);
   Attributes::addValues(state, sensorStateValues);
   m_interfaceItems.add(state);
@@ -94,13 +82,8 @@ SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
   Attributes::addEnabled(simulateTrigger, false);
   Attributes::addObjectEditor(simulateTrigger, false);
   m_interfaceItems.add(simulateTrigger);
-}
 
-SensorRailTile::~SensorRailTile()
-{
-  assert(!input);
-  assert(!m_inputPropertyChanged.connected());
-  assert(!m_inputDestroying.connected());
+  m_interfaceItems.add(onStateChanged);
 }
 
 //! \todo Remove in v0.4
@@ -121,59 +104,39 @@ void SensorRailTile::load(WorldLoader& loader, const nlohmann::json& data)
 void SensorRailTile::loaded()
 {
   StraightRailTile::loaded();
-
-  if(input)
-    connectInput(*input);
-
+  InputConsumer::loaded();
   updateSimulateTriggerEnabled();
 }
 
 void SensorRailTile::destroying()
 {
-  input = nullptr;
   StraightRailTile::destroying();
 }
 
 void SensorRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
 {
   StraightRailTile::worldEvent(worldState, worldEvent);
+  InputConsumer::worldEvent(worldState, worldEvent);
 
   const bool editable = contains(worldState, WorldState::Edit);
 
   Attributes::setEnabled(name, editable);
-  Attributes::setEnabled(input, editable);
   Attributes::setEnabled(type, editable);
   Attributes::setEnabled(invert, editable);
   updateSimulateTriggerEnabled();
 }
 
-void SensorRailTile::connectInput(Input& object)
+void SensorRailTile::inputValueChanged(bool value, const std::shared_ptr<Input>& /*input*/)
 {
-  object.consumers.appendInternal(shared_from_this());
-  m_inputDestroying = object.onDestroying.connect(
-    [this]([[maybe_unused]] Object& obj)
-    {
-      assert(input.value().get() == &obj);
-      input = nullptr;
-    });
-  m_inputPropertyChanged = object.propertyChanged.connect(std::bind(&SensorRailTile::inputPropertyChanged, this, std::placeholders::_1));
-}
-
-void SensorRailTile::disconnectInput(Input& object)
-{
-  m_inputPropertyChanged.disconnect();
-  m_inputDestroying.disconnect();
-  object.consumers.removeInternal(shared_from_this());
-}
-
-void SensorRailTile::inputPropertyChanged(BaseProperty& property)
-{
-  assert(input);
-  if(&property == static_cast<BaseProperty*>(&input->value))
-    state.setValueInternal(toSensorState(type, input->value.value() ^ invert.value()));
+  const auto newState = toSensorState(type, toTriState(value != invert.value()));
+  if(state != newState)
+  {
+    state.setValueInternal(newState);
+    fireEvent(onStateChanged, newState, shared_ptr<SensorRailTile>());
+  }
 }
 
 void SensorRailTile::updateSimulateTriggerEnabled()
 {
-  Attributes::setEnabled(simulateTrigger, contains(m_world.state, WorldState::Online | WorldState::Simulation) && input);
+  Attributes::setEnabled(simulateTrigger, contains(m_world.state, WorldState::Online | WorldState::Simulation) /*&& input*/);
 }

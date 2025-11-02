@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,10 +33,30 @@ PropertyPairOutputAction::PropertyPairOutputAction(Property& property, QWidget* 
 
   setFocusPolicy(Qt::StrongFocus);
 
+  setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
+  setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
+
   connect(&m_property, &Property::valueChanged, this,
     [this]()
     {
       update(rect());
+    });
+  connect(&m_property, &Property::attributeChanged,
+    [this](AttributeName name, const QVariant& value)
+    {
+      switch(name)
+      {
+        case AttributeName::Enabled:
+          setEnabled(value.toBool());
+          break;
+
+        case AttributeName::Visible:
+          setVisible(value.toBool());
+          break;
+
+        default:
+          break;
+      }
     });
 }
 

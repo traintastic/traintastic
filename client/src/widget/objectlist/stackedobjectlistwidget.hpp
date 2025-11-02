@@ -38,6 +38,8 @@ class MethodAction;
 
 class StackedObjectListWidget : public QWidget
 {
+  friend class ScreenShotDialog;
+
 protected:
   ObjectPtr m_object;
   TableModelPtr m_tableModel;

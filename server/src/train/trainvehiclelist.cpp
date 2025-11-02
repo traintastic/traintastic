@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023-2024 Reinder Feenstra
+ * Copyright (C) 2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,13 +47,13 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
         vehicle->trains.appendInternal(parent().shared_ptr<Train>());
 
         if(train().active)
-          vehicle->activeTrain.setValueInternal(parent().shared_ptr<Train>());
+          vehicle->setActiveTrain(parent().shared_ptr<Train>());
       }}
   , remove{*this, "remove",
       [this](const std::shared_ptr<RailVehicle>& vehicle)
       {
         if(vehicle->activeTrain.value() == train().shared_ptr<Train>())
-          vehicle->activeTrain.setValueInternal(nullptr);
+          vehicle->setActiveTrain(nullptr);
 
         vehicle->trains.removeInternal(parent().shared_ptr<Train>());
         removeObject(vehicle);
@@ -87,6 +87,8 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
 {
   const auto& world = getWorld(parent());
 
+  m_interfaceItems.add(length);
+
   Attributes::addDisplayName(add, DisplayName::List::add);
   Attributes::addEnabled(add, false);
   Attributes::addObjectList(add, world.railVehicles);
@@ -115,7 +117,7 @@ bool TrainVehicleList::isListedProperty(std::string_view name)
 
 void TrainVehicleList::propertyChanged(BaseProperty& property)
 {
-  if(property.name() == "lob")
+  if(property.name() == "length")
     train().updateLength();
   else if(property.name() == "total_weight")
     train().updateWeight();

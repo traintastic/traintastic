@@ -12,6 +12,8 @@
 ![POEditor](https://img.shields.io/poeditor/progress/622757/sv?token=6428931964d7cdf58536a518443ebe16)
 ![POEditor](https://img.shields.io/poeditor/progress/622757/fr?token=6428931964d7cdf58536a518443ebe16)
 ![POEditor](https://img.shields.io/poeditor/progress/622757/es?token=6428931964d7cdf58536a518443ebe16)
+![POEditor](https://img.shields.io/poeditor/progress/622757/pl?token=6428931964d7cdf58536a518443ebe16)
+![POEditor](https://img.shields.io/poeditor/progress/622757/fy?token=6428931964d7cdf58536a518443ebe16)
 
 ## About The Project
 Traintastic is a client/server software application to control a model railway. It is in an early stage of development, it contains very limited functionality.
@@ -30,6 +32,20 @@ The project goal is to develop open source software that can control everything 
 
 See [BUILDING.md](BUILDING.md).
 
+## Legal Notes
+
+This project includes an independent implementation of the LocoNet® protocol,
+based on reverse engineering and publicly observable behavior.
+It does not use or include Digitrax’s confidential documentation.
+
+If you have signed an NDA with Digitrax regarding LocoNet, **you cannot
+contribute to the LocoNet-related parts of this project**, as that would risk
+contaminating the open source implementation with NDA-covered information.
+
+## Trademarks
+
+LocoNet® is a registered trademark of Digitrax, Inc.
+This project is not affiliated with, endorsed by, or connected to Digitrax.
 
 ## Contributors
 

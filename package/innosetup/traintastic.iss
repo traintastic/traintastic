@@ -34,8 +34,8 @@ OutputDir=output
 OutputBaseFilename=traintastic-setup-v{#VersionFull}
 SolidCompression=yes
 WizardStyle=modern
-ArchitecturesInstallIn64BitMode=x64
-ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64compatible
+ArchitecturesAllowed=x64compatible
 MinVersion=10.0
 
 [Languages]
@@ -45,6 +45,7 @@ Name: de; MessagesFile: "compiler:Languages\German.isl,de-de.isl"
 Name: it; MessagesFile: "compiler:Languages\Italian.isl,it-it.isl"
 Name: sv; MessagesFile: "Languages\Swedish.isl,sv-se.isl"
 Name: fr; MessagesFile: "compiler:Languages\French.isl,fr-fr.isl"
+Name: pl; MessagesFile: "compiler:Languages\Polish.isl,pl-pl.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -65,8 +66,7 @@ Source: "..\..\client\build\Release\styles\*.dll"; DestDir: "{app}\client\styles
 ; Shared
 Source: "..\..\shared\translations\*.lang"; DestDir: "{commonappdata}\traintastic\translations"; Flags: ignoreversion;
 ; Manual
-Source: "..\..\manual\build\*"; DestDir: "{commonappdata}\traintastic\manual"; Flags: ignoreversion recursesubdirs
-Source: "..\..\manual\build.luadoc\*"; DestDir: "{commonappdata}\traintastic\manual-lua"; Flags: ignoreversion recursesubdirs
+Source: "..\..\manual\output\*"; DestDir: "{commonappdata}\traintastic\manual"; Flags: ignoreversion recursesubdirs
 ; LNCV XML
 Source: "..\..\shared\data\lncv\xml\*.xml"; DestDir: "{commonappdata}\traintastic\lncv"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\shared\data\lncv\xml\lncvmodule.xsd"; DestDir: "{commonappdata}\traintastic\lncv"; Flags: ignoreversion; Check: InstallClient
@@ -218,6 +218,7 @@ begin
     'it': Result := 'it-it';
     'sv': Result := 'sv-se';
     'fr': Result := 'fr-fr';
+    'pl': Result := 'pl-pl';
   else
     Result := 'en-us';
   end;

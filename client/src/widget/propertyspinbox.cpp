@@ -40,6 +40,7 @@ PropertySpinBox::PropertySpinBox(Property& property, QWidget* parent) :
   {
     setSuffix(unit.prepend(" "));
   }
+  setSingleStep(m_property.getAttributeInt(AttributeName::Step, singleStep()));
   setValue(m_property.toInt());
   connect(&m_property, &AbstractProperty::valueChangedInt, this,
     [this](int value)

@@ -2,49 +2,89 @@
   "assert": {
     "is_lua_builtin": true,
     "type": "function",
-    "parameters": [],
+    "parameters": [
+      {
+        "name": "condition"
+      },
+      {
+        "name": "message",
+        "optional": true
+      }
+    ],
     "return_values": 0,
     "since": "0.1"
   },
   "pairs": {
     "is_lua_builtin": true,
     "type": "function",
-    "parameters": [],
-    "return_values": 0,
+    "parameters": [
+      {
+        "name": "table"
+      }
+    ],
+    "return_values": 3,
     "since": "0.1"
   },
   "ipairs": {
     "is_lua_builtin": true,
     "type": "function",
-    "parameters": [],
-    "return_values": 0,
+    "parameters": [
+      {
+        "name": "table"
+      }
+    ],
+    "return_values": 3,
     "since": "0.1"
   },
   "next": {
     "is_lua_builtin": true,
     "type": "function",
-    "parameters": [],
-    "return_values": 0,
+    "parameters": [
+      {
+        "name": "table"
+      },
+      {
+        "name": "index",
+        "optional": true
+      }
+    ],
+    "return_values": 1,
     "since": "0.1"
   },
   "tonumber": {
     "is_lua_builtin": true,
     "type": "function",
-    "parameters": [],
-    "return_values": 0,
+    "parameters": [
+      {
+        "name": "value"
+      },
+      {
+        "name": "base",
+        "optional": true
+      }
+    ],
+    "return_values": 1,
     "since": "0.1"
   },
   "tostring": {
     "is_lua_builtin": true,
     "type": "function",
-    "parameters": [],
-    "return_values": 0,
+    "parameters": [
+      {
+        "name": "value"
+      }
+    ],
+    "return_values": 1,
     "since": "0.1"
   },
   "type": {
     "type": "function",
-    "parameters": [],
-    "return_values": 0,
+    "parameters": [
+      {
+        "name": "value"
+      }
+    ],
+    "return_values": 2,
     "since": "0.1"
   },
   "VERSION": {

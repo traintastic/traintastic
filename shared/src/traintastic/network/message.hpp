@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -70,8 +70,6 @@ class Message
       TableModelUpdateRegion = 24,
 
       InputMonitorGetInputInfo = 30,
-      InputMonitorInputIdChanged = 31,
-      InputMonitorInputValueChanged = 32,
 
       OutputKeyboardGetOutputInfo = 33,
 
@@ -82,6 +80,8 @@ class Message
       ObjectGetObjectPropertyObject = 44,
       ObjectGetObjectVectorPropertyObject = 45,
       ObjectSetVectorProperty = 46,
+
+      ObjectListGetObjects = 47,
 
       Discover = 255,
     };
@@ -214,6 +214,30 @@ class Message
     {
     }
 
+    inline std::unique_ptr<Message> response(size_t capacity = 0) const
+    {
+      assert(isRequest());
+      return newResponse(command(), requestId(), capacity);
+    }
+
+    inline std::unique_ptr<Message> errorResponse(LogMessage code) const
+    {
+      assert(isRequest());
+      return newErrorResponse(command(), requestId(), code);
+    }
+
+    inline std::unique_ptr<Message> errorResponse(LogMessage code, std::string_view arg) const
+    {
+      assert(isRequest());
+      return newErrorResponse(command(), requestId(), code, arg);
+    }
+
+    inline std::unique_ptr<Message> errorResponse(LogMessage code, const std::vector<std::string>& args) const
+    {
+      assert(isRequest());
+      return newErrorResponse(command(), requestId(), code, args);
+    }
+
     inline Command command() const { return header().command; }
     inline Type type() const { return static_cast<Type>(header().flags.type); }
     inline bool isRequest() const { return type() == Type::Request; }
@@ -262,6 +286,12 @@ class Message
         const Length length = read<Length>();
         value.resize(length);
         memcpy(value.data(), p + sizeof(Length), length);
+        m_readPosition += length;
+      }
+      else if constexpr(std::is_same_v<T, std::string_view>)
+      {
+        const Length length = read<Length>();
+        value = std::string_view(reinterpret_cast<const char*>(p + sizeof(Length)), static_cast<size_t>(length));
         m_readPosition += length;
       }
       else if constexpr(std::is_trivially_copyable_v<T>)

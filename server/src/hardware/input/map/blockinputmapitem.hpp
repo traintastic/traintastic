@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,29 +25,23 @@
 
 #include "inputmapitem.hpp"
 #include "../../../core/objectproperty.hpp"
-#include "../input.hpp"
+#include "../inputconsumer.hpp"
 #include "../../../enum/sensortype.hpp"
 #include "../../../enum/sensorstate.hpp"
 #include "../../identification/identification.hpp"
 
 class BlockInputMap;
 
-class BlockInputMapItem final : public InputMapItem
+class BlockInputMapItem final : public InputMapItem, public InputConsumer
 {
   CLASS_ID("input_map_item.block")
 
   private:
     BlockInputMap& m_parent;
     const uint32_t m_itemId;
-    boost::signals2::connection m_inputDestroying;
-    boost::signals2::connection m_inputPropertyChanged;
     boost::signals2::connection m_identificationDestroying;
     boost::signals2::connection m_identificationEvent;
     SensorState m_value;
-
-    void connectInput(Input& object);
-    void disconnectInput(Input& object);
-    void inputPropertyChanged(BaseProperty& property);
 
     void connectIdentification(Identification& object);
     void disconnectIdentification(Identification& object);
@@ -60,10 +54,10 @@ class BlockInputMapItem final : public InputMapItem
     void loaded() final;
     void destroying() final;
     void worldEvent(WorldState state, WorldEvent event) final;
+    void inputValueChanged(bool value, const std::shared_ptr<Input>& input) final;
 
   public:
     Property<std::string> name;
-    ObjectProperty<Input> input;
     Property<SensorType> type;
     Property<bool> invert;
     ObjectProperty<Identification> identification;
@@ -74,6 +68,8 @@ class BlockInputMapItem final : public InputMapItem
     std::string getObjectId() const final;
     uint32_t itemId() const { return m_itemId; }
     SensorState value() const { return m_value; }
+
+    using InputConsumer::input;
 };
 
 #endif

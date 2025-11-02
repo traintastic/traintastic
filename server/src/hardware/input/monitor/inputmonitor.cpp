@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 #include "../input.hpp"
 #include "../../../core/method.tpp"
 
-InputMonitor::InputMonitor(InputController& controller, uint32_t channel)
+InputMonitor::InputMonitor(InputController& controller, InputChannel channel)
   : m_controller{controller}
   , m_channel{channel}
   , addressMin{this, "address_min", m_controller.inputAddressMinMax(m_channel).first, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
@@ -35,10 +35,14 @@ InputMonitor::InputMonitor(InputController& controller, uint32_t channel)
       {
         m_controller.inputSimulateChange(m_channel, address, SimulateInputAction::Toggle);
       }}
+  , inputUsedChanged(*this, "input_used_changed", EventFlags::Public)
+  , inputValueChanged(*this, "input_value_changed", EventFlags::Public)
 {
   m_interfaceItems.add(addressMin);
   m_interfaceItems.add(addressMax);
   m_interfaceItems.add(simulateInputChange);
+  m_interfaceItems.add(inputUsedChanged);
+  m_interfaceItems.add(inputValueChanged);
 }
 
 std::string InputMonitor::getObjectId() const
@@ -48,12 +52,21 @@ std::string InputMonitor::getObjectId() const
 
 std::vector<InputMonitor::InputInfo> InputMonitor::getInputInfo() const
 {
-  std::vector<InputInfo> inputInfo;
+  std::vector<InputInfo> states;
   for(auto it : m_controller.inputMap())
   {
     const auto& input = *(it.second);
-    InputInfo info(input.address, input.id, input.value);
-    inputInfo.push_back(info);
+    states.emplace_back(InputInfo{input.address.value(), true, input.value.value()});
   }
-  return inputInfo;
+  return states;
+}
+
+void InputMonitor::fireInputUsedChanged(uint32_t address, bool used)
+{
+  fireEvent(inputUsedChanged, address, used);
+}
+
+void InputMonitor::fireInputValueChanged(uint32_t address, TriState value)
+{
+  fireEvent(inputValueChanged, address, value);
 }

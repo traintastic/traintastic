@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +34,8 @@ class ObjectListWidget : public ListWidget
 {
   Q_OBJECT
 
+  friend class ScreenShotDialog;
+
   private:
     int m_requestIdCreate;
     int m_requestIdInputMonitor;
@@ -49,7 +51,6 @@ class ObjectListWidget : public ListWidget
     MethodAction* m_actionMoveDown = nullptr;
     MethodAction* m_actionReverse = nullptr;
     MethodAction* m_actionInputMonitor = nullptr;
-    MethodAction* m_actionInputMonitorChannel = nullptr;
     MethodAction* m_actionOutputKeyboard = nullptr;
 
     bool hasEdit() const;

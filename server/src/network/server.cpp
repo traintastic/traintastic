@@ -22,8 +22,12 @@
 
 #include "server.hpp"
 #include <boost/beast/http/buffer_body.hpp>
+#include <boost/beast/http/file_body.hpp>
+#include <boost/url/url_view.hpp>
+#include <boost/url/parse.hpp>
 #include <span>
 #include <traintastic/network/message.hpp>
+#include <traintastic/utils/standardpaths.hpp>
 #include <version.hpp>
 #include "clientconnection.hpp"
 #include "httpconnection.hpp"
@@ -31,7 +35,10 @@
 #include "../core/eventloop.hpp"
 #include "../log/log.hpp"
 #include "../log/logmessageexception.hpp"
+#include "../utils/endswith.hpp"
 #include "../utils/setthreadname.hpp"
+#include "../utils/startswith.hpp"
+#include "../utils/stripprefix.hpp"
 
 //#define SERVE_FROM_FS // Development option, NOT for production!
 #ifdef SERVE_FROM_FS
@@ -60,6 +67,53 @@ static constexpr std::string_view contentTypeTextHtml{"text/html"};
 static constexpr std::string_view contentTypeTextCss{"text/css"};
 static constexpr std::string_view contentTypeTextJavaScript{"text/javascript"};
 static constexpr std::string_view contentTypeImageXIcon{"image/x-icon"};
+static constexpr std::string_view contentTypeImagePng{"image/png"};
+static constexpr std::string_view contentTypeApplicationGzip{"application/gzip"};
+static constexpr std::string_view contentTypeApplicationJson{"application/json"};
+static constexpr std::string_view contentTypeApplicationXml{"application/xml"};
+
+static constexpr std::array<std::string_view, 7> manualAllowedExtensions{{
+  ".html",
+  ".css",
+  ".js",
+  ".json",
+  ".png",
+  ".xml",
+  ".xml.gz",
+}};
+
+std::string_view getContentType(std::string_view filename)
+{
+  if(endsWith(filename, ".html"))
+  {
+    return contentTypeTextHtml;
+  }
+  else if(endsWith(filename, ".png"))
+  {
+    return contentTypeImagePng;
+  }
+  else if(endsWith(filename, ".css"))
+  {
+    return contentTypeTextCss;
+  }
+  else if(endsWith(filename, ".js"))
+  {
+    return contentTypeTextJavaScript;
+  }
+  else if(endsWith(filename, ".json"))
+  {
+    return contentTypeApplicationJson;
+  }
+  else if(endsWith(filename, ".xml"))
+  {
+    return contentTypeApplicationXml;
+  }
+  else if(endsWith(filename, ".gz"))
+  {
+    return contentTypeApplicationGzip;
+  }
+  return {};
+}
 
 http::message_generator notFound(const http::request<http::string_body>& request)
 {
@@ -155,6 +209,53 @@ http::message_generator textJavaScript(const http::request<http::string_body>& r
   return text(request, contentTypeTextJavaScript, body);
 }
 
+http::message_generator serveFileFromFileSystem(const http::request<http::string_body>& request, std::string_view target, const std::filesystem::path& root, std::span<const std::string_view> allowedExtensions)
+{
+  if(request.method() != http::verb::get && request.method() != http::verb::head)
+  {
+    return methodNotAllowed(request, {http::verb::get, http::verb::head});
+  }
+
+  if(const auto url = boost::urls::parse_origin_form(target))
+  {
+    const std::filesystem::path path = std::filesystem::weakly_canonical(root / url->path().substr(1));
+
+    if(std::mismatch(path.begin(), path.end(), root.begin(), root.end()).second == root.end() && std::filesystem::exists(path))
+    {
+      const auto filename = path.string();
+
+      if(endsWith(filename, allowedExtensions))
+      {
+        http::file_body::value_type file;
+        boost::system::error_code ec;
+
+        file.open(filename.c_str(), boost::beast::file_mode::scan, ec);
+        if(!ec)
+        {
+          http::response<http::file_body> response{
+            std::piecewise_construct,
+            std::make_tuple(std::move(file)),
+            std::make_tuple(http::status::ok, request.version())};
+
+          response.set(http::field::server, serverHeader);
+          response.set(http::field::content_type, getContentType(filename));
+          response.content_length(file.size());
+          response.keep_alive(request.keep_alive());
+
+          if(request.method() == http::verb::head)
+          {
+            response.body().close(); // don’t send file contents
+          }
+
+          return response;
+        }
+      }
+    }
+  }
+
+  return notFound(request);
+}
+
 }
 
 Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
@@ -162,6 +263,7 @@ Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
   , m_acceptor{m_ioContext}
   , m_socketUDP{m_ioContext}
   , m_localhostOnly{localhostOnly}
+  , m_manualPath{getManualPath()}
 {
   assert(isEventLoopThread());
 
@@ -355,6 +457,7 @@ http::message_generator Server::handleHTTPRequest(http::request<http::string_bod
       "<body>"
         "<h1>Traintastic <small>v" TRAINTASTIC_VERSION_FULL "</small></h1>"
         "<ul>"
+          "<li><a href=\"/manual/en/index.html\">Manual</a></li>"
           "<li><a href=\"/throttle\">Web throttle</a></li>"
         "</ul>"
       "</body>"
@@ -398,6 +501,14 @@ http::message_generator Server::handleHTTPRequest(http::request<http::string_bod
   if(target == "/version")
   {
     return textPlain(request, TRAINTASTIC_VERSION_FULL);
+  }
+  if(startsWith(target, "/manual"))
+  {
+    return serveFileFromFileSystem(
+      request,
+      stripPrefix(target, "/manual"),
+      m_manualPath,
+      manualAllowedExtensions);
   }
   return notFound(request);
 }

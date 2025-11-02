@@ -45,7 +45,7 @@
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 CREATE_IMPL(DCCEXInterface)
@@ -127,6 +127,8 @@ DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
   updateVisible();
 }
 
+DCCEXInterface::~DCCEXInterface() = default;
+
 std::span<const DecoderProtocol> DCCEXInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
@@ -158,12 +160,18 @@ void DCCEXInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags c
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-std::pair<uint32_t, uint32_t> DCCEXInterface::inputAddressMinMax(uint32_t /*channel*/) const
+std::span<const InputChannel> DCCEXInterface::inputChannels() const
+{
+  static const auto values = makeArray(InputChannel::Input);
+  return values;
+}
+
+std::pair<uint32_t, uint32_t> DCCEXInterface::inputAddressMinMax(InputChannel /*channel*/) const
 {
   return {DCCEX::Kernel::idMin, DCCEX::Kernel::idMax};
 }
 
-void DCCEXInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void DCCEXInterface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);

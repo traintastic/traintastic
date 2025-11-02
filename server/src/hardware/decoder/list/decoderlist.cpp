@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,30 +31,8 @@
 
 DecoderList::DecoderList(Object& _parent, std::string_view parentPropertyName, DecoderListColumn _columns) :
   ObjectList<Decoder>(_parent, parentPropertyName),
-  columns{_columns},
-  create{*this, "create",
-    [this]()
-    {
-      auto& world = getWorld(parent());
-      auto decoder = Decoder::create(world, world.getUniqueId("decoder"));
-      if(const auto controller = std::dynamic_pointer_cast<DecoderController>(parent().shared_from_this()))
-      {
-        // todo: select free address?
-        decoder->interface = controller;
-      }
-      return decoder;
-    }}
-  , delete_{*this, "delete", std::bind(&DecoderList::deleteMethodHandler, this, std::placeholders::_1)}
+  columns{_columns}
 {
-  const bool editable = contains(getWorld(parent()).state.value(), WorldState::Edit);
-
-  Attributes::addDisplayName(create, DisplayName::List::create);
-  Attributes::addEnabled(create, editable);
-  m_interfaceItems.add(create);
-
-  Attributes::addDisplayName(delete_, DisplayName::List::remove);
-  Attributes::addEnabled(delete_, editable);
-  m_interfaceItems.add(delete_);
 }
 
 TableModelPtr DecoderList::getModel()
@@ -86,16 +64,6 @@ std::shared_ptr<Decoder> DecoderList::getDecoder(DecoderProtocol protocol, uint1
   if(it != end())
     return *it;
   return {};
-}
-
-void DecoderList::worldEvent(WorldState state, WorldEvent event)
-{
-  ObjectList<Decoder>::worldEvent(state, event);
-
-  const bool editable = contains(state, WorldState::Edit);
-
-  Attributes::setEnabled(create, editable);
-  Attributes::setEnabled(delete_, editable);
 }
 
 bool DecoderList::isListedProperty(std::string_view name)

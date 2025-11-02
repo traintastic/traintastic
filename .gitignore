@@ -48,3 +48,5 @@ CMakeLists.txt.*
 .DS_Store
 shared/translations/*.lang
 CMakeSettings.json
+.venv
+

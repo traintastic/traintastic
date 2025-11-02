@@ -40,4 +40,17 @@ TRAINTASTIC_ENUM(Direction, "direction", 3,
   {Direction::Unknown, "unknown"}
 });
 
+constexpr Direction operator~(const Direction value)
+{
+  switch(value)
+  {
+    case Direction::Forward:
+      return Direction::Reverse;
+    case Direction::Reverse:
+      return Direction::Forward;
+    default:
+      return Direction::Unknown;
+  }
+}
+
 #endif

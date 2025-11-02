@@ -11,8 +11,8 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_msvc"
-          os: windows-2019
-          generator: "Visual Studio 16 2019"
+          os: windows-latest
+          generator: "Visual Studio 17 2022"
           arch: "-A x64"
           target: traintastic-client
           jobs: 4
@@ -22,6 +22,16 @@ jobs:
 
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
+          generator: "Unix Makefiles"
+          arch: ""
+          target: traintastic-client
+          jobs: 4
+          build_type: Release
+          build_deb: true
+          defines: ""
+
+        - name: "ubuntu_24.04_arm64"
+          os: ubuntu-24.04-arm
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
@@ -75,6 +85,7 @@ jobs:
       uses: jurplel/install-qt-action@v4
       with:
         cache: true
+        version: 5.15
 
     # macOS only:
     - name: Install Qt 6.5
@@ -123,7 +134,7 @@ jobs:
       if: startswith(matrix.config.os, 'windows')
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{github.workspace}}/client/build/${{matrix.config.build_type}}/traintastic-client.exe
 
     # Linux only:
@@ -158,8 +169,8 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_clang"
-          os: windows-2019
-          generator: "Visual Studio 16 2019"
+          os: windows-latest
+          generator: "Visual Studio 17 2022"
           arch: "-A x64"
           toolset: "-T ClangCL"
           target: ALL_BUILD
@@ -192,6 +203,18 @@ jobs:
           build_deb: false
           defines: "-DCODE_COVERAGE=ON"
           ccov: true
+
+        - name: "ubuntu_24.04_arm64"
+          os: ubuntu-24.04-arm
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: all
+          jobs: 4
+          build_type: Release
+          build_deb: true
+          defines: "-DINSTALL_SYSTEMD_SERVICE=ON"
+          ccov: false
 
         - name: "raspberrypios_arm7"
           os: [self-hosted, ARM, RaspberryPi]
@@ -267,7 +290,7 @@ jobs:
     # Ubuntu only:
     - name: Install packages
       if: startswith(matrix.config.os, 'ubuntu')
-      run: sudo apt install libboost-program-options-dev liblua5.4-dev lcov libarchive-dev clang-tidy libsystemd-dev
+      run: sudo apt install libboost-program-options-dev libboost-url-dev liblua5.4-dev lcov libarchive-dev clang-tidy libsystemd-dev
 
     # MacOS only:
     - name: Install brew packages
@@ -356,7 +379,7 @@ jobs:
   build-data:
     name: shared data ${{matrix.config.name}}
     runs-on: ${{matrix.config.os}}
-    needs: [build-lang]
+    needs: [build-lang, build-manual]
     strategy:
       fail-fast: false
       matrix:
@@ -382,6 +405,12 @@ jobs:
       with:
         name: traintastic-lang
         path: ${{github.workspace}}/shared/translations
+
+    - name: "Download artifact: manual"
+      uses: actions/download-artifact@v4
+      with:
+        name: traintastic-manual
+        path: ${{github.workspace}}/manual/output
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/shared/build
@@ -435,45 +464,24 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Install python packages
-      run: sudo pip3 install cmarkgfm
+    - name: Install python requirements
+      working-directory: ${{github.workspace}}/manual
+      run: sudo pip3 install -r requirements.txt
 
     - name: Build manual
       working-directory: ${{github.workspace}}/manual
-      run: ./builddoc.py html-single-page --output-dir build
+      run: ./build.py
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: traintastic-manual
-        path: ${{github.workspace}}/manual/build/*
-
-  build-manual-lua:
-    name: manual lua
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: FranzDiebold/github-env-vars-action@v2
-
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive
-
-    - name: Build manual
-      working-directory: ${{github.workspace}}/manual
-      run: ./buildluadoc.py
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: traintastic-manual-lua
-        path: ${{github.workspace}}/manual/build.luadoc/*
+        path: ${{github.workspace}}/manual/output/*
 
   package-innosetup:
     name: package innosetup
-    runs-on: windows-2019
-    needs: [build-client, build-server, build-lang, build-manual, build-manual-lua]
+    runs-on: windows-2022
+    needs: [build-client, build-server, build-lang, build-manual]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -505,13 +513,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: traintastic-manual
-        path: ${{github.workspace}}/manual/build
-
-    - name: "Download artifact: manual-lua"
-      uses: actions/download-artifact@v4
-      with:
-        name: traintastic-manual-lua
-        path: ${{github.workspace}}/manual/build.luadoc
+        path: ${{github.workspace}}/manual/output
 
     - name: Build installer
       shell: cmd
@@ -528,7 +530,7 @@ jobs:
     name: Deploy to website
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
-    needs: [package-innosetup, build-server, build-client, build-data, build-manual, build-manual-lua]
+    needs: [package-innosetup, build-server, build-client, build-data, build-manual]
 
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
@@ -571,12 +573,6 @@ jobs:
         pattern: traintastic-data-deb-*
         merge-multiple: true
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
-
-    - name: "Download artifact: manual-lua"
-      uses: actions/download-artifact@v4
-      with:
-        name: traintastic-manual-lua
-        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}/manual-lua
 
     - uses: easingthemes/ssh-deploy@v2.2.11
       env:

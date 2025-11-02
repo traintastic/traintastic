@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,8 +29,6 @@
 bool InputListTableModel::isListedProperty(std::string_view name)
 {
   return
-    name == "id" ||
-    name == "name" ||
     name == "interface" ||
     name == "channel" ||
     name == "address";
@@ -40,12 +38,6 @@ static std::string_view displayName(InputListColumn column)
 {
   switch(column)
   {
-    case InputListColumn::Id:
-      return DisplayName::Object::id;
-
-    case InputListColumn::Name:
-      return DisplayName::Object::name;
-
     case InputListColumn::Interface:
       return DisplayName::Hardware::interface;
 
@@ -85,12 +77,6 @@ std::string InputListTableModel::getText(uint32_t column, uint32_t row) const
     assert(column < m_columns.size());
     switch(m_columns[column])
     {
-      case InputListColumn::Id:
-        return input.id;
-
-      case InputListColumn::Name:
-        return input.name;
-
       case InputListColumn::Interface:
         if(const auto& interface = std::dynamic_pointer_cast<Object>(input.interface.value()))
         {
@@ -102,24 +88,15 @@ std::string InputListTableModel::getText(uint32_t column, uint32_t row) const
         return "";
 
       case InputListColumn::Channel:
-      {
-        const uint32_t channel = input.channel.value();
-        if(channel == InputController::defaultInputChannel)
-          return "";
-
-        if(const auto* aliasKeys = input.channel.tryGetValuesAttribute(AttributeName::AliasKeys))
+        if(input.interface->inputChannels().size() > 1)
         {
-          if(const auto* aliasValues = input.channel.tryGetValuesAttribute(AttributeName::AliasValues))
+          if(const auto* it = EnumValues<InputChannel>::value.find(input.channel); it != EnumValues<InputChannel>::value.end()) /*[[likely]]*/
           {
-            assert(aliasKeys->length() == aliasValues->length());
-            for(uint32_t i = 0; i < aliasKeys->length(); i++)
-              if(aliasKeys->getInt64(i) == channel)
-                return aliasValues->getString(i);
+            return std::string("$").append(EnumName<InputChannel>::value).append(":").append(it->second).append("$");
           }
         }
+        break;
 
-        return std::to_string(channel);
-      }
       case InputListColumn::Address:
         return std::to_string(input.address.value());
     }
@@ -133,11 +110,7 @@ void InputListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
 {
   std::string_view name = property.name();
 
-  if(name == "id")
-    changed(row, InputListColumn::Id);
-  else if(name == "name")
-    changed(row, InputListColumn::Name);
-  else if(name == "interface")
+  if(name == "interface")
     changed(row, InputListColumn::Interface);
   else if(name == "channel")
     changed(row, InputListColumn::Channel);

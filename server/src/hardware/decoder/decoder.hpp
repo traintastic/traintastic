@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@
 
 enum class DecoderChangeFlags;
 class DecoderFunction;
+class RailVehicle;
 class Throttle;
 
 class Decoder : public IdObject
@@ -44,8 +45,8 @@ class Decoder : public IdObject
   friend class DecoderFunction;
 
   private:
-    bool m_worldMute;
-    bool m_worldNoSmoke;
+    bool m_mute = false;
+    bool m_noSmoke = false;
     std::shared_ptr<Throttle> m_driver;
 
   protected:
@@ -82,7 +83,9 @@ class Decoder : public IdObject
 
   public:
     CLASS_ID("decoder")
+    DEFAULT_ID("decoder")
     CREATE_DEF(Decoder)
+    static std::shared_ptr<Decoder> create(World& world);
 
     static constexpr uint16_t invalidAddress = std::numeric_limits<uint16_t>::max();
     static constexpr uint8_t speedStepsAuto = 0;
@@ -107,7 +110,6 @@ class Decoder : public IdObject
 
     static const std::shared_ptr<Decoder> null;
 
-    Property<std::string> name;
     ObjectProperty<DecoderController> interface;
     Property<DecoderProtocol> protocol;
     Property<uint16_t> address;
@@ -116,9 +118,9 @@ class Decoder : public IdObject
     Property<Direction> direction;
     Method<void()> toggleDirection;
     Property<uint8_t> speedSteps;
+    ObjectProperty<RailVehicle> vehicle;
     Property<float> throttle;
     ObjectProperty<DecoderFunctions> functions;
-    Property<std::string> notes;
 
     boost::signals2::signal<void (Decoder&, DecoderChangeFlags, uint32_t)> decoderChanged;
 
@@ -136,6 +138,9 @@ class Decoder : public IdObject
 
     bool acquire(Throttle& driver, bool steal = false);
     void release(Throttle& driver);
+
+    void updateMute();
+    void updateNoSmoke();
 };
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -360,7 +360,7 @@ void OutputMapWidget::updateTableOutputActions(ObjectVectorProperty& property, i
         const int columnCount = static_cast<int>(m_columnCountNonOutput + objects.size());
         if(columnCount > m_table->columnCount())
         {
-          m_table->setColumnCount(columnCount);
+          updateTableOutputColumns();
         }
 
         auto& rowActions = m_actions[row];

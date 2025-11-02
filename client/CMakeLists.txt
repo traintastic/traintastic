@@ -4,7 +4,7 @@ project(traintastic-client VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintast
 include(GNUInstallDirs)
 include(../shared/translations/traintastic-lang.cmake)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
@@ -71,6 +71,7 @@ file(GLOB SOURCES
   "src/utils/*.cpp"
   "src/widget/*.hpp"
   "src/widget/*.cpp"
+  "src/widget/decoder/*.cpp"
   "src/widget/list/*.hpp"
   "src/widget/list/*.cpp"
   "src/widget/object/*.hpp"
@@ -81,6 +82,7 @@ file(GLOB SOURCES
   "src/widget/status/*.cpp"
   "src/widget/throttle/*.hpp"
   "src/widget/throttle/*.cpp"
+  "src/widget/tile/*.cpp"
   "src/wizard/*.hpp"
   "src/wizard/*.cpp"
   "src/wizard/page/*.hpp"

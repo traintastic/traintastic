@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "railvehiclelist.hpp"
 #include "railvehiclelisttablemodel.hpp"
 #include "railvehicles.hpp"
+#include "poweredrailvehicle.hpp"
 #include "../../world/getworld.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
@@ -38,7 +39,12 @@ RailVehicleList::RailVehicleList(Object& _parent, std::string_view parentPropert
     [this](std::string_view railVehicleClassId)
     {
       auto& world = getWorld(parent());
-      return RailVehicles::create(world, railVehicleClassId, world.getUniqueId("vehicle"));
+      auto vehicle = RailVehicles::create(world, railVehicleClassId, world.getUniqueId("vehicle"));
+      if(dynamic_cast<PoweredRailVehicle*>(vehicle.get()))
+      {
+        vehicle->createDecoder();
+      }
+      return vehicle;
     }}
   , delete_{*this, "delete",
       [this](const std::shared_ptr<RailVehicle>& railVehicle)

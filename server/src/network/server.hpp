@@ -27,6 +27,7 @@
 #include <array>
 #include <list>
 #include <thread>
+#include <filesystem>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/udp.hpp>
@@ -51,6 +52,7 @@ class Server : public std::enable_shared_from_this<Server>
     boost::asio::ip::udp::endpoint m_remoteEndpoint;
     const bool m_localhostOnly;
     std::list<std::shared_ptr<WebSocketConnection>> m_connections;
+    std::filesystem::path m_manualPath;
 
     void doReceive();
     static std::unique_ptr<Message> processMessage(const Message& message);

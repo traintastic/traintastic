@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,10 +47,13 @@ class IntroductionWizard;
 class AddInterfaceWizard;
 class NewBoardWizard;
 class WorldListDialog;
+class BlockHighlight;
 
 class MainWindow final : public QMainWindow
 {
   Q_OBJECT
+
+  friend class ScreenShotDialog;
 
   protected:
     std::shared_ptr<Connection> m_connection;
@@ -61,9 +64,11 @@ class MainWindow final : public QMainWindow
     {
       std::unique_ptr<AddInterfaceWizard> addInterface;
       std::unique_ptr<NewWorldWizard> newWorld;
+      std::vector<NewBoardWizard*> newBoardWizards;
     } m_wizard;
     int m_clockRequest;
     ObjectPtr m_clock;
+    QString m_windowTitle;
     QSplitter* m_splitter;
     MdiArea* m_mdiArea;
     MainWindowStatusBar* m_statusBar;
@@ -71,6 +76,7 @@ class MainWindow final : public QMainWindow
     QMdiSubWindow* m_clockWindow = nullptr;
     QMap<QString, SubWindow*> m_subWindows;
     QMdiSubWindow* m_trainAndRailVehiclesSubWindow = nullptr;
+    BlockHighlight* m_blockHighlight;
     // Main menu:
     QAction* m_actionConnectToServer;
     QAction* m_actionDisconnectFromServer;
@@ -137,6 +143,11 @@ class MainWindow final : public QMainWindow
 
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow() final;
+
+    BlockHighlight& blockHighlight()
+    {
+      return *m_blockHighlight;
+    }
 
     const std::shared_ptr<Connection>& connection() { return m_connection; }
 

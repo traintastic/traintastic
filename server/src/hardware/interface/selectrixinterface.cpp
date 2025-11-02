@@ -42,13 +42,26 @@
 #include "../../utils/makearray.hpp"
 #include "../../world/world.hpp"
 
+namespace
+{
+
+constexpr bool isSX(InputChannel channel)
+{
+  return
+    channel == InputChannel::SX0 ||
+    channel == InputChannel::SX1 ||
+    channel == InputChannel::SX2;
+}
+
+}
+
 constexpr bool operator <(const SelectrixInterface::BusAddress& lhs, const SelectrixInterface::BusAddress& rhs)
 {
   return lhs.bus < rhs.bus || (lhs.bus == rhs.bus && lhs.address < rhs.address);
 }
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 constexpr std::array<uint32_t, 6> baudrates = {2400, 4800, 9600, 19200, 38400, 57600};
@@ -118,12 +131,15 @@ void SelectrixInterface::decoderChanged(const Decoder& decoder, DecoderChangeFla
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-std::pair<uint32_t, uint32_t> SelectrixInterface::inputAddressMinMax(uint32_t channel) const
+std::span<const InputChannel> SelectrixInterface::inputChannels() const
 {
-  assert(
-    channel == InputChannel::sx0 ||
-    channel == InputChannel::sx1 ||
-    channel == InputChannel::sx2);
+  static const auto values = makeArray(InputChannel::SX0, InputChannel::SX1, InputChannel::SX2);
+  return values;
+}
+
+std::pair<uint32_t, uint32_t> SelectrixInterface::inputAddressMinMax(InputChannel channel) const
+{
+  assert(isSX(channel));
 
   if(Selectrix::toBus(channel) == Selectrix::Bus::SX0)
   {
@@ -132,9 +148,9 @@ std::pair<uint32_t, uint32_t> SelectrixInterface::inputAddressMinMax(uint32_t ch
   return {inputAddressMin, inputAddressMax};
 }
 
-bool SelectrixInterface::isInputAddressAvailable(uint32_t channel, uint32_t address) const
+bool SelectrixInterface::isInputAvailable(InputChannel channel, uint32_t address) const
 {
-  if(!InputController::isInputAddressAvailable(channel, address))
+  if(!InputController::isInputAvailable(channel, address))
   {
     return false;
   }
@@ -147,18 +163,7 @@ bool SelectrixInterface::isInputAddressAvailable(uint32_t channel, uint32_t addr
   return true;
 }
 
-bool SelectrixInterface::changeInputChannelAddress(Input& input, uint32_t newChannel, uint32_t newAddress)
-{
-  if(InputController::changeInputChannelAddress(input, newChannel, newAddress))
-  {
-    useFeedbackAddress(newChannel, newAddress);
-    unuseFeedbackAddress(input.channel, input.address);
-    return true;
-  }
-  return false;
-}
-
-void SelectrixInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void SelectrixInterface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
 {
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
   {
@@ -388,7 +393,7 @@ void SelectrixInterface::unuseLocomotiveAddress(uint32_t address)
   }
 }
 
-void SelectrixInterface::useFeedbackAddress(uint32_t channel, uint32_t address)
+void SelectrixInterface::useFeedbackAddress(InputChannel channel, uint32_t address)
 {
   const BusAddress key{Selectrix::toBus(channel), Selectrix::toBusAddress(address)};
   const uint8_t portBit = 1 << Selectrix::toPort(address);
@@ -408,7 +413,7 @@ void SelectrixInterface::useFeedbackAddress(uint32_t channel, uint32_t address)
   }
 }
 
-void SelectrixInterface::unuseFeedbackAddress(uint32_t channel, uint32_t address)
+void SelectrixInterface::unuseFeedbackAddress(InputChannel channel, uint32_t address)
 {
   const BusAddress key{Selectrix::toBus(channel), Selectrix::toBusAddress(address)};
   const uint8_t portBit = 1 << Selectrix::toPort(address);

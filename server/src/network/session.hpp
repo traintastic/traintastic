@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -71,6 +71,8 @@ class Session : public std::enable_shared_from_this<Session>
 
     bool processMessage(const Message& message);
 
+    bool isSessionObject(const ObjectPtr& object);
+
     void writeObject(Message& message, const ObjectPtr& object);
     void writeTableModel(Message& message, const TableModelPtr& model);
 
@@ -80,9 +82,6 @@ class Session : public std::enable_shared_from_this<Session>
     void objectPropertyChanged(BaseProperty& property);
     void objectAttributeChanged(AbstractAttribute& attribute);
     void objectEventFired(const AbstractEvent& event, const Arguments& arguments);
-
-    void inputMonitorInputIdChanged(InputMonitor& inputMonitor, uint32_t address, std::string_view id);
-    void inputMonitorInputValueChanged(InputMonitor& inputMonitor, uint32_t address, TriState value);
 
     void boardTileDataChanged(Board& board, const TileLocation& location, const TileData& data);
 

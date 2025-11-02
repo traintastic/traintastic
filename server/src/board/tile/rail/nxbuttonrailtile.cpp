@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023-2024 Reinder Feenstra
+ * Copyright (C) 2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -62,23 +62,11 @@ static std::shared_ptr<BlockRailTile> findBlock(Node& node, uint8_t linkIndex)
 
 NXButtonRailTile::NXButtonRailTile(World& world, std::string_view id_)
   : StraightRailTile(world, id_, TileId::RailNXButton)
+  , InputConsumer(static_cast<Object&>(*this), m_world)
   , m_node{*this, 2}
   , name{this, "name", std::string{id_}, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , enabled{this, "enabled", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , block{this, "block", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
-  , input{this, "input", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
-      [this](const std::shared_ptr<Input>& value)
-      {
-        if(input)
-        {
-          disconnectInput(*input);
-        }
-        if(value)
-        {
-          connectInput(*value);
-        }
-        return true;
-      }}
 {
   const bool editable = contains(m_world.state, WorldState::Edit);
 
@@ -91,43 +79,29 @@ NXButtonRailTile::NXButtonRailTile(World& world, std::string_view id_)
 
   m_interfaceItems.add(block);
 
-  Attributes::addEnabled(input, editable);
-  //Attributes::addDisplayName(input, DisplayName::Hardware::input);
-  Attributes::addObjectList(input, world.inputs);
-  m_interfaceItems.add(input);
-}
-
-NXButtonRailTile::~NXButtonRailTile()
-{
-  assert(!input);
-  assert(!m_inputValueChanged.connected());
-  assert(!m_inputDestroying.connected());
+  InputConsumer::addInterfaceItems(m_interfaceItems);
 }
 
 void NXButtonRailTile::loaded()
 {
   StraightRailTile::loaded();
-
-  if(input)
-    connectInput(*input);
-
+  InputConsumer::loaded();
   updateEnabled();
 }
 
 void NXButtonRailTile::destroying()
 {
-  input = nullptr;
   StraightRailTile::destroying();
 }
 
 void NXButtonRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
 {
   StraightRailTile::worldEvent(worldState, worldEvent);
+  InputConsumer::worldEvent(worldState, worldEvent);
 
   const bool editable = contains(worldState, WorldState::Edit);
 
   Attributes::setEnabled(name, editable);
-  Attributes::setEnabled(input, editable);
 
   updateEnabled();
 }
@@ -159,39 +133,21 @@ void NXButtonRailTile::boardModified()
   updateEnabled();
 }
 
-void NXButtonRailTile::connectInput(Input& object)
+void NXButtonRailTile::inputValueChanged(bool value, const std::shared_ptr<Input>& /*input*/)
 {
-  object.consumers.appendInternal(shared_from_this());
-  m_inputDestroying = object.onDestroying.connect(
-    [this]([[maybe_unused]] Object& obj)
-    {
-      assert(input.value().get() == &obj);
-      input = nullptr;
-    });
-  m_inputValueChanged = object.onValueChanged.connect(
-    [this](bool value, const std::shared_ptr<Input>& /*input*/)
-    {
-      if(!enabled)
-      {
-        return; // not enabled, no action
-      }
+  if(!enabled)
+  {
+    return; // not enabled, no action
+  }
 
-      if(value)
-      {
-        m_world.nxManager->pressed(*this);
-      }
-      else
-      {
-        m_world.nxManager->released(*this);
-      }
-    });
-}
-
-void NXButtonRailTile::disconnectInput(Input& object)
-{
-  m_inputValueChanged.disconnect();
-  m_inputDestroying.disconnect();
-  object.consumers.removeInternal(shared_from_this());
+  if(value)
+  {
+    m_world.nxManager->pressed(*this);
+  }
+  else
+  {
+    m_world.nxManager->released(*this);
+  }
 }
 
 void NXButtonRailTile::updateEnabled()

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -215,7 +215,7 @@ void Kernel::receive(std::string_view message)
               EventLoop::call(
                 [this, id, value]()
                 {
-                  m_inputController->updateInputValue(InputController::defaultInputChannel, id, toTriState(value));
+                  m_inputController->updateInputValue(InputChannel::Input, id, toTriState(value));
                 });
             }
           }

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -267,17 +267,6 @@ void Script::stopSandbox()
     setState(LuaScriptState::Stopped);
     Log::log(*this, LogMessage::I9001_STOPPED_SCRIPT);
   }
-}
-
-bool Script::pcall(lua_State* L, int nargs, int nresults)
-{
-  const bool success = Sandbox::pcall(L, nargs, nresults) == LUA_OK;
-  if(!success)
-  {
-    Log::log(*this, LogMessage::F9003_CALLING_FUNCTION_FAILED_X, lua_tostring(L, -1));
-    lua_pop(L, 1); // pop error message from the stack
-  }
-  return success;
 }
 
 }

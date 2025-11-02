@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 #ifndef NDEBUG
   #include "../core/eventloop.hpp" // for: isEventLoopThread()
 #endif
+#include "../core/abstractobjectlist.hpp"
 #include "../core/abstractunitproperty.hpp"
 #include "../core/objectproperty.tpp"
 #include "../core/tablemodel.hpp"
@@ -40,6 +41,7 @@
 #include "../board/tile/tiles.hpp"
 #include "../hardware/input/monitor/inputmonitor.hpp"
 #include "../hardware/output/keyboard/outputkeyboard.hpp"
+#include "../throttle/clientthrottle.hpp"
 
 #ifdef GetObject
   #undef GetObject // GetObject is defined by a winapi header
@@ -55,6 +57,15 @@ Session::Session(const std::shared_ptr<ClientConnection>& connection) :
 Session::~Session()
 {
   assert(isEventLoopThread());
+
+  m_objectSignals.clear(); // disconnect all, we don't want m_handles modified during the loop
+  for(const auto& it : m_handles)
+  {
+    if(it.second && isSessionObject(it.second))
+    {
+      it.second->destroy();
+    }
+  }
 }
 
 bool Session::processMessage(const Message& message)
@@ -120,6 +131,11 @@ bool Session::processMessage(const Message& message)
       const auto counter = message.read<uint32_t>();
       if(counter == m_handles.getCounter(handle))
       {
+        if(auto object = m_handles.getItem(handle); object && isSessionObject(object))
+        {
+          object->destroy();
+        }
+
         m_handles.removeHandle(handle);
 
         auto it = m_objectSignals.find(handle);
@@ -552,7 +568,7 @@ bool Session::processMessage(const Message& message)
         for(auto& info : inputInfo)
         {
           response->write(info.address);
-          response->write(info.id);
+          response->write(info.used);
           response->write(info.value);
         }
         m_connection->sendMessage(std::move(response));
@@ -689,10 +705,79 @@ bool Session::processMessage(const Message& message)
       }
       break;
 
+    case Message::Command::CreateObject:
+      if(message.isRequest())
+      {
+        if(Traintastic::instance->world)
+        {
+          const auto classId = message.read<std::string_view>();
+          if(classId == ClientThrottle::classId)
+          {
+            auto throttle = ClientThrottle::create(*Traintastic::instance->world);
+            auto response = message.response();
+            writeObject(*response, throttle);
+            m_connection->sendMessage(std::move(response));
+          }
+          else
+          {
+            m_connection->sendMessage(message.errorResponse(LogMessage::C1015_UNKNOWN_OBJECT)); // FIXME change error
+          }
+        }
+        else
+        {
+          m_connection->sendMessage(message.errorResponse(LogMessage::C1015_UNKNOWN_OBJECT)); // FIXME change error
+        }
+        return true;
+      }
+      break;
+
+    case Message::Command::ObjectListGetObjects:
+      if(message.isRequest())
+      {
+        if(ObjectPtr object = m_handles.getItem(message.read<Handle>()))
+        {
+          if(auto* list = dynamic_cast<AbstractObjectList*>(object.get()))
+          {
+            const uint32_t startIndex = message.read<uint32_t>();
+            const uint32_t endIndex = message.read<uint32_t>();
+
+            if(endIndex >= startIndex && endIndex < list->length.value())
+            {
+              auto response = message.response();
+              for(uint32_t i = startIndex; i <= endIndex; i++)
+              {
+                writeObject(*response, list->getObject(i));
+              }
+              m_connection->sendMessage(std::move(response));
+            }
+            else // send error response
+            {
+              m_connection->sendMessage(message.errorResponse(LogMessage::C1017_INVALID_INDICES));
+            }
+          }
+          else
+          {
+            m_connection->sendMessage(message.errorResponse(LogMessage::C1015_UNKNOWN_OBJECT));
+          }
+        }
+        else
+        {
+          m_connection->sendMessage(message.errorResponse(LogMessage::C1015_UNKNOWN_OBJECT));
+        }
+        return true;
+      }
+      break;
+
     default:
       break;
   }
   return false;
+}
+
+bool Session::isSessionObject(const ObjectPtr& object)
+{
+  assert(object);
+  return dynamic_cast<ClientThrottle*>(object.get());
 }
 
 void Session::writeObject(Message& message, const ObjectPtr& object)
@@ -710,12 +795,7 @@ void Session::writeObject(Message& message, const ObjectPtr& object)
     m_objectSignals.emplace(handle, object->propertyChanged.connect(std::bind(&Session::objectPropertyChanged, this, std::placeholders::_1)));
     m_objectSignals.emplace(handle, object->attributeChanged.connect(std::bind(&Session::objectAttributeChanged, this, std::placeholders::_1)));
 
-    if(auto* inputMonitor = dynamic_cast<InputMonitor*>(object.get()))
-    {
-      m_objectSignals.emplace(handle, inputMonitor->inputIdChanged.connect(std::bind(&Session::inputMonitorInputIdChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-      m_objectSignals.emplace(handle, inputMonitor->inputValueChanged.connect(std::bind(&Session::inputMonitorInputValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-    }
-    else if(auto* board = dynamic_cast<Board*>(object.get()))
+    if(auto* board = dynamic_cast<Board*>(object.get()))
     {
       m_objectSignals.emplace(handle, board->tileDataChanged.connect(std::bind(&Session::boardTileDataChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
     }
@@ -1106,24 +1186,6 @@ void Session::writeTypeInfo(Message& message, const TypeInfo& typeInfo)
     message.write(typeInfo.enumName);
   else if(typeInfo.type == ValueType::Set)
     message.write(typeInfo.setName);
-}
-
-void Session::inputMonitorInputIdChanged(InputMonitor& inputMonitor, const uint32_t address, std::string_view id)
-{
-  auto event = Message::newEvent(Message::Command::InputMonitorInputIdChanged);
-  event->write(m_handles.getHandle(inputMonitor.shared_from_this()));
-  event->write(address);
-  event->write(id);
-  m_connection->sendMessage(std::move(event));
-}
-
-void Session::inputMonitorInputValueChanged(InputMonitor& inputMonitor, const uint32_t address, const TriState value)
-{
-  auto event = Message::newEvent(Message::Command::InputMonitorInputValueChanged);
-  event->write(m_handles.getHandle(inputMonitor.shared_from_this()));
-  event->write(address);
-  event->write(value);
-  m_connection->sendMessage(std::move(event));
 }
 
 void Session::boardTileDataChanged(Board& board, const TileLocation& location, const TileData& data)

@@ -1,13 +1,22 @@
 import sys
 import os
 import json
+from collections import OrderedDict
+from operator import itemgetter
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 POEDITOR_PROJECT_ID = 622757
-
-
-def languages() -> list:
-    return ['en-us', 'de-de', 'fr-fr', 'it-it', 'nl-nl', 'sv-se']
+LANGUAGES = [
+    'en-us',
+    'de-de',
+    'es-es',
+    'fr-fr',
+    'fy-nl',
+    'it-it',
+    'nl-nl',
+    'pl-pl',
+    'sv-se',
+]
 
 
 def poeditor_language_code(code: str) -> str:
@@ -28,8 +37,12 @@ def read_innosetup_isl(language: str) -> dict:
 
 def write_innosetup_isl(language: str, terms: dict) -> None:
     import configparser
+
+    # remove empty
+    terms = {k: v for k, v in terms.items() if v}
+
     isl = configparser.ConfigParser(delimiters=['='])
-    isl['CustomMessages'] = terms
+    isl['CustomMessages'] = OrderedDict(sorted(terms.items(), key=lambda t: t[0]))
 
     isl_file = innosetup_isl_path(language)
     with open(isl_file, 'w', encoding='utf-8-sig') as f:
@@ -48,6 +61,17 @@ def read_traintastic_terms(language: str) -> list:
 
 def write_traintastic_json(language: str, terms: list) -> None:
     file = traintastic_json_path(language)
+
+    # remove empty stuff
+    for term in terms:
+        for k in ['context', 'term_plural', 'reference', 'comment']:
+            if k in term and term[k] == '':
+                del term[k]
+        if 'fuzzy' in term and term['fuzzy'] == 0:
+            del term['fuzzy']
+
+    terms = sorted(terms, key=itemgetter('term'))
+
     with open(file, 'w', encoding='utf8') as f:
         json.dump(terms, f, indent=4)
     print('Wrote: {:s}'.format(file))
@@ -58,7 +82,12 @@ def pull(args: list):
 
     api = POEditorAPI(api_token=os.environ['POEDITOR_TOKEN'])
 
-    for language in languages():
+    if len(args) > 0:
+        languages = args
+    else:
+        languages = LANGUAGES
+
+    for language in languages:
         url, filename = api.export(
             project_id=POEDITOR_PROJECT_ID,
             language_code=poeditor_language_code(language),
@@ -91,14 +120,23 @@ def push(args: list):
 
     api = POEditorAPI(api_token=os.environ['POEDITOR_TOKEN'])
 
+    if len(args) > 0:
+        languages = args
+    else:
+        languages = LANGUAGES
+
     wait = False
-    for language in languages():
+    for language in languages:
         if wait:
             print('API rate limit, sleeping...')
             time.sleep(30)  # API has rate limit
 
         fd, tmp_file = tempfile.mkstemp(suffix='.json')
         try:
+            terms = read_traintastic_terms(language)
+            for k, v in read_innosetup_isl(language).items():
+                terms.append({'term': 'innosetup:' + k, 'definition': v})
+
             with os.fdopen(fd, 'w', encoding='utf8') as f:
                 json.dump(terms, f, indent=4)
 
@@ -108,7 +146,7 @@ def push(args: list):
                 language_code=poeditor_language_code(language),
                 file_path=tmp_file,
                 overwrite=True,
-                sync_terms=(language == 'en_us'))
+                sync_terms=(language == 'en-us'))
         finally:
             os.unlink(tmp_file)
 
@@ -119,7 +157,7 @@ def push(args: list):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: {:s} <command> [args...]".format(sys.argv[0]), file=sys.stderr)
+        print("Usage: {:s} <command> [languages...]".format(sys.argv[0]), file=sys.stderr)
         sys.exit(1)
 
     for sub_command in [pull, push]:

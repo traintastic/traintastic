@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <unordered_map>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
+#include <traintastic/enum/inputchannel.hpp>
 #include <traintastic/enum/outputchannel.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
@@ -62,22 +63,6 @@ class Kernel : public ::KernelBase
     static constexpr uint16_t s88AddressMax = 1000; //!< \todo what is the maximum
     static constexpr uint16_t ecosDetectorAddressMin = 1;
     static constexpr uint16_t ecosDetectorAddressMax = 1000; //!< \todo what is the maximum
-
-    struct InputChannel
-    {
-      static constexpr uint32_t s88 = 1;
-      static constexpr uint32_t ecosDetector = 2;
-    };
-
-    inline static const std::vector<uint32_t> inputChannels = {
-      InputChannel::s88,
-      InputChannel::ecosDetector,
-    };
-
-    inline static const std::vector<std::string_view> inputChannelNames = {
-      "$hardware:s88$",
-      "$ecos_channel:ecos_detector$",
-    };
 
   private:
     class Objects : public std::unordered_map<uint16_t, std::unique_ptr<Object>>
@@ -272,7 +257,7 @@ class Kernel : public ::KernelBase
      */
     bool setOutput(OutputChannel channel, uint32_t id, OutputValue value);
 
-    void simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action);
+    void simulateInputChange(InputChannel channel, uint32_t address, SimulateInputAction action);
 
     void switchManagerSwitched(SwitchProtocol protocol, uint16_t address, OutputPairValue value);
     void switchStateChanged(uint16_t objectId, uint8_t state);

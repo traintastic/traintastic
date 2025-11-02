@@ -1,4 +1,15 @@
 {
+  "create_throttle": {
+    "type":"function",
+    "parameters": [
+      {
+        "name": "name",
+        "optional": true
+      }
+    ],
+    "return_values": 1,
+    "since": "0.3"
+  },
   "get": {
     "type": "function",
     "parameters": [
@@ -173,6 +184,9 @@
   "IDENTIFICATION_LIST": {
     "type": "constant"
   },
+  "SCRIPT_THROTTLE": {
+    "type": "constant"
+  },
   "RAIL_VEHICLE_LIST": {
     "type": "constant"
   },
@@ -188,6 +202,10 @@
   "TRAIN_LIST": {
     "type": "constant"
   },
+  "TRAIN_ZONE_STATUS": {
+    "type": "constant",
+    "since": "0.3"
+  },
   "WORLD": {
     "type": "constant",
     "since": "0.1"
@@ -196,6 +214,10 @@
     "type": "constant"
   },
   "NX_BUTTON_RAIL_TILE": {
+    "type": "constant",
+    "since": "0.3"
+  },
+  "ZONE": {
     "type": "constant",
     "since": "0.3"
   }

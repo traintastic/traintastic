@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023,2025 Reinder Feenstra
+ * Copyright (C) 2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -234,7 +234,7 @@ void Kernel::busChanged(Bus bus, uint8_t address, uint8_t value)
             {
               if(m_inputController) /*[[likely]]*/
               {
-                const uint32_t channel = 1 + static_cast<uint8_t>(bus);
+                const InputChannel channel = toChannel(bus);
                 const uint32_t baseAddress = 1 + static_cast<uint32_t>(address) * 8;
 
                 for(uint_least8_t i = 0; i < 8; ++i)

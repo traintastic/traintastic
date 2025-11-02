@@ -86,6 +86,7 @@ ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName)
   Attributes::addEnabled(stopAll, false);
   m_interfaceItems.add(stopAll);
 
+  Attributes::addDisplayName(clearPersistentVariables, "lua.script:clear_persistent_variables");
   Attributes::addEnabled(clearPersistentVariables, false);
   m_interfaceItems.add(clearPersistentVariables);
 }

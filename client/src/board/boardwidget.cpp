@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,6 +46,7 @@
 #include "../network/object/nxbuttonrailtile.hpp"
 #include "../theme/theme.hpp"
 #include "../utils/enum.hpp"
+#include "../utils/trysetlocalename.hpp"
 #include "../settings/boardsettings.hpp"
 #include <traintastic/utils/clamp.hpp>
 
@@ -101,7 +102,6 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
     connect(name, &AbstractProperty::valueChangedString, this, &BoardWidget::setWindowTitle);
     setWindowTitle(name->toString());
   }
-  QMenu* menu;
 
   QVBoxLayout* l = new QVBoxLayout();
   l->setContentsMargins(0, 0, 0, 0);
@@ -120,32 +120,6 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
 
   m_actionZoomIn = toolbar->addAction(Theme::getIcon("zoom_in"), Locale::tr("qtapp:zoom_in"), m_boardArea, &BoardAreaWidget::zoomIn);
   m_actionZoomOut = toolbar->addAction(Theme::getIcon("zoom_out"), Locale::tr("qtapp:zoom_out"), m_boardArea, &BoardAreaWidget::zoomOut);
-
-  toolbar->addSeparator();
-
-  m_toolButtonGrid = new QToolButton(this);
-  m_toolButtonGrid->setIcon(Theme::getIcon("grid_dot"));
-  m_toolButtonGrid->setToolTip(Locale::tr("qtapp:grid"));
-  m_toolButtonGrid->setPopupMode(QToolButton::MenuButtonPopup);
-  connect(m_toolButtonGrid, &QToolButton::pressed, m_toolButtonGrid, &QToolButton::showMenu);
-  menu = new QMenu(this);
-  m_actionGridNone = menu->addAction(Theme::getIcon("grid_none"), Locale::tr("qtapp:grid_none"),
-    [this]()
-    {
-      m_boardArea->setGrid(BoardAreaWidget::Grid::None);
-    });
-  m_actionGridDot = menu->addAction(Theme::getIcon("grid_dot"), Locale::tr("qtapp:grid_dot"),
-    [this]()
-    {
-      m_boardArea->setGrid(BoardAreaWidget::Grid::Dot);
-    });
-  m_actionGridLine = menu->addAction(Theme::getIcon("grid_line"), Locale::tr("qtapp:grid_line"),
-    [this]()
-    {
-      m_boardArea->setGrid(BoardAreaWidget::Grid::Line);
-    });
-  m_toolButtonGrid->setMenu(menu);
-  toolbar->addWidget(m_toolButtonGrid);
 
   // edit toolbar:
   m_toolbarEdit = new QToolBar(this);
@@ -382,7 +356,6 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
 
   connect(m_object.get(), &Board::tileDataChanged, this, [this](){ m_boardArea->update(); });
   connect(m_object.get(), &Board::tileObjectAdded, m_boardArea, &BoardAreaWidget::tileObjectAdded);
-  connect(m_boardArea, &BoardAreaWidget::gridChanged, this, &BoardWidget::gridChanged);
   connect(m_boardArea, &BoardAreaWidget::zoomLevelChanged, this, &BoardWidget::zoomLevelChanged);
   connect(m_boardArea, &BoardAreaWidget::tileClicked, this, &BoardWidget::tileClicked);
   connect(m_boardArea, &BoardAreaWidget::rightClicked, this, &BoardWidget::rightClicked);
@@ -441,7 +414,6 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
     });
 
   m_boardArea->setMouseTracking(true);
-  gridChanged(m_boardArea->grid());
   zoomLevelChanged(m_boardArea->zoomLevel());
 }
 
@@ -462,27 +434,11 @@ void BoardWidget::worldEditChanged(bool value)
   m_toolbarEdit->setVisible(value);
   m_statusBar->setVisible(value);
 
+  m_boardArea->updateGrid();
+
   // Stop timers in edit mode
   if(value)
     stopTimerAndReleaseButtons();
-}
-
-void BoardWidget::gridChanged(BoardAreaWidget::Grid value)
-{
-  switch(value)
-  {
-    case BoardAreaWidget::Grid::None:
-      m_toolButtonGrid->setIcon(m_actionGridNone->icon());
-      break;
-
-    case BoardAreaWidget::Grid::Dot:
-      m_toolButtonGrid->setIcon(m_actionGridDot->icon());
-      break;
-
-    case BoardAreaWidget::Grid::Line:
-      m_toolButtonGrid->setIcon(m_actionGridLine->icon());
-      break;
-  }
 }
 
 void BoardWidget::zoomLevelChanged(int value)
@@ -599,8 +555,15 @@ void BoardWidget::tileClicked(int16_t x, int16_t y)
       const Qt::KeyboardModifiers kbMod = QApplication::keyboardModifiers();
       if(kbMod == Qt::NoModifier || kbMod == Qt::ControlModifier)
         m_object->addTile(x, y, m_boardArea->mouseMoveTileRotate(), classId, kbMod == Qt::ControlModifier,
-          [](const bool& /*r*/, std::optional<const Error> /*error*/)
+          [this, x, y](const bool& r, std::optional<const Error> /*error*/)
           {
+            if(r)
+            {
+              if(auto object = m_object->getTileObject({x, y}))
+              {
+                trySetLocaleName(*object);
+              }
+            }
           });
     }
   }

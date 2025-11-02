@@ -137,6 +137,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(XpressNetInterfaceType)
   TRANSLATE_ENUM(XpressNetSerialInterfaceType)
   TRANSLATE_ENUM(BoardSettings::ColorScheme)
+  TRANSLATE_ENUM(BoardAreaGrid)
   return enumName + "@" + QString::number(value);
 }
 

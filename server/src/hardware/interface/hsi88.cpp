@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,12 +28,13 @@
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
+#include "../../utils/makearray.hpp"
 #include "../../utils/serialport.hpp"
 #include "../../utils/setthreadname.hpp"
 #include "../../utils/tohex.hpp"
 #include "../../world/world.hpp"
 
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Channel | InputListColumn::Address;
 
 HSI88Interface::HSI88Interface(World& world, std::string_view _id)
   : Interface(world, _id)
@@ -90,19 +91,18 @@ HSI88Interface::HSI88Interface(World& world, std::string_view _id)
   updateModulesMax();
 }
 
-std::pair<uint32_t, uint32_t> HSI88Interface::inputAddressMinMax(uint32_t channel) const
+std::span<const InputChannel> HSI88Interface::inputChannels() const
 {
-  (void)channel; // silence unused warning
+  static const auto values = makeArray(InputChannel::S88_Left, InputChannel::S88_Middle, InputChannel::S88_Right);
+  return values;
+}
 
-  assert(
-    channel == InputChannel::left ||
-    channel == InputChannel::middle ||
-    channel == InputChannel::right);
-
+std::pair<uint32_t, uint32_t> HSI88Interface::inputAddressMinMax(InputChannel /*channel*/) const
+{
   return {inputAddressMin, inputAddressMax};
 }
 
-void HSI88Interface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void HSI88Interface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
 {
   //! \todo add simulation support
   (void)channel;
@@ -327,11 +327,11 @@ void HSI88Interface::receive(std::string_view message)
               {
                 const auto moduleIndex = index / inputsPerModule;
                 if(moduleIndex < modulesLeft.value())
-                  updateInputValue(InputChannel::left, inputAddressMin + index, value);
+                  updateInputValue(InputChannel::S88_Left, inputAddressMin + index, value);
                 else if(moduleIndex < (modulesLeft.value() + modulesMiddle.value()))
-                  updateInputValue(InputChannel::middle, inputAddressMin + index - modulesLeft.value() * inputsPerModule, value);
+                  updateInputValue(InputChannel::S88_Middle, inputAddressMin + index - modulesLeft.value() * inputsPerModule, value);
                 else
-                  updateInputValue(InputChannel::right, inputAddressMin + index - (modulesLeft.value() + modulesMiddle.value()) * inputsPerModule, value);
+                  updateInputValue(InputChannel::S88_Right, inputAddressMin + index - (modulesLeft.value() + modulesMiddle.value()) * inputsPerModule, value);
               });
           }
         }

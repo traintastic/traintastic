@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,14 +31,22 @@ inline void checkArguments(lua_State* L, int count)
 {
   const int top = lua_gettop(L);
   if(top != count)
+  {
     errorExpectedNArgumentsGotN(L, count, top);
+  }
 }
 
 inline int checkArguments(lua_State* L, int min, int max)
 {
   const int top = lua_gettop(L);
   if(top < min || top > max)
+  {
+    if(min == max)
+    {
+      errorExpectedNArgumentsGotN(L, min, top);
+    }
     errorExpectedNNArgumentsGotN(L, min, max, top);
+  }
   return top;
 }
 
