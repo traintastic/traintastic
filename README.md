@@ -12,6 +12,8 @@
 ![POEditor](https://img.shields.io/poeditor/progress/622757/sv?token=6428931964d7cdf58536a518443ebe16)
 ![POEditor](https://img.shields.io/poeditor/progress/622757/fr?token=6428931964d7cdf58536a518443ebe16)
 ![POEditor](https://img.shields.io/poeditor/progress/622757/es?token=6428931964d7cdf58536a518443ebe16)
+![POEditor](https://img.shields.io/poeditor/progress/622757/pl?token=6428931964d7cdf58536a518443ebe16)
+![POEditor](https://img.shields.io/poeditor/progress/622757/fy?token=6428931964d7cdf58536a518443ebe16)
 
 ## About The Project
 Traintastic is a client/server software application to control a model railway. It is in an early stage of development, it contains very limited functionality.
