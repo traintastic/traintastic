@@ -25,6 +25,7 @@
 
 #include <lua.hpp>
 #include "enum.hpp"
+#include <traintastic/enum/blockstate.hpp>
 #include <traintastic/enum/blocktraindirection.hpp>
 #include <traintastic/enum/color.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
@@ -47,6 +48,7 @@
 #include <traintastic/enum/zonetrainstate.hpp>
 
 #define LUA_ENUMS \
+  BlockState, \
   BlockTrainDirection, \
   Color, \
   DecoderProtocol, \
