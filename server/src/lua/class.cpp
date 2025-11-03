@@ -103,6 +103,7 @@
 #include "../vehicle/rail/freightwagon.hpp"
 
 #include "../train/train.hpp"
+#include "../train/trainblockstatus.hpp"
 #include "../train/trainlist.hpp"
 #include "../train/trainzonestatus.hpp"
 
@@ -230,6 +231,7 @@ void Class::registerValues(lua_State* L)
   registerValue<FreightWagon>(L, "FREIGHT_WAGON");
 
   registerValue<Train>(L, "TRAIN");
+  registerValue<TrainBlockStatus>(L, "TRAIN_BLOCK_STATUS");
   registerValue<TrainList>(L, "TRAIN_LIST");
   registerValue<TrainZoneStatus>(L, "TRAIN_ZONE_STATUS");
 

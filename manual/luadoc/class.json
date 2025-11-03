@@ -199,6 +199,9 @@
   "TRAIN": {
     "type": "constant"
   },
+  "TRAIN_BLOCK_STATUS": {
+    "type": "constant"
+  },
   "TRAIN_LIST": {
     "type": "constant"
   },
