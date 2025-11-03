@@ -2738,5 +2738,73 @@
   {
     "term": "object.throttle.on_release.parameter.throttle:description",
     "definition": "the throttle that released control."
+  },
+  {
+    "term": "object.blockrailtile:description",
+    "definition": "Represents a block in the train control system. A block is a section of track that can detect, reserve, and track trains."
+  },
+  {
+    "term": "object.blockrailtile.name:description",
+    "definition": "The name assigned to the block, used for the user interface."
+  },
+  {
+    "term": "object.blockrailtile.state:description",
+    "definition": "The current state of the block, a {ref:enum.block_state|block state} value. Indicates whether the block is free, reserved, occupied, or its state is unknown."
+  },
+  {
+    "term": "object.blockrailtile.trains:description",
+    "definition": "List of {ref:object.trainblockstatus|train block status} objects with information about the trains in this block."
+  },
+  {
+    "term": "object.blockrailtile.on_train_assigned:description",
+    "definition": "Fired when a train is manually assigned to the block. This happens after a train has been placed on the track and the operator links it to the block, allowing Traintastic to recognize which train it is.\n\nThis event is about train identification, not movement."
+  },
+  {
+    "term": "object.blockrailtile.on_train_removed:description",
+    "definition": "Fired when a train is manually removed from the block. This is the opposite of `on_train_assigned` and indicates the train is no longer linked to the block.\n\nThis event is about train identification, not movement."
+  },
+  {
+    "term": "enum.block_state:title",
+    "definition": "Block state"
+  },
+  {
+    "term": "enum.block_state:description",
+    "definition": "Represents the current occupancy or reservation state of a {ref:object.blockrailtile|block} in the train control system."
+  },
+  {
+    "term": "enum.block_state.free:description",
+    "definition": "Indicates that the block is free and not occupied or reserved by any train."
+  },
+  {
+    "term": "enum.block_state.occupied:description",
+    "definition": "Indicates that the block is currently occupied by a train."
+  },
+  {
+    "term": "enum.block_state.reserved:description",
+    "definition": "Indicates that the block has been reserved by a train but is not yet occupied."
+  },
+  {
+    "term": "enum.block_state.unknown:description",
+    "definition": "Indicates that the block's state is unknown, typically due to missing or invalid data from feedback sensors."
+  },
+  {
+    "term": "object.trainblockstatus:title",
+    "definition": "Train block status"
+  },
+  {
+    "term": "object.trainblockstatus:description",
+    "definition": "Represents the status of a {ref:object.train|train} in relation to a specific {ref:object.blockrailtile|block}. It provides information about which block the train occupies or interacts with, along with its direction and reference to the train."
+  },
+  {
+    "term": "object.trainblockstatus.block:description",
+    "definition": "The {ref:object.blockrailtile|block} associated with this status entry."
+  },
+  {
+    "term": "object.trainblockstatus.direction:description",
+    "definition": "The direction of the train relative to the block, represented by a {ref:enum.block_train_direction|block train direction} value."
+  },
+  {
+    "term": "object.trainblockstatus.train:description",
+    "definition": "The {ref:object.train|train} this status entry refers to."
   }
 ]
