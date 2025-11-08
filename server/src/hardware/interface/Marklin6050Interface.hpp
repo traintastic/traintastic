@@ -16,24 +16,23 @@
  */
 class Marklin6050Interface final : public Interface
 {
-  CLASS_ID("interface.marklin6050")
-  DEFAULT_ID("marklin6050")
-  CREATE_DEF(Marklin6050Interface)
+    CLASS_ID("interface.marklin6050")
+    DEFAULT_ID("marklin6050")
+    CREATE_DEF(Marklin6050Interface)
 
 private:
-  void updateEnabled();
+    void updateEnabled();
 
 protected:
-  void addToWorld() final;
-  void loaded() final;
-  void destroying() final;
-  void worldEvent(WorldState state, WorldEvent event) final;
-  void onlineChanged(bool value) final;
-  bool setOnline(bool& value, bool simulation) final;
+    void addToWorld() override;
+    void loaded() override;
+    void destroying() override;
+    void worldEvent(WorldState state, WorldEvent event) override;
+    void onlineChanged(bool value) override;
+    bool setOnline(bool& value, bool simulation) override;
 
 public:
-  Marklin6050Interface(World& world, std::string_view id);
+    explicit Marklin6050Interface(World& world, std::string_view idValue);
 };
 
 #endif
-
