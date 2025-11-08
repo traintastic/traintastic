@@ -8,79 +8,76 @@
 #include "Marklin6050Interface.hpp"
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
-#include "../../log/log.hpp"
 #include "../../world/world.hpp"
 #include "../../utils/makearray.hpp"
 
 CREATE_IMPL(Marklin6050Interface)
 
-Marklin6050Interface::Marklin6050Interface(World& world, std::string_view id)
-  : Interface(world, id)
+Marklin6050Interface::Marklin6050Interface(World& world, std::string_view idValue)
+  : Interface(world, idValue)
 {
-  name = "Märklin 6050";
+    name = "Märklin 6050";
 
-  // Example property setup for UI (if needed later)
-  // Attributes::addDisplayName(propertyName, "Property Display Name");
+    // Example property setup for UI (if needed later)
+    // Attributes::addDisplayName(propertyName, "Property Display Name");
 }
 
 void Marklin6050Interface::addToWorld()
 {
-  Interface::addToWorld();
+    Interface::addToWorld();
 }
 
 void Marklin6050Interface::loaded()
 {
-  Interface::loaded();
-  updateEnabled();
+    Interface::loaded();
+    updateEnabled();
 }
 
 void Marklin6050Interface::destroying()
 {
-  Interface::destroying();
+    Interface::destroying();
 }
 
 void Marklin6050Interface::worldEvent(WorldState state, WorldEvent event)
 {
-  Interface::worldEvent(state, event);
+    Interface::worldEvent(state, event);
 
-  switch (event)
-  {
-    case WorldEvent::PowerOn:
-     
-      break;
+    switch (event)
+    {
+        case WorldEvent::PowerOn:
+            // Handle power-on logic here if needed
+            break;
 
-    case WorldEvent::PowerOff:
-      
-      break;
+        case WorldEvent::PowerOff:
+            // Handle power-off logic here if needed
+            break;
 
-    default:
-      break;
-  }
+        default:
+            break;
+    }
 }
 
 void Marklin6050Interface::onlineChanged(bool /*value*/)
 {
-  updateEnabled();
+    // Update UI or internal states based on online status
+    updateEnabled();
 }
 
 bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
 {
-  if (value)
-  {
-    
-    setState(InterfaceState::Online);
-  }
-  else
-  {
-    
-    setState(InterfaceState::Offline);
-  }
+    if (value)
+    {
+        setState(InterfaceState::Online);
+    }
+    else
+    {
+        setState(InterfaceState::Offline);
+    }
 
-  return true;
+    return true;
 }
 
 void Marklin6050Interface::updateEnabled()
 {
-  // Update UI property states based on online status or world mode
+    // Update UI property states based on online status or world mode
 }
-
