@@ -46,11 +46,11 @@ void Marklin6050Interface::worldEvent(WorldState state, WorldEvent event)
   switch (event)
   {
     case WorldEvent::PowerOn:
-      Log::log(*this, "World power on event received (dummy interface).");
+     
       break;
 
     case WorldEvent::PowerOff:
-      Log::log(*this, "World power off event received (dummy interface).");
+      
       break;
 
     default:
@@ -67,12 +67,12 @@ bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
 {
   if (value)
   {
-    Log::log(*this, "Marklin6050Interface set online (dummy mode).");
+    
     setState(InterfaceState::Online);
   }
   else
   {
-    Log::log(*this, "Marklin6050Interface set offline.");
+    
     setState(InterfaceState::Offline);
   }
 
