@@ -28,14 +28,17 @@ protected:
   void loaded() override;
   void destroying() override;
   void worldEvent(WorldState state, WorldEvent event) override;
-
-  // This is a new method, not overriding anything
-  void onlineChanged(bool value);
-
   bool setOnline(bool& value, bool simulation) override;
+
+  // Custom method for handling changes to serial port selection
+  void serialPortChanged(const std::string& newPort);
+  void onlineChanged(bool value);
 
 public:
   explicit Marklin6050Interface(World& world, std::string_view idValue);
+
+  // === Properties ===
+  Property<std::string> serialPort;
 };
 
 #endif
