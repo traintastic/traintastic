@@ -10,7 +10,7 @@
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 #include "../../utils/makearray.hpp"
-#include "../../hardware/serial/serial.hpp"
+#include "../../hardware/protocol/Marklin6050Interface/serial.hpp"
 
 CREATE_IMPL(Marklin6050Interface)
 
