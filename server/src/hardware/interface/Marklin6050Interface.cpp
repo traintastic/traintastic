@@ -10,7 +10,7 @@
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 #include "../../utils/makearray.hpp"
-#include "../protocol/serialport.hpp" // Our cross-platform serial helper
+#include "../protocol/serial.hpp" // Our cross-platform serial helper
 
 CREATE_IMPL(Marklin6050Interface)
 
