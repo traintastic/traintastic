@@ -35,6 +35,7 @@ class LuaDoc:
         self._sets = LuaDoc._find_sets(project_root)
         self._libs = LuaDoc._find_libs(project_root)
         self._objects = LuaDoc._find_objects(project_root)
+        self._object_categories, self._object_category_other = LuaDoc._build_category_tree(self._objects)
         self._examples = LuaDoc._find_examples(project_root)
         self._patch()
         self._add_cross_references()
@@ -79,10 +80,10 @@ class LuaDoc:
                 for cpp_type in cpp_types:
                     for enum in self._enums:
                         if enum['cpp_name'] == cpp_type:
-                            enum['see_also'].append('<a href="' + object['filename'] + '#' + item['lua_name'] + '"><code>' + object['lua_name'] + '.' + item['lua_name'] + '</code></a>')
+                            enum['see_also'].append('[`' + object['lua_name'] + '.' + item['lua_name'] + '`](../' + object['filename'] + '#' + item['lua_name'] + ')')
                     for set in self._sets:
                         if set['cpp_name'] == cpp_type:
-                            set['see_also'].append('<a href="' + object['filename'] + '#' + item['lua_name'] + '"><code>' + object['lua_name'] + '.' + item['lua_name'] + '</code></a>')
+                            set['see_also'].append('[' + object['lua_name'] + '.' + item['lua_name'] + '](../' + object['filename'] + '#' + item['lua_name'] + ')')
 
     def _ref_link(self, m: re.Match) -> str:
         id = m.group(1)
@@ -352,6 +353,7 @@ class LuaDoc:
 
             lua_name = 'object.' + cpp_name.lower()
             items = LuaDoc._find_object_items(cpp_classes, cpp_name)
+            category = LuaDoc._get_object_category(cpp_classes, cpp_name)
 
             objects.append({
                 'filename': posixpath.join('object', cpp_name.lower() + '.md'),
@@ -359,6 +361,7 @@ class LuaDoc:
                 'name': lua_name + ':title',
                 'cpp_name': cpp_name,
                 'term_prefix': lua_name + '.',
+                'category': category,
                 'items': items
             })
 
@@ -428,6 +431,64 @@ class LuaDoc:
             items += LuaDoc._find_object_items(cpp_classes, cpp_base_class)
 
         return items
+
+    def _get_object_category(cpp_classes, cpp_name):
+        for cpp_class in [cpp_name] + cpp_classes[cpp_name]['base_classes']:
+            if cpp_class.startswith('Board') or cpp_class.endswith('Tile'):
+                category = ['boards_tiles']
+                if cpp_class.startswith('Turnout'):
+                    category += ['turnouts']
+                elif cpp_class.startswith('Signal'):
+                    category += ['signals']
+                elif cpp_class.startswith(('Block', 'Sensor', 'NXButton')):
+                    category += ['control']
+                elif cpp_class.startswith(('Straight', 'Tunnel', 'Curve', 'Bridge', 'Cross', 'Buffer')):
+                    category += ['standard']
+                elif cpp_class in ['PushButtonTile', 'SwitchTile', 'LabelTile']:
+                    category += ['miscellaneous']
+                return category
+            if cpp_class.startswith('Decoder'):
+                return ['hardware', 'decoders']
+            if cpp_class == 'Interface' or cpp_class == 'InterfaceStatus':
+                return ['hardware', 'interfaces']
+            if cpp_class.startswith('Input'):
+                return ['hardware', 'inputs']
+            if cpp_class.startswith('Output') or cpp_class.endswith('Output'):
+                return ['hardware', 'outputs']
+            if cpp_class.startswith('Identification'):
+                return ['hardware', 'identification']
+            if cpp_class in ['Clock', 'World']:
+                return ['world']
+            if cpp_class in ['Throttle', 'Train', 'TrainList', 'RailVehicleList'] or cpp_class.endswith('RailVehicle'):
+                return ['trains_vehicles']
+        return []
+
+    def _get_or_create_category(categories, name):
+        for category in categories:
+            if category['id'] == name:
+                return category
+        category = {'id': name, 'name': 'object.category.' + name + ':title', 'items': [], 'categories': []}
+        categories.append(category)
+        return category
+
+    def _build_category_tree(objects: list):
+        categories = []
+        other = []
+
+        for object in objects:
+            item = {'id': object['cpp_name'].lower(), 'href': object['filename'], 'title': object['name']}
+            if not object['category']:
+                other.append(item)
+                continue
+
+            current_level = categories
+            for i, category_name in enumerate(object['category']):
+                category = LuaDoc._get_or_create_category(current_level, category_name)
+                if i == len(object['category']) - 1:
+                    category["items"].append(item)
+                current_level = category["categories"]
+
+        return categories, other
 
     def _find_examples(project_root: str) -> dict:
         examples = {}
@@ -703,35 +764,29 @@ class LuaDoc:
             md += self._build_see_also_md(lib['see_also'])
         LuaDoc._write_file(posixpath.join(output_dir, lib['filename']), LuaDoc._fix_links(md, os.path.dirname(lib['filename'])))
 
+    def _build_object_category(self, category: dict, level: int = 2) -> str:
+        md = ('#' * level) + ' ' + category['name'] + os.linesep
+        items = [{**v, 'title': self._get_term(v['title'])} for v in category['items']]
+        for item in sorted(items, key=operator.itemgetter('title')):
+            md += '- [' + item['title'] + '](' + item['href'] + ')' + os.linesep
+        categories = [{**v, 'name': self._get_term(v['name'])} for v in category['categories']]
+        for category in sorted(categories, key=operator.itemgetter('name')):
+            md += self._build_object_category(category, level + 1)
+        md += os.linesep
+        return md
+
+
     def _build_objects(self, output_dir: str) -> None:
         md = '# ' + self._get_term('object:title') + os.linesep + os.linesep
         md += self._get_term('object:description') + os.linesep + os.linesep
 
-        items = []
-        for object in self._objects:
-            items.append({'id': object['cpp_name'].lower(), 'href': object['filename'], 'title': self._get_term(object['name'])})
+        categories = [{**v, 'name': self._get_term(v['name'])} for v in self._object_categories]
+        for category in sorted(categories, key=operator.itemgetter('name')):
+            md += self._build_object_category(category)
 
-        categories = json.loads(LuaDoc._read_file(posixpath.join(os.path.dirname(__file__), 'luadoc', 'object.categories.json')))
-
-        for key, category in categories.items():
-            category['id'] = key
-            category['title'] = self._get_term('object.category.' + key + ':title')
-            category['items'] = []
-            for object in category['objects']:
-                for item in items:
-                    if item['id'] == object:
-                        category['items'].append(item)
-                        items = [v for v in items if v['id'] != object]
-                        break
-
-        for category in sorted(categories.values(), key=operator.itemgetter('title')):
-            md += '## ' + category['title'] + os.linesep
-            for item in sorted(category['items'], key=operator.itemgetter('title')):
-                md += '- [' + item['title'] + '](' + item['href'] + ')' + os.linesep
-            md += os.linesep
-
-        if len(items) > 0:
+        if len(self._object_category_other) > 0:
             md += '## ' + self._get_term('object.category.other:title') + os.linesep
+            items = [{**v, 'title': self._get_term(v['title'])} for v in self._object_category_other]
             for item in sorted(items, key=operator.itemgetter('title')):
                 md += '- [' + item['title'] + '](' + item['href'] + ')' + os.linesep
             md += os.linesep

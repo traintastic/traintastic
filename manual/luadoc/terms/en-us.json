@@ -2806,5 +2806,57 @@
   {
     "term": "object.trainblockstatus.train:description",
     "definition": "The {ref:object.train|train} this status entry refers to."
+  },
+  {
+    "term": "object.category.boards_tiles:title",
+    "definition": "Boards & Tiles"
+  },
+  {
+    "term": "object.category.hardware:title",
+    "definition": "Hardware"
+  },
+  {
+    "term": "object.category.decoders:title",
+    "definition": "Decoders"
+  },
+  {
+    "term": "object.category.inputs:title",
+    "definition": "Inputs"
+  },
+  {
+    "term": "object.category.outputs:title",
+    "definition": "Outputs"
+  },
+  {
+    "term": "object.category.identification:title",
+    "definition": "Identification"
+  },
+  {
+    "term": "object.category.trains_vehicles:title",
+    "definition": "Trains & Vehicles"
+  },
+  {
+    "term": "object.category.world:title",
+    "definition": "World"
+  },
+  {
+    "term": "object.category.control:title",
+    "definition": "Control"
+  },
+  {
+    "term": "object.category.miscellaneous:title",
+    "definition": "Miscellaneous"
+  },
+  {
+    "term": "object.category.standard:title",
+    "definition": "Standard"
+  },
+  {
+    "term": "object.category.turnouts:title",
+    "definition": "Turnouts"
+  },
+  {
+    "term": "object.category.signals:title",
+    "definition": "Signals"
   }
 ]
