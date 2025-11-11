@@ -169,28 +169,6 @@ jobs:
       matrix:
         config:
 
-
-
-        # Setup Ninja build system
-- name: Install Ninja
-  if: startswith(matrix.config.os, 'windows')
-  uses: seanmiddleditch/gha-setup-ninja@v3
-
-# Setup and cache sccache (compiler cache)
-- name: Setup sccache
-  if: startswith(matrix.config.os, 'windows')
-  uses: mozilla-actions/sccache-action@v0.0.4
-  with:
-    version: latest
-
-- name: Cache sccache
-  if: startswith(matrix.config.os, 'windows')
-  uses: actions/cache@v4
-  with:
-    path: ~/.cache/sccache
-    key: ${{ runner.os }}-sccache-${{ hashFiles('**/CMakeLists.txt') }}
-    restore-keys: ${{ runner.os }}-sccache-
-
         - name: "windows_x64_clang"
   os: windows-2022
   generator: "Ninja"
@@ -328,6 +306,24 @@ jobs:
       # Some projects don't allow in-source building, so create a separate build directory
       # We'll use this as our working directory for all subsequent commands
       run: cmake -E make_directory ${{github.workspace}}/server/build
+           # Setup Ninja and sccache for Windows
+    - name: Install Ninja
+      if: startswith(matrix.config.os, 'windows')
+      uses: seanmiddleditch/gha-setup-ninja@v3
+
+    - name: Setup sccache
+      if: startswith(matrix.config.os, 'windows')
+      uses: mozilla-actions/sccache-action@v0.0.4
+      with:
+        version: latest
+
+    - name: Cache sccache
+      if: startswith(matrix.config.os, 'windows')
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/sccache
+        key: ${{ runner.os }}-sccache-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: ${{ runner.os }}-sccache-
 
     # All:
     - name: Configure CMake
