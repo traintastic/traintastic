@@ -2,101 +2,119 @@
  * server/src/hardware/interface/Marklin6050Interface.cpp
  *
  * Dummy Märklin 6050 interface for Traintastic
- * © 2025
+ * Copyright (C) 2025
  */
 
 #include "Marklin6050Interface.hpp"
 #include "../../core/attributes.hpp"
-#include "../../world/world.hpp"
 #include "../../utils/displayname.hpp"
+#include "../../world/world.hpp"
+#include "../../utils/makearray.hpp"
+#include "../protocol/serialport.hpp" // Our cross-platform serial helper
 
 CREATE_IMPL(Marklin6050Interface)
 
-Marklin6050Interface::Marklin6050Interface(World& world, std::string_view idValue)
-  : Interface(world, idValue),
-    serialPort(this, "serialPort", "", PropertyFlags::None)
+Marklin6050Interface::Marklin6050Interface(World& world, std::string_view id)
+    : Interface(world, id),
+      serialPort(this, "serialPort", "", PropertyFlags{}) // default flags
 {
-  name = "Märklin 6050";
+    name = "Märklin 6050";
 
-  // Optionally: populate default ports at load time
-  auto availablePorts = Marklin6050::Serial::getPortList();
-  if (!availablePorts.empty())
-    serialPort = availablePorts.front();
+    // Populate available serial ports dynamically
+    auto availablePorts = SerialPort::getPortList();
+    serialPort.setChoices(availablePorts);
+
+    // Hook for changes
+    serialPort.afterChange().connect([this](const std::string& newPort) {
+        serialPortChanged(newPort);
+    });
 }
 
 void Marklin6050Interface::addToWorld()
 {
-  Interface::addToWorld();
+    Interface::addToWorld();
 }
 
 void Marklin6050Interface::loaded()
 {
-  Interface::loaded();
-  updateEnabled();
+    Interface::loaded();
+    updateEnabled();
 }
 
 void Marklin6050Interface::destroying()
 {
-  Interface::destroying();
+    Interface::destroying();
 }
 
 void Marklin6050Interface::worldEvent(WorldState state, WorldEvent event)
 {
-  Interface::worldEvent(state, event);
+    Interface::worldEvent(state, event);
 
-  switch (event)
-  {
-    case WorldEvent::PowerOn:
-      // If desired, automatically go online here
-      break;
+    switch (event)
+    {
+        case WorldEvent::PowerOn:
+            break;
 
-    case WorldEvent::PowerOff:
-      break;
+        case WorldEvent::PowerOff:
+            break;
 
-    default:
-      break;
-  }
+        default:
+            break;
+    }
+}
+
+void Marklin6050Interface::onlineChanged(bool /*value*/)
+{
+    updateEnabled();
 }
 
 bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
 {
-  if (value)
-  {
-    // Attempt to open selected serial port
-    std::string port = serialPort.value();
-    if (!Marklin6050::Serial::isValidPort(port))
+    auto port = serialPort.getValue();
+
+    if (value)
     {
-      value = false;
-      setState(InterfaceState::Offline);
-      return false;
+        if (port.empty())
+        {
+            // Cannot go online without selecting a port
+            value = false;
+            return false;
+        }
+
+        if (!SerialPort::isValidPort(port))
+        {
+            value = false;
+            return false;
+        }
+
+        if (!SerialPort::testOpen(port))
+        {
+            value = false;
+            return false;
+        }
+
+        setState(InterfaceState::Online);
+    }
+    else
+    {
+        setState(InterfaceState::Offline);
     }
 
-    // Optionally test open
-    if (!Marklin6050::Serial::testOpen(port))
-    {
-      value = false;
-      setState(InterfaceState::Offline);
-      return false;
-    }
-
-    setState(InterfaceState::Online);
-  }
-  else
-  {
-    setState(InterfaceState::Offline);
-  }
-
-  updateEnabled();
-  return true;
+    updateEnabled();
+    return true;
 }
 
 void Marklin6050Interface::updateEnabled()
 {
-  // You can add conditional logic if needed
+    // Enable/disable property based on online status
+    serialPort.setEnabled(!isOnline());
 }
 
-void Marklin6050Interface::serialPortChanged(const std::string& newPort)
+void Marklin6050Interface::serialPortChanged(const std::string& /*newPort*/)
 {
-  // For example, reconnect or log
-  (void)newPort;
+    // Re-open or test the port if the interface is online
+    if (isOnline())
+    {
+        setOnline(true, false);
+    }
 }
