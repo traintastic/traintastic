@@ -1,8 +1,8 @@
 /**
- * hardware/protocol/Marklin6050Interface/serial.hpp
+ * server/src/hardware/serial/Serial.hpp
  *
- * Cross-platform serial port helper for Märklin 6050 interface
- * © 2025
+ * Cross-platform serial port abstraction
+ * Supports Windows, macOS, Linux, and Raspbian
  */
 
 #pragma once
@@ -10,24 +10,18 @@
 #include <string>
 #include <vector>
 
-namespace Marklin6050
+class Serial
 {
-namespace Serial
-{
-    /**
-     * Get a list of available serial ports on the current OS
-     */
-    std::vector<std::string> getPortList();
+public:
+    // Return a list of available serial port names on the current OS
+    static std::vector<std::string> getPortList();
 
-    /**
-     * Quick check if a port name is valid
-     */
-    bool isValidPort(const std::string& port);
+    // Check if a given port name is valid/exists
+    static bool isValidPort(const std::string& port);
 
-    /**
-     * Test opening the port without fully connecting
-     */
-    bool testOpen(const std::string& port);
-}
-}
+    // Attempt to open the port for testing; returns true if successful
+    static bool testOpen(const std::string& port);
 
+    // Prevent instantiation
+    Serial() = delete;
+};
