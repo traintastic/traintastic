@@ -1,49 +1,67 @@
-#include "serial.hpp"
-#include <algorithm>
+#include "Serial.hpp"
 
-#ifdef _WIN32
+#if defined(_WIN32)
 #include <windows.h>
+#elif defined(__APPLE__)
+#include <IOKit/serial/IOSerialKeys.h>
+#include <IOKit/IOKitLib.h>
+#include <CoreFoundation/CoreFoundation.h>
 #else
 #include <dirent.h>
 #include <fcntl.h>
 #include <unistd.h>
 #endif
 
-namespace Marklin6050
-{
-namespace Serial
-{
+#include <algorithm>
+#include <iostream>
 
-std::vector<std::string> getPortList()
+std::vector<std::string> Serial::getPortList()
 {
     std::vector<std::string> ports;
 
-#ifdef _WIN32
-    // Check COM1..COM256
-    for(int i=1;i<=256;i++)
+#if defined(_WIN32)
+    // COM1..COM256
+    for (int i = 1; i <= 256; ++i)
     {
-        std::string name = "COM" + std::to_string(i);
-        HANDLE h = CreateFileA(name.c_str(), GENERIC_READ|GENERIC_WRITE,
-                               0, nullptr, OPEN_EXISTING, 0, nullptr);
-        if(h != INVALID_HANDLE_VALUE)
-            CloseHandle(h), ports.push_back(name);
+        std::string port = "COM" + std::to_string(i);
+        HANDLE h = CreateFileA(port.c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, 0, nullptr);
+        if (h != INVALID_HANDLE_VALUE)
+            CloseHandle(h), ports.push_back(port);
     }
-#elif __APPLE__
-    // macOS typical tty devices
-    const char* devs[] = {"/dev/tty.usbserial", "/dev/tty.usbmodem"};
-    for(auto dev : devs)
-        ports.push_back(dev);
-#else
-    // Linux /dev/ttyS*, /dev/ttyUSB*, /dev/ttyAMA*, /dev/serial/by-id/*
-    const char* prefixes[] = {"/dev/ttyS", "/dev/ttyUSB", "/dev/ttyAMA", "/dev/serial/by-id/"};
-    for(auto prefix : prefixes)
+#elif defined(__APPLE__)
+    // List /dev/cu.* devices (common for macOS)
+    DIR* dir = opendir("/dev");
+    if (dir)
     {
-        for(int i=0;i<256;i++)
+        struct dirent* entry;
+        while ((entry = readdir(dir)) != nullptr)
         {
-            std::string port = std::string(prefix) + std::to_string(i);
-            if(access(port.c_str(), F_OK) == 0)
-                ports.push_back(port);
+            std::string name = entry->d_name;
+            if (name.find("cu.") == 0)
+                ports.push_back("/dev/" + name);
         }
+        closedir(dir);
+    }
+#else
+    // Linux / Raspbian: /dev/ttyS*, /dev/ttyUSB*, /dev/ttyACM*
+    const std::vector<std::string> prefixes = { "ttyS", "ttyUSB", "ttyACM" };
+    DIR* dir = opendir("/dev");
+    if (dir)
+    {
+        struct dirent* entry;
+        while ((entry = readdir(dir)) != nullptr)
+        {
+            std::string name = entry->d_name;
+            for (auto& pre : prefixes)
+            {
+                if (name.find(pre) == 0)
+                {
+                    ports.push_back("/dev/" + name);
+                    break;
+                }
+            }
+        }
+        closedir(dir);
     }
 #endif
 
@@ -51,31 +69,30 @@ std::vector<std::string> getPortList()
     return ports;
 }
 
-bool isValidPort(const std::string& port)
+bool Serial::isValidPort(const std::string& port)
 {
     auto ports = getPortList();
     return std::find(ports.begin(), ports.end(), port) != ports.end();
 }
 
-bool testOpen(const std::string& port)
+bool Serial::testOpen(const std::string& port)
 {
-#ifdef _WIN32
-    HANDLE h = CreateFileA(port.c_str(), GENERIC_READ|GENERIC_WRITE,
-                           0, nullptr, OPEN_EXISTING, 0, nullptr);
-    if(h == INVALID_HANDLE_VALUE)
-        return false;
-    CloseHandle(h);
-    return true;
+#if defined(_WIN32)
+    HANDLE h = CreateFileA(port.c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, 0, nullptr);
+    if (h != INVALID_HANDLE_VALUE)
+    {
+        CloseHandle(h);
+        return true;
+    }
+    return false;
 #else
     int fd = open(port.c_str(), O_RDWR | O_NOCTTY | O_NONBLOCK);
-    if(fd < 0) return false;
-    close(fd);
-    return true;
+    if (fd >= 0)
+    {
+        close(fd);
+        return true;
+    }
+    return false;
 #endif
 }
 
-}
-}
-
-}
-}
