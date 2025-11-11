@@ -60,8 +60,8 @@ jobs:
           build_deb: true
           defines: "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
 
-        - name: "macos-13"
-          os: "macos-13"
+        - name: "macos-15-intel"
+          os: "macos-15-intel"
           generator: "Unix Makefiles"
           arch: ""
           target: traintastic-client
@@ -240,8 +240,8 @@ jobs:
           defines: "-DINSTALL_SYSTEMD_SERVICE=ON -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
           ccov: false
 
-        - name: "macos-13"
-          os: "macos-13"
+        - name: "macos-15-intel"
+          os: "macos-15-intel"
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
