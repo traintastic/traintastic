@@ -51,8 +51,8 @@ namespace Serial {
 
 Marklin6050Interface::Marklin6050Interface(World& world, std::string_view idValue)
     : Interface(world, idValue),
-      serialPort(this, "serialPort", "", PropertyFlags{},
-                 /* onChanged */ [this](const std::string& value) {
+      serialPort(this, "serialPort", "", PropertyFlags::Writable,
+                 [this](const std::string& value) {
                      serialPortChanged(value);
                  })
 {
