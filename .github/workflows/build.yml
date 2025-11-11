@@ -168,17 +168,43 @@ jobs:
       fail-fast: false
       matrix:
         config:
+
+
+
+        # Setup Ninja build system
+- name: Install Ninja
+  if: startswith(matrix.config.os, 'windows')
+  uses: seanmiddleditch/gha-setup-ninja@v3
+
+# Setup and cache sccache (compiler cache)
+- name: Setup sccache
+  if: startswith(matrix.config.os, 'windows')
+  uses: mozilla-actions/sccache-action@v0.0.4
+  with:
+    version: latest
+
+- name: Cache sccache
+  if: startswith(matrix.config.os, 'windows')
+  uses: actions/cache@v4
+  with:
+    path: ~/.cache/sccache
+    key: ${{ runner.os }}-sccache-${{ hashFiles('**/CMakeLists.txt') }}
+    restore-keys: ${{ runner.os }}-sccache-
+
         - name: "windows_x64_clang"
-          os: windows-latest
-          generator: "Visual Studio 17 2022"
-          arch: "-A x64"
-          toolset: "-T ClangCL"
-          target: ALL_BUILD
-          jobs: 4
-          build_type: Release
-          build_deb: false
-          defines: ""
-          ccov: false
+  os: windows-2022
+  generator: "Ninja"
+  arch: ""
+  toolset: "-T ClangCL"
+  target: ALL_BUILD
+  jobs: 8
+  build_type: Release
+  build_deb: false
+  defines: |
+    -DCMAKE_C_COMPILER_LAUNCHER=sccache
+    -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+  ccov: false
+
 
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
