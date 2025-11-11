@@ -10,16 +10,24 @@
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 #include "../../utils/makearray.hpp"
+#include "../../hardware/serial/serial.hpp"
 
 CREATE_IMPL(Marklin6050Interface)
 
 Marklin6050Interface::Marklin6050Interface(World& world, std::string_view idValue)
-  : Interface(world, idValue)
+  : Interface(world, idValue),
+    serialPort{*this, "serialPort", ""}
 {
   name = "Märklin 6050";
 
-  // Example property setup for UI (if needed later)
-  // Attributes::addDisplayName(propertyName, "Property Display Name");
+  // Setup attributes (used by the Traintastic editor)
+  Attributes::addDisplayName(serialPort, "Serial Port");
+  Attributes::addChoices(serialPort, Serial::getPortList);
+
+  // Connect property change signal to handler
+  serialPort.afterChange().connect([this](const std::string& value) {
+    serialPortChanged(value);
+  });
 }
 
 void Marklin6050Interface::addToWorld()
@@ -45,9 +53,11 @@ void Marklin6050Interface::worldEvent(WorldState state, WorldEvent event)
   switch (event)
   {
     case WorldEvent::PowerOn:
+      // Future hardware communication when powered on
       break;
 
     case WorldEvent::PowerOff:
+      // Future hardware shutdown sequence
       break;
 
     default:
@@ -55,16 +65,22 @@ void Marklin6050Interface::worldEvent(WorldState state, WorldEvent event)
   }
 }
 
-void Marklin6050Interface::onlineChanged(bool /*value*/)
-{
-  updateEnabled();
-}
-
 bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
 {
   if (value)
   {
-    setState(InterfaceState::Online);
+    // Attempt to connect to serial port if available
+    if (!serialPort().empty())
+    {
+      // For now just mark as online
+      setState(InterfaceState::Online);
+    }
+    else
+    {
+      // Stay offline if no serial port is configured
+      value = false;
+      setState(InterfaceState::Offline);
+    }
   }
   else
   {
@@ -74,7 +90,22 @@ bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
   return true;
 }
 
+void Marklin6050Interface::onlineChanged(bool /*value*/)
+{
+  updateEnabled();
+}
+
 void Marklin6050Interface::updateEnabled()
 {
-  // Update UI property states based on online status or world mode
+  // Disable serialPort editing when online
+  serialPort.setEnabled(!isOnline());
+}
+
+void Marklin6050Interface::serialPortChanged(const std::string& newPort)
+{
+  // Called when serial port property changes
+  if (isOnline())
+  {
+    // Reconnection logic could go here
+  }
 }
