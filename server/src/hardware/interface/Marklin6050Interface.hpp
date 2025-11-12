@@ -12,7 +12,7 @@ class Marklin6050Interface : public Interface
   CREATE_DEF(Marklin6050Interface)
 
 private:
-  Property<std::string> serialPort;
+  SerialDeviceProperty serialPort;
 
   void updateEnabled();
   void serialPortChanged(const std::string& newPort);
