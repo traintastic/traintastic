@@ -11,24 +11,16 @@ CREATE_IMPL(Marklin6050Interface)
 
 Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
   : Interface(world, objId),
-    serialPort(this, "serialPort", "", PropertyFlags{}) // matches SerialDeviceProperty constructor
+    serialPort(this, "serialPort", "", PropertyFlags{}) // just create property
 {
     name = "Märklin 6050";
 
-    // List available serial ports
-    auto ports = listSerialPorts();
-    if (ports.empty())
-        ports.push_back("No ports detected");
-
-    // Set display name, values, and enable state
+    // Set display name and initial enabled state
     Attributes::addDisplayName(serialPort, DisplayName::Serial::device);
-    Attributes::addValues(serialPort, ports);
     Attributes::addEnabled(serialPort, !online);
+
+    // Do NOT call listSerialPorts() here; will populate later in loaded()
 }
-
-
-
-
 
 void Marklin6050Interface::addToWorld()
 {
@@ -38,6 +30,14 @@ void Marklin6050Interface::addToWorld()
 void Marklin6050Interface::loaded()
 {
     Interface::loaded();
+
+    // Lazy population of serial ports (does not block constructor)
+    auto ports = Marklin6050::Serial::listAvailablePorts();
+    if (ports.empty())
+        ports.push_back("No ports detected");
+
+    Attributes::addValues(serialPort, ports);
+
     updateEnabled();
 }
 
