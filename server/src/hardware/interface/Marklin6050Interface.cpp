@@ -18,11 +18,12 @@ Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
     Attributes::addEnabled(serialPort, !online);
 
     // Populate serial port list from Marklin6050::Serial
-    Attributes::addValues(serialPort, Marklin6050::Serial::listSerialPorts());
+    Attributes::addValues(serialPort, Marklin6050::Serial::listAvailablePorts());
 
-    // Connect OnChanged signal (capital O)
-    serialPort.OnChanged.connect([this](const std::string&) { serialPortChanged(serialPort); });
+    // Assign OnChanged lambda directly
+    serialPort.OnChanged = [this](const std::string&) { serialPortChanged(serialPort); };
 }
+
 
 
 void Marklin6050Interface::addToWorld()
