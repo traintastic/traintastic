@@ -1,5 +1,6 @@
 #include "Marklin6050Interface.hpp"
 #include "../../core/attributes.hpp"
+#include "../../utils/displayname.hpp"       // <-- required for DisplayName::Serial::device
 #include "../../world/world.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../hardware/protocol/Marklin6050Interface/serial_port_list.hpp"
@@ -12,9 +13,15 @@ Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
 {
     name = "Märklin 6050";
 
-    // Use SerialDeviceProperty to populate values and auto-update
+    // Add display name and enable property
     Attributes::addDisplayName(serialPort, DisplayName::Serial::device);
     Attributes::addEnabled(serialPort, !online);
+
+    // Populate serial port values from SerialPortList singleton
+    Attributes::addValues(serialPort, &SerialPortList::instance().get());
+
+    // Optional: auto-refresh if serial ports change dynamically
+    serialPort.onChanged.connect([this](const std::string&) { serialPortChanged(serialPort); });
 }
 
 void Marklin6050Interface::addToWorld()
