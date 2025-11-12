@@ -10,7 +10,6 @@
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 #include "../../utils/makearray.hpp"
-#include "../../hardware/protocol/Marklin6050Interface/serial.hpp"
 
 CREATE_IMPL(Marklin6050Interface)
 
@@ -20,12 +19,8 @@ Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
 {
     name = "Märklin 6050";
 
-    // Populate serial port choices
-    auto ports = Marklin6050::Serial::getPortList();
-    Attributes::addChoices(serialPort, [ports]() { return ports; });
-
     // Connect change callback
-    serialPort.afterChange().connect([this](const std::string& newPort){
+    serialPort.changed().connect([this](const std::string& newPort){
         serialPortChanged(newPort);
     });
 }
@@ -70,19 +65,19 @@ void Marklin6050Interface::onlineChanged(bool /*value*/)
 
 bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
 {
+    std::string port = serialPort.getValue(); // actual Property method
+
     if(value)
     {
-        std::string port = serialPort.get();
-
         if(port.empty() || !Marklin6050::Serial::isValidPort(port))
         {
-            value = false; // cannot go online without a valid port
+            value = false;
             return false;
         }
 
         if(!Marklin6050::Serial::testOpen(port))
         {
-            value = false; // cannot open port
+            value = false;
             return false;
         }
 
@@ -99,19 +94,19 @@ bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
 
 void Marklin6050Interface::updateEnabled()
 {
-    // Enable/disable the serialPort property depending on online state
-    serialPort.setEnabled(state != InterfaceState::Online);
+    // Enable/disable serialPort based on online status
+    serialPort.setEnabled(getState() != InterfaceState::Online);
 }
 
 void Marklin6050Interface::serialPortChanged(const std::string& newPort)
 {
-    // Called when the serial port property is changed
-    if(state == InterfaceState::Online)
+    if(getState() == InterfaceState::Online)
     {
-        // Re-test the port
+        // If new port is invalid, go offline
         if(!Marklin6050::Serial::isValidPort(newPort) || !Marklin6050::Serial::testOpen(newPort))
         {
-            setOnline(false, false);
+            bool val = false;
+            setOnline(val, false);
         }
     }
 }
