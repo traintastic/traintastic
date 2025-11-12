@@ -3,6 +3,8 @@
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 #include "../../utils/makearray.hpp"
+#include "../../core/objectproperty.tpp"
+
 
 CREATE_IMPL(Marklin6050Interface)
 
