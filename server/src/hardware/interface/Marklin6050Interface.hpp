@@ -2,34 +2,32 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLIN6050INTERFACE_HPP
 
 #include "interface.hpp"
-#include "../../core/objectproperty.hpp"
-#include "../../hardware/protocol/Marklin6050Interface/serial.hpp"
 #include "../../core/serialdeviceproperty.hpp"
+#include "../../core/objectproperty.hpp"
+#include <memory>
 
-
-class Marklin6050Interface : public Interface
+class Marklin6050Interface final : public Interface
 {
   CLASS_ID("interface.marklin6050")
   DEFAULT_ID("marklin6050")
   CREATE_DEF(Marklin6050Interface)
 
 private:
-  SerialDeviceProperty serialPort;
+  std::unique_ptr<class SerialConnection> m_connection;
 
-  void updateEnabled();
-  void serialPortChanged(const std::string& newPort);
-
-protected:
   void addToWorld() final;
   void loaded() final;
   void destroying() final;
-  void worldEvent(WorldState state, WorldEvent event) final;
-  void onlineChanged(bool value);  // remove 'final'
 
+protected:
   bool setOnline(bool& value, bool simulation) final;
 
 public:
-  Marklin6050Interface(World& world, std::string_view id);
+  SerialDeviceProperty device;
+  Property<uint32_t> baudrate;
+
+  Marklin6050Interface(World& world, std::string_view _id);
+  ~Marklin6050Interface() final;
 };
 
 #endif
