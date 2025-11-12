@@ -79,7 +79,7 @@ void Marklin6050Interface::updateEnabled()
 
 void Marklin6050Interface::serialPortChanged(const std::string& newPort)
 {
-    InterfaceStatus* st = status.get(); // safe way to get underlying pointer
+    InterfaceStatus* st = status; // use implicit conversion
     if (st && st->state == InterfaceState::Online)
     {
         if (!Marklin6050::Serial::isValidPort(newPort) || !Marklin6050::Serial::testOpen(newPort))
@@ -89,6 +89,7 @@ void Marklin6050Interface::serialPortChanged(const std::string& newPort)
         }
     }
 }
+
 
 
 
