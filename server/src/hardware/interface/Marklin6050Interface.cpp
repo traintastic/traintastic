@@ -11,13 +11,10 @@ CREATE_IMPL(Marklin6050Interface)
 
 Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
   : Interface(world, objId),
-    serialPort(this, "serialPort", "", PropertyFlags{},
-               nullptr, 
-               [this](std::string& newPort) { serialPortChanged(newPort); return true; })
+    serialPort(this, "serialPort", "", PropertyFlags{})
 {
     name = "Märklin 6050";
 
-    // Add dropdown options (list available ports)
     auto ports = listSerialPorts();
     if (ports.empty())
         ports.push_back("No ports detected");
