@@ -78,14 +78,19 @@ void Marklin6050Interface::updateEnabled()
 }
 
 void Marklin6050Interface::serialPortChanged(const std::string& newPort)
-{   
-    if (status && status->state == InterfaceState::Online)
+{
+    if (status.valid()) // or status.get() != nullptr
     {
-        if (!Marklin6050::Serial::isValidPort(newPort) || !Marklin6050::Serial::testOpen(newPort))
+        InterfaceStatus* st = status.get(); // or whatever method returns raw pointer
+        if (st->state == InterfaceState::Online)
         {
-            bool val = false;
-            setOnline(val, false);
+            if (!Marklin6050::Serial::isValidPort(newPort) || !Marklin6050::Serial::testOpen(newPort))
+            {
+                bool val = false;
+                setOnline(val, false);
+            }
         }
     }
 }
+
 
