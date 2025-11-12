@@ -6,6 +6,8 @@
 #include <windows.h>
 #elif defined(__APPLE__) || defined(__linux__)
 #include <filesystem>
+#include <fcntl.h>    // for O_RDWR, O_NOCTTY, O_NDELAY
+#include <unistd.h>   // for close()
 #endif
 
 namespace Marklin6050 {
