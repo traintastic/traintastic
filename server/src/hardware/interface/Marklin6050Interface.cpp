@@ -5,23 +5,28 @@
 #include "../../utils/makearray.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../core/serialdeviceproperty.hpp"
+#include "../../hardware/protocol/Marklin6050Interface/serial_port_list.hpp"
 
 CREATE_IMPL(Marklin6050Interface)
 
 Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
   : Interface(world, objId),
-    serialPort(this, "serialPort", PropertyFlags{},
+    serialPort(this, "serialPort", "", PropertyFlags{},
+               nullptr, 
                [this](std::string& newPort) { serialPortChanged(newPort); return true; })
 {
     name = "Märklin 6050";
 
-    // UI setup
-    Attributes::addDisplayName(serialPort, DisplayName::Serial::device);
-    Attributes::addEnabled(serialPort, !online);
+    // Add dropdown options (list available ports)
+    auto ports = listSerialPorts();
+    if (ports.empty())
+        ports.push_back("No ports detected");
 
-    // Add to interface object tree (for serialization/UI)
-    m_interfaceItems.insertBefore(serialPort, notes);
+    Attributes::addDisplayName(serialPort, DisplayName::Serial::device);
+    Attributes::addList(serialPort, ports);
+    Attributes::addEnabled(serialPort, !online);
 }
+
 
 
 
