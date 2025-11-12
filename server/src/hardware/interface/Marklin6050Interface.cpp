@@ -92,9 +92,7 @@ void Marklin6050Interface::updateEnabled()
 
 void Marklin6050Interface::serialPortChanged(const std::string& newPort)
 {
-    // Avoid implicit conversion to bool
-    auto* statusPtr = status.value().get(); // get shared_ptr, then raw pointer
-    if (statusPtr && statusPtr->state == InterfaceState::Online)
+    if (online)  // <-- use this instead of status->state
     {
         if (!Marklin6050::Serial::isValidPort(newPort) || !Marklin6050::Serial::testOpen(newPort))
         {
@@ -103,4 +101,5 @@ void Marklin6050Interface::serialPortChanged(const std::string& newPort)
         }
     }
 }
+
 
