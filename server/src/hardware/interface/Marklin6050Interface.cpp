@@ -16,11 +16,14 @@ Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
 {
     name = "Märklin 6050";
 
-    // Configure display name and enablement
+    // Fill available ports into the property list
+    serialPort.setList(Marklin6050::Serial::listAvailablePorts());
+
+    // UI setup
     Attributes::addDisplayName(serialPort, DisplayName::Serial::device);
     Attributes::addEnabled(serialPort, !online);
 
-    // Add serialPort to the interface items so it shows in the UI
+    // Add to UI
     m_interfaceItems.insertBefore(serialPort, notes);
 }
 
