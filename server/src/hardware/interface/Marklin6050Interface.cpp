@@ -16,10 +16,14 @@ Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
 {
     name = "Märklin 6050";
 
-    // Make the serial port property visible and editable in UI
+    // Configure display name and enablement
     Attributes::addDisplayName(serialPort, DisplayName::Serial::device);
     Attributes::addEnabled(serialPort, !online);
+
+    // Add serialPort to the interface items so it shows in the UI
+    m_interfaceItems.insertBefore(serialPort, notes);
 }
+
 
 void Marklin6050Interface::addToWorld()
 {
@@ -79,6 +83,7 @@ bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
 
 void Marklin6050Interface::updateEnabled()
 {
+    // Enable or disable the serial port property depending on online state
     Attributes::setEnabled(serialPort, !online);
 }
 
