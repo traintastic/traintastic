@@ -13,16 +13,20 @@ Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
 {
     name = "Märklin 6050";
 
-    // Display name and enable property
+    // Use SerialDeviceProperty to populate values and auto-update
     Attributes::addDisplayName(serialPort, DisplayName::Serial::device);
-    Attributes::addEnabled(serialPort, !online);
 
-    // Populate serial port list from Marklin6050::Serial
+    // Add possible serial ports
     Attributes::addValues(serialPort, Marklin6050::Serial::listAvailablePorts());
 
-    // Assign OnChanged lambda directly
-    serialPort.OnChanged = [this](const std::string&) { serialPortChanged(serialPort); };
+    // Enable property if interface is offline
+    Attributes::addEnabled(serialPort, !online);
+
+    // If SerialDeviceProperty does not provide a connectable signal, we can poll or override a callback
+    // Example (if your Property class has OnChanged exposed):
+    // serialPort.OnChanged = [this](const std::string&) { serialPortChanged(serialPort); };
 }
+
 
 
 
