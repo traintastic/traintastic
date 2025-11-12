@@ -1,10 +1,3 @@
-/**
- * server/src/hardware/interface/Marklin6050Interface.cpp
- *
- * Dummy Märklin 6050 interface for Traintastic
- * Copyright (C) 2025
- */
-
 #include "Marklin6050Interface.hpp"
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
@@ -15,14 +8,11 @@ CREATE_IMPL(Marklin6050Interface)
 
 Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
   : Interface(world, objId),
-    serialPort(this, "serialPort", "", PropertyFlags{}) // default flags
+    serialPort(this, "serialPort", "", PropertyFlags{},
+               nullptr, 
+               [this](std::string& newPort) { serialPortChanged(newPort); return true; })
 {
     name = "Märklin 6050";
-
-    // Connect change callback
-    serialPort.changed().connect([this](const std::string& newPort){
-        serialPortChanged(newPort);
-    });
 }
 
 void Marklin6050Interface::addToWorld()
@@ -44,18 +34,7 @@ void Marklin6050Interface::destroying()
 void Marklin6050Interface::worldEvent(WorldState state, WorldEvent event)
 {
     Interface::worldEvent(state, event);
-
-    switch(event)
-    {
-        case WorldEvent::PowerOn:
-            break;
-
-        case WorldEvent::PowerOff:
-            break;
-
-        default:
-            break;
-    }
+    // handle world events if needed
 }
 
 void Marklin6050Interface::onlineChanged(bool /*value*/)
@@ -65,7 +44,7 @@ void Marklin6050Interface::onlineChanged(bool /*value*/)
 
 bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
 {
-    std::string port = serialPort.getValue(); // actual Property method
+    std::string port = serialPort; // read value via operator T()
 
     if(value)
     {
@@ -94,15 +73,14 @@ bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
 
 void Marklin6050Interface::updateEnabled()
 {
-    // Enable/disable serialPort based on online status
-    serialPort.setEnabled(getState() != InterfaceState::Online);
+    // Optionally update UI elements here
+    // serialPort.setEnabled(...) if supported
 }
 
 void Marklin6050Interface::serialPortChanged(const std::string& newPort)
 {
-    if(getState() == InterfaceState::Online)
+    if(state == InterfaceState::Online)
     {
-        // If new port is invalid, go offline
         if(!Marklin6050::Serial::isValidPort(newPort) || !Marklin6050::Serial::testOpen(newPort))
         {
             bool val = false;
