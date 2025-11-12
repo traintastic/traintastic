@@ -78,8 +78,9 @@ void Marklin6050Interface::updateEnabled()
 }
 
 void Marklin6050Interface::serialPortChanged(const std::string& newPort)
-{
-    if(status == InterfaceState::Online)
+{   
+
+    if (status.get() == InterfaceStatus::Online)
     {
         if(!Marklin6050::Serial::isValidPort(newPort) || !Marklin6050::Serial::testOpen(newPort))
         {
