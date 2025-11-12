@@ -1,6 +1,7 @@
 #include "Marklin6050Interface.hpp"
+
 #include "../../core/attributes.hpp"
-#include "../../utils/displayname.hpp"
+#include "../../utils/displayname.hpp"       // needed for DisplayName::Serial::device
 #include "../../world/world.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../hardware/protocol/Marklin6050Interface/serial_port_list.hpp"
@@ -13,22 +14,18 @@ Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
 {
     name = "Märklin 6050";
 
-    // Use SerialDeviceProperty to populate values and auto-update
+    // Show display name and enabled state (disabled while online)
     Attributes::addDisplayName(serialPort, DisplayName::Serial::device);
-
-    // Add possible serial ports
-    Attributes::addValues(serialPort, Marklin6050::Serial::listAvailablePorts());
-
-    // Enable property if interface is offline
     Attributes::addEnabled(serialPort, !online);
 
-    // If SerialDeviceProperty does not provide a connectable signal, we can poll or override a callback
-    // Example (if your Property class has OnChanged exposed):
-    // serialPort.OnChanged = [this](const std::string&) { serialPortChanged(serialPort); };
+    // Make property visible in the interface UI and insert it before the notes entry,
+    // so it appears alongside other interface options (same pattern as LocoNet)
+    Attributes::addVisible(serialPort, true);
+    m_interfaceItems.insertBefore(serialPort, notes);
+
+    // Do NOT enumerate ports here — SerialDeviceProperty already uses the global
+    // SerialPortList and will populate/update values automatically.
 }
-
-
-
 
 void Marklin6050Interface::addToWorld()
 {
@@ -87,12 +84,14 @@ bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
 
 void Marklin6050Interface::updateEnabled()
 {
+    // Disable serialPort while online (same UX as LocoNet)
     Attributes::setEnabled(serialPort, !online);
 }
 
 void Marklin6050Interface::serialPortChanged(const std::string& newPort)
 {
-    if (online)  // <-- use this instead of status->state
+    // Use the interface's 'online' flag instead of accessing ObjectProperty<InterfaceStatus>
+    if (online)
     {
         if (!Marklin6050::Serial::isValidPort(newPort) || !Marklin6050::Serial::testOpen(newPort))
         {
