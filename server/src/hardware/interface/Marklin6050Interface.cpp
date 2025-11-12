@@ -4,7 +4,7 @@
 #include "../../world/world.hpp"
 #include "../../utils/makearray.hpp"
 #include "../../core/objectproperty.tpp"
-
+#include "../../core/serialdeviceproperty.hpp"
 
 CREATE_IMPL(Marklin6050Interface)
 
@@ -15,6 +15,10 @@ Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
                [this](std::string& newPort) { serialPortChanged(newPort); return true; })
 {
     name = "Märklin 6050";
+
+    // Make the serial port property visible and editable in UI
+    Attributes::addDisplayName(serialPort, DisplayName::Serial::device);
+    Attributes::addEnabled(serialPort, !online);
 }
 
 void Marklin6050Interface::addToWorld()
@@ -75,8 +79,7 @@ bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
 
 void Marklin6050Interface::updateEnabled()
 {
-    // Optionally update UI elements here
-    // serialPort.setEnabled(...) if supported
+    Attributes::setEnabled(serialPort, !online);
 }
 
 void Marklin6050Interface::serialPortChanged(const std::string& newPort)
@@ -90,8 +93,3 @@ void Marklin6050Interface::serialPortChanged(const std::string& newPort)
         }
     }
 }
-
-
-
-
-
