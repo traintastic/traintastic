@@ -1,10 +1,3 @@
-/**
- * server/src/hardware/interface/Marklin6050Interface.cpp
- *
- * Dummy Märklin 6050 interface for Traintastic
- * Copyright (C) 2025
- */
-
 #include "Marklin6050Interface.hpp"
 #include "../../core/attributes.hpp"
 #include "../../utils/displayname.hpp"
@@ -13,21 +6,13 @@
 
 CREATE_IMPL(Marklin6050Interface)
 
-Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objectId)
-  : Interface(world, objectId),
-    serialPort(this, "serialPort", "", PropertyFlags::None)
+Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
+  : Interface(world, objId),
+    serialPort(this, "serialPort", "", PropertyFlags{},
+               nullptr, 
+               [this](std::string& newPort) { serialPortChanged(newPort); return true; })
 {
     name = "Märklin 6050";
-
-    // Populate serial port choices manually (platform-independent)
-    std::vector<std::string> ports = Marklin6050::Serial::getPortList();
-    // Could later create a UI helper for choices
-    serialPortChanged(serialPort.getValue()); // initial check
-
-    // Connect property change
-    serialPort.changed().connect([this](const std::string& newPort){
-        serialPortChanged(newPort);
-    });
 }
 
 void Marklin6050Interface::addToWorld()
@@ -49,18 +34,7 @@ void Marklin6050Interface::destroying()
 void Marklin6050Interface::worldEvent(WorldState state, WorldEvent event)
 {
     Interface::worldEvent(state, event);
-
-    switch (event)
-    {
-        case WorldEvent::PowerOn:
-            break;
-
-        case WorldEvent::PowerOff:
-            break;
-
-        default:
-            break;
-    }
+    // handle world events if needed
 }
 
 void Marklin6050Interface::onlineChanged(bool /*value*/)
@@ -70,17 +44,22 @@ void Marklin6050Interface::onlineChanged(bool /*value*/)
 
 bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
 {
-    if(value)
-    {
-        std::string port = serialPort.getValue();
-        if(!Marklin6050::Serial::isValidPort(port) || !Marklin6050::Serial::testOpen(port))
-        {
-            value = false;
-        }
-    }
+    std::string port = serialPort; // read value via operator T()
 
     if(value)
     {
+        if(port.empty() || !Marklin6050::Serial::isValidPort(port))
+        {
+            value = false;
+            return false;
+        }
+
+        if(!Marklin6050::Serial::testOpen(port))
+        {
+            value = false;
+            return false;
+        }
+
         setState(InterfaceState::Online);
     }
     else
@@ -94,8 +73,8 @@ bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
 
 void Marklin6050Interface::updateEnabled()
 {
-    // Disable serial port selection when online
-    serialPort.setEnabled(status != InterfaceState::Online);
+    // Optionally update UI elements here
+    // serialPort.setEnabled(...) if supported
 }
 
 void Marklin6050Interface::serialPortChanged(const std::string& newPort)
