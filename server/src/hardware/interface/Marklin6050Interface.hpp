@@ -1,10 +1,3 @@
-/**
- * server/src/hardware/interface/Marklin6050Interface.hpp
- *
- * Dummy Märklin 6050 interface for Traintastic
- * Copyright (C) 2025
- */
-
 #ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLIN6050INTERFACE_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLIN6050INTERFACE_HPP
 
@@ -12,10 +5,7 @@
 #include "../../core/objectproperty.hpp"
 #include "../../hardware/protocol/Marklin6050Interface/serial.hpp"
 
-/**
- * \brief Dummy interface for the Märklin 6050 hardware
- */
-class Marklin6050Interface final : public Interface
+class Marklin6050Interface : public Interface
 {
   CLASS_ID("interface.marklin6050")
   DEFAULT_ID("marklin6050")
@@ -32,7 +22,8 @@ protected:
   void loaded() final;
   void destroying() final;
   void worldEvent(WorldState state, WorldEvent event) final;
-  void onlineChanged(bool value) final;
+  void onlineChanged(bool value);  // remove 'final'
+
   bool setOnline(bool& value, bool simulation) final;
 
 public:
@@ -40,4 +31,3 @@ public:
 };
 
 #endif
-
