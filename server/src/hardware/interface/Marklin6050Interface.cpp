@@ -11,7 +11,7 @@ CREATE_IMPL(Marklin6050Interface)
 Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
     : Interface(world, objId),
       serialPort(this, "serialPort", "", PropertyFlags::ReadWrite | PropertyFlags::Store),
-      baudrate(this, "baudrate", 9600, PropertyFlags::ReadWrite | PropertyFlags::Store) // default 9600
+      baudrate(this, "baudrate", 2400, PropertyFlags::ReadWrite | PropertyFlags::Store) // default 2400
 {
     name = "Märklin 6050";
 
