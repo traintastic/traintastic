@@ -7,8 +7,6 @@
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../hardware/protocol/Marklin6050Interface/kernel.hpp"
 
-
-
 class Marklin6050Interface : public Interface
 {
   CLASS_ID("interface.marklin6050")
@@ -17,6 +15,7 @@ class Marklin6050Interface : public Interface
 
 private:
   SerialDeviceProperty serialPort;
+  Property<uint32_t> baudrate;   // NEW
   std::unique_ptr<Marklin6050::Kernel> m_kernel;
   void updateEnabled();
   void serialPortChanged(const std::string& newPort);
