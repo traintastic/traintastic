@@ -46,7 +46,25 @@ void Marklin6050Interface::destroying()
 void Marklin6050Interface::worldEvent(WorldState state, WorldEvent event)
 {
     Interface::worldEvent(state, event);
+
+    if (!m_kernel)
+        return;
+
+    switch (event)
+    {
+        case WorldEvent::Stop:
+            m_kernel->sendByte(96); // 0x60
+            break;
+
+        case WorldEvent::Run:
+            m_kernel->sendByte(97); // 0x61
+            break;
+
+        default:
+            break;
+    }
 }
+
 
 void Marklin6050Interface::onlineChanged(bool /*value*/)
 {
@@ -71,16 +89,30 @@ bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
             return false;
         }
 
+        m_kernel = std::make_unique<Marklin6050::Kernel>(port);
+        if (!m_kernel->start())
+        {
+            m_kernel.reset();
+            value = false;
+            return false;
+        }
+
         setState(InterfaceState::Online);
     }
     else
     {
+        if (m_kernel)
+        {
+            m_kernel->stop();
+            m_kernel.reset();
+        }
         setState(InterfaceState::Offline);
     }
 
     updateEnabled();
     return true;
 }
+
 
 void Marklin6050Interface::updateEnabled()
 {
