@@ -10,8 +10,8 @@
 
 using namespace Marklin6050;
 
-Kernel::Kernel(const std::string& port)
-    : m_port(port), m_isOpen(false)
+Kernel::Kernel(const std::string& port, unsigned int baudrate)
+    : m_port(port), m_baudrate(baudrate), m_isOpen(false)
 {
 #if defined(_WIN32)
     m_handle = INVALID_HANDLE_VALUE;
@@ -41,6 +41,18 @@ bool Kernel::start()
     if (m_handle == INVALID_HANDLE_VALUE)
         return false;
 
+    // Configure baud rate on Windows
+    DCB dcb{};
+    if (!GetCommState(m_handle, &dcb))
+        return false;
+
+    dcb.BaudRate = m_baudrate;
+    dcb.ByteSize = 8;
+    dcb.Parity   = NOPARITY;
+    dcb.StopBits = ONESTOPBIT;
+    if (!SetCommState(m_handle, &dcb))
+        return false;
+
     m_isOpen = true;
     return true;
 
@@ -51,13 +63,31 @@ bool Kernel::start()
 
     termios options{};
     tcgetattr(m_fd, &options);
-    cfsetispeed(&options, B9600);
-    cfsetospeed(&options, B9600);
+
+    // Map common baud rates
+    speed_t speed;
+    switch (m_baudrate) {
+        case 1200:   speed = B1200; break;
+        case 2400:   speed = B2400; break;
+        case 3000:   speed = B3000; break;
+        case 4800:   speed = B4800; break;
+        case 9600:   speed = B9600; break;
+        case 19200:  speed = B19200; break;
+        case 38400:  speed = B38400; break;
+        case 57600:  speed = B57600; break;
+        case 115200: speed = B115200; break;
+        default:     speed = B2400; break; // fallback
+    }
+
+    cfsetispeed(&options, speed);
+    cfsetospeed(&options, speed);
+
     options.c_cflag |= (CLOCAL | CREAD);
     options.c_cflag &= ~PARENB;
     options.c_cflag &= ~CSTOPB;
     options.c_cflag &= ~CSIZE;
     options.c_cflag |= CS8;
+
     tcsetattr(m_fd, TCSANOW, &options);
 
     m_isOpen = true;
@@ -97,3 +127,7 @@ bool Kernel::sendByte(unsigned char byte)
 #endif
 }
 
+void Kernel::setBaudRate(unsigned int baud)
+{
+    m_baudrate = baud;
+}
