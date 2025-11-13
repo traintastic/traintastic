@@ -53,11 +53,11 @@ void Marklin6050Interface::worldEvent(WorldState state, WorldEvent event)
     switch (event)
     {
         case WorldEvent::Stop:
-            m_kernel->sendByte(96); // 0x60
+            m_kernel->sendByte(97); // 0x61
             break;
 
         case WorldEvent::Run:
-            m_kernel->sendByte(97); // 0x61
+            m_kernel->sendByte(96); // 0x60
             break;
 
         default:
