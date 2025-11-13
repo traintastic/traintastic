@@ -1,54 +1,103 @@
-#include "marklin6050interface.hpp"
+#include "Marklin6050Interface.hpp"
+
 #include "../../core/attributes.hpp"
-#include "../../utils/displayname.hpp"
-#include "../../log/log.hpp"
-#include "../../core/eventloop.hpp"
+#include "../../utils/displayname.hpp"       // needed for DisplayName::Serial::device
+#include "../../world/world.hpp"
+#include "../../core/serialdeviceproperty.hpp"
+#include "../../hardware/protocol/Marklin6050Interface/serial_port_list.hpp"
 
 CREATE_IMPL(Marklin6050Interface)
 
-Marklin6050Interface::Marklin6050Interface(World& world, std::string_view _id)
-  : Interface(world, _id)
-  , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , baudrate{this, "baudrate", 2400, PropertyFlags::ReadWrite | PropertyFlags::Store}
+Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
+    : Interface(world, objId),
+      serialPort(this, "serialPort", "", PropertyFlags::ReadWrite | PropertyFlags::Store)
 {
-  name = "Märklin 6050";
+    name = "Märklin 6050";
 
-  Attributes::addDisplayName(device, DisplayName::Serial::device);
-  Attributes::addEnabled(device, !online);
-  m_interfaceItems.insertBefore(device, notes);
+    // Show display name and enabled state (disabled while online)
+    Attributes::addDisplayName(serialPort, DisplayName::Serial::device);
+    Attributes::addEnabled(serialPort, !online);
 
-  Attributes::addDisplayName(baudrate, DisplayName::Serial::baudrate);
-  Attributes::addEnabled(baudrate, !online);
-  m_interfaceItems.insertBefore(baudrate, notes);
-}
+    // Make property visible in the interface UI and insert it before the notes entry,
+    // so it appears alongside other interface options (same pattern as LocoNet)
+    Attributes::addVisible(serialPort, true);
+    m_interfaceItems.insertBefore(serialPort, notes);
 
-Marklin6050Interface::~Marklin6050Interface() = default;
-
-bool Marklin6050Interface::setOnline(bool& value, bool simulation)
-{
-  if (value) {
-    Log::info(*this, "Opening Märklin 6050 serial connection on {} at {} baud", device.value(), baudrate.value());
-    // TODO: Create serial connection with baudrate.value()
-  } else {
-    // TODO: Close serial connection
-  }
-  return true;
+    // Do NOT enumerate ports here — SerialDeviceProperty already uses the global
+    // SerialPortList and will populate/update values automatically.
 }
 
 void Marklin6050Interface::addToWorld()
 {
-  Interface::addToWorld();
+    Interface::addToWorld();
 }
 
 void Marklin6050Interface::loaded()
 {
-  Interface::loaded();
+    Interface::loaded();
+    updateEnabled();
 }
 
 void Marklin6050Interface::destroying()
 {
-  Interface::destroying();
+    Interface::destroying();
 }
 
+void Marklin6050Interface::worldEvent(WorldState state, WorldEvent event)
+{
+    Interface::worldEvent(state, event);
+}
 
+void Marklin6050Interface::onlineChanged(bool /*value*/)
+{
+    updateEnabled();
+}
+
+bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
+{
+    std::string port = serialPort;
+
+    if (value)
+    {
+        if (port.empty() || !Marklin6050::Serial::isValidPort(port))
+        {
+            value = false;
+            return false;
+        }
+
+        if (!Marklin6050::Serial::testOpen(port))
+        {
+            value = false;
+            return false;
+        }
+
+        setState(InterfaceState::Online);
+    }
+    else
+    {
+        setState(InterfaceState::Offline);
+    }
+
+    updateEnabled();
+    return true;
+}
+
+void Marklin6050Interface::updateEnabled()
+{
+    // Disable serialPort while online (same UX as LocoNet)
+    Attributes::setEnabled(serialPort, !online);
+}
+
+void Marklin6050Interface::serialPortChanged(const std::string& newPort)
+{
+    // Use the interface's 'online' flag instead of accessing ObjectProperty<InterfaceStatus>
+    if (online)
+    {
+        if (!Marklin6050::Serial::isValidPort(newPort) || !Marklin6050::Serial::testOpen(newPort))
+        {
+            bool val = false;
+            setOnline(val, false);
+        }
+    }
+}
 
