@@ -82,7 +82,7 @@ bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
             value = false;
             return false;
         }
-
+     
         if (!Marklin6050::Serial::testOpen(port))
         {
             value = false;
@@ -96,6 +96,14 @@ bool Marklin6050Interface::setOnline(bool& value, bool /*simulation*/)
             value = false;
             return false;
         }
+        
+        m_kernel = std::make_unique<Marklin6050::Kernel>(port, baudrate.value());
+       if (!m_kernel->start())
+       {
+            m_kernel.reset();
+            value = false;
+            return false;
+       }
 
         setState(InterfaceState::Online);
     }
