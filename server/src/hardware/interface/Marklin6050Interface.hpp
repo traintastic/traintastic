@@ -5,6 +5,8 @@
 #include "../../core/objectproperty.hpp"
 #include "../../hardware/protocol/Marklin6050Interface/serial.hpp"
 #include "../../core/serialdeviceproperty.hpp"
+#include "../../hardware/protocol/Marklin6050Interface/kernel.hpp"
+
 
 
 class Marklin6050Interface : public Interface
