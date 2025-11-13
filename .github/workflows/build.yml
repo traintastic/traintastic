@@ -9,8 +9,8 @@ on:
         default: 'no'
         type: choice
         options:
-          - yes
           - no
+          - yes
 
 jobs:
   build-client:
