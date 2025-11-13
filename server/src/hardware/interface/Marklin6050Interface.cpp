@@ -10,22 +10,22 @@ CREATE_IMPL(Marklin6050Interface)
 
 Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
     : Interface(world, objId),
-      serialPort(this, "serialPort", "", PropertyFlags::ReadWrite | PropertyFlags::Store)
+      serialPort(this, "serialPort", "", PropertyFlags::ReadWrite | PropertyFlags::Store),
+      baudrate(this, "baudrate", 9600, PropertyFlags::ReadWrite | PropertyFlags::Store) // default 9600
 {
     name = "Märklin 6050";
 
-    // Show display name and enabled state (disabled while online)
     Attributes::addDisplayName(serialPort, DisplayName::Serial::device);
     Attributes::addEnabled(serialPort, !online);
-
-    // Make property visible in the interface UI and insert it before the notes entry,
-    // so it appears alongside other interface options (same pattern as LocoNet)
     Attributes::addVisible(serialPort, true);
     m_interfaceItems.insertBefore(serialPort, notes);
 
-    // Do NOT enumerate ports here — SerialDeviceProperty already uses the global
-    // SerialPortList and will populate/update values automatically.
+    Attributes::addDisplayName(baudrate, DisplayName::Serial::baudrate);
+    Attributes::addEnabled(baudrate, !online);
+    Attributes::addVisible(baudrate, true);
+    m_interfaceItems.insertBefore(baudrate, notes);
 }
+
 
 void Marklin6050Interface::addToWorld()
 {
