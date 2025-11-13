@@ -2,6 +2,15 @@ name: Build
 #modified file
 on:
   workflow_dispatch:
+    inputs:
+      release:
+        description: 'Ready to release?'
+        required: true
+        default: 'no'
+        type: choice
+        options:
+          - yes
+          - no
 
 jobs:
   build-client:
@@ -526,6 +535,35 @@ jobs:
       with:
         name: package-innosetup
         path: ${{github.workspace}}/package/innosetup/output
+
+        - name: Create GitHub Release
+        if: ${{ github.event.inputs.release == 'yes' }}
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v1.0.0   # You can make this dynamic
+          name: Installer Release v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload installer to release
+        if: ${{ github.event.inputs.release == 'yes' }}
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{github.workspace}}/package/innosetup/output/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update-readme-contributors:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    name: Update contributers in README.md
+    steps:
+        - name: Update contribute list
+          uses: akhilmhdh/contributors-readme-action@v2.3.9
+          env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  
 
  #  deploy:
    #  name: Deploy to website
