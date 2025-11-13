@@ -125,8 +125,3 @@ bool Kernel::sendByte(unsigned char byte)
     return write(m_fd, &byte, 1) == 1;
 #endif
 }
-
-void Kernel::setBaudRate(unsigned int baud)
-{
-    m_baudrate = baud;
-}
