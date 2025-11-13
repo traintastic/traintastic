@@ -11,6 +11,18 @@ on:
         options:
           - no
           - yes
+          
+      tag_name:
+        description: 'Release tag (e.g., v1.0.0)'
+        required: false
+        default: 'v1.0.0'
+        type: string
+          
+      changelog:
+        description: 'Changelog for this release'
+        required: false
+        default: ''
+        type: string
 
 jobs:
   build-client:
@@ -541,8 +553,9 @@ jobs:
       if: ${{ github.event.inputs.release == 'yes' }}
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: v1.0.0
-        name: Installer Release v1.0.0
+        tag_name: ${{ github.event.inputs.tag_name }}       # Use input for dynamic tag
+        name: Installer Release ${{ github.event.inputs.tag_name }}
+        body: ${{ github.event.inputs.changelog }}         # Add changelog from input
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
