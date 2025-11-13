@@ -1,4 +1,4 @@
-//6050-6023-interface/server/src/hardware/protocol/Marklin6050Interface/serial.cpp
+//6050-6023-interface/server/src/hardware/protocol/Marklin6050Interface/serial_port_list.hpp
 #pragma once
 #include <vector>
 #include <string>
