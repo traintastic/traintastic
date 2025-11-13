@@ -548,14 +548,17 @@ jobs:
         name: package-innosetup
         path: ${{github.workspace}}/package/innosetup/output
 
-       # Optional release upload
+
     - name: Create GitHub Release
       if: ${{ github.event.inputs.release == 'yes' }}
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.event.inputs.tag_name }}       # Use input for dynamic tag
+        tag_name: ${{ github.event.inputs.tag_name }}       # e.g., v1.0.0
         name: Installer Release ${{ github.event.inputs.tag_name }}
-        body: ${{ github.event.inputs.changelog }}         # Add changelog from input
+        body: ${{ github.event.inputs.changelog }}
+        draft: false
+        prerelease: false
+        create_tag: true          # <- IMPORTANT: creates the tag if it doesn't exist
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -563,7 +566,7 @@ jobs:
       if: ${{ github.event.inputs.release == 'yes' }}
       uses: softprops/action-gh-release@v1
       with:
-        files: ${{github.workspace}}/package/innosetup/output/*
+        files: ${{ github.workspace }}/package/innosetup/output/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
