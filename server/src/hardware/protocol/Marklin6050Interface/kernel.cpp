@@ -69,7 +69,6 @@ bool Kernel::start()
     switch (m_baudrate) {
         case 1200:   speed = B1200; break;
         case 2400:   speed = B2400; break;
-        case 3000:   speed = B3000; break;
         case 4800:   speed = B4800; break;
         case 9600:   speed = B9600; break;
         case 19200:  speed = B19200; break;
