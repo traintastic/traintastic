@@ -17,7 +17,7 @@ class Marklin6050Interface : public Interface
 
 private:
   SerialDeviceProperty serialPort;
-
+  std::unique_ptr<Marklin6050::Kernel> m_kernel;
   void updateEnabled();
   void serialPortChanged(const std::string& newPort);
 
