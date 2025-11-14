@@ -547,29 +547,6 @@ jobs:
       with:
         name: package-innosetup
         path: ${{ github.workspace }}/package/innosetup/output
-
-    - name: Create GitHub Release
-      if: ${{ github.event.inputs.release == 'yes' }}
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ github.event.inputs.tag_name }}
-        name: Installer Release ${{ github.event.inputs.tag_name }}
-        body: ${{ github.event.inputs.changelog }}
-        draft: false
-        prerelease: false
-        create_tag: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Upload installer to release
-      if: ${{ github.event.inputs.release == 'yes' }}
-      uses: softprops/action-gh-release@v1
-      with:
-        files: ${{ github.workspace }}/package/innosetup/output/*
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
   
 
  #  deploy:
@@ -639,3 +616,26 @@ jobs:
           uses: akhilmhdh/contributors-readme-action@v2.3.9
           env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [package-innosetup, build-server, build-client, build-data, build-manual]
+    if: ${{ github.event.inputs.release == 'yes' }}
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          name: "Release build ${{ github.run_number }}"
+          files: artifacts/**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+     
