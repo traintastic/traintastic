@@ -11,13 +11,11 @@ on:
         options:
           - no
           - yes
-          
       tag_name:
         description: 'Release tag (e.g., v1.0.0)'
         required: false
         default: 'v1.0.0'
         type: string
-          
       changelog:
         description: 'Changelog for this release'
         required: false
@@ -542,23 +540,24 @@ jobs:
       run: |
         "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" %GITHUB_WORKSPACE%/package/innosetup/traintastic.iss
 
+
+    # --- inside your existing package-innosetup job ---
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: package-innosetup
-        path: ${{github.workspace}}/package/innosetup/output
-
+        path: ${{ github.workspace }}/package/innosetup/output
 
     - name: Create GitHub Release
       if: ${{ github.event.inputs.release == 'yes' }}
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.event.inputs.tag_name }}       # e.g., v1.0.0
+        tag_name: ${{ github.event.inputs.tag_name }}
         name: Installer Release ${{ github.event.inputs.tag_name }}
         body: ${{ github.event.inputs.changelog }}
         draft: false
         prerelease: false
-        create_tag: true          # <- IMPORTANT: creates the tag if it doesn't exist
+        create_tag: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
