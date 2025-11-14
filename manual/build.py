@@ -3,6 +3,7 @@
 import sys
 import os
 import codecs
+import operator
 import shutil
 import mkdocs.config
 import mkdocs.commands
@@ -56,6 +57,16 @@ class TraintasticHelp:
 
         return True
 
+    def _build_luadoc_object_category_nav(self, category: dict) -> list:
+        nav = []
+        items = [{**v, 'title': self._luadoc._get_term(v['title'])} for v in category['items']]
+        for item in sorted(items, key=operator.itemgetter('title')):
+            nav.append({item['title']: os.path.join('appendix', 'lua', item['href'])})
+        categories = [{**v, 'name': self._luadoc._get_term(v['name'])} for v in category['categories']]
+        for sub_category in sorted(categories, key=operator.itemgetter('name')):
+            nav.append({sub_category['name']: self._build_luadoc_object_category_nav(sub_category)})
+        return nav
+
     def _write_mkdocs_yml(self):
         lua_libs = {}
         for _, lib in self._luadoc._libs.items():
@@ -70,8 +81,15 @@ class TraintasticHelp:
             lua_sets.append({self._luadoc._get_term(obj['name']): os.path.join('appendix', 'lua', obj['filename'])})
 
         lua_objects = [{'All': os.path.join('appendix', 'lua', LuaDoc.FILENAME_OBJECT)}]
-        for obj in self._luadoc._objects:
-            lua_objects.append({self._luadoc._get_term(obj['name']): os.path.join('appendix', 'lua', obj['filename'])})
+        categories = [{**v, 'name': self._luadoc._get_term(v['name'])} for v in self._luadoc._object_categories]
+        for category in sorted(categories, key=operator.itemgetter('name')):
+            items = self._build_luadoc_object_category_nav(category)
+            lua_objects.append({category['name']: items})
+        if len(self._luadoc._object_category_other) > 0:
+            items = []
+            for obj in self._luadoc._object_category_other:
+                items.append((self._luadoc._get_term(obj['title']), os.path.join('appendix', 'lua', obj['href'])))
+            lua_objects.append({self._luadoc._get_term('object.category.other:title'): [{v[0]: v[1]} for v in sorted(items, key=operator.itemgetter(0))]})
 
         lua_ref = [
             {'Introduction': 'appendix/lua/index.md'},

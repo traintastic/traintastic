@@ -20,6 +20,7 @@ Traintastic is a client/server software application to control a model railway. 
 
 The project goal is to develop open source software that can control everything in your model railway layout. More information can be found using the links below:
 
+- [Join the Traintastic forum](https://discourse.traintastic.org/)
 - [Download Traintastic](https://traintastic.org/download)
 - [Traintastic Manual](https://traintastic.org/manual)
 - [Traintastic hardware support](https://traintastic.org/supported-hardware)
@@ -85,6 +86,13 @@ This project is not affiliated with, endorsed by, or connected to Digitrax.
             <img src="https://avatars.githubusercontent.com/u/1159809?v=4" width="100;" alt="cyrilpawelko"/>
             <br />
             <sub><b>Cyril Pawelko</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/kamil00110">
+            <img src="https://avatars.githubusercontent.com/u/68923965?v=4" width="100;" alt="kamil00110"/>
+            <br />
+            <sub><b>kamil00110</b></sub>
         </a>
     </td>
     <td align="center">

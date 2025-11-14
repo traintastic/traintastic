@@ -2806,5 +2806,365 @@
   {
     "term": "object.trainblockstatus.train:description",
     "definition": "The {ref:object.train|train} this status entry refers to."
+  },
+  {
+    "term": "enum.color:title",
+    "definition": "Color"
+  },
+  {
+    "term": "enum.color:description",
+    "definition": "Represents a set of standard named colors that can be used for display, signaling, or visualization within the train control system or user interface."
+  },
+  {
+    "term": "enum.color.aqua:description",
+    "definition": "A bright cyan-blue color, often used for highlighting or informational indicators."
+  },
+  {
+    "term": "enum.color.black:description",
+    "definition": "Black color, typically used for text, outlines, or inactive elements."
+  },
+  {
+    "term": "enum.color.blue:description",
+    "definition": "Blue color, commonly used to represent normal operation, information, or neutral states."
+  },
+  {
+    "term": "enum.color.fuchsia:description",
+    "definition": "A vivid pink-purple color, often used for emphasis or alerts."
+  },
+  {
+    "term": "enum.color.gray:description",
+    "definition": "Gray color, usually used for disabled or inactive elements."
+  },
+  {
+    "term": "enum.color.green:description",
+    "definition": "Green color, typically representing safety, readiness, or 'go' states."
+  },
+  {
+    "term": "enum.color.lime:description",
+    "definition": "Bright lime-green color, a lighter variant of green often used for visibility or highlights."
+  },
+  {
+    "term": "enum.color.maroon:description",
+    "definition": "Dark red color, sometimes used to indicate caution or reserved conditions."
+  },
+  {
+    "term": "enum.color.navy:description",
+    "definition": "Dark blue color, typically used for professional or subdued indicators."
+  },
+  {
+    "term": "enum.color.none:description",
+    "definition": "Represents the absence of a color or transparent state."
+  },
+  {
+    "term": "enum.color.olive:description",
+    "definition": "Olive green color, often used for muted or intermediate visual states."
+  },
+  {
+    "term": "enum.color.purple:description",
+    "definition": "Purple color, commonly used for secondary or auxiliary indicators."
+  },
+  {
+    "term": "enum.color.red:description",
+    "definition": "Red color, typically representing danger, stop, or error conditions."
+  },
+  {
+    "term": "enum.color.silver:description",
+    "definition": "Light gray or silver color, used for neutral or decorative purposes."
+  },
+  {
+    "term": "enum.color.teal:description",
+    "definition": "Teal color, a blue-green hue used for calm or neutral indicators."
+  },
+  {
+    "term": "enum.color.white:description",
+    "definition": "White color, representing neutrality, clarity, or background elements."
+  },
+  {
+    "term": "enum.color.yellow:description",
+    "definition": "Yellow color, typically used for warnings, attention, or intermediate states."
+  },
+  {
+    "term": "enum.input_channel:title",
+    "definition": "Input channel"
+  },
+  {
+    "term": "enum.input_channel:description",
+    "definition": "Defines the input channel type used by supported hardware interfaces to receive sensor or feedback data. By default, the channel is `INPUT`, but other channels are used for specific systems such as Z21, ESU ECoS, or LDI HSI-88."
+  },
+  {
+    "term": "enum.input_channel.ecos_detector:description",
+    "definition": "Input channel used by the {ref:object.ecosinterface} for ESU ECoS Detector feedback modules."
+  },
+  {
+    "term": "enum.input_channel.input:description",
+    "definition": "Default input channel type used for general-purpose inputs not tied to a specific hardware interface."
+  },
+  {
+    "term": "enum.input_channel.loconet:description",
+    "definition": "Input channel used by the {ref:object.z21interface} for LocoNet-based feedback modules."
+  },
+  {
+    "term": "enum.input_channel.rbus:description",
+    "definition": "Input channel used by the {ref:object.z21interface} for RBus-based feedback modules."
+  },
+  {
+    "term": "enum.input_channel.s88:description",
+    "definition": "Input channel used by the {ref:object.ecosinterface} for S88 feedback modules."
+  },
+  {
+    "term": "enum.input_channel.s88_left:description",
+    "definition": "Input channel for the left S88 bus segment on the {ref:object.hsi88interface}."
+  },
+  {
+    "term": "enum.input_channel.s88_middle:description",
+    "definition": "Input channel for the middle S88 bus segment on the {ref:object.hsi88interface}."
+  },
+  {
+    "term": "enum.input_channel.s88_right:description",
+    "definition": "Input channel for the right S88 bus segment on the {ref:object.hsi88interface}."
+  },
+  {
+    "term": "enum.output_pair_value:title",
+    "definition": "Output pair value"
+  },
+  {
+    "term": "enum.output_pair_value:description",
+    "definition": "Defines the active output within a pair used by accessory-type outputs such as turnouts or signals. Each pair has two lines, where only one is active at a time — typically referred to as red/green or thrown/closed."
+  },
+  {
+    "term": "enum.output_pair_value.first:description",
+    "definition": "Indicates that the first output in the pair is active. This is commonly referred to as the red or thrown state."
+  },
+  {
+    "term": "enum.output_pair_value.second:description",
+    "definition": "Indicates that the second output in the pair is active. This is commonly referred to as the green or closed state."
+  },
+  {
+    "term": "enum.output_pair_value.undefined:description",
+    "definition": "Indicates that the active output in the pair is undefined, meaning neither output is currently active or the state cannot be determined."
+  },
+  {
+    "term": "enum.speed_unit:title",
+    "definition": "Speed unit"
+  },
+  {
+    "term": "enum.speed_unit:description",
+    "definition": "Specifies the unit of measurement used for train speed values."
+  },
+  {
+    "term": "enum.speed_unit.kmph:description",
+    "definition": "Speed expressed in kilometers per hour (km/h). Commonly used in metric-based regions."
+  },
+  {
+    "term": "enum.speed_unit.mph:description",
+    "definition": "Speed expressed in miles per hour (mph). Commonly used in imperial-based regions."
+  },
+  {
+    "term": "enum.speed_unit.mps:description",
+    "definition": "Speed expressed in meters per second (m/s)."
+  },
+  {
+    "term": "enum.text_align:title",
+    "definition": "Text alignment"
+  },
+  {
+    "term": "enum.text_align:description",
+    "definition": "Defines how text is positioned within a display or layout area, combining vertical and horizontal alignment options."
+  },
+  {
+    "term": "enum.text_align.bottom_center:description",
+    "definition": "Text is aligned to the bottom and horizontally centered."
+  },
+  {
+    "term": "enum.text_align.bottom_left:description",
+    "definition": "Text is aligned to the bottom and flush to the left."
+  },
+  {
+    "term": "enum.text_align.bottom_right:description",
+    "definition": "Text is aligned to the bottom and flush to the right."
+  },
+  {
+    "term": "enum.text_align.center:description",
+    "definition": "Text is centered both horizontally and vertically."
+  },
+  {
+    "term": "enum.text_align.center_left:description",
+    "definition": "Text is vertically centered and aligned to the left."
+  },
+  {
+    "term": "enum.text_align.center_right:description",
+    "definition": "Text is vertically centered and aligned to the right."
+  },
+  {
+    "term": "enum.text_align.top_center:description",
+    "definition": "Text is aligned to the top and horizontally centered."
+  },
+  {
+    "term": "enum.text_align.top_left:description",
+    "definition": "Text is aligned to the top and flush to the left."
+  },
+  {
+    "term": "enum.text_align.top_right:description",
+    "definition": "Text is aligned to the top and flush to the right."
+  },
+  {
+    "term": "enum.decoder_protocol:description",
+    "definition": "Communication protocol used by a digital decoder to receive commands from the command station."
+  },
+  {
+    "term": "enum.sensor_state:title",
+    "definition": "Sensor state"
+  },
+  {
+    "term": "enum.sensor_state:description",
+    "definition": "Defines the possible states of a track sensor. Depending on the set type sensors report section occupancy (free/occupied), or event triggers (idle/triggered)."
+  },
+  {
+    "term": "enum.sensor_state.free:description",
+    "definition": "Section-based state indicating that no train is present in the monitored track section."
+  },
+  {
+    "term": "enum.sensor_state.idle:description",
+    "definition": "Position-based state indicating that the sensor is inactive and waiting to be triggered  (e.g., reed switch, IR sensor, or hall sensor)."
+  },
+  {
+    "term": "enum.sensor_state.occupied:description",
+    "definition": "Section-based state indicating that a train occupies the monitored track section."
+  },
+  {
+    "term": "enum.sensor_state.triggered:description",
+    "definition": "Position-based state indicating that the sensor has been activated by a passing train."
+  },
+  {
+    "term": "enum.sensor_state.unknown:description",
+    "definition": "Indicates that the current sensor state cannot be determined, possibly due to communication issues or an uninitialized input."
+  },
+  {
+    "term": "enum.signal_aspect:description",
+    "definition": "Represents the visual aspect or indication shown by a railway signal, defining how a train should proceed based on track conditions ahead."
+  },
+  {
+    "term": "enum.signal_aspect.proceed:description",
+    "definition": "Indicates that the train may proceed at the permitted line speed. Typically shown as a green aspect."
+  },
+  {
+    "term": "enum.signal_aspect.proceed_reduced_speed:description",
+    "definition": "Indicates that the train may proceed but must reduce speed, often due to an upcoming occupied block or diverging route. Typically shown as a yellow aspect."
+  },
+  {
+    "term": "enum.signal_aspect.stop:description",
+    "definition": "Indicates that the train must stop before the signal. Typically shown as a red aspect."
+  },
+  {
+    "term": "enum.signal_aspect.unknown:description",
+    "definition": "Indicates that the signal aspect is not known or cannot be determined, possibly due to configuration or communication issues."
+  },
+  {
+    "term": "enum.output_channel:title",
+    "definition": "Output channel"
+  },
+  {
+    "term": "enum.output_channel:description",
+    "definition": "Defines the communication channel or protocol used for controlling digital outputs such as accessories, turnouts, and signals. The available options depend on the connected command station or hardware interface."
+  },
+  {
+    "term": "enum.output_channel.accessory:description",
+    "definition": "Generic accessory channel used when the interface supports only one protocol for accessory control."
+  },
+  {
+    "term": "enum.output_channel.accessory_dcc:description",
+    "definition": "Accessory channel using the DCC protocol, available on systems that support multiple protocols to control accessories."
+  },
+  {
+    "term": "enum.output_channel.accessory_motorola:description",
+    "definition": "Accessory channel using the Motorola protocol, available on systems that support multiple protocols to control accessories."
+  },
+  {
+    "term": "enum.output_channel.dcc_ext:description",
+    "definition": "DCCext channel as defined in the RCN-213 standard, used for extended DCC accessory communication."
+  },
+  {
+    "term": "enum.output_channel.ecos_object:description",
+    "definition": "ECoS object channel representing a turnout or signal defined in an ESU ECoS command station."
+  },
+  {
+    "term": "enum.output_channel.output:description",
+    "definition": "Output channel specific to the {ref:object.dccexinterface}, used for controlling general-purpose outputs."
+  },
+  {
+    "term": "enum.output_channel.turnout:description",
+    "definition": "Turnout channel specific to the {ref:object.dccexinterface}, used for controlling turnout (switch) outputs."
+  },
+  {
+    "term": "enum.output_type:description",
+    "definition": "Defines how an output behaves or is structured, depending on the selected output channel or the type of accessory being controlled."
+  },
+  {
+    "term": "enum.output_type.aspect:description",
+    "definition": "Used for multi-aspect signals where the output represents a specific signal aspect, such as red, yellow, or green. Typically applies to DCCext (RCN-213)."
+  },
+  {
+    "term": "enum.output_type.ecos_state:description",
+    "definition": "Represents an ESU ECoS object state, such as a turnout or signal defined within the ECoS command station."
+  },
+  {
+    "term": "enum.output_type.pair:description",
+    "definition": "Generally used for accessory outputs that form a logical pair, where one output is active at a time (e.g., red/green or thrown/closed)."
+  },
+  {
+    "term": "enum.output_type.single:description",
+    "definition": "Used for a single, independent output, typically representing an on/off function such as a light or relay control."
+  },
+  {
+    "term": "object.category.boards_tiles:title",
+    "definition": "Boards & Tiles"
+  },
+  {
+    "term": "object.category.hardware:title",
+    "definition": "Hardware"
+  },
+  {
+    "term": "object.category.decoders:title",
+    "definition": "Decoders"
+  },
+  {
+    "term": "object.category.inputs:title",
+    "definition": "Inputs"
+  },
+  {
+    "term": "object.category.outputs:title",
+    "definition": "Outputs"
+  },
+  {
+    "term": "object.category.identification:title",
+    "definition": "Identification"
+  },
+  {
+    "term": "object.category.trains_vehicles:title",
+    "definition": "Trains & Vehicles"
+  },
+  {
+    "term": "object.category.world:title",
+    "definition": "World"
+  },
+  {
+    "term": "object.category.control:title",
+    "definition": "Control"
+  },
+  {
+    "term": "object.category.miscellaneous:title",
+    "definition": "Miscellaneous"
+  },
+  {
+    "term": "object.category.standard:title",
+    "definition": "Standard"
+  },
+  {
+    "term": "object.category.turnouts:title",
+    "definition": "Turnouts"
+  },
+  {
+    "term": "object.category.signals:title",
+    "definition": "Signals"
   }
 ]
