@@ -8,9 +8,8 @@ on:
         required: true
         default: 'no'
         type: choice
-        options:
-          - no
-          - yes
+        options: [ "yes", "no" ]
+        
       tag_name:
         description: 'Release tag (e.g., v1.0.0)'
         required: false
