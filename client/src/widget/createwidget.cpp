@@ -172,8 +172,9 @@ QWidget* createWidget(Property& property, QWidget* parent)
     if(widget && property.hasAttribute(AttributeName::Help))
     {
         widget->setToolTip(
-            QString::fromStdString(property.getAttribute<std::string>(AttributeName::Help))
+            QString::fromStdString(property.getAttribute< std::string >(AttributeName::Help))
         );
+
     }
 
 
