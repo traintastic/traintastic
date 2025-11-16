@@ -208,20 +208,19 @@ if (!helpText.isEmpty())
     QFont font = infoBtn->font();
     font.setPointSizeF(font.pointSizeF() * 0.5); // 50% smaller
     infoBtn->setFont(font);
-    infoBtn->setStyleSheet("QToolButton { color: gray; border: none; padding: 0px; }");
+    infoBtn->setStyleSheet("QToolButton { color: #555555; border: none; padding: 0px; }"); // darker gray
 
-    // Layout for label + info button
-    QHBoxLayout* labelLayout = new QHBoxLayout();
-    labelLayout->setContentsMargins(0, 0, 0, 0);
-    labelLayout->setSpacing(2);
-    labelLayout->addWidget(label);
-    labelLayout->addWidget(infoBtn);
-    labelLayout->addStretch();
+    // Vertical layout for icon above label
+    QVBoxLayout* labelLayout = new QVBoxLayout();
+    labelLayout->setContentsMargins(0, -6, 0, 0); // negative top margin to nudge icon up
+    labelLayout->setSpacing(0);
+    labelLayout->addWidget(infoBtn, 0, Qt::AlignLeft); // icon top-left
+    labelLayout->addWidget(label, 0, Qt::AlignLeft);    // label below
 
     QWidget* labelContainer = new QWidget(this);
     labelContainer->setLayout(labelLayout);
 
-    // Set tooltip for editor as well
+    // Optional: also set tooltip for the editor widget
     if (w)
         w->setToolTip(helpText);
 
@@ -231,6 +230,7 @@ else
 {
     static_cast<QFormLayout*>(tabWidget->layout())->addRow(label, w);
 }
+
 
       }
     }
