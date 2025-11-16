@@ -194,22 +194,40 @@ void ObjectEditWidget::buildForm()
           tabWidget = categoryTabs[category];
 
         // ----- NEW: create label pointer, attach help tooltip to label and editor -----
-        InterfaceItemNameLabel* label = new InterfaceItemNameLabel(*item, this);
+InterfaceItemNameLabel* label = new InterfaceItemNameLabel(*item, this);
 
-        // If item has a Help attribute, apply it to both label and editor widget (if present).
-        const QString helpText = item->getAttributeString(AttributeName::Help, QString());
-        if(!helpText.isEmpty())
-        {
-          label->setToolTip(helpText);
-          if(w)
-            w->setToolTip(helpText);
-        }
-        // ---------------------------------------------------------------------------
+// If item has a Help attribute, apply it to both label and editor widget (if present).
+const QString helpText = item->getAttributeString(AttributeName::Help, QString());
+if(!helpText.isEmpty())
+{
+    label->setToolTip(helpText);
 
-        // finally add the row using the explicit label pointer
-        static_cast<QFormLayout*>(tabWidget->layout())->addRow(label, w);
-      }
-    }
+    if(w)
+        w->setToolTip(helpText);
+
+    // Optional: add an "info" button (ⓘ) next to the label that shows the help
+    QToolButton* infoButton = new QToolButton(this);
+    infoButton->setText(QString::fromUtf8("ⓘ"));
+    infoButton->setToolTip(helpText);
+    infoButton->setStyleSheet("QToolButton { border: none; padding: 0px; }");
+    infoButton->setCursor(Qt::WhatsThisCursor);
+
+    QHBoxLayout* labelLayout = new QHBoxLayout();
+    labelLayout->setContentsMargins(0, 0, 0, 0);
+    labelLayout->addWidget(label);
+    labelLayout->addWidget(infoButton, 0, Qt::AlignRight);
+
+    QWidget* labelWidgetContainer = new QWidget(this);
+    labelWidgetContainer->setLayout(labelLayout);
+
+    static_cast<QFormLayout*>(tabWidget->layout())->addRow(labelWidgetContainer, w);
+}
+else
+{
+    static_cast<QFormLayout*>(tabWidget->layout())->addRow(label, w);
+}
+
+    
 
     if(tabs.count() > 1)
     {
