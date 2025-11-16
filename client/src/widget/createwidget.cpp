@@ -199,7 +199,7 @@ if (parentWidget) {
         for (int row = 0; row < formLayout->rowCount(); ++row) {
             QWidget* fieldWidget = formLayout->itemAt(row, QFormLayout::FieldRole)->widget();
             if (fieldWidget == widget) {
-                QLabel* label = qobject_cast<QLabel*>(formLayout->itemAt(row, QFormLayout::LabelRole)->widget());
+                label = qobject_cast<QLabel*>(formLayout->itemAt(row, QFormLayout::LabelRole)->widget());
                 if (label)
                     label->setToolTip(helpText);
                 break;
@@ -207,6 +207,10 @@ if (parentWidget) {
         }
     }
 }
+
+if (label)
+    label->setToolTip(helpText);
+
 
 if (label)
     label->setToolTip(helpText);
