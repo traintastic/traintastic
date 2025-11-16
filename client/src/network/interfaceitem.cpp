@@ -49,6 +49,16 @@ QString InterfaceItem::displayName() const
     id = QString(object().classId()).append(':').append(name());
   return Locale::tr(id);
 }
+QString InterfaceItem::helpText() const
+{
+    QString id;
+    if(QVariant attr = getAttribute(AttributeName::Help, QVariant()); attr.isValid())
+        id = attr.toString();
+    else
+        return QString(); // or return id = QString(object().classId()).append(':').append(name()).append(".help");
+    return Locale::tr(id);
+}
+
 
 bool InterfaceItem::hasAttribute(AttributeName name) const
 {
