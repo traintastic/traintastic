@@ -208,7 +208,7 @@ if (!helpText.isEmpty())
     QFont font = infoBtn->font();
     font.setPointSizeF(font.pointSizeF() * 0.5); // 50% smaller
     infoBtn->setFont(font);
-    infoBtn->setStyleSheet("QToolButton { color: #666666; border: none; padding: 0px; }"); // slightly more gray
+    infoBtn->setStyleSheet("QToolButton { color: #474747; border: none; padding: 0px; }"); // slightly more gray
 
     // Horizontal layout: label + info button
     QHBoxLayout* labelLayout = new QHBoxLayout();
