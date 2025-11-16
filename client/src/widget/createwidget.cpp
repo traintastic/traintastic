@@ -46,7 +46,7 @@
 #include "../network/outputkeyboard.hpp"
 #include "../network/board.hpp"
 #include "../network/property.hpp"
-#include <QString>
+
 
 QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 {
@@ -169,11 +169,13 @@ QWidget* createWidget(Property& property, QWidget* parent)
             break;
     }
 
-    // Set tooltip if Help attribute exists
     if(widget && property.hasAttribute(AttributeName::Help))
     {
-        widget->setToolTip(property.getAttribute<QString>(AttributeName::Help));
+        widget->setToolTip(
+            QString::fromStdString(property.getAttribute<std::string>(AttributeName::Help))
+        );
     }
+
 
     return widget;
 }
