@@ -41,24 +41,23 @@ Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
     6223,
     6027, 6029, 6030, 6032
 };
-
-// 6️⃣ Labels — must match **exactly** 1:1 to options
 static const std::vector<std::string_view> labels = {
     "6020", "6021", "6022", "6023",
     "6223",
     "6027", "6029", "6030", "6032"
 };
 
-
-
-// Use the existing member variable
 Attributes::addCategory(centralUnitVersion, "Märklin 6050");
 Attributes::addDisplayName(centralUnitVersion, "Central Unit Version");
+    Attributes::addDescription(
+    centralUnitVersion,
+    "Select the version of your Märklin Central Unit.\n"
+    "Some versions require different command timing."
+);
 Attributes::addEnabled(centralUnitVersion, true);
 Attributes::addVisible(centralUnitVersion, true);
 m_interfaceItems.insertBefore(centralUnitVersion, notes);
 
-// Assign the numeric options and string labels as aliases
 Attributes::addValues(centralUnitVersion, options);
 Attributes::addAliases(centralUnitVersion, &options, &labels);
 
