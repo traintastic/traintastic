@@ -1,7 +1,7 @@
 #include "Marklin6050Interface.hpp"
 
 #include "../../core/attributes.hpp"
-#include "../../utils/displayname.hpp"       // needed for DisplayName::Serial::device
+#include "../../utils/displayname.hpp"   
 #include "../../world/world.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../hardware/protocol/Marklin6050Interface/serial_port_list.hpp"
@@ -49,11 +49,7 @@ static const std::vector<std::string_view> labels = {
 
 Attributes::addCategory(centralUnitVersion, "Märklin 6050");
 Attributes::addDisplayName(centralUnitVersion, "Central Unit Version");
-Attributes::addHelp(
-    centralUnitVersion,
-    "Select your Märklin Central Unit version.\n"
-    "Different models have different timing and feature support."
-);
+Attributes::addHelp(centralUnitVersion, "CUversion");
 
 Attributes::addEnabled(centralUnitVersion, true);
 Attributes::addVisible(centralUnitVersion, true);
