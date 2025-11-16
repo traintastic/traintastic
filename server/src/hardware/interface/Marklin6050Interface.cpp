@@ -24,16 +24,16 @@ Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
     Attributes::addEnabled(baudrate, !online);
     Attributes::addVisible(baudrate, true);
     m_interfaceItems.insertBefore(baudrate, notes);
-    Attributes::addValues(baudrate, {
-        {1200,  "1200"},
-        {2400,  "2400"},
-        {4800,  "4800"},
-        {9600,  "9600"},
-        {19200, "19200"},
-        {38400, "38400"},
-        {57600, "57600"},
-        {115200,"115200"}
-    });
+    Attributes::addValues(baudrate, std::vector<unsigned int>{
+    1200,
+    2400,
+    4800,
+    9600,
+    19200,
+    38400,
+    57600,
+    115200
+});
 }
 
 
