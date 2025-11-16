@@ -189,15 +189,27 @@ QWidget* createWidget(Property& property, QWidget* parent)
             target = widget;
         target->setToolTip(helpText);
 
-        // 2. Apply tooltip to the title label (left side of form)
         QLabel* label = nullptr;
 
-        // Property base widget usually has a layout with [label][editor]
-        if (widget->parent())
-            label = widget->parent()->findChild<QLabel*>();
+        if (widget->parent()) {
+    if (auto formLayout = qobject_cast<QFormLayout*>(widget->parent()->layout())) {
 
-        if (label)
-            label->setToolTip(helpText);
+        for (int row = 0; row < formLayout->rowCount(); ++row) {
+            QWidget* fieldWidget = formLayout->itemAt(row, QFormLayout::FieldRole)
+                                        ->widget();
+            if (fieldWidget == widget) {
+                // Found the row corresponding to our widget
+                label = qobject_cast<QLabel*>(
+                    formLayout->itemAt(row, QFormLayout::LabelRole)->widget()
+                );
+                break;
+            }
+        }
+    }
+}
+if (label)
+    label->setToolTip(helpText);
+
     }
 }
     return widget;
