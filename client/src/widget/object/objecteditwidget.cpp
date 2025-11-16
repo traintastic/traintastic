@@ -195,7 +195,7 @@ void ObjectEditWidget::buildForm()
         InterfaceItemNameLabel* label = new InterfaceItemNameLabel(*item, this);
 
 // Check if Help text exists
-const QString helpText = item->getAttributeString(AttributeName::Help, QString());
+const QString helpText = item->helpText();
 if (!helpText.isEmpty())
 {
     // Create info button
