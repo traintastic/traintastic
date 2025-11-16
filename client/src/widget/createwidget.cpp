@@ -177,6 +177,16 @@ QWidget* createWidget(Property& property, QWidget* parent)
         widget->setToolTip(helpVar.toString());
     }
 }
+QWidget *target = widget->findChild<QWidget*>();
+if (!target) {
+    target = widget; // fallback
+}
+
+// apply tooltip
+if (helpVar.isValid() && !helpVar.toString().isEmpty()) {
+    target->setToolTip(helpVar.toString());
+}
+
 
 
 
