@@ -187,15 +187,18 @@ while(current && !label)
 {
     if(QFormLayout* formLayout = qobject_cast<QFormLayout*>(current->layout()))
     {
-        for(int row = 0; row < formLayout->rowCount(); ++row)
-        {
-            QWidget* fieldWidget = formLayout->itemAt(row, QFormLayout::FieldRole)->widget();
-            if(fieldWidget == widget)
-            {
-                label = qobject_cast<QLabel*>(formLayout->itemAt(row, QFormLayout::LabelRole)->widget());
-                break;
-            }
+        // Suppose parentLayout is the QFormLayout containing the property
+for (int row = 0; row < parentLayout->rowCount(); ++row) {
+    QWidget* labelWidget = parentLayout->itemAt(row, QFormLayout::LabelRole)->widget();
+    QWidget* editorWidget = parentLayout->itemAt(row, QFormLayout::FieldRole)->widget();
+    if (editorWidget == propertyEditorWidget) {
+        if (labelWidget) {
+            labelWidget->setToolTip(property.getAttribute(AttributeName::Help).toString());
         }
+        break;
+    }
+}
+
     }
     current = current->parentWidget();
 }
