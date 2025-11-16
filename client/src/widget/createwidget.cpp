@@ -173,25 +173,31 @@ QWidget* createWidget(Property& property, QWidget* parent)
             break;
     }
 
-    // --------------------------------------------------------------------
-    // Tooltip (Help attribute)
-    // --------------------------------------------------------------------
     if(widget && property.hasAttribute(AttributeName::Help))
+{
+    QVariant helpVar = property.getAttribute(AttributeName::Help, QVariant());
+
+    if(helpVar.isValid() && !helpVar.toString().isEmpty())
     {
-        QVariant helpVar = property.getAttribute(AttributeName::Help, QVariant());
+        QString helpText = helpVar.toString();
 
-        if(helpVar.isValid() && !helpVar.toString().isEmpty())
-        {
-            // Some widgets wrap internal controls, so resolve internal target
-            QWidget *target = widget->findChild<QWidget*>();
-            if (!target)
-                target = widget;
+        // 1. Apply tooltip to the editor
+        QWidget *target = widget->findChild<QWidget*>();
+        if (!target)
+            target = widget;
+        target->setToolTip(helpText);
 
-            target->setToolTip(helpVar.toString());
-        }
+        // 2. Apply tooltip to the title label (left side of form)
+        QLabel* label = nullptr;
+
+        // Property base widget usually has a layout with [label][editor]
+        if (widget->parent())
+            label = widget->parent()->findChild<QLabel*>();
+
+        if (label)
+            label->setToolTip(helpText);
     }
-    // --------------------------------------------------------------------
-
+}
     return widget;
 }
 
