@@ -141,71 +141,72 @@ QWidget* createWidget(Property& property, QWidget* parent)
         case ValueType::Boolean:
             widget = new PropertyCheckBox(property, parent);
             break;
+
         case ValueType::Enum:
             if(property.enumName() == "pair_output_action")
                 widget = new PropertyPairOutputAction(property, parent);
             else
                 widget = new PropertyComboBox(property, parent);
             break;
+
         case ValueType::Integer:
             if(property.hasAttribute(AttributeName::Values) &&
                !property.hasAttribute(AttributeName::Min) &&
                !property.hasAttribute(AttributeName::Max))
+            {
                 widget = new PropertyComboBox(property, parent);
+            }
             else
                 widget = new PropertySpinBox(property, parent);
             break;
+
         case ValueType::Float:
             widget = new PropertyDoubleSpinBox(property, parent);
             break;
+
         case ValueType::String:
             if(property.hasAttribute(AttributeName::Values))
                 widget = new PropertyComboBox(property, parent);
             else
                 widget = new PropertyLineEdit(property, parent);
             break;
-        default:
+
+        case ValueType::Object:
+        case ValueType::Set:
+        case ValueType::Invalid:
             break;
     }
 
     if(widget && property.hasAttribute(AttributeName::Help))
     {
-        QVariant helpVar = property.getAttribute(AttributeName::Help, QVariant());
-        if(helpVar.isValid() && !helpVar.toString().isEmpty())
+        QString helpText = property.getAttribute(AttributeName::Help, QString()).toString();
+
+        // 1. Tooltip on the editor widget itself
+        widget->setToolTip(helpText);
+
+        // 2. Find the label in the parent QFormLayout
+        QWidget* current = widget->parentWidget();
+        while(current)
         {
-            QString helpText = helpVar.toString();
-
-            /// Apply tooltip to editor
-widget->setToolTip(helpText);
-
-// Try to find a QLabel ancestor
-QLabel* label = nullptr;
-
-// Traverse up to the parent of the editor to see if it's in a QFormLayout
-QWidget* current = widget;
-while(current && !label)
-{
-    if(QFormLayout* formLayout = qobject_cast<QFormLayout*>(current->layout()))
-    {
-        // Suppose parentLayout is the QFormLayout containing the property
-for (int row = 0; row < parentLayout->rowCount(); ++row) {
-    QWidget* labelWidget = parentLayout->itemAt(row, QFormLayout::LabelRole)->widget();
-    QWidget* editorWidget = parentLayout->itemAt(row, QFormLayout::FieldRole)->widget();
-    if (editorWidget == propertyEditorWidget) {
-        if (labelWidget) {
-            labelWidget->setToolTip(property.getAttribute(AttributeName::Help).toString());
-        }
-        break;
-    }
-}
-
-    }
-    current = current->parentWidget();
-}
-
-if(label)
-    label->setToolTip(helpText);
-
+            if(auto* layout = qobject_cast<QFormLayout*>(current->layout()))
+            {
+                // Iterate rows
+                for(int row=0; row<layout->rowCount(); ++row)
+                {
+                    QWidget* fieldWidget = layout->itemAt(row, QFormLayout::FieldRole)->widget();
+                    if(fieldWidget == widget)
+                    {
+                        if(QWidget* labelWidget = layout->itemAt(row, QFormLayout::LabelRole)->widget())
+                        {
+                            if(QLabel* label = qobject_cast<QLabel*>(labelWidget))
+                                label->setToolTip(helpText);  // <-- This attaches tooltip to display name
+                        }
+                        break;
+                    }
+                }
+                break; // found the QFormLayout, stop traversing
+            }
+            current = current->parentWidget();
         }
     }
 
