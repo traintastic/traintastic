@@ -193,7 +193,7 @@ void ObjectEditWidget::buildForm()
         else
           tabWidget = categoryTabs[category];
 
-        // ----- NEW: create label pointer, attach help tooltip to label and editor -----
+       // ----- NEW: create label pointer, attach help tooltip to label and editor -----
 InterfaceItemNameLabel* label = new InterfaceItemNameLabel(*item, this);
 
 // If item has a Help attribute, apply it to both label and editor widget (if present).
@@ -217,17 +217,16 @@ if(!helpText.isEmpty())
     labelLayout->addWidget(label);
     labelLayout->addWidget(infoButton, 0, Qt::AlignRight);
 
-    QWidget* labelWidgetContainer = new QWidget(this);
-    labelWidgetContainer->setLayout(labelLayout);
+    QWidget* labelContainer = new QWidget(this);   // renamed from labelWidgetContainer
+    labelContainer->setLayout(labelLayout);
 
-    static_cast<QFormLayout*>(tabWidget->layout())->addRow(labelWidgetContainer, w);
+    static_cast<QFormLayout*>(tabWidget->layout())->addRow(labelContainer, w);
 }
 else
 {
     static_cast<QFormLayout*>(tabWidget->layout())->addRow(label, w);
 }
 
-    
 
     if(tabs.count() > 1)
     {
