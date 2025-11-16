@@ -15,7 +15,8 @@ class Marklin6050Interface : public Interface
 
 private:
   SerialDeviceProperty serialPort;
-  Property<uint32_t> baudrate;   // NEW
+  Property<uint32_t> baudrate;
+  Property<unsigned int> centralUnitVersion;
   std::unique_ptr<Marklin6050::Kernel> m_kernel;
   void updateEnabled();
   void serialPortChanged(const std::string& newPort);
