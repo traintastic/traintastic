@@ -25,6 +25,8 @@
 #include <QFormLayout>
 #include <QVBoxLayout>
 #include <QTabWidget>
+#include <QToolButton>
+#include <QHBoxLayout>
 #include "../../network/object.hpp"
 #include "../../network/property.hpp"
 #include "../../network/objectproperty.hpp"
