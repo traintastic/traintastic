@@ -36,14 +36,19 @@ Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
     115200
     });
     
-    std::vector<unsigned int> options = {6020, 6021, 6022, 6023, 6223, 6027, 6029, 6030, 6032};
-
-// Corresponding display names
-std::vector<std::string_view> labels = {
-    "6020/6021/6022/6030 with 6050",
-    "6223 with 6050",
-    "6027/6029/6030/6032"
+    static const std::vector<unsigned int> options = {
+    6020, 6021, 6022, 6023,
+    6223,
+    6027, 6029, 6030, 6032
 };
+
+// 6️⃣ Labels — must match **exactly** 1:1 to options
+static const std::vector<std::string_view> labels = {
+    "6020", "6021", "6022", "6023",
+    "6223",
+    "6027", "6029", "6030", "6032"
+};
+
 
 
 // Use the existing member variable
