@@ -39,11 +39,12 @@ Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
     std::vector<unsigned int> options = {6020, 6021, 6022, 6023, 6223, 6027, 6029, 6030, 6032};
 
 // Corresponding display names
-std::vector<std::string> labels = {
-    "6020/6021/6022/6023 with 6050",
+std::vector<std::string_view> labels = {
+    "6020/6021/6022/6030 with 6050",
     "6223 with 6050",
     "6027/6029/6030/6032"
 };
+
 
 // Use the existing member variable
 Attributes::addCategory(centralUnitVersion, "Märklin 6050");
@@ -54,7 +55,8 @@ m_interfaceItems.insertBefore(centralUnitVersion, notes);
 
 // Assign the numeric options and string labels as aliases
 Attributes::addValues(centralUnitVersion, options);
-Attributes::addAliases(centralUnitVersion, options, labels);
+Attributes::addAliases(centralUnitVersion, &options, &labels);
+
 
 }
 
