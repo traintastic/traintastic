@@ -199,10 +199,17 @@ void ObjectEditWidget::buildForm()
         if(!helpText.isEmpty())
         {
             QToolButton* infoBtn = new QToolButton(this);
-            infoBtn->setText("ⓘ");
-            infoBtn->setToolTip(helpText);
-            infoBtn->setAutoRaise(true);
-            infoBtn->setCursor(Qt::PointingHandCursor);
+infoBtn->setText("ℹ");  // Use cleaner Unicode
+infoBtn->setToolTip(helpText);
+infoBtn->setAutoRaise(true);
+infoBtn->setCursor(Qt::PointingHandCursor);
+
+QFont font("Segoe UI Symbol");
+font.setPointSizeF(font.pointSizeF() * 0.5);  // 50% smaller
+infoBtn->setFont(font);
+infoBtn->setStyleSheet("QToolButton { color: gray; border: none; padding: 0px; }");
+
+
 
             QHBoxLayout* labelLayout = new QHBoxLayout();
             labelLayout->setContentsMargins(0, 0, 0, 0);
