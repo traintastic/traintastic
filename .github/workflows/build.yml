@@ -619,22 +619,38 @@ jobs:
   release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    needs: [package-innosetup, build-server, build-client, build-data, build-manual]
+    needs: [package-innosetup]
     if: ${{ github.event.inputs.release == 'yes' }}
 
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download installer artifact
+        uses: actions/download-artifact@v4
         with:
-          path: artifacts/
+          name: package-innosetup
+          path: release/
+
+      - name: Download client .deb artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: traintastic-client-deb-*
+          merge-multiple: true
+          path: release/
+
+      - name: Download server .deb artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: traintastic-server-deb-*
+          merge-multiple: true
+          path: release/
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ github.run_number }}
-          name: "Release build ${{ github.run_number }}"
-          files: artifacts/**
+          tag_name: ${{ github.event.inputs.tag_name }}
+          name: "Installer Release ${{ github.event.inputs.tag_name }}"
+          body: ${{ github.event.inputs.changelog }}
+          files: release/**
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-     
