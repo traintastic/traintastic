@@ -61,17 +61,17 @@ This project is not affiliated with, endorsed by, or connected to Digitrax.
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/gfgit">
-            <img src="https://avatars.githubusercontent.com/u/42845724?v=4" width="100;" alt="gfgit"/>
-            <br />
-            <sub><b>Null</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/kamil00110">
             <img src="https://avatars.githubusercontent.com/u/68923965?v=4" width="100;" alt="kamil00110"/>
             <br />
             <sub><b>kamil00110</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/gfgit">
+            <img src="https://avatars.githubusercontent.com/u/42845724?v=4" width="100;" alt="gfgit"/>
+            <br />
+            <sub><b>Null</b></sub>
         </a>
     </td>
     <td align="center">
