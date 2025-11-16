@@ -35,21 +35,19 @@ Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
     57600,
     115200
     });
-    // --- New Tab: "Märklin 6050" ---
-    Attributes::addDisplayName(centralUnitVersion, "Central Unit Version");
-    Attributes::addVisible(centralUnitVersion, true);
-    Attributes::addEnabled(centralUnitVersion, !online);
-    Attributes::addCategory(centralUnitVersion, "Märklin 6050"); // Assign to custom tab
-
-    // Options for dropdown
-    std::vector<std::string> options = {
-        "6020/6021/6022/6023 with 6050",
-        "6223 with 6050",
-        "6027/6029/6030/6032"
-    };
-    Attributes::setValues(centralUnitVersion, options);
-    m_interfaceItems.insertBefore(centralUnitVersion, notes);
     
+    Property<std::string> centralUnitVersion;
+    Attributes::addCategory(centralUnitVersion, "Märklin 6050");
+    Attributes::addDisplayName(centralUnitVersion, "Central Unit Version");
+    Attributes::addEnabled(centralUnitVersion, true);
+    Attributes::addVisible(centralUnitVersion, true);
+    m_interfaceItems.insertBefore(centralUnitVersion, notes);
+    Attributes::addValues(centralUnitVersion, std::vector<std::string>{
+       "6020/6021/6022/6023 with 6050",
+       "6223 with 6050",
+       "6027/6029/6030/6032"
+   });
+
 }
 
 
