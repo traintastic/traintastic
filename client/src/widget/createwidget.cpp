@@ -169,12 +169,15 @@ QWidget* createWidget(Property& property, QWidget* parent)
             break;
     }
 
-    if (widget && property.hasAttribute(AttributeName::Help))
+    if(widget && property.hasAttribute(AttributeName::Help))
+{
+    QVariant helpVar = property.getAttribute(AttributeName::Help, QVariant());
+    if(helpVar.canConvert<QString>())
     {
-        // Get it as std::string_view or std::string, then convert
-        auto help = property.getAttribute<std::string_view>(AttributeName::Help);
-        widget->setToolTip(QString::fromUtf8(help.data(), static_cast<int>(help.size())));
+        widget->setToolTip(helpVar.toString());
     }
+}
+
 
 
     return widget;
