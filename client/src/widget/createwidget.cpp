@@ -46,6 +46,7 @@
 #include "../network/outputkeyboard.hpp"
 #include "../network/board.hpp"
 #include "../network/property.hpp"
+#include <QString>
 
 QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 {
