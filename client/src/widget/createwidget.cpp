@@ -47,6 +47,8 @@
 #include "../network/board.hpp"
 #include "../network/property.hpp"
 #include <QLabel>
+#include <QFormLayout>
+
 
 
 
@@ -191,22 +193,21 @@ QWidget* createWidget(Property& property, QWidget* parent)
 
         QLabel* label = nullptr;
 
-        if (widget->parent()) {
-    if (auto formLayout = qobject_cast<QFormLayout*>(widget->parent()->layout())) {
-
+        QWidget* parentWidget = qobject_cast<QWidget*>(widget->parent());
+if (parentWidget) {
+    if (auto formLayout = qobject_cast<QFormLayout*>(parentWidget->layout())) {
         for (int row = 0; row < formLayout->rowCount(); ++row) {
-            QWidget* fieldWidget = formLayout->itemAt(row, QFormLayout::FieldRole)
-                                        ->widget();
+            QWidget* fieldWidget = formLayout->itemAt(row, QFormLayout::FieldRole)->widget();
             if (fieldWidget == widget) {
-                // Found the row corresponding to our widget
-                label = qobject_cast<QLabel*>(
-                    formLayout->itemAt(row, QFormLayout::LabelRole)->widget()
-                );
+                QLabel* label = qobject_cast<QLabel*>(formLayout->itemAt(row, QFormLayout::LabelRole)->widget());
+                if (label)
+                    label->setToolTip(helpText);
                 break;
             }
         }
     }
 }
+
 if (label)
     label->setToolTip(helpText);
 
