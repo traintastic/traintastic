@@ -49,11 +49,12 @@ static const std::vector<std::string_view> labels = {
 
 Attributes::addCategory(centralUnitVersion, "Märklin 6050");
 Attributes::addDisplayName(centralUnitVersion, "Central Unit Version");
-    Attributes::addDescription(
+Attributes::addHelp(
     centralUnitVersion,
-    "Select the version of your Märklin Central Unit.\n"
-    "Some versions require different command timing."
+    "Select your Märklin Central Unit version.\n"
+    "Different models have different timing and feature support."
 );
+
 Attributes::addEnabled(centralUnitVersion, true);
 Attributes::addVisible(centralUnitVersion, true);
 m_interfaceItems.insertBefore(centralUnitVersion, notes);
