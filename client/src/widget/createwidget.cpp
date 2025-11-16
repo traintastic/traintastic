@@ -175,32 +175,34 @@ QWidget* createWidget(Property& property, QWidget* parent)
         {
             QString helpText = helpVar.toString();
 
-            // 1. Apply tooltip to the editor itself
-            widget->setToolTip(helpText);
+            /// Apply tooltip to editor
+widget->setToolTip(helpText);
 
-            // 2. Traverse parent widgets to find a QFormLayout
-            QWidget* current = widget->parentWidget();
-            while(current)
+// Try to find a QLabel ancestor
+QLabel* label = nullptr;
+
+// Traverse up to the parent of the editor to see if it's in a QFormLayout
+QWidget* current = widget;
+while(current && !label)
+{
+    if(QFormLayout* formLayout = qobject_cast<QFormLayout*>(current->layout()))
+    {
+        for(int row = 0; row < formLayout->rowCount(); ++row)
+        {
+            QWidget* fieldWidget = formLayout->itemAt(row, QFormLayout::FieldRole)->widget();
+            if(fieldWidget == widget)
             {
-                if(auto formLayout = qobject_cast<QFormLayout*>(current->layout()))
-                {
-                    for(int row = 0; row < formLayout->rowCount(); ++row)
-                    {
-                        QWidget* fieldWidget = formLayout->itemAt(row, QFormLayout::FieldRole)->widget();
-                        if(fieldWidget == widget)
-                        {
-                            // Found the label corresponding to this field
-                            if(QLabel* label = qobject_cast<QLabel*>(formLayout->itemAt(row, QFormLayout::LabelRole)->widget()))
-                            {
-                                label->setToolTip(helpText);
-                            }
-                            break;
-                        }
-                    }
-                    break; // stop after finding the form layout
-                }
-                current = current->parentWidget();
+                label = qobject_cast<QLabel*>(formLayout->itemAt(row, QFormLayout::LabelRole)->widget());
+                break;
             }
+        }
+    }
+    current = current->parentWidget();
+}
+
+if(label)
+    label->setToolTip(helpText);
+
         }
     }
 
