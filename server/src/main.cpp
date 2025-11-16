@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -96,12 +96,20 @@ int main(int argc, char* argv[])
   do
   {
     {
-      const auto settings = Settings::getPreStartSettings(dataDir);
-
       const auto localePath = getLocalePath();
       try
       {
         Locale::instance = std::make_unique<Locale>(localePath / "en-us.lang", std::make_unique<Locale>(localePath / "neutral.lang"));
+      }
+      catch(const std::exception& e)
+      {
+        std::cerr << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+      }
+
+      const auto settings = Settings::getPreStartSettings(dataDir);
+      try
+      {
         if(settings.language != "en-us")
         {
           Locale::instance = std::make_unique<Locale>((localePath / settings.language) += ".lang", std::move(Locale::instance));
