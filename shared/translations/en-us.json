@@ -1260,6 +1260,10 @@
         "definition": "Object not a table"
     },
     {
+        "term": "message:C1020",
+        "definition": "Loading settings failed: %1"
+    },
+    {
         "term": "message:C2001",
         "definition": "Address already used at #%1"
     },
@@ -1810,6 +1814,10 @@
     {
         "term": "message:W1003",
         "definition": "Reading world %1 failed (libarchive error %2: %3)"
+    },
+    {
+        "term": "message:W1004",
+        "definition": "Setting file empty or corrupt, using defaults"
     },
     {
         "term": "message:W2001",

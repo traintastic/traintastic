@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,12 +37,19 @@ Settings::PreStart Settings::getPreStartSettings(const std::filesystem::path& pa
   std::ifstream file(path / filename);
   if(file.is_open())
   {
-    json settings = json::parse(file);
-    PreStart preStart;
-    preStart.memoryLoggerSize = settings.value(Name::memoryLoggerSize, Default::memoryLoggerSize);
-    preStart.enableFileLogger = settings.value(Name::enableFileLogger, Default::enableFileLogger);
-    preStart.language = settings.value(Name::language, Default::language);
-    return preStart;
+    try
+    {
+      json settings = json::parse(file);
+      PreStart preStart;
+      preStart.memoryLoggerSize = settings.value(Name::memoryLoggerSize, Default::memoryLoggerSize);
+      preStart.enableFileLogger = settings.value(Name::enableFileLogger, Default::enableFileLogger);
+      preStart.language = settings.value(Name::language, Default::language);
+      return preStart;
+    }
+    catch(const std::exception& e)
+    {
+      Log::log(classId, LogMessage::C1020_LOADING_SETTINGS_FAILED_X, e.what());
+    }
   }
   return {};
 }
@@ -99,16 +106,24 @@ void Settings::loadFromFile()
   std::ifstream file(m_filename);
   if(file.is_open())
   {
-    json settings = json::parse(file);
-    for(auto& [name, value] : settings.items())
+    try
     {
-      AbstractProperty* property = getProperty(name);
-      if(property)
-        property->loadJSON(value);
-      else
-        Log::log(*this, LogMessage::W1002_SETTING_X_DOESNT_EXIST, name);
+      json settings = json::parse(file);
+      for(auto& [name, value] : settings.items())
+      {
+        AbstractProperty* property = getProperty(name);
+        if(property)
+          property->loadJSON(value);
+        else
+          Log::log(*this, LogMessage::W1002_SETTING_X_DOESNT_EXIST, name);
+      }
+      Log::log(*this, LogMessage::N1008_LOADED_SETTINGS);
     }
-    Log::log(*this, LogMessage::N1008_LOADED_SETTINGS);
+    catch(const std::exception& e)
+    {
+      Log::log(*this, LogMessage::W1004_SETTING_FILE_EMPTY_OR_CORRUPT_USING_DEFAULTS);
+      saveToFile();
+    }
   }
   else
   {
