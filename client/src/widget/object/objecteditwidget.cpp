@@ -71,178 +71,144 @@ ObjectEditWidget::ObjectEditWidget(ObjectProperty& property, QWidget* parent)
 
 void ObjectEditWidget::buildForm()
 {
-  setObjectWindowTitle();
-  setWindowIcon(Theme::getIconForClassId(m_object->classId()));
+    setObjectWindowTitle();
+    setWindowIcon(Theme::getIconForClassId(m_object->classId()));
 
-  if(QWidget* widget = createWidgetIfCustom(m_object))
-  {
-    QVBoxLayout* l = new QVBoxLayout();
-    l->setContentsMargins(0, 0, 0, 0);
-    l->addWidget(widget);
-    setLayout(l);
-  }
-  else
-  {
+    if(QWidget* customWidget = createWidgetIfCustom(m_object))
+    {
+        QVBoxLayout* l = new QVBoxLayout();
+        l->setContentsMargins(0, 0, 0, 0);
+        l->addWidget(customWidget);
+        setLayout(l);
+        return;
+    }
+
     QList<QWidget*> tabs;
     QMap<QString, QWidget*> categoryTabs;
 
     for(const QString& name : m_object->interfaceItems().names())
     {
-      if(InterfaceItem* item = m_object->getInterfaceItem(name))
-      {
-        if(!item->getAttributeBool(AttributeName::ObjectEditor, true))
-          continue;
-
-        QWidget* w = nullptr;
-
-        if(AbstractProperty* baseProperty = dynamic_cast<AbstractProperty*>(item))
+        if(InterfaceItem* item = m_object->getInterfaceItem(name))
         {
-          if(baseProperty->type() == ValueType::Object)
-          {
-            ObjectProperty* property = static_cast<ObjectProperty*>(baseProperty);
-            if(property->name() == "decoder")
+            if(!item->getAttributeBool(AttributeName::ObjectEditor, true))
+                continue;
+
+            QWidget* editorWidget = nullptr;
+
+            if(AbstractProperty* baseProperty = dynamic_cast<AbstractProperty*>(item))
             {
-              tabs.append(new DecoderWidget(*property, this));
-              tabs.append(new DecoderFunctionsWidget(*property, this));
-              continue;
+                if(baseProperty->type() == ValueType::Object)
+                {
+                    ObjectProperty* property = static_cast<ObjectProperty*>(baseProperty);
+                    if(property->name() == "decoder")
+                    {
+                        tabs.append(new DecoderWidget(*property, this));
+                        tabs.append(new DecoderFunctionsWidget(*property, this));
+                        continue;
+                    }
+                    else if(contains(baseProperty->flags(), PropertyFlags::SubObject))
+                    {
+                        tabs.append(new ObjectEditWidget(*property, this));
+                        continue;
+                    }
+                    else if(property->name() == "interface")
+                    {
+                        editorWidget = new ObjectPropertyComboBox(*property, this);
+                    }
+                    else
+                    {
+                        editorWidget = new PropertyObjectEdit(*property, this);
+                    }
+                }
+                else
+                {
+                    Property* property = static_cast<Property*>(baseProperty);
+                    if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
+                    {
+                        if(unitProperty->hasAttribute(AttributeName::Values))
+                            editorWidget = new UnitPropertyComboBox(*unitProperty, this);
+                        else
+                            editorWidget = new UnitPropertyEdit(*unitProperty, this);
+                    }
+                    else if(!property->isWritable())
+                        editorWidget = new PropertyValueLabel(*property, this);
+                    else if(property->type() == ValueType::Boolean)
+                        editorWidget = new PropertyCheckBox(*property, this);
+                    else
+                        editorWidget = createWidget(*property, this);
+                }
             }
-            else if(contains(baseProperty->flags(), PropertyFlags::SubObject))
+            else if(Method* method = dynamic_cast<Method*>(item))
             {
-              tabs.append(new ObjectEditWidget(*property, this));
-              continue;
+                editorWidget = new MethodPushButton(*method, this);
             }
-            else if(property->name() == "interface")
+
+            const QString category = item->getAttributeString(AttributeName::Category, "category:general");
+            QWidget* tabPage = nullptr;
+
+            if(!categoryTabs.contains(category))
             {
-              w = new ObjectPropertyComboBox(*property, this);
+                tabPage = new QWidget(this);
+                tabPage->setWindowTitle(Locale::tr(category));
+                tabPage->setLayout(new QFormLayout());
+                tabs.append(tabPage);
+                categoryTabs.insert(category, tabPage);
+            }
+            else
+                tabPage = categoryTabs[category];
+
+            // Create label + optional info button
+            InterfaceItemNameLabel* label = new InterfaceItemNameLabel(*item, this);
+            const QString helpText = item->getAttributeString(AttributeName::Help, QString());
+
+            if(!helpText.isEmpty())
+            {
+                label->setToolTip(helpText);
+
+                if(editorWidget)
+                    editorWidget->setToolTip(helpText);
+
+                QToolButton* infoButton = new QToolButton(this);
+                infoButton->setText(QString::fromUtf8("ⓘ"));
+                infoButton->setToolTip(helpText);
+                infoButton->setStyleSheet("QToolButton { border: none; padding: 0px; }");
+                infoButton->setCursor(Qt::WhatsThisCursor);
+
+                QHBoxLayout* labelLayout = new QHBoxLayout();
+                labelLayout->setContentsMargins(0, 0, 0, 0);
+                labelLayout->addWidget(label);
+                labelLayout->addWidget(infoButton, 0, Qt::AlignRight);
+
+                QWidget* labelContainer = new QWidget(this);
+                labelContainer->setLayout(labelLayout);
+
+                static_cast<QFormLayout*>(tabPage->layout())->addRow(labelContainer, editorWidget);
             }
             else
             {
-              w = new PropertyObjectEdit(*property, this);
+                static_cast<QFormLayout*>(tabPage->layout())->addRow(label, editorWidget);
             }
-          }
-          else
-          {
-            Property* property = static_cast<Property*>(baseProperty);
-            if(UnitProperty* unitProperty = dynamic_cast<UnitProperty*>(property))
-            {
-              if(unitProperty->hasAttribute(AttributeName::Values))
-              {
-                w = new UnitPropertyComboBox(*unitProperty, this);
-              }
-              else
-              {
-                w = new UnitPropertyEdit(*unitProperty, this);
-              }
-            }
-            else if(!property->isWritable())
-              w = new PropertyValueLabel(*property, this);
-            else if(property->type() == ValueType::Boolean)
-              w = new PropertyCheckBox(*property, this);
-            else if(property->type() == ValueType::Integer)
-            {
-              w = createWidget(*property, this);
-            }
-            else if(property->type() == ValueType::Float)
-              w = createWidget(*property, this);
-            else if(property->type() == ValueType::String)
-            {
-              if(property->name() == "notes")
-              {
-                PropertyTextEdit* edit = new PropertyTextEdit(*property, this);
-                edit->setWindowTitle(property->displayName());
-                edit->setPlaceholderText(property->displayName());
-                tabs.append(edit);
-                continue;
-              }
-              else if(property->name() == "code")
-              {
-                PropertyTextEdit* edit = new PropertyTextEdit(*property, this);
-                edit->setWindowTitle(property->displayName());
-                edit->setPlaceholderText(property->displayName());
-                tabs.append(edit);
-                continue;
-              }
-              else
-                w = createWidget(*property, this);
-            }
-            else if(property->type() == ValueType::Enum)
-            {
-              if(property->enumName() == EnumName<Direction>::value)
-                w = new PropertyDirectionControl(*property, this);
-              else
-                w = createWidget(*property, this);
-            }
-          }
         }
-        else if(Method* method = dynamic_cast<Method*>(item))
-        {
-          w = new MethodPushButton(*method, this);
-        }
+    }
 
-        // category tab creation, same as before
-        const QString category = item->getAttributeString(AttributeName::Category, "category:general");
-        QWidget* tabWidget;
-        if(!categoryTabs.contains(category))
-        {
-          tabWidget = new QWidget(this);
-          tabWidget->setWindowTitle(Locale::tr(category));
-          tabWidget->setLayout(new QFormLayout());
-          tabs.append(tabWidget);
-          categoryTabs.insert(category, tabWidget);
-        }
-        else
-          tabWidget = categoryTabs[category];
-
-       // ----- NEW: create label pointer, attach help tooltip to label and editor -----
-InterfaceItemNameLabel* label = new InterfaceItemNameLabel(*item, this);
-
-// If item has a Help attribute, apply it to both label and editor widget (if present).
-const QString helpText = item->getAttributeString(AttributeName::Help, QString());
-if(!helpText.isEmpty())
-{
-    label->setToolTip(helpText);
-
-    if(w)
-        w->setToolTip(helpText);
-
-    // Optional: add an "info" button (ⓘ) next to the label that shows the help
-    QToolButton* infoButton = new QToolButton(this);
-    infoButton->setText(QString::fromUtf8("ⓘ"));
-    infoButton->setToolTip(helpText);
-    infoButton->setStyleSheet("QToolButton { border: none; padding: 0px; }");
-    infoButton->setCursor(Qt::WhatsThisCursor);
-
-    QHBoxLayout* labelLayout = new QHBoxLayout();
-    labelLayout->setContentsMargins(0, 0, 0, 0);
-    labelLayout->addWidget(label);
-    labelLayout->addWidget(infoButton, 0, Qt::AlignRight);
-
-    QWidget* labelContainer = new QWidget(this);   // renamed from labelWidgetContainer
-    labelContainer->setLayout(labelLayout);
-
-    static_cast<QFormLayout*>(tabWidget->layout())->addRow(labelContainer, w);
-}
-else
-{
-    static_cast<QFormLayout*>(tabWidget->layout())->addRow(label, w);
-}
-
-
+    // Final layout
     if(tabs.count() > 1)
     {
-      QTabWidget* tabWidget = new QTabWidget(this);
-      for(auto* tab : tabs)
-        tabWidget->addTab(tab, tab->windowTitle());
-      QVBoxLayout* l = new QVBoxLayout();
-      l->setContentsMargins(0, 0, 0, 0);
-      l->addWidget(tabWidget);
-      setLayout(l);
+        QTabWidget* mainTabWidget = new QTabWidget(this);
+        for(auto* t : tabs)
+            mainTabWidget->addTab(t, t->windowTitle());
+
+        QVBoxLayout* l = new QVBoxLayout();
+        l->setContentsMargins(0, 0, 0, 0);
+        l->addWidget(mainTabWidget);
+        setLayout(l);
     }
     else if(tabs.count() == 1)
     {
-      QWidget* w = tabs.first();
-      setLayout(w->layout());
-      delete w;
+        QWidget* onlyTab = tabs.first();
+        setLayout(onlyTab->layout());
+        delete onlyTab;
     }
-  }
+}
+
 }
