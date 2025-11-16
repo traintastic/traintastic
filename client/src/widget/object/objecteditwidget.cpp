@@ -192,45 +192,45 @@ void ObjectEditWidget::buildForm()
         else
           tabWidget = categoryTabs[category];
 
-        // ---------- NEW: Add ⓘ info button if Help attribute exists ----------
         InterfaceItemNameLabel* label = new InterfaceItemNameLabel(*item, this);
-        const QString helpText = item->getAttributeString(AttributeName::Help, QString());
 
-        if(!helpText.isEmpty())
-        {
-           QToolButton* infoBtn = new QToolButton(this);
-infoBtn->setText("ⓘ");  // circled i
-infoBtn->setToolTip(helpText);
-infoBtn->setAutoRaise(true);
-infoBtn->setCursor(Qt::PointingHandCursor);
+// Check if Help text exists
+const QString helpText = item->getAttributeString(AttributeName::Help, QString());
+if (!helpText.isEmpty())
+{
+    QToolButton* infoBtn = new QToolButton(this);
+    infoBtn->setText("ⓘ");  // circled i
+    infoBtn->setToolTip(helpText);
+    infoBtn->setAutoRaise(true);
+    infoBtn->setCursor(Qt::PointingHandCursor);
 
-// Use a font that has good circled-i rendering
-QFont font("Segoe UI Symbol"); // or "Arial Unicode MS" / "Noto Sans Symbols"
-font.setPointSizeF(font.pointSizeF() * 0.5);  // 50% smaller
-infoBtn->setFont(font);
+    QFont font("Segoe UI Symbol");
+    font.setPointSizeF(font.pointSizeF() * 0.5);  // 50% smaller
+    infoBtn->setFont(font);
+    infoBtn->setStyleSheet("QToolButton { color: gray; border: none; padding: 0px; }");
 
-// Make it gray and remove borders/padding
-infoBtn->setStyleSheet("QToolButton { color: gray; border: none; padding: 0px; }");
+    // Horizontal layout for label + info
+    QHBoxLayout* labelLayout = new QHBoxLayout();
+    labelLayout->setContentsMargins(-4, -2, 0, 0); // negative margins to nudge left & up
+    labelLayout->setSpacing(2); // small spacing between icon and label
+    labelLayout->addWidget(infoBtn);
+    labelLayout->addWidget(label);
+    labelLayout->addStretch();
 
-            QHBoxLayout* labelLayout = new QHBoxLayout();
-            labelLayout->setContentsMargins(0, 0, 0, 0);
-            labelLayout->addWidget(label);
-            labelLayout->addWidget(infoBtn);
-            labelLayout->addStretch();
+    QWidget* labelContainer = new QWidget(this);
+    labelContainer->setLayout(labelLayout);
 
-            QWidget* labelContainer = new QWidget(this);
-            labelContainer->setLayout(labelLayout);
+    // Optional: also set tooltip for the editor widget
+    if (w)
+        w->setToolTip(helpText);
 
-            if(w)
-                w->setToolTip(helpText);
+    static_cast<QFormLayout*>(tabWidget->layout())->addRow(labelContainer, w);
+}
+else
+{
+    static_cast<QFormLayout*>(tabWidget->layout())->addRow(label, w);
+}
 
-            static_cast<QFormLayout*>(tabWidget->layout())->addRow(labelContainer, w);
-        }
-        else
-        {
-            static_cast<QFormLayout*>(tabWidget->layout())->addRow(label, w);
-        }
-        // ----------------------------------------------------------------------
       }
     }
 
