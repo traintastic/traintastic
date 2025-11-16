@@ -136,45 +136,35 @@ QWidget* createWidget(Property& property, QWidget* parent)
 {
     QWidget* widget = nullptr;
 
-    // 1. Create the appropriate editor widget
     switch(property.type())
     {
         case ValueType::Boolean:
             widget = new PropertyCheckBox(property, parent);
             break;
-
         case ValueType::Enum:
             if(property.enumName() == "pair_output_action")
                 widget = new PropertyPairOutputAction(property, parent);
             else
                 widget = new PropertyComboBox(property, parent);
             break;
-
         case ValueType::Integer:
             if(property.hasAttribute(AttributeName::Values) &&
                !property.hasAttribute(AttributeName::Min) &&
                !property.hasAttribute(AttributeName::Max))
-            {
                 widget = new PropertyComboBox(property, parent);
-            }
             else
                 widget = new PropertySpinBox(property, parent);
             break;
-
         case ValueType::Float:
             widget = new PropertyDoubleSpinBox(property, parent);
             break;
-
         case ValueType::String:
             if(property.hasAttribute(AttributeName::Values))
                 widget = new PropertyComboBox(property, parent);
             else
                 widget = new PropertyLineEdit(property, parent);
             break;
-
-        case ValueType::Object:
-        case ValueType::Set:
-        case ValueType::Invalid:
+        default:
             break;
     }
 
@@ -185,52 +175,10 @@ QWidget* createWidget(Property& property, QWidget* parent)
         {
             QString helpText = helpVar.toString();
 
-            // Apply to the editor itself
+            // 1. Apply tooltip to the editor itself
             widget->setToolTip(helpText);
 
-            // Try to apply tooltip to the label, if available via custom property widget
-            if(auto* comboBox = dynamic_cast<PropertyComboBox*>(widget))
-            {
-                if(QLabel* label = comboBox->label())
-                {
-                    label->setToolTip(helpText);
-                    return widget; // done
-                }
-            }
-            else if(auto* checkBox = dynamic_cast<PropertyCheckBox*>(widget))
-            {
-                if(QLabel* label = checkBox->label())
-                {
-                    label->setToolTip(helpText);
-                    return widget;
-                }
-            }
-            else if(auto* spinBox = dynamic_cast<PropertySpinBox*>(widget))
-            {
-                if(QLabel* label = spinBox->label())
-                {
-                    label->setToolTip(helpText);
-                    return widget;
-                }
-            }
-            else if(auto* doubleSpin = dynamic_cast<PropertyDoubleSpinBox*>(widget))
-            {
-                if(QLabel* label = doubleSpin->label())
-                {
-                    label->setToolTip(helpText);
-                    return widget;
-                }
-            }
-            else if(auto* lineEdit = dynamic_cast<PropertyLineEdit*>(widget))
-            {
-                if(QLabel* label = lineEdit->label())
-                {
-                    label->setToolTip(helpText);
-                    return widget;
-                }
-            }
-
-            // Fallback: try to traverse QFormLayout if present
+            // 2. Traverse parent widgets to find a QFormLayout
             QWidget* current = widget->parentWidget();
             while(current)
             {
@@ -241,6 +189,7 @@ QWidget* createWidget(Property& property, QWidget* parent)
                         QWidget* fieldWidget = formLayout->itemAt(row, QFormLayout::FieldRole)->widget();
                         if(fieldWidget == widget)
                         {
+                            // Found the label corresponding to this field
                             if(QLabel* label = qobject_cast<QLabel*>(formLayout->itemAt(row, QFormLayout::LabelRole)->widget()))
                             {
                                 label->setToolTip(helpText);
@@ -248,7 +197,7 @@ QWidget* createWidget(Property& property, QWidget* parent)
                             break;
                         }
                     }
-                    break; // found the form layout
+                    break; // stop after finding the form layout
                 }
                 current = current->parentWidget();
             }
@@ -257,5 +206,3 @@ QWidget* createWidget(Property& property, QWidget* parent)
 
     return widget;
 }
-
-
