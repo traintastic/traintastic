@@ -198,18 +198,19 @@ void ObjectEditWidget::buildForm()
 
         if(!helpText.isEmpty())
         {
-            QToolButton* infoBtn = new QToolButton(this);
-infoBtn->setText("ℹ");  // Use cleaner Unicode
+           QToolButton* infoBtn = new QToolButton(this);
+infoBtn->setText("ⓘ");  // circled i
 infoBtn->setToolTip(helpText);
 infoBtn->setAutoRaise(true);
 infoBtn->setCursor(Qt::PointingHandCursor);
 
-QFont font("Segoe UI Symbol");
+// Use a font that has good circled-i rendering
+QFont font("Segoe UI Symbol"); // or "Arial Unicode MS" / "Noto Sans Symbols"
 font.setPointSizeF(font.pointSizeF() * 0.5);  // 50% smaller
 infoBtn->setFont(font);
+
+// Make it gray and remove borders/padding
 infoBtn->setStyleSheet("QToolButton { color: gray; border: none; padding: 0px; }");
-
-
 
             QHBoxLayout* labelLayout = new QHBoxLayout();
             labelLayout->setContentsMargins(0, 0, 0, 0);
