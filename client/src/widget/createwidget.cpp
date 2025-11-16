@@ -146,8 +146,12 @@ QWidget* createWidget(Property& property, QWidget* parent)
             break;
 
         case ValueType::Integer:
-            if(property.hasAttribute(AttributeName::Values) && !property.hasAttribute(AttributeName::Min) && !property.hasAttribute(AttributeName::Max))
+            if(property.hasAttribute(AttributeName::Values) &&
+               !property.hasAttribute(AttributeName::Min) &&
+               !property.hasAttribute(AttributeName::Max))
+            {
                 widget = new PropertyComboBox(property, parent);
+            }
             else
                 widget = new PropertySpinBox(property, parent);
             break;
@@ -169,26 +173,24 @@ QWidget* createWidget(Property& property, QWidget* parent)
             break;
     }
 
+    // --------------------------------------------------------------------
+    // Tooltip (Help attribute)
+    // --------------------------------------------------------------------
     if(widget && property.hasAttribute(AttributeName::Help))
-{
-    QVariant helpVar = property.getAttribute(AttributeName::Help, QVariant());
-    if(helpVar.canConvert<QString>())
     {
-        widget->setToolTip(helpVar.toString());
+        QVariant helpVar = property.getAttribute(AttributeName::Help, QVariant());
+
+        if(helpVar.isValid() && !helpVar.toString().isEmpty())
+        {
+            // Some widgets wrap internal controls, so resolve internal target
+            QWidget *target = widget->findChild<QWidget*>();
+            if (!target)
+                target = widget;
+
+            target->setToolTip(helpVar.toString());
+        }
     }
-}
-QWidget *target = widget->findChild<QWidget*>();
-if (!target) {
-    target = widget; // fallback
-}
-
-// apply tooltip
-if (helpVar.isValid() && !helpVar.toString().isEmpty()) {
-    target->setToolTip(helpVar.toString());
-}
-
-
-
+    // --------------------------------------------------------------------
 
     return widget;
 }
