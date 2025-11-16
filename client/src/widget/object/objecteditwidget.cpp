@@ -24,6 +24,7 @@
 
 #include <QFormLayout>
 #include <QVBoxLayout>
+#include <QTabWidget>
 #include "../../network/object.hpp"
 #include "../../network/property.hpp"
 #include "../../network/objectproperty.hpp"
@@ -176,6 +177,7 @@ void ObjectEditWidget::buildForm()
           w = new MethodPushButton(*method, this);
         }
 
+        // category tab creation, same as before
         const QString category = item->getAttributeString(AttributeName::Category, "category:general");
         QWidget* tabWidget;
         if(!categoryTabs.contains(category))
@@ -189,7 +191,21 @@ void ObjectEditWidget::buildForm()
         else
           tabWidget = categoryTabs[category];
 
-        static_cast<QFormLayout*>(tabWidget->layout())->addRow(new InterfaceItemNameLabel(*item, this), w);
+        // ----- NEW: create label pointer, attach help tooltip to label and editor -----
+        InterfaceItemNameLabel* label = new InterfaceItemNameLabel(*item, this);
+
+        // If item has a Help attribute, apply it to both label and editor widget (if present).
+        const QString helpText = item->getAttributeString(AttributeName::Help, QString());
+        if(!helpText.isEmpty())
+        {
+          label->setToolTip(helpText);
+          if(w)
+            w->setToolTip(helpText);
+        }
+        // ---------------------------------------------------------------------------
+
+        // finally add the row using the explicit label pointer
+        static_cast<QFormLayout*>(tabWidget->layout())->addRow(label, w);
       }
     }
 
