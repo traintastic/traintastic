@@ -210,5 +210,3 @@ void ObjectEditWidget::buildForm()
         delete onlyTab;
     }
 }
-
-}
