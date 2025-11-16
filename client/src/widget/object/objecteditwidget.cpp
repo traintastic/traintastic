@@ -198,29 +198,30 @@ void ObjectEditWidget::buildForm()
 const QString helpText = item->getAttributeString(AttributeName::Help, QString());
 if (!helpText.isEmpty())
 {
+    // Create info button
     QToolButton* infoBtn = new QToolButton(this);
-    infoBtn->setText("ⓘ");  // circled i
+    infoBtn->setText("ⓘ");
     infoBtn->setToolTip(helpText);
     infoBtn->setAutoRaise(true);
     infoBtn->setCursor(Qt::PointingHandCursor);
 
-    QFont font("Segoe UI Symbol");
-    font.setPointSizeF(font.pointSizeF() * 0.5);  // 50% smaller
+    QFont font = infoBtn->font();
+    font.setPointSizeF(font.pointSizeF() * 0.5); // 50% smaller
     infoBtn->setFont(font);
     infoBtn->setStyleSheet("QToolButton { color: gray; border: none; padding: 0px; }");
 
-    // Horizontal layout for label + info
+    // Layout for label + info button
     QHBoxLayout* labelLayout = new QHBoxLayout();
-    labelLayout->setContentsMargins(-4, -2, 0, 0); // negative margins to nudge left & up
-    labelLayout->setSpacing(2); // small spacing between icon and label
-    labelLayout->addWidget(infoBtn);
+    labelLayout->setContentsMargins(0, 0, 0, 0);
+    labelLayout->setSpacing(2);
     labelLayout->addWidget(label);
+    labelLayout->addWidget(infoBtn);
     labelLayout->addStretch();
 
     QWidget* labelContainer = new QWidget(this);
     labelContainer->setLayout(labelLayout);
 
-    // Optional: also set tooltip for the editor widget
+    // Set tooltip for editor as well
     if (w)
         w->setToolTip(helpText);
 
