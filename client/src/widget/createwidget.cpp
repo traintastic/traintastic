@@ -180,17 +180,12 @@ QWidget* createWidget(Property& property, QWidget* parent)
     if(widget && property.hasAttribute(AttributeName::Help))
     {
         QString helpText = property.getAttribute(AttributeName::Help, QString()).toString();
-
-        // 1. Tooltip on the editor widget itself
         widget->setToolTip(helpText);
-
-        // 2. Find the label in the parent QFormLayout
         QWidget* current = widget->parentWidget();
         while(current)
         {
             if(auto* layout = qobject_cast<QFormLayout*>(current->layout()))
             {
-                // Iterate rows
                 for(int row=0; row<layout->rowCount(); ++row)
                 {
                     QWidget* fieldWidget = layout->itemAt(row, QFormLayout::FieldRole)->widget();
@@ -199,12 +194,12 @@ QWidget* createWidget(Property& property, QWidget* parent)
                         if(QWidget* labelWidget = layout->itemAt(row, QFormLayout::LabelRole)->widget())
                         {
                             if(QLabel* label = qobject_cast<QLabel*>(labelWidget))
-                                label->setToolTip(helpText);  // <-- This attaches tooltip to display name
+                                label->setToolTip(helpText);
                         }
                         break;
                     }
                 }
-                break; // found the QFormLayout, stop traversing
+                break;
             }
             current = current->parentWidget();
         }
