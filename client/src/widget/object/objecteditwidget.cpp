@@ -193,36 +193,8 @@ void ObjectEditWidget::buildForm()
           tabWidget = categoryTabs[category];
 
         InterfaceItemNameLabel* label = new InterfaceItemNameLabel(*item, this);
-        const QString helpText = item->helpText();
-        if (!helpText.isEmpty())
-        {
-            QToolButton* infoBtn = new QToolButton(this);
-            infoBtn->setIcon(Theme::getIcon("help")); // ICON
-            infoBtn->setToolTip(helpText);
-            infoBtn->setAutoRaise(true);
-            infoBtn->setCursor(Qt::PointingHandCursor);
-            infoBtn->setIconSize(QSize(8,8)); // SIZE
+        static_cast<QFormLayout*>(tabWidget->layout())->addRow(label, w);
 
-            QHBoxLayout* labelLayout = new QHBoxLayout();
-            labelLayout->setContentsMargins(-2, 0, 0, 0); //OFFSET
-            labelLayout->setSpacing(2);
-            labelLayout->addWidget(label);
-            labelLayout->addWidget(infoBtn, 0, Qt::AlignTop);
-            labelLayout->addStretch();
-
-            QWidget* labelContainer = new QWidget(this);
-            labelContainer->setLayout(labelLayout);
-
-            if (w)
-                w->setToolTip(helpText);
-
-            static_cast<QFormLayout*>(tabWidget->layout())->addRow(labelContainer, w);
-
-            }
-            else
-            {
-                static_cast<QFormLayout*>(tabWidget->layout())->addRow(label, w);
-            }
       }
     }
 
