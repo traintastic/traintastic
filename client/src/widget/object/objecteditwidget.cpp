@@ -208,7 +208,7 @@ infoBtn->setCursor(Qt::PointingHandCursor);
 
 
     QHBoxLayout* labelLayout = new QHBoxLayout();
-labelLayout->setContentsMargins(0, 0, 0, 0);
+labelLayout->setContentsMargins(-2, 0, 0, 0);
 labelLayout->setSpacing(2);
 labelLayout->addWidget(label);
 labelLayout->addWidget(infoBtn, 0, Qt::AlignTop); // top aligned with label
