@@ -198,34 +198,30 @@ void ObjectEditWidget::buildForm()
 const QString helpText = item->helpText();
 if (!helpText.isEmpty())
 {
-    // Create info button
     QToolButton* infoBtn = new QToolButton(this);
-    infoBtn->setText("ⓘ");
-    infoBtn->setToolTip(helpText);
-    infoBtn->setAutoRaise(true);
-    infoBtn->setCursor(Qt::PointingHandCursor);
+infoBtn->setIcon(Theme::getIcon("help")); // gets a portable help icon
+infoBtn->setToolTip(helpText);
+infoBtn->setAutoRaise(true);
+infoBtn->setCursor(Qt::PointingHandCursor);
+  infoBtn->setIconSize(QSize(12,12)); // 50% smaller or adjust as needed
 
-    QFont font = infoBtn->font();
-    font.setPointSizeF(font.pointSizeF() * 0.5); // 50% smaller
-    infoBtn->setFont(font);
-    infoBtn->setStyleSheet("QToolButton { color: #474747; border: none; padding: 0px; }"); // slightly more gray
 
-    // Horizontal layout: label + info button
+
     QHBoxLayout* labelLayout = new QHBoxLayout();
-    labelLayout->setContentsMargins(0, 0, 0, 0);
-    labelLayout->setSpacing(2); // small spacing
-    labelLayout->addWidget(label);
-    labelLayout->addWidget(infoBtn, 0, Qt::AlignTop); // top aligned with label
-    labelLayout->addStretch(); // push everything left
+labelLayout->setContentsMargins(0, 0, 0, 0);
+labelLayout->setSpacing(2);
+labelLayout->addWidget(label);
+labelLayout->addWidget(infoBtn, 0, Qt::AlignTop); // top aligned with label
+labelLayout->addStretch();
 
-    QWidget* labelContainer = new QWidget(this);
-    labelContainer->setLayout(labelLayout);
+QWidget* labelContainer = new QWidget(this);
+labelContainer->setLayout(labelLayout);
 
-    // Optional: also set tooltip for the editor widget
-    if (w)
-        w->setToolTip(helpText);
+if (w)
+    w->setToolTip(helpText);
 
-    static_cast<QFormLayout*>(tabWidget->layout())->addRow(labelContainer, w);
+static_cast<QFormLayout*>(tabWidget->layout())->addRow(labelContainer, w);
+
 }
 else
 {
