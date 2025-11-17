@@ -203,7 +203,7 @@ infoBtn->setIcon(Theme::getIcon("help")); // gets a portable help icon
 infoBtn->setToolTip(helpText);
 infoBtn->setAutoRaise(true);
 infoBtn->setCursor(Qt::PointingHandCursor);
-  infoBtn->setIconSize(QSize(12,12)); // 50% smaller or adjust as needed
+  infoBtn->setIconSize(QSize(8,8)); // 50% smaller or adjust as needed
 
 
 
