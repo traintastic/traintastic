@@ -23,17 +23,25 @@
 #ifndef TRAINTASTIC_CLIENT_WIDGET_INTERFACEITEMNAMELABEL_HPP
 #define TRAINTASTIC_CLIENT_WIDGET_INTERFACEITEMNAMELABEL_HPP
 
+#include <QWidget>
 #include <QLabel>
+#include <QToolButton>
+#include <QHBoxLayout>
 
 class InterfaceItem;
 
-class InterfaceItemNameLabel : public QLabel
+class InterfaceItemNameLabel : public QWidget
 {
-  protected:
-    InterfaceItem& m_item;
+    Q_OBJECT
 
-  public:
+protected:
+    InterfaceItem& m_item;
+    QLabel* m_label;
+    QToolButton* m_helpBtn;
+
+public:
     InterfaceItemNameLabel(InterfaceItem& item, QWidget* parent = nullptr);
 };
 
 #endif
+
