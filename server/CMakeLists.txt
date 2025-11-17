@@ -139,8 +139,6 @@ file(GLOB SOURCES
   "src/hardware/protocol/marklincan/iohandler/*.cpp"
   "src/hardware/protocol/marklincan/message/*.hpp"
   "src/hardware/protocol/marklincan/message/*.cpp"
-  "src/hardware/protocol/Marklin6050Interface/*.hpp"
-  "src/hardware/protocol/Marklin6050Interface/*.cpp"
   "src/hardware/protocol/traintasticdiy/*.hpp"
   "src/hardware/protocol/traintasticdiy/*.cpp"
   "src/hardware/protocol/traintasticdiy/iohandler/*.hpp"
