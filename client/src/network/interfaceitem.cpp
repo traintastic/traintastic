@@ -52,14 +52,29 @@ QString InterfaceItem::displayName() const
 QString InterfaceItem::helpText() const
 {
     QString id;
-    if(QVariant attr = getAttribute(AttributeName::Help, QVariant()); attr.isValid())
+    if (QVariant attr = getAttribute(AttributeName::Help, QVariant()); attr.isValid())
+    {
         id = attr.toString();
+    }
     else
-        return QString(); // or return id = QString(object().classId()).append(':').append(name()).append(".help");
-    return Locale::tr(id);
+    {
+        if (QVariant displayAttr = getAttribute(AttributeName::DisplayName, QVariant()); displayAttr.isValid())
+        {
+            id = displayAttr.toString() + "/help";
+        }
+        else
+        {
+            id = QString(object().classId())
+                     + ":" + name()
+                     + "/help";
+        }
+    }
+    QString translated = Locale::tr(id);
+    if (translated == id)
+        return QString();  
+
+    return translated;
 }
-
-
 bool InterfaceItem::hasAttribute(AttributeName name) const
 {
   return m_attributes.contains(name);
