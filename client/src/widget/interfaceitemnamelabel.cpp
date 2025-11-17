@@ -22,28 +22,51 @@
 
 #include "interfaceitemnamelabel.hpp"
 #include "../network/interfaceitem.hpp"
+#include "../theme/theme.hpp"
 
-InterfaceItemNameLabel::InterfaceItemNameLabel(InterfaceItem& item, QWidget* parent) :
-  QLabel(parent),
-  m_item{item}
+InterfaceItemNameLabel::InterfaceItemNameLabel(InterfaceItem& item, QWidget* parent)
+    : QWidget(parent), m_item(item)
 {
-  setVisible(m_item.getAttributeBool(AttributeName::Visible, true));
-  setText(m_item.displayName());
-  connect(&m_item, &InterfaceItem::attributeChanged, this,
-    [this](AttributeName name, const QVariant& value)
+    m_label = new QLabel(m_item.displayName(), this);
+    m_label->setVisible(m_item.getAttributeBool(AttributeName::Visible, true));
+
+    QHBoxLayout* layout = new QHBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(2);
+    layout->addWidget(m_label);
+
+    const QString help = m_item.helpText();
+    if (!help.isEmpty())
     {
-      switch(name)
-      {
-        case AttributeName::Visible:
-          setVisible(value.toBool());
-          break;
+        m_helpBtn = new QToolButton(this);
+        m_helpBtn->setIcon(Theme::getIcon("help"));   // portable icon
+        m_helpBtn->setToolTip(help);
+        m_helpBtn->setAutoRaise(true);
+        m_helpBtn->setCursor(Qt::PointingHandCursor);
+        m_helpBtn->setIconSize(QSize(12,12));          // small
 
-        case AttributeName::DisplayName:
-          setText(m_item.displayName());
-          break;
+        layout->addWidget(m_helpBtn, 0, Qt::AlignTop);
+    }
+    else
+    {
+        m_helpBtn = nullptr;
+    }
 
-        default:
-          break;
-      }
-    });
+    layout->addStretch();
+
+    connect(&m_item, &InterfaceItem::attributeChanged, this,
+        [this](AttributeName name, const QVariant& value)
+        {
+            switch(name)
+            {
+                case AttributeName::Visible:
+                    m_label->setVisible(value.toBool());
+                    break;
+                case AttributeName::DisplayName:
+                    m_label->setText(m_item.displayName());
+                    break;
+                default:
+                    break;
+            }
+        });
 }
