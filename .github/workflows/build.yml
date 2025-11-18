@@ -35,7 +35,7 @@ jobs:
             jobs: 8
             build_type: Release
             build_deb: false
-            defines: "-DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache"
+            defines: "-DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache"
 
           - name: "ubuntu_24.04"
             os: ubuntu-24.04
@@ -144,8 +144,8 @@ jobs:
           rem Ensure deploy folder exists
           if not exist "%GITHUB_WORKSPACE%\client\deploy" mkdir "%GITHUB_WORKSPACE%\client\deploy"
 
-          rem Copy main exe to deploy folder
-          copy "%GITHUB_WORKSPACE%\client\build\Release\traintastic-client.exe" "%GITHUB_WORKSPACE%\client\deploy\"
+          rem Copy main exe to deploy folder (correct Ninja path)
+          copy "%GITHUB_WORKSPACE%\client\build\traintastic-client.exe" "%GITHUB_WORKSPACE%\client\deploy\"
 
           rem Deploy Qt dependencies into the same folder
           windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw --dir "%GITHUB_WORKSPACE%\client\deploy" "%GITHUB_WORKSPACE%\client\deploy\traintastic-client.exe"
@@ -190,7 +190,6 @@ jobs:
         with:
           name: traintastic-client-deb-${{matrix.config.name}}
           path: ${{github.workspace}}/client/build/*.deb
-
 
   build-server:
     name: server ${{matrix.config.name}}
