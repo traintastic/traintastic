@@ -70,6 +70,16 @@ jobs:
           build_deb: false
           defines: ""
 
+        - name: "macos-15-arm64"
+          os: "macos-15"
+          generator: "Unix Makefiles"
+          arch: ""
+          target: traintastic-client
+          jobs: 4
+          build_type: Release
+          build_deb: false
+          defines: ""
+
     steps:
     - uses: FranzDiebold/github-env-vars-action@v2
 
@@ -242,6 +252,18 @@ jobs:
 
         - name: "macos-15-intel"
           os: "macos-15-intel"
+          generator: "Unix Makefiles"
+          arch: ""
+          toolset: ""
+          target: all
+          jobs: 4
+          build_type: Release
+          build_deb: false
+          defines: ""
+          ccov: false
+
+        - name: "macos-15-arm64"
+          os: "macos-15"
           generator: "Unix Makefiles"
           arch: ""
           toolset: ""
