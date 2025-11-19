@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -107,7 +107,7 @@ class TilePainter
     void drawSignal(TileId id, const QRectF& r, TileRotate rotate, bool isReserved = false, SignalAspect aspect = SignalAspect::Unknown);
     void drawBlock(TileId id, const QRectF& r, TileRotate rotate, bool isReservedA = false, bool isReservedB = false, const ObjectPtr& blockTile = {});
 
-    void drawPushButton(const QRectF& r, Color color = Color::Yellow);
+    void drawPushButton(const QRectF& r, Color color = Color::Yellow, Color textColor = Color::Black, const QString& text = {});
     void drawSwitch(const QRectF& r, bool value = false, Color colorOn = Color::Yellow, Color colorOff = Color::Gray);
 
     void drawRailDecoupler(const QRectF& r, TileRotate rotate, bool isReserved = false, DecouplerState active = DecouplerState::Deactivated);

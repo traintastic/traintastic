@@ -84,6 +84,14 @@
         "definition": "Color"
     },
     {
+        "term": "board_tile.misc.push_button:text",
+        "definition": "Text"
+    },
+    {
+        "term": "board_tile.misc.push_button:text_color",
+        "definition": "Text color"
+    },
+    {
         "term": "board_tile.misc.switch:color_off",
         "definition": "Color when off"
     },

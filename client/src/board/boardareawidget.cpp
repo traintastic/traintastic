@@ -175,6 +175,8 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
 
     case TileId::PushButton:
       tryConnect("color");
+      tryConnect("text");
+      tryConnect("text_color");
       break;
 
     case TileId::RailNXButton:
@@ -462,8 +464,7 @@ QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
       return text;
     }
   }
-  else if(tileId == TileId::PushButton ||
-          tileId == TileId::RailNXButton)
+  else if(tileId == TileId::RailNXButton)
   {
     if(auto tile = m_board->getTileObject(l))
     {
@@ -740,7 +741,17 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           break;
 
         case TileId::PushButton:
-          tilePainter.drawPushButton(r, getColor(it.first));
+          if(auto button = m_board->getTileObject(it.first)) [[likely]]
+          {
+            tilePainter.drawPushButton(r,
+              button->getPropertyValueEnum<Color>("color", Color::Yellow),
+              button->getPropertyValueEnum<Color>("text_color", Color::Black),
+              button->getPropertyValueString("text"));
+          }
+          else
+          {
+            tilePainter.drawPushButton(r);
+          }
           break;
 
         case TileId::RailDecoupler:

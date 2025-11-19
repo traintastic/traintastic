@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -438,12 +438,28 @@ void TilePainter::drawBlock(TileId id, const QRectF& r, TileRotate rotate, bool 
   }
 }
 
-void TilePainter::drawPushButton(const QRectF& r, Color color)
+void TilePainter::drawPushButton(const QRectF& r, Color color, Color textColor, const QString& text)
 {
-  m_painter.setPen(QPen(Qt::gray, r.width() / 10));
+  const auto size = std::min(r.height(), r.width());
+  m_painter.setPen(QPen(Qt::gray, size / 10));
   m_painter.setBrush(toQColor(color));
-  const qreal radius = r.width() * 0.4;
-  m_painter.drawEllipse(r.center(), radius, radius);
+  const qreal radius = size * 0.4;
+  if(r.height() == r.width())
+  {
+    m_painter.drawEllipse(r.center(), radius, radius);
+  }
+  else
+  {
+    const auto margin = size * 0.1;
+    m_painter.drawRoundedRect(r.adjusted(margin, margin, -margin, -margin), radius, radius);
+  }
+
+  if(!text.isEmpty())
+  {
+    const auto margin = size * 0.2;
+    m_painter.setPen(toQColor(textColor));
+    m_painter.drawText(r.adjusted(margin, margin, -margin, -margin), text, QTextOption(Qt::AlignCenter));
+  }
 }
 
 void TilePainter::drawSwitch(const QRectF& r, bool value, Color colorOn, Color colorOff)
