@@ -41,6 +41,7 @@
 #include "../../network/connection.hpp"
 #include "../../network/callmethod.hpp"
 #include "../../network/event.hpp"
+#include "../../theme/theme.hpp"
 
 static QDomElement getElementByLanguage(const QList<QDomElement>& list, const QString& language)
 {
