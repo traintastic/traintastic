@@ -94,7 +94,7 @@ BoardWidget::BoardWidget(std::shared_ptr<Board> object, QWidget* parent) :
   , m_tileResizeStarted{false}
   , m_nxButtonTimerId(0)
 {
-  setWindowIcon(Theme::getIconForClassId(object->classId));
+  Theme::setWindowIcon(*this, object->classId);
   setFocusPolicy(Qt::StrongFocus);
 
   if(AbstractProperty* name = m_object->getProperty("name"))

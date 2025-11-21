@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #include <cassert>
 #include <QFile>
 #include <QPalette>
+#include <QWidget>
 
 const QString iconPathDefault = QStringLiteral(":/");
 const QString iconPathDark = QStringLiteral(":/dark/");
@@ -73,6 +74,18 @@ QIcon Theme::getIconForClassId(const QString& classId)
     return getIcon("zone");
   else
     return QIcon();
+}
+
+void Theme::setWindowIcon(QWidget& widget, const QString& classId)
+{
+  if(auto icon = Theme::getIconForClassId(classId); !icon.isNull())
+  {
+    widget.setWindowIcon(icon);
+  }
+  else
+  {
+    widget.setWindowIcon(QIcon(":/appicon.svg"));
+  }
 }
 
 const std::array<const QString*, 3>& Theme::getIconPaths()

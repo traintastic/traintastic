@@ -24,6 +24,7 @@
 #include <QTabWidget>
 #include "../../network/object.hpp"
 #include "../../network/property.hpp"
+#include "../../theme/theme.hpp"
 #include "../interfaceitemnamelabel.hpp"
 #include "../createwidget.hpp"
 #include "tileimagewidget.hpp"
@@ -34,6 +35,8 @@ TileWidget::TileWidget(ObjectPtr object, QWidget* parent)
   , m_tabs{new QTabWidget(this)}
   , m_image{new TileImageWidget(this)}
 {
+  Theme::setWindowIcon(*this, m_object->classId());
+
   auto* grid = new QGridLayout();
   grid->setContentsMargins(2, 2, 2, 2);
 

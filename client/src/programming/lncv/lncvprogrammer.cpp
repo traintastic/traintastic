@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -116,6 +116,7 @@ LNCVProgrammer::LNCVProgrammer(std::shared_ptr<Connection> connection, QWidget* 
   , m_stop{new QPushButton(Locale::tr("lncv_programmer:stop"))}
 {
   setWindowTitle(Locale::tr("lncv_programmer:lncv_programmer"));
+  Theme::setWindowIcon(*this, "lncv_programmer");
 
   loadInterfaces();
   connect(m_interface, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LNCVProgrammer::updateStartEnabled);

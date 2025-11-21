@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022,2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -62,7 +62,7 @@ LuaScriptEditWidget::LuaScriptEditWidget(const QString& id, QWidget* parent) :
 void LuaScriptEditWidget::buildForm()
 {
   setObjectWindowTitle();
-  setWindowIcon(Theme::getIconForClassId(m_object->classId()));
+  Theme::setWindowIcon(*this, m_object->classId());
 
   m_propertyState = dynamic_cast<Property*>(m_object->getProperty("state"));
   m_methodStart = m_object->getMethod("start");

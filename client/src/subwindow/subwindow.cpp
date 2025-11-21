@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -103,6 +103,7 @@ void SubWindow::setObject(const ObjectPtr& object)
   else
     m_id = object->classId();
   setWidget(createWidget(object));
+  connect(widget(), &QWidget::windowIconChanged, this, &SubWindow::setWindowIcon);
   connect(widget(), &QWidget::windowTitleChanged, this, &SubWindow::setWindowTitle);
   if(!widget()->windowTitle().isEmpty())
     setWindowTitle(widget()->windowTitle());

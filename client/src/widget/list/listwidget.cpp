@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@ ListWidget::ListWidget(const ObjectPtr& object, QWidget* parent)
   , m_object{object}
   , m_tableWidget{new TableWidget(this)}
 {
-  setWindowIcon(Theme::getIconForClassId(m_object->classId()));
+  Theme::setWindowIcon(*this, m_object->classId());
 
   m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 

@@ -69,7 +69,7 @@ ObjectEditWidget::ObjectEditWidget(ObjectProperty& property, QWidget* parent)
 void ObjectEditWidget::buildForm()
 {
   setObjectWindowTitle();
-  setWindowIcon(Theme::getIconForClassId(m_object->classId()));
+  Theme::setWindowIcon(*this, m_object->classId());
 
   if(QWidget* widget = createWidgetIfCustom(m_object))
   {
