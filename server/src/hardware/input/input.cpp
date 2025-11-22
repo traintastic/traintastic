@@ -53,8 +53,8 @@ Input::Input(std::shared_ptr<InputController> inputController, InputChannel chan
 
 void Input::simulateChange(SimulateInputAction action)
 {
-  assert(getWorld(this).simulation.value()); // should only be called in simulation mode
   assert(interface);
+  assert(getWorld(dynamic_cast<Object*>(interface.value().get())).simulation.value()); // should only be called in simulation mode
   interface->inputSimulateChange(channel, address, action);
 }
 
