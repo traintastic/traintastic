@@ -30,6 +30,7 @@
 #include <traintastic/locale/locale.hpp>
 #include <traintastic/utils/standardpaths.hpp>
 #include "../../misc/methodaction.hpp"
+#include "../../network/connection.hpp"
 #include "../../network/object.hpp"
 #include "../../network/property.hpp"
 #include "../../network/method.hpp"
@@ -126,13 +127,17 @@ void LuaScriptEditWidget::buildForm()
   toolbar->addWidget(spacer);
 
   toolbar->addAction(Theme::getIcon("help"), Locale::tr("qtapp.mainmenu:help"),
-    []()
+    [this]()
     {
-      const auto manual = QString::fromStdString((getLuaManualPath() / "index.html").string());
-      if(QFile::exists(manual))
-        QDesktopServices::openUrl(QUrl::fromLocalFile(manual));
-      else
-        QDesktopServices::openUrl(QString("https://traintastic.org/manual-lua?version=" TRAINTASTIC_VERSION_FULL));
+      if(const auto& connection = m_object->connection()) [[likely]]
+      {
+          QUrl url;
+          url.setScheme("http");
+          url.setHost(connection->peerAddress().toString());
+          url.setPort(connection->peerPort());
+          url.setPath("/manual/en/appendix/lua/index.html");
+          QDesktopServices::openUrl(url);
+      }
     });
 
   l->addLayout(form);
