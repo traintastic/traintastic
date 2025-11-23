@@ -21,11 +21,11 @@ If the server has no world loaded (the default on a fresh installation), the cli
 
 Click *New world* to launch the wizard:
 
-1. Enter a **name** for your world (for example *My First World*).
+1. Enter a **name** for your world (for example *My First World*). \
     ![New world wizard: Set world name](../assets/images/getting-started/new-world-wizard-set-name.png)
-2. Choose the **scale** (H0, N, Z, etc.).
+2. Choose the **scale** (H0, N, Z, etc.). \
     ![New world wizard: Select world scale](../assets/images/getting-started/new-world-wizard-select-scale.png)
-3. Finish the wizard to create your new, empty world.
+3. Finish the wizard to create your new, empty world. \
     ![New world wizard: Finish](../assets/images/getting-started/new-world-wizard-finish.png)
 
 ## Step 3: Edit and operate modes

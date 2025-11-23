@@ -716,7 +716,7 @@ void ScreenShotDialog::start()
     [this]()
     {
       static constexpr std::array<const char*, 2> schemes{"light", "dark"};
-      static constexpr std::array<const char*, 22> icons{
+      static constexpr std::array<const char*, 23> icons{
         "circle/add",
         "add",
         "board",
@@ -736,6 +736,7 @@ void ScreenShotDialog::start()
         "power_on",
         "remove",
         "resize_tile",
+        "run",
         "swap",
         "train",
         "up",

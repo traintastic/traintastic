@@ -33,8 +33,8 @@ The dialog has three tabs:
 2. Click the ![plus](../assets/images/icons/light/add.png#only-light)![plus](../assets/images/icons/dark/add.png#only-dark) button and choose **Locomotive**. \
     ![Locomotive general tab](../assets/images/getting-started/locomotive-general.png)
 3. Enter the locomotive details:
-    - **Name** - e.g. “BR 03” or “NS 2400”
-    - **Maximum speed** - e.g. 80 km/h
+    - **Name** — e.g. “BR 03” or “NS 2400”
+    - **Maximum speed** — e.g. 80 km/h
 4. Switch to the **Decoder** tab. \
     ![Locomotive decoder tab](../assets/images/getting-started/locomotive-decoder.png)
 5. Enter the decoder details:
@@ -45,9 +45,9 @@ The dialog has three tabs:
 6. Switch to the **Functions** tab. \
     ![Locomotive functions tab](../assets/images/getting-started/locomotive-functions.png)
 7. Additional functions can be added using the ![plus](../assets/images/icons/light/add.png#only-light)![plus](../assets/images/icons/dark/add.png#only-dark) button. Double-click a function to edit its details. Function details:
-    - **#** - function number: F0, F1 etc. (just enter the number)
+    - **#** — function number: F0, F1 etc. (just enter the number)
     - **Function**
-    - **Name** - Short description of the function
+    - **Name** — Short description of the function
     - **Type**
 8. Close the locomotive dialog.
 
@@ -67,7 +67,7 @@ The train is now defined but not yet active.
 ## Step 4: Control the train
 
 1. Switch to **operate mode** (toggle the ![pencil](../assets/images/icons/light/edit.png#only-light)![pencil](../assets/images/icons/dark/edit.png#only-dark) button off).
-2. Click the **play** button on the main toolbar, this allows train movements.
+2. Click the ![play](../assets/images/icons/light/run.png#only-light)![play](../assets/images/icons/dark/run.png#only-dark) button on the main toolbar, this allows train movements.
 3. Double click on the train in the list, this will open a throttle. \
     ![Train throttle](../assets/images/getting-started/train-throttle.png)
 4. Click **Acquire** to activate the train and take control of speed and direction (see note below). \

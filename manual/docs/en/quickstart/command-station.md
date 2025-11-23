@@ -30,32 +30,34 @@ In the wizard, choose your **digital system / command station** from the list of
 Depending on your selection, Traintastic will ask additional questions, such as:
 
 - **How it is connected**: serial, USB, or network (Ethernet or Wi-Fi).
-  *Tip: Wi-Fi is supported but not recommended for stability reasons.*
 - **Device or port**: for example a COM port (Windows), `/dev/ttyUSB0` (Linux), or an IP address.
+
+!!! tip "Using WiFi"
+    Wi-Fi is supported but not recommended for stability reasons.
 
 When you finish the wizard:
 
 - The new interface will appear in the *Interfaces* list.
 - A **status icon** will show in the status bar (right side of the window).
-    - ![Gray](../assets/images/icons/dark/interface_state.offline.png) - Offline
-    - ![Purple](../assets/images/icons/dark/interface_state.initializing.png) - Initializing
-    - ![Green](../assets/images/icons/dark/interface_state.online.png) - Online/connected
-    - ![Red](../assets/images/icons/dark/interface_state.error.png) - Error
+    - ![Gray](../assets/images/icons/dark/interface_state.offline.png) — Offline
+    - ![Purple](../assets/images/icons/dark/interface_state.initializing.png) — Initializing
+    - ![Green](../assets/images/icons/dark/interface_state.online.png) — Online/connected
+    - ![Red](../assets/images/icons/dark/interface_state.error.png) — Error occured
 
 If you add multiple interfaces, each has its own status icon.
 
 ## Step 4: Connect and test
 
-1. Press the ![connect](../assets/images/icons/light/offline.png#only-light)![connect](../assets/images/icons/dark/offline.png#only-dark) button (double arrow icon, top left on the toolbar)
+1. Press the ![connect](../assets/images/icons/light/offline.png#only-light)![connect](../assets/images/icons/dark/offline.png#only-dark) button
    or use the menu: **World → Connection → Connect**.
 2. The status icon will change:
-     - Purple while initializing (up to a few seconds).
-     - Green if the connection succeeds.
-     - Red if an error occurs.
+     - ![Purple](../assets/images/icons/dark/interface_state.initializing.png) — while initializing (up to a few seconds).
+     - ![Green](../assets/images/icons/dark/interface_state.online.png) — if the connection succeeds.
+     - ![Red](../assets/images/icons/dark/interface_state.error.png) — if an error occurs.
 
 If an error occurs:
 
-- Open the **server log** (hotkey ++F12++ or **View → Server log**) to see details.
+- Open the **server log** (hotkey ++f12++ or **View → Server log**) to see details.
 - See [Common interface connection errors](../troubleshooting/interface-connection-errors.md) for steps to resolve typical issues.
 - If you’re unsure whether your system is supported, check the [Supported hardware appendix](../appendix/supported-hardware.md).
 
@@ -64,7 +66,7 @@ When the connection succeeds:
 Toggle the track power using the
 ![power off](../assets/images/icons/light/power_off.png#only-light)![power off](../assets/images/icons/dark/power_off.png#only-dark) /
 ![power on](../assets/images/icons/light/power_on.png#only-light)![power on](../assets/images/icons/dark/power_on.png#only-dark)
-button (left of *Connect* button).
+button.
 If the command station responds, your connection is working!
 
 ---

@@ -8,8 +8,8 @@ You can create multiple boards, for example one for the **main layout** and anot
 
 1. Make sure you are in **edit mode** (![pencil](../../assets/images/icons/light/edit.png#only-light)![pencil](../../assets/images/icons/dark/edit.png#only-dark) button in the top right).
 2. Open the board list:
-   - From the main menu: **Objects → Boards**
-   - Or click the **Board icon** on the toolbar (next to the Train icon).
+    - From the main menu: **Objects → Boards**
+    - Or click the ![board](../../assets/images/icons/light/board.png#only-light)![board](../../assets/images/icons/dark/board.png#only-dark) button on the toolbar.
 
 ![Empty board list](../../assets/images/getting-started/board-list-empty.png)
 
@@ -27,8 +27,8 @@ You can now start drawing.
 1. Select a **tile** from the toolbar (straight, curve, turnout, etc.).
 2. Click on the board where you want to place it.
 3. To **rotate** a tile (before placing it):
-    - **Right-click** → rotate clockwise
-    - **Shift + Right-click** → rotate counter-clockwise
+    - **Right-click** — rotate clockwise
+    - ++shift++ + **Right-click** — rotate counter-clockwise
 
 ## Step 4: Move tiles
 
