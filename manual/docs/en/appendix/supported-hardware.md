@@ -39,11 +39,11 @@ These systems are expected to work with Traintastic, but have not yet been verif
 | Märklin CS3                 | Network                       | Yes            | -                                       |
 | Märklin CS3 plus            | Network                       | Yes            | -                                       |
 | Uhlenbrock Intellibox Basic | USB                           | Yes            | -                                       |
-| Uhlenbrock Intellibox IR    | Loconet, Serial not supported | Yes            | Requires a LocoNet interface.           |
+| Uhlenbrock Intellibox IR    | LocoNet, Serial not supported | Yes            | Requires a LocoNet interface.           |
 | Uhlenbrock Intellibox II    | USB                           | Yes            | -                                       |
 | Uhlenbrock Intellibox 2neo  | USB                           | Yes            | -                                       |
-| YaMoRC YD7001               | USB, Network                  | No             | -                                       |
-| YaMoRC YD7010               | USB, Network                  | No             | -                                       |
+| YaMoRC YD7001               | USB, Network                  | No             | Similar to Digikeijs DR5000.            |
+| YaMoRC YD7010               | USB, Network                  | No             | Similar to Digikeijs DR5000.            |
 | z21 start                   | Network                       | Yes            | -                                       |
 | z21 white                   | Network                       | Yes            | -                                       |
 | Z21 black                   | Network                       | Yes            | -                                       |
@@ -61,6 +61,7 @@ Supported for others has not been developed due to missing hardware.
 
 | Vendor / System | Interface Type(s) | Notes               |
 |-----------------|-------------------|---------------------|
+| BiDiB           | USB, Network      | -                   |
 | Selectix        | Serial            | In development      |
 | VPEB Dinamo     | Serial, USB       | Track driver system |
 

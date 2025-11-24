@@ -90,9 +90,7 @@ Through [**Lua scripting**](../advanced/scripting-basics.md), it is also possibl
 - Send **raw LocoNet messages**, see [`send()`](lua/object/loconetinterface.md#send).
 - Send **raw DCC track commands** (`OPC_IMM_PACKET`), see [`imm_packet()`](lua/object/loconetinterface.md#imm_packet).
 
-!!! warning
-    Use this with caution.
-
+!!! warning "Use this with caution!"
     - These messages bypass Traintastic’s normal handling.
     - You need a solid understanding of LocoNet and DCC to avoid conflicts.
     - Side effects may occur that Traintastic is not aware of or cannot manage.

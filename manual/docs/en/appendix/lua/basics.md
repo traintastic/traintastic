@@ -88,8 +88,8 @@ log.debug(numbers[1])      -- 10
 
 With just these basics—variables, control flow, functions, and tables—you can already create useful scripts in Traintastic.
 
-> **Tip**
-> Don’t worry about learning everything at once. Start simple and build up as you go.
+!!! tip
+    Don’t worry about learning everything at once. Start simple and build up as you go.
 
 ## Next steps
 

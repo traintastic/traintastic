@@ -1893,7 +1893,15 @@
   },
   {
     "term": "object.loconetinterface.imm_packet:description",
-    "definition": "Request the LocoNet command station to send a DCC packet to the track (`OPC_IMM_PACKET`). This isn't supported by all LocoNet command stations."
+    "definition": "Request the LocoNet command station to send a DCC packet to the track (`OPC_IMM_PACKET`)."
+  },
+  {
+    "term": "object.loconetinterface.imm_packet.note:title",
+    "definition": "Limited support"
+  },
+  {
+    "term": "object.loconetinterface.imm_packet.note:description",
+    "definition": "Not supported by all LocoNet command stations."
   },
   {
     "term": "object.loconetinterface.imm_packet.parameter.dcc_packet:description",
@@ -1908,8 +1916,16 @@
     "definition": "`true` if send to the command station, `false` otherwise."
   },
   {
+    "term": "object.loconetinterface.imm_packet.warning:title",
+    "definition": "Use this with caution!"
+  },
+  {
+    "term": "object.loconetinterface.imm_packet.warning:description",
+    "definition": "These messages bypass Traintastic’s normal handling. You need a solid understanding of DCC to avoid conflicts. Side effects may occur that Traintastic is not aware of or cannot manage."
+  },
+  {
     "term": "object.loconetinterface.send:description",
-    "definition": "Send LocoNet packet"
+    "definition": "Send LocoNet packet."
   },
   {
     "term": "object.loconetinterface.send.parameter.packet:description",
@@ -1918,6 +1934,14 @@
   {
     "term": "object.loconetinterface.send:return_values",
     "definition": "`true` if send, `false` otherwise."
+  },
+  {
+    "term": "object.loconetinterface.send.warning:title",
+    "definition": "Use this with caution!"
+  },
+  {
+    "term": "object.loconetinterface.send.warning:description",
+    "definition": "These messages bypass Traintastic’s normal handling. You need a solid understanding of LocoNet to avoid conflicts. Side effects may occur that Traintastic is not aware of or cannot manage."
   },
   {
     "term": "object.objectlist.__get:description",

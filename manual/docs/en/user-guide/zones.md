@@ -39,3 +39,7 @@ Each zone has a set of properties that define its behavior.
 - **Speed limit** — Defines the maximum speed for trains in the zone.
   This does **not** affect manually controlled trains.
   By default, there is no speed limit.
+
+!!! note "Mute and no smoke"
+    For *mute* to work it is **required** that there is decoder function configured as **Sound** or **Mute**.
+    For *no smoke* to work it is **required** that there is decoder function configured as **Smoke**.
