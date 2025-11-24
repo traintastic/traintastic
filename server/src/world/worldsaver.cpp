@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,8 @@
 #include <version.hpp>
 #include "world.hpp"
 #include "../core/stateobject.hpp"
+#include "../core/objectproperty.tpp"
+#include "../status/simulationstatus.hpp"
 #include "../utils/sha1.hpp"
 #include "ctwwriter.hpp"
 
@@ -43,6 +45,19 @@ WorldSaver::WorldSaver(const World& world)
     if(!worldState.empty())
       m_states[world.getObjectId()] = worldState;
     m_data.erase("class_id");
+    // ugly fixup: remove simulation status object
+    if(auto it = m_data.find(world.statuses.name()); it != m_data.end() && it->is_array()) [[likely]]
+    {
+      const auto removeId = world.simulationStatus->getObjectId();
+      for(size_t i = 0; i < it->size(); i++)
+      {
+        if(it->operator[](i) == removeId)
+        {
+          it->erase(i);
+          break;
+        }
+      }
+    }
   }
 
   m_data["uuid"] = m_state["uuid"] = world.uuid.value();
