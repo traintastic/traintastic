@@ -464,6 +464,8 @@ World::World(Private /*unused*/) :
 
 World::~World()
 {
+  luaScripts->stopAll(); // no surprise event actions during destruction
+
   deleteAll(*interfaces);
   deleteAll(*identifications);
   deleteAll(*boards);
