@@ -462,13 +462,20 @@ void TilePainter::drawPushButton(const QRectF& r, Color color, Color textColor, 
   }
 }
 
-void TilePainter::drawSwitch(const QRectF& r, bool value, Color colorOn, Color colorOff)
+void TilePainter::drawSwitch(const QRectF& r, Color color, Color textColor, const QString& text)
 {
-  m_painter.setPen(QPen(Qt::gray, r.width() / 10));
-  m_painter.setBrush(toQColor(value ? colorOn : colorOff));
-  const qreal margin = r.width() * 0.1;
-  const qreal radius = r.width() * 0.15;
+  const auto size = std::min(r.height(), r.width());
+  m_painter.setPen(QPen(Qt::gray, size / 10));
+  m_painter.setBrush(toQColor(color));
+  const qreal margin = size * 0.1;
+  const qreal radius = size* 0.15;
   m_painter.drawRoundedRect(r.adjusted(margin, margin, -margin, -margin), radius, radius);
+  if(!text.isEmpty())
+  {
+    const auto textMargin = size * 0.2;
+    m_painter.setPen(toQColor(textColor));
+    m_painter.drawText(r.adjusted(textMargin, textMargin, -textMargin, -textMargin), text, QTextOption(Qt::AlignCenter));
+  }
 }
 
 //=============================================================================

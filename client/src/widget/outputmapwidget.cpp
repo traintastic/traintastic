@@ -299,7 +299,7 @@ void OutputMapWidget::updateKeyIcons()
         }
         else if(tileId == TileId::Switch)
         {
-          tilePainter.drawSwitch(image.rect(), key->toBool());
+          tilePainter.drawSwitch(image.rect(), key->toBool() ? Color::Yellow : Color::Gray);
         }
         else
         {

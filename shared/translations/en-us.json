@@ -100,6 +100,18 @@
         "definition": "Color when on"
     },
     {
+        "term": "board_tile.misc.switch:text",
+        "definition": "Text"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_off",
+        "definition": "Text color when off"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_on",
+        "definition": "Text color when on"
+    },
+    {
         "term": "board_tile.misc.switch:value",
         "definition": "Value"
     },

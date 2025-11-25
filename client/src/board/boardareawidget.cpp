@@ -190,6 +190,9 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
     case TileId::Switch:
       tryConnect("color_off");
       tryConnect("color_on");
+      tryConnect("text");
+      tryConnect("text_color_off");
+      tryConnect("text_color_on");
       tryConnect("value");
       break;
 
@@ -444,7 +447,7 @@ QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
   {
     if(auto switch_ = m_board->getTileObject(l))
     {
-      QString text = "<b>" + switch_->getPropertyValueString("name") + "</b>";
+      QString text = "<b>" + switch_->getPropertyValueString("text") + "</b>";
       if(auto* value = switch_->getProperty("value")) /*[[likely]]*/
       {
         if(value->hasAttribute(AttributeName::AliasKeys)) /*[[likely]]*/
@@ -781,10 +784,20 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
         case TileId::Switch:
           if(auto sw = m_board->getTileObject(it.first)) /*[[likely]]*/
           {
-            tilePainter.drawSwitch(r,
-              sw->getPropertyValueBool("value", false),
-              sw->getPropertyValueEnum<Color>("color_on", Color::Yellow),
-              sw->getPropertyValueEnum<Color>("color_off", Color::Gray));
+            if(sw->getPropertyValueBool("value", false)) // on
+            {
+              tilePainter.drawSwitch(r,
+                sw->getPropertyValueEnum<Color>("color_on", Color::Yellow),
+                sw->getPropertyValueEnum<Color>("text_color_on", Color::Black),
+                sw->getPropertyValueString("text"));
+            }
+            else // off
+            {
+              tilePainter.drawSwitch(r,
+                sw->getPropertyValueEnum<Color>("color_off", Color::Gray),
+                sw->getPropertyValueEnum<Color>("text_color_off", Color::White),
+                sw->getPropertyValueString("text"));
+            }
           }
           else
           {

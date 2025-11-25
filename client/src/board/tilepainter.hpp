@@ -108,7 +108,7 @@ class TilePainter
     void drawBlock(TileId id, const QRectF& r, TileRotate rotate, bool isReservedA = false, bool isReservedB = false, const ObjectPtr& blockTile = {});
 
     void drawPushButton(const QRectF& r, Color color = Color::Yellow, Color textColor = Color::Black, const QString& text = {});
-    void drawSwitch(const QRectF& r, bool value = false, Color colorOn = Color::Yellow, Color colorOff = Color::Gray);
+    void drawSwitch(const QRectF& r, Color color = Color::Gray, Color textColor = Color::White, const QString& text = {});
 
     void drawRailDecoupler(const QRectF& r, TileRotate rotate, bool isReserved = false, DecouplerState active = DecouplerState::Deactivated);
 
