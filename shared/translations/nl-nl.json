@@ -84,12 +84,32 @@
         "definition": "Kleur"
     },
     {
+        "term": "board_tile.misc.push_button:text",
+        "definition": "Tekst"
+    },
+    {
+        "term": "board_tile.misc.push_button:text_color",
+        "definition": "Tekst kleur"
+    },
+    {
         "term": "board_tile.misc.switch:color_off",
         "definition": "Uit kleur"
     },
     {
         "term": "board_tile.misc.switch:color_on",
         "definition": "Aan kleur"
+    },
+    {
+        "term": "board_tile.misc.switch:text",
+        "definition": "Tekst"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_off",
+        "definition": "Tekst uit kleur"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_on",
+        "definition": "Tekst aan kleur"
     },
     {
         "term": "board_tile.misc.switch:value",
@@ -586,6 +606,66 @@
     {
         "term": "decoupler_state:deactivated",
         "definition": "Gedeactiveerd"
+    },
+    {
+        "term": "default_name:block",
+        "definition": "Blok"
+    },
+    {
+        "term": "default_name:board",
+        "definition": "Bord"
+    },
+    {
+        "term": "default_name:decoupler",
+        "definition": "Ontkoppelaar"
+    },
+    {
+        "term": "default_name:direction",
+        "definition": "Richting"
+    },
+    {
+        "term": "default_name:link",
+        "definition": "Link"
+    },
+    {
+        "term": "default_name:nx_button",
+        "definition": "NX knop"
+    },
+    {
+        "term": "default_name:push_button",
+        "definition": "Drukknop"
+    },
+    {
+        "term": "default_name:script",
+        "definition": "Script"
+    },
+    {
+        "term": "default_name:sensor",
+        "definition": "Sensor"
+    },
+    {
+        "term": "default_name:signal",
+        "definition": "Sein"
+    },
+    {
+        "term": "default_name:switch",
+        "definition": "Schakelaar"
+    },
+    {
+        "term": "default_name:train",
+        "definition": "Trein"
+    },
+    {
+        "term": "default_name:turnout",
+        "definition": "Wissel"
+    },
+    {
+        "term": "default_name:vehicle",
+        "definition": "Voertuig"
+    },
+    {
+        "term": "default_name:zone",
+        "definition": "Zon"
     },
     {
         "term": "direction:forward",
@@ -1200,6 +1280,10 @@
         "definition": "Object is geen tabel"
     },
     {
+        "term": "message:C1020",
+        "definition": "Laden van instelling is mislukt: %1"
+    },
+    {
         "term": "message:C2001",
         "definition": "Adres is al in gebruikt door #%1"
     },
@@ -1750,6 +1834,10 @@
     {
         "term": "message:W1003",
         "definition": "Inlezen wereld %1 is mislukt (libarchive fout %2: %3)"
+    },
+    {
+        "term": "message:W1004",
+        "definition": "Leeg of corrupt instellingen bestand, standaard waarden worden gebruikt"
     },
     {
         "term": "message:W2001",
