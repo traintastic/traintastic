@@ -84,12 +84,32 @@
         "definition": "Farbe"
     },
     {
+        "term": "board_tile.misc.push_button:text",
+        "definition": "Text"
+    },
+    {
+        "term": "board_tile.misc.push_button:text_color",
+        "definition": "Textfrabe"
+    },
+    {
         "term": "board_tile.misc.switch:color_off",
         "definition": "Farbe Ausgeschaltet"
     },
     {
         "term": "board_tile.misc.switch:color_on",
         "definition": "Farbe Angeschaltet"
+    },
+    {
+        "term": "board_tile.misc.switch:text",
+        "definition": "Text"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_off",
+        "definition": "Textfarbe wenn aus"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_on",
+        "definition": "Textfarbe wenn an"
     },
     {
         "term": "board_tile.misc.switch:value",
@@ -1061,15 +1081,15 @@
     },
     {
         "term": "loconet_settings:fast_clock",
-        "definition": "Schneller Takt"
+        "definition": "Schnelle Uhr"
     },
     {
         "term": "loconet_settings:fast_clock_sync_enabled",
-        "definition": "Schnelle Taktsynchronisation aktiviert"
+        "definition": "Schnelle Uhrsynchronisation aktiviert"
     },
     {
         "term": "loconet_settings:fast_clock_sync_interval",
-        "definition": "Schnelles Taktsynchronisationsintervall"
+        "definition": "Schnelles Uhrsynchronisationsintervall"
     },
     {
         "term": "loconet_settings:listen_only",
@@ -1258,6 +1278,10 @@
     {
         "term": "message:C1019",
         "definition": "Objekt ist keine Tabelle"
+    },
+    {
+        "term": "message:C1020",
+        "definition": "Speichern der Einstelungen fehlgeschlagen: %1"
     },
     {
         "term": "message:C2001",
@@ -1753,7 +1777,7 @@
     },
     {
         "term": "message:N2003",
-        "definition": "Schnelle Taktsynchronisation wird nicht mehr gesendet"
+        "definition": "Schnelle Uhrsynchronisation wird nicht mehr gesendet"
     },
     {
         "term": "message:N2004",
@@ -1812,6 +1836,10 @@
         "definition": "Lesen von Welt %1 fehlgeschlagen (Libarchive-Fehler %2: %3)"
     },
     {
+        "term": "message:W1004",
+        "definition": "Einstellungsdatei leer oder besch\u00e4digt, Standartwerte werden benutzt"
+    },
+    {
         "term": "message:W2001",
         "definition": "Fehlerhafte Daten empfangen %1 Bytes verloren"
     },
@@ -1837,7 +1865,7 @@
     },
     {
         "term": "message:W2007",
-        "definition": "Die Befehlszentrale unterst\u00fctzt die Schnelle-Takt-Schnittstelle nicht"
+        "definition": "UDie Befehlszentrale unterst\u00fctzt die Schnelle-Uhr-Schnittstelle nicht"
     },
     {
         "term": "message:W2018",
