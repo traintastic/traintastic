@@ -84,12 +84,32 @@
         "definition": "kolor"
     },
     {
+        "term": "board_tile.misc.push_button:text",
+        "definition": "Tekst"
+    },
+    {
+        "term": "board_tile.misc.push_button:text_color",
+        "definition": "Kolor tekstu"
+    },
+    {
         "term": "board_tile.misc.switch:color_off",
         "definition": "Kolor wy\u0142\u0105czony"
     },
     {
         "term": "board_tile.misc.switch:color_on",
         "definition": "Kolor w\u0142\u0105czony"
+    },
+    {
+        "term": "board_tile.misc.switch:text",
+        "definition": "Tekst"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_off",
+        "definition": "Kolor tekstu, gdy wy\u0142\u0105czone"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_on",
+        "definition": "Kolor tekstu, gdy w\u0142\u0105czone"
     },
     {
         "term": "board_tile.misc.switch:value",
@@ -1260,6 +1280,10 @@
         "definition": "Obiekt nie jest tabel\u0105"
     },
     {
+        "term": "message:C1020",
+        "definition": "\u0141adowanie ustawie\u0144 nie powiod\u0142o si\u0119: %1"
+    },
+    {
         "term": "message:C2001",
         "definition": "Adres ju\u017c u\u017cywany pod #%1"
     },
@@ -1810,6 +1834,10 @@
     {
         "term": "message:W1003",
         "definition": "Nie uda\u0142o si\u0119 odczyta\u0107 \u015bwiata %1 (b\u0142\u0105d libarchive %2: %3)"
+    },
+    {
+        "term": "message:W1004",
+        "definition": "Plik ustawie\u0144 jest pusty lub uszkodzony, u\u017cywane s\u0105 ustawienia domy\u015blne"
     },
     {
         "term": "message:W2001",
