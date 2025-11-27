@@ -96,6 +96,11 @@ void LuaScriptEditWidget::buildForm()
       if(name == AttributeName::Enabled)
         m_start->setEnabled(value.toBool());
     });
+#ifdef Q_OS_MAC
+  m_start->setShortcut(Qt::META | Qt::Key_R);
+#else
+  m_start->setShortcut(Qt::Key_F5);
+#endif
 
   m_stop = toolbar->addAction(Theme::getIcon("stop"), m_methodStop->displayName(),
     [this]()
@@ -109,7 +114,11 @@ void LuaScriptEditWidget::buildForm()
       if(name == AttributeName::Enabled)
         m_stop->setEnabled(value.toBool());
     });
-
+#ifdef Q_OS_MAC
+  m_stop->setShortcut(Qt::META | Qt::SHIFT | Qt::Key_R);
+#else
+  m_stop->setShortcut(Qt::SHIFT | Qt::Key_F5);
+#endif
 
   if(auto* method = m_object->getMethod("clear_persistent_variables"))
   {
