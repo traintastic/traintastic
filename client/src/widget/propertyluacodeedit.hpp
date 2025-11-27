@@ -90,7 +90,7 @@ class PropertyLuaCodeEdit : public QPlainTextEdit
     int calcLineNumbersWidth() const;
     void updateViewportMargins();
     void keyPressEvent(QKeyEvent* event) override;
-    void resizeEvent(QResizeEvent* event);
+    void resizeEvent(QResizeEvent* event) override;
     void paintLineNumbers(QPaintEvent* event);
 
   public:
