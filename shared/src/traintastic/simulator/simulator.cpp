@@ -941,43 +941,60 @@ void Simulator::updateTrainPositions()
       trainState.speedOrDirectionChanged = false;
     }
 
-    auto updateHelper = [this](Simulator::Train::VehicleItem& item, float speed, bool reverse) -> bool
+    auto updateHelper = [this](Simulator::Train::VehicleItem& item, float speed,
+                               bool reverse, float &outRemaining) -> bool
     {
       if(reverse)
         speed = -speed;
 
       if(item.reversed == reverse)
-        return updateVehiclePosition(item.vehicle->state.front, speed) &&
-            updateVehiclePosition(item.vehicle->state.rear, speed);
+        return updateVehiclePosition(item.vehicle->state.front, speed, outRemaining) &&
+            updateVehiclePosition(item.vehicle->state.rear, speed, outRemaining);
       else
-        return updateVehiclePosition(item.vehicle->state.rear, speed) &&
-            updateVehiclePosition(item.vehicle->state.front, speed);
+        return updateVehiclePosition(item.vehicle->state.rear, speed, outRemaining) &&
+            updateVehiclePosition(item.vehicle->state.front, speed, outRemaining);
     };
 
     const float speed = m_stateData.powerOn ? trainState.speed : 0.0f;
 
-    if(!trainState.reverse)
+    float outRemaining = 0.0f;
+
+    do
     {
-      for(auto& vehicleItem : train->vehicles)
+      float tickPosDelta = speed;
+      if(outRemaining > 0.0f && speed != 0.0f)
       {
-        if(!updateHelper(vehicleItem, speed, trainState.reverse))
+        // This is second round, travel just remaining distance to stop
+        if(speed > 0.0f)
+          tickPosDelta = outRemaining;
+        else
+          tickPosDelta = outRemaining;
+      }
+
+      if(!trainState.reverse)
+      {
+        for(auto& vehicleItem : train->vehicles)
         {
-          setTrainSpeed(train, 0.0f);
-          break;
+          if(!updateHelper(vehicleItem, tickPosDelta, trainState.reverse, outRemaining))
+          {
+            setTrainSpeed(train, 0.0f);
+            break;
+          }
+        }
+      }
+      else // reverse
+      {
+        for(auto& vehicleItem : train->vehicles | std::views::reverse)
+        {
+          if(!updateHelper(vehicleItem, tickPosDelta, trainState.reverse, outRemaining))
+          {
+            setTrainSpeed(train, 0.0f);
+            break;
+          }
         }
       }
     }
-    else // reverse
-    {
-      for(auto& vehicleItem : train->vehicles | std::views::reverse)
-      {
-        if(!updateHelper(vehicleItem, speed, trainState.reverse))
-        {
-          setTrainSpeed(train, 0.0f);
-          break;
-        }
-      }
-    }
+    while(outRemaining > 0.0f && speed != 0.0f);
   }
 }
 
@@ -1004,8 +1021,10 @@ inline bool isTurnoutUnknownState(const Simulator::TrackSegment& segment,
   return false;
 }
 
-bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float speed)
+bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float speed, float &outRemaining)
 {
+  outRemaining = 0.0f;
+
   float distance = face.distance + (face.segmentDirectionInverted ? -speed : speed);
 
   // Move to next segment when reaching the end:
@@ -1015,18 +1034,26 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float spee
     const auto& segment = staticData.trackSegments[face.segmentIndex];
     const auto segmentLength = getSegmentLength(segment, m_stateData);
 
-    if(distance >= segmentLength)
+    // If train is right on the end of segment (distance == segmentLenght) do not update
+    // unlsess we are effectively moving. Because if speed is 0, segmentDirectionInverted is
+    // not calculated correctly and because in case of 2 segment touching by their side 1,
+    // it will infinitely jump vehicle face from one to another.
+    if(distance > segmentLength || (distance == segmentLength && speed != 0))
     {
       const auto nextSegmentIndex = getNextSegmentIndex(segment, true, m_stateData);
       if(nextSegmentIndex == invalidIndex)
       {
+        outRemaining = segmentLength - face.distance - 0.0001;
         return false; // no next segment
       }
 
       auto& nextSegment = staticData.trackSegments[nextSegmentIndex];
 
       if(isTurnoutUnknownState(nextSegment, m_stateData))
+      {
+        outRemaining = segmentLength - face.distance - 0.0001;
         return false;
+      }
 
       if(segment.sensor.index != invalidIndex)
       {
@@ -1058,13 +1085,17 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float spee
       const auto nextSegmentIndex = getNextSegmentIndex(segment, false, m_stateData);
       if(nextSegmentIndex == invalidIndex)
       {
+        outRemaining = face.distance;
         return false; // no next segment
       }
 
       auto& nextSegment = staticData.trackSegments[nextSegmentIndex];
 
       if(isTurnoutUnknownState(nextSegment, m_stateData))
+      {
+        outRemaining = face.distance;
         return false;
+      }
 
       if(segment.sensor.index != invalidIndex)
       {

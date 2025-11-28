@@ -340,7 +340,7 @@ private:
   void handShake();
 
   void updateTrainPositions();
-  bool updateVehiclePosition(VehicleState::Face& face, const float speed);
+  bool updateVehiclePosition(VehicleState::Face& face, const float speed, float &outRemaining);
   void updateSensors();
 
   bool isStraight(const TrackSegment& segment);
