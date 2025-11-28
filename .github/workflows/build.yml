@@ -63,7 +63,7 @@ jobs:
         - name: "macos-15-intel"
           os: "macos-15-intel"
           generator: "Unix Makefiles"
-          arch: ""
+          arch: "x86_64"
           target: traintastic-client
           jobs: 4
           build_type: Release
@@ -73,7 +73,7 @@ jobs:
         - name: "macos-15-arm64"
           os: "macos-15"
           generator: "Unix Makefiles"
-          arch: ""
+          arch: "arm64"
           target: traintastic-client
           jobs: 4
           build_type: Release
@@ -111,7 +111,7 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-          core.exportVariable('CMAKE_OSX_ARCHITECTURES', 'x86_64');
+          core.exportVariable('CMAKE_OSX_ARCHITECTURES', '${{matrix.config.arch}}');
 
     # Ubuntu only:
     - name: apt update
