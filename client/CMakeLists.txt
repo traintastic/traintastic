@@ -109,6 +109,10 @@ endif()
 
 ### PLATFORM ###
 
+if(UNIX AND NOT APPLE)
+  set(LINUX TRUE)
+endif()
+
 if(WIN32)
   target_sources(traintastic-client PRIVATE ../shared/gfx/appicon.rc src/version.rc)
   set_property(TARGET traintastic-client PROPERTY WIN32_EXECUTABLE true)
@@ -125,37 +129,59 @@ else()
   endif()
 endif()
 
-### INSTALL ###
-
-install(TARGETS traintastic-client
-    COMPONENT traintastic-client
-    RUNTIME DESTINATION "/opt/traintastic/bin/"
-)
-
-if(LINUX)
-  install(FILES ${CMAKE_SOURCE_DIR}/debian/traintastic-client.desktop DESTINATION share/applications)
-  install(FILES ${CMAKE_SOURCE_DIR}/debian/traintastic_256.png DESTINATION "/opt/traintastic/icons/")
-endif()
-
 ### BUILD TYPE ###
 
 if (CMAKE_BUILD_TYPE EQUAL "Release")
   add_definitions(-DQT_NO_DEBUG_OUTPUT)
 endif()
 
-### DEB package ###
+### INSTALL / PACKAGE ###
+if(APPLE)
+  unset(CPACK_BUNDLE_STARTUP_COMMAND)
 
-if(NOT DEBIAN_PACKAGE_VERSION_EXTRA)
-  set(DEBIAN_PACKAGE_VERSION_EXTRA "${PROJECT_VERSION_EXTRA}")
+  set_target_properties(traintastic-client PROPERTIES
+    MACOSX_BUNDLE TRUE
+    OUTPUT_NAME "TraintasticClient"
+  )
+
+  install(TARGETS traintastic-client
+    BUNDLE DESTINATION .
+  )
+  
+  qt_generate_deploy_app_script(
+    TARGET traintastic-client
+    OUTPUT_SCRIPT deploy_script
+  )
+  
+  install(SCRIPT ${deploy_script})  
+
+  set(CPACK_GENERATOR "Bundle")
+  set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/../shared/gfx/appicon.icns")
+  set(CPACK_BUNDLE_NAME "Traintastic client")
+  set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/../package/macos/client.plist")
+
+  include(CPack)
+elseif(LINUX) 
+  
+  install(TARGETS traintastic-client
+    COMPONENT traintastic-client
+    RUNTIME DESTINATION "/opt/traintastic/bin/"
+  )
+  install(FILES ${CMAKE_SOURCE_DIR}/debian/traintastic-client.desktop DESTINATION share/applications)
+  install(FILES ${CMAKE_SOURCE_DIR}/debian/traintastic_256.png DESTINATION "/opt/traintastic/icons/")
+
+  if(NOT DEBIAN_PACKAGE_VERSION_EXTRA)
+    set(DEBIAN_PACKAGE_VERSION_EXTRA "${PROJECT_VERSION_EXTRA}")
+  endif()
+
+  set(CPACK_GENERATOR "DEB")
+  set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}${DEBIAN_PACKAGE_VERSION_EXTRA}")
+  set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+  set(CPACK_DEBIAN_PACKAGE_SECTION "misc")
+  set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Reinder Feenstra")
+  set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://traintastic.org")
+  set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+  set(CPACK_DEBIAN_PACKAGE_DEPENDS "traintastic-data (>= ${CPACK_PACKAGE_VERSION})")
+
+  include(CPack)
 endif()
-
-set(CPACK_GENERATOR "DEB")
-set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}${DEBIAN_PACKAGE_VERSION_EXTRA}")
-set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
-set(CPACK_DEBIAN_PACKAGE_SECTION "misc")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Reinder Feenstra")
-set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://traintastic.org")
-set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "traintastic-data (>= ${CPACK_PACKAGE_VERSION})")
-
-include(CPack)

@@ -155,6 +155,12 @@ jobs:
       working-directory: ${{github.workspace}}/client/build
       run: cpack
 
+    # macOS only:
+    - name: Build macOS bundle
+      if: startswith(matrix.config.os, 'macos')
+      working-directory: ${{github.workspace}}/client/build
+      run: cpack
+
     # Windows only:
     - name: Upload artifact
       if: startswith(matrix.config.os, 'windows')
@@ -170,6 +176,14 @@ jobs:
       with:
         name: traintastic-client-deb-${{matrix.config.name}}
         path: ${{github.workspace}}/client/build/*.deb
+
+    # macOS only:
+    - name: Upload upload macOS bundle
+      if: startswith(matrix.config.os, 'macos')
+      uses: actions/upload-artifact@v4
+      with:
+        name: traintastic-client-dmg-${{matrix.config.name}}
+        path: ${{github.workspace}}/client/build/*.dmg
 
   build-server:
     name: server ${{matrix.config.name}}
