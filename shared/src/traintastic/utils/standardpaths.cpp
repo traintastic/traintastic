@@ -26,6 +26,9 @@
   #include <windows.h>
   #include <shlobj.h>
 #endif
+#ifdef __APPLE__
+  #include <CoreFoundation/CoreFoundation.h>
+#endif
 
 namespace {
 
@@ -87,6 +90,20 @@ std::filesystem::path getLocalAppDataPath()
 }
 #endif
 
+#ifdef __APPLE__
+std::filesystem::path getBundleResourcesPath()
+{
+  CFBundleRef mainBundle = CFBundleGetMainBundle();
+  CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+  char path[PATH_MAX];
+  if(CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8*)path, PATH_MAX))
+  {
+    CFRelease(resourcesURL);
+  }
+  return std::filesystem::path(path);
+}
+#endif
+
 std::filesystem::path getLocalePath()
 {
   if(auto path = getEnvironmentVariableAsPath("TRAINTASTIC_LOCALE_PATH"))
@@ -97,6 +114,8 @@ std::filesystem::path getLocalePath()
   return getProgramDataPath() / "traintastic" / "translations";
 #elif defined(__linux__)
   return "/opt/traintastic/translations";
+#elif defined(__APPLE__)
+  return getBundleResourcesPath() / "translations";
 #else
   return std::filesystem::current_path() / "translations";
 #endif
@@ -112,6 +131,8 @@ std::filesystem::path getManualPath()
   return getProgramDataPath() / "traintastic" / "manual";
 #elif defined(__linux__)
   return "/opt/traintastic/manual";
+#elif defined(__APPLE__)
+  return getBundleResourcesPath() / "manual";
 #else
   return std::filesystem::current_path() / "manual";
 #endif
@@ -132,6 +153,8 @@ std::filesystem::path getLNCVXMLPath()
   return getProgramDataPath() / "traintastic" / "lncv";
 #elif defined(__linux__)
   return "/opt/traintastic/lncv";
+#elif defined(__APPLE__)
+  return getBundleResourcesPath() / "lncv";
 #else
   return std::filesystem::current_path() / "lncv";
 #endif

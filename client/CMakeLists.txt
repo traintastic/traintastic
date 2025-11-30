@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.20)
 include(../shared/traintastic.cmake)
 project(traintastic-client VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic client")
 include(GNUInstallDirs)
@@ -137,7 +137,9 @@ endif()
 
 ### INSTALL / PACKAGE ###
 if(APPLE)
-  unset(CPACK_BUNDLE_STARTUP_COMMAND)
+
+  set_source_files_properties(${LNCV_XML_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/lncv")
+  set_source_files_properties(${TRANSLATION_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/translations")
 
   set_target_properties(traintastic-client PROPERTIES
     MACOSX_BUNDLE TRUE
@@ -155,7 +157,7 @@ if(APPLE)
   
   install(SCRIPT ${deploy_script})  
 
-  set(CPACK_GENERATOR "Bundle")
+  set(CPACK_GENERATOR "DragNDrop")
   set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/../shared/gfx/appicon.icns")
   set(CPACK_BUNDLE_NAME "Traintastic client")
   set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/../package/macos/client.plist")
