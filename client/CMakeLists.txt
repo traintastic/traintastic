@@ -138,17 +138,30 @@ endif()
 ### INSTALL / PACKAGE ###
 if(APPLE)
 
-  set_source_files_properties(${LNCV_XML_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/lncv")
-  set_source_files_properties(${TRANSLATION_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/translations")
+  set(CPACK_GENERATOR "DragNDrop")
+  set(CPACK_PACKAGE_VERSION "${TRAINTASTIC_VERSION}${TRAINTASTIC_VERSION_EXTRA}")
+  set(CPACK_BUNDLE_NAME "TraintasticClient")
+  set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/../shared/gfx/appicon.icns")
+  set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/../package/macos/client.plist")
 
   set_target_properties(traintastic-client PROPERTIES
     MACOSX_BUNDLE TRUE
-    OUTPUT_NAME "TraintasticClient"
+    OUTPUT_NAME "${CPACK_BUNDLE_NAME}"
   )
 
   install(TARGETS traintastic-client
     BUNDLE DESTINATION .
   )
+
+  install(FILES ${TRANSLATION_FILES} DESTINATION "${CPACK_BUNDLE_NAME}.app/Contents/Resources/translations")
+  
+  file(GLOB LNCV_FILES 
+    "${CMAKE_SOURCE_DIR}/../shared/data/lncv/xml/*.xml"
+    "${CMAKE_SOURCE_DIR}/../shared/data/lncv/xml/lncvmodule.xsd"
+  )
+  install(FILES ${LNCV_FILES} DESTINATION "${CPACK_BUNDLE_NAME}.app/Contents/Resources/lncv")
+  
+  qt_finalize_executable(traintastic-client)
   
   qt_generate_deploy_app_script(
     TARGET traintastic-client
@@ -156,11 +169,6 @@ if(APPLE)
   )
   
   install(SCRIPT ${deploy_script})  
-
-  set(CPACK_GENERATOR "DragNDrop")
-  set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/../shared/gfx/appicon.icns")
-  set(CPACK_BUNDLE_NAME "Traintastic client")
-  set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/../package/macos/client.plist")
 
   include(CPack)
 elseif(LINUX) 
