@@ -26,13 +26,10 @@ def json_to_lang(filename_json, filename_lang):
 
 
 if __name__ == "__main__":
-    import os
-    import re
-    path = os.path.realpath(os.path.dirname(__file__))
-    for item in os.scandir(path):
-        if re.match(r'^([a-z]{2}-[a-z]{2}|neutral)\.json$', item.name) is not None:
-            filename_json = os.path.join(path, item.name)
-            filename_lang = os.path.splitext(filename_json)[0] + '.lang'
-            if not os.path.exists(filename_lang) or os.path.getmtime(filename_json) > os.path.getmtime(filename_lang):
-                print('Building language file: {:s} => {:s}'.format(os.path.basename(filename_json), os.path.basename(filename_lang)))
-                json_to_lang(filename_json, filename_lang)
+    import sys
+
+    if len(sys.argv) != 3:
+        print("Usage: {:s} <json file> <lang file>".format(sys.argv[0]), file=sys.stderr)
+        sys.exit(1)
+
+    json_to_lang(sys.argv[1], sys.argv[2])
