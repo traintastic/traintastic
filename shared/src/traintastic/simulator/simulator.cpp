@@ -734,7 +734,8 @@ void Simulator::doReceive()
                                     [this](const boost::system::error_code& ec2, std::size_t bytesTransferred)
           {
             assert(!ec2 && bytesTransferred == 6);
-            doReceive();
+            if(!ec2 && bytesTransferred == 6)
+              doReceive();
           });
           return;
         }
