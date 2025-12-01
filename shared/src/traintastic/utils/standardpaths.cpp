@@ -117,15 +117,6 @@ std::filesystem::path getManualPath()
 #endif
 }
 
-std::filesystem::path getLuaManualPath()
-{
-#ifdef WIN32
-  return getProgramDataPath() / "traintastic" / "manual-lua";
-#else
-  return {};
-#endif
-}
-
 std::filesystem::path getLNCVXMLPath()
 {
 #ifdef WIN32
