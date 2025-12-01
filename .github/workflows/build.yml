@@ -480,9 +480,17 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{github.workspace}}/shared/build
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{github.workspace}}/shared/build
+      run: cmake $GITHUB_WORKSPACE/shared
+
     - name: Build language files
-      working-directory: ${{github.workspace}}/shared/translations
-      run: python3 json2lang.py
+      working-directory: ${{github.workspace}}/shared/build
+      run: cmake --build . --target traintastic-lang
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
