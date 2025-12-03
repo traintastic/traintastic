@@ -47,12 +47,12 @@ struct Sha1
       {
       }
 
-      bool operator ==(const Digest& other)
+      bool operator ==(const Digest& other) const
       {
         return std::memcmp(this, &other, sizeof(Digest)) == 0;
       }
 
-      bool operator !=(const Digest& other)
+      bool operator !=(const Digest& other) const
       {
         return !operator ==(other);
       }
