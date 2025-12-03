@@ -374,21 +374,6 @@ endif()
 
 target_code_coverage(traintastic-server-test AUTO EXCLUDE "${PROJECT_SOURCE_DIR}/test/*" "${PROJECT_SOURCE_DIR}/thirdparty/*")
 
-### INSTALL ###
-
-install(TARGETS traintastic-server
-    COMPONENT traintastic-server
-    RUNTIME DESTINATION "/opt/traintastic/bin/"
-)
-
-if(INSTALL_TRANSLATIONS)
-  install(FILES ${TRANSLATION_FILES} DESTINATION "/opt/traintastic/translations")
-endif()
-
-if(INSTALL_SYSTEMD_SERVICE)
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/debian/traintastic-server.service DESTINATION "/lib/systemd/system")
-endif()
-
 ### TEST ###
 
 if(BUILD_TESTING)
@@ -410,20 +395,54 @@ if(DOXYGEN_FOUND)
     #[COMMENT comment])
 endif()
 
-### DEB package ###
+### INSTALL / PACKAGE ###
+if(APPLE)
 
-if(NOT DEBIAN_PACKAGE_VERSION_EXTRA)
-  set(DEBIAN_PACKAGE_VERSION_EXTRA "${PROJECT_VERSION_EXTRA}")
+  set(CPACK_GENERATOR "DragNDrop")
+  set(CPACK_PACKAGE_VERSION "${TRAINTASTIC_VERSION}${TRAINTASTIC_VERSION_EXTRA}")
+  set(CPACK_BUNDLE_NAME "TraintasticServer")
+  set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/../shared/gfx/appicon.icns")
+  set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/package/macos/info.plist")
+
+  set_target_properties(traintastic-server PROPERTIES
+    MACOSX_BUNDLE TRUE
+    OUTPUT_NAME "${CPACK_BUNDLE_NAME}"
+  )
+
+  install(TARGETS traintastic-server
+    BUNDLE DESTINATION .
+  )
+
+  install(FILES ${TRANSLATION_FILES} DESTINATION "${CPACK_BUNDLE_NAME}.app/Contents/Resources/translations")
+
+  include(CPack)
+elseif(LINUX)
+  install(TARGETS traintastic-server
+      COMPONENT traintastic-server
+      RUNTIME DESTINATION "/opt/traintastic/bin/"
+  )
+
+  if(INSTALL_TRANSLATIONS)
+    install(FILES ${TRANSLATION_FILES} DESTINATION "/opt/traintastic/translations")
+  endif()
+
+  if(INSTALL_SYSTEMD_SERVICE)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/debian/traintastic-server.service DESTINATION "/lib/systemd/system")
+  endif()
+
+  if(NOT DEBIAN_PACKAGE_VERSION_EXTRA)
+    set(DEBIAN_PACKAGE_VERSION_EXTRA "${PROJECT_VERSION_EXTRA}")
+  endif()
+
+  set(CPACK_GENERATOR "DEB")
+  set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}${DEBIAN_PACKAGE_VERSION_EXTRA}")
+  set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+  set(CPACK_DEBIAN_PACKAGE_SECTION "misc")
+  set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Reinder Feenstra")
+  set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://traintastic.org")
+  set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+  set(CPACK_DEBIAN_PACKAGE_DEPENDS "traintastic-data (>= ${CPACK_PACKAGE_VERSION})")
+  set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/debian/postinst")
+
+  include(CPack)
 endif()
-
-set(CPACK_GENERATOR "DEB")
-set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}${DEBIAN_PACKAGE_VERSION_EXTRA}")
-set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
-set(CPACK_DEBIAN_PACKAGE_SECTION "misc")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Reinder Feenstra")
-set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://traintastic.org")
-set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "traintastic-data (>= ${CPACK_PACKAGE_VERSION})")
-set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/debian/postinst")
-
-include(CPack)
