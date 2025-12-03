@@ -323,6 +323,14 @@ if(WIN32 AND NOT MSVC)
   endif()
 endif()
 
+if(APPLE)
+  find_library(CORE_FOUNDATION CoreFoundation)
+  target_link_libraries(traintastic-server PRIVATE ${CORE_FOUNDATION})
+  if(BUILD_TESTING)
+    target_link_libraries(traintastic-server-test PRIVATE ${CORE_FOUNDATION})
+  endif()
+endif()
+
 # boost
 find_package(Boost 1.81 REQUIRED COMPONENTS program_options url)
 target_include_directories(traintastic-server SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
