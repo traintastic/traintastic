@@ -32,7 +32,7 @@
 SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
   StraightRailTile(world, _id, TileId::RailSensor),
   InputConsumer(static_cast<Object&>(*this), world),
-  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   type{this, "type", SensorType::OccupancyDetector, PropertyFlags::ReadWrite | PropertyFlags::Store,
     [this](SensorType /*value*/)
     {
@@ -49,7 +49,7 @@ SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
         inputValueChanged(input()->value == TriState::True, input());
       }
     }},
-  state{this, "state", SensorState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  state{this, "state", SensorState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , simulateTrigger{*this, "simulate_trigger",
       [this]()
       {
