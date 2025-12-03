@@ -270,6 +270,7 @@ jobs:
           os: "macos-15-intel"
           generator: "Unix Makefiles"
           arch: ""
+          osx_arch: x86_64
           toolset: ""
           target: all
           jobs: 4
@@ -282,6 +283,7 @@ jobs:
           os: "macos-15"
           generator: "Unix Makefiles"
           arch: ""
+          osx_arch: arm64
           toolset: ""
           target: all
           jobs: 4
@@ -318,7 +320,7 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-          core.exportVariable('CMAKE_OSX_ARCHITECTURES', 'x86_64');
+          core.exportVariable('CMAKE_OSX_ARCHITECTURES', '${{matrix.config.osx_arch}}');
 
     # Ubuntu only:
     - name: apt update
@@ -377,6 +379,12 @@ jobs:
       working-directory: ${{github.workspace}}/server/build
       run: cpack
 
+    # macOS only:
+    - name: Build macOS bundle
+      if: startswith(matrix.config.os, 'macos')
+      working-directory: ${{github.workspace}}/server/build
+      run: cpack
+
     # Windows only:
     - name: Upload artifact
       if: matrix.config.name == 'windows_x64_clang'
@@ -392,6 +400,14 @@ jobs:
       with:
         name: traintastic-server-deb-${{matrix.config.name}}
         path: ${{github.workspace}}/server/build/*.deb
+
+    # macOS only:
+    - name: Upload upload macOS bundle
+      if: startswith(matrix.config.os, 'macos')
+      uses: actions/upload-artifact@v4
+      with:
+        name: traintastic-server-dmg-${{matrix.config.name}}
+        path: ${{github.workspace}}/server/build/*.dmg
 
     # Code coverage:
     - name: Code coverage
