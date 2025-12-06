@@ -159,7 +159,9 @@ jobs:
     - name: Build macOS bundle
       if: startswith(matrix.config.os, 'macos')
       working-directory: ${{github.workspace}}/client/build
-      run: cpack
+      run: |
+        cpack
+        f=(*-Darwin.dmg) && mv "$f" "${f%.dmg}-${{matrix.config.osx_arch}}.dmg"
 
     # Windows only:
     - name: Upload artifact
@@ -383,7 +385,9 @@ jobs:
     - name: Build macOS bundle
       if: startswith(matrix.config.os, 'macos')
       working-directory: ${{github.workspace}}/server/build
-      run: cpack
+      run: |
+        cpack
+        f=(*-Darwin.dmg) && mv "$f" "${f%.dmg}-${{matrix.config.osx_arch}}.dmg"
 
     # Windows only:
     - name: Upload artifact
@@ -633,6 +637,20 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         pattern: traintastic-data-deb-*
+        merge-multiple: true
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
+
+    - name: "Download artifacts: client bundles"
+      uses: actions/download-artifact@v4
+      with:
+        pattern: traintastic-client-dmg-*
+        merge-multiple: true
+        path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
+
+    - name: "Download artifacts: server bundles"
+      uses: actions/download-artifact@v4
+      with:
+        pattern: traintastic-server-dmg-*
         merge-multiple: true
         path: ${{github.workspace}}/dist/${{env.CI_REF_NAME_SLUG}}/${{github.run_number}}
 
