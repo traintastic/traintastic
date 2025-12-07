@@ -23,6 +23,7 @@
 #include "simulatorconnection.hpp"
 #include <numbers>
 #include <ranges>
+#include <bit>
 #include "protocol.hpp"
 
 namespace
@@ -315,8 +316,11 @@ std::optional<T> stringToEnum(std::string_view value)
 Simulator::Simulator(const nlohmann::json& world)
   : staticData(load(world, m_stateData))
   , m_tickTimer{m_ioContext}
+  , m_handShakeTimer{m_ioContext}
   , m_acceptor{m_ioContext}
+  , m_socketUDP{m_ioContext}
 {
+
 }
 
 Simulator::~Simulator()
@@ -342,10 +346,10 @@ uint16_t Simulator::serverPort() const
   return m_acceptor.local_endpoint().port();
 }
 
-void Simulator::start()
+void Simulator::start(bool discoverable)
 {
   m_thread = std::thread(
-    [this]()
+    [this, discoverable]()
     {
       if(m_serverEnabled)
       {
@@ -358,19 +362,36 @@ void Simulator::start()
 
         m_acceptor.listen(5, ec);
 
+        if(discoverable)
+        {
+          m_socketUDP.open(boost::asio::ip::udp::v4(), ec);
+          if(ec)
+              assert(false);
+
+          m_socketUDP.set_option(boost::asio::socket_base::reuse_address(true), ec);
+          if(ec)
+              assert(false);
+
+          m_socketUDP.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::address_v4::any(), defaultPort), ec);
+          if(ec)
+            assert(false);
+
+          doReceive();
+        }
+
         accept();
       }
       tick();
+      handShake();
       m_ioContext.run();
     });
 }
 
 void Simulator::stop()
 {
+  // Stop UDP discovery
   boost::system::error_code ec;
-  m_acceptor.cancel(ec);
-  m_acceptor.close(ec);
-  // ignore errors
+  m_socketUDP.close(ec);
 
   while(!m_connections.empty())
   {
@@ -379,7 +400,12 @@ void Simulator::stop()
     connection->stop();
   }
 
+  // Stop TCP server
+  m_acceptor.cancel(ec);
+  m_acceptor.close(ec);
+
   m_tickTimer.cancel();
+  m_handShakeTimer.cancel();
   if(m_thread.joinable())
   {
     m_thread.join();
@@ -539,7 +565,7 @@ void Simulator::send(const SimulatorProtocol::Message& message)
   }
 }
 
-void Simulator::receive(const SimulatorProtocol::Message& message)
+void Simulator::receive(const SimulatorProtocol::Message& message, size_t fromConnId)
 {
   using namespace SimulatorProtocol;
 
@@ -640,6 +666,33 @@ void Simulator::receive(const SimulatorProtocol::Message& message)
     }
     case OpCode::SensorChanged:
       break; // only sent by simulator
+    case OpCode::Handshake:
+    case OpCode::HandshakeResponse:
+      break; // handled by SimulatorConnection already
+    case OpCode::RequestChannel:
+    {
+      const auto& m = static_cast<const RequestChannel&>(message);
+      std::lock_guard<std::mutex> lock(m_stateMutex);
+
+      const size_t count = staticData.sensors.size();
+      for(size_t i = 0; i < count; ++i)
+      {
+        const auto& sensor = staticData.sensors[i];
+        if(m.channel != invalidAddress && m.channel != sensor.channel)
+          continue;
+
+        auto& sensorState = m_stateData.sensors[i];
+
+        for(const auto& connection : m_connections)
+        {
+          if(connection->connectionId() != fromConnId)
+            continue;
+          connection->send(SimulatorProtocol::SensorChanged(sensor.channel, sensor.address, sensorState.value));
+          break;
+        }
+      }
+      break;
+    }
   }
 }
 
@@ -648,7 +701,13 @@ void Simulator::removeConnection(const std::shared_ptr<SimulatorConnection>& con
   if(auto it = std::find(m_connections.begin(), m_connections.end(), connection); it != m_connections.end())
   {
     m_connections.erase(it);
+    onConnectionRemoved(connection);
   }
+}
+
+void Simulator::onConnectionRemoved(const std::shared_ptr<SimulatorConnection>&)
+{
+
 }
 
 void Simulator::accept()
@@ -658,10 +717,61 @@ void Simulator::accept()
     {
       if(!ec)
       {
-        m_connections.emplace_back(std::make_shared<SimulatorConnection>(shared_from_this(), std::move(socket)))->start();
+        lastConnectionId++;
+        if(lastConnectionId == invalidIndex)
+          lastConnectionId = 0;
+
+        m_connections.emplace_back(std::make_shared<SimulatorConnection>(
+                                     shared_from_this(), std::move(socket),
+                                     lastConnectionId))->start();
         accept();
       }
     });
+}
+
+constexpr char RequestMessage[] = {'s', 'i', 'm', '?'};
+constexpr char ResponseMessage[] = {'s', 'i', 'm', '!'};
+
+void Simulator::doReceive()
+{
+  m_socketUDP.async_receive_from(
+        boost::asio::buffer(m_udpBuffer),
+        m_remoteEndpoint,
+        [this](const boost::system::error_code& ec, std::size_t bytesReceived)
+  {
+    if(!ec)
+    {
+      const char *recvMsg = reinterpret_cast<char*>(m_udpBuffer.data());
+      if(bytesReceived >= sizeof(RequestMessage) && std::memcmp(recvMsg, &RequestMessage, sizeof(RequestMessage)) == 0)
+      {
+        if(!m_serverLocalHostOnly || m_remoteEndpoint.address().is_loopback())
+        {
+          uint16_t response[3] = {0, 0, serverPort()};
+
+          // Send in big endian format
+          if constexpr (std::endian::native == std::endian::little)
+          {
+            // Swap bytes
+            uint8_t b[2] = {};
+            *reinterpret_cast<uint16_t *>(b) = response[2];
+            std::swap(b[0], b[1]);
+            response[2] = *reinterpret_cast<uint16_t *>(b);
+          }
+
+          std::memcpy(&response, &ResponseMessage, sizeof(ResponseMessage));
+          m_socketUDP.async_send_to(boost::asio::buffer(response, sizeof(response)), m_remoteEndpoint,
+                                    [this](const boost::system::error_code& ec2, std::size_t bytesTransferred)
+          {
+            assert(!ec2 && bytesTransferred == 6);
+            if(!ec2 && bytesTransferred == 6)
+              doReceive();
+          });
+          return;
+        }
+      }
+      doReceive();
+    }
+  });
 }
 
 void Simulator::tick()
@@ -687,6 +797,36 @@ void Simulator::tick()
   }
 
   onTick();
+}
+
+void Simulator::handShake()
+{
+  m_handShakeTimer.expires_after(handShakeRate);
+  m_handShakeTimer.async_wait(
+    [this](std::error_code ec)
+    {
+      if(!ec)
+      {
+        handShake();
+      }
+    });
+
+  auto it = m_connections.begin();
+  while(it != m_connections.end())
+  {
+    if(!(*it)->handShakeResponseReceived())
+    {
+      std::shared_ptr<SimulatorConnection> conn = *it;
+      it = m_connections.erase(it);
+      conn->stop();
+      onConnectionRemoved(conn);
+      continue;
+    }
+
+    (*it)->setHandShakeResponseReceived(false);
+    (*it)->send(SimulatorProtocol::HandShake(false));
+    it++;
+  }
 }
 
 void Simulator::updateTrainPositions()

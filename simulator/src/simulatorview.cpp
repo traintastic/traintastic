@@ -87,7 +87,7 @@ void drawCurve(const Simulator::TrackSegment& segment, size_t curveIndex)
   const auto& curve = segment.curves[curveIndex];
   const float rotation = curve.angle < 0 ? 0.0f : pi;
 
-  int numSegments = qCeil(std::abs(curve.angle) / (pi / 36.0f)); // Smooth curve
+  int numSegments = qCeil(curve.length / 10.0); // Smooth curve
   float step = curve.angle / numSegments;
   const float cx = curve.radius * sinf(rotation);
   const float cy = curve.radius * -cosf(rotation);
@@ -114,7 +114,7 @@ SimulatorView::SimulatorView(QWidget* parent)
 
 SimulatorView::~SimulatorView()
 {
-  setSimulator({});
+  setSimulator({}, false, false);
 }
 
 Simulator* SimulatorView::simulator() const
@@ -122,7 +122,8 @@ Simulator* SimulatorView::simulator() const
   return m_simulator.get();
 }
 
-void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
+void SimulatorView::setSimulator(std::shared_ptr<Simulator> value,
+                                 bool localOnly, bool discoverable)
 {
   if(m_simulator)
   {
@@ -154,8 +155,9 @@ void SimulatorView::setSimulator(std::shared_ptr<Simulator> value)
         QMetaObject::invokeMethod(this, "tick", Qt::QueuedConnection);
       }));
 
-    m_simulator->enableServer();
-    m_simulator->start();
+    m_simulator->enableServer(localOnly);
+
+    m_simulator->start(discoverable);
   }
 
   update();

@@ -159,10 +159,15 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
 void MainWindow::load(const QString& filename)
 {
+  setWindowFilePath(filename);
+
   QFile file(filename);
   if(file.open(QIODeviceBase::ReadOnly))
   {
-    m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString())));
+    m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString(),
+                                                                           nullptr,
+                                                                           true, true)),
+                         mLocalOnly, mDiscoverable);
     QMetaObject::invokeMethod(m_view, &SimulatorView::zoomToFit, Qt::QueuedConnection);
   }
 }

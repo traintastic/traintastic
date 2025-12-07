@@ -23,10 +23,13 @@
 #include "simulator.hpp"
 #include "protocol.hpp"
 
-SimulatorConnection::SimulatorConnection(std::shared_ptr<Simulator> simulator, boost::asio::ip::tcp::socket&& socket)
+SimulatorConnection::SimulatorConnection(std::shared_ptr<Simulator> simulator, boost::asio::ip::tcp::socket&& socket, size_t connId)
   : m_simulator{std::move(simulator)}
   , m_socket{std::move(socket)}
+  , m_connectionId(connId)
 {
+    m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
+    m_socket.set_option(boost::asio::socket_base::send_buffer_size(8192 * 2));
 }
 
 void SimulatorConnection::start()
@@ -61,7 +64,6 @@ bool SimulatorConnection::send(const SimulatorProtocol::Message& message)
   return true;
 }
 
-
 void SimulatorConnection::read()
 {
   m_socket.async_read_some(boost::asio::buffer(m_readBuffer.data() + m_readBufferOffset, m_readBuffer.size() - m_readBufferOffset),
@@ -81,7 +83,17 @@ void SimulatorConnection::read()
             break;
           }
 
-          m_simulator->receive(*message);
+          if(message->opCode == SimulatorProtocol::OpCode::HandshakeResponse &&
+             message->size == sizeof(SimulatorProtocol::HandShake))
+          {
+            // Eat message
+            m_handShakeResponseReceived = true;
+          }
+          else
+          {
+            m_simulator->receive(*message, m_connectionId);
+          }
+
           pos += message->size;
           bytesTransferred -= message->size;
         }

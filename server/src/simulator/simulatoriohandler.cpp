@@ -142,6 +142,15 @@ void SimulatorIOHandler::receive(const SimulatorProtocol::Message& message)
         onAccessorySetState(m.channel, m.address, m.state);
       }
       break;
+
+    case OpCode::Handshake:
+      send(SimulatorProtocol::HandShake(true));
+      break;
+
+  case OpCode::HandshakeResponse:
+  case OpCode::RequestChannel:
+    // This is never sent by simulator, only by simulator clients
+    break;
   }
 }
 
