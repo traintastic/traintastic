@@ -19,15 +19,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_TILE_TURNOUTTILEWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_TILE_TURNOUTTILEWIDGET_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECTNAMELABEL_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_OBJECTNAMELABEL_HPP
 
-#include "tilewidget.hpp"
+#include <QLabel>
+#include "../network/objectptr.hpp"
 
-class TurnoutTileWidget : public TileWidget
+class ObjectProperty;
+
+class ObjectNameLabel : public QLabel
 {
-public:
-  explicit TurnoutTileWidget(ObjectPtr object, QWidget* parent = nullptr);
+  private:
+    ObjectProperty& m_property;
+    ObjectPtr m_object;
+    QMetaObject::Connection m_valueChanged;
+    int m_requestId;
+
+    void objectChanged();
+
+  public:
+    ObjectNameLabel(ObjectProperty& property, QWidget* parent = nullptr);
 };
 
 #endif

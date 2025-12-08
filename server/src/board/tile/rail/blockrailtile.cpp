@@ -32,6 +32,7 @@
 #include "../../../train/train.hpp"
 #include "../../../train/trainblockstatus.hpp"
 #include "../../../train/traintracking.hpp"
+#include "../../../utils/category.hpp"
 #include "../../../utils/displayname.hpp"
 #include "../../../zone/blockzonelist.hpp"
 #include "../../../zone/zoneblocklist.hpp"
@@ -185,10 +186,12 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
 
+  Attributes::addCategory(length, Category::general);
   Attributes::addDisplayName(length, DisplayName::Vehicle::Rail::length);
   Attributes::addEnabled(length, editable);
   m_interfaceItems.add(length);
 
+  Attributes::addCategory(inputMap, Category::input);
   m_interfaceItems.add(inputMap);
 
   Attributes::addObjectEditor(state, false);
@@ -202,6 +205,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   Attributes::addObjectEditor(trains, false);
   m_interfaceItems.add(trains);
 
+  Attributes::addCategory(zones, Category::zones);
   m_interfaceItems.add(zones);
 
   Attributes::addEnabled(assignTrain, true);

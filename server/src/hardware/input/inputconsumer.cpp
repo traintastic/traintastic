@@ -26,6 +26,7 @@
 #include "../../core/eventloop.hpp"
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
+#include "../../utils/category.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
 #include "../../utils/valuestep.hpp"
@@ -105,20 +106,24 @@ InputConsumer::InputConsumer(Object& object, const World& world)
   const bool editable = contains(worldState, WorldState::Edit);
   const bool editableAndStopped = editable && !contains(worldState, WorldState::Run);
 
+  Attributes::addCategory(interface, Category::input);
   Attributes::addDisplayName(interface, DisplayName::Hardware::interface);
   Attributes::addEnabled(interface, editableAndStopped);
   Attributes::addObjectList(interface, world.inputControllers);
 
+  Attributes::addCategory(channel, Category::input);
   Attributes::addDisplayName(channel, DisplayName::Hardware::channel);
   Attributes::addEnabled(channel, editableAndStopped);
   Attributes::addValues(channel, std::span<const InputChannel>());
   Attributes::addVisible(channel, false);
 
+  Attributes::addCategory(address, Category::input);
   Attributes::addDisplayName(address, DisplayName::Hardware::address);
   Attributes::addEnabled(address, editableAndStopped);
   Attributes::addVisible(address, false);
   Attributes::addMinMax<uint32_t>(address, Input::addressMinDefault, Input::addressMaxDefault);
 
+  Attributes::addCategory(onDelay, Category::input);
   Attributes::addDisplayName(onDelay, "input:on_delay");
   Attributes::addEnabled(onDelay, editable);
   Attributes::addMinMax(onDelay, delayMin, delayMax);
@@ -126,6 +131,7 @@ InputConsumer::InputConsumer(Object& object, const World& world)
   Attributes::addUnit(onDelay, delayUnit);
   Attributes::addVisible(onDelay, false);
 
+  Attributes::addCategory(offDelay, Category::input);
   Attributes::addDisplayName(offDelay, "input:off_delay");
   Attributes::addEnabled(offDelay, editable);
   Attributes::addMinMax(offDelay, delayMin, delayMax);

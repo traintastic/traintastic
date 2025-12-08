@@ -22,10 +22,15 @@
 #include "tilewidget.hpp"
 #include <QGridLayout>
 #include <QTabWidget>
+#include <traintastic/locale/locale.hpp>
+#include "../../network/error.hpp"
 #include "../../network/object.hpp"
+#include "../../network/objectproperty.hpp"
 #include "../../network/property.hpp"
 #include "../../theme/theme.hpp"
+#include "../../utils/settabwidget.hpp"
 #include "../interfaceitemnamelabel.hpp"
+#include "../createform.hpp"
 #include "../createwidget.hpp"
 #include "tileimagewidget.hpp"
 
@@ -33,33 +38,86 @@ TileWidget::TileWidget(ObjectPtr object, QWidget* parent)
   : QWidget(parent)
   , m_object{std::move(object)}
   , m_tabs{new QTabWidget(this)}
-  , m_image{new TileImageWidget(this)}
+  , m_image{new TileImageWidget(m_object, this)}
 {
   Theme::setWindowIcon(*this, m_object->classId());
 
   auto* grid = new QGridLayout();
   grid->setContentsMargins(2, 2, 2, 2);
+  grid->addWidget(m_image, 0, 0);
 
-  if(auto* tileId = m_object->getProperty(QStringLiteral("tile_id"))) [[likely]]
+  // Window title:
+  if(auto* name = m_object->getProperty(QStringLiteral("name")))
   {
-    m_image->setTileId(tileId->toEnum<TileId>());
-  }
-  grid->addWidget(m_image, 0, 0, 2, 1);
-
-  if(auto* name = m_object->getProperty(QStringLiteral("name"))) [[likely]]
-  {
-    grid->addWidget(new InterfaceItemNameLabel(*name, this), 0, 1);
-    grid->addWidget(createWidget(*name, this), 0, 2);
     connect(name, &AbstractProperty::valueChangedString, this, &TileWidget::setWindowTitle);
     setWindowTitle(name->toString());
   }
-  if(auto* id = m_object->getProperty(QStringLiteral("id"))) [[likely]]
+  else if(auto* id = m_object->getProperty(QStringLiteral("id")))
   {
-    grid->addWidget(new InterfaceItemNameLabel(*id, this), 1, 1);
-    grid->addWidget(createWidget(*id, this), 1, 2);
+    connect(id, &AbstractProperty::valueChangedString, this, &TileWidget::setWindowTitle);
+    setWindowTitle(id->toString());
   }
 
-  grid->addWidget(m_tabs, 2, 0, 1, 3);
+  // Properties:
+  for(const QString& category : m_object->interfaceItems().categories())
+  {
+    auto items = m_object->interfaceItems().items(category);
+    items.erase(std::remove_if(items.begin(), items.end(),
+      [](auto* item)
+      {
+        return !item->getAttributeBool(AttributeName::ObjectEditor, true) || !dynamic_cast<AbstractProperty*>(item);
+      }), items.end());
+
+    if(items.empty())
+    {
+      continue;
+    }
+
+    // sub object to own tab:
+    for(auto it = items.begin(); it < items.end();)
+    {
+      if(auto* property = dynamic_cast<ObjectProperty*>(*it); property && contains(property->flags(), PropertyFlags::SubObject))
+      {
+        const auto tabIndex = m_tabs->addTab(new QWidget(this), property->displayName());
+        (void)property->getObject(
+          [this, tabIndex](const ObjectPtr& obj, std::optional<const Error> /*error*/)
+          {
+            if(obj) [[likely]]
+            {
+              setTabWidget(m_tabs, tabIndex, createWidget(obj, this));
+            }
+          });
+        it = items.erase(it);
+      }
+      else
+      {
+        it++;
+      }
+    }
+
+    if(QWidget* w = createFormWidget(items, this))
+    {
+      if(category.isEmpty())
+      {
+        w->layout()->setContentsMargins(2, 2, 2, 2);
+        grid->addWidget(w, 0, 1);
+      }
+      else
+      {
+        m_tabs->addTab(w, Locale::tr(category));
+      }
+    }
+  }
+
+  if(m_tabs->count() > 0)
+  {
+    grid->addWidget(m_tabs, 1, 0, 1, 2);
+  }
+  else
+  {
+    delete m_tabs;
+    m_tabs = nullptr;
+  }
 
   setLayout(grid);
 }

@@ -164,8 +164,8 @@
         "definition": "Link"
     },
     {
-        "term": "board_tile.rail.sensor:input",
-        "definition": "Input"
+        "term": "board_tile.rail.nx_button:block",
+        "definition": "Block"
     },
     {
         "term": "board_tile.rail.sensor:invert",
@@ -204,6 +204,18 @@
         "definition": "Cargo"
     },
     {
+        "term": "category:block",
+        "definition": "Block"
+    },
+    {
+        "term": "category:colors",
+        "definition": "Colors"
+    },
+    {
+        "term": "category:colors_and_alignment",
+        "definition": "Colors && Alignment"
+    },
+    {
         "term": "category:debug",
         "definition": "Debug"
     },
@@ -218,6 +230,10 @@
     {
         "term": "category:info",
         "definition": "Info"
+    },
+    {
+        "term": "category:input",
+        "definition": "Input"
     },
     {
         "term": "category:log",
@@ -298,14 +314,6 @@
     {
         "term": "class_id:board_tile.rail.nx_button",
         "definition": "NX button"
-    },
-    {
-        "term": "class_id:board_tile.rail.nx_button:block",
-        "definition": "Block"
-    },
-    {
-        "term": "class_id:board_tile.rail.nx_button:input",
-        "definition": "Input"
     },
     {
         "term": "class_id:board_tile.rail.one_way",

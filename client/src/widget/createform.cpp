@@ -56,3 +56,32 @@ QWidget* createFormWidget(Object& object, std::initializer_list<QString> items, 
   }
   return nullptr;
 }
+
+QLayout* createFormLayout(std::span<InterfaceItem*> items, QWidget* parent)
+{
+  auto* form = new QFormLayout();
+
+  for(auto* item : items)
+  {
+    form->addRow(new InterfaceItemNameLabel(*item, parent), createWidget(*item, parent));
+  }
+
+  if(!form->isEmpty())
+  {
+    return form;
+  }
+
+  delete form;
+  return nullptr;
+}
+
+QWidget* createFormWidget(std::span<InterfaceItem*> items, QWidget* parent)
+{
+  if(auto* form = createFormLayout(items, parent))
+  {
+    auto* w = new QWidget(parent);
+    w->setLayout(form);
+    return w;
+  }
+  return nullptr;
+}

@@ -26,6 +26,7 @@
 #include "../../../core/method.tpp"
 #include "../../../core/attributes.hpp"
 #include "../../../hardware/output/map/switchoutputmap.hpp"
+#include "../../../utils/category.hpp"
 #include "../../../utils/displayname.hpp"
 
 CREATE_IMPL(SwitchTile)
@@ -66,15 +67,19 @@ SwitchTile::SwitchTile(World& world, std::string_view _id)
 
   m_interfaceItems.add(text);
 
+  Attributes::addCategory(colorOn, Category::colors);
   Attributes::addValues(colorOn, colorValuesWithoutNone);
   m_interfaceItems.add(colorOn);
 
+  Attributes::addCategory(colorOff, Category::colors);
   Attributes::addValues(colorOff, colorValuesWithoutNone);
   m_interfaceItems.add(colorOff);
 
+  Attributes::addCategory(textColorOn, Category::colors);
   Attributes::addValues(textColorOn, colorValuesWithoutNone);
   m_interfaceItems.add(textColorOn);
 
+  Attributes::addCategory(textColorOff, Category::colors);
   Attributes::addValues(textColorOff, colorValuesWithoutNone);
   m_interfaceItems.add(textColorOff);
 

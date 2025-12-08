@@ -24,7 +24,7 @@
 
 #include <QWidget>
 #include <traintastic/board/tileid.hpp>
-#include <traintastic/enum/turnoutposition.hpp>
+#include "../../network/objectptr.hpp"
 
 struct BoardColorScheme;
 
@@ -32,21 +32,18 @@ class TileImageWidget : public QWidget
 {
 private:
   const BoardColorScheme* m_colorScheme;
-  TileId m_tileId = TileId::None;
-  TurnoutPosition m_turnoutPosition = TurnoutPosition::Unknown;
+  ObjectPtr m_object;
+  const TileId m_tileId;
 
 protected:
   void paintEvent(QPaintEvent* event) final;
 
 public:
-  explicit TileImageWidget(QWidget* parent = nullptr);
+  explicit TileImageWidget(ObjectPtr object, QWidget* parent = nullptr);
 
   int heightForWidth(int w) const final;
   bool hasHeightForWidth() const final;
   QSize minimumSizeHint() const final;
-
-  void setTileId(TileId value);
-  void setTurnoutPosition(TurnoutPosition value);
 };
 
 #endif

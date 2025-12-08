@@ -23,13 +23,18 @@
 #define TRAINTASTIC_CLIENT_WIDGET_CREATEFORM_HPP
 
 #include <initializer_list>
+#include <span>
 #include <QString>
 
 class QLayout;
 class QWidget;
 class Object;
+class InterfaceItem;
 
 QLayout* createFormLayout(Object& object, std::initializer_list<QString> items, QWidget* parent = nullptr);
 QWidget* createFormWidget(Object& object, std::initializer_list<QString> items, QWidget* parent = nullptr);
+
+QLayout* createFormLayout(std::span<InterfaceItem*> items, QWidget* parent = nullptr);
+QWidget* createFormWidget(std::span<InterfaceItem*> items, QWidget* parent = nullptr);
 
 #endif

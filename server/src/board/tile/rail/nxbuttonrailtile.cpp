@@ -27,6 +27,7 @@
 #include "../../../core/attributes.hpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../log/log.hpp"
+#include "../../../utils/category.hpp"
 #include "../../../utils/displayname.hpp"
 #include "../../../world/world.hpp"
 
@@ -77,6 +78,7 @@ NXButtonRailTile::NXButtonRailTile(World& world, std::string_view id_)
   Attributes::addObjectEditor(enabled, false);
   m_interfaceItems.add(enabled);
 
+  Attributes::addCategory(block, Category::block);
   m_interfaceItems.add(block);
 
   InputConsumer::addInterfaceItems(m_interfaceItems);

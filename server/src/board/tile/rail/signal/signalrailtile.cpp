@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include "../../../../core/method.tpp"
 #include "../../../../core/objectproperty.tpp"
 #include "../../../../world/getworld.hpp"
+#include "../../../../utils/category.hpp"
 #include "../../../../utils/displayname.hpp"
 #include "../blockrailtile.hpp"
 #include "../../../../train/trainblockstatus.hpp"
@@ -98,6 +99,7 @@ SignalRailTile::SignalRailTile(World& world, std::string_view _id, TileId tileId
   Attributes::addEnabled(name, editable);
   m_interfaceItems.add(name);
 
+  Attributes::addCategory(requireReservation, Category::options);
   Attributes::addDisplayName(requireReservation, "board_tile.rail.signal:require_reservation");
   Attributes::addEnabled(requireReservation, editable);
   Attributes::addValues(requireReservation, autoYesNoValues);

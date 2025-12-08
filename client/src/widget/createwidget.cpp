@@ -30,7 +30,7 @@
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
 #include "object/itemseditwidget.hpp"
-#include "tile/turnouttilewidget.hpp"
+#include "tile/tilewidget.hpp"
 #include "inputmonitorwidget.hpp"
 #include "outputkeyboardwidget.hpp"
 #include "outputmapwidget.hpp"
@@ -40,12 +40,15 @@
 #include "propertyspinbox.hpp"
 #include "propertylineedit.hpp"
 #include "propertypairoutputaction.hpp"
+#include "objectpropertycombobox.hpp"
+#include "objectnamelabel.hpp"
 #include "../board/boardwidget.hpp"
 #include "../network/object.hpp"
 #include "../network/inputmonitor.hpp"
 #include "../network/outputkeyboard.hpp"
 #include "../network/board.hpp"
 #include "../network/property.hpp"
+#include "../network/objectproperty.hpp"
 
 QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 {
@@ -87,10 +90,6 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return new ListWidget(object, parent);
   else if(classId == "marklin_can_locomotive_list")
     return new MarklinCANLocomotiveListWidget(object, parent);
-  else if(object->classId().startsWith("board_tile.rail.turnout"))
-  {
-    return new TurnoutTileWidget(object, parent);
-  }
   else
     return nullptr;
 }
@@ -103,6 +102,10 @@ QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
     return new InputMonitorWidget(inputMonitor, parent);
   else if(auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(object))
     return new OutputKeyboardWidget(outputKeyboard, parent);
+  else if(object->classId().startsWith("board_tile."))
+  {
+    return new TileWidget(object, parent);
+  }
   else
     return new ObjectEditWidget(object, parent);
 }
@@ -122,6 +125,10 @@ QWidget* createWidget(AbstractProperty& baseProperty, QWidget* parent)
   if(auto* property = dynamic_cast<Property*>(&baseProperty))
   {
     return createWidget(*property, parent);
+  }
+  else if(auto* objectProperty = dynamic_cast<ObjectProperty*>(&baseProperty))
+  {
+    return createWidget(*objectProperty, parent);
   }
   assert(false);
   return nullptr;
@@ -171,3 +178,11 @@ QWidget* createWidget(Property& property, QWidget* parent)
   return nullptr;
 }
 
+QWidget* createWidget(ObjectProperty& property, QWidget* parent)
+{
+  if(property.isWritable())
+  {
+    return new ObjectPropertyComboBox(property, parent);
+  }
+  return new ObjectNameLabel(property, parent);
+}

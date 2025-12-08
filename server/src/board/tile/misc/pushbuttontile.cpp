@@ -24,6 +24,7 @@
 #include "../../../world/world.hpp"
 #include "../../../core/method.tpp"
 #include "../../../core/attributes.hpp"
+#include "../../../utils/category.hpp"
 #include "../../../utils/displayname.hpp"
 
 CREATE_IMPL(PushButtonTile)
@@ -43,11 +44,13 @@ PushButtonTile::PushButtonTile(World& world, std::string_view _id)
   Attributes::setMax<uint8_t>(height, 16);
   Attributes::setMax<uint8_t>(width, 16);
 
+  Attributes::addCategory(color, Category::colors);
   Attributes::addValues(color, colorValuesWithoutNone);
   m_interfaceItems.add(color);
 
   m_interfaceItems.add(text);
 
+  Attributes::addCategory(textColor, Category::colors);
   Attributes::addValues(textColor, colorValuesWithoutNone);
   m_interfaceItems.add(textColor);
 
