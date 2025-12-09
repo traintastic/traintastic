@@ -32,7 +32,6 @@ enum class DecoderChangeFlags
   Throttle = 1 << 2,
   SpeedSteps = 1 << 3,
   FunctionValue = 1 << 4,
-  FunctionMomentary = 1 << 5,
 };
 
 constexpr DecoderChangeFlags operator| (const DecoderChangeFlags& lhs, const DecoderChangeFlags& rhs)
