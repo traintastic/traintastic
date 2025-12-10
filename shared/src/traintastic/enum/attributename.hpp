@@ -42,6 +42,7 @@ enum class AttributeName : uint16_t
   AliasValues = 12,
   Unit = 14,
   Step = 15,
+  Help = 16,
 };
 
 #endif
