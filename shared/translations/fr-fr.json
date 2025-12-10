@@ -25,7 +25,7 @@
     },
     {
         "term": "block_state:unknown",
-        "definition": ""
+        "definition": "Inconnu"
     },
     {
         "term": "board:delete_tile",
@@ -53,7 +53,7 @@
     },
     {
         "term": "board_area_grid:none",
-        "definition": ""
+        "definition": "Aucun"
     },
     {
         "term": "board_settings.color_scheme:dark",
@@ -84,12 +84,32 @@
         "definition": "Couleur"
     },
     {
+        "term": "board_tile.misc.push_button:text",
+        "definition": "Texte"
+    },
+    {
+        "term": "board_tile.misc.push_button:text_color",
+        "definition": "Couleur du texte"
+    },
+    {
         "term": "board_tile.misc.switch:color_off",
         "definition": "Couleur en position Off"
     },
     {
         "term": "board_tile.misc.switch:color_on",
         "definition": "Couleur en position On"
+    },
+    {
+        "term": "board_tile.misc.switch:text",
+        "definition": "Texte"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_off",
+        "definition": "Texte si d\u00e9sactiv\u00e9"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_on",
+        "definition": "Texte si activ\u00e9"
     },
     {
         "term": "board_tile.misc.switch:value",
@@ -117,7 +137,7 @@
     },
     {
         "term": "board_tile.rail.block:zones",
-        "definition": ""
+        "definition": "Zones"
     },
     {
         "term": "board_tile.rail.direction_control:state",
@@ -144,8 +164,8 @@
         "definition": "Lien"
     },
     {
-        "term": "board_tile.rail.sensor:input",
-        "definition": "Entr\u00e9e"
+        "term": "board_tile.rail.nx_button:block",
+        "definition": "Bloc"
     },
     {
         "term": "board_tile.rail.sensor:invert",
@@ -180,12 +200,24 @@
         "definition": "Sorties"
     },
     {
+        "term": "category:block",
+        "definition": "Bloc"
+    },
+    {
         "term": "category:cargo",
         "definition": "Cargo"
     },
     {
+        "term": "category:colors",
+        "definition": "Couleurs"
+    },
+    {
+        "term": "category:colors_and_alignment",
+        "definition": "Couleurs && Alignement"
+    },
+    {
         "term": "category:debug",
-        "definition": ""
+        "definition": "Debogage"
     },
     {
         "term": "category:developer",
@@ -200,6 +232,10 @@
         "definition": "Info"
     },
     {
+        "term": "category:input",
+        "definition": "Entr\u00e9e"
+    },
+    {
         "term": "category:log",
         "definition": "Journaux"
     },
@@ -209,7 +245,7 @@
     },
     {
         "term": "category:options",
-        "definition": ""
+        "definition": "Options"
     },
     {
         "term": "category:trains",
@@ -278,14 +314,6 @@
     {
         "term": "class_id:board_tile.rail.nx_button",
         "definition": "Bouton NX"
-    },
-    {
-        "term": "class_id:board_tile.rail.nx_button:block",
-        "definition": "Canton"
-    },
-    {
-        "term": "class_id:board_tile.rail.nx_button:input",
-        "definition": "Entr\u00e9e"
     },
     {
         "term": "class_id:board_tile.rail.one_way",
@@ -588,6 +616,66 @@
         "definition": "D\u00e9sactiv\u00e9"
     },
     {
+        "term": "default_name:block",
+        "definition": "Bloc"
+    },
+    {
+        "term": "default_name:board",
+        "definition": "plateau"
+    },
+    {
+        "term": "default_name:decoupler",
+        "definition": "D\u00e9coupler"
+    },
+    {
+        "term": "default_name:direction",
+        "definition": "Direction"
+    },
+    {
+        "term": "default_name:link",
+        "definition": "Lien"
+    },
+    {
+        "term": "default_name:nx_button",
+        "definition": "Boutton NX"
+    },
+    {
+        "term": "default_name:push_button",
+        "definition": "Bouton poussoir"
+    },
+    {
+        "term": "default_name:script",
+        "definition": "Script"
+    },
+    {
+        "term": "default_name:sensor",
+        "definition": "Capteur"
+    },
+    {
+        "term": "default_name:signal",
+        "definition": "Signal"
+    },
+    {
+        "term": "default_name:switch",
+        "definition": "Switch"
+    },
+    {
+        "term": "default_name:train",
+        "definition": "Train"
+    },
+    {
+        "term": "default_name:turnout",
+        "definition": "Aiguillage"
+    },
+    {
+        "term": "default_name:vehicle",
+        "definition": "V\u00e9hicule"
+    },
+    {
+        "term": "default_name:zone",
+        "definition": "Zone"
+    },
+    {
         "term": "direction:forward",
         "definition": "Avant"
     },
@@ -697,11 +785,11 @@
     },
     {
         "term": "input:off_delay",
-        "definition": ""
+        "definition": "D\u00e9lai Off"
     },
     {
         "term": "input:on_delay",
-        "definition": ""
+        "definition": "D\u00e9lai On"
     },
     {
         "term": "input_list:bus",
@@ -789,11 +877,11 @@
     },
     {
         "term": "interface_list:create",
-        "definition": ""
+        "definition": "Cr\u00e9er une nouvelle interface."
     },
     {
         "term": "interface_list:list_is_empty",
-        "definition": ""
+        "definition": "La liste des interface est vide.\nAppuyer sur le boutton plus pour cr\u00e9er une nouvelle interface"
     },
     {
         "term": "interface_state:error",
@@ -849,7 +937,7 @@
     },
     {
         "term": "language:pl-pl",
-        "definition": ""
+        "definition": "Polonais"
     },
     {
         "term": "language:sv-se",
@@ -865,7 +953,7 @@
     },
     {
         "term": "list.zone:highlight_zone",
-        "definition": ""
+        "definition": "Zone surlign\u00e9e"
     },
     {
         "term": "list:add",
@@ -1200,6 +1288,10 @@
         "definition": "L'objet n'est pas une table"
     },
     {
+        "term": "message:C1020",
+        "definition": "Le chargement des param\u00e8tres a \u00e9chou\u00e9: %1"
+    },
+    {
         "term": "message:C2001",
         "definition": "Adresse d\u00e9j\u00e0 utilis\u00e9e \u00e0 #%1"
     },
@@ -1265,51 +1357,51 @@
     },
     {
         "term": "message:D3001",
-        "definition": ""
+        "definition": "Prise du train %1 & \u00e9chou\u00e9e : %2"
     },
     {
         "term": "message:D3010",
-        "definition": ""
+        "definition": "Train '%1' assign\u00e9 au bloc '%2'"
     },
     {
         "term": "message:D3011",
-        "definition": ""
+        "definition": "Le train '%1' a r\u00e9serv\u00e9 le bloc '%2'"
     },
     {
         "term": "message:D3012",
-        "definition": ""
+        "definition": "Le train '%1' est entr\u00e9 dans le bloc '%2'"
     },
     {
         "term": "message:D3013",
-        "definition": ""
+        "definition": "Le train '%1' a quitt\u00e9 le bloc '%2'"
     },
     {
         "term": "message:D3014",
-        "definition": ""
+        "definition": "Train '%1' retir\u00e9 du bloc '%2'"
     },
     {
         "term": "message:D3020",
-        "definition": ""
+        "definition": "Train '%1' assign\u00e9 \u00e0 la zone '%2'"
     },
     {
         "term": "message:D3021",
-        "definition": ""
+        "definition": "Le train '%1' rentre dans la zone '%2'"
     },
     {
         "term": "message:D3022",
-        "definition": ""
+        "definition": "Le train '%1' est rentr\u00e9 dans la zone '%2'"
     },
     {
         "term": "message:D3023",
-        "definition": ""
+        "definition": "Le train '%1' quitte la zone '%2'"
     },
     {
         "term": "message:D3024",
-        "definition": ""
+        "definition": "Le train '%1' a quitt\u00e9 la zone '%2'"
     },
     {
         "term": "message:D3025",
-        "definition": ""
+        "definition": "Train '%1' retir\u00e9 de la zone '%2'"
     },
     {
         "term": "message:E1001",
@@ -1557,11 +1649,11 @@
     },
     {
         "term": "message:I3001",
-        "definition": ""
+        "definition": "Le contr\u00f4leur %1 a pris %2"
     },
     {
         "term": "message:I3002",
-        "definition": ""
+        "definition": "Le contr\u00f4leur %1 a lib\u00e9r\u00e9 %2"
     },
     {
         "term": "message:I9001",
@@ -1729,11 +1821,11 @@
     },
     {
         "term": "message:N3005",
-        "definition": ""
+        "definition": "Le contr\u00f4leur %1 a vol\u00e9 %2"
     },
     {
         "term": "message:N3006",
-        "definition": ""
+        "definition": "Le contr\u00f4leur %1 a lib\u00e9r\u00e9 %2 sans le stopper"
     },
     {
         "term": "message:N9001",
@@ -1750,6 +1842,10 @@
     {
         "term": "message:W1003",
         "definition": "\u00c9chec de la lecture du monde %1 (erreur libarchive %2: %3)"
+    },
+    {
+        "term": "message:W1004",
+        "definition": "Fichier de param\u00e8tres vide ou corrompu, utilisation des param\u00e8tres par d\u00e9faut"
     },
     {
         "term": "message:W2001",
@@ -1917,7 +2013,7 @@
     },
     {
         "term": "output_map:swap_outputs",
-        "definition": ""
+        "definition": "Inverser les sorties"
     },
     {
         "term": "output_map:use",
@@ -2025,7 +2121,7 @@
     },
     {
         "term": "qtapp.mainmenu:community_forum",
-        "definition": ""
+        "definition": "Forum communitaire"
     },
     {
         "term": "qtapp.mainmenu:connect_to_server",
@@ -2173,11 +2269,11 @@
     },
     {
         "term": "qtapp.settings.board:grid_edit_mode",
-        "definition": ""
+        "definition": "Grille (mode \u00e9dition)"
     },
     {
         "term": "qtapp.settings.board:grid_operate_mode",
-        "definition": ""
+        "definition": "Grille (mode d'op\u00e9ration)"
     },
     {
         "term": "qtapp.settings.board:show_block_sensor_states",
@@ -2249,7 +2345,7 @@
     },
     {
         "term": "qtapp.world_list_dialog:search",
-        "definition": ""
+        "definition": "Rechercher"
     },
     {
         "term": "qtapp.world_list_dialog:world_list",
@@ -2449,15 +2545,15 @@
     },
     {
         "term": "stacked_object_list:back",
-        "definition": ""
+        "definition": "Retour"
     },
     {
         "term": "stacked_object_list:click_to_edit_ctrl_click_to_open_in_a_new_window",
-        "definition": ""
+        "definition": "Appuyer pour \u00e9diter.\nCtrl+Clic pour ouvrir dans une nouvelle fen\u00eatre."
     },
     {
         "term": "stacked_object_list:list_is_empty",
-        "definition": ""
+        "definition": "La liste est vide."
     },
     {
         "term": "status.lua:x_in_error",
@@ -2525,31 +2621,31 @@
     },
     {
         "term": "throttle.acquire",
-        "definition": ""
+        "definition": "Prendre"
     },
     {
         "term": "throttle.controlled_by_x",
-        "definition": ""
+        "definition": "Contr\u00f4l\u00e9 par %1"
     },
     {
         "term": "throttle.estop",
-        "definition": ""
+        "definition": "E-stop"
     },
     {
         "term": "throttle.in_control",
-        "definition": ""
+        "definition": "Vous avez le contr\u00f4le"
     },
     {
         "term": "throttle.not_controlled",
-        "definition": ""
+        "definition": "Non control\u00e9"
     },
     {
         "term": "throttle.release",
-        "definition": ""
+        "definition": "Lib\u00e9rer"
     },
     {
         "term": "throttle.steal",
-        "definition": ""
+        "definition": "Voler"
     },
     {
         "term": "throttle_object_list:throttle",
@@ -2857,7 +2953,7 @@
     },
     {
         "term": "wizard.add_interface.protocol_dr5000_usb:bottom_text",
-        "definition": ""
+        "definition": "La %command_station% prend en charge deux protocoles de communication diff\u00e9rents. Bien que les deux soient compatibles avec Traintastic, l\u2019utilisation de LocoNet est recommand\u00e9e car il est plus polyvalent."
     },
     {
         "term": "wizard.add_interface.serial_port:text",
@@ -2881,7 +2977,7 @@
     },
     {
         "term": "wizard.add_interface:recommended",
-        "definition": ""
+        "definition": "Recommand\u00e9"
     },
     {
         "term": "wizard.button:back",
@@ -3037,15 +3133,15 @@
     },
     {
         "term": "world:debug_block_events",
-        "definition": ""
+        "definition": "\u00c9v\u00e9nements bloc"
     },
     {
         "term": "world:debug_train_events",
-        "definition": ""
+        "definition": "\u00c9v\u00e9nements train"
     },
     {
         "term": "world:debug_zone_events",
-        "definition": ""
+        "definition": "\u00c9v\u00e9nements zone"
     },
     {
         "term": "world:decoders",
@@ -3149,7 +3245,7 @@
     },
     {
         "term": "world:zones",
-        "definition": ""
+        "definition": "Zones"
     },
     {
         "term": "world_scale:custom",
@@ -3197,15 +3293,15 @@
     },
     {
         "term": "zone:blocks",
-        "definition": ""
+        "definition": "Blocs"
     },
     {
         "term": "zone:mute",
-        "definition": ""
+        "definition": "Sourdine"
     },
     {
         "term": "zone:no_smoke",
-        "definition": ""
+        "definition": "Pas de fum\u00e9e"
     },
     {
         "term": "zone:speed_limit",
