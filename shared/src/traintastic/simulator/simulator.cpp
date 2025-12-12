@@ -1120,7 +1120,8 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
 
       if(auto id = obj.value<std::string_view>("id", {}); !id.empty())
       {
-        trackSegmentId.emplace(std::move(id), data.trackSegments.size());
+        segment.m_id = id;
+        data.trackSegmentId.emplace(std::move(id), data.trackSegments.size());
       }
 
       const auto type = obj.value<std::string_view>("type", {});
@@ -1206,11 +1207,11 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         }
       }
 
-      if(const auto fromId = obj.value<std::string_view>("from_id", {}); !fromId.empty())
+      if(const auto fromId = obj.value<std::string>("from_id", {}); !fromId.empty())
       {
         const size_t fromPoint = obj.value("from_point", invalidIndex);
 
-        if(auto it = trackSegmentId.find(fromId); it != trackSegmentId.end())
+        if(auto it = data.trackSegmentId.find(fromId); it != data.trackSegmentId.end())
         {
           auto& fromSegment = data.trackSegments[it->second];
           const auto pointCount = getPointCount(fromSegment.type);
@@ -1537,9 +1538,9 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
       Train train;
       size_t segmentIndex = invalidIndex;
 
-      if(const auto trackId = object.value<std::string_view>("track_id", {}); !trackId.empty())
+      if(const auto trackId = object.value<std::string>("track_id", {}); !trackId.empty())
       {
-        if(auto it = trackSegmentId.find(trackId); it != trackSegmentId.end())
+        if(auto it = data.trackSegmentId.find(trackId); it != data.trackSegmentId.end())
         {
           segmentIndex = it->second;
         }
