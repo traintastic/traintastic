@@ -196,6 +196,13 @@ void SimulatorView::zoomToFit()
   setZoomLevel(zoomLevel);
 }
 
+void SimulatorView::setCamera(const Simulator::Point &cameraPt)
+{
+  m_cameraX = cameraPt.x;
+  m_cameraY = cameraPt.y;
+  updateProjection();
+}
+
 void SimulatorView::initializeGL()
 {
   initializeOpenGLFunctions();
@@ -493,9 +500,9 @@ void SimulatorView::mouseReleaseEvent(QMouseEvent* event)
   if(event->button() == Qt::LeftButton)
   {
     auto diff = m_leftClickMousePos - event->pos();
-    if(qAbs(diff.x()) <= 2 && qAbs(diff.y()) <= 2)
+    if(std::abs(diff.x()) <= 2 && std::abs(diff.y()) <= 2)
     {
-      mouseLeftClick({m_cameraX + m_leftClickMousePos.x() / m_zoomLevel, m_cameraY + m_leftClickMousePos.y() / m_zoomLevel});
+      mouseLeftClick(mapToSim(m_leftClickMousePos));
     }
   }
   if(event->button() == Qt::RightButton)
@@ -517,9 +524,8 @@ void SimulatorView::wheelEvent(QWheelEvent* event)
   }
 }
 
-void SimulatorView::mouseLeftClick(QPointF pos)
+void SimulatorView::mouseLeftClick(const Simulator::Point &point)
 {
-  const Simulator::Point point(pos.x(), pos.y());
   for(const auto& turnout : m_turnouts)
   {
     if(isPointInTriangle(turnout.points, point))

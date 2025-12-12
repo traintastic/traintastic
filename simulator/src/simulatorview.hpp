@@ -56,6 +56,23 @@ public:
   void zoomOut();
   void zoomToFit();
 
+  inline Simulator::Point getCamera() const
+  {
+      return {m_cameraX, m_cameraY};
+  }
+
+  void setCamera(const Simulator::Point& cameraPt);
+
+  inline Simulator::Point mapToSim(const QPointF& p)
+  {
+    return {m_cameraX + float(p.x()) / m_zoomLevel,
+            m_cameraY + float(p.y()) / m_zoomLevel};
+  }
+
+  inline float getZoomLevel() const { return m_zoomLevel; }
+
+  void setZoomLevel(float zoomLevel);
+
 signals:
   void tickActiveChanged(float value);
   void powerOnChanged(bool value);
@@ -102,13 +119,11 @@ private:
   bool m_showTrackOccupancy = true;
   size_t m_trainIndex = 0;
 
-  void mouseLeftClick(QPointF pos);
+  void mouseLeftClick(const Simulator::Point &point);
 
   void drawTracks();
   void drawTrains();
   void drawMisc();
-
-  void setZoomLevel(float zoomLevel);
 
   void updateProjection();
 

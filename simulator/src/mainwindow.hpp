@@ -43,7 +43,7 @@ public:
   }
 
 protected:
-  void keyPressEvent(QKeyEvent *event) final;
+  void keyPressEvent(QKeyEvent *ev) final;
 
 private:
   SimulatorView* m_view;
