@@ -13,19 +13,19 @@
     },
     {
         "term": "block_state:free",
-        "definition": ""
+        "definition": "Libero"
     },
     {
         "term": "block_state:occupied",
-        "definition": ""
+        "definition": "Occupato"
     },
     {
         "term": "block_state:reserved",
-        "definition": ""
+        "definition": "Riservato"
     },
     {
         "term": "block_state:unknown",
-        "definition": ""
+        "definition": "Ignoto"
     },
     {
         "term": "board:delete_tile",
@@ -65,35 +65,55 @@
     },
     {
         "term": "board_tile.misc.label:background_color",
-        "definition": ""
+        "definition": "Colore sfondo"
     },
     {
         "term": "board_tile.misc.label:text",
-        "definition": ""
+        "definition": "Testo"
     },
     {
         "term": "board_tile.misc.label:text_align",
-        "definition": ""
+        "definition": "Allineamento Testo"
     },
     {
         "term": "board_tile.misc.label:text_color",
-        "definition": ""
+        "definition": "Colore Testo"
     },
     {
         "term": "board_tile.misc.push_button:color",
         "definition": "Colore"
     },
     {
+        "term": "board_tile.misc.push_button:text",
+        "definition": "Testo"
+    },
+    {
+        "term": "board_tile.misc.push_button:text_color",
+        "definition": "Color testo"
+    },
+    {
         "term": "board_tile.misc.switch:color_off",
-        "definition": ""
+        "definition": "Colore se off"
     },
     {
         "term": "board_tile.misc.switch:color_on",
-        "definition": ""
+        "definition": "Colore se on"
+    },
+    {
+        "term": "board_tile.misc.switch:text",
+        "definition": "Testo"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_off",
+        "definition": "Colore se off"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_on",
+        "definition": "Colore se on"
     },
     {
         "term": "board_tile.misc.switch:value",
-        "definition": ""
+        "definition": "Valore"
     },
     {
         "term": "board_tile.rail.block:assign_train",
@@ -113,11 +133,11 @@
     },
     {
         "term": "board_tile.rail.block:state",
-        "definition": ""
+        "definition": "Stato"
     },
     {
         "term": "board_tile.rail.block:zones",
-        "definition": ""
+        "definition": "Zone"
     },
     {
         "term": "board_tile.rail.direction_control:state",
@@ -144,6 +164,10 @@
         "definition": "Link"
     },
     {
+        "term": "board_tile.rail.nx_button:block",
+        "definition": "Blocco"
+    },
+    {
         "term": "board_tile.rail.sensor:input",
         "definition": "Input"
     },
@@ -153,7 +177,7 @@
     },
     {
         "term": "board_tile.rail.sensor:state",
-        "definition": ""
+        "definition": "Stato"
     },
     {
         "term": "board_tile.rail.sensor:type",
@@ -169,23 +193,35 @@
     },
     {
         "term": "board_tile.rail.turnout_slip:dual_motor",
-        "definition": ""
+        "definition": "Doppio avvolgimento"
     },
     {
         "term": "board_tile.turnout:position",
-        "definition": ""
+        "definition": "Posizione"
     },
     {
         "term": "board_tile:output_map",
         "definition": "Outputs"
     },
     {
+        "term": "category:block",
+        "definition": "Blocco"
+    },
+    {
         "term": "category:cargo",
         "definition": "Carico"
     },
     {
+        "term": "category:colors",
+        "definition": "Colori"
+    },
+    {
+        "term": "category:colors_and_alignment",
+        "definition": "Colori && Allineamento"
+    },
+    {
         "term": "category:debug",
-        "definition": ""
+        "definition": "Debug"
     },
     {
         "term": "category:developer",
@@ -200,6 +236,10 @@
         "definition": "Info"
     },
     {
+        "term": "category:input",
+        "definition": "Input"
+    },
+    {
         "term": "category:log",
         "definition": "Log"
     },
@@ -209,15 +249,15 @@
     },
     {
         "term": "category:options",
-        "definition": ""
+        "definition": "Opzioni"
     },
     {
         "term": "category:trains",
-        "definition": ""
+        "definition": "Treni"
     },
     {
         "term": "class_id:board_tile.misc.label",
-        "definition": ""
+        "definition": "Etichetta"
     },
     {
         "term": "class_id:board_tile.misc.push_button",
@@ -225,7 +265,7 @@
     },
     {
         "term": "class_id:board_tile.misc.switch",
-        "definition": ""
+        "definition": "Deviatoio"
     },
     {
         "term": "class_id:board_tile.rail.block",
@@ -277,15 +317,15 @@
     },
     {
         "term": "class_id:board_tile.rail.nx_button",
-        "definition": ""
+        "definition": "Pulsante NX"
     },
     {
         "term": "class_id:board_tile.rail.nx_button:block",
-        "definition": ""
+        "definition": "Blocco"
     },
     {
         "term": "class_id:board_tile.rail.nx_button:input",
-        "definition": ""
+        "definition": "Input"
     },
     {
         "term": "class_id:board_tile.rail.one_way",
@@ -437,7 +477,7 @@
     },
     {
         "term": "color:none",
-        "definition": ""
+        "definition": "Nessuno"
     },
     {
         "term": "color:olive",
@@ -481,11 +521,11 @@
     },
     {
         "term": "dccex_interface_type:network_tcp",
-        "definition": ""
+        "definition": "Rete (TCP)"
     },
     {
         "term": "dccex_interface_type:serial",
-        "definition": ""
+        "definition": "Seriale"
     },
     {
         "term": "dccex_settings:startup_delay",
@@ -586,6 +626,66 @@
     {
         "term": "decoupler_state:deactivated",
         "definition": "Disattivato"
+    },
+    {
+        "term": "default_name:block",
+        "definition": "Blocco"
+    },
+    {
+        "term": "default_name:board",
+        "definition": "Board"
+    },
+    {
+        "term": "default_name:decoupler",
+        "definition": "Sganciatore"
+    },
+    {
+        "term": "default_name:direction",
+        "definition": "Direzione"
+    },
+    {
+        "term": "default_name:link",
+        "definition": "Link"
+    },
+    {
+        "term": "default_name:nx_button",
+        "definition": "Bottone NX"
+    },
+    {
+        "term": "default_name:push_button",
+        "definition": "Pulsante"
+    },
+    {
+        "term": "default_name:script",
+        "definition": "Script"
+    },
+    {
+        "term": "default_name:sensor",
+        "definition": "Sensore"
+    },
+    {
+        "term": "default_name:signal",
+        "definition": "Segnale"
+    },
+    {
+        "term": "default_name:switch",
+        "definition": "Switch"
+    },
+    {
+        "term": "default_name:train",
+        "definition": "Treno"
+    },
+    {
+        "term": "default_name:turnout",
+        "definition": "Deviatoio"
+    },
+    {
+        "term": "default_name:vehicle",
+        "definition": "Veicolo"
+    },
+    {
+        "term": "default_name:zone",
+        "definition": "Zona"
     },
     {
         "term": "direction:forward",
@@ -697,11 +797,11 @@
     },
     {
         "term": "input:off_delay",
-        "definition": ""
+        "definition": "Ritardo off"
     },
     {
         "term": "input:on_delay",
-        "definition": ""
+        "definition": "Ritardo on"
     },
     {
         "term": "input_list:bus",
@@ -789,11 +889,11 @@
     },
     {
         "term": "interface_list:create",
-        "definition": ""
+        "definition": "Crea"
     },
     {
         "term": "interface_list:list_is_empty",
-        "definition": ""
+        "definition": "Lista vuota"
     },
     {
         "term": "interface_state:error",
@@ -829,7 +929,7 @@
     },
     {
         "term": "language:es-es",
-        "definition": ""
+        "definition": "Spagnolo"
     },
     {
         "term": "language:fr-fr",
@@ -837,7 +937,7 @@
     },
     {
         "term": "language:fy-nl",
-        "definition": ""
+        "definition": "Frisone"
     },
     {
         "term": "language:it-it",
@@ -849,7 +949,7 @@
     },
     {
         "term": "language:pl-pl",
-        "definition": ""
+        "definition": "Polacco"
     },
     {
         "term": "language:sv-se",
@@ -865,7 +965,7 @@
     },
     {
         "term": "list.zone:highlight_zone",
-        "definition": ""
+        "definition": "Evidenzia zona"
     },
     {
         "term": "list:add",
@@ -897,7 +997,7 @@
     },
     {
         "term": "list:setup_using_wizard",
-        "definition": ""
+        "definition": "Setup con procedura guidata"
     },
     {
         "term": "lncv_programmer:description",
@@ -1029,7 +1129,7 @@
     },
     {
         "term": "lua.script:clear_persistent_variables",
-        "definition": ""
+        "definition": "Pulisci variabili persistenti"
     },
     {
         "term": "lua.script:disabled",
@@ -1073,11 +1173,11 @@
     },
     {
         "term": "luadoc:index:nav",
-        "definition": ""
+        "definition": "Indice"
     },
     {
         "term": "luadoc:index:title",
-        "definition": ""
+        "definition": "Traintastic Scripting Lua"
     },
     {
         "term": "marklin_can_interface_type:network_tcp",
@@ -1200,6 +1300,10 @@
         "definition": "L'Oggetto non \u00e8 una tabella"
     },
     {
+        "term": "message:C1020",
+        "definition": "Caricamento impostazioni fallito: %1"
+    },
+    {
         "term": "message:C2001",
         "definition": "Indirizzo gi\u00e0 usato in #%1"
     },
@@ -1265,51 +1369,51 @@
     },
     {
         "term": "message:D3001",
-        "definition": ""
+        "definition": "Impossibile acquisire treno %1: %2"
     },
     {
         "term": "message:D3010",
-        "definition": ""
+        "definition": "Il treno '%1' \u00e8 assegnato al blocco '%2'"
     },
     {
         "term": "message:D3011",
-        "definition": ""
+        "definition": "Il treno '%1' ha riservato il blocco '%2'"
     },
     {
         "term": "message:D3012",
-        "definition": ""
+        "definition": "Il treno '%1' \u00e8 entrato nel blocco '%2'"
     },
     {
         "term": "message:D3013",
-        "definition": ""
+        "definition": "Il treno '%1' ha lasciato il blocco '%2'"
     },
     {
         "term": "message:D3014",
-        "definition": ""
+        "definition": "Treno '%1' rimosso dal blocco '%2'"
     },
     {
         "term": "message:D3020",
-        "definition": ""
+        "definition": "Treno '%1' assegnato alla zona '%2'"
     },
     {
         "term": "message:D3021",
-        "definition": ""
+        "definition": "Il treno '%1' sta entrando nella zona '%2'"
     },
     {
         "term": "message:D3022",
-        "definition": ""
+        "definition": "Treno '%1' entrato in zona '%2'"
     },
     {
         "term": "message:D3023",
-        "definition": ""
+        "definition": "Il treno '%1' sta uscendo dalla zona '%2'"
     },
     {
         "term": "message:D3024",
-        "definition": ""
+        "definition": "Il treno '%1' ha lasciato zona '%2'"
     },
     {
         "term": "message:D3025",
-        "definition": ""
+        "definition": "Treno '%1' rimosso dalla zona '%2'"
     },
     {
         "term": "message:E1001",
@@ -1457,11 +1561,11 @@
     },
     {
         "term": "message:E3005",
-        "definition": ""
+        "definition": "Impossibile rimuovere il treno, deve prima essere stoppato"
     },
     {
         "term": "message:E3006",
-        "definition": ""
+        "definition": "Impossibile rimuovere il treno, pu\u00f2 essere rimosso solo dal blocco di testa o di coda"
     },
     {
         "term": "message:E3007",
@@ -1557,11 +1661,11 @@
     },
     {
         "term": "message:I3001",
-        "definition": ""
+        "definition": "Throttle %1 acquisitp treno %2"
     },
     {
         "term": "message:I3002",
-        "definition": ""
+        "definition": "Throttle %1 rilasciato treno %2"
     },
     {
         "term": "message:I9001",
@@ -1569,7 +1673,7 @@
     },
     {
         "term": "message:I9003",
-        "definition": ""
+        "definition": "Eliminate variabili persistenti"
     },
     {
         "term": "message:N1001",
@@ -1729,11 +1833,11 @@
     },
     {
         "term": "message:N3005",
-        "definition": ""
+        "definition": "Throttle %1 rubato treno %2"
     },
     {
         "term": "message:N3006",
-        "definition": ""
+        "definition": "Throttle %1 rilasciato treno %2 senza averlo fermato"
     },
     {
         "term": "message:N9001",
@@ -1750,6 +1854,10 @@
     {
         "term": "message:W1003",
         "definition": "Lettura Mondo %1 fallita (libarchive error %2: %3)"
+    },
+    {
+        "term": "message:W1004",
+        "definition": "File impostazioni vuoto o corrotto, uso defaults"
     },
     {
         "term": "message:W2001",
@@ -1873,11 +1981,11 @@
     },
     {
         "term": "output_channel:output",
-        "definition": ""
+        "definition": "Output"
     },
     {
         "term": "output_channel:turnout",
-        "definition": ""
+        "definition": "Deviatoio"
     },
     {
         "term": "output_list:bus",
@@ -1893,7 +2001,7 @@
     },
     {
         "term": "output_map.switch:key",
-        "definition": ""
+        "definition": "Valore"
     },
     {
         "term": "output_map.turnout:key",
@@ -1905,7 +2013,7 @@
     },
     {
         "term": "output_map:address_x",
-        "definition": ""
+        "definition": "Indirizzo %1"
     },
     {
         "term": "output_map:ecos_object",
@@ -1917,7 +2025,7 @@
     },
     {
         "term": "output_map:swap_outputs",
-        "definition": ""
+        "definition": "Scambia outputs"
     },
     {
         "term": "output_map:use",
@@ -1925,11 +2033,11 @@
     },
     {
         "term": "output_map_item.switch.key:off",
-        "definition": ""
+        "definition": "Off"
     },
     {
         "term": "output_map_item.switch.key:on",
-        "definition": ""
+        "definition": "On"
     },
     {
         "term": "pair_output_action:first",
@@ -2025,7 +2133,7 @@
     },
     {
         "term": "qtapp.mainmenu:community_forum",
-        "definition": ""
+        "definition": "Forum Communit\u00e0"
     },
     {
         "term": "qtapp.mainmenu:connect_to_server",
@@ -2173,11 +2281,11 @@
     },
     {
         "term": "qtapp.settings.board:grid_edit_mode",
-        "definition": ""
+        "definition": "Griglia (modalit\u00e0 modifica)"
     },
     {
         "term": "qtapp.settings.board:grid_operate_mode",
-        "definition": ""
+        "definition": "Grid (modalit\u00e0 esercizio)"
     },
     {
         "term": "qtapp.settings.board:show_block_sensor_states",
@@ -2249,7 +2357,7 @@
     },
     {
         "term": "qtapp.world_list_dialog:search",
-        "definition": ""
+        "definition": "Cerca"
     },
     {
         "term": "qtapp.world_list_dialog:world_list",
@@ -2313,15 +2421,15 @@
     },
     {
         "term": "sensor_state:free",
-        "definition": ""
+        "definition": "Libero"
     },
     {
         "term": "sensor_state:occupied",
-        "definition": ""
+        "definition": "Occupato"
     },
     {
         "term": "sensor_state:unknown",
-        "definition": ""
+        "definition": "Ignoto"
     },
     {
         "term": "sensor_type:occupancy_detector",
@@ -2393,7 +2501,7 @@
     },
     {
         "term": "settings:load_last_world_on_startup",
-        "definition": ""
+        "definition": "Carica ultimo mondo all'avvio"
     },
     {
         "term": "settings:localhost_only",
@@ -2429,35 +2537,35 @@
     },
     {
         "term": "single_output_action:none",
-        "definition": ""
+        "definition": "Nessuno"
     },
     {
         "term": "single_output_action:off",
-        "definition": ""
+        "definition": "Off"
     },
     {
         "term": "single_output_action:on",
-        "definition": ""
+        "definition": "On"
     },
     {
         "term": "single_output_action:pulse",
-        "definition": ""
+        "definition": "Pulse"
     },
     {
         "term": "speed_limit_property:no_limit",
-        "definition": ""
+        "definition": "Nessun limite"
     },
     {
         "term": "stacked_object_list:back",
-        "definition": ""
+        "definition": "Indietro"
     },
     {
         "term": "stacked_object_list:click_to_edit_ctrl_click_to_open_in_a_new_window",
-        "definition": ""
+        "definition": "Clicca per modificare.\nCtrl click per aprire in una nuova finestra."
     },
     {
         "term": "stacked_object_list:list_is_empty",
-        "definition": ""
+        "definition": "Lista vuota."
     },
     {
         "term": "status.lua:x_in_error",
@@ -2489,67 +2597,67 @@
     },
     {
         "term": "text_align:bottom_center",
-        "definition": ""
+        "definition": "Centra in basso"
     },
     {
         "term": "text_align:bottom_left",
-        "definition": ""
+        "definition": "In basso a sinistra"
     },
     {
         "term": "text_align:bottom_right",
-        "definition": ""
+        "definition": "In basso a destra"
     },
     {
         "term": "text_align:center",
-        "definition": ""
+        "definition": "Centrato"
     },
     {
         "term": "text_align:center_left",
-        "definition": ""
+        "definition": "Centrato a sinistra"
     },
     {
         "term": "text_align:center_right",
-        "definition": ""
+        "definition": "Centrato a destra"
     },
     {
         "term": "text_align:top_center",
-        "definition": ""
+        "definition": "Centra in alto"
     },
     {
         "term": "text_align:top_left",
-        "definition": ""
+        "definition": "In alto a sinistra"
     },
     {
         "term": "text_align:top_right",
-        "definition": ""
+        "definition": "In alto a destra"
     },
     {
         "term": "throttle.acquire",
-        "definition": ""
+        "definition": "Acquisisci"
     },
     {
         "term": "throttle.controlled_by_x",
-        "definition": ""
+        "definition": "Controllato da %1"
     },
     {
         "term": "throttle.estop",
-        "definition": ""
+        "definition": "EStop"
     },
     {
         "term": "throttle.in_control",
-        "definition": ""
+        "definition": "Sei in controllo"
     },
     {
         "term": "throttle.not_controlled",
-        "definition": ""
+        "definition": "Non controllato"
     },
     {
         "term": "throttle.release",
-        "definition": ""
+        "definition": "Rilascia"
     },
     {
         "term": "throttle.steal",
-        "definition": ""
+        "definition": "Ruba"
     },
     {
         "term": "throttle_object_list:throttle",
@@ -2613,7 +2721,7 @@
     },
     {
         "term": "traintastic_diy_settings:debug_log_heartbeat",
-        "definition": "Log communicazione di heartbeat"
+        "definition": "Log comunicazione di heartbeat"
     },
     {
         "term": "traintastic_diy_settings:heartbeat_timeout",
@@ -2625,75 +2733,75 @@
     },
     {
         "term": "tray_icon.language_changed_message_box:caption",
-        "definition": ""
+        "definition": "Lingua modificata"
     },
     {
         "term": "tray_icon.language_changed_message_box:text",
-        "definition": ""
+        "definition": "Traintastic server deve essere riavviato affinch\u00e8 la modifica della lingua abbia effetto. Riavviare ora?"
     },
     {
         "term": "tray_icon.menu:advanced",
-        "definition": ""
+        "definition": "Avanzate"
     },
     {
         "term": "tray_icon.menu:allow_client_to_restart_server",
-        "definition": ""
+        "definition": "Permetti al client di riavviare il server"
     },
     {
         "term": "tray_icon.menu:allow_client_to_shutdown_server",
-        "definition": ""
+        "definition": "Permetti al cliend di spegnere il server"
     },
     {
         "term": "tray_icon.menu:language",
-        "definition": ""
+        "definition": "Lingua"
     },
     {
         "term": "tray_icon.menu:open_data_directory",
-        "definition": ""
+        "definition": "Apri cartella dati"
     },
     {
         "term": "tray_icon.menu:restart",
-        "definition": ""
+        "definition": "Riavvia"
     },
     {
         "term": "tray_icon.menu:settings",
-        "definition": ""
+        "definition": "Impostazioni"
     },
     {
         "term": "tray_icon.menu:show_hide_console",
-        "definition": ""
+        "definition": "Mostra/nascondi console"
     },
     {
         "term": "tray_icon.menu:shutdown",
-        "definition": ""
+        "definition": "Spegni"
     },
     {
         "term": "tray_icon.menu:start_automatically_at_logon",
-        "definition": ""
+        "definition": "Avvio automatico al logon"
     },
     {
         "term": "tray_icon.notify:message_restarting",
-        "definition": ""
+        "definition": "Traintastic server riavviato"
     },
     {
         "term": "tray_icon.notify:message_running",
-        "definition": ""
+        "definition": "Traintastic server gi\u00e0 in esecuzione in background."
     },
     {
         "term": "turnout_position:crossed",
-        "definition": ""
+        "definition": "Incrocio"
     },
     {
         "term": "turnout_position:diverged",
-        "definition": ""
+        "definition": "Divergente"
     },
     {
         "term": "turnout_position:double_slip_straight_a",
-        "definition": ""
+        "definition": "Dritto A"
     },
     {
         "term": "turnout_position:double_slip_straight_b",
-        "definition": ""
+        "definition": "Dritto B"
     },
     {
         "term": "turnout_position:left",
@@ -2753,7 +2861,7 @@
     },
     {
         "term": "weight_unit:ton",
-        "definition": ""
+        "definition": "ton"
     },
     {
         "term": "wizard.add_interface.command_station:text",
@@ -2857,7 +2965,7 @@
     },
     {
         "term": "wizard.add_interface.protocol_dr5000_usb:bottom_text",
-        "definition": ""
+        "definition": "La %command_station% supporta due protocolli differenti per la comunicazione. Nonostante entrambi siano supportati da Traintastic, si consiglia di usare LocoNet perch\u00e8 pi\u00f9 versatile."
     },
     {
         "term": "wizard.add_interface.serial_port:text",
@@ -2881,7 +2989,7 @@
     },
     {
         "term": "wizard.add_interface:recommended",
-        "definition": ""
+        "definition": "Consigliato"
     },
     {
         "term": "wizard.button:back",
@@ -2937,51 +3045,51 @@
     },
     {
         "term": "wizard.new_board.adding:text",
-        "definition": ""
+        "definition": "Si possono aggiungere nuovi elementi alla board usando le voci disponibili in vari menu. Usa il tasto sinistro del mouse per piazzare un elemento, usa il tasto destro per ruotarlo.\n\nPer sostituire un elemento con un altro tieni premuto Ctrl mentre fai click sinistro, altrimenti il vecchio elemento deve essere prima rimosso."
     },
     {
         "term": "wizard.new_board.adding:title",
-        "definition": ""
+        "definition": "Aggiunta elementi"
     },
     {
         "term": "wizard.new_board.editing:text",
-        "definition": ""
+        "definition": "La board pu\u00f2 essere modificata solo se il mondo \u00e8 in modalit\u00e0 modifica e stoppato. La barra degli strumenti con l'opzione modifica apparir\u00e0 automaicamente quando \u00e8 possibile la modifica."
     },
     {
         "term": "wizard.new_board.editing:title",
-        "definition": ""
+        "definition": "Modifica in corso"
     },
     {
         "term": "wizard.new_board.finalization:text",
-        "definition": ""
+        "definition": "Costruiamo la board!"
     },
     {
         "term": "wizard.new_board.finalization:title",
-        "definition": ""
+        "definition": "Completato"
     },
     {
         "term": "wizard.new_board.introduction.long:text",
-        "definition": ""
+        "definition": "Questo wizard ti spiegher\u00e0 le basi della board."
     },
     {
         "term": "wizard.new_board.introduction.short:text",
-        "definition": ""
+        "definition": "Questo wizard ti aiuter\u00e0 ad impostare le propriet\u00e0 di base della board."
     },
     {
         "term": "wizard.new_board.introduction:title",
-        "definition": ""
+        "definition": "Nuova board"
     },
     {
         "term": "wizard.new_board.name:text",
-        "definition": ""
+        "definition": "Dai un nome alla board, e.s. Traintastic, Stazione Fantastica o Scalo Merci:"
     },
     {
         "term": "wizard.new_board.name:title",
-        "definition": ""
+        "definition": "Nome board"
     },
     {
         "term": "wizard.new_board:title",
-        "definition": ""
+        "definition": "Nuova board"
     },
     {
         "term": "wizard.new_world.finalization:text",
@@ -3037,15 +3145,15 @@
     },
     {
         "term": "world:debug_block_events",
-        "definition": ""
+        "definition": "Eventi blocco"
     },
     {
         "term": "world:debug_train_events",
-        "definition": ""
+        "definition": "Eventi treno"
     },
     {
         "term": "world:debug_zone_events",
-        "definition": ""
+        "definition": "Eventi zona"
     },
     {
         "term": "world:decoders",
@@ -3149,7 +3257,7 @@
     },
     {
         "term": "world:zones",
-        "definition": ""
+        "definition": "Zone"
     },
     {
         "term": "world_scale:custom",
@@ -3197,18 +3305,18 @@
     },
     {
         "term": "zone:blocks",
-        "definition": ""
+        "definition": "Blocchi"
     },
     {
         "term": "zone:mute",
-        "definition": ""
+        "definition": "Mute"
     },
     {
         "term": "zone:no_smoke",
-        "definition": ""
+        "definition": "No fumo"
     },
     {
         "term": "zone:speed_limit",
-        "definition": ""
+        "definition": "Limite velocit\u00e0"
     }
 ]
