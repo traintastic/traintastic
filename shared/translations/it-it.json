@@ -204,6 +204,34 @@
         "definition": "Outputs"
     },
     {
+        "term": "booster:current",
+        "definition": "Corrente"
+    },
+    {
+        "term": "booster:input_voltage",
+        "definition": "Voltaggio ingresso"
+    },
+    {
+        "term": "booster:load",
+        "definition": "Carico"
+    },
+    {
+        "term": "booster:temperature",
+        "definition": "Temperatura"
+    },
+    {
+        "term": "booster:type",
+        "definition": "Tipo"
+    },
+    {
+        "term": "booster:voltage",
+        "definition": "Voltaggio"
+    },
+    {
+        "term": "booster_driver:poll_interval",
+        "definition": "Intervallo poll"
+    },
+    {
         "term": "category:block",
         "definition": "Blocco"
     },
@@ -228,6 +256,10 @@
         "definition": "Sviluppatore"
     },
     {
+        "term": "category:features",
+        "definition": "Funzionalit\u00e0"
+    },
+    {
         "term": "category:general",
         "definition": "Generale"
     },
@@ -250,6 +282,10 @@
     {
         "term": "category:options",
         "definition": "Opzioni"
+    },
+    {
+        "term": "category:status",
+        "definition": "Stato"
     },
     {
         "term": "category:trains",
@@ -722,6 +758,10 @@
     {
         "term": "hardware:addresses",
         "definition": "Indirizzi"
+    },
+    {
+        "term": "hardware:boosters",
+        "definition": "Boosters"
     },
     {
         "term": "hardware:channel",
@@ -1544,6 +1584,18 @@
         "definition": "Locomotiva sconosciuta MFX UID: %1"
     },
     {
+        "term": "message:E2025",
+        "definition": "Lettura versione software booster '%1' fallita: %2"
+    },
+    {
+        "term": "message:E2026",
+        "definition": "Lettura temperatura booster '%1' fallita: %2"
+    },
+    {
+        "term": "message:E2027",
+        "definition": "Lettura carico booster '%1' fallita: %2"
+    },
+    {
         "term": "message:E3001",
         "definition": "Impossibile eliminare un rotabile quando \u00e8 in un treno attivo"
     },
@@ -1658,6 +1710,10 @@
     {
         "term": "message:I2003",
         "definition": "Versione Firmware: %1"
+    },
+    {
+        "term": "message:I2006",
+        "definition": "Booster '%1' versione software: %2"
     },
     {
         "term": "message:I3001",
@@ -1898,6 +1954,14 @@
     {
         "term": "message:W2020",
         "definition": "DCCext (RCN-213) non \u00e8 supportato"
+    },
+    {
+        "term": "message:W2026",
+        "definition": "ettura temperatura booster '%1' fallita: %2"
+    },
+    {
+        "term": "message:W2027",
+        "definition": "Lettura carico booster '%1' fallita: %2"
     },
     {
         "term": "message:W3001",
@@ -3166,6 +3230,10 @@
     {
         "term": "world:ext_output_change_action",
         "definition": "Azione per Modifica Esterna di un Output"
+    },
+    {
+        "term": "world:feature_scripting",
+        "definition": "Scripting"
     },
     {
         "term": "world:inputs",
