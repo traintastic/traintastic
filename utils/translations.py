@@ -155,13 +155,32 @@ def push(args: list):
     return 0
 
 
+def add_missing(args: list):
+    if len(args) != 2:
+        print('Usage: add-missing <src alng> <dst_lang>', file=sys.stderr)
+        sys.exit(1)
+
+    dst_lang = args[1]
+    dst = read_traintastic_terms(dst_lang)
+    dst = [v for v in dst if v['definition'] != '']  # remove empty (= unstranslated)
+    dst_terms = [v['term'] for v in dst]
+    n = 0
+    for v in read_traintastic_terms(args[0]):
+        if v['term'] not in dst_terms:
+            dst.append(v)
+            n += 1
+    print('Added {:d} missing terms'.format(n))
+    write_traintastic_json(dst_lang, dst)
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: {:s} <command> [languages...]".format(sys.argv[0]), file=sys.stderr)
         sys.exit(1)
 
-    for sub_command in [pull, push]:
-        if sys.argv[1] == sub_command.__name__:
+    cmd = sys.argv[1].replace('-', '_')
+    for sub_command in [pull, push, add_missing]:
+        if cmd == sub_command.__name__:
             sys.exit(sub_command(sys.argv[2:]))
 
     print("Unknown sub command: {:s}".format(sys.argv[1]), file=sys.stderr)
