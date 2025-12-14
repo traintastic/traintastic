@@ -97,10 +97,12 @@ struct Attributes
   {
     item.addAttribute(AttributeName::DisplayName, value);
   }
+
   static inline void addHelp(InterfaceItem& item, std::string_view value)
   {
     item.addAttribute(AttributeName::Help, value);
   }
+
   static inline void setDisplayName(InterfaceItem& item, std::string_view value)
   {
     item.setAttribute(AttributeName::DisplayName, value);
