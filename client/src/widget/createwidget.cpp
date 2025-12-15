@@ -94,6 +94,16 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return nullptr;
 }
 
+static void setHelpTooltip(QWidget* widget, Property& property)
+{
+  if (!widget)
+    return;
+
+  const QString helpText = property.getAttribute(AttributeName::Help, QString()).toString();
+  if (!helpText.isEmpty())
+    widget->setToolTip(helpText);
+}
+
 QWidget* createWidget(Property& property, QWidget* parent)
 {
   QWidget* widget = nullptr;
@@ -144,16 +154,6 @@ QWidget* createWidget(Property& property, QWidget* parent)
   }
   setHelpTooltip(widget, property);
   return widget;
-}
-
-static void setHelpTooltip(QWidget* widget, Property& property)
-{
-  if (!widget)
-    return;
-
-  const QString helpText = property.getAttribute(AttributeName::Help, QString()).toString();
-  if (!helpText.isEmpty())
-    widget->setToolTip(helpText);
 }
 
 QWidget* createWidget(ObjectProperty& property, QWidget* parent)
