@@ -35,56 +35,31 @@ InterfaceItemNameLabel::InterfaceItemNameLabel(InterfaceItem& item, QWidget* par
   layout->setSpacing(2);
   layout->addWidget(m_label);
 
-  const bool visible = m_item.getAttributeBool(AttributeName::Visible, true);
-  m_label->setVisible(visible);
+  // Create help button if needed
   m_helpBtn = nullptr;
   const QString help = m_item.helpText();
-  if (!help.isEmpty() && visible)
+  if (!help.isEmpty())
   {
     m_helpBtn = new QToolButton(this);
-    m_helpBtn->setIcon(Theme::getIcon("help"));
+    m_helpBtn->setIcon(Theme::getIcon("help"));   // portable icon
     m_helpBtn->setToolTip(help);
     m_helpBtn->setAutoRaise(true);
     m_helpBtn->setCursor(Qt::PointingHandCursor);
     m_helpBtn->setIconSize(QSize(12, 12));
     layout->addWidget(m_helpBtn, 0, Qt::AlignTop);
   }
+
   layout->addStretch();
 
+  // Capture layout too
   connect(&m_item, &InterfaceItem::attributeChanged, this,
     [this, layout](AttributeName name, const QVariant&)
     {
       switch (name)
       {
         case AttributeName::Visible:
-        {
-          const bool isVisible = m_item.getAttributeBool(AttributeName::Visible, true);
-          m_label->setVisible(isVisible);
-
-          const QString helpText = m_item.helpText();
-
-          if (isVisible)
-          {
-            if (!m_helpBtn && !helpText.isEmpty())
-            {
-              m_helpBtn = new QToolButton(this);
-              m_helpBtn->setIcon(Theme::getIcon("help"));
-              m_helpBtn->setToolTip(helpText);
-              m_helpBtn->setAutoRaise(true);
-              m_helpBtn->setCursor(Qt::PointingHandCursor);
-              m_helpBtn->setIconSize(QSize(12, 12));
-              layout->insertWidget(1, m_helpBtn, 0, Qt::AlignTop); // insert next to label
-            }
-          }
-
-
-          if (m_helpBtn)
-          {
-            m_helpBtn->setVisible(isVisible);
-          }
-
+          m_label->setVisible(m_item.getAttributeBool(AttributeName::Visible, true));
           break;
-        }
 
         case AttributeName::DisplayName:
         case AttributeName::Help:
