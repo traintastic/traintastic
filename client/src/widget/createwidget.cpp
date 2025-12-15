@@ -142,15 +142,18 @@ QWidget* createWidget(Property& property, QWidget* parent)
     case ValueType::Invalid: /*[[unlikely]]*/
       break;
   }
-  
-  if(widget)
-  {
-    const QString helpText = property.getAttribute(AttributeName::Help, QString()).toString();
-    if(!helpText.isEmpty())
-      widget->setToolTip(helpText);
-  }
-
+  setHelpTooltip(widget, property);
   return widget;
+}
+
+static void setHelpTooltip(QWidget* widget, Property& property)
+{
+  if (!widget)
+    return;
+
+  const QString helpText = property.getAttribute(AttributeName::Help, QString()).toString();
+  if (!helpText.isEmpty())
+    widget->setToolTip(helpText);
 }
 
 QWidget* createWidget(ObjectProperty& property, QWidget* parent)
