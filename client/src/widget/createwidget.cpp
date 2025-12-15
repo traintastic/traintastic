@@ -96,86 +96,55 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 
 QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
 {
-  if(QWidget* widget = createWidgetIfCustom(object, parent))
+  QWidget* widget = nullptr;
+
+    switch(property.type())
+    {
+        case ValueType::Boolean:
+            widget = new PropertyCheckBox(property, parent);
+            break;
+
+        case ValueType::Enum:
+            if(property.enumName() == "pair_output_action")
+                widget = new PropertyPairOutputAction(property, parent);
+            else
+                widget = new PropertyComboBox(property, parent);
+            break;
+
+        case ValueType::Integer:
+            if(property.hasAttribute(AttributeName::Values) &&
+               !property.hasAttribute(AttributeName::Min) &&
+               !property.hasAttribute(AttributeName::Max))
+            {
+                widget = new PropertyComboBox(property, parent);
+            }
+            else
+                widget = new PropertySpinBox(property, parent);
+            break;
+
+        case ValueType::Float:
+            widget = new PropertyDoubleSpinBox(property, parent);
+            break;
+
+        case ValueType::String:
+            if(property.hasAttribute(AttributeName::Values))
+                widget = new PropertyComboBox(property, parent);
+            else
+                widget = new PropertyLineEdit(property, parent);
+            break;
+
+        case ValueType::Object: // TODO
+        case ValueType::Set: // TODO
+        case ValueType::Invalid:
+            break;
+    }
+
+    if(widget && property.hasAttribute(AttributeName::Help))
+    {
+        QString helpText = property.getAttribute(AttributeName::Help, QString()).toString();
+        widget->setToolTip(helpText);
+    }
     return widget;
-  else if(auto inputMonitor = std::dynamic_pointer_cast<InputMonitor>(object))
-    return new InputMonitorWidget(inputMonitor, parent);
-  else if(auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(object))
-    return new OutputKeyboardWidget(outputKeyboard, parent);
-  else if(object->classId().startsWith("board_tile."))
-  {
-    return new TileWidget(object, parent);
-  }
-  else
-    return new ObjectEditWidget(object, parent);
-}
-
-QWidget* createWidget(InterfaceItem& item, QWidget* parent)
-{
-  if(auto* baseProperty = dynamic_cast<AbstractProperty*>(&item))
-  {
-    return createWidget(*baseProperty, parent);
-  }
-  assert(false);
-  return nullptr;
-}
-
-QWidget* createWidget(AbstractProperty& baseProperty, QWidget* parent)
-{
-  if(auto* property = dynamic_cast<Property*>(&baseProperty))
-  {
-    return createWidget(*property, parent);
-  }
-  else if(auto* objectProperty = dynamic_cast<ObjectProperty*>(&baseProperty))
-  {
-    return createWidget(*objectProperty, parent);
-  }
-  assert(false);
-  return nullptr;
-}
-
-QWidget* createWidget(Property& property, QWidget* parent)
-{
-  switch(property.type())
-  {
-    case ValueType::Boolean:
-      return new PropertyCheckBox(property, parent);
-
-    case ValueType::Enum:
-      if(property.enumName() == "pair_output_action")
-      {
-        return new PropertyPairOutputAction(property, parent);
-      }
-      return new PropertyComboBox(property, parent);
-
-    case ValueType::Integer:
-      if(property.hasAttribute(AttributeName::Values) && !property.hasAttribute(AttributeName::Min) && !property.hasAttribute(AttributeName::Max))
-      {
-        return new PropertyComboBox(property, parent);
-      }
-      return new PropertySpinBox(property, parent);
-
-    case ValueType::Float:
-      return new PropertyDoubleSpinBox(property, parent);
-
-    case ValueType::String:
-      if(property.hasAttribute(AttributeName::Values))
-      {
-        return new PropertyComboBox(property, parent);
-      }
-      return new PropertyLineEdit(property, parent);
-
-    case ValueType::Object:
-      break; // TODO
-
-    case ValueType::Set:
-      break; // TODO
-
-    case ValueType::Invalid: /*[[unlikely]]*/
-      break;
-  }
-  assert(false);
-  return nullptr;
 }
 
 QWidget* createWidget(ObjectProperty& property, QWidget* parent)
