@@ -179,12 +179,7 @@ QWidget* createWidget(Property& property, QWidget* parent)
             break;
     }
 
-    // Set tooltip on the widget itself for accessibility
-    if(widget && property.hasAttribute(AttributeName::Help))
-    {
-        QString helpText = property.getAttribute(AttributeName::Help, QString()).toString();
-        widget->setToolTip(helpText);
-    }
+    
 
     return widget;
 }
