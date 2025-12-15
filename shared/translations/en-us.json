@@ -876,6 +876,10 @@
         "definition": "Type"
     },
     {
+        "term": "interface:type\help",
+        "definition": "Conection method between the\n server and the interface."
+    },
+    {
         "term": "interface_list:create",
         "definition": "Create a new interface."
     },
