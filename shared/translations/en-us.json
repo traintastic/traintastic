@@ -768,7 +768,7 @@
         "definition": "Speed steps"
     },
     {
-        "term": "hardware:speed_stepshelp",
+        "term": "hardware:speed_steps/help",
         "definition": "Number of different speeds a locomotive can operate at"
     },
     {
@@ -884,7 +884,7 @@
         "definition": "Type"
     },
     {
-        "term": "interface:typehelp",
+        "term": "interface:type/help",
         "definition": "Conection method between the\n server and the interface."
     },
     {
@@ -916,7 +916,7 @@
         "definition": "Hostname"
     },
     {
-        "term": "ip:hostnamehelp",
+        "term": "ip:hostname/help",
         "definition": "IP address or domain used to communicate with the interface\nExample: 192.168.2.112"
     },
     {
