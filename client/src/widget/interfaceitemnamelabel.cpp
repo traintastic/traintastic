@@ -58,9 +58,16 @@ InterfaceItemNameLabel::InterfaceItemNameLabel(InterfaceItem& item, QWidget* par
       switch (name)
       {
         case AttributeName::Visible:
-          m_label->setVisible(m_item.getAttributeBool(AttributeName::Visible, true));
+        {
+          const bool visible = m_item.getAttributeBool(AttributeName::Visible, true);
+          m_label->setVisible(visible);
+          if (m_helpBtn)
+          {
+            m_helpBtn->setVisible(visible);
+          }
           break;
-
+        }
+        
         case AttributeName::DisplayName:
         case AttributeName::Help:
         {
