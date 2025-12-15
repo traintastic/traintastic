@@ -908,6 +908,10 @@
         "definition": "Hostname"
     },
     {
+        "term": "ip:hostnamehelp",
+        "definition": "IP address or domain used to communicate with the interface\nExample: 192.168.2.112"
+    },
+    {
         "term": "ip:port",
         "definition": "Port"
     },
