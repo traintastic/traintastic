@@ -70,7 +70,7 @@ DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
   dccex.setValueInternal(std::make_shared<DCCEX::Settings>(*this, dccex.name()));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
-  Attributes::addHelp(type, DisplayName::Interface::typehelp);
+  Attributes::addHelp(type, "interface:typehelp");
   Attributes::addEnabled(type, !online);
   Attributes::addValues(type, DCCEXInterfaceTypeValues);
   m_interfaceItems.insertBefore(type, notes);
