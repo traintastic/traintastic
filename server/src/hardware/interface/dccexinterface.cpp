@@ -87,6 +87,7 @@ DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(baudrate, notes);
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
+  Attributes::addHelp(hostname, "interface:hostnamehelp");
   Attributes::addEnabled(hostname, !online);
   Attributes::addVisible(hostname, false);
   m_interfaceItems.insertBefore(hostname, notes);
