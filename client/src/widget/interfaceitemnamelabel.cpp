@@ -61,6 +61,22 @@ InterfaceItemNameLabel::InterfaceItemNameLabel(InterfaceItem& item, QWidget* par
           const bool isVisible = m_item.getAttributeBool(AttributeName::Visible, true);
           m_label->setVisible(isVisible);
 
+          const QString help = m_item.helpText();
+
+          if (isVisible)
+          {
+            if (!m_helpBtn && !help.isEmpty())
+            {
+              m_helpBtn = new QToolButton(this);
+              m_helpBtn->setIcon(Theme::getIcon("help"));
+              m_helpBtn->setToolTip(help);
+              m_helpBtn->setAutoRaise(true);
+              m_helpBtn->setCursor(Qt::PointingHandCursor);
+              m_helpBtn->setIconSize(QSize(12, 12));
+              layout()->insertWidget(1, m_helpBtn, 0, Qt::AlignTop); // insert next to label
+            }
+          }
+
           if (m_helpBtn)
           {
             m_helpBtn->setVisible(isVisible);
