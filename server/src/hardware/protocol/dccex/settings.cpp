@@ -33,12 +33,11 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   , debugLogRXTX{this, "debug_log", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   Attributes::addDisplayName(speedSteps, DisplayName::Hardware::speedSteps);
-  Attributes::addHelp(speedSteps, "hardware:speed_stepshelp");
   Attributes::addEnabled(speedSteps, false);
   Attributes::addValues(speedSteps, speedStepValues);
   m_interfaceItems.add(speedSteps);
 
-  Attributes::addHelp(startupDelay, "dccex_settings:startup_delayhelp");
+  Attributes::addHelp(startupDelay, "dccex_settings:startup_delay/help");
   Attributes::addMinMax(startupDelay, startupDelayMin, startupDelayMax);
   m_interfaceItems.add(startupDelay);
 
