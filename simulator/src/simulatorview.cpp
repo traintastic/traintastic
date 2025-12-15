@@ -112,7 +112,12 @@ SimulatorView::SimulatorView(QWidget* parent)
   setFocusPolicy(Qt::StrongFocus); // for key stuff
 
   // 800 ms turnout blink
-  turnoutBlinkTimer.start(std::chrono::milliseconds(800), Qt::PreciseTimer, this);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+  const auto ms = std::chrono::milliseconds(800);
+#else
+  const int ms = 800;
+#endif
+  turnoutBlinkTimer.start(ms, Qt::PreciseTimer, this);
 }
 
 SimulatorView::~SimulatorView()
