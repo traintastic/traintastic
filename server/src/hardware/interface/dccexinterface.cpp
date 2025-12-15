@@ -70,7 +70,6 @@ DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
   dccex.setValueInternal(std::make_shared<DCCEX::Settings>(*this, dccex.name()));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
-  Attributes::addHelp(type, "interface:typehelp");
   Attributes::addEnabled(type, !online);
   Attributes::addValues(type, DCCEXInterfaceTypeValues);
   m_interfaceItems.insertBefore(type, notes);
@@ -87,7 +86,6 @@ DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(baudrate, notes);
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
-  Attributes::addHelp(hostname, "interface:hostnamehelp");
   Attributes::addEnabled(hostname, !online);
   Attributes::addVisible(hostname, false);
   m_interfaceItems.insertBefore(hostname, notes);
