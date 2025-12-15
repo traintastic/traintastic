@@ -51,9 +51,9 @@ InterfaceItemNameLabel::InterfaceItemNameLabel(InterfaceItem& item, QWidget* par
 
   layout->addStretch();
 
-  // Update label visibility, text, and help dynamically
+  // Capture layout too
   connect(&m_item, &InterfaceItem::attributeChanged, this,
-    [this](AttributeName name, const QVariant&)
+    [this, layout](AttributeName name, const QVariant&)
     {
       switch (name)
       {
