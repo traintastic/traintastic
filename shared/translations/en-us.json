@@ -3252,6 +3252,10 @@
         "definition": "Scale"
     },
     {
+        "term": "world:scale/help",
+        "definition": "Scale of the real-life layout\n used for speed calculations"
+    },
+    {
         "term": "world:scale_ratio",
         "definition": "Scale ratio"
     },
