@@ -94,57 +94,63 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return nullptr;
 }
 
-QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
+QWidget* createWidget(Property& property, QWidget* parent)
 {
   QWidget* widget = nullptr;
 
-    switch(property.type())
-    {
-        case ValueType::Boolean:
-            widget = new PropertyCheckBox(property, parent);
-            break;
+  switch(property.type())
+  {
+    case ValueType::Boolean:
+      widget = new PropertyCheckBox(property, parent);
+      break;
 
-        case ValueType::Enum:
-            if(property.enumName() == "pair_output_action")
-                widget = new PropertyPairOutputAction(property, parent);
-            else
-                widget = new PropertyComboBox(property, parent);
-            break;
+    case ValueType::Enum:
+      if(property.enumName() == "pair_output_action")
+        widget = new PropertyPairOutputAction(property, parent);
+      else
+        widget = new PropertyComboBox(property, parent);
+      break;
 
-        case ValueType::Integer:
-            if(property.hasAttribute(AttributeName::Values) &&
-               !property.hasAttribute(AttributeName::Min) &&
-               !property.hasAttribute(AttributeName::Max))
-            {
-                widget = new PropertyComboBox(property, parent);
-            }
-            else
-                widget = new PropertySpinBox(property, parent);
-            break;
+    case ValueType::Integer:
+      if(property.hasAttribute(AttributeName::Values) &&
+         !property.hasAttribute(AttributeName::Min) &&
+         !property.hasAttribute(AttributeName::Max))
+      {
+        widget = new PropertyComboBox(property, parent);
+      }
+      else
+        widget = new PropertySpinBox(property, parent);
+      break;
 
-        case ValueType::Float:
-            widget = new PropertyDoubleSpinBox(property, parent);
-            break;
+    case ValueType::Float:
+      widget = new PropertyDoubleSpinBox(property, parent);
+      break;
 
-        case ValueType::String:
-            if(property.hasAttribute(AttributeName::Values))
-                widget = new PropertyComboBox(property, parent);
-            else
-                widget = new PropertyLineEdit(property, parent);
-            break;
+    case ValueType::String:
+      if(property.hasAttribute(AttributeName::Values))
+        widget = new PropertyComboBox(property, parent);
+      else
+        widget = new PropertyLineEdit(property, parent);
+      break;
 
-        case ValueType::Object: // TODO
-        case ValueType::Set: // TODO
-        case ValueType::Invalid:
-            break;
-    }
+    case ValueType::Object:
+      break; // TODO
 
-    if(widget && property.hasAttribute(AttributeName::Help))
-    {
-        QString helpText = property.getAttribute(AttributeName::Help, QString()).toString();
-        widget->setToolTip(helpText);
-    }
-    return widget;
+    case ValueType::Set:
+      break; // TODO
+
+    case ValueType::Invalid: /*[[unlikely]]*/
+      break;
+  }
+  
+  if(widget)
+  {
+    const QString helpText = property.getAttribute(AttributeName::Help, QString()).toString();
+    if(!helpText.isEmpty())
+      widget->setToolTip(helpText);
+  }
+
+  return widget;
 }
 
 QWidget* createWidget(ObjectProperty& property, QWidget* parent)
