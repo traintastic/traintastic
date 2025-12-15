@@ -764,6 +764,10 @@
         "definition": "Speed steps"
     },
     {
+        "term": "hardware:speed_stepshelp",
+        "definition": "Number of different speeds a locomotive can operate at"
+    },
+    {
         "term": "hardware:throttles",
         "definition": "Throttles"
     },
