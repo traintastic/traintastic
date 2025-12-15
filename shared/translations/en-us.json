@@ -876,7 +876,7 @@
         "definition": "Type"
     },
     {
-        "term": "interface:type:help",
+        "term": "interface:typehelp",
         "definition": "Conection method between the\n server and the interface."
     },
     {
