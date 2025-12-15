@@ -110,6 +110,30 @@ QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
     return new ObjectEditWidget(object, parent);
 }
 
+QWidget* createWidget(InterfaceItem& item, QWidget* parent)
+{
+  if(auto* baseProperty = dynamic_cast<AbstractProperty*>(&item))
+  {
+    return createWidget(*baseProperty, parent);
+  }
+  assert(false);
+  return nullptr;
+}
+
+QWidget* createWidget(AbstractProperty& baseProperty, QWidget* parent)
+{
+  if(auto* property = dynamic_cast<Property*>(&baseProperty))
+  {
+    return createWidget(*property, parent);
+  }
+  else if(auto* objectProperty = dynamic_cast<ObjectProperty*>(&baseProperty))
+  {
+    return createWidget(*objectProperty, parent);
+  }
+  assert(false);
+  return nullptr;
+}
+
 QWidget* createWidget(Property& property, QWidget* parent)
 {
     QWidget* widget = nullptr;
@@ -164,6 +188,7 @@ QWidget* createWidget(Property& property, QWidget* parent)
 
     return widget;
 }
+
 QWidget* createWidget(ObjectProperty& property, QWidget* parent)
 {
   if(property.isWritable())
