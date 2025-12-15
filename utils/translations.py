@@ -173,13 +173,23 @@ def add_missing(args: list):
     write_traintastic_json(dst_lang, dst)
 
 
+def sort(args: list):
+    if len(args) > 0:
+        languages = args
+    else:
+        languages = LANGUAGES
+
+    for language in languages:
+        write_traintastic_json(language, read_traintastic_terms(language))
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: {:s} <command> [languages...]".format(sys.argv[0]), file=sys.stderr)
         sys.exit(1)
 
     cmd = sys.argv[1].replace('-', '_')
-    for sub_command in [pull, push, add_missing]:
+    for sub_command in [pull, push, add_missing, sort]:
         if cmd == sub_command.__name__:
             sys.exit(sub_command(sys.argv[2:]))
 
