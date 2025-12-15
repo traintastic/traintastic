@@ -1228,6 +1228,10 @@
         "definition": "Default switch time"
     },
     {
+        "term": "marklincan_settings:default_switch_time/help",
+        "definition": "info_needed!"
+    },
+    {
         "term": "marklincan_settings:node_serial_number",
         "definition": "Node serial number"
     },
