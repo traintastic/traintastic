@@ -65,6 +65,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   Attributes::addMinMax(locomotiveSlots, SLOT_LOCO_MIN, SLOT_LOCO_MAX);
   m_interfaceItems.add(locomotiveSlots);
 
+  Attributes::addHelp(f9f28, "loconet_f9_f28/help");
   Attributes::addEnabled(f9f28, true);
   Attributes::addValues(f9f28, loconetF9F28Values);
   m_interfaceItems.add(f9f28);
