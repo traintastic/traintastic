@@ -520,6 +520,10 @@
         "definition": "Startup delay"
     },
     {
+        "term": "dccex_settings:startup_delay/help",
+        "definition": "info_needed!"
+    },
+    {
         "term": "decoder:functions",
         "definition": "Functions"
     },
