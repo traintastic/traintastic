@@ -200,12 +200,12 @@
         "definition": "Outputs"
     },
     {
-        "term": "category:cargo",
-        "definition": "Cargo"
-    },
-    {
         "term": "category:block",
         "definition": "Block"
+    },
+    {
+        "term": "category:cargo",
+        "definition": "Cargo"
     },
     {
         "term": "category:colors",
