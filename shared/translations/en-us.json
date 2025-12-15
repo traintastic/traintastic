@@ -3300,6 +3300,10 @@
         "definition": "Use short emergency stop locomotive command"
     },
     {
+        "term": "xpressnet_settings:use_roco_accessory_addressing",
+        "definition": "Use Roco accessory addressing"
+    },
+    {
         "term": "xpressnet_settings:use_roco_f13_f20_command",
         "definition": "Use Roco F13-F20 command"
     },
