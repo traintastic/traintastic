@@ -64,7 +64,7 @@ This project is not affiliated with, endorsed by, or connected to Digitrax.
         <a href="https://github.com/gfgit">
             <img src="https://avatars.githubusercontent.com/u/42845724?v=4" width="100;" alt="gfgit"/>
             <br />
-            <sub><b>Null</b></sub>
+            <sub><b>gfgit</b></sub>
         </a>
     </td>
     <td align="center">
@@ -92,7 +92,7 @@ This project is not affiliated with, endorsed by, or connected to Digitrax.
         <a href="https://github.com/memen45">
             <img src="https://avatars.githubusercontent.com/u/27782135?v=4" width="100;" alt="memen45"/>
             <br />
-            <sub><b>Null</b></sub>
+            <sub><b>memen45</b></sub>
         </a>
     </td></tr>
 </table>
