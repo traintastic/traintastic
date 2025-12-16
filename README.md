@@ -52,48 +52,51 @@ This project is not affiliated with, endorsed by, or connected to Digitrax.
 
 <!-- readme: contributors -start -->
 <table>
-<tr>
-    <td align="center">
-        <a href="https://github.com/reinder">
-            <img src="https://avatars.githubusercontent.com/u/886282?v=4" width="100;" alt="reinder"/>
-            <br />
-            <sub><b>Reinder Feenstra</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/gfgit">
-            <img src="https://avatars.githubusercontent.com/u/42845724?v=4" width="100;" alt="gfgit"/>
-            <br />
-            <sub><b>Null</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/DrEVILish">
-            <img src="https://avatars.githubusercontent.com/u/6287003?v=4" width="100;" alt="DrEVILish"/>
-            <br />
-            <sub><b>Ryan Freeman</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/cyrilpawelko">
-            <img src="https://avatars.githubusercontent.com/u/1159809?v=4" width="100;" alt="cyrilpawelko"/>
-            <br />
-            <sub><b>Cyril Pawelko</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/kamil00110">
-            <img src="https://avatars.githubusercontent.com/u/68923965?v=4" width="100;" alt="kamil00110"/>
-            <br />
-            <sub><b>kamil00110</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/memen45">
-            <img src="https://avatars.githubusercontent.com/u/27782135?v=4" width="100;" alt="memen45"/>
-            <br />
-            <sub><b>Null</b></sub>
-        </a>
-    </td></tr>
+	<tbody>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/reinder">
+                    <img src="https://avatars.githubusercontent.com/u/886282?v=4" width="100;" alt="reinder"/>
+                    <br />
+                    <sub><b>Reinder Feenstra</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/gfgit">
+                    <img src="https://avatars.githubusercontent.com/u/42845724?v=4" width="100;" alt="gfgit"/>
+                    <br />
+                    <sub><b>Null</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/DrEVILish">
+                    <img src="https://avatars.githubusercontent.com/u/6287003?v=4" width="100;" alt="DrEVILish"/>
+                    <br />
+                    <sub><b>Ryan Freeman</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/cyrilpawelko">
+                    <img src="https://avatars.githubusercontent.com/u/1159809?v=4" width="100;" alt="cyrilpawelko"/>
+                    <br />
+                    <sub><b>Cyril Pawelko</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/kamil00110">
+                    <img src="https://avatars.githubusercontent.com/u/68923965?v=4" width="100;" alt="kamil00110"/>
+                    <br />
+                    <sub><b>kamil00110</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/memen45">
+                    <img src="https://avatars.githubusercontent.com/u/27782135?v=4" width="100;" alt="memen45"/>
+                    <br />
+                    <sub><b>Null</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
 </table>
 <!-- readme: contributors -end -->
