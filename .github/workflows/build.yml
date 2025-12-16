@@ -614,6 +614,6 @@ jobs:
     name: Update contributers in README.md
     steps:
         - name: Update contribute list
-          uses: akhilmhdh/contributors-readme-action@v2.3.9
+          uses: akhilmhdh/contributors-readme-action@v2.3.11
           env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
