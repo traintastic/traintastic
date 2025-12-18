@@ -26,6 +26,7 @@
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../decoder/decodercontroller.hpp"
+#include "../../decoder/list/decoderlist.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
 #include "../../identification/identificationcontroller.hpp"
@@ -891,53 +892,87 @@ void Kernel::receive(const Message& message)
   }
 }
 
-void Kernel::setPowerOn(bool value)
-{
-  assert(isEventLoopThread());
-  if(value)
-  {
-    m_ioContext.post(
-      [this]()
-      {
-        if(m_globalPower != TriState::True)
-          send(GlobalPowerOn(), HighPriority);
-      });
-  }
-  else
-  {
-    m_ioContext.post(
-      [this]()
-      {
-        if(m_globalPower != TriState::False)
-          send(GlobalPowerOff(), HighPriority);
-      });
-  }
-}
-
-void Kernel::emergencyStop()
+void Kernel::setState(bool powerOn, bool run)
 {
   assert(isEventLoopThread());
   m_ioContext.post(
-    [this]()
+    [this, powerOn, run]()
     {
-      if(m_emergencyStop != TriState::True)
-        send(Idle(), HighPriority);
+      if(!powerOn) // disable power
+      {
+        if(m_emergencyStop != TriState::True)
+        {
+          send(Idle(), HighPriority); // estop trains
+        }
+        if(m_globalPower != TriState::False)
+        {
+          send(GlobalPowerOff(), HighPriority);
+        }
+      }
+      else
+      {
+        if(m_globalPower != TriState::True) // enable power
+        {
+          send(GlobalPowerOn(), HighPriority);
+        }
+        if(run && m_emergencyStop != TriState::False)
+        {
+          EventLoop::call(std::bind_front(&Kernel::resume, this));
+        }
+        else if(!run && m_emergencyStop != TriState::True)
+        {
+          send(Idle(), HighPriority); // estop trains
+        }
+      }
     });
 }
 
 void Kernel::resume()
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
-    [this]()
-    {
-      if(m_emergencyStop != TriState::False)
-      {
-        m_emergencyStop = TriState::False;
 
-        // TODO: restore speeds
-      }
-    });
+  auto& list = *m_decoderController->decoders.value();
+  for(const auto& decoder : list)
+  {
+    decoderChanged(*decoder, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps, 0);
+
+    if(decoder->hasFunction(5) ||
+        decoder->hasFunction(6) ||
+        decoder->hasFunction(7) ||
+        decoder->hasFunction(8))
+    {
+      decoderChanged(*decoder, DecoderChangeFlags::FunctionValue, 5); // trigger F5-F8 update
+    }
+    if(decoder->hasFunction(9) ||
+        decoder->hasFunction(10) ||
+        decoder->hasFunction(11) ||
+        decoder->hasFunction(12))
+    {
+      decoderChanged(*decoder, DecoderChangeFlags::FunctionValue, 9); // trigger F9-F12 update
+    }
+    if(decoder->hasFunction(13) ||
+        decoder->hasFunction(14) ||
+        decoder->hasFunction(15) ||
+        decoder->hasFunction(16) ||
+        decoder->hasFunction(17) ||
+        decoder->hasFunction(18) ||
+        decoder->hasFunction(19) ||
+        decoder->hasFunction(20))
+    {
+      decoderChanged(*decoder, DecoderChangeFlags::FunctionValue, 13); // trigger F13-F20 update
+    }
+    if(decoder->hasFunction(21) ||
+        decoder->hasFunction(22) ||
+        decoder->hasFunction(23) ||
+        decoder->hasFunction(24) ||
+        decoder->hasFunction(25) ||
+        decoder->hasFunction(26) ||
+        decoder->hasFunction(27) ||
+        decoder->hasFunction(28))
+    {
+      decoderChanged(*decoder, DecoderChangeFlags::FunctionValue, 21); // trigger F21-F28 update
+    }
+  }
 }
 
 bool Kernel::send(std::span<uint8_t> packet)

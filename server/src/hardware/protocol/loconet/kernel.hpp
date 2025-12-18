@@ -202,6 +202,8 @@ class Kernel : public ::KernelBase
       return m_sendQueue[m_sentMessagePriority].front();
     }
 
+    void resume();
+
     void send(const Message& message, Priority priority = NormalPriority);
     template<class T>
     void postSend(const T& message)
@@ -395,23 +397,7 @@ class Kernel : public ::KernelBase
      */
     void receive(const Message& message);
 
-    /**
-     *
-     *
-     */
-    void setPowerOn(bool value);
-
-    /**
-     *
-     *
-     */
-    void emergencyStop();
-
-
-    /**
-     *
-     */
-    void resume();
+    void setState(bool powerOn, bool run);
 
     //! \brief Send LocoNet packet
     //! \param[in] packet LocoNet packet bytes, exluding checksum.
