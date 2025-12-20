@@ -323,13 +323,8 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
         [this]()
         {
           setState(InterfaceState::Online);
-
-          m_kernel->setPowerOn(contains(m_world.state.value(), WorldState::PowerOn));
-
-          if(contains(m_world.state.value(), WorldState::Run))
-            m_kernel->resume();
-          else
-            m_kernel->emergencyStop();
+          const auto worldState = m_world.state.value();
+          m_kernel->setState(contains(worldState, WorldState::PowerOn), contains(worldState, WorldState::Run));
         });
       m_kernel->setOnError(
         [this]()
@@ -442,22 +437,10 @@ void LocoNetInterface::worldEvent(WorldState state, WorldEvent event)
     switch(event)
     {
       case WorldEvent::PowerOff:
-        m_kernel->setPowerOn(false);
-        break;
-
       case WorldEvent::PowerOn:
-        m_kernel->setPowerOn(true);
-        if(contains(state, WorldState::Run))
-          m_kernel->resume();
-        break;
-
       case WorldEvent::Stop:
-        m_kernel->emergencyStop();
-        break;
-
       case WorldEvent::Run:
-        if(contains(state, WorldState::PowerOn))
-          m_kernel->resume();
+        m_kernel->setState(contains(state, WorldState::PowerOn), contains(state, WorldState::Run));
         break;
 
       default:
