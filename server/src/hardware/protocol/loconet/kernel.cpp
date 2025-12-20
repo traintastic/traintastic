@@ -36,6 +36,7 @@
 #include "../../../pcap/pcapfile.hpp"
 #include "../../../pcap/pcappipe.hpp"
 #include "../../../core/eventloop.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
 #include "../../../clock/clock.hpp"
