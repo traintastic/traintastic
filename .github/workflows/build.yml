@@ -102,12 +102,22 @@ jobs:
         submodules: recursive
 
     # Windows only:
-    - name: Install Qt 5
-      if: startswith(matrix.config.os, 'windows')
+    - name: Install Qt 5 x64
+      if: matrix.config.name == 'windows_x64_msvc' || matrix.config.name == 'windows_x64_clang'
       uses: jurplel/install-qt-action@v4
       with:
+        version: 5.15.9
+        arch: win64_msvc2019
         cache: true
-        version: 5.15
+
+    # Windows ARM64
+    - name: Install Qt 5 ARM64
+      if: matrix.config.name == 'windows_arm64_msvc' || matrix.config.name == 'windows_arm64_clang'
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: 5.15.9
+        arch: win64_msvc2019_arm64
+        cache: true
 
     # macOS only:
     - name: Install Qt 6.5
