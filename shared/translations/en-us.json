@@ -521,7 +521,7 @@
     },
     {
         "term": "dccex_settings:startup_delay/help",
-        "definition": "info_needed!"
+        "definition": "Wait before sending the first command to the Interface."
     },
     {
         "term": "decoder:functions",
@@ -1229,7 +1229,7 @@
     },
     {
         "term": "marklincan_settings:default_switch_time/help",
-        "definition": "info_needed!"
+        "definition": "Duration the turnout motor stays powered when switched."
     },
     {
         "term": "marklincan_settings:node_serial_number",
