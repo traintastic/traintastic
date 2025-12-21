@@ -149,11 +149,22 @@ jobs:
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/client/build
 
+    
+    - name: Set Qt path for CMake
+      if: startswith(matrix.config.os, 'windows')
+      shell: cmd
+      run: |
+        if "%MATRIX_CONFIG_NAME%"=="windows_x64_msvc" (
+          set "CMAKE_PREFIX_PATH=%USERPROFILE%\Qt\5.15.9\msvc2019_64"
+        ) else (
+          set "CMAKE_PREFIX_PATH=%USERPROFILE%\Qt\5.15.9\msvc2019_arm64"
+        )
+        
     # All:
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/client/build
-      run: cmake $GITHUB_WORKSPACE/client -G "${{matrix.config.generator}}" ${{matrix.config.arch}} -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} ${{matrix.config.defines}}
+      run: cmake $GITHUB_WORKSPACE/client -G "${{matrix.config.generator}}" ${{matrix.config.arch}} -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} ${{matrix.config.defines}}
 
     # All:
     - name: Build
@@ -166,7 +177,11 @@ jobs:
       if: startswith(matrix.config.os, 'windows')
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        if "%MATRIX_CONFIG_NAME%"=="windows_x64_msvc" (
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        ) else (
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsarm64.bat"
+        )
         windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{github.workspace}}/client/build/${{matrix.config.build_type}}/traintastic-client.exe
 
     # Linux only:
