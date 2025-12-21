@@ -520,6 +520,10 @@
         "definition": "Startup delay"
     },
     {
+        "term": "dccex_settings:startup_delay/help",
+        "definition": "Wait before sending the first command to the Interface."
+    },
+    {
         "term": "decoder:functions",
         "definition": "Functions"
     },
@@ -764,6 +768,10 @@
         "definition": "Speed steps"
     },
     {
+        "term": "hardware:speed_steps/help",
+        "definition": "Number of different speeds a locomotive can operate at"
+    },
+    {
         "term": "hardware:throttles",
         "definition": "Throttles"
     },
@@ -876,6 +884,10 @@
         "definition": "Type"
     },
     {
+        "term": "interface:type/help",
+        "definition": "Conection method between the\n server and the interface."
+    },
+    {
         "term": "interface_list:create",
         "definition": "Create a new interface."
     },
@@ -902,6 +914,10 @@
     {
         "term": "ip:hostname",
         "definition": "Hostname"
+    },
+    {
+        "term": "ip:hostname/help",
+        "definition": "IP address or domain used to communicate with the interface\nExample: 192.168.2.112"
     },
     {
         "term": "ip:port",
@@ -1052,6 +1068,10 @@
         "definition": "Custom"
     },
     {
+        "term": "loconet_f9_f28/help",
+        "definition": "Set F9–F12 to send standard LocoNet commands (Direct / OPC_IMM_PACKET) or Uhlenbrock extended packets (OPC_A3/D4)"
+    },
+    {
         "term": "loconet_f9_f28:imm_packet",
         "definition": "Direct (OPC_IMM_PACKET)"
     },
@@ -1090,6 +1110,10 @@
     {
         "term": "loconet_settings:fast_clock",
         "definition": "Fast clock"
+    },
+    {
+        "term": "loconet_settings:fast_clock/help",
+        "definition": "Simulates railroad time for layout operations"
     },
     {
         "term": "loconet_settings:fast_clock_sync_enabled",
@@ -1202,6 +1226,10 @@
     {
         "term": "marklincan_settings:default_switch_time",
         "definition": "Default switch time"
+    },
+    {
+        "term": "marklincan_settings:default_switch_time/help",
+        "definition": "Duration the turnout motor stays powered when switched."
     },
     {
         "term": "marklincan_settings:node_serial_number",
@@ -3224,6 +3252,10 @@
         "definition": "Scale"
     },
     {
+        "term": "world:scale/help",
+        "definition": "Scale of the real-life layout\n used for speed calculations"
+    },
+    {
         "term": "world:scale_ratio",
         "definition": "Scale ratio"
     },
@@ -3270,6 +3302,10 @@
     {
         "term": "xpressnet_settings:use_emergency_stop_locomotive_command",
         "definition": "Use short emergency stop locomotive command"
+    },
+    {
+        "term": "xpressnet_settings:use_roco_accessory_addressing",
+        "definition": "Use Roco accessory addressing"
     },
     {
         "term": "xpressnet_settings:use_roco_f13_f20_command",
