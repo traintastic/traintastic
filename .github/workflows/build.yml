@@ -165,11 +165,12 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/client/build
       run: cmake $GITHUB_WORKSPACE/client \
-          -G "${{matrix.config.generator}}" \
+           -G "${{matrix.config.generator}}" \
            ${{matrix.config.arch}} \
            -DCMAKE_PREFIX_PATH="$env:QTDIR" \
            -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} \
            ${{matrix.config.defines}}
+
 
     # All:
     - name: Build
