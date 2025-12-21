@@ -20,16 +20,6 @@ jobs:
           build_deb: false
           defines: ""
 
-        - name: "windows_arm64_msvc"
-          os: windows-latest
-          generator: "Visual Studio 17 2022"
-          arch: "-A ARM64"
-          target: traintastic-client
-          jobs: 4
-          build_type: Release
-          build_deb: false            
-          defines: ""
-
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
           generator: "Unix Makefiles"
@@ -102,22 +92,12 @@ jobs:
         submodules: recursive
 
     # Windows only:
-    - name: Install Qt 5 x64
-      if: matrix.config.name == 'windows_x64_msvc' || matrix.config.name == 'windows_x64_clang'
+    - name: Install Qt 5
+      if: startswith(matrix.config.os, 'windows')
       uses: jurplel/install-qt-action@v4
       with:
-        version: 5.15.9
-        arch: win64_msvc2019
         cache: true
-
-    # Windows ARM64
-    - name: Install Qt 5 ARM64
-      if: matrix.config.name == 'windows_arm64_msvc' || matrix.config.name == 'windows_arm64_clang'
-      uses: jurplel/install-qt-action@v4
-      with:
-        version: 5.15.9
-        arch: win64_msvc2019_arm64
-        cache: true
+        version: 5.15
 
     # macOS only:
     - name: Install Qt 6.5
@@ -149,28 +129,11 @@ jobs:
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/client/build
 
-    
-    - name: Set Qt path for CMake
-      if: startswith(matrix.config.os, 'windows')
-      shell: cmd
-      run: |
-        if "%MATRIX_CONFIG_NAME%"=="windows_x64_msvc" (
-          set "CMAKE_PREFIX_PATH=%USERPROFILE%\Qt\5.15.9\msvc2019_64"
-        ) else (
-          set "CMAKE_PREFIX_PATH=%USERPROFILE%\Qt\5.15.9\msvc2019_arm64"
-        )
-        
     # All:
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/client/build
-      run: cmake $GITHUB_WORKSPACE/client \
-           -G "${{matrix.config.generator}}" \
-           ${{matrix.config.arch}} \
-           -DCMAKE_PREFIX_PATH="$env:QTDIR" \
-           -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} \
-           ${{matrix.config.defines}}
-
+      run: cmake $GITHUB_WORKSPACE/client -G "${{matrix.config.generator}}" ${{matrix.config.arch}} -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} ${{matrix.config.defines}}
 
     # All:
     - name: Build
@@ -184,7 +147,7 @@ jobs:
       shell: cmd
       run: |
         call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw "%QTDIR%\bin\${{matrix.config.build_type}}\traintastic-client.exe"
+        windeployqt --release --no-translations -no-system-d3d-compiler --no-opengl-sw ${{github.workspace}}/client/build/${{matrix.config.build_type}}/traintastic-client.exe
 
     # Linux only:
     - name: Build debian package
@@ -221,18 +184,6 @@ jobs:
           os: windows-latest
           generator: "Visual Studio 17 2022"
           arch: "-A x64"
-          toolset: "-T ClangCL"
-          target: ALL_BUILD
-          jobs: 4
-          build_type: Release
-          build_deb: false
-          defines: ""
-          ccov: false
-          
-        - name: "windows_arm64_clang"
-          os: windows-latest
-          generator: "Visual Studio 17 2022"
-          arch: "-A ARM64"
           toolset: "-T ClangCL"
           target: ALL_BUILD
           jobs: 4
