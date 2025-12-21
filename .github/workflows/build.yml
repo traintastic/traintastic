@@ -20,6 +20,16 @@ jobs:
           build_deb: false
           defines: ""
 
+        - name: "windows_arm64_msvc"
+          os: windows-latest
+          generator: "Visual Studio 17 2022"
+          arch: "-A ARM64"
+          target: traintastic-client
+          jobs: 4
+          build_type: Release
+          build_deb: false            
+          defines: ""
+
         - name: "ubuntu_24.04"
           os: ubuntu-24.04
           generator: "Unix Makefiles"
@@ -184,6 +194,18 @@ jobs:
           os: windows-latest
           generator: "Visual Studio 17 2022"
           arch: "-A x64"
+          toolset: "-T ClangCL"
+          target: ALL_BUILD
+          jobs: 4
+          build_type: Release
+          build_deb: false
+          defines: ""
+          ccov: false
+          
+        - name: "windows_arm64_clang"
+          os: windows-latest
+          generator: "Visual Studio 17 2022"
+          arch: "-A ARM64"
           toolset: "-T ClangCL"
           target: ALL_BUILD
           jobs: 4
