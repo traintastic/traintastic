@@ -1,9 +1,8 @@
 /**
- * client/src/widget/propertyvaluelabel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,12 +28,8 @@ PropertyValueLabel::PropertyValueLabel(Property& property, QWidget* parent) :
 {
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
-  setText(m_property.toString());
-  connect(&m_property, &Property::valueChanged, this,
-    [this]()
-    {
-      setText(m_property.toString());
-    });
+  updateText();
+  connect(&m_property, &Property::valueChanged, this, &PropertyValueLabel::updateText);
   connect(&m_property, &Property::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
@@ -48,8 +43,46 @@ PropertyValueLabel::PropertyValueLabel(Property& property, QWidget* parent) :
           setVisible(value.toBool());
           break;
 
+        case AttributeName::Unit:
+          updateText();
+          break;
+
         default:
           break;
       }
     });
+}
+
+void PropertyValueLabel::updateText()
+{
+  switch(m_property.type())
+  {
+    case ValueType::Integer:
+    {
+      const auto v = m_property.toInt64();
+      auto s = QString("%1").arg(v);
+      if(const auto unit = m_property.getAttributeString(AttributeName::Unit, {}); !unit.isEmpty())
+      {
+        s.append(" ").append(unit);
+      }
+      setText(s);
+      break;
+    }
+    case ValueType::Float:
+    {
+      const auto v = m_property.toDouble();
+      auto s = std::isfinite(v)
+        ? QString("%1").arg(v)
+        : QStringLiteral("-");
+      if(const auto unit = m_property.getAttributeString(AttributeName::Unit, {}); !unit.isEmpty())
+      {
+        s.append(" ").append(unit);
+      }
+      setText(s);
+      break;
+    }
+    default:
+      setText(m_property.toString());
+      break;
+  }
 }
