@@ -332,19 +332,25 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
           setState(InterfaceState::Error);
           online = false; // communication no longer possible
         });
-      m_kernel->setOnGlobalPowerChanged(
-        [this](bool powerOn)
+      m_kernel->setOnStateChanged(
+        [this](bool powerOn, bool run)
         {
-          if(powerOn && !contains(m_world.state.value(), WorldState::PowerOn))
+          if(run && !contains(m_world.state.value(), WorldState::Run))
+          {
+            m_world.run();
+          }
+          else if(powerOn && !contains(m_world.state.value(), WorldState::PowerOn))
+          {
             m_world.powerOn();
+          }
           else if(!powerOn && contains(m_world.state.value(), WorldState::PowerOn))
+          {
             m_world.powerOff();
-        });
-      m_kernel->setOnIdle(
-        [this]()
-        {
-          if(contains(m_world.state.value(), WorldState::Run))
+          }
+          else if(!run && contains(m_world.state.value(), WorldState::Run))
+          {
             m_world.stop();
+          }
         });
       m_kernel->setClock(m_world.clock.value());
       m_kernel->setDecoderController(this);

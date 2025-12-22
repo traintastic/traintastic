@@ -161,18 +161,11 @@ void Kernel::setConfig(const Config& config)
     });
 }
 
-void Kernel::setOnGlobalPowerChanged(std::function<void(bool)> callback)
+void Kernel::setOnStateChanged(std::function<void(bool, bool)> callback)
 {
   assert(isEventLoopThread());
   assert(!m_started);
-  m_onGlobalPowerChanged = std::move(callback);
-}
-
-void Kernel::setOnIdle(std::function<void()> callback)
-{
-  assert(isEventLoopThread());
-  assert(!m_started);
-  m_onIdle = std::move(callback);
+  m_onStateChanged = std::move(callback);
 }
 
 void Kernel::setClock(std::shared_ptr<Clock> clock)
@@ -320,8 +313,9 @@ void Kernel::receive(const Message& message)
   if(m_config.debugLogRXTX)
     EventLoop::call([this, msg=toString(message)](){ Log::log(logId, LogMessage::D2002_RX_X, msg); });
 
+  const bool isEcho = (message == lastSentMessage());
   bool isResponse = false;
-  if(m_waitingForEcho && message == lastSentMessage())
+  if(m_waitingForEcho && isEcho)
   {
     m_waitingForEcho = false;
     m_waitingForEchoTimer.cancel();
@@ -339,41 +333,49 @@ void Kernel::receive(const Message& message)
   switch(message.opCode)
   {
     case OPC_GPON:
-      if(m_globalPower != TriState::True)
+      if(!isEcho) // sent by another LocoNet device, not by Traintastic
       {
         m_globalPower = TriState::True;
-        if(m_onGlobalPowerChanged)
+        m_emergencyStop = TriState::False;
+        if(m_onStateChanged) [[likely]]
+        {
           EventLoop::call(
             [this]()
             {
-              m_onGlobalPowerChanged(true);
+              m_onStateChanged(true, true);
             });
+        }
+        EventLoop::call(std::bind_front(&Kernel::resume, this));
       }
       break;
 
     case OPC_GPOFF:
-      if(m_globalPower != TriState::False)
+      if(!isEcho) // sent by another LocoNet device, not by Traintastic
       {
         m_globalPower = TriState::False;
-        if(m_onGlobalPowerChanged)
+        if(m_onStateChanged) [[likely]]
+        {
           EventLoop::call(
             [this]()
             {
-              m_onGlobalPowerChanged(false);
+              m_onStateChanged(false, false);
             });
+        }
       }
       break;
 
     case OPC_IDLE:
-      if(m_emergencyStop != TriState::True)
+      if(!isEcho) // sent by another LocoNet device, not by Traintastic
       {
         m_emergencyStop = TriState::True;
-        if(m_onIdle)
+        if(m_onStateChanged) [[likely]]
+        {
           EventLoop::call(
             [this]()
             {
-              m_onIdle();
+              m_onStateChanged(m_globalPower == TriState::True, false);
             });
+        }
       }
       break;
 
@@ -918,6 +920,7 @@ void Kernel::setState(bool powerOn, bool run)
         }
         if(run && m_emergencyStop != TriState::False)
         {
+          m_emergencyStop = TriState::False;
           EventLoop::call(std::bind_front(&Kernel::resume, this));
         }
         else if(!run && m_emergencyStop != TriState::True)

@@ -152,10 +152,8 @@ class Kernel : public ::KernelBase
     boost::asio::steady_timer m_waitingForResponseTimer;
 
     TriState m_globalPower;
-    std::function<void(bool)> m_onGlobalPowerChanged;
-
     TriState m_emergencyStop;
-    std::function<void()> m_onIdle;
+    std::function<void(bool, bool)> m_onStateChanged;
 
     std::shared_ptr<Clock> m_clock;
     boost::signals2::connection m_clockChangeConnection;
@@ -318,15 +316,7 @@ class Kernel : public ::KernelBase
      * @param[in] callback ...
      * @note This function may not be called when the kernel is running.
      */
-    void setOnGlobalPowerChanged(std::function<void(bool)> callback);
-
-    /**
-     * @brief ...
-     *
-     * @param[in] callback ...
-     * @note This function may not be called when the kernel is running.
-     */
-    void setOnIdle(std::function<void()> callback);
+    void setOnStateChanged(std::function<void(bool, bool)> callback);
 
     /**
      * @brief Set clock for LocoNet fast clock
