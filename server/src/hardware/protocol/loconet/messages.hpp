@@ -1263,6 +1263,18 @@ struct SlotReadData : SlotReadDataBase
     else
       snd &= ~SL_F8;
   }
+
+  uint16_t id() const
+  {
+    return (static_cast<uint16_t>(id2) << 7) | id1;
+  }
+
+  void setId(uint16_t value)
+  {
+    assert(value <= 0x3FFF);
+    id2 = (value >> 7) & 0x7F;
+    id1 = value & 0x7F;
+  }
 };
 static_assert(sizeof(SlotReadData) == 14);
 
