@@ -368,6 +368,14 @@ void Train::loaded()
   vehiclesChanged();
   updateMute();
   updateNoSmoke();
+
+  if(active)
+  {
+    for(const auto& vehicle : m_poweredVehicles)
+    {
+      vehicle->setDirection(direction);
+    }
+  }
 }
 
 void Train::worldEvent(WorldState state, WorldEvent event)
