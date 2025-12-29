@@ -43,6 +43,7 @@ enum class AttributeName : uint16_t
   Unit = 14,
   Step = 15,
   Help = 16,
+  Custom = 17, //!< Boolean: allow/disallow custom values, unset means auto detect.
 };
 
 #endif
