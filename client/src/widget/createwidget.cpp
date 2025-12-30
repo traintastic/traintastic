@@ -40,6 +40,7 @@
 #include "propertyspinbox.hpp"
 #include "propertylineedit.hpp"
 #include "propertypairoutputaction.hpp"
+#include "propertyvaluelabel.hpp"
 #include "objectpropertycombobox.hpp"
 #include "objectnamelabel.hpp"
 #include "../board/boardwidget.hpp"
@@ -136,6 +137,11 @@ QWidget* createWidget(AbstractProperty& baseProperty, QWidget* parent)
 
 QWidget* createWidget(Property& property, QWidget* parent)
 {
+  if(!property.isWritable()) // read only
+  {
+    return new PropertyValueLabel(property, parent);
+  }
+
   switch(property.type())
   {
     case ValueType::Boolean:
