@@ -82,6 +82,44 @@ TileWidget::TileWidget(ObjectPtr object, QWidget* parent)
       if(auto* property = dynamic_cast<ObjectProperty*>(*it); property && contains(property->flags(), PropertyFlags::SubObject))
       {
         const auto tabIndex = m_tabs->addTab(new QWidget(this), property->displayName());
+        connect(property, &AbstractProperty::valueChanged, this,
+          [this, property, tabIndex]()
+          {
+            setTabWidget(m_tabs, tabIndex, new QWidget(this));
+
+            (void)property->getObject(
+              [this, tabIndex](const ObjectPtr& obj, std::optional<const Error> /*error*/)
+              {
+                if(obj) [[likely]]
+                {
+                  setTabWidget(m_tabs, tabIndex, createWidget(obj, this));
+                }
+              });
+          });
+        connect(property, &AbstractProperty::attributeChanged, this,
+          [this, tabIndex](AttributeName name, const QVariant &value)
+          {
+            switch(name)
+            {
+              case AttributeName::DisplayName:
+                m_tabs->setTabText(tabIndex, Locale::tr(value.toString()));
+                break;
+
+              case AttributeName::Enabled:
+                m_tabs->setTabEnabled(tabIndex, value.toBool());
+                break;
+
+              case AttributeName::Visible:
+                m_tabs->setTabVisible(tabIndex, value.toBool());
+                break;
+
+              default:
+                assert(false);
+                break;
+            }
+          });
+        m_tabs->setTabEnabled(tabIndex, property->getAttributeBool(AttributeName::Enabled, true));
+        m_tabs->setTabVisible(tabIndex, property->getAttributeBool(AttributeName::Visible, true));
         (void)property->getObject(
           [this, tabIndex](const ObjectPtr& obj, std::optional<const Error> /*error*/)
           {
