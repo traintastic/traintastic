@@ -19,24 +19,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_TILE_TILEWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_TILE_TILEWIDGET_HPP
+#include "createimagewidget.hpp"
+#include "../network/object.hpp"
 
-#include <QWidget>
-#include "../../network/objectptr.hpp"
+#include "tile/tileimagewidget.hpp"
 
-class QTabWidget;
-
-class TileWidget : public QWidget
+QWidget* createImageWidget(const ObjectPtr& object, QWidget* parent)
 {
-  friend class ScreenShotDialog;
+  if(object->classId().startsWith("board_tile."))
+  {
+    return new TileImageWidget(object, parent);
+  }
 
-protected:
-  ObjectPtr m_object;
-  QTabWidget* m_tabs;
-
-public:
-  explicit TileWidget(ObjectPtr object, QWidget* parent = nullptr);
-};
-
-#endif
+  return nullptr; // no image
+}

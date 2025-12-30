@@ -30,6 +30,7 @@
 #include "../../theme/theme.hpp"
 #include "../../utils/settabwidget.hpp"
 #include "../interfaceitemnamelabel.hpp"
+#include "../createimagewidget.hpp"
 #include "../createform.hpp"
 #include "../createwidget.hpp"
 #include "tileimagewidget.hpp"
@@ -38,13 +39,15 @@ TileWidget::TileWidget(ObjectPtr object, QWidget* parent)
   : QWidget(parent)
   , m_object{std::move(object)}
   , m_tabs{new QTabWidget(this)}
-  , m_image{new TileImageWidget(m_object, this)}
 {
   Theme::setWindowIcon(*this, m_object->classId());
 
   auto* grid = new QGridLayout();
   grid->setContentsMargins(2, 2, 2, 2);
-  grid->addWidget(m_image, 0, 0);
+  if(auto* image = createImageWidget(m_object, this))
+  {
+    grid->addWidget(image, 0, 0);
+  }
 
   // Window title:
   if(auto* name = m_object->getProperty(QStringLiteral("name")))
