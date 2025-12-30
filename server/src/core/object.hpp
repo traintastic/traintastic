@@ -119,6 +119,17 @@ class Object : public std::enable_shared_from_this<Object>
       return std::static_pointer_cast<Derived>(shared_from_this());
     }
 
+    template <typename Derived>
+    std::weak_ptr<const Derived> weak_ptr_c() const
+    {
+      return shared_ptr_c<Derived>();
+    }
+    template <typename Derived>
+    std::weak_ptr<Derived> weak_ptr()
+    {
+      return shared_ptr<Derived>();
+    }
+
     virtual std::string_view getClassId() const = 0;
     virtual std::string getObjectId() const = 0;
 
