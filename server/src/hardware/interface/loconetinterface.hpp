@@ -92,6 +92,8 @@ class LocoNetInterface final
     //! \return \c true if send to command station, \c false otherwise.
     bool immPacket(std::span<uint8_t> dccPacket, uint8_t repeat);
 
+    void readLNCV(uint16_t moduleId, uint16_t address, uint16_t lncv, std::function<void(uint16_t, std::error_code)> callback);
+
     // DecoderController:
     std::span<const DecoderProtocol> decoderProtocols() const final;
     std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const final;

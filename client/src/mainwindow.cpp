@@ -408,6 +408,11 @@ MainWindow::MainWindow(QWidget* parent) :
     menu->addAction(Locale::tr("world:inputs") + "...", [this](){ showObject("world.inputs", Locale::tr("world:inputs")); });
     menu->addAction(Locale::tr("world:outputs") + "...", [this](){ showObject("world.outputs", Locale::tr("world:outputs")); });
     menu->addAction(Locale::tr("hardware:identifications") + "...", [this](){ showObject("world.identifications", Locale::tr("hardware:identifications")); });
+    menu->addAction(Locale::tr("hardware:boosters").append("..."),
+      [this]()
+      {
+        showObject("world.boosters", Locale::tr("hardware:boosters"));
+      });
     boardsAction = m_menuObjects->addAction(Theme::getIcon("board"), Locale::tr("world:boards") + "...", [this](){ showObject("world.boards", Locale::tr("world:boards")); });
     m_menuObjects->addAction(
       Theme::getIcon("zone"),

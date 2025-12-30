@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -100,6 +100,7 @@ enum class LogMessage : uint32_t
   I2003_FIRMWARE_VERSION_X = LogMessageOffset::info + 2003,
   I2004_HSI_88_X = LogMessageOffset::info + 2004,
   I2005_X = LogMessageOffset::info + 2005,
+  I2006_BOOSTER_X_SOFTWARE_VERSION_X = LogMessageOffset::info + 2006,
   I3001_THROTTLE_X_ACQUIRED_TRAIN_X = LogMessageOffset::info + 3001,
   I3002_THROTTLE_X_RELEASED_TRAIN_X = LogMessageOffset::info + 3002,
   I9001_STOPPED_SCRIPT = LogMessageOffset::info + 9001,
@@ -167,6 +168,9 @@ enum class LogMessage : uint32_t
   W2018_TIMEOUT_NO_ECHO_WITHIN_X_MS = LogMessageOffset::warning + 2018,
   W2019_Z21_BROADCAST_FLAG_MISMATCH = LogMessageOffset::warning + 2019,
   W2020_DCCEXT_RCN213_IS_NOT_SUPPORTED = LogMessageOffset::warning + 2020,
+  // RESERVED: W2025_READING_BOOSTER_X_SOFTWARE_VERSION_FAILED_X = LogMessageOffset::warning + 2025,
+  W2026_READING_BOOSTER_X_TEMPERATURE_FAILED_X = LogMessageOffset::warning + 2026,
+  W2027_READING_BOOSTER_X_LOAD_FAILED_X = LogMessageOffset::warning + 2027,
   W3001_NX_BUTTON_CONNECTED_TO_TWO_BLOCKS = LogMessageOffset::warning + 3001,
   W3002_NX_BUTTON_NOT_CONNECTED_TO_ANY_BLOCK = LogMessageOffset::warning + 3002,
   W3003_LOCKED_TURNOUT_CHANGED = LogMessageOffset::warning + 3003,
@@ -207,6 +211,9 @@ enum class LogMessage : uint32_t
   E2022_SOCKET_CREATE_FAILED_X = LogMessageOffset::error + 2022,
   E2023_SOCKET_IOCTL_FAILED_X = LogMessageOffset::error + 2023,
   E2024_UNKNOWN_LOCOMOTIVE_MFX_UID_X = LogMessageOffset::error + 2024,
+  E2025_READING_BOOSTER_X_SOFTWARE_VERSION_FAILED_X = LogMessageOffset::error + 2025,
+  E2026_READING_BOOSTER_X_TEMPERATURE_FAILED_X = LogMessageOffset::error + 2026,
+  E2027_READING_BOOSTER_X_LOAD_FAILED_X = LogMessageOffset::error + 2027,
   E3001_CANT_DELETE_RAIL_VEHICLE_WHEN_IN_ACTIVE_TRAIN = LogMessageOffset::error + 3001,
   E3002_CANT_DELETE_ACTIVE_TRAIN = LogMessageOffset::error + 3002,
   E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED = LogMessageOffset::error + 3003,

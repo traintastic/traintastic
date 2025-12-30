@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
 
 #include "kernel.hpp"
 #include "iohandler/iohandler.hpp"
+#include "lncv/lncvutils.hpp"
 #include "messages.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
@@ -629,21 +630,49 @@ void Kernel::receive(const Message& message)
             });
         }
       }
-      else if(m_lncvActive && m_onLNCVReadResponse &&
-          longAck.respondingOpCode() == OPC_IMM_PACKET && longAck.ack1 == 0x7F &&
-          Uhlenbrock::LNCVWrite::check(lastSentMessage()))
+      else if(longAck.respondingOpCode() == OPC_IMM_PACKET)
       {
-        const auto& lncvWrite = static_cast<const Uhlenbrock::LNCVWrite&>(lastSentMessage());
-        if(lncvWrite.lncv() == 0)
+        if(m_waitingForLNCVReadResponse)
         {
-          m_lncvModuleAddress = lncvWrite.value();
-        }
-
-        EventLoop::call(
-          [this, lncvWrite]()
+          if(!m_lncvReads.empty() &&
+              m_lncvReads.front().moduleId == m_pendingLNCVRead.moduleId &&
+              m_lncvReads.front().address == m_pendingLNCVRead.address &&
+              m_lncvReads.front().lncv == m_pendingLNCVRead.lncv)
           {
-            m_onLNCVReadResponse(true, lncvWrite.lncv(), lncvWrite.value());
-          });
+            m_pendingLNCVRead.reset();
+            auto ec = LNCV::parseLongAck(longAck.ack1);
+            if(!ec)
+            {
+              // 0x7F indicates a successful LONG_ACK, but for a read operation
+              // we expect a proper read response message instead. Receiving
+              // only a LONG_ACK is unexpected, so we treat it as
+              // unexpected response until proven otherwise.
+              ec = LNCV::Error::unexpectedResponse();
+            }
+            EventLoop::call(
+              [callback=std::move(m_lncvReads.front().callback), ec]()
+              {
+                callback(0, ec);
+              });
+            m_lncvReads.pop();
+          }
+        }
+        else if(m_lncvActive && m_onLNCVReadResponse &&
+            longAck.ack1 == 0x7F &&
+            Uhlenbrock::LNCVWrite::check(lastSentMessage()))
+        {
+          const auto& lncvWrite = static_cast<const Uhlenbrock::LNCVWrite&>(lastSentMessage());
+          if(lncvWrite.lncv() == 0)
+          {
+            m_lncvModuleAddress = lncvWrite.value();
+          }
+
+          EventLoop::call(
+            [this, lncvWrite]()
+            {
+              m_onLNCVReadResponse(true, lncvWrite.lncv(), lncvWrite.value());
+            });
+        }
       }
       break;
     }
@@ -810,20 +839,38 @@ void Kernel::receive(const Message& message)
         {
           [[maybe_unused]] const auto& readSpecialOptionReply = static_cast<const Uhlenbrock::ReadSpecialOptionReply&>(message);
         }
-        else if(m_onLNCVReadResponse && Uhlenbrock::LNCVReadResponse::check(message))
+        else if(Uhlenbrock::LNCVReadResponse::check(message))
         {
           const auto& lncvReadResponse = static_cast<const Uhlenbrock::LNCVReadResponse&>(message);
-          if(lncvReadResponse.lncv() == 0)
+
+          if(!m_lncvReads.empty() &&
+              m_lncvReads.front().moduleId == lncvReadResponse.moduleId() &&
+              m_lncvReads.front().address == m_pendingLNCVRead.address &&
+              m_lncvReads.front().lncv == lncvReadResponse.lncv())
           {
-            m_lncvActive = true;
-            m_lncvModuleAddress = lncvReadResponse.value();
+            EventLoop::call(
+              [callback=m_lncvReads.front().callback, value=lncvReadResponse.value()]()
+              {
+                callback(value, {});
+              });
+            m_lncvReads.pop();
+          }
+          else if(m_onLNCVReadResponse)
+          {
+            if(lncvReadResponse.lncv() == 0)
+            {
+              m_lncvActive = true;
+              m_lncvModuleAddress = lncvReadResponse.value();
+            }
+
+            EventLoop::call(
+              [this, lncvReadResponse]()
+              {
+                m_onLNCVReadResponse(true, lncvReadResponse.lncv(), lncvReadResponse.value());
+              });
           }
 
-          EventLoop::call(
-            [this, lncvReadResponse]()
-            {
-              m_onLNCVReadResponse(true, lncvReadResponse.lncv(), lncvReadResponse.value());
-            });
+          m_pendingLNCVRead.reset();
         }
       }
       break;
@@ -1010,6 +1057,18 @@ bool Kernel::immPacket(std::span<const uint8_t> dccPacket, uint8_t repeat)
 
   postSend(ImmPacket(dccPacket, repeat));
   return true;
+}
+
+void Kernel::readLNCV(uint16_t moduleId, uint16_t address, uint16_t lncv, std::function<void(uint16_t, std::error_code)> callback)
+{
+  assert(isEventLoopThread());
+
+  m_ioContext.post(
+    [this, moduleId, address, lncv, callback]()
+    {
+      m_lncvReads.emplace(LNCVRead{moduleId, address, lncv, std::move(callback)});
+      send(Uhlenbrock::LNCVRead(moduleId, address, lncv), LocoNet::Kernel::LowPriority);
+    });
 }
 
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
@@ -1439,9 +1498,18 @@ void Kernel::sendNextMessage()
         m_waitingForEchoTimer.async_wait(std::bind(&Kernel::waitingForEchoTimerExpired, this, std::placeholders::_1));
 
         m_waitingForResponse = hasResponse(message);
+        m_waitingForLNCVReadResponse = m_waitingForResponse && Uhlenbrock::LNCVRead::check(message);
         if(m_waitingForResponse)
         {
-          m_waitingForResponseTimer.expires_after(boost::asio::chrono::milliseconds(m_config.responseTimeout));
+          if(m_waitingForLNCVReadResponse)
+          {
+            const auto& lncvRead = static_cast<const Uhlenbrock::LNCVRead&>(message);
+            m_pendingLNCVRead.moduleId = lncvRead.moduleId();
+            m_pendingLNCVRead.address = lncvRead.address();
+            m_pendingLNCVRead.lncv = lncvRead.lncv();
+          }
+          const auto timeout = m_waitingForLNCVReadResponse ? Config::lncvReadResponseTimeout : m_config.responseTimeout;
+          m_waitingForResponseTimer.expires_after(boost::asio::chrono::milliseconds(timeout));
           m_waitingForResponseTimer.async_wait(std::bind(&Kernel::waitingForResponseTimerExpired, this, std::placeholders::_1));
         }
       }
@@ -1473,7 +1541,28 @@ void Kernel::waitingForResponseTimerExpired(const boost::system::error_code& ec)
   if(ec)
     return;
 
-  if(m_lncvActive && Uhlenbrock::LNCVStart::check(lastSentMessage()))
+  if(m_waitingForLNCVReadResponse)
+  {
+    if(!m_lncvReads.empty() &&
+        m_lncvReads.front().moduleId == m_pendingLNCVRead.moduleId &&
+        m_lncvReads.front().address == m_pendingLNCVRead.address &&
+        m_lncvReads.front().lncv == m_pendingLNCVRead.lncv)
+    {
+      m_pendingLNCVRead.reset();
+      EventLoop::call(
+        [callback=std::move(m_lncvReads.front().callback)]()
+        {
+          callback(0, LNCV::Error::noResponse());
+        });
+      m_lncvReads.pop();
+    }
+
+    assert(Uhlenbrock::LNCVRead::check(lastSentMessage()));
+    m_sendQueue[m_sentMessagePriority].pop();
+    m_waitingForResponse = false;
+    sendNextMessage();
+  }
+  else if(m_lncvActive && Uhlenbrock::LNCVStart::check(lastSentMessage()))
   {
     EventLoop::call(
       [this, lncvStart=static_cast<const Uhlenbrock::LNCVStart&>(lastSentMessage())]()
@@ -1484,6 +1573,9 @@ void Kernel::waitingForResponseTimerExpired(const boost::system::error_code& ec)
           m_onLNCVReadResponse(false, lncvStart.address(), 0);
       });
 
+    assert(Uhlenbrock::LNCVStart::check(lastSentMessage()));
+    m_sendQueue[m_sentMessagePriority].pop();
+    m_waitingForResponse = false;
     sendNextMessage();
   }
   else

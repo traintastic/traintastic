@@ -38,6 +38,7 @@
 #include "../protocol/loconet/iohandler/lbserveriohandler.hpp"
 #include "../protocol/loconet/iohandler/z21iohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/controllerlist.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
@@ -134,6 +135,14 @@ bool LocoNetInterface::immPacket(std::span<uint8_t> dccPacket, uint8_t repeat)
   if(m_kernel)
     return m_kernel->immPacket(dccPacket, repeat);
   return false;
+}
+
+void LocoNetInterface::readLNCV(uint16_t moduleId, uint16_t address, uint16_t lncv, std::function<void(uint16_t, std::error_code)> callback)
+{
+  if(m_kernel)
+  {
+    m_kernel->readLNCV(moduleId, address, lncv, std::move(callback));
+  }
 }
 
 std::span<const DecoderProtocol> LocoNetInterface::decoderProtocols() const
@@ -415,6 +424,7 @@ void LocoNetInterface::addToWorld()
   OutputController::addToWorld(outputListColumns);
   IdentificationController::addToWorld(identificationListColumns);
   LNCVProgrammingController::addToWorld();
+  m_world.loconetInterfaces->add(Object::shared_ptr<LocoNetInterface>());
 }
 
 void LocoNetInterface::loaded()
@@ -426,6 +436,7 @@ void LocoNetInterface::loaded()
 
 void LocoNetInterface::destroying()
 {
+  m_world.loconetInterfaces->remove(Object::shared_ptr<LocoNetInterface>());
   LNCVProgrammingController::destroying();
   IdentificationController::destroying();
   OutputController::destroying();

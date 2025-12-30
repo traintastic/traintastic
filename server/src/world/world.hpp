@@ -44,11 +44,13 @@ class InputController;
 class OutputController;
 class IdentificationController;
 class LNCVProgrammingController;
+class LocoNetInterface;
 class InterfaceList;
 class DecoderList;
 class InputList;
 class OutputList;
 class IdentificationList;
+class BoosterList;
 class BoardList;
 class ZoneList;
 class BlockRailTileList;
@@ -121,12 +123,14 @@ class World : public Object
     ObjectProperty<ControllerList<OutputController>> outputControllers;
     ObjectProperty<ControllerList<IdentificationController>> identificationControllers;
     ObjectProperty<ControllerList<LNCVProgrammingController>> lncvProgrammingControllers;
+    ObjectProperty<ControllerList<LocoNetInterface>> loconetInterfaces;
 
     ObjectProperty<InterfaceList> interfaces;
     ObjectProperty<DecoderList> decoders;
     ObjectProperty<InputList> inputs;
     ObjectProperty<OutputList> outputs;
     ObjectProperty<IdentificationList> identifications;
+    ObjectProperty<BoosterList> boosters;
     ObjectProperty<BoardList> boards;
     ObjectProperty<ZoneList> zones;
     ObjectProperty<Clock> clock;

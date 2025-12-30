@@ -107,6 +107,10 @@ QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
   {
     return new TileWidget(object, parent);
   }
+  else if(object->classId() == "booster")
+  {
+    return new TileWidget(object, parent);
+  }
   else
     return new ObjectEditWidget(object, parent);
 }

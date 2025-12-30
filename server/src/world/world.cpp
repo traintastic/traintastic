@@ -43,6 +43,8 @@
 #include "../core/abstractvectorproperty.hpp"
 #include "../core/controllerlist.hpp"
 
+#include "../hardware/booster/booster.hpp"
+#include "../hardware/booster/list/boosterlist.hpp"
 #include "../hardware/input/input.hpp"
 #include "../hardware/input/monitor/inputmonitor.hpp"
 #include "../hardware/input/list/inputlist.hpp"
@@ -123,12 +125,14 @@ void World::init(World& world)
   world.outputControllers.setValueInternal(std::make_shared<ControllerList<OutputController>>(world, world.outputControllers.name()));
   world.identificationControllers.setValueInternal(std::make_shared<ControllerList<IdentificationController>>(world, world.identificationControllers.name()));
   world.lncvProgrammingControllers.setValueInternal(std::make_shared<ControllerList<LNCVProgrammingController>>(world, world.lncvProgrammingControllers.name()));
+  world.loconetInterfaces.setValueInternal(std::make_shared<ControllerList<LocoNetInterface>>(world, world.loconetInterfaces.name()));
 
   world.interfaces.setValueInternal(std::make_shared<InterfaceList>(world, world.interfaces.name()));
   world.decoders.setValueInternal(std::make_shared<DecoderList>(world, world.decoders.name(), decoderListColumns));
   world.inputs.setValueInternal(std::make_shared<InputList>(world, world.inputs.name(), inputListColumns));
   world.outputs.setValueInternal(std::make_shared<OutputList>(world, world.outputs.name(), outputListColumns));
   world.identifications.setValueInternal(std::make_shared<IdentificationList>(world, world.outputs.name(), identificationListColumns));
+  world.boosters.setValueInternal(std::make_shared<BoosterList>(world, world.boosters.name()));
   world.boards.setValueInternal(std::make_shared<BoardList>(world, world.boards.name()));
   world.zones.setValueInternal(std::make_shared<ZoneList>(world, world.zones.name()));
   world.clock.setValueInternal(std::make_shared<Clock>(world, world.clock.name()));
@@ -177,11 +181,13 @@ World::World(Private /*unused*/) :
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   identificationControllers{this, "identification_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   lncvProgrammingControllers{this, "lncv_programming_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  loconetInterfaces{this, "loconet_interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   interfaces{this, "interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   identifications{this, "identifications", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  boosters{this, "boosters", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   boards{this, "boards", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   zones{this, "zones", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
@@ -381,6 +387,8 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(identificationControllers);
   Attributes::addObjectEditor(lncvProgrammingControllers, false);
   m_interfaceItems.add(lncvProgrammingControllers);
+  Attributes::addObjectEditor(loconetInterfaces, false);
+  m_interfaceItems.add(loconetInterfaces);
 
   Attributes::addObjectEditor(interfaces, false);
   m_interfaceItems.add(interfaces);
@@ -392,6 +400,8 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(outputs);
   Attributes::addObjectEditor(identifications, false);
   m_interfaceItems.add(identifications);
+  Attributes::addObjectEditor(boosters, false);
+  m_interfaceItems.add(boosters);
   Attributes::addObjectEditor(throttles, false);
   m_interfaceItems.add(throttles);
   Attributes::addObjectEditor(boards, false);

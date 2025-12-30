@@ -3306,5 +3306,65 @@
     {
         "term": "zone:speed_limit",
         "definition": "Speed limit"
+    },
+    {
+        "term": "hardware:boosters",
+        "definition": "Boosters"
+    },
+    {
+        "term": "booster:type",
+        "definition": "Type"
+    },
+    {
+        "term": "booster:load",
+        "definition": "Load"
+    },
+    {
+        "term": "booster:temperature",
+        "definition": "Temperature"
+    },
+    {
+        "term": "booster:current",
+        "definition": "Current"
+    },
+    {
+        "term": "booster:voltage",
+        "definition": "Voltage"
+    },
+    {
+        "term": "booster:input_voltage",
+        "definition": "Input voltage"
+    },
+    {
+        "term": "booster_driver:poll_interval",
+        "definition": "Poll interval"
+    },
+    {
+        "term": "category:status",
+        "definition": "Status"
+    },
+    {
+        "term": "message:I2006",
+        "definition": "Booster '%1' software version: %2"
+    },
+    {
+        "term": "message:W2026",
+        "definition": "Reading booster '%1' temperature failed: %2"
+    },
+    {
+        "term": "message:W2027",
+        "definition": "Reading booster '%1' load failed: %2"
+    },
+    {
+        "term": "message:E2025",
+        "definition": "Reading booster '%1' software version failed: %2"
+    },
+    {
+        "term": "message:E2026",
+        "definition": "Reading booster '%1' temperature failed: %2"
+    },
+    {
+        "term": "message:E2027",
+        "definition": "Reading booster '%1' load failed: %2"
     }
 ]

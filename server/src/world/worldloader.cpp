@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,6 +40,7 @@
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunction.hpp"
 #include "../hardware/identification/identification.hpp"
+#include "../hardware/booster/booster.hpp"
 #include "../vehicle/rail/railvehicles.hpp"
 #include "../vehicle/rail/freightwagon.hpp" //! \todo Remove in v0.4
 #include "../train/train.hpp"
@@ -364,6 +365,10 @@ void WorldLoader::createObject(ObjectData& objectData)
   }
   else if(classId == Identification::classId)
     objectData.object = Identification::create(*m_world, id);
+  else if(classId == Booster::classId)
+  {
+    objectData.object = Booster::create(*m_world, id);
+  }
   else if(classId == Board::classId)
     objectData.object = Board::create(*m_world, id);
   else if(startsWith(classId, Tiles::classIdPrefix))
