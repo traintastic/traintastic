@@ -164,8 +164,8 @@
         "definition": "Link"
     },
     {
-        "term": "board_tile.rail.sensor:input",
-        "definition": "Ingang"
+        "term": "board_tile.rail.nx_button:block",
+        "definition": "Blok"
     },
     {
         "term": "board_tile.rail.sensor:invert",
@@ -200,8 +200,48 @@
         "definition": "Uitgangen"
     },
     {
+        "term": "booster:current",
+        "definition": "Stroom"
+    },
+    {
+        "term": "booster:input_voltage",
+        "definition": "Ingangsspanning"
+    },
+    {
+        "term": "booster:load",
+        "definition": "Belasting"
+    },
+    {
+        "term": "booster:temperature",
+        "definition": "Temperatuur"
+    },
+    {
+        "term": "booster:type",
+        "definition": "Type"
+    },
+    {
+        "term": "booster:voltage",
+        "definition": "Spanning"
+    },
+    {
+        "term": "booster_driver:poll_interval",
+        "definition": "Uitleesinterval"
+    },
+    {
+        "term": "category:block",
+        "definition": "Blok"
+    },
+    {
         "term": "category:cargo",
         "definition": "Cargo"
+    },
+    {
+        "term": "category:colors",
+        "definition": "Kleuren"
+    },
+    {
+        "term": "category:colors_and_alignment",
+        "definition": "Kleuren && Uitlijning"
     },
     {
         "term": "category:debug",
@@ -220,6 +260,10 @@
         "definition": "Informatie"
     },
     {
+        "term": "category:input",
+        "definition": "Ingang"
+    },
+    {
         "term": "category:log",
         "definition": "Log"
     },
@@ -230,6 +274,10 @@
     {
         "term": "category:options",
         "definition": "Opties"
+    },
+    {
+        "term": "category:status",
+        "definition": "Status"
     },
     {
         "term": "category:trains",
@@ -298,14 +346,6 @@
     {
         "term": "class_id:board_tile.rail.nx_button",
         "definition": "NX-knop"
-    },
-    {
-        "term": "class_id:board_tile.rail.nx_button:block",
-        "definition": "Blok"
-    },
-    {
-        "term": "class_id:board_tile.rail.nx_button:input",
-        "definition": "Ingang"
     },
     {
         "term": "class_id:board_tile.rail.one_way",
@@ -702,6 +742,10 @@
     {
         "term": "hardware:addresses",
         "definition": "Adres"
+    },
+    {
+        "term": "hardware:boosters",
+        "definition": "Boosters"
     },
     {
         "term": "hardware:channel",
@@ -1524,6 +1568,18 @@
         "definition": "Onbekend locomotief MFX UID: %1"
     },
     {
+        "term": "message:E2025",
+        "definition": "Uitlezen van de softwareversie van booster '%1' mislukt: %2"
+    },
+    {
+        "term": "message:E2026",
+        "definition": "Uitlezen van de temperatuur van booster '%1' mislukt: %2"
+    },
+    {
+        "term": "message:E2027",
+        "definition": "Uitlezen van de belasting van booster '%1' mislukt: %2"
+    },
+    {
         "term": "message:E3001",
         "definition": "Kan spoorvoertuig niet verwijderen in actieve trein"
     },
@@ -1638,6 +1694,10 @@
     {
         "term": "message:I2003",
         "definition": "Firmware verie: %1"
+    },
+    {
+        "term": "message:I2006",
+        "definition": "Softwareversie booster '%1': %2"
     },
     {
         "term": "message:I3001",
@@ -1878,6 +1938,14 @@
     {
         "term": "message:W2020",
         "definition": "DCCext (RCN-213) wordt niet ondersteund"
+    },
+    {
+        "term": "message:W2026",
+        "definition": "Uitlezen van de temperatuur van booster '%1' mislukt: %2"
+    },
+    {
+        "term": "message:W2027",
+        "definition": "Uitlezen van de belasting van booster '%1' mislukt: %2"
     },
     {
         "term": "message:W3001",
