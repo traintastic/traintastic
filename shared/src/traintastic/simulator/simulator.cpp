@@ -383,6 +383,8 @@ Simulator::~Simulator()
         it = m_stateData.vehicles.erase(it);
       }
     }
+
+    assert(m_trainIndexes.empty());
   }
 }
 

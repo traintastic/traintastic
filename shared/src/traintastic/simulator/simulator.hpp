@@ -267,8 +267,85 @@ public:
     std::unordered_map<std::string, Vehicle *, StringHash, StringEqual> vehicles;
   };
 
+  class TrainIndexHelper
+  {
+    explicit TrainIndexHelper(Simulator *sim,
+                              size_t trainIndex = Simulator::invalidIndex)
+    {
+      init(sim);
+      setIndex(trainIndex);
+    }
+    ~TrainIndexHelper()
+    {
+      reset();
+    }
+
+    inline size_t getIndex() const
+    {
+      if(!m_simulator)
+        return Simulator::invalidIndex;
+
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      return m_trainIndex;
+    }
+
+    inline bool setIndex(size_t trainIndex)
+    {
+      assert(m_simulator);
+
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(trainIndex);
+      if(train)
+      {
+        m_trainIndex = trainIndex;
+        return true;
+      }
+
+      m_trainIndex = Simulator::invalidIndex;
+      return false;
+    }
+
+    inline bool valid() const
+    {
+      return getIndex() != Simulator::invalidIndex;
+    }
+
+    void reset()
+    {
+      if(!m_simulator)
+        return;
+
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      std::erase_if(m_simulator->m_trainIndexes, [this](auto idx) -> bool
+      {
+        return idx == this;
+      });
+
+      m_trainIndex = Simulator::invalidIndex;
+    }
+
+    void init(Simulator *sim)
+    {
+      reset();
+
+      assert(m_trainIndex == Simulator::invalidIndex);
+      m_simulator = sim;
+
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      m_simulator->m_trainIndexes.push_back(this);
+    }
+
+  private:
+    friend class Simulator;
+    Simulator *m_simulator = nullptr;
+    size_t m_trainIndex = Simulator::invalidIndex;
+  };
+
 private:
   StateData m_stateData;
+
+  friend class TrainIndexHelper;
+  std::vector<TrainIndexHelper *> m_trainIndexes;
 
 public:
   const StaticData staticData;
