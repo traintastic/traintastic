@@ -110,6 +110,14 @@ SimulatorView::SimulatorView(QWidget* parent)
   : QOpenGLWidget(parent)
 {
   setFocusPolicy(Qt::StrongFocus); // for key stuff
+
+  // 800 ms turnout blink
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+  const auto ms = std::chrono::milliseconds(800);
+#else
+  const int ms = 800;
+#endif
+  turnoutBlinkTimer.start(ms, Qt::PreciseTimer, this);
 }
 
 SimulatorView::~SimulatorView()
@@ -196,6 +204,13 @@ void SimulatorView::zoomToFit()
   setZoomLevel(zoomLevel);
 }
 
+void SimulatorView::setCamera(const Simulator::Point &cameraPt)
+{
+  m_cameraX = cameraPt.x;
+  m_cameraY = cameraPt.y;
+  updateProjection();
+}
+
 void SimulatorView::initializeGL()
 {
   initializeOpenGLFunctions();
@@ -264,6 +279,14 @@ void SimulatorView::drawTracks()
 
       switch(state)
       {
+        case Simulator::TurnoutState::State::Unknown:
+          // Blink cyan or normal
+          if(turnoutBlinkState)
+            glColor3f(0.0f, 1.0f, 1.0f);
+          drawCurve(segment, 0);
+          drawStraight(segment);
+          break;
+
         case Simulator::TurnoutState::State::Closed:
           drawCurve(segment, 0);
           glColor3f(0.0f, 1.0f, 1.0f);
@@ -348,21 +371,21 @@ void SimulatorView::drawTrains()
 
   const float trainWidth = m_simulator->staticData.trainWidth;
 
-  const size_t railVehicleCount = m_simulator->staticData.vehicles.size();
-  for(size_t i = 0; i < railVehicleCount; ++i)
+  for(auto it : m_stateData.vehicles)
   {
-    const auto& vehicle = m_stateData.vehicles[i];
-    const float length = m_simulator->staticData.vehicles[i].length;
+    const auto* vehicle = it.second;
+    const auto& vehicleState = vehicle->state;
+    const float length = vehicle->length;
 
-    const auto center = (vehicle.front.position + vehicle.rear.position) / 2;
-    const auto delta = vehicle.front.position - vehicle.rear.position;
+    const auto center = (vehicleState.front.position + vehicleState.rear.position) / 2;
+    const auto delta = vehicleState.front.position - vehicleState.rear.position;
     const float angle = atan2f(delta.y, delta.x);
 
     glPushMatrix();
     glTranslatef(center.x, center.y, 0);
     glRotatef(qRadiansToDegrees(angle), 0, 0, 1);
 
-    const auto& color = colors[static_cast<size_t>(m_simulator->staticData.vehicles[i].color)];
+    const auto& color = colors[static_cast<size_t>(vehicle->color)];
     glColor3f(color.red, color.green, color.blue);
     glBegin(GL_QUADS);
     glVertex2f(-length / 2, -trainWidth / 2);
@@ -420,32 +443,39 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
     case Qt::Key_7:
     case Qt::Key_8:
     case Qt::Key_9:
-      if(static_cast<size_t>(event->key() - Qt::Key_1) < m_simulator->staticData.trains.size())
+    {
+      const size_t trainIndex = static_cast<size_t>(event->key() - Qt::Key_1);
+      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
+      Simulator::Train *train = m_simulator->getTrainAt(trainIndex);
+      if(train)
       {
         m_trainIndex = event->key() - Qt::Key_1;
       }
       break;
-
+    }
     case Qt::Key_Up:
-      m_simulator->applyTrainSpeedDelta(m_trainIndex, m_simulator->staticData.trains[m_trainIndex].speedMax / 20);
+    {
+      m_simulator->applyTrainSpeedDelta(m_trainIndex, 1);
       break;
-
+    }
     case Qt::Key_Down:
-      m_simulator->applyTrainSpeedDelta(m_trainIndex, -m_simulator->staticData.trains[m_trainIndex].speedMax / 20);
+    {
+      m_simulator->applyTrainSpeedDelta(m_trainIndex, -1);
       break;
-
+    }
     case Qt::Key_Right:
-      m_simulator->setTrainDirection(m_trainIndex, false);
-      break;
-
     case Qt::Key_Left:
-      m_simulator->setTrainDirection(m_trainIndex, true);
+    {
+      const bool dir = (event->key() == Qt::Key_Left);
+      m_simulator->setTrainDirectionHelper(m_trainIndex, dir, true);
       break;
+    }
 
     case Qt::Key_Space:
+    {
       m_simulator->setTrainSpeed(m_trainIndex, 0.0f);
       break;
-
+    }
     case Qt::Key_Escape:
       m_simulator->stopAllTrains();
       break;
@@ -493,9 +523,10 @@ void SimulatorView::mouseReleaseEvent(QMouseEvent* event)
   if(event->button() == Qt::LeftButton)
   {
     auto diff = m_leftClickMousePos - event->pos();
-    if(qAbs(diff.x()) <= 2 && qAbs(diff.y()) <= 2)
+    if(std::abs(diff.x()) <= 2 && std::abs(diff.y()) <= 2)
     {
-      mouseLeftClick({m_cameraX + m_leftClickMousePos.x() / m_zoomLevel, m_cameraY + m_leftClickMousePos.y() / m_zoomLevel});
+      const bool shiftPressed = event->modifiers().testFlag(Qt::ShiftModifier);
+      mouseLeftClick(mapToSim(m_leftClickMousePos), shiftPressed);
     }
   }
   if(event->button() == Qt::RightButton)
@@ -517,14 +548,25 @@ void SimulatorView::wheelEvent(QWheelEvent* event)
   }
 }
 
-void SimulatorView::mouseLeftClick(QPointF pos)
+void SimulatorView::timerEvent(QTimerEvent *e)
 {
-  const Simulator::Point point(pos.x(), pos.y());
+  if(e->timerId() == turnoutBlinkTimer.timerId())
+  {
+    turnoutBlinkState = !turnoutBlinkState;
+    update();
+    return;
+  }
+
+  QOpenGLWidget::timerEvent(e);
+}
+
+void SimulatorView::mouseLeftClick(const Simulator::Point &point, bool shiftPressed)
+{
   for(const auto& turnout : m_turnouts)
   {
     if(isPointInTriangle(turnout.points, point))
     {
-      m_simulator->toggleTurnoutState(turnout.segmentIndex);
+      m_simulator->toggleTurnoutState(turnout.segmentIndex, shiftPressed);
       update();
       break;
     }
