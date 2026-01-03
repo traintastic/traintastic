@@ -538,14 +538,6 @@ void Simulator::setTrainSpeed(Train *train, float speed)
   }
 }
 
-void Simulator::applyTrainSpeedDelta(Train *train, float delta)
-{
-  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
-
-  const float speed = std::clamp(train->state.speed + delta, 0.0f, train->speedMax);
-  setTrainSpeed(train, speed);
-}
-
 void Simulator::stopAllTrains()
 {
   std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
@@ -557,6 +549,42 @@ void Simulator::stopAllTrains()
       setTrainSpeed(train, 0.0f);
     }
   }
+}
+
+void Simulator::applyTrainSpeedDelta(size_t trainIndex, int deltaStep)
+{
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+  Simulator::Train *train = getTrainAt(trainIndex);
+  if(!train)
+    return;
+
+  const float deltaSpeed = deltaStep * train->speedMax / 20.0f;
+
+  const float speed = std::clamp(train->state.speed + deltaSpeed, 0.0f, train->speedMax);
+  setTrainSpeed(train, speed);
+}
+
+void Simulator::setTrainDirectionHelper(size_t trainIndex, bool reverse, bool autoInvert)
+{
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+  Simulator::Train *train = getTrainAt(trainIndex);
+  if(!train)
+    return;
+
+  if(autoInvert && isTrainDirectionInverted(train))
+    reverse = !reverse;
+
+  setTrainDirection(train, reverse);
+}
+
+void Simulator::setTrainSpeed(size_t trainIndex, float speed)
+{
+  std::lock_guard<std::recursive_mutex> lock(m_stateMutex);
+  Simulator::Train *train = getTrainAt(trainIndex);
+  if(!train)
+    return;
+
+  setTrainSpeed(train, speed);
 }
 
 void Simulator::setTurnoutState(size_t segmentIndex, TurnoutState::State state)

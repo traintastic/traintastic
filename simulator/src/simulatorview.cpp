@@ -455,41 +455,25 @@ void SimulatorView::keyPressEvent(QKeyEvent* event)
     }
     case Qt::Key_Up:
     {
-      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
-      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
-      if(train)
-        m_simulator->applyTrainSpeedDelta(train, train->speedMax / 20);
+      m_simulator->applyTrainSpeedDelta(m_trainIndex, 1);
       break;
     }
     case Qt::Key_Down:
     {
-      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
-      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
-      if(train)
-        m_simulator->applyTrainSpeedDelta(train, -train->speedMax / 20);
+      m_simulator->applyTrainSpeedDelta(m_trainIndex, -1);
       break;
     }
     case Qt::Key_Right:
     case Qt::Key_Left:
     {
-      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
-      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
-      if(train)
-      {
-        bool dir = (event->key() == Qt::Key_Left);
-        if(m_simulator->isTrainDirectionInverted(train))
-          dir = !dir;
-        m_simulator->setTrainDirection(train, dir);
-      }
+      const bool dir = (event->key() == Qt::Key_Left);
+      m_simulator->setTrainDirectionHelper(m_trainIndex, dir, true);
       break;
     }
 
     case Qt::Key_Space:
     {
-      std::lock_guard<std::recursive_mutex> lock(m_simulator->stateMutex());
-      Simulator::Train *train = m_simulator->getTrainAt(m_trainIndex);
-      if(train)
-        m_simulator->setTrainSpeed(train, 0.0f);
+      m_simulator->setTrainSpeed(m_trainIndex, 0.0f);
       break;
     }
     case Qt::Key_Escape:

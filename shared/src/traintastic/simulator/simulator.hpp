@@ -294,8 +294,11 @@ public:
   bool isTrainDirectionInverted(Train *train);
   void setTrainDirection(Train *train, bool reverse);
   void setTrainSpeed(Train *train, float speed);
-  void applyTrainSpeedDelta(Train *train, float delta);
+
   void stopAllTrains();
+  void applyTrainSpeedDelta(size_t trainIndex, int deltaStep);
+  void setTrainDirectionHelper(size_t trainIndex, bool reverse, bool autoInvert);
+  void setTrainSpeed(size_t trainIndex, float speed);
 
   void setTurnoutState(size_t segmentIndex, TurnoutState::State state);
   void toggleTurnoutState(size_t segmentIndex, bool setUnknown);
