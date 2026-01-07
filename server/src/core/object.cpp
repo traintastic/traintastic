@@ -1,9 +1,8 @@
 /**
- * server/src/core/object.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +27,7 @@
 #include "abstractproperty.hpp"
 #include "abstractobjectproperty.hpp"
 #include "abstractvectorproperty.hpp"
+#include "../world/worldfeatures.hpp"
 #include "../world/worldloader.hpp"
 #include "../world/worldsaver.hpp"
 
@@ -165,14 +165,49 @@ void Object::worldEvent(WorldState state, WorldEvent event)
     if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&it.second);
         property && contains(property->flags(), PropertyFlags::SubObject))
     {
-      property->toObject()->worldEvent(state, event);
+      if(auto object = property->toObject())
+      {
+        object->worldEvent(state, event);
+      }
     }
     else if(AbstractVectorProperty* vectorProperty = dynamic_cast<AbstractVectorProperty*>(&it.second);
         vectorProperty && contains(vectorProperty->flags(), PropertyFlags::SubObject))
     {
       const size_t size = vectorProperty->size();
       for(size_t i = 0; i < size; i++)
-        vectorProperty->getObject(i)->worldEvent(state, event);
+      {
+        if(auto object = vectorProperty->getObject(i)) [[likely]]
+        {
+          object->worldEvent(state, event);
+        }
+      }
+    }
+  }
+}
+
+void Object::worldFeaturesChanged(WorldFeatures features, WorldFeature changed)
+{
+  for(const auto& it : m_interfaceItems)
+  {
+    if(AbstractProperty* property = dynamic_cast<AbstractProperty*>(&it.second);
+        property && contains(property->flags(), PropertyFlags::SubObject))
+    {
+      if(auto object = property->toObject())
+      {
+        object->worldFeaturesChanged(features, changed);
+      }
+    }
+    else if(AbstractVectorProperty* vectorProperty = dynamic_cast<AbstractVectorProperty*>(&it.second);
+        vectorProperty && contains(vectorProperty->flags(), PropertyFlags::SubObject))
+    {
+      const size_t size = vectorProperty->size();
+      for(size_t i = 0; i < size; i++)
+      {
+        if(auto object = vectorProperty->getObject(i)) [[likely]]
+        {
+          object->worldFeaturesChanged(features, changed);
+        }
+      }
     }
   }
 }

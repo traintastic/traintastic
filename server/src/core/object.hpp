@@ -1,9 +1,8 @@
 /**
- * server/src/core/object.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,6 +43,8 @@ class AbstractObjectProperty;
 class AbstractVectorProperty;
 class AbstractAttribute;
 class AbstractEvent;
+enum class WorldFeature;
+class WorldFeatures;
 class WorldLoader;
 class WorldSaver;
 
@@ -91,6 +92,7 @@ class Object : public std::enable_shared_from_this<Object>
     virtual void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const;
     virtual void loaded();
     virtual void worldEvent(WorldState state, WorldEvent event);
+    virtual void worldFeaturesChanged(WorldFeatures features, WorldFeature changed);
 
   public:
     Object(const Object&) = delete;

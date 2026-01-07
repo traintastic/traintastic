@@ -1,9 +1,8 @@
 /**
- * server/src/world/world.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +22,7 @@
 #ifndef TRAINTASTIC_SERVER_WORLD_WORLD_HPP
 #define TRAINTASTIC_SERVER_WORLD_WORLD_HPP
 
+#include "worldfeatures.hpp"
 #include "../core/object.hpp"
 #include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
@@ -80,7 +80,10 @@ class World : public Object
   private:
     struct Private {};
 
+    WorldFeatures m_features;
+
     void updateEnabled();
+    void updateFeatures();
     void updateScaleRatio();
 
   protected:
@@ -90,7 +93,10 @@ class World : public Object
 
     void loaded() final;
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
+    void worldFeaturesChanged(const WorldFeatures features, WorldFeature changed) final;
+
     void event(WorldEvent value);
+    void setFeature(WorldFeature feature, bool value);
 
   public:
     CLASS_ID("world")
@@ -113,6 +119,8 @@ class World : public Object
     Property<bool> correctOutputPosWhenLocked;
     Property<ExternalOutputChangeAction> extOutputChangeAction;
     Property<uint16_t> pathReleaseDelay;
+
+    Property<bool> featureScripting;
 
     Property<bool> debugBlockEvents;
     Property<bool> debugTrainEvents;
@@ -169,6 +177,16 @@ class World : public Object
 
     World(Private);
     ~World() override;
+
+    inline bool feature(WorldFeature feature) const
+    {
+      return m_features[feature];
+    }
+
+    const WorldFeatures features() const
+    {
+      return m_features;
+    }
 
     std::string getObjectId() const final { return std::string(classId); }
 

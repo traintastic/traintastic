@@ -1,9 +1,8 @@
 /**
- * server/src/world/world.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -173,6 +172,11 @@ World::World(Private /*unused*/) :
   correctOutputPosWhenLocked{this, "correct_output_pos_when_locked", true, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   extOutputChangeAction{this, "ext_output_change_action", ExternalOutputChangeAction::EmergencyStopTrain, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   pathReleaseDelay{this, "path_release_delay", 5000, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
+    featureScripting{this, "feature_scripting", true, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](bool value)
+    {
+      setFeature(WorldFeature::Scripting, value);
+    }},
   debugBlockEvents{this, "debug_block_events", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   debugTrainEvents{this, "debug_train_events", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   debugZoneEvents{this, "debug_zone_events", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
@@ -369,6 +373,10 @@ World::World(Private /*unused*/) :
   Attributes::addMinMax(pathReleaseDelay, {0, 15000}); // Up to 15 seconds
   m_interfaceItems.add(pathReleaseDelay);
 
+  // Features:
+  Attributes::addCategory(featureScripting, Category::features);
+  m_interfaceItems.add(featureScripting);
+
   // Debug options:
   Attributes::addCategory(debugBlockEvents, Category::debug);
   m_interfaceItems.add(debugBlockEvents);
@@ -417,6 +425,7 @@ World::World(Private /*unused*/) :
   Attributes::addObjectEditor(railVehicles, false);
   m_interfaceItems.add(railVehicles);
   Attributes::addObjectEditor(luaScripts, false);
+  Attributes::addVisible(luaScripts, featureScripting);
   m_interfaceItems.add(luaScripts);
 
   Attributes::addObjectEditor(blockRailTiles, false);
@@ -470,6 +479,7 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(onEvent);
 
   updateEnabled();
+  updateFeatures();
 }
 
 World::~World()
@@ -565,6 +575,7 @@ void World::export_(std::vector<std::byte>& data)
 
 void World::loaded()
 {
+  updateFeatures();
   updateScaleRatio();
   Object::loaded();
 }
@@ -580,6 +591,13 @@ void World::worldEvent(WorldState worldState, WorldEvent worldEvent)
   Attributes::setEnabled(scaleRatio, editState && !runState);
 
   fireEvent(onEvent, worldState, worldEvent);
+}
+
+void World::worldFeaturesChanged(const WorldFeatures features, WorldFeature changed)
+{
+  Object::worldFeaturesChanged(features, changed);
+
+  Attributes::setVisible(luaScripts, features[WorldFeature::Scripting]);
 }
 
 void World::event(const WorldEvent value)
@@ -664,6 +682,20 @@ void World::event(const WorldEvent value)
     it.second.lock()->worldEvent(worldState, value);
 }
 
+void World::setFeature(WorldFeature feature, bool value)
+{
+  if(m_features[feature] != value)
+  {
+    m_features.set(feature, value);
+
+    worldFeaturesChanged(m_features, feature);
+    for(auto& it : m_objects)
+    {
+      it.second.lock()->worldFeaturesChanged(m_features, feature);
+    }
+  }
+}
+
 void World::updateEnabled()
 {
   const bool isOnline = contains(state.value(), WorldState::Online);
@@ -671,6 +703,12 @@ void World::updateEnabled()
   const bool isRunning = contains(state.value(), WorldState::Run);
 
   Attributes::setEnabled(simulation, !isOnline && !isPoweredOn && !isRunning);
+}
+
+void World::updateFeatures()
+{
+  m_features.set(WorldFeature::Scripting, featureScripting);
+  Attributes::setVisible(luaScripts, feature(WorldFeature::Scripting));
 }
 
 void World::updateScaleRatio()

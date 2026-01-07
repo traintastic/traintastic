@@ -1,9 +1,8 @@
 /**
- * server/src/utils/category.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +33,7 @@ namespace Category
   constexpr std::string_view debug = "category:debug";
   constexpr std::string_view developer = "category:developer";
   constexpr std::string_view driver = "category:driver";
+  constexpr std::string_view features = "category:features";
   constexpr std::string_view general = "category:general";
   constexpr std::string_view info = "category:info";
   constexpr std::string_view input = "category:input";

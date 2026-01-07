@@ -1,9 +1,8 @@
 /**
- * server/src/lua/scriptlist.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -93,12 +92,22 @@ ScriptList::ScriptList(Object& _parent, std::string_view parentPropertyName)
 
 ScriptList::~ScriptList()
 {
-  getWorld(parent()).statuses.removeInternal(status.value());
+  removeStatus();
 }
 
 TableModelPtr ScriptList::getModel()
 {
   return std::make_shared<ScriptListTableModel>(*this);
+}
+
+void ScriptList::loaded()
+{
+  ObjectList<Script>::loaded();
+
+  if(!getWorld(parent()).feature(WorldFeature::Scripting))
+  {
+    removeStatus();
+  }
 }
 
 void ScriptList::worldEvent(WorldState state, WorldEvent event)
@@ -111,11 +120,28 @@ void ScriptList::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(delete_, editable);
 }
 
+void ScriptList::worldFeaturesChanged(const WorldFeatures features, WorldFeature changed)
+{
+  ObjectList<Script>::worldFeaturesChanged(features, changed);
+
+  if(changed == WorldFeature::Scripting && !empty())
+  {
+    if(features[WorldFeature::Scripting])
+    {
+      addStatus();
+    }
+    else if(!features[WorldFeature::Scripting])
+    {
+      removeStatus();
+    }
+  }
+}
+
 void ScriptList::objectAdded(const std::shared_ptr<Script>& /*object*/)
 {
   if(m_items.size() == 1)
   {
-    getWorld(parent()).statuses.appendInternal(status.value());
+    addStatus();
   }
   updateEnabled();
 }
@@ -124,7 +150,7 @@ void ScriptList::objectRemoved(const std::shared_ptr<Script>& /*object*/)
 {
   if(empty())
   {
-    getWorld(parent()).statuses.removeInternal(status.value());
+    removeStatus();
   }
   updateEnabled();
 }
@@ -150,6 +176,16 @@ void ScriptList::updateEnabled()
   Attributes::setEnabled(startAll, canStart);
   Attributes::setEnabled(stopAll, canStop);
   Attributes::setEnabled(clearPersistentVariables, canClearPersistentVariables);
+}
+
+void ScriptList::addStatus()
+{
+  getWorld(parent()).statuses.appendInternal(status.value());
+}
+
+void ScriptList::removeStatus()
+{
+  getWorld(parent()).statuses.removeInternal(status.value());
 }
 
 }

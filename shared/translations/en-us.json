@@ -252,6 +252,10 @@
         "definition": "Developer"
     },
     {
+        "term": "category:features",
+        "definition": "Features"
+    },
+    {
         "term": "category:general",
         "definition": "General"
     },
@@ -3214,6 +3218,10 @@
     {
         "term": "world:ext_output_change_action",
         "definition": "External output change action"
+    },
+    {
+        "term": "world:feature_scripting",
+        "definition": "Scripting"
     },
     {
         "term": "world:inputs",

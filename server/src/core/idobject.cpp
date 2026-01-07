@@ -1,7 +1,8 @@
 /**
- * server/src/core/idobject.cpp
+  * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,6 +47,7 @@ IdObject::IdObject(World& world, std::string_view _id) :
 
   Attributes::addDisplayName(id, DisplayName::Object::id);
   Attributes::addEnabled(id, editable);
+  Attributes::addVisible(id, m_world.feature(WorldFeature::Scripting));
   m_interfaceItems.add(id);
 }
 
@@ -55,6 +57,12 @@ void IdObject::destroying()
 {
   m_world.m_objects.erase(id);
   Object::destroying();
+}
+
+void IdObject::loaded()
+{
+  Object::loaded();
+  Attributes::setVisible(id, m_world.feature(WorldFeature::Scripting));
 }
 
 void IdObject::addToWorld()
@@ -67,4 +75,11 @@ void IdObject::worldEvent(WorldState state, WorldEvent event)
   Object::worldEvent(state, event);
 
   Attributes::setEnabled(id, contains(state, WorldState::Edit));
+}
+
+void IdObject::worldFeaturesChanged(const WorldFeatures features, WorldFeature changed)
+{
+  Object::worldFeaturesChanged(features, changed);
+
+  Attributes::setVisible(id, features[WorldFeature::Scripting]);
 }
