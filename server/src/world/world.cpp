@@ -180,7 +180,7 @@ World::World(Private /*unused*/) :
   debugBlockEvents{this, "debug_block_events", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   debugTrainEvents{this, "debug_train_events", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   debugZoneEvents{this, "debug_zone_events", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
-  decoderControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  decoderControllers{this, "decoder_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   identificationControllers{this, "identification_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
