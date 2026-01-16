@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,10 +24,18 @@
 
 #include "dr5033boosterdriver.hpp"
 #include "power4boosterdriver.hpp"
+#include "power7boosterdriver.hpp"
+#include "power22boosterdriver.hpp"
+#include "power40boosterdriver.hpp"
+#include "power70boosterdriver.hpp"
 
 #define BOOSTER_DRIVERS \
   BOOSTER_DRIVER(DR5033BoosterDriver) \
-  BOOSTER_DRIVER(Power4BoosterDriver)
+  BOOSTER_DRIVER(Power4BoosterDriver) \
+  BOOSTER_DRIVER(Power7BoosterDriver) \
+  BOOSTER_DRIVER(Power22BoosterDriver) \
+  BOOSTER_DRIVER(Power40BoosterDriver) \
+  BOOSTER_DRIVER(Power70BoosterDriver)
 
 std::span<const std::string_view> BoosterDrivers::types()
 {
