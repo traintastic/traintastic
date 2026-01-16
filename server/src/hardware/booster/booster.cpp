@@ -110,7 +110,8 @@ void Booster::addToWorld()
 
 void Booster::destroying()
 {
-  setDriver(nullptr);
+  driver->destroy();
+  driver.setValueInternal(nullptr);
   m_world.boosters->removeObject(shared_ptr<Booster>());
   IdObject::destroying();
 }
@@ -148,6 +149,8 @@ void Booster::worldEvent(WorldState state, WorldEvent event)
 
 void Booster::setDriver(std::shared_ptr<BoosterDriver> drv)
 {
+  assert(drv);
+
   if(driver)
   {
     driver->destroy();
