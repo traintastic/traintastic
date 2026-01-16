@@ -3,7 +3,7 @@
 Traintastic supports a wide range of digital command stations, feedback sensors, and wireless throttle devices.
 This section provides detailed instructions on configuring each supported interface for advanced users who need more control or whose setup is not fully covered by the setup wizard.
 
-For a complete list of tested and supported hardware, see the [Supported hardware](../../appendix/supported-hardware.md) page.
+For a complete list of tested and supported hardware, see the [Supported hardware](../../appendix/supported-hardware/index.md) section.
 
 ## Overview
 

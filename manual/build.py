@@ -211,7 +211,16 @@ class TraintasticHelp:
                     {'Interface connection errors': 'troubleshooting/interface-connection-errors.md'}
                 ]},
                 {'Appendix': [
-                    {'Supported hardware': 'appendix/supported-hardware.md'},
+                    {'Supported hardware': [
+                        {'Overview': 'appendix/supported-hardware/index.md'},
+                        {'Command Stations': 'appendix/supported-hardware/command-stations/index.md'},
+                        {'Boosters': [
+                            {'Overview': 'appendix/supported-hardware/boosters/index.md'},
+                            {'Digikeijs DR5033': 'appendix/supported-hardware/boosters/digikeijs-dr5033.md'},
+                            {'Uhlenblock Power 4/7/22/40/70': 'appendix/supported-hardware/boosters/uhlenbrock-power-4-7-22-40-70.md'}
+                        ]},
+                        {'Product index': 'appendix/supported-hardware/product-index.md'}
+                    ]},
                     {'LocoNet reference': 'appendix/loconet.md'},
                     {'XpressNet reference': 'appendix/xpressnet.md'},
                     {'Lua scripting reference': lua_ref},

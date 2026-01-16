@@ -10,7 +10,7 @@ It is intended for advanced users who are already familiar with the basics of th
 ## Supported hardware
 
 Traintastic supports a wide range of command stations and interfaces with LocoNet capability.
-See the [Supported hardware](supported-hardware.md) page for a complete and up-to-date list.
+See the [Supported hardware](supported-hardware/index.md) secion for a complete and up-to-date list.
 
 ## Implementation philosophy
 

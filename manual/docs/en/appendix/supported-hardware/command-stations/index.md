@@ -1,10 +1,10 @@
-# Supported hardware
+# Supported command stations
 
 This page lists command stations and digital systems that have been tested with Traintastic.
 Using the setup wizard is **recommended** whenever possible.
 If wizard support is not available, setup can still be done manually by creating and configuring the correct interface type.
 
-For details on manual interface configuration, see the [Interface configuration](../advanced/interface/index.md) section.
+For details on manual interface configuration, see the [Interface configuration](../../../advanced/interface/index.md) section.
 
 !!! tip "Not on the list?"
     Your system may still work even if it isn’t listed here.
