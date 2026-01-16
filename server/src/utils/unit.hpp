@@ -31,7 +31,7 @@ struct Unit
   static constexpr std::string_view milliSeconds{"ms"};
   static constexpr std::string_view percent{"%"};
   static constexpr std::string_view seconds{"s"};
-  static constexpr std::string_view volt{"C"};
+  static constexpr std::string_view volt{"V"};
 };
 
 #endif
