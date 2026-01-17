@@ -21,6 +21,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include "../src/core/eventloop.hpp"
 #include "../src/world/world.hpp"
 #include "../src/core/method.tpp"
 #include "../src/core/objectproperty.tpp"
@@ -30,6 +31,8 @@
 
 TEST_CASE("Board: Resize non existing tile", "[board][board-resize]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();
@@ -49,6 +52,8 @@ TEST_CASE("Board: Resize non existing tile", "[board][board-resize]")
 
 TEST_CASE("Board: Resize block rail tile vertical", "[board][board-resize]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();
@@ -128,6 +133,8 @@ TEST_CASE("Board: Resize block rail tile vertical", "[board][board-resize]")
 
 TEST_CASE("Board: Resize block rail tile horizontal", "[board][board-resize]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();

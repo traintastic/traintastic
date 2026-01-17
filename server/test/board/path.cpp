@@ -21,6 +21,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include "../../src/core/eventloop.hpp"
 #include "../../src/world/world.hpp"
 #include "../../src/core/method.tpp"
 #include "../../src/core/objectproperty.tpp"
@@ -44,6 +45,8 @@
 
 TEST_CASE("Board: Bridge path resevation using NX", "[board][board-path]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
 
@@ -162,6 +165,8 @@ TEST_CASE("Board: Bridge path resevation using NX", "[board][board-path]")
 
 TEST_CASE("Board: Cross path resevation using NX", "[board][board-path]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
 
@@ -279,6 +284,8 @@ TEST_CASE("Board: Cross path resevation using NX", "[board][board-path]")
 
 TEST_CASE("Board: Crossover path resevation using NX", "[board][board-path]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
 
@@ -389,6 +396,8 @@ TEST_CASE("Board: Crossover path resevation using NX", "[board][board-path]")
 
 TEST_CASE("Board: Direction path reservation using NX and change direction state", "[board][board-path]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
 

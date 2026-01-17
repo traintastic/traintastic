@@ -20,6 +20,7 @@
  */
 
 #include <catch2/catch_template_test_macros.hpp>
+#include "../src/core/eventloop.hpp"
 #include "../src/world/world.hpp"
 #include "../src/core/method.tpp"
 #include "../src/core/objectproperty.tpp"
@@ -32,6 +33,8 @@
 
 TEST_CASE("Board: Crossover create/modify/destroy", "[board]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
 

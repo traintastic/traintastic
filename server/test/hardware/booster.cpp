@@ -21,6 +21,7 @@
 
 #include <catch2/catch_template_test_macros.hpp>
 #include <ranges>
+#include "../src/core/eventloop.hpp"
 #include "../src/core/method.tpp"
 #include "../src/core/objectproperty.tpp"
 #include "../src/hardware/booster/drivers/boosterdrivers.hpp"
@@ -29,6 +30,8 @@
 
 TEST_CASE("Create world and booster => destroy world", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -49,6 +52,8 @@ TEST_CASE("Create world and booster => destroy world", "[object-create-destroy]"
 
 TEST_CASE("Create world and booster => destroy booster", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -71,6 +76,8 @@ TEST_CASE("Create world and booster => destroy booster", "[object-create-destroy
 
 TEST_CASE("Booster change driver", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());

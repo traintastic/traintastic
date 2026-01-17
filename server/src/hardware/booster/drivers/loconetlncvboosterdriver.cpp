@@ -42,7 +42,7 @@ LocoNetLNCVBoosterDriver::LocoNetLNCVBoosterDriver(Booster& booster, uint16_t mo
   , address{this, "address", addressDefault, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript}
   , pollInterval{this, "poll_interval", pollIntervalDefault, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript}
   , m_moduleId{moduleId}
-  , m_pollTimer{EventLoop::ioContext}
+  , m_pollTimer{EventLoop::ioContext()}
 {
   Attributes::addDisplayName(address, DisplayName::Hardware::address);
   Attributes::addEnabled(address, false);

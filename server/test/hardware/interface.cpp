@@ -21,6 +21,7 @@
  */
 
 #include <catch2/catch_template_test_macros.hpp>
+#include "../src/core/eventloop.hpp"
 #include "../src/world/world.hpp"
 #include "../src/core/method.tpp"
 #include "../src/core/objectproperty.tpp"
@@ -38,6 +39,8 @@
 
 TEMPLATE_TEST_CASE("Assign decoder to another interface", "[interface]", INTERFACES_DECODER)
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -97,6 +100,8 @@ TEMPLATE_TEST_CASE("Assign decoder to another interface", "[interface]", INTERFA
 
 TEMPLATE_TEST_CASE("Assign identification to another interface", "[interface]", INTERFACES_IDENTIFICATION)
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());

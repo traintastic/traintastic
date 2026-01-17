@@ -1,9 +1,8 @@
 /**
- * server/src/board/map/blockpath.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2023-2024 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -324,7 +323,7 @@ BlockPath::BlockPath(BlockRailTile& block, BlockSide side)
   : m_fromBlock{block}
   , m_fromSide{side}
   , m_toSide{static_cast<BlockSide>(-1)}
-  , m_delayReleaseTimer{EventLoop::ioContext}
+  , m_delayReleaseTimer{EventLoop::ioContext()}
   , m_isReserved(false)
   , m_delayedReleaseScheduled(false)
 {
@@ -345,7 +344,7 @@ BlockPath::BlockPath(const BlockPath &other)
   , m_signals(other.m_signals)
   , m_nxButtonFrom(other.m_nxButtonFrom)
   , m_nxButtonTo(other.m_nxButtonTo)
-  , m_delayReleaseTimer{EventLoop::ioContext}
+  , m_delayReleaseTimer{EventLoop::ioContext()}
   , m_isReserved(false)
   , m_delayedReleaseScheduled(false)
 {

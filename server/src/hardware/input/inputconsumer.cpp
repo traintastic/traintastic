@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +44,7 @@ bool roundToDelayStep(uint16_t& value)
 
 InputConsumer::InputConsumer(Object& object, const World& world)
   : m_object{object}
-  , m_inputFilterTimer{EventLoop::ioContext}
+  , m_inputFilterTimer{EventLoop::ioContext()}
   , interface{&object, "interface", nullptr, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript,
       [this](const std::shared_ptr<InputController>& /*newValue*/)
       {

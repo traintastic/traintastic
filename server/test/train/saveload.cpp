@@ -20,6 +20,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include "../src/core/eventloop.hpp"
 #include "../src/world/world.hpp"
 #include "../src/world/worldloader.hpp"
 #include "../src/world/worldsaver.hpp"
@@ -34,6 +35,8 @@
 
 TEST_CASE("Train: Save/Load", "[train][train-saveload]")
 {
+  EventLoop::reset();
+
   std::filesystem::path ctw;
   std::string worldUUID;
 

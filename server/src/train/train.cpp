@@ -1,9 +1,8 @@
 /**
- * server/src/train/train.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,7 +49,7 @@ static inline bool isPowered(const RailVehicle& vehicle)
 
 Train::Train(World& world, std::string_view _id) :
   IdObject(world, _id),
-  m_speedTimer{EventLoop::ioContext},
+  m_speedTimer{EventLoop::ioContext()},
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   length{*this, "length", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
   overrideLength{this, "override_length", false, PropertyFlags::ReadWrite | PropertyFlags::Store,

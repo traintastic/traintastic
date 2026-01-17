@@ -21,6 +21,7 @@
  */
 
 #include <catch2/catch_template_test_macros.hpp>
+#include "../src/core/eventloop.hpp"
 #include "../src/world/world.hpp"
 #include "../src/core/method.tpp"
 #include "../src/core/objectproperty.tpp"
@@ -44,6 +45,8 @@
 
 TEST_CASE("Create world => destroy world", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -54,6 +57,8 @@ TEST_CASE("Create world => destroy world", "[object-create-destroy]")
 
 TEST_CASE("Create world and board => destroy world", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -71,6 +76,8 @@ TEST_CASE("Create world and board => destroy world", "[object-create-destroy]")
 
 TEST_CASE("Create world and board => destroy board", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -90,6 +97,8 @@ TEST_CASE("Create world and board => destroy board", "[object-create-destroy]")
 
 TEMPLATE_TEST_CASE("Create world and interface => destroy world", "[object-create-destroy]", INTERFACES)
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -105,6 +114,8 @@ TEMPLATE_TEST_CASE("Create world and interface => destroy world", "[object-creat
 
 TEMPLATE_TEST_CASE("Create world and interface => destroy interface", "[object-create-destroy]", INTERFACES)
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -124,6 +135,8 @@ TEMPLATE_TEST_CASE("Create world and interface => destroy interface", "[object-c
 
 TEST_CASE("Create world, locomotive, decoder and function => destroy world", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -153,6 +166,8 @@ TEST_CASE("Create world, locomotive, decoder and function => destroy world", "[o
 
 TEST_CASE("Create world, locomotive, decoder and function => destroy locomotive", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -187,6 +202,8 @@ TEST_CASE("Create world, locomotive, decoder and function => destroy locomotive"
 
 TEST_CASE("Create world, locomotive, decoder and function => delete decoder", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -223,6 +240,8 @@ TEST_CASE("Create world, locomotive, decoder and function => delete decoder", "[
 
 TEST_CASE("Create world, locomotive, decoder and function => destroy function", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -256,6 +275,8 @@ TEST_CASE("Create world, locomotive, decoder and function => destroy function", 
 
 TEMPLATE_TEST_CASE("Create world, interface, locomotive and decoder => destroy interface", "[object-create-destroy]", INTERFACES_DECODER)
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -294,6 +315,8 @@ TEMPLATE_TEST_CASE("Create world, interface, locomotive and decoder => destroy i
 
 TEMPLATE_TEST_CASE("Create world, interface, locomotive and decoder => destroy locomotive", "[object-create-destroy]", INTERFACES_DECODER)
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -333,6 +356,8 @@ TEMPLATE_TEST_CASE("Create world, interface, locomotive and decoder => destroy l
 
 TEMPLATE_TEST_CASE("Create world, interface, locomotive and decoder => delete decoder", "[object-create-destroy]", INTERFACES_DECODER)
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -372,6 +397,8 @@ TEMPLATE_TEST_CASE("Create world, interface, locomotive and decoder => delete de
 
 TEMPLATE_TEST_CASE("Create world and rail vehicle => destroy world", "[object-create-destroy]", RAIL_VEHICLES)
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -387,6 +414,8 @@ TEMPLATE_TEST_CASE("Create world and rail vehicle => destroy world", "[object-cr
 
 TEMPLATE_TEST_CASE("Create world and rail vehicle => destroy rail vehicle", "[object-create-destroy]", RAIL_VEHICLES)
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -406,6 +435,8 @@ TEMPLATE_TEST_CASE("Create world and rail vehicle => destroy rail vehicle", "[ob
 
 TEST_CASE("Create world and train => destroy world", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -423,6 +454,8 @@ TEST_CASE("Create world and train => destroy world", "[object-create-destroy]")
 
 TEST_CASE("Create world and train => destroy train", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -442,6 +475,8 @@ TEST_CASE("Create world and train => destroy train", "[object-create-destroy]")
 
 TEST_CASE("Create world and zone => destroy world", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -457,6 +492,8 @@ TEST_CASE("Create world and zone => destroy world", "[object-create-destroy]")
 
 TEST_CASE("Create world and zone => destroy zone", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -476,6 +513,8 @@ TEST_CASE("Create world and zone => destroy zone", "[object-create-destroy]")
 
 TEST_CASE("Create world, board, block and zone => destroy world", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -511,6 +550,8 @@ TEST_CASE("Create world, board, block and zone => destroy world", "[object-creat
 
 TEST_CASE("Create world, board, block and zone => destroy board", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -551,6 +592,8 @@ TEST_CASE("Create world, board, block and zone => destroy board", "[object-creat
 
 TEST_CASE("Create world, board, block and zone => destroy block", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -592,6 +635,8 @@ TEST_CASE("Create world, board, block and zone => destroy block", "[object-creat
 
 TEST_CASE("Create world, board, block and zone => destroy zone", "[object-create-destroy]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());

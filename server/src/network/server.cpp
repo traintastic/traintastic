@@ -1,9 +1,8 @@
 /**
- * server/src/network/server.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022-2025 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,7 +52,7 @@
 #include <resource/www/css/normalize.css.hpp>
 #include <resource/shared/gfx/appicon.ico.hpp>
 
-#define IS_SERVER_THREAD (std::this_thread::get_id() == m_thread.get_id())
+#define IS_SERVER_THREAD (std::this_thread::get_id() == m_threadId)
 
 namespace beast = boost::beast;
 namespace http = beast::http;
@@ -315,14 +314,6 @@ Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
 
   Log::log(id, LogMessage::N1007_LISTENING_AT_X_X, m_acceptor.local_endpoint().address().to_string(), m_acceptor.local_endpoint().port());
 
-  m_thread = std::thread(
-    [this]()
-    {
-      setThreadName("server");
-      auto work = std::make_shared<boost::asio::io_context::work>(m_ioContext);
-      m_ioContext.run();
-    });
-
   m_ioContext.post(
     [this, discoverable]()
     {
@@ -330,6 +321,16 @@ Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
         doReceive();
 
       doAccept();
+    });
+
+  m_thread = std::thread(
+    [this]()
+    {
+#ifndef NDEBUG
+      m_threadId = std::this_thread::get_id();
+#endif
+      setThreadName("server");
+      m_ioContext.run();
     });
 }
 
@@ -339,6 +340,11 @@ Server::~Server()
 
   if(!m_ioContext.stopped())
   {
+    for(const auto& connection : m_connections)
+    {
+      connection->disconnect();
+    }
+
     m_ioContext.post(
       [this]()
       {
@@ -350,15 +356,10 @@ Server::~Server()
 
         m_socketUDP.close();
       });
-
-    m_ioContext.stop();
   }
 
   if(m_thread.joinable())
     m_thread.join();
-
-  while(!m_connections.empty())
-    m_connections.front()->disconnect();
 }
 
 void Server::connectionGone(const std::shared_ptr<WebSocketConnection>& connection)
@@ -400,8 +401,10 @@ void Server::doReceive()
         }
         doReceive();
       }
-      else
+      else if(ec != boost::asio::error::operation_aborted)
+      {
         Log::log(id, LogMessage::E1003_UDP_RECEIVE_ERROR_X, ec.message());
+      }
     });
 }
 
@@ -434,7 +437,7 @@ void Server::doAccept()
 
         doAccept();
       }
-      else
+      else if(ec != boost::asio::error::operation_aborted)
       {
         Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
       }
@@ -556,7 +559,7 @@ bool Server::acceptWebSocketUpgradeRequest(http::request<http::string_body>&& re
             m_connections.push_back(connection);
           });
       }
-      else
+      else if(ec != boost::asio::error::operation_aborted)
       {
         Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
       }

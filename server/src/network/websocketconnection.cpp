@@ -1,9 +1,8 @@
 /**
- * server/src/network/websocketconnection.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,7 +67,7 @@ void WebSocketConnection::disconnect()
   assert(isEventLoopThread());
 
   m_server.m_ioContext.post(
-    [this]()
+    [this, serverWeak=m_server.weak_from_this()]()
     {
       if(m_ws->is_open())
       {
@@ -77,9 +76,12 @@ void WebSocketConnection::disconnect()
       }
 
       EventLoop::call(
-        [this]()
+        [this, serverWeak]()
         {
-          m_server.connectionGone(shared_from_this());
+          if(auto server = serverWeak.lock()) // server might be gone when this is processed.
+          {
+            server->connectionGone(shared_from_this());
+          }
         });
     });
 }
