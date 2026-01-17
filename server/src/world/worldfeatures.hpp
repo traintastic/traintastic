@@ -28,6 +28,7 @@
 enum class WorldFeature
 {
   Scripting = 0,
+  Boosters = 1,
 };
 
 class WorldFeatures
@@ -80,5 +81,20 @@ private:
     return static_cast<ET>(1) << (static_cast<UT>(f) % (sizeof(ET) * 8));
   }
 };
+
+constexpr bool isAutomaticFeature(WorldFeature feature)
+{
+  switch(feature)
+  {
+    // features controlled by world properties:
+    case WorldFeature::Scripting:
+      return false;
+
+    // features controlled by other objects:
+    case WorldFeature::Boosters:
+      return true;
+  }
+  return false;
+}
 
 #endif

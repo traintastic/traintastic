@@ -188,6 +188,18 @@ class World : public Object
       return m_features;
     }
 
+    void enableFeature(WorldFeature feature)
+    {
+      assert(isAutomaticFeature(feature));
+      setFeature(feature, true);
+    }
+
+    void disableFeature(WorldFeature feature)
+    {
+      assert(isAutomaticFeature(feature));
+      setFeature(feature, false);
+    }
+
     std::string getObjectId() const final { return std::string(classId); }
 
     std::string getUniqueId(std::string_view prefix) const;

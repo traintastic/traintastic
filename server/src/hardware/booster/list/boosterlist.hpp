@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,10 +30,6 @@ class BoosterList final : public ObjectList<Booster>
 {
   CLASS_ID("list.booster")
 
-protected:
-  void worldEvent(WorldState state, WorldEvent event) final;
-  bool isListedProperty(std::string_view name) final;
-
 public:
   Method<std::shared_ptr<Booster>()> create;
   Method<void(const std::shared_ptr<Booster>&)> delete_;
@@ -42,6 +38,13 @@ public:
   ~BoosterList() final = default;
 
   TableModelPtr getModel() final;
+
+protected:
+  void worldEvent(WorldState state, WorldEvent event) final;
+  bool isListedProperty(std::string_view name) final;
+
+  void objectAdded(const std::shared_ptr<Booster>& object) final;
+  void objectRemoved(const std::shared_ptr<Booster>& object) final;
 };
 
 #endif

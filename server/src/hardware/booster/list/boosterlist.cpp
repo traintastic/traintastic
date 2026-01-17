@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,4 +68,20 @@ void BoosterList::worldEvent(WorldState state, WorldEvent event)
 bool BoosterList::isListedProperty(std::string_view name)
 {
   return BoosterListTableModel::isListedProperty(name);
+}
+
+void BoosterList::objectAdded(const std::shared_ptr<Booster>& /*object*/)
+{
+  if(m_items.size() == 1)
+  {
+    getWorld(parent()).enableFeature(WorldFeature::Boosters);
+  }
+}
+
+void BoosterList::objectRemoved(const std::shared_ptr<Booster>& /*object*/)
+{
+  if(m_items.empty())
+  {
+    getWorld(parent()).disableFeature(WorldFeature::Boosters);
+  }
 }
