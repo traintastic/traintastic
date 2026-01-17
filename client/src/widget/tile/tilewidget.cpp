@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -121,11 +121,12 @@ TileWidget::TileWidget(ObjectPtr object, QWidget* parent)
         m_tabs->setTabEnabled(tabIndex, property->getAttributeBool(AttributeName::Enabled, true));
         m_tabs->setTabVisible(tabIndex, property->getAttributeBool(AttributeName::Visible, true));
         (void)property->getObject(
-          [this, tabIndex](const ObjectPtr& obj, std::optional<const Error> /*error*/)
+          [this, property, tabIndex](const ObjectPtr& obj, std::optional<const Error> /*error*/)
           {
             if(obj) [[likely]]
             {
               setTabWidget(m_tabs, tabIndex, createWidget(obj, this));
+              m_tabs->setTabVisible(tabIndex, property->getAttributeBool(AttributeName::Visible, true));
             }
           });
         it = items.erase(it);
