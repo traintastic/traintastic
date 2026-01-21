@@ -1,9 +1,8 @@
 /**
- * client/src/widget/tablewidget.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -170,9 +169,13 @@ void TableWidget::mouseMoveEvent(QMouseEvent* event)
 {
   QTableView::mouseMoveEvent(event);
 
-  if(event->button() == Qt::LeftButton)
+  if(!m_dragStarted && (event->buttons() & Qt::LeftButton) && (event->pos() - m_dragStartPosition).manhattanLength() >= QApplication::startDragDistance())
   {
-    m_dragStartPosition = event->pos();
+    if(const int row = indexAt(m_dragStartPosition).row(); row >= 0)
+    {
+      m_dragStarted = true;
+      emit rowDragged(row);
+    }
   }
 }
 
@@ -180,8 +183,18 @@ void TableWidget::mousePressEvent(QMouseEvent* event)
 {
   QTableView::mousePressEvent(event);
 
-  if((event->buttons() & Qt::LeftButton) && (event->pos() - m_dragStartPosition).manhattanLength() >= QApplication::startDragDistance())
+  if(event->button() == Qt::LeftButton)
   {
-    emit rowDragged(indexAt(m_dragStartPosition).row());
+    m_dragStartPosition = event->pos();
+  }
+}
+
+void TableWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+  QTableView::mouseReleaseEvent(event);
+
+  if(event->button() == Qt::LeftButton)
+  {
+    m_dragStarted = false;
   }
 }
