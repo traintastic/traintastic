@@ -88,7 +88,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
           }
 
           const auto self = shared_ptr<BlockRailTile>();
-          BlockTrainDirection direction = (newTrain->direction == Direction::Reverse) ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
+          BlockTrainDirection direction = (newTrain->direction == Direction::Reverse) ? BlockTrainDirection::TowardsA : BlockTrainDirection::TowardsB;
 
           if(!newTrain->blocks.empty())
           {
