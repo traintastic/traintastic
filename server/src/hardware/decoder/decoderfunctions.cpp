@@ -28,8 +28,8 @@
 #include "../../core/objectvectorproperty.tpp"
 #include "../../utils/displayname.hpp"
 
-DecoderFunctions::DecoderFunctions(Object& _parent, std::string_view parentPropertyName)
-  : SubObject(_parent, parentPropertyName)
+DecoderFunctions::DecoderFunctions(Decoder &decoder_, std::string_view parentPropertyName)
+  : SubObject(decoder_, parentPropertyName)
   , items{*this, "items", {}, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , create{*this, "create",
       [this]() -> void
@@ -88,6 +88,13 @@ DecoderFunctions::DecoderFunctions(Object& _parent, std::string_view parentPrope
   Attributes::addDisplayName(moveDown, DisplayName::List::moveDown);
   Attributes::addEnabled(moveDown, editable);
   m_interfaceItems.add(moveDown);
+
+  decoder_.propertyChanged.connect(
+    [this](BaseProperty& property)
+    {
+      if(property.name() == "id")
+        items.parentIdChanged();
+    });
 }
 
 void DecoderFunctions::load(WorldLoader& loader, const nlohmann::json& data)
