@@ -123,12 +123,10 @@ TEST_CASE("Board: Bridge path resevation using NX", "[board][board-path]")
   // Assign train 1 to block 1:
   block1.lock()->assignTrain(train1.lock());
   REQUIRE(block1.lock()->state == BlockState::Reserved);
-  block1.lock()->flipTrain();
 
   // Assign train 2 to block 3:
   block3.lock()->assignTrain(train2.lock());
   REQUIRE(block3.lock()->state == BlockState::Reserved);
-  block3.lock()->flipTrain();
 
   // Set world in RUN state (required for selecting paths using NX buttons):
   world->run();
@@ -243,12 +241,10 @@ TEST_CASE("Board: Cross path resevation using NX", "[board][board-path]")
   // Assign train 1 to block 1:
   block1.lock()->assignTrain(train1.lock());
   REQUIRE(block1.lock()->state == BlockState::Reserved);
-  block1.lock()->flipTrain();
 
   // Assign train 2 to block 3:
   block3.lock()->assignTrain(train2.lock());
   REQUIRE(block3.lock()->state == BlockState::Reserved);
-  block3.lock()->flipTrain();
 
   // Set world in RUN state (required for selecting paths using NX buttons):
   world->run();
@@ -354,12 +350,10 @@ TEST_CASE("Board: Crossover path resevation using NX", "[board][board-path]")
   // Assign train 1 to block 1:
   block1.lock()->assignTrain(train1.lock());
   REQUIRE(block1.lock()->state == BlockState::Reserved);
-  block1.lock()->flipTrain();
 
   // Assign train 2 to block 3:
   block3.lock()->assignTrain(train2.lock());
   REQUIRE(block3.lock()->state == BlockState::Reserved);
-  block3.lock()->flipTrain();
 
   // Set world in RUN state (required for selecting paths using NX buttons):
   world->run();
@@ -452,7 +446,6 @@ TEST_CASE("Board: Direction path reservation using NX and change direction state
   // Assign train to block 1:
   block1.lock()->assignTrain(train.lock());
   REQUIRE(block1.lock()->state == BlockState::Reserved);
-  block1.lock()->flipTrain();
 
   // Set world in RUN state (required for selecting paths using NX buttons):
   world->run();
