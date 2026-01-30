@@ -1,6 +1,6 @@
 # Version
 set(TRAINTASTIC_VERSION 0.3.0)
-set(TRAINTASTIC_CODENAME "master")
+set(TRAINTASTIC_CODENAME "Copenhagen")
 
 # Platform
 if(UNIX AND NOT APPLE AND NOT MINGW)
