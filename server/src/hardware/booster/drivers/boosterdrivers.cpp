@@ -28,6 +28,7 @@
 #include "power22boosterdriver.hpp"
 #include "power40boosterdriver.hpp"
 #include "power70boosterdriver.hpp"
+#include "yd7403boosterdriver.hpp"
 
 #define BOOSTER_DRIVERS \
   BOOSTER_DRIVER(DR5033BoosterDriver) \
@@ -35,7 +36,8 @@
   BOOSTER_DRIVER(Power7BoosterDriver) \
   BOOSTER_DRIVER(Power22BoosterDriver) \
   BOOSTER_DRIVER(Power40BoosterDriver) \
-  BOOSTER_DRIVER(Power70BoosterDriver)
+  BOOSTER_DRIVER(Power70BoosterDriver) \
+  BOOSTER_DRIVER(YD7403BoosterDriver)
 
 std::span<const std::string_view> BoosterDrivers::types()
 {

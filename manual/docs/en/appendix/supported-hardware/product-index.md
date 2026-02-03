@@ -35,3 +35,6 @@ and are documented together:
 - [Power 40 (63220)](boosters/uhlenbrock-power-4-7-22-40-70.md)
 - [Power 70 (63230)](boosters/uhlenbrock-power-4-7-22-40-70.md)
 
+### YaMoRC
+
+- [YD7403](boosters/yamorc-yd7403.md)

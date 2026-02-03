@@ -14,6 +14,7 @@ functionality to Traintastic.
 |-------------------------------------------------------------------|-----------|-------------------|--------------|
 | [Digikeijs DR5033](digikeijs-dr5033.md)                           | LocoNet   | Basic             | Verified     |
 | [Uhlenbrock Power 4/7/22/40/70](uhlenbrock-power-4-7-22-40-70.md) | LocoNet   | Basic             | Not verified |
+| [YaMoRC YD7403](yamorc-yd7403.md)                                 | LocoNet   | Advanced          | Verified     |
 
 ## General notes
 

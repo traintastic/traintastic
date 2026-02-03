@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/loconetinterface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -123,11 +122,17 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
 
 LocoNetInterface::~LocoNetInterface() = default;
 
-bool LocoNetInterface::send(std::span<uint8_t> packet)
+bool LocoNetInterface::send(std::span<const uint8_t> packet)
 {
   if(m_kernel)
     return m_kernel->send(packet);
   return false;
+}
+
+bool LocoNetInterface::send(const LocoNet::Message& message)
+{
+  const auto* p = reinterpret_cast<const uint8_t*>(&message);
+  return send(std::span<const uint8_t>{p, p + message.size() - 1});
 }
 
 bool LocoNetInterface::immPacket(std::span<uint8_t> dccPacket, uint8_t repeat)
@@ -142,6 +147,23 @@ void LocoNetInterface::readLNCV(uint16_t moduleId, uint16_t address, uint16_t ln
   if(m_kernel)
   {
     m_kernel->readLNCV(moduleId, address, lncv, std::move(callback));
+  }
+}
+
+size_t LocoNetInterface::registerOnReceive(std::vector<std::pair<uint8_t, uint8_t>> filter, std::function<void(const LocoNet::Message&)> callback)
+{
+  if(m_kernel)
+  {
+    return m_kernel->registerOnReceive(std::move(filter), std::move(callback));
+  }
+  return 0;
+}
+
+void LocoNetInterface::unregisterOnReceive(size_t handle)
+{
+  if(m_kernel)
+  {
+    m_kernel->unregisterOnReceive(handle);
   }
 }
 

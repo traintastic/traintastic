@@ -1,7 +1,6 @@
 /**
- * server/src/hardware/protocol/loconet/loconet.cpp
- *
- * This file is part of the traintastic source code.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) 2019-2026 Reinder Feenstra
  *
@@ -46,6 +45,37 @@
 #include "../dcc/messages.hpp"
 
 namespace LocoNet {
+
+namespace {
+
+bool matches(const Message& message, const std::vector<std::pair<uint8_t, uint8_t>>& filter)
+{
+  if(message.size() < filter.size())
+  {
+    return false;
+  }
+
+  const auto* p = reinterpret_cast<const uint8_t*>(&message);
+  for(const auto& by : filter)
+  {
+    if((*p & by.first) != by.second)
+    {
+      return false;
+    }
+    p++;
+  }
+
+  return true;
+}
+
+std::vector<uint8_t> copy(const Message& message)
+{
+  std::vector<uint8_t> messageCopy(message.size());
+  std::memcpy(messageCopy.data(), &message, message.size());
+  return messageCopy;
+}
+
+}
 
 static constexpr uint8_t multiplierFreeze = 0;
 
@@ -940,6 +970,23 @@ void Kernel::receive(const Message& message)
     m_sendQueue[m_sentMessagePriority].pop();
     sendNextMessage();
   }
+
+  // external listeners:
+  for(const auto& [handle, filter] : m_onReceiveFilters)
+  {
+    if(matches(message, filter))
+    {
+      EventLoop::call(
+        [this, handle, msg=copy(message)]()
+        {
+          // check if still registered, could theoretically be unregister after filtering and before callback:
+          if(auto it = m_onReceiveCallbacks.find(handle); it != m_onReceiveCallbacks.end())
+          {
+            it->second(*reinterpret_cast<const Message*>(msg.data()));
+          }
+        });
+    }
+  }
 }
 
 void Kernel::setState(bool powerOn, bool run)
@@ -1026,11 +1073,11 @@ void Kernel::resume()
   }
 }
 
-bool Kernel::send(std::span<uint8_t> packet)
+bool Kernel::send(std::span<const uint8_t> packet)
 {
   assert(isEventLoopThread());
 
-  if(reinterpret_cast<Message*>(packet.data())->size() != packet.size() + 1) // verify packet length, must be all bytes excluding checksum
+  if(reinterpret_cast<const Message*>(packet.data())->size() != packet.size() + 1) // verify packet length, must be all bytes excluding checksum
     return false;
 
   std::vector<uint8_t> data(packet.data(), packet.data() + packet.size());
@@ -1068,6 +1115,36 @@ void Kernel::readLNCV(uint16_t moduleId, uint16_t address, uint16_t lncv, std::f
     {
       m_lncvReads.emplace(LNCVRead{moduleId, address, lncv, std::move(callback)});
       send(Uhlenbrock::LNCVRead(moduleId, address, lncv), LocoNet::Kernel::LowPriority);
+    });
+}
+
+size_t Kernel::registerOnReceive(std::vector<std::pair<uint8_t, uint8_t>> filter, std::function<void(const LocoNet::Message&)> callback)
+{
+  assert(isEventLoopThread());
+
+  while(++m_onReceiveHandle == 0);
+
+  m_onReceiveCallbacks.emplace(m_onReceiveHandle, std::move(callback));
+
+  m_ioContext.post(
+    [this, handle=m_onReceiveHandle, filter_=std::move(filter)]()
+    {
+      m_onReceiveFilters.emplace(handle, filter_);
+    });
+
+  return m_onReceiveHandle;
+}
+
+void Kernel::unregisterOnReceive(size_t handle)
+{
+  assert(isEventLoopThread());
+
+  m_onReceiveCallbacks.erase(handle);
+
+  m_ioContext.post(
+    [this, handle]()
+    {
+      m_onReceiveFilters.erase(handle);
     });
 }
 

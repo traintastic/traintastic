@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/loconetinterface.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +37,7 @@
 namespace LocoNet {
 class Kernel;
 class Settings;
+struct Message;
 }
 
 /**
@@ -84,7 +84,8 @@ class LocoNetInterface final
     //! \brief Send LocoNet packet
     //! \param[in] packet LocoNet packet bytes, exluding checksum.
     //! \return \c true if send, \c false otherwise.
-    bool send(std::span<uint8_t> packet);
+    bool send(std::span<const uint8_t> packet);
+    bool send(const LocoNet::Message& message);
 
     //! \brief Send immediate DCC packet
     //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 5.
@@ -93,6 +94,9 @@ class LocoNetInterface final
     bool immPacket(std::span<uint8_t> dccPacket, uint8_t repeat);
 
     void readLNCV(uint16_t moduleId, uint16_t address, uint16_t lncv, std::function<void(uint16_t, std::error_code)> callback);
+
+    size_t registerOnReceive(std::vector<std::pair<uint8_t, uint8_t>> filter, std::function<void(const LocoNet::Message&)> callback);
+    void unregisterOnReceive(size_t handle);
 
     // DecoderController:
     std::span<const DecoderProtocol> decoderProtocols() const final;

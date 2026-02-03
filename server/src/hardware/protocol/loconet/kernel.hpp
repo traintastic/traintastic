@@ -1,7 +1,6 @@
 /**
- * server/src/hardware/protocol/loconet/kernel.hpp
- *
- * This file is part of the traintastic source code.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) 2019-2026 Reinder Feenstra
  *
@@ -189,6 +188,10 @@ class Kernel : public ::KernelBase
       std::function<void(uint16_t, std::error_code)> callback;
     };
     std::queue<LNCVRead> m_lncvReads;
+
+    size_t m_onReceiveHandle = 0; // owned by eventloop thread
+    std::unordered_map<size_t, std::function<void(const Message&)>> m_onReceiveCallbacks; // owned by eventloop thread
+    std::unordered_map<size_t, std::vector<std::pair<uint8_t, uint8_t>>> m_onReceiveFilters; // owned by loconet thread
 
     DecoderController* m_decoderController;
     std::unordered_map<uint16_t, uint8_t> m_addressToSlot;
@@ -415,7 +418,7 @@ class Kernel : public ::KernelBase
     //! \brief Send LocoNet packet
     //! \param[in] packet LocoNet packet bytes, exluding checksum.
     //! \return \c true if send, \c false otherwise.
-    bool send(std::span<uint8_t> packet);
+    bool send(std::span<const uint8_t> packet);
 
     //! \brief Send immediate DCC packet
     //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 5.
@@ -430,6 +433,9 @@ class Kernel : public ::KernelBase
     }
 
     void readLNCV(uint16_t moduleId, uint16_t address, uint16_t lncv, std::function<void(uint16_t, std::error_code)> callback);
+
+    size_t registerOnReceive(std::vector<std::pair<uint8_t, uint8_t>> filter, std::function<void(const LocoNet::Message&)> callback);
+    void unregisterOnReceive(size_t handle);
 
     /**
      *

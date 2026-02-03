@@ -217,7 +217,8 @@ class TraintasticHelp:
                         {'Boosters': [
                             {'Overview': 'appendix/supported-hardware/boosters/index.md'},
                             {'Digikeijs DR5033': 'appendix/supported-hardware/boosters/digikeijs-dr5033.md'},
-                            {'Uhlenblock Power 4/7/22/40/70': 'appendix/supported-hardware/boosters/uhlenbrock-power-4-7-22-40-70.md'}
+                            {'Uhlenblock Power 4/7/22/40/70': 'appendix/supported-hardware/boosters/uhlenbrock-power-4-7-22-40-70.md'},
+                            {'YaMoRC YD7403': 'appendix/supported-hardware/boosters/yamorc-yd7403.md'}
                         ]},
                         {'Product index': 'appendix/supported-hardware/product-index.md'}
                     ]},
