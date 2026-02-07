@@ -116,6 +116,7 @@ const
   ComponentsValueName = 'Components';
 var
   ComponentsPage : TWizardPage;
+  ComponentsCLI : string;
   ClientAndServerRadioButton : TRadioButton;
   ClientOnlyRadioButton : TRadioButton;
 
@@ -131,12 +132,12 @@ end;
 
 procedure RegWriteTraintasticComponents(Value: String);
 begin
-  RegWriteStringValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Value);
+  RegWriteStringValue(HKEY_LOCAL_MACHINE, ExpandConstant('{#AppSubKey}'), ComponentsValueName, Value);
 end;
 
 function RegReadTraintasticComponents: String;
 begin
-  if not RegQueryStringValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Result) then
+  if not RegQueryStringValue(HKEY_LOCAL_MACHINE, ExpandConstant('{#AppSubKey}'), ComponentsValueName, Result) then
     Result := '';
 end;
 
@@ -167,13 +168,40 @@ begin
   Result := True;
 end;
 
+function InitializeSetup: Boolean;
+var
+  I: Integer;
+  Param: string;
+begin
+  Result := True;
+
+  for I := 1 to ParamCount do begin
+    Param := ParamStr(I);
+    if CompareText(Copy(Param, 1, 12), '/Components=') = 0 then begin
+      ComponentsCLI := Copy(Param, 13, MaxInt);
+      if (ComponentsCLI <> 'ClientAndServer') and (ComponentsCLI <> 'ClientOnly') then begin
+        Log('Invalid /Components value: ' + ComponentsCLI)
+        Result := False;
+      end;
+    end;
+  end;
+end;
+
 procedure InitializeWizard;
 var
   Lbl: TLabel;
   Components: String;
 begin
-  Components := RegReadTraintasticComponents;
+  if ComponentsCLI <> '' then
+    Components := ComponentsCLI // override from CLI
+  else
+    Components := RegReadTraintasticComponents;
 
+  if (Components = '') and WizardSilent then begin
+    Log('Silent install without known Components value, defaulting to: ClientAndServer');
+    Components := 'ClientAndServer';
+  end;
+    
   ComponentsPage := CreateCustomPage(wpSelectComponents, SetupMessage(msgWizardSelectComponents), SetupMessage(msgSelectComponentsDesc));
 
   ClientAndServerRadioButton := TNewRadioButton.Create(ComponentsPage);
