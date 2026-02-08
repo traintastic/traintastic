@@ -119,6 +119,10 @@ std::filesystem::path getManualPath()
 
 std::filesystem::path getLNCVXMLPath()
 {
+  if(auto path = getEnvironmentVariableAsPath("TRAINTASTIC_LNCVXML_PATH"))
+  {
+    return *path;
+  }
 #ifdef WIN32
   return getProgramDataPath() / "traintastic" / "lncv";
 #elif defined(__linux__)
