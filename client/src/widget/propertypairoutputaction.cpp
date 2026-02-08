@@ -41,7 +41,7 @@ PropertyPairOutputAction::PropertyPairOutputAction(Property& property, QWidget* 
     {
       update(rect());
     });
-  connect(&m_property, &Property::attributeChanged,
+  connect(&m_property, &Property::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
       switch(name)
