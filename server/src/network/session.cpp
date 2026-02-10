@@ -1,9 +1,8 @@
 /**
- * server/src/network/session.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,6 +45,19 @@
 #ifdef GetObject
   #undef GetObject // GetObject is defined by a winapi header
 #endif
+
+namespace {
+
+std::pair<std::string_view, std::string_view> splitOnLastDot(std::string_view sv)
+{
+  if(const auto pos = sv.rfind('.'); pos != std::string_view::npos)
+  {
+    return {sv.substr(0, pos), sv.substr(pos + 1)};
+  }
+  return {{}, sv};
+}
+
+}
 
 Session::Session(const std::shared_ptr<ClientConnection>& connection) :
   m_connection{connection},
@@ -377,109 +389,27 @@ bool Session::processMessage(const Message& message)
       {
         if(AbstractMethod* method = object->getMethod(message.read<std::string>()); method && !method->isInternal())
         {
-          const auto resultType = message.read<ValueType>();
-          const auto argumentCount = message.read<uint8_t>();
-
-          Arguments args;
-          for(uint8_t i = 0; i < argumentCount; i++)
+          if(callMethod(message, *method))
           {
-            switch(message.read<ValueType>())
-            {
-              case ValueType::Boolean:
-                args.push_back(message.read<bool>());
-                break;
-
-              case ValueType::Enum:
-              case ValueType::Integer:
-              case ValueType::Set:
-                args.push_back(message.read<int64_t>());
-                break;
-
-              case ValueType::Float:
-                args.push_back(message.read<double>());
-                break;
-
-              case ValueType::String:
-              {
-                auto arg = message.read<std::string>();
-                if(i < method->argumentTypeInfo().size() && method->argumentTypeInfo()[i].type == ValueType::Object)
-                {
-                  if(arg.empty())
-                    args.push_back(ObjectPtr());
-                  else if(ObjectPtr obj = Traintastic::instance->world->getObjectByPath(arg))
-                    args.push_back(obj);
-                  else
-                    args.push_back(arg);
-                }
-                else
-                  args.push_back(arg);
-                break;
-              }
-              case ValueType::Object:
-                args.push_back(m_handles.getItem(message.read<Handle>()));
-                break;
-
-              default:
-                assert(false);
-                break;
-            }
+            return true;
           }
+        }
+      }
+      break;
+    }
+    case Message::Command::CallMethod:
+    {
+      const auto path = message.read<std::string_view>();
+      const auto [objectPath, methodName] = splitOnLastDot(path);
 
-          try
+      if(const auto& world = Traintastic::instance->world.value())
+      {
+        if(ObjectPtr object = world->getObjectByPath(objectPath))
+        {
+          if(AbstractMethod* method = object->getMethod(methodName); method && !method->isInternal())
           {
-            AbstractMethod::Result result = method->call(args);
-
-            if(message.isRequest())
+            if(callMethod(message, *method))
             {
-              auto response = Message::newResponse(message.command(), message.requestId());
-
-              switch(resultType)
-              {
-                case ValueType::Boolean:
-                  response->write(std::get<bool>(result));
-                  break;
-
-                case ValueType::Integer:
-                case ValueType::Enum:
-                case ValueType::Set:
-                  response->write(std::get<int64_t>(result));
-                  break;
-
-                case ValueType::Float:
-                  response->write(std::get<double>(result));
-                  break;
-
-                case ValueType::String:
-                  response->write(std::get<std::string>(result));
-                  break;
-
-                case ValueType::Object:
-                  writeObject(*response, std::get<ObjectPtr>(result));
-                  break;
-
-                case ValueType::Invalid:
-                  break;
-              }
-
-              m_connection->sendMessage(std::move(response));
-              return true;
-            }
-          }
-          catch(const LogMessageException& e)
-          {
-            if(message.isRequest())
-            {
-              m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), e.message(), e.args()));
-              return true;
-            }
-            // we can't report it back to the caller, so just log it.
-            Log::log(*object, e.message(), e.args());
-          }
-          catch(const std::exception& e)
-          {
-            if(message.isRequest())
-            {
-              m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1018_EXCEPTION_X, e.what()));
               return true;
             }
           }
@@ -778,6 +708,117 @@ bool Session::isSessionObject(const ObjectPtr& object)
 {
   assert(object);
   return dynamic_cast<ClientThrottle*>(object.get());
+}
+
+bool Session::callMethod(const Message& message, AbstractMethod& method)
+{
+  const auto resultType = message.read<ValueType>();
+  const auto argumentCount = message.read<uint8_t>();
+
+  Arguments args;
+  for(uint8_t i = 0; i < argumentCount; i++)
+  {
+    switch(message.read<ValueType>())
+    {
+      case ValueType::Boolean:
+        args.push_back(message.read<bool>());
+        break;
+
+      case ValueType::Enum:
+      case ValueType::Integer:
+      case ValueType::Set:
+        args.push_back(message.read<int64_t>());
+        break;
+
+      case ValueType::Float:
+        args.push_back(message.read<double>());
+        break;
+
+      case ValueType::String:
+      {
+        auto arg = message.read<std::string>();
+        if(i < method.argumentTypeInfo().size() && method.argumentTypeInfo()[i].type == ValueType::Object)
+        {
+          if(arg.empty())
+            args.push_back(ObjectPtr());
+          else if(ObjectPtr obj = Traintastic::instance->world->getObjectByPath(arg))
+            args.push_back(obj);
+          else
+            args.push_back(arg);
+        }
+        else
+          args.push_back(arg);
+        break;
+      }
+      case ValueType::Object:
+        args.push_back(m_handles.getItem(message.read<Handle>()));
+        break;
+
+      default:
+        assert(false);
+        break;
+    }
+  }
+
+  try
+  {
+    AbstractMethod::Result result = method.call(args);
+
+    if(message.isRequest())
+    {
+      auto response = Message::newResponse(message.command(), message.requestId());
+
+      switch(resultType)
+      {
+        case ValueType::Boolean:
+          response->write(std::get<bool>(result));
+          break;
+
+        case ValueType::Integer:
+        case ValueType::Enum:
+        case ValueType::Set:
+          response->write(std::get<int64_t>(result));
+          break;
+
+        case ValueType::Float:
+          response->write(std::get<double>(result));
+          break;
+
+        case ValueType::String:
+          response->write(std::get<std::string>(result));
+          break;
+
+        case ValueType::Object:
+          writeObject(*response, std::get<ObjectPtr>(result));
+          break;
+
+        case ValueType::Invalid:
+          break;
+      }
+
+      m_connection->sendMessage(std::move(response));
+      return true;
+    }
+  }
+  catch(const LogMessageException& e)
+  {
+    if(message.isRequest())
+    {
+      m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), e.message(), e.args()));
+      return true;
+    }
+    // we can't report it back to the caller, so just log it.
+    Log::log(method.object(), e.message(), e.args());
+  }
+  catch(const std::exception& e)
+  {
+    if(message.isRequest())
+    {
+      m_connection->sendMessage(Message::newErrorResponse(message.command(), message.requestId(), LogMessage::C1018_EXCEPTION_X, e.what()));
+      return true;
+    }
+  }
+  return false;
 }
 
 void Session::writeObject(Message& message, const ObjectPtr& object)
