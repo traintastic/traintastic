@@ -63,6 +63,7 @@
 #include "../board/list/blockrailtilelist.hpp"
 #include "../board/list/linkrailtilelist.hpp"
 #include "../board/nx/nxmanager.hpp"
+#include "../board/pathfinder/trainpathfinder.hpp"
 #include "../board/tile/rail/nxbuttonrailtile.hpp"
 
 #include "../zone/zone.hpp"
@@ -143,6 +144,7 @@ void World::init(World& world)
   world.blockRailTiles.setValueInternal(std::make_shared<BlockRailTileList>(world, world.blockRailTiles.name()));
   world.linkRailTiles.setValueInternal(std::make_shared<LinkRailTileList>(world, world.linkRailTiles.name()));
   world.nxManager.setValueInternal(std::make_shared<NXManager>(world, world.nxManager.name()));
+  world.trainPathFinder.setValueInternal(std::make_shared<TrainPathFinder>(world, world.trainPathFinder.name()));
 
   world.simulationStatus.setValueInternal(std::make_shared<SimulationStatus>(world, world.simulationStatus.name()));
 }
@@ -202,6 +204,7 @@ World::World(Private /*unused*/) :
   blockRailTiles{this, "block_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   linkRailTiles{this, "link_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   nxManager{this, "nx_manager", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  trainPathFinder{this, "train_path_finder", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   statuses(*this, "statuses", {}, PropertyFlags::ReadOnly | PropertyFlags::Store),
   hardwareThrottles{this, "hardware_throttles", 0, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::NoScript},
   state{this, "state", WorldState(), PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
@@ -435,6 +438,8 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(linkRailTiles);
   Attributes::addObjectEditor(nxManager, false);
   m_interfaceItems.add(nxManager);
+  Attributes::addObjectEditor(trainPathFinder, false);
+  m_interfaceItems.add(trainPathFinder);
 
   Attributes::addObjectEditor(statuses, false);
   m_interfaceItems.add(statuses);

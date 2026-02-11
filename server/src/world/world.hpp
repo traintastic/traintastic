@@ -56,6 +56,7 @@ class ZoneList;
 class BlockRailTileList;
 class LinkRailTileList;
 class NXManager;
+class TrainPathFinder;
 class Clock;
 class ThrottleList;
 class TrainList;
@@ -150,6 +151,7 @@ class World : public Object
     ObjectProperty<BlockRailTileList> blockRailTiles;
     ObjectProperty<LinkRailTileList> linkRailTiles;
     ObjectProperty<NXManager> nxManager;
+    ObjectProperty<TrainPathFinder> trainPathFinder;
 
     ObjectVectorProperty<Status> statuses;
     Property<uint32_t> hardwareThrottles; //<! number of connected hardware throttles

@@ -67,6 +67,7 @@ file(GLOB SOURCES
   "src/board/map/*.cpp"
   "src/board/nx/*.hpp"
   "src/board/nx/*.cpp"
+  "src/board/pathfinder/*.cpp"
   "src/board/tile/*.hpp"
   "src/board/tile/*.cpp"
   "src/board/tile/hidden/*.cpp"
