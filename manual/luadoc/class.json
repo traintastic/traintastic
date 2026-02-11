@@ -205,6 +205,10 @@
   "TRAIN_LIST": {
     "type": "constant"
   },
+  "TRAIN_PATH_FINDER": {
+    "type": "constant",
+    "since": "0.4"
+  },
   "TRAIN_ZONE_STATUS": {
     "type": "constant",
     "since": "0.3"
