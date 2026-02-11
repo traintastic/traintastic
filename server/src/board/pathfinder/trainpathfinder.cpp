@@ -23,6 +23,7 @@
 #include <traintastic/enum/blocktraindirection.hpp>
 #include "../map/blockpath.hpp"
 #include "../../core/method.tpp"
+#include "../../core/objectproperty.tpp"
 #include "../../board/tile/rail/blockrailtile.hpp"
 #include "../../train/trainblockstatus.hpp"
 
