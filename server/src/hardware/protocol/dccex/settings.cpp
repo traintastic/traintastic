@@ -37,6 +37,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   Attributes::addValues(speedSteps, speedStepValues);
   m_interfaceItems.add(speedSteps);
 
+  Attributes::addHelp(startupDelay, "dccex_settings:startup_delay/help");
   Attributes::addMinMax(startupDelay, startupDelayMin, startupDelayMax);
   m_interfaceItems.add(startupDelay);
 
