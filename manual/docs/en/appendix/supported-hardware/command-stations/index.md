@@ -23,6 +23,7 @@ For details on manual interface configuration, see the [Interface configuration]
 | Roco MultiMAUS        | XpressNet                     | Requires a XpressNet interface. |
 | Uhlenbrock Intellibox | LocoNet, Serial not supported | Requires a LocoNet interface.   |
 | Uhlenbrock IB-COM     | USB                           | -                               |
+| VPEB Dinamo           | USB                           | Track driver system             |
 
 !!! note
     All systems listed here have been verified either with the setup wizard or through manual configuration.
@@ -63,7 +64,6 @@ Supported for others has not been developed due to missing hardware.
 |-----------------|-------------------|---------------------|
 | BiDiB           | USB, Network      | -                   |
 | Selectix        | Serial            | In development      |
-| VPEB Dinamo     | Serial, USB       | Track driver system |
 
 !!! tip "Contributions are welcome!"
     Can you help improve support for these systems?

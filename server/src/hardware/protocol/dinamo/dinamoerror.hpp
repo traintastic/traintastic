@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025-2026 Reinder Feenstra
+ * Copyright (C) 2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,44 +19,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_BIT_HPP
-#define TRAINTASTIC_SERVER_UTILS_BIT_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DINAMO_DINAMOERROR_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DINAMO_DINAMOERROR_HPP
 
-#include <type_traits>
+#include <system_error>
 
-template<unsigned int N, typename T>
-requires(std::is_integral_v<T> && N < sizeof(T) * 8)
-constexpr bool getBit(T value)
+namespace Dinamo {
+
+enum class Errc
 {
-  return (value & (static_cast<T>(1) << N)) != 0;
-}
+  BufferFull = 1,
+  MessageTooLarge = 2,
+};
 
-template<unsigned int N, typename T>
-requires(std::is_integral_v<T> && N < sizeof(T) * 8)
-constexpr void clearBit(T& value)
-{
-  value &= ~(static_cast<T>(1) << N);
-}
+std::error_code makeErrorCode(Errc ec);
 
-template<unsigned int N, typename T>
-requires(std::is_integral_v<T> && N < sizeof(T) * 8)
-constexpr void setBit(T& value)
+namespace Error
 {
-  value |= (1 << N);
-}
-
-template<unsigned int N, typename T>
-requires(std::is_integral_v<T> && N < sizeof(T) * 8)
-constexpr void setBit(T& value, bool set)
-{
-  if(set)
+  inline std::error_code bufferFull()
   {
-    setBit<N>(value);
+    return makeErrorCode(Errc::BufferFull);
   }
-  else
+
+  inline std::error_code messageTooLarge()
   {
-    clearBit<N>(value);
+    return makeErrorCode(Errc::MessageTooLarge);
   }
 }
+
+}
+
+template<>
+struct std::is_error_code_enum<Dinamo::Errc> : std::true_type {};
 
 #endif

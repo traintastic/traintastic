@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025-2026 Reinder Feenstra
+ * Copyright (C) 2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,44 +19,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_BIT_HPP
-#define TRAINTASTIC_SERVER_UTILS_BIT_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DINAMO_IOHANDLER_DINAMOSIMULATIONIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DINAMO_IOHANDLER_DINAMOSIMULATIONIOHANDLER_HPP
 
-#include <type_traits>
+#include "dinamoiohandler.hpp"
+#include <memory>
 
-template<unsigned int N, typename T>
-requires(std::is_integral_v<T> && N < sizeof(T) * 8)
-constexpr bool getBit(T value)
+namespace Dinamo {
+
+class Simulator;
+
+class SimulationIOHandler final : public IOHandler
 {
-  return (value & (static_cast<T>(1) << N)) != 0;
+public:
+  SimulationIOHandler(Kernel& kernel, Simulator& simulator);
+  ~SimulationIOHandler() final;
+
+  void stop() final {}
+
+  [[nodiscard]] std::error_code send(std::span<const uint8_t> message, bool hold, bool fault) final;
+
+private:
+  Simulator& m_simulator;
+  bool m_hold = false;
+  bool m_fault = true;
+
+  void reply(std::span<const uint8_t> message, bool hold, bool fault);
+};
+
+template<>
+constexpr bool isSimulation<SimulationIOHandler>()
+{
+  return true;
 }
 
-template<unsigned int N, typename T>
-requires(std::is_integral_v<T> && N < sizeof(T) * 8)
-constexpr void clearBit(T& value)
-{
-  value &= ~(static_cast<T>(1) << N);
-}
-
-template<unsigned int N, typename T>
-requires(std::is_integral_v<T> && N < sizeof(T) * 8)
-constexpr void setBit(T& value)
-{
-  value |= (1 << N);
-}
-
-template<unsigned int N, typename T>
-requires(std::is_integral_v<T> && N < sizeof(T) * 8)
-constexpr void setBit(T& value, bool set)
-{
-  if(set)
-  {
-    setBit<N>(value);
-  }
-  else
-  {
-    clearBit<N>(value);
-  }
 }
 
 #endif
+

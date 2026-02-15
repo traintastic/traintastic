@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025-2026 Reinder Feenstra
+ * Copyright (C) 2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,44 +19,51 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_UTILS_BIT_HPP
-#define TRAINTASTIC_SERVER_UTILS_BIT_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DINAMO_DINAMOTYPES_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DINAMO_DINAMOTYPES_HPP
 
-#include <type_traits>
+#include <cstdint>
+#include <string>
+#include <string_view>
 
-template<unsigned int N, typename T>
-requires(std::is_integral_v<T> && N < sizeof(T) * 8)
-constexpr bool getBit(T value)
+namespace Dinamo {
+
+struct Version
 {
-  return (value & (static_cast<T>(1) << N)) != 0;
-}
+  uint8_t major = 0;
+  uint8_t minor = 0;
+  uint8_t subRelease = 0;
+  uint8_t bugFix = 0;
 
-template<unsigned int N, typename T>
-requires(std::is_integral_v<T> && N < sizeof(T) * 8)
-constexpr void clearBit(T& value)
-{
-  value &= ~(static_cast<T>(1) << N);
-}
+  auto operator<=>(const Version&) const = default;
 
-template<unsigned int N, typename T>
-requires(std::is_integral_v<T> && N < sizeof(T) * 8)
-constexpr void setBit(T& value)
-{
-  value |= (1 << N);
-}
+  std::string toString() const;
+};
 
-template<unsigned int N, typename T>
-requires(std::is_integral_v<T> && N < sizeof(T) * 8)
-constexpr void setBit(T& value, bool set)
+struct ProtocolVersion : Version
 {
-  if(set)
+  bool isSupported() const noexcept
   {
-    setBit<N>(value);
+    return major == 3;
   }
-  else
-  {
-    clearBit<N>(value);
-  }
+};
+
+enum class SystemType : uint8_t
+{
+  RM_H = 1,  //!< RM-H
+  RM_U = 2,  //!< RM-U
+  RM_C = 3,  //!< RM-C
+  UCCI = 10, //!< UCCI or UCCI/E
+};
+
+struct System
+{
+  SystemType type;
+  Version version;
+};
+
+std::string_view toString(SystemType type);
+
 }
 
 #endif
