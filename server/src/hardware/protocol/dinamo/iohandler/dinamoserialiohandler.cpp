@@ -39,7 +39,6 @@ constexpr uint8_t txRetryLimit = 10;
 constexpr size_t headerSize = 1;
 constexpr size_t checksumSize = 1;
 constexpr size_t minDatagramSize = headerSize + checksumSize;
-constexpr size_t maxDatagramSize = headerSize + Dinamo::IOHandler::maxMessageSize + checksumSize;
 
 constexpr uint8_t headerX012Mask = 0x07;
 constexpr uint8_t headerX34Mask = 0x30;
