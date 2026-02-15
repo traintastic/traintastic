@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/map/outputmapaspectoutputaction.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +32,7 @@ OutputMapAspectOutputAction::OutputMapAspectOutputAction(OutputMap& parent_, siz
   const bool editable = contains(world().state.value(), WorldState::Edit);
 
   Attributes::addEnabled(aspect, editable);
+  Attributes::addMinMax(aspect, std::numeric_limits<int16_t>::min(), std::numeric_limits<int16_t>::max());
   m_interfaceItems.add(aspect);
 }
 

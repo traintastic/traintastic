@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/outputcontroller.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022,2024-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -60,6 +59,7 @@ OutputType OutputController::outputType(OutputChannel channel) const
       return OutputType::Pair;
 
     case OutputChannel::DCCext:
+    case OutputChannel::OC32:
       return OutputType::Aspect;
 
     case OutputChannel::ECoSObject:
@@ -84,6 +84,7 @@ std::pair<uint32_t, uint32_t> OutputController::outputAddressMinMax(OutputChanne
     case OutputChannel::Output:
     case OutputChannel::Accessory:
     case OutputChannel::Turnout:
+    case OutputChannel::OC32:
       break;
 
     case OutputChannel::ECoSObject:
@@ -114,6 +115,7 @@ bool OutputController::isOutputId(OutputChannel channel, uint32_t id) const
     case OutputChannel::Output:
     case OutputChannel::Accessory:
     case OutputChannel::Turnout:
+    case OutputChannel::OC32:
       return inRange(id, outputAddressMinMax(channel)); // id == address
 
     case OutputChannel::ECoSObject:

@@ -390,5 +390,9 @@
     {
         "term": "loconet_command_station:uhlenbrock_intellibox_2",
         "definition": "Uhlenbrock Intellibox II"
+    },
+    {
+        "term": "output_channel:oc32",
+        "definition": "OC32"
     }
 ]

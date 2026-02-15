@@ -1,9 +1,8 @@
 /**
- * server/src/board/tile/rail/turnout/turnoutsliprailtile.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024-2025 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,13 +23,13 @@
 #include "../../../../core/attributes.hpp"
 #include "../../../../utils/category.hpp"
 
-std::optional<OutputActionValue> TurnoutSlipRailTile::getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
+std::optional<OutputActionValue> TurnoutSlipRailTile::getDefaultActionValue(TurnoutPosition turnoutPosition, OutputChannel outputChannel, OutputType outputType, size_t outputIndex)
 {
   // FIXME: implement more defaults
   switch(outputType)
   {
     case OutputType::Aspect:
-      if(outputIndex == 0)
+      if(outputChannel == OutputChannel::DCCext && outputIndex == 0)
       {
         // There is no official/defacto standard yet, until there is use values used by YaMoRC YD8116.
         switch(turnoutPosition)

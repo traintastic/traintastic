@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/map/switchoutputmap.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +21,7 @@
 
 #include "switchoutputmap.hpp"
 
-static std::optional<OutputActionValue> getDefaultActionValue(bool value, OutputType outputType, size_t outputIndex)
+static std::optional<OutputActionValue> getDefaultActionValue(bool value, OutputChannel /*outputChannel*/, OutputType outputType, size_t outputIndex)
 {
   // FIXME: implement defaults
   (void)value;

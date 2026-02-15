@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/map/outputmap.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -75,7 +74,7 @@ class OutputMap : public SubObject
     uint32_t getUnusedAddress() const;
     std::shared_ptr<OutputMapOutputAction> createOutputAction(OutputType outputType, size_t index, std::optional<OutputActionValue> actionValue);
 
-    virtual std::optional<OutputActionValue> getDefaultOutputActionValue(const OutputMapItem& item, OutputType outputType, size_t outputIndex) = 0;
+    virtual std::optional<OutputActionValue> getDefaultOutputActionValue(const OutputMapItem& item, OutputChannel outputChannel, OutputType outputType, size_t outputIndex) = 0;
 
     int getMatchingActionOnCurrentState();
 
