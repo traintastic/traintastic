@@ -1,9 +1,8 @@
 /**
- * server/src/train/traintracking.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,7 +49,8 @@ private:
   static void trainEnteredOrLeftZone(Train& train, Zone& zone);
 
 public:
-  static void assigned(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block);
+  static void assigned(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction);
+  static void flipped(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction);
   static void reserve(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction);
   static void enter(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction); // enter unreserved block
   static void enter(const std::shared_ptr<TrainBlockStatus>& blockStatus); // enter reserved block

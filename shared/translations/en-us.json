@@ -28,6 +28,10 @@
         "definition": "Unknown"
     },
     {
+        "term": "block_track_driver:invert_polarity",
+        "definition": "Invert polarity"
+    },
+    {
         "term": "board:delete_tile",
         "definition": "Delete tile"
     },
@@ -134,6 +138,10 @@
     {
         "term": "board_tile.rail.block:state",
         "definition": "State"
+    },
+    {
+        "term": "board_tile.rail.block:track_driver",
+        "definition": "Track driver"
     },
     {
         "term": "board_tile.rail.block:zones",
@@ -282,6 +290,10 @@
     {
         "term": "category:status",
         "definition": "Status"
+    },
+    {
+        "term": "category:track_driver",
+        "definition": "Track driver"
     },
     {
         "term": "category:trains",

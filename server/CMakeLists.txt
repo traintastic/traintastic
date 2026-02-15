@@ -160,6 +160,7 @@ file(GLOB SOURCES
   "src/hardware/protocol/z21/*.cpp"
   "src/hardware/protocol/z21/iohandler/*.hpp"
   "src/hardware/protocol/z21/iohandler/*.cpp"
+  "src/hardware/trackdriver/*.cpp"
   "src/log/*.hpp"
   "src/log/*.cpp"
   "src/lua/*.hpp"

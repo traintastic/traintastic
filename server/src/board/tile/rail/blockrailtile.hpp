@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2025 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,6 +39,7 @@ class Train;
 class TrainBlockStatus;
 class BlockInputMapItem;
 class BlockPath;
+class BlockTrackDriver;
 class BlockZoneList;
 
 class BlockRailTile : public RailTile
@@ -70,6 +71,7 @@ class BlockRailTile : public RailTile
 
   protected:
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
+    void worldFeaturesChanged(const WorldFeatures features, WorldFeature changed) final;
     void addToWorld() final;
     void loaded() final;
     void destroying() final;
@@ -90,6 +92,7 @@ class BlockRailTile : public RailTile
     VectorProperty<SensorState> sensorStates;
     ObjectVectorProperty<TrainBlockStatus> trains;
     ObjectProperty<BlockZoneList> zones;
+    ObjectProperty<BlockTrackDriver> trackDriver;
     Method<void(std::shared_ptr<Train>)> assignTrain;
     Method<void(std::shared_ptr<Train>)> removeTrain;
     Method<void()> flipTrain;

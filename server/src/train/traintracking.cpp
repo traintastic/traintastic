@@ -1,9 +1,8 @@
 /**
- * server/src/train/traintracking.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024-2025 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,22 +25,79 @@
 #include "../board/tile/rail/blockrailtile.hpp"
 #include "../board/map/blockpath.hpp"
 #include "../core/objectproperty.tpp"
+#include "../hardware/trackdriver/blocktrackdriver.hpp"
+#include "../hardware/trackdriver/trackdriver.hpp"
+#include "../hardware/trackdriver/trackdrivercontroller.hpp"
 #include "../zone/blockzonelist.hpp"
 #include "../world/world.hpp"
 
-void TrainTracking::assigned(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block)
+namespace {
+
+const std::shared_ptr<TrackDriver> getTrackDriver(BlockRailTile& block)
+{
+  if(block.trackDriver)
+  {
+    return block.trackDriver->trackDriver();
+  }
+  static const std::shared_ptr<TrackDriver> null;
+  return null;
+}
+
+void trackDriverTrainAdded(Train& train, BlockRailTile& block, BlockTrainDirection direction)
+{
+  if(const auto& btd = block.trackDriver.value())
+  {
+    if(const auto& td = btd->trackDriver())
+    {
+      td->interface->trackDriverTrainAdded(td->address, btd->invertPolarity, train, direction);
+    }
+  }
+}
+
+void trackDriverTrainFlipped(Train& train, BlockRailTile& block, BlockTrainDirection direction)
+{
+  if(const auto& td = getTrackDriver(block))
+  {
+    td->interface->trackDriverTrainFlipped(td->address, train, direction);
+  }
+}
+
+void trackDriverTrainRemoved(Train& train, BlockRailTile& block)
+{
+  if(const auto& td = getTrackDriver(block))
+  {
+    td->interface->trackDriverTrainRemoved(td->address, train);
+  }
+}
+
+}
+
+void TrainTracking::assigned(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction)
 {
   assert(train);
   assert(block);
+
+  trackDriverTrainAdded(*train, *block, direction);
+
   checkZoneAssigned(train, block);
   train->fireBlockAssigned(block);
   block->fireTrainAssigned(train);
+}
+
+void TrainTracking::flipped(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction)
+{
+  assert(train);
+  assert(block);
+
+  trackDriverTrainFlipped(*train, *block, direction);
 }
 
 void TrainTracking::reserve(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction)
 {
   assert(train);
   assert(block);
+
+  trackDriverTrainAdded(*train, *block, direction);
 
   checkZoneLeaving(train, block);
 
@@ -54,10 +110,13 @@ void TrainTracking::reserve(const std::shared_ptr<Train>& train, const std::shar
   block->fireTrainReserved(train, direction);
 }
 
+//! \todo rename enterSurprise()
 void TrainTracking::enter(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction)
 {
   assert(train);
   assert(block);
+
+  trackDriverTrainAdded(*train, *block, direction);
 
   checkZoneLeaving(train, block);
 
@@ -69,12 +128,15 @@ void TrainTracking::enter(const std::shared_ptr<Train>& train, const std::shared
   enter(status);
 }
 
+//! \todo rename enterReserved()
 void TrainTracking::enter(const std::shared_ptr<TrainBlockStatus>& blockStatus)
 {
   assert(blockStatus);
   const auto& train = blockStatus->train.value();
   const auto& block = blockStatus->block.value();
   const auto direction = blockStatus->direction.value();
+
+  // Block already reserved, no need to notify track driver.
 
   blockStatus->train->blocks.insertInternal(0, blockStatus); // head of train
 
@@ -108,6 +170,8 @@ void TrainTracking::left(std::shared_ptr<TrainBlockStatus> blockStatus)
   const auto& train = blockStatus->train.value();
   const auto& block = blockStatus->block.value();
   const auto direction = blockStatus->direction.value();
+
+  trackDriverTrainRemoved(*train, *block);
 
   train->blocks.removeInternal(blockStatus);
   block->trains.removeInternal(blockStatus);
@@ -148,6 +212,9 @@ void TrainTracking::removed(const std::shared_ptr<Train>& train, const std::shar
 {
   assert(train);
   assert(block);
+
+  trackDriverTrainRemoved(*train, *block);
+
   checkZoneRemoved(train, block);
   train->fireBlockRemoved(block);
   block->fireTrainRemoved(train);
