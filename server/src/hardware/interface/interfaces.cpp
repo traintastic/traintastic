@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/interfaces.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +24,7 @@
 #include "../../world/world.hpp"
 #include "../../utils/makearray.hpp"
 
+#include "cbusinterface.hpp"
 #include "dccexinterface.hpp"
 #include "ecosinterface.hpp"
 #include "hsi88.hpp"
@@ -39,6 +39,7 @@
 std::span<const std::string_view> Interfaces::classList()
 {
   static constexpr auto classes = makeArray(
+    CBUSInterface::classId,
     DCCEXInterface::classId,
     ECoSInterface::classId,
     HSI88Interface::classId,
@@ -55,6 +56,7 @@ std::span<const std::string_view> Interfaces::classList()
 
 std::shared_ptr<Interface> Interfaces::create(World& world, std::string_view classId, std::string_view id)
 {
+  IF_CLASSID_CREATE(CBUSInterface)
   IF_CLASSID_CREATE(DCCEXInterface)
   IF_CLASSID_CREATE(ECoSInterface)
   IF_CLASSID_CREATE(HSI88Interface)

@@ -19,27 +19,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_IOHANDLER_CBUSASCIIIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_IOHANDLER_CBUSASCIIIOHANDLER_HPP
 
-#include "../cbusopcode.hpp"
+#include "cbusiohandler.hpp"
+#include <array>
+#include <string>
+#include <queue>
 
 namespace CBUS {
 
-struct Message
+class ASCIIIOHandler : public IOHandler
 {
-  OpCode opCode;
-
-  constexpr uint8_t size() const
-  {
-    return sizeof(OpCode) + dataSize(opCode);
-  }
+public:
+  [[nodiscard]] std::error_code send(const Message& message) override;
 
 protected:
-  Message(OpCode opc)
-    : opCode{opc}
-  {
-  }
+  std::array<char, 1024> m_readBuffer;
+  size_t m_readBufferOffset;
+  std::queue<std::string> m_writeQueue;
+
+  ASCIIIOHandler(Kernel& kernel, uint8_t canId);
+
+  void logDropIfNonZeroAndReset(size_t& drop);
+  void processRead(std::size_t bytesTransferred);
+
+  virtual void read() = 0;
+  virtual void write() = 0;
 };
 
 }

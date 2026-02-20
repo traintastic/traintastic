@@ -19,29 +19,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_CBUS_CBUSSETTINGS_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_CBUS_CBUSSETTINGS_HPP
 
-#include "../cbusopcode.hpp"
+#include "../../../core/subobject.hpp"
+#include "../../../core/property.hpp"
+#include "../../../hardware/protocol/cbus/cbusconfig.hpp"
 
-namespace CBUS {
-
-struct Message
+class CBUSSettings final : public SubObject
 {
-  OpCode opCode;
+  CLASS_ID("cbus_settings")
 
-  constexpr uint8_t size() const
-  {
-    return sizeof(OpCode) + dataSize(opCode);
-  }
+public:
+  Property<bool> debugLogRXTX;
 
-protected:
-  Message(OpCode opc)
-    : opCode{opc}
-  {
-  }
+  CBUSSettings(Object& _parent, std::string_view parentPropertyName);
+
+  CBUS::Config config() const;
 };
-
-}
 
 #endif

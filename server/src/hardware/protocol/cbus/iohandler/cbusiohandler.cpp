@@ -19,29 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
-
-#include "../cbusopcode.hpp"
+#include "cbusiohandler.hpp"
 
 namespace CBUS {
 
-struct Message
+IOHandler::IOHandler(Kernel& kernel, uint8_t canId)
+  : m_kernel{kernel}
+  , m_canId{canId}
 {
-  OpCode opCode;
-
-  constexpr uint8_t size() const
-  {
-    return sizeof(OpCode) + dataSize(opCode);
-  }
-
-protected:
-  Message(OpCode opc)
-    : opCode{opc}
-  {
-  }
-};
-
 }
 
-#endif
+}
