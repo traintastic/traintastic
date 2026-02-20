@@ -19,28 +19,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_IOHANDLER_CBUSIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_IOHANDLER_CBUSIOHANDLER_HPP
 
-#include "../cbusopcode.hpp"
+#include <cstdint>
+#include <system_error>
 
 namespace CBUS {
 
-struct Message
-{
-  OpCode opCode;
+class Kernel;
+struct Message;
 
-  constexpr uint8_t size() const
-  {
-    return sizeof(OpCode) + dataSize(opCode);
-  }
+class IOHandler
+{
+public:
+  IOHandler(const IOHandler&) = delete;
+  IOHandler& operator =(const IOHandler&) = delete;
+
+  virtual ~IOHandler() = default;
+
+  virtual void start() = 0;
+  virtual void stop() = 0;
+
+  [[nodiscard]] virtual std::error_code send(const Message& message) = 0;
 
 protected:
-  Message(OpCode opc)
-    : opCode{opc}
-  {
-  }
+  Kernel& m_kernel;
+  const uint8_t m_canId;
+
+  IOHandler(Kernel& kernel, uint8_t canId);
 };
+
+template<class T>
+constexpr bool isSimulation()
+{
+  return false;
+}
 
 }
 

@@ -167,6 +167,11 @@ enum class OpCode : uint8_t
   EXTC6  = 0xFF, //!< Extended op-code with 6 data bytes
 };
 
+constexpr uint8_t dataSize(OpCode opc)
+{
+  return static_cast<uint8_t>(opc) >> 5; // highest 3 bits determine data length
+}
+
 }
 
 #endif

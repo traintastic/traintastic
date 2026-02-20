@@ -27,13 +27,15 @@
 
 namespace CBUS {
 
+struct Message;
+
 constexpr std::string_view toString(OpCode opCode)
 {
   switch(opCode)
   {
     using enum OpCode;
 
-    // 00-1F – 0 data bytes packets:
+    // 00-1F – 0 data byte packets:
     case ACK: return "ACK";
     case NAK: return "NAK";
     case HLT: return "HLT";
@@ -170,6 +172,8 @@ constexpr std::string_view toString(OpCode opCode)
   }
   return {};
 }
+
+std::string toString(const Message& message);
 
 }
 

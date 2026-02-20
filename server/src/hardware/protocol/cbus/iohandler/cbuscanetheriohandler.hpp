@@ -19,27 +19,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_IOHANDLER_CBUSCANETHERIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_IOHANDLER_CBUSCANETHERIOHANDLER_HPP
 
-#include "../cbusopcode.hpp"
+#include "cbusasciiiohandler.hpp"
+#include <boost/asio/ip/tcp.hpp>
 
 namespace CBUS {
 
-struct Message
+class CANEtherIOHandler final : public ASCIIIOHandler
 {
-  OpCode opCode;
+public:
+  CANEtherIOHandler(Kernel& kernel, std::string hostname, uint16_t port);
 
-  constexpr uint8_t size() const
-  {
-    return sizeof(OpCode) + dataSize(opCode);
-  }
+  void start() final;
+  void stop() final;
 
 protected:
-  Message(OpCode opc)
-    : opCode{opc}
-  {
-  }
+  void read() final;
+  void write() final;
+
+private:
+  static constexpr uint8_t canId = 0x7D; //!< CANEther fixed CAN_ID
+
+  const std::string m_hostname;
+  const uint16_t m_port;
+  boost::asio::ip::tcp::socket m_socket;
+  boost::asio::ip::tcp::endpoint m_endpoint;
+  bool m_connected = false;
 };
 
 }

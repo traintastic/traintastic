@@ -1,5 +1,9 @@
 [
     {
+        "term": "class_id:interface.cbus",
+        "definition": "CBUS/VLCB"
+    },
+    {
         "term": "class_id:interface.dccex",
         "definition": "DCC-EX"
     },

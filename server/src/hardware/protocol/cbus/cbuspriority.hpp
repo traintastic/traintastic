@@ -19,27 +19,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSPRIORITY_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSPRIORITY_HPP
 
-#include "../cbusopcode.hpp"
+#include <cstdint>
 
 namespace CBUS {
 
-struct Message
+enum class MajorPriority : uint8_t
 {
-  OpCode opCode;
+  Highest = 0b00,
+  Next = 0b01,
+  Lowest = 0b10,
+};
 
-  constexpr uint8_t size() const
-  {
-    return sizeof(OpCode) + dataSize(opCode);
-  }
-
-protected:
-  Message(OpCode opc)
-    : opCode{opc}
-  {
-  }
+enum class MinorPriority : uint8_t
+{
+  High = 0b00,
+  AboveNormal = 0b01,
+  Normal = 0b10,
+  Low = 0b11,
 };
 
 }

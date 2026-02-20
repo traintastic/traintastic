@@ -19,27 +19,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_IOHANDLER_CBUSCANUSBIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_IOHANDLER_CBUSCANUSBIOHANDLER_HPP
 
-#include "../cbusopcode.hpp"
+#include "cbusasciiiohandler.hpp"
+#include <boost/asio/serial_port.hpp>
 
 namespace CBUS {
 
-struct Message
+class CANUSBIOHandler final : public ASCIIIOHandler
 {
-  OpCode opCode;
+public:
+  CANUSBIOHandler(Kernel& kernel, const std::string& device);
+  ~CANUSBIOHandler() final;
 
-  constexpr uint8_t size() const
-  {
-    return sizeof(OpCode) + dataSize(opCode);
-  }
+  void start() final;
+  void stop() final;
 
 protected:
-  Message(OpCode opc)
-    : opCode{opc}
-  {
-  }
+  void read() final;
+  void write() final;
+
+private:
+  static constexpr uint8_t canId = 0x7C; //!< CANUSB fixed CAN_ID
+
+  boost::asio::serial_port m_serialPort;
 };
 
 }

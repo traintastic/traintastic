@@ -19,29 +19,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_MESSAGES_CBUSMESSAGE_HPP
+#include "cbussettings.hpp"
+#include "../../../core/attributes.hpp"
+#include "../../../utils/displayname.hpp"
 
-#include "../cbusopcode.hpp"
-
-namespace CBUS {
-
-struct Message
+CBUSSettings::CBUSSettings(Object& _parent, std::string_view parentPropertyName)
+  : SubObject(_parent, parentPropertyName)
+  , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
-  OpCode opCode;
-
-  constexpr uint8_t size() const
-  {
-    return sizeof(OpCode) + dataSize(opCode);
-  }
-
-protected:
-  Message(OpCode opc)
-    : opCode{opc}
-  {
-  }
-};
-
+  Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
+  //Attributes::addGroup(debugLogRXTX, Group::debug);
+  m_interfaceItems.add(debugLogRXTX);
 }
 
-#endif
+CBUS::Config CBUSSettings::config() const
+{
+  return CBUS::Config{
+    .debugLogRXTX = debugLogRXTX,
+  };
+}
