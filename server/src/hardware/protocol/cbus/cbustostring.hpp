@@ -22,6 +22,7 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSTOSTRING_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSTOSTRING_HPP
 
+#include <string>
 #include <string_view>
 #include "cbusopcode.hpp"
 
