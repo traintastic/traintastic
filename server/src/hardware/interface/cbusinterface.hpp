@@ -30,7 +30,7 @@ class CBUSSettings;
 
 namespace CBUS {
 class Kernel;
-class Simulator {};
+class Simulator;
 }
 
 /**
@@ -52,6 +52,17 @@ public:
 
   CBUSInterface(World& world, std::string_view _id);
   ~CBUSInterface() final;
+
+  //! \brief Send CBUS/VLCB message
+  //! \param[in] message CBUS/VLCB message bytes, 1..8 bytes.
+  //! \return \c true if send, \c false otherwise.
+  bool send(std::vector<uint8_t> message);
+
+  //! \brief Send DCC packet
+  //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 6.
+  //! \param[in] repeat DCC packet repeat count 0..7
+  //! \return \c true if send, \c false otherwise.
+  bool sendDCC(std::vector<uint8_t> dccPacket, uint8_t repeat);
 
 protected:
   void addToWorld() final;

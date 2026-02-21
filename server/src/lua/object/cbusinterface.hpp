@@ -19,11 +19,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSMESSAGES_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSMESSAGES_HPP
+#ifndef TRAINTASTIC_SERVER_LUA_OBJECT_CBUSINTERFACE_HPP
+#define TRAINTASTIC_SERVER_LUA_OBJECT_CBUSINTERFACE_HPP
 
-#include "messages/cbusenginemessages.hpp"
-#include "messages/cbusgeneralmessages.hpp"
-#include "messages/cbusrequestdccpacketmessage.hpp"
+#include <lua.hpp>
+#include "../../hardware/interface/cbusinterface.hpp"
+
+namespace Lua::Object {
+
+class CBUSInterface
+{
+private:
+  static int __index(lua_State* L);
+
+  static int send(lua_State* L);
+  static int send_dcc(lua_State* L);
+
+public:
+  static constexpr char const* metaTableName = "object.interface.cbus";
+
+  static void registerType(lua_State* L);
+
+  static int index(lua_State* L, ::CBUSInterface& object);
+};
+
+}
 
 #endif

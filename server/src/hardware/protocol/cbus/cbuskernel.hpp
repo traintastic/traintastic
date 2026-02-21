@@ -89,6 +89,9 @@ public:
   void trackOn();
   void requestEmergencyStop();
 
+  bool send(std::vector<uint8_t> message);
+  bool sendDCC(std::vector<uint8_t> dccPacket, uint8_t repeat);
+
 private:
   std::unique_ptr<IOHandler> m_ioHandler;
   const bool m_simulation;
