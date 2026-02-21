@@ -221,6 +221,7 @@ class TraintasticHelp:
                         ]},
                         {'Product index': 'appendix/supported-hardware/product-index.md'}
                     ]},
+                    {'CBUS/VLCB reference': 'appendix/cbus-vlcb.md'},
                     {'LocoNet reference': 'appendix/loconet.md'},
                     {'XpressNet reference': 'appendix/xpressnet.md'},
                     {'Lua scripting reference': lua_ref},

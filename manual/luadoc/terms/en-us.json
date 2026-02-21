@@ -3190,5 +3190,58 @@
   {
     "term": "object.category.signals:title",
     "definition": "Signals"
+  },
+  {
+    "term": "object.cbusinterface:title",
+    "definition": "CBUS/VLCB interface"
+  },
+  {
+    "term": "object.cbusinterface:description",
+    "definition": "Interface for communicating with a CBUS/VLCB network."
+  },
+  {
+    "term": "object.cbusinterface.send_dcc:description",
+    "definition": "Request the command station to send a DCC packet to the track (`RDCCn`)."
+  },
+  {
+    "term": "object.cbusinterface.send_dcc.parameter.dcc_packet:description",
+    "definition": "Table containing two to five DCC packet bytes to send excluding checksum byte."
+  },
+  {
+    "term": "object.cbusinterface.send_dcc.parameter.repeat:description",
+    "definition": "Number of times to repeat the packet on the track. (1...255)"
+  },
+  {
+    "term": "object.cbusinterface.send_dcc:return_values",
+    "definition": "`true` if send, `false` otherwise."
+  },
+  {
+    "term": "object.cbusinterface.send_dcc.warning:title",
+    "definition": "Use this with caution!"
+  },
+  {
+    "term": "object.cbusinterface.send_dcc.warning:description",
+    "definition": "These messages bypass Traintastic’s normal handling. You need a solid understanding of DCC to avoid conflicts. Side effects may occur that Traintastic is not aware of or cannot manage."
+  },
+
+  {
+    "term": "object.cbusinterface.send:description",
+    "definition": "Send CBUS/VLCB message."
+  },
+  {
+    "term": "object.cbusinterface.send.parameter.message:description",
+    "definition": "CBUS/VLCB message bytes. (1...8)"
+  },
+  {
+    "term": "object.cbusinterface.send:return_values",
+    "definition": "`true` if send, `false` otherwise."
+  },
+  {
+    "term": "object.cbusinterface.send.warning:title",
+    "definition": "Use this with caution!"
+  },
+  {
+    "term": "object.cbusinterface.send.warning:description",
+    "definition": "These messages bypass Traintastic’s normal handling. You need a solid understanding of CBUS/VLCB to avoid conflicts. Side effects may occur that Traintastic is not aware of or cannot manage."
   }
 ]

@@ -106,6 +106,9 @@
   "CLOCK": {
     "type": "constant"
   },
+  "CBUS_INTERFACE": {
+    "type": "constant"
+  },
   "DCCEX_INTERFACE": {
     "type": "constant"
   },

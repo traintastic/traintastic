@@ -36,6 +36,10 @@
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 
+namespace CBUS {
+class Simulator{};
+}
+
 CREATE_IMPL(CBUSInterface)
 
 CBUSInterface::CBUSInterface(World& world, std::string_view _id)
@@ -87,6 +91,24 @@ CBUSInterface::CBUSInterface(World& world, std::string_view _id)
 }
 
 CBUSInterface::~CBUSInterface() = default;
+
+bool CBUSInterface::send(std::vector<uint8_t> message)
+{
+  if(m_kernel)
+  {
+    return m_kernel->send(std::move(message));
+  }
+  return false;
+}
+
+bool CBUSInterface::sendDCC(std::vector<uint8_t> dccPacket, uint8_t repeat)
+{
+  if(m_kernel)
+  {
+    return m_kernel->sendDCC(std::move(dccPacket), repeat);
+  }
+  return false;
+}
 
 void CBUSInterface::addToWorld()
 {

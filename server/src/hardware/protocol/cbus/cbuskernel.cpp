@@ -25,9 +25,11 @@
 /*
 #include "simulator/cbussimulator.hpp"
 */
+#include "../dcc/dcc.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
+#include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
 
 namespace CBUS {
@@ -189,6 +191,65 @@ void Kernel::requestEmergencyStop()
     {
       send(RequestEmergencyStop());
     });
+}
+
+bool Kernel::send(std::vector<uint8_t> message)
+{
+  assert(isEventLoopThread());
+
+  if(!inRange<size_t>(message.size(), 1, 8))
+  {
+    return false;
+  }
+
+  m_ioContext.post(
+    [this, msg=std::move(message)]()
+    {
+      send(*reinterpret_cast<const Message*>(msg.data()));
+    });
+
+  return true;
+}
+
+bool Kernel::sendDCC(std::vector<uint8_t> dccPacket, uint8_t repeat)
+{
+  assert(isEventLoopThread());
+
+  if(!inRange<size_t>(dccPacket.size(), 2, 5) || repeat == 0)
+  {
+    return false;
+  }
+
+  dccPacket.emplace_back(DCC::calcChecksum(dccPacket));
+
+  m_ioContext.post(
+    [this, packet=std::move(dccPacket), repeat]()
+    {
+      switch(packet.size())
+      {
+        case 3:
+          send(RequestDCCPacket<3>(packet, repeat));
+          break;
+
+        case 4:
+          send(RequestDCCPacket<4>(packet, repeat));
+          break;
+
+        case 5:
+          send(RequestDCCPacket<5>(packet, repeat));
+          break;
+
+        case 6:
+          send(RequestDCCPacket<6>(packet, repeat));
+          break;
+
+        default: [[unlikely]]
+          assert(false);
+          break;
+      }
+    });
+
+  return true;
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
