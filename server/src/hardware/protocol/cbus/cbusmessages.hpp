@@ -22,6 +22,8 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSMESSAGES_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSMESSAGES_HPP
 
+#include "messages/cbusaccessorymessages.hpp"
+#include "messages/cbusaccessoryshortmessages.hpp"
 #include "messages/cbusenginemessages.hpp"
 #include "messages/cbusgeneralmessages.hpp"
 #include "messages/cbusrequestdccpacketmessage.hpp"
