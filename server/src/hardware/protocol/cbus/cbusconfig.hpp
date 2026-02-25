@@ -26,6 +26,8 @@ namespace CBUS {
 
 struct Config
 {
+  static constexpr uint16_t nodeId = 0xFFFC; //!< CANUSB fixed node id
+
   bool debugLogRXTX;
 };
 

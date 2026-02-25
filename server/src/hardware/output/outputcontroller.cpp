@@ -52,6 +52,8 @@ OutputType OutputController::outputType(OutputChannel channel) const
   {
     case OutputChannel::Output:
     case OutputChannel::Turnout:
+    case OutputChannel::CBUSAccessory:
+    case OutputChannel::CBUSAccessoryShort:
       return OutputType::Single;
 
     case OutputChannel::Accessory:
@@ -84,6 +86,8 @@ std::pair<uint32_t, uint32_t> OutputController::outputAddressMinMax(OutputChanne
     case OutputChannel::Output:
     case OutputChannel::Accessory:
     case OutputChannel::Turnout:
+    case OutputChannel::CBUSAccessory:
+    case OutputChannel::CBUSAccessoryShort:
       break;
 
     case OutputChannel::ECoSObject:
@@ -114,6 +118,8 @@ bool OutputController::isOutputId(OutputChannel channel, uint32_t id) const
     case OutputChannel::Output:
     case OutputChannel::Accessory:
     case OutputChannel::Turnout:
+    case OutputChannel::CBUSAccessory:
+    case OutputChannel::CBUSAccessoryShort:
       return inRange(id, outputAddressMinMax(channel)); // id == address
 
     case OutputChannel::ECoSObject:
