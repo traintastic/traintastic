@@ -206,20 +206,15 @@ std::string toString(const Message& message)
       break;
 
     case ACON:
-      break;
-
     case ACOF:
-      break;
-
     case AREQ:
-      break;
-
     case ARON:
-      break;
-
     case AROF:
+    {
+      const auto& m = static_cast<const AccessoryRequestEvent&>(message); // same memory layout, only opcode is different
+      s.append(std::format(" node={} event={}", m.nodeNumber(), m.eventNumber()));
       break;
-
+    }
     case EVULN:
       break;
 
@@ -230,24 +225,19 @@ std::string toString(const Message& message)
       break;
 
     case ASON:
-      break;
-
     case ASOF:
-      break;
-
     case ASRQ:
+    case ARSON:
+    case ARSOF:
+    {
+      const auto& m = static_cast<const AccessoryShortRequestEvent&>(message); // same memory layout, only opcode is different
+      s.append(std::format(" node={} device={}", m.nodeNumber(), m.deviceNumber()));
       break;
-
+    }
     case PARAN:
       break;
 
     case REVAL:
-      break;
-
-    case ARSON:
-      break;
-
-    case ARSOF:
       break;
 
     case EXTC3:
