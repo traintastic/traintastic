@@ -193,6 +193,42 @@ void Kernel::requestEmergencyStop()
     });
 }
 
+void Kernel::setAccessoryShort(uint16_t deviceNumber, bool on)
+{
+  assert(isEventLoopThread());
+
+  m_ioContext.post(
+    [this, deviceNumber, on]()
+    {
+      if(on)
+      {
+        send(AccessoryShortOn(Config::nodeId, deviceNumber));
+      }
+      else
+      {
+        send(AccessoryShortOff(Config::nodeId, deviceNumber));
+      }
+    });
+}
+
+void Kernel::setAccessory(uint16_t eventNumber, bool on)
+{
+  assert(isEventLoopThread());
+
+  m_ioContext.post(
+    [this, eventNumber, on]()
+    {
+      if(on)
+      {
+        send(AccessoryOn(Config::nodeId, eventNumber));
+      }
+      else
+      {
+        send(AccessoryOff(Config::nodeId, eventNumber));
+      }
+    });
+}
+
 bool Kernel::send(std::vector<uint8_t> message)
 {
   assert(isEventLoopThread());

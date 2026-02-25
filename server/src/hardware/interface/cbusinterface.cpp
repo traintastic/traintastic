@@ -21,6 +21,7 @@
 
 #include "cbusinterface.hpp"
 #include "cbus/cbussettings.hpp"
+#include "../output/list/outputlist.hpp"
 #include "../protocol/cbus/cbuskernel.hpp"
 #include "../protocol/cbus/iohandler/cbuscanusbiohandler.hpp"
 #include "../protocol/cbus/iohandler/cbuscanetheriohandler.hpp"
@@ -36,6 +37,8 @@
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 
+constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
+
 namespace CBUS {
 class Simulator{};
 }
@@ -44,6 +47,7 @@ CREATE_IMPL(CBUSInterface)
 
 CBUSInterface::CBUSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , OutputController(static_cast<IdObject&>(*this))
   , type{this, "type", CBUSInterfaceType::CANUSB, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](CBUSInterfaceType /*value*/)
       {
@@ -78,6 +82,8 @@ CBUSInterface::CBUSInterface(World& world, std::string_view _id)
 
   m_interfaceItems.insertBefore(cbus, notes);
 
+  m_interfaceItems.insertBefore(outputs, notes);
+
   m_cbusPropertyChanged = cbus->propertyChanged.connect(
     [this](BaseProperty& /*property*/)
     {
@@ -110,9 +116,64 @@ bool CBUSInterface::sendDCC(std::vector<uint8_t> dccPacket, uint8_t repeat)
   return false;
 }
 
+std::span<const OutputChannel> CBUSInterface::outputChannels() const
+{
+  static const std::array<OutputChannel, 2> channels{
+    OutputChannel::CBUSAccessoryShort,
+    OutputChannel::CBUSAccessory,
+    //OutputChannel::AccessoryDCC,
+    //OutputChannel::DCCext,
+  };
+  return channels;
+}
+
+std::pair<uint32_t, uint32_t> CBUSInterface::outputAddressMinMax(OutputChannel channel) const
+{
+  switch(channel)
+  {
+    case OutputChannel::CBUSAccessory:
+    case OutputChannel::CBUSAccessoryShort:
+      return {std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint16_t>::max()};
+
+    default:
+      return OutputController::outputAddressMinMax(channel);
+  }
+}
+
+bool CBUSInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+{
+  if(m_kernel)
+  {
+    switch(channel)
+    {
+      case OutputChannel::CBUSAccessoryShort:
+        if(auto v = std::get<TriState>(value); v != TriState::Undefined)
+        {
+          m_kernel->setAccessoryShort(static_cast<uint16_t>(address), v == TriState::True);
+          return true;
+        }
+        break;
+
+      case OutputChannel::CBUSAccessory:
+        if(auto v = std::get<TriState>(value); v != TriState::Undefined)
+        {
+          m_kernel->setAccessory(static_cast<uint16_t>(address), v == TriState::True);
+          return true;
+        }
+        break;
+
+      default: [[unlikely]]
+        assert(false);
+        break;
+    }
+  }
+  return false;
+}
+
 void CBUSInterface::addToWorld()
 {
   Interface::addToWorld();
+  OutputController::addToWorld(outputListColumns);
 }
 
 void CBUSInterface::loaded()
@@ -125,6 +186,7 @@ void CBUSInterface::loaded()
 void CBUSInterface::destroying()
 {
   m_cbusPropertyChanged.disconnect();
+  OutputController::destroying();
   Interface::destroying();
 }
 

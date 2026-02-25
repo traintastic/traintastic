@@ -23,6 +23,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_CBUSINTERFACE_HPP
 
 #include "interface.hpp"
+#include "../output/outputcontroller.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include <traintastic/enum/cbusinterfacetype.hpp>
 
@@ -38,6 +39,7 @@ class Simulator;
  */
 class CBUSInterface final
   : public Interface
+  , public OutputController
 {
   CLASS_ID("interface.cbus")
   DEFAULT_ID("cbus")
@@ -63,6 +65,11 @@ public:
   //! \param[in] repeat DCC packet repeat count 0..7
   //! \return \c true if send, \c false otherwise.
   bool sendDCC(std::vector<uint8_t> dccPacket, uint8_t repeat);
+
+  // OutputController:
+  std::span<const OutputChannel> outputChannels() const final;
+  std::pair<uint32_t, uint32_t> outputAddressMinMax(OutputChannel channel) const final;
+  [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t address, OutputValue value) final;
 
 protected:
   void addToWorld() final;

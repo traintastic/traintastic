@@ -1,9 +1,8 @@
 /**
- * shared/src/traintastic/enum/outputchannel.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,9 +35,11 @@ enum class OutputChannel : uint16_t
   DCCext = 5, //!< DCCext, see RCN-213
   Turnout = 6, //!< DCC-EX turnout
   ECoSObject = 7, //!< ECoS switch object
+  CBUSAccessory = 9,
+  CBUSAccessoryShort = 10,
 };
 
-TRAINTASTIC_ENUM(OutputChannel, "output_channel", 7,
+TRAINTASTIC_ENUM(OutputChannel, "output_channel", 9,
 {
   {OutputChannel::Output, "output"},
   {OutputChannel::Accessory, "accessory"},
@@ -47,9 +48,11 @@ TRAINTASTIC_ENUM(OutputChannel, "output_channel", 7,
   {OutputChannel::DCCext, "dcc_ext"},
   {OutputChannel::Turnout, "turnout"},
   {OutputChannel::ECoSObject, "ecos_object"},
+  {OutputChannel::CBUSAccessory, "cbus_accessory"},
+  {OutputChannel::CBUSAccessoryShort, "cbus_accessory_short"},
 });
 
-inline constexpr std::array<OutputChannel, 7> outputChannelValues{{
+inline constexpr std::array<OutputChannel, 9> outputChannelValues{{
   OutputChannel::Output,
   OutputChannel::Accessory,
   OutputChannel::AccessoryDCC,
@@ -57,6 +60,8 @@ inline constexpr std::array<OutputChannel, 7> outputChannelValues{{
   OutputChannel::DCCext,
   OutputChannel::Turnout,
   OutputChannel::ECoSObject,
+  OutputChannel::CBUSAccessory,
+  OutputChannel::CBUSAccessoryShort,
 }};
 
 constexpr bool isAccessory(OutputChannel value)
