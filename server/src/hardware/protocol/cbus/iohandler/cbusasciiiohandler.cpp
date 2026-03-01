@@ -50,7 +50,8 @@ std::string buildFrame(CBUS::MajorPriority majorPriority, CBUS::MinorPriority mi
 namespace CBUS {
 
 ASCIIIOHandler::ASCIIIOHandler(Kernel& kernel, uint8_t canId)
-  : IOHandler(kernel, canId)
+  : IOHandler(kernel)
+  , m_canId{canId}
 {
 }
 

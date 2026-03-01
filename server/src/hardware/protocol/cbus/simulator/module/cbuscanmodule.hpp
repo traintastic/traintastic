@@ -19,13 +19,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "cbusiohandler.hpp"
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_SIMULATOR_MODULE_CBUSCANMODULE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_SIMULATOR_MODULE_CBUSCANMODULE_HPP
 
-namespace CBUS {
+#include "../../messages/cbusmessage.hpp"
+#include <functional>
 
-IOHandler::IOHandler(Kernel& kernel)
-  : m_kernel{kernel}
+namespace CBUS
 {
+  class Simulator;
 }
 
+namespace CBUS::Module {
+
+class CANModule
+{
+public:
+  const uint16_t nodeNumber;
+  const uint8_t canId;
+
+  CANModule(Simulator& simulator, uint16_t nodeNumber_, uint8_t canId_);
+
+  virtual void receive(const Message& message) = 0;
+
+protected:
+  void send(const Message& message);
+
+private:
+  Simulator& m_simulator;
+};
+
 }
+
+#endif

@@ -19,13 +19,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "cbusiohandler.hpp"
+#include "cbuscanmodule.hpp"
+#include "../cbussimulator.hpp"
 
-namespace CBUS {
+namespace CBUS::Module {
 
-IOHandler::IOHandler(Kernel& kernel)
-  : m_kernel{kernel}
+CANModule::CANModule(Simulator& simulator, uint16_t nodeNumber_, uint8_t canId_)
+  : nodeNumber{nodeNumber_}
+  , canId{canId_}
+  , m_simulator{simulator}
 {
+}
+
+void CANModule::send(const Message& message)
+{
+  m_simulator.onSend(canId, message);
 }
 
 }

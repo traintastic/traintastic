@@ -22,9 +22,7 @@
 #include "cbuskernel.hpp"
 #include "cbusmessages.hpp"
 #include "cbustostring.hpp"
-/*
 #include "simulator/cbussimulator.hpp"
-*/
 #include "../dcc/dcc.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
