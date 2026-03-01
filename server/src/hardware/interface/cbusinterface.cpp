@@ -25,9 +25,9 @@
 #include "../protocol/cbus/cbuskernel.hpp"
 #include "../protocol/cbus/iohandler/cbuscanusbiohandler.hpp"
 #include "../protocol/cbus/iohandler/cbuscanetheriohandler.hpp"
-/*
+#include "../protocol/cbus/iohandler/cbussimulationiohandler.hpp"
 #include "../protocol/cbus/simulator/cbussimulator.hpp"
-*/
+#include "../protocol/cbus/simulator/module/cbuscancmd.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../core/method.tpp"
@@ -38,10 +38,6 @@
 #include "../../world/world.hpp"
 
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
-
-namespace CBUS {
-class Simulator{};
-}
 
 CREATE_IMPL(CBUSInterface)
 
@@ -235,15 +231,13 @@ bool CBUSInterface::setOnline(bool& value, bool simulation)
   {
     try
     {
-      (void)simulation; // silence warning until simulation is added
-      /* TODO: simulation support
       if(simulation)
       {
         m_simulator = std::make_unique<CBUS::Simulator>();
+        m_simulator->addModule(std::make_unique<CBUS::Module::CANCMD>(*m_simulator));
         m_kernel = CBUS::Kernel::create<CBUS::SimulationIOHandler>(id.value(), cbus->config(), std::ref(*m_simulator));
       }
       else
-      */
       {
         switch(type)
         {
@@ -299,9 +293,7 @@ bool CBUSInterface::setOnline(bool& value, bool simulation)
   {
     m_kernel->stop();
     EventLoop::deleteLater(m_kernel.release());
-    /*
     EventLoop::deleteLater(m_simulator.release());
-    */
 
     if(status->state != InterfaceState::Error)
     {

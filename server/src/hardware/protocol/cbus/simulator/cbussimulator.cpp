@@ -19,13 +19,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "cbusiohandler.hpp"
+#include "cbussimulator.hpp"
+#include <algorithm>
 
-namespace CBUS {
-
-IOHandler::IOHandler(Kernel& kernel)
-  : m_kernel{kernel}
+namespace CBUS
 {
+
+Simulator::Simulator()
+{
+}
+
+bool Simulator::addModule(std::unique_ptr<Module::CANModule> module)
+{
+  if(!module || std::find_if(m_modules.begin(), m_modules.end(),
+    [nodeNumber=module->nodeNumber, canId=module->canId](const auto& m)
+    {
+      return (m->nodeNumber == nodeNumber) || (m->canId == canId);
+    }) != m_modules.end())
+  {
+    return false;
+  }
+  m_modules.emplace_back(std::move(module));
+  return true;
+}
+
+void Simulator::receive(const Message& message)
+{
+  for(const auto& module : m_modules)
+  {
+    module->receive(message);
+  }
 }
 
 }

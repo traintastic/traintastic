@@ -19,13 +19,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "cbusiohandler.hpp"
+#include "cbussimulationiohandler.hpp"
+#include "../cbuskernel.hpp"
+#include "../simulator/cbussimulator.hpp"
 
 namespace CBUS {
 
-IOHandler::IOHandler(Kernel& kernel)
-  : m_kernel{kernel}
+SimulationIOHandler::SimulationIOHandler(Kernel& kernel, Simulator& simulator)
+  : IOHandler(kernel)
+  , m_simulator{simulator}
 {
+  m_simulator.onSend = std::bind_front(&Kernel::receive, &kernel);
+}
+
+SimulationIOHandler::~SimulationIOHandler() = default;
+
+void SimulationIOHandler::start()
+{
+  m_kernel.started();
+}
+
+void SimulationIOHandler::stop()
+{
+}
+
+std::error_code SimulationIOHandler::send(const Message& message)
+{
+  m_simulator.receive(message);
+  return {};
 }
 
 }

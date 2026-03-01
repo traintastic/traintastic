@@ -35,6 +35,7 @@ public:
   [[nodiscard]] std::error_code send(const Message& message) override;
 
 protected:
+  const uint8_t m_canId;
   std::array<char, 1024> m_readBuffer;
   size_t m_readBufferOffset;
   std::queue<std::string> m_writeQueue;

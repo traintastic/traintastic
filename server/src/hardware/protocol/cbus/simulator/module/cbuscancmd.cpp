@@ -19,13 +19,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "cbusiohandler.hpp"
+#include "cbuscancmd.hpp"
+#include "../../cbusmessages.hpp"
 
-namespace CBUS {
+namespace CBUS::Module {
 
-IOHandler::IOHandler(Kernel& kernel)
-  : m_kernel{kernel}
+CANCMD::CANCMD(Simulator& simulator, uint16_t nodeNumber_, uint8_t canId_)
+  : CANModule(simulator, nodeNumber_, canId_)
 {
+}
+
+void CANCMD::receive(const Message& message)
+{
+  switch(message.opCode)
+  {
+    using enum OpCode;
+
+    case RTOF:
+      m_trackOn = false;
+      send(TrackOff());
+      break;
+
+    case RTON:
+      m_trackOn = true;
+      send(TrackOn());
+      break;
+
+    default:
+      break;
+  }
 }
 
 }

@@ -45,9 +45,8 @@ public:
 
 protected:
   Kernel& m_kernel;
-  const uint8_t m_canId;
 
-  IOHandler(Kernel& kernel, uint8_t canId);
+  IOHandler(Kernel& kernel);
 };
 
 template<class T>

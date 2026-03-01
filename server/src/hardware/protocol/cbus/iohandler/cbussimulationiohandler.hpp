@@ -19,13 +19,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_IOHANDLER_CBUSSIMULATIONIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_IOHANDLER_CBUSSIMULATIONIOHANDLER_HPP
+
 #include "cbusiohandler.hpp"
+#include <memory>
 
 namespace CBUS {
 
-IOHandler::IOHandler(Kernel& kernel)
-  : m_kernel{kernel}
+class Simulator;
+
+class SimulationIOHandler final : public IOHandler
 {
+  friend class Simulator;
+
+public:
+  SimulationIOHandler(Kernel& kernel, Simulator& simulator);
+  ~SimulationIOHandler() final;
+
+  void start() final;
+  void stop() final;
+
+  [[nodiscard]] std::error_code send(const Message& message) final;
+
+private:
+  Simulator& m_simulator;
+
+  void reply(uint8_t canId, const Message& message);
+};
+
+template<>
+constexpr bool isSimulation<SimulationIOHandler>()
+{
+  return true;
 }
 
 }
+
+#endif
