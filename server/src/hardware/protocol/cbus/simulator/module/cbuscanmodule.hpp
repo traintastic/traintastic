@@ -39,6 +39,7 @@ public:
   const uint8_t canId;
 
   CANModule(Simulator& simulator, uint16_t nodeNumber_, uint8_t canId_);
+  virtual ~CANModule() = default;
 
   virtual void receive(const Message& message) = 0;
 
