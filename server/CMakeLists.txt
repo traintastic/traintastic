@@ -250,6 +250,8 @@ if(NO_LOCALHOST_ONLY_SETTING)
   add_definitions(-DNO_LOCALHOST_ONLY_SETTING)
 endif()
 
+option(USE_NOSTD_FORMAT "Use fmt instead of std::format" OFF)
+
 ### PLATFORM ###
 
 if(UNIX AND NOT APPLE)
@@ -264,6 +266,11 @@ endif()
 
 if(LINUX)
   find_package(PkgConfig REQUIRED)
+ 
+  if(USE_NOSTD_FORMAT)
+      find_package(fmt REQUIRED)
+      target_link_libraries(traintastic-server PRIVATE fmt::fmt)
+  endif()
 
   # libsystemd:
   pkg_check_modules(LIBSYSTEMD IMPORTED_TARGET libsystemd)

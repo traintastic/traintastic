@@ -20,7 +20,12 @@
  */
 
 #include "cbustostring.hpp"
-#include <format>
+#if __has_include(<format>) && __cplusplus >= 202002L
+    #include <format>
+    #define USE_STD_FORMAT
+#else
+    #include <fmt/core.h>
+#endif
 #include "cbusmessages.hpp"
 #include "../../../utils/tohex.hpp"
 
@@ -58,7 +63,11 @@ std::string toString(const Message& message)
     case DKEEP:
     {
       const auto& m = static_cast<const EngineMessage&>(message);
-      s.append(std::format(" session={}", m.session));
+      #ifdef USE_STD_FORMAT 
+        s.append(std::format(" session={}", m.session));
+      #else
+        s.append(fmt::format(" session={}", m.session));
+      #endif
       break;
     }
     case DBG1:
@@ -212,7 +221,11 @@ std::string toString(const Message& message)
     case AROF:
     {
       const auto& m = static_cast<const AccessoryRequestEvent&>(message); // same memory layout, only opcode is different
-      s.append(std::format(" node={} event={}", m.nodeNumber(), m.eventNumber()));
+      #ifdef USE_STD_FORMAT
+        s.append(std::format(" node={} event={}", m.nodeNumber(), m.eventNumber()));
+      #else
+        s.append(fmt::format(" node={} event={}", m.nodeNumber(), m.eventNumber()));
+      #endif
       break;
     }
     case EVULN:
@@ -231,7 +244,11 @@ std::string toString(const Message& message)
     case ARSOF:
     {
       const auto& m = static_cast<const AccessoryShortRequestEvent&>(message); // same memory layout, only opcode is different
-      s.append(std::format(" node={} device={}", m.nodeNumber(), m.deviceNumber()));
+      #ifdef USE_STD_FORMAT
+        s.append(std::format(" node={} device={}", m.nodeNumber(), m.deviceNumber()));
+      #else
+        s.append(fmt::format(" node={} device={}", m.nodeNumber(), m.deviceNumber()));
+      #endif
       break;
     }
     case PARAN:
