@@ -21,7 +21,11 @@
 
 #include "cbusinterface.hpp"
 #include "cbus/cbussettings.hpp"
+#include "../decoder/decoderchangeflags.hpp"
+#include "../decoder/list/decoderlist.hpp"
+#include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../output/list/outputlist.hpp"
+#include "../protocol/cbus/cbusconst.hpp"
 #include "../protocol/cbus/cbuskernel.hpp"
 #include "../protocol/cbus/iohandler/cbuscanusbiohandler.hpp"
 #include "../protocol/cbus/iohandler/cbuscanetheriohandler.hpp"
@@ -37,12 +41,14 @@
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 
+constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 CREATE_IMPL(CBUSInterface)
 
 CBUSInterface::CBUSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , DecoderController(*this, decoderListColumns)
   , OutputController(static_cast<IdObject&>(*this))
   , type{this, "type", CBUSInterfaceType::CANUSB, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](CBUSInterfaceType /*value*/)
@@ -78,6 +84,8 @@ CBUSInterface::CBUSInterface(World& world, std::string_view _id)
 
   m_interfaceItems.insertBefore(cbus, notes);
 
+  m_interfaceItems.insertBefore(decoders, notes);
+
   m_interfaceItems.insertBefore(outputs, notes);
 
   m_cbusPropertyChanged = cbus->propertyChanged.connect(
@@ -110,6 +118,39 @@ bool CBUSInterface::sendDCC(std::vector<uint8_t> dccPacket, uint8_t repeat)
     return m_kernel->sendDCC(std::move(dccPacket), repeat);
   }
   return false;
+}
+
+std::span<const DecoderProtocol> CBUSInterface::decoderProtocols() const
+{
+  static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+}
+
+void CBUSInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
+{
+  if(m_kernel)
+  {
+    const bool longAddress = (decoder.protocol == DecoderProtocol::DCCLong);
+
+    if(has(changes, DecoderChangeFlags::FunctionValue) && functionNumber <= CBUS::engineFunctionMax)
+    {
+      m_kernel->setEngineFunction(
+        decoder.address,
+        longAddress,
+        static_cast<uint8_t>(functionNumber),
+        decoder.getFunctionValue(functionNumber));
+    }
+    else
+    {
+      m_kernel->setEngineSpeedDirection(
+        decoder.address,
+        longAddress,
+        Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, decoder.speedSteps),
+        decoder.speedSteps,
+        decoder.emergencyStop,
+        decoder.direction == Direction::Forward);
+    }
+  }
 }
 
 std::span<const OutputChannel> CBUSInterface::outputChannels() const
@@ -169,6 +210,7 @@ bool CBUSInterface::setOutputValue(OutputChannel channel, uint32_t address, Outp
 void CBUSInterface::addToWorld()
 {
   Interface::addToWorld();
+  DecoderController::addToWorld();
   OutputController::addToWorld(outputListColumns);
 }
 
@@ -183,6 +225,7 @@ void CBUSInterface::destroying()
 {
   m_cbusPropertyChanged.disconnect();
   OutputController::destroying();
+  DecoderController::destroying();
   Interface::destroying();
 }
 

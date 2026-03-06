@@ -24,6 +24,7 @@
 
 #include "messages/cbusaccessorymessages.hpp"
 #include "messages/cbusaccessoryshortmessages.hpp"
+#include "messages/cbuscommandstationerrormessages.hpp"
 #include "messages/cbusenginemessages.hpp"
 #include "messages/cbusgeneralmessages.hpp"
 #include "messages/cbusrequestdccpacketmessage.hpp"

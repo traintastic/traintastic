@@ -23,6 +23,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_CBUSINTERFACE_HPP
 
 #include "interface.hpp"
+#include "../decoder/decodercontroller.hpp"
 #include "../output/outputcontroller.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include <traintastic/enum/cbusinterfacetype.hpp>
@@ -39,6 +40,7 @@ class Simulator;
  */
 class CBUSInterface final
   : public Interface
+  , public DecoderController
   , public OutputController
 {
   CLASS_ID("interface.cbus")
@@ -65,6 +67,10 @@ public:
   //! \param[in] repeat DCC packet repeat count 0..7
   //! \return \c true if send, \c false otherwise.
   bool sendDCC(std::vector<uint8_t> dccPacket, uint8_t repeat);
+
+  // DecoderController:
+  std::span<const DecoderProtocol> decoderProtocols() const final;
+  void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
   // OutputController:
   std::span<const OutputChannel> outputChannels() const final;
