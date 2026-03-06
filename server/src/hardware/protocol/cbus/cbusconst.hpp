@@ -19,29 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_SIMULATOR_MODULE_CBUSCANCMD_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_SIMULATOR_MODULE_CBUSCANCMD_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSCONST_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSCONST_HPP
 
-#include "cbuscanmodule.hpp"
-#include "../../messages/cbusenginemessages.hpp"
-#include <map>
+#include <cstdint>
 
-namespace CBUS::Module {
+namespace CBUS {
 
-class CANCMD : public CANModule
-{
-public:
-  CANCMD(Simulator& simulator, uint16_t nodeNumber_ = 0xFFFE, uint8_t canId_ = 0x72);
-
-  void receive(const Message& message) override;
-
-private:
-  bool m_trackOn = false;
-  std::map<uint8_t, EngineReport> m_sessions;
-
-  EngineReport* newEngineSession(const EngineReport& init);
-  void handleGetEngineSession(uint16_t address, bool isLongAddress, GetEngineSession::Mode mode);
-};
+constexpr uint8_t engineFunctionMax = 28;
 
 }
 

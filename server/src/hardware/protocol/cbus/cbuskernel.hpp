@@ -23,7 +23,9 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSKERNEL_HPP
 
 #include "../kernelbase.hpp"
+#include <map>
 #include <span>
+#include <set>
 #include <traintastic/enum/direction.hpp>
 #include "cbusconfig.hpp"
 #include "iohandler/cbusiohandler.hpp"
@@ -36,6 +38,7 @@ public:
   std::function<void()> onTrackOff;
   std::function<void()> onTrackOn;
   std::function<void()> onEmergencyStop;
+  std::function<void(uint16_t address, bool isLongAddress)> onEngineSessionCancelled;
 
   /**
    * @brief Create kernel and IO handler
@@ -89,6 +92,9 @@ public:
   void trackOn();
   void requestEmergencyStop();
 
+  void setEngineSpeedDirection(uint16_t address, bool longAddress, uint8_t speedStep, uint8_t speedSteps, bool eStop, bool directionForward);
+  void setEngineFunction(uint16_t address, bool longAddress, uint8_t number, bool value);
+
   void setAccessoryShort(uint16_t deviceNumber, bool on);
   void setAccessory(uint16_t eventNumber, bool on);
 
@@ -96,10 +102,21 @@ public:
   bool sendDCC(std::vector<uint8_t> dccPacket, uint8_t repeat);
 
 private:
+  struct Engine
+  {
+    std::optional<uint8_t> session;
+    uint8_t speed = 0;
+    uint8_t speedSteps = 126;
+    bool directionForward = true;
+    std::map<uint8_t, bool> functions;
+  };
+
   std::unique_ptr<IOHandler> m_ioHandler;
   const bool m_simulation;
   Config m_config;
   bool m_trackOn = false;
+  std::map<uint16_t, Engine> m_engines;
+  std::set<uint16_t> m_engineGLOCs;
 
   Kernel(std::string logId_, const Config& config, bool simulation);
 
@@ -109,6 +126,10 @@ private:
   void setIOHandler(std::unique_ptr<IOHandler> handler);
 
   void send(const Message& message);
+  void sendGetEngineSession(uint16_t address, bool longAddress);
+  void sendSetEngineSessionMode(uint8_t session, uint8_t speedSteps);
+  void sendSetEngineSpeedDirection(uint8_t session, uint8_t speed, bool directionForward);
+  void sendSetEngineFunction(uint8_t session, uint8_t number, bool value);
 };
 
 }

@@ -26,69 +26,28 @@
 #include <cassert>
 #include <span>
 #include "cbusmessage.hpp"
+#include "../cbusconst.hpp"
 #include "../../../../utils/bit.hpp"
 #include "../../../../utils/byte.hpp"
 
 namespace CBUS {
 
-constexpr uint8_t engineFunctionMax = 28;
-
-struct EngineMessage : Message
+struct EngineSessionMessage : Message
 {
   uint8_t session;
 
 protected:
-  EngineMessage(OpCode opc, uint8_t session_)
+  EngineSessionMessage(OpCode opc, uint8_t session_)
     : Message{opc}
     , session{session_}
   {
   }
 };
 
-struct ReleaseEngine : EngineMessage
-{
-  ReleaseEngine(uint8_t session_)
-    : EngineMessage(OpCode::KLOC, session_)
-  {
-  }
-};
-
-struct QueryEngine : EngineMessage
-{
-  QueryEngine(uint8_t session_)
-    : EngineMessage(OpCode::QLOC, session_)
-  {
-  }
-};
-
-struct SessionKeepAlive : EngineMessage
-{
-  SessionKeepAlive(uint8_t session_)
-    : EngineMessage(OpCode::DKEEP, session_)
-  {
-  }
-};
-
-struct RequestEngineSession : Message
+struct EngineAddressMessage : Message
 {
   uint8_t addrH;
   uint8_t addrL;
-
-  RequestEngineSession(uint16_t address_, bool longAddress)
-    : Message(OpCode::RLOC)
-  {
-    if(longAddress)
-    {
-
-      addrH = 0xC0 | high8(address_);
-      addrL = low8(address_);
-    }
-    else
-    {
-      addrH = 0;
-      addrL = static_cast<uint8_t>(address_ & 0x7F);
-    }
-  }
 
   bool isLongAddress() const
   {
@@ -99,22 +58,73 @@ struct RequestEngineSession : Message
   {
     return to16(addrL, addrH & 0x3F);
   }
+
+protected:
+  EngineAddressMessage(OpCode opc, uint16_t address_, bool longAddress)
+    : Message(opc)
+  {
+    if(longAddress)
+    {
+      addrH = 0xC0 | high8(address_);
+      addrL = low8(address_);
+    }
+    else
+    {
+      addrH = 0;
+      addrL = static_cast<uint8_t>(address_ & 0x7F);
+    }
+  }
+};
+
+struct ReleaseEngine : EngineSessionMessage
+{
+  ReleaseEngine(uint8_t session_)
+    : EngineSessionMessage(OpCode::KLOC, session_)
+  {
+  }
+};
+
+struct QueryEngine : EngineSessionMessage
+{
+  QueryEngine(uint8_t session_)
+    : EngineSessionMessage(OpCode::QLOC, session_)
+  {
+  }
+};
+
+struct SessionKeepAlive : EngineSessionMessage
+{
+  SessionKeepAlive(uint8_t session_)
+    : EngineSessionMessage(OpCode::DKEEP, session_)
+  {
+  }
+};
+
+struct RequestEngineSession : EngineAddressMessage
+{
+  uint8_t addrH;
+  uint8_t addrL;
+
+  RequestEngineSession(uint16_t address_, bool longAddress)
+    : EngineAddressMessage(OpCode::RLOC, address_, longAddress)
+  {
+  }
 };
 
 // QueryConsist
 
-struct AllocateEngineToActivity : EngineMessage
+struct AllocateEngineToActivity : EngineSessionMessage
 {
   uint8_t allocationCode;
 
   AllocateEngineToActivity(uint8_t session_, uint8_t allocationCode_)
-    : EngineMessage(OpCode::ALOC, session_)
+    : EngineSessionMessage(OpCode::ALOC, session_)
     , allocationCode{allocationCode_}
   {
   }
 };
 
-struct SetEngineSessionMode : EngineMessage
+struct SetEngineSessionMode : EngineSessionMessage
 {
   static constexpr uint8_t serviceModeBit = 2;
   static constexpr uint8_t soundControlModeBit = 3;
@@ -130,7 +140,7 @@ struct SetEngineSessionMode : EngineMessage
   uint8_t mode;
 
   SetEngineSessionMode(uint8_t session_, SpeedMode speedMode_, bool serviceMode_, bool soundControlMode_)
-    : EngineMessage(OpCode::STMOD, session_)
+    : EngineSessionMessage(OpCode::STMOD, session_)
     , mode{0}
   {
     mode |= static_cast<uint8_t>(speedMode_);
@@ -158,7 +168,7 @@ struct SetEngineSessionMode : EngineMessage
 
 // RemoveEngineFromConsist
 
-struct SetEngineSpeedDirection : EngineMessage
+struct SetEngineSpeedDirection : EngineSessionMessage
 {
   static constexpr uint8_t speedMask = 0x7F;
   static constexpr uint8_t directionBit = 7;
@@ -166,7 +176,7 @@ struct SetEngineSpeedDirection : EngineMessage
   uint8_t speedDir;
 
   SetEngineSpeedDirection(uint8_t session_, uint8_t speed_, bool directionForward_)
-    : EngineMessage(OpCode::DSPD, session_)
+    : EngineSessionMessage(OpCode::DSPD, session_)
     , speedDir(speed_ & speedMask)
   {
     setBit<directionBit>(speedDir, directionForward_);
@@ -185,31 +195,31 @@ struct SetEngineSpeedDirection : EngineMessage
 
 // SetEngineFlags
 
-struct SetEngineFunctionOn : EngineMessage
+struct SetEngineFunctionOn : EngineSessionMessage
 {
   uint8_t number;
 
   SetEngineFunctionOn(uint8_t session_, uint8_t number_)
-    : EngineMessage(OpCode::DFNON, session_)
+    : EngineSessionMessage(OpCode::DFNON, session_)
     , number{number_}
   {
     assert(number <= engineFunctionMax);
   }
 };
 
-struct SetEngineFunctionOff : EngineMessage
+struct SetEngineFunctionOff : EngineSessionMessage
 {
   uint8_t number;
 
   SetEngineFunctionOff(uint8_t session_, uint8_t number_)
-    : EngineMessage(OpCode::DFNOF, session_)
+    : EngineSessionMessage(OpCode::DFNOF, session_)
     , number{number_}
   {
     assert(number <= engineFunctionMax);
   }
 };
 
-struct SetEngineFunctions : EngineMessage
+struct SetEngineFunctions : EngineSessionMessage
 {
   enum class Range : uint8_t
   {
@@ -261,7 +271,7 @@ struct SetEngineFunctions : EngineMessage
 
 protected:
   SetEngineFunctions(uint8_t session_, Range range_, uint8_t value_ = 0)
-    : EngineMessage(OpCode::DFUN, session_)
+    : EngineSessionMessage(OpCode::DFUN, session_)
     , range{range_}
     , value{value_}
   {
@@ -600,7 +610,7 @@ struct SetEngineFunctionsF21F28 : SetEngineFunctions
   }
 };
 
-struct GetEngineSession : Message
+struct GetEngineSession : EngineAddressMessage
 {
   static constexpr uint8_t modeMask = 0b11;
 
@@ -611,36 +621,13 @@ struct GetEngineSession : Message
     Share = 0b10,
   };
 
-  uint8_t addrH;
-  uint8_t addrL;
   uint8_t flags;
 
   GetEngineSession(uint16_t address_, bool longAddress_, Mode mode_)
-    : Message(OpCode::GLOC)
+    : EngineAddressMessage(OpCode::GLOC, address_, longAddress_)
     , flags(static_cast<uint8_t>(mode_) & modeMask)
   {
     assert(mode_ == Mode::Request || mode_ == Mode::Steal || mode_ == Mode::Share);
-
-    if(longAddress_)
-    {
-      addrH = 0xC0 | high8(address_);
-      addrL = low8(address_);
-    }
-    else
-    {
-      addrH = 0;
-      addrL = static_cast<uint8_t>(address_ & 0x7F);
-    }
-  }
-
-  bool isLongAddress() const
-  {
-    return (addrH & 0xC0) == 0xC0;
-  }
-
-  uint16_t address() const
-  {
-    return to16(addrL, addrH & 0x3F);
   }
 
   Mode mode() const
@@ -649,7 +636,7 @@ struct GetEngineSession : Message
   }
 };
 
-struct EngineReport : EngineMessage
+struct EngineReport : EngineSessionMessage
 {
   static constexpr uint8_t speedMask = 0x7F;
   static constexpr uint8_t directionBit = 7;
@@ -681,7 +668,7 @@ struct EngineReport : EngineMessage
         bool f5, bool f6, bool f7, bool f8,
         bool f9, bool f10, bool f11, bool f12)
 
-    : EngineMessage(OpCode::PLOC, session_)
+    : EngineSessionMessage(OpCode::PLOC, session_)
     , speedDir(speed_ & speedMask)
     , f0f4{0}
     , f5f8{0}
@@ -733,6 +720,12 @@ struct EngineReport : EngineMessage
   bool directionForward() const
   {
     return getBit<directionBit>(speedDir);
+  }
+
+  std::span<const uint8_t> numbers() const
+  {
+    static constexpr std::array<uint8_t, 13> values{{0, 1, 2, 3, 4 , 5, 6, 7, 8, 9, 10, 11, 12}};
+    return values;
   }
 
   bool f(uint8_t number) const

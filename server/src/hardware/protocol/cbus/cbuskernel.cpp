@@ -30,6 +30,32 @@
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
 
+namespace {
+
+constexpr uint16_t makeAddressKey(uint16_t address, bool longAddress)
+{
+  return longAddress ? (0xC000 | (address & 0x3FFF)) : (address & 0x7F);
+}
+
+constexpr CBUS::SetEngineSessionMode::SpeedMode toSpeedMode(uint8_t speedSteps)
+{
+  using enum CBUS::SetEngineSessionMode::SpeedMode;
+
+  switch(speedSteps)
+  {
+    case 14:
+      return SpeedMode14;
+
+    case 28:
+      return SpeedMode28;
+
+    default:
+      return SpeedMode128;
+  }
+}
+
+}
+
 namespace CBUS {
 
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
@@ -147,6 +173,81 @@ void Kernel::receive(uint8_t /*canId*/, const Message& message)
       }
       break;
 
+    case OpCode::ERR:
+    {
+      switch(static_cast<const CommandStationErrorMessage&>(message).errorCode)
+      {
+        using enum DCCErr;
+
+        case LocoStackFull:
+        {
+          const auto& err = static_cast<const CommandStationLocoStackFullError&>(message);
+          const auto key = makeAddressKey(err.address(), err.isLongAddress());
+          if(m_engineGLOCs.contains(key))
+          {
+            m_engineGLOCs.erase(key);
+            // FIXME: log error
+          }
+          break;
+        }
+        case SessionCancelled:
+          if(auto it = std::find_if(m_engines.begin(), m_engines.end(),
+            [session=static_cast<const CommandStationSessionCancelled&>(message).session()](const auto& item)
+            {
+              return item.second.session && *item.second.session == session;
+            }); it != m_engines.end())
+          {
+            it->second.session = std::nullopt;
+
+            EventLoop::call(
+              [this, key=it->first]()
+              {
+                if(onEngineSessionCancelled) [[likely]]
+                {
+                  onEngineSessionCancelled(key & 0x3FFF, (key & 0xC000) == 0xC000);
+                }
+              });
+          }
+          break;
+
+        case LocoAddressTaken:
+        case SessionNotPresent:
+        case ConsistEmpty:
+        case LocoNotFound:
+        case CANBusError:
+        case InvalidRequest:
+          break;
+      }
+      break;
+    }
+    case OpCode::PLOC:
+    {
+      const auto& ploc = static_cast<const EngineReport&>(message);
+      const auto key = makeAddressKey(ploc.address(), ploc.isLongAddress());
+      if(m_engineGLOCs.contains(key))
+      {
+        m_engineGLOCs.erase(key);
+
+        if(auto it = m_engines.find(key); it != m_engines.end())
+        {
+          auto& engine = it->second;
+          engine.session = ploc.session;
+
+          sendSetEngineSessionMode(ploc.session, engine.speedSteps);
+          sendSetEngineSpeedDirection(ploc.session, engine.speed, engine.directionForward);
+
+          for(const auto [number, value] : engine.functions)
+          {
+            sendSetEngineFunction(ploc.session, number, value);
+          }
+        }
+        else // we're no longer in need of control (rare but possible)
+        {
+          send(ReleaseEngine(ploc.session));
+        }
+      }
+      break;
+    }
     default:
       break;
   }
@@ -188,6 +289,56 @@ void Kernel::requestEmergencyStop()
     [this]()
     {
       send(RequestEmergencyStop());
+    });
+}
+
+void Kernel::setEngineSpeedDirection(uint16_t address, bool longAddress, uint8_t speedStep, uint8_t speedSteps, bool eStop, bool directionForward)
+{
+  assert(isEventLoopThread());
+
+  const uint8_t speed = eStop ? 1 : (speedStep > 0 ? speedStep + 1 : 0);
+
+  m_ioContext.post(
+    [this, address, longAddress, speed, speedSteps, directionForward]()
+    {
+      auto& engine = m_engines[makeAddressKey(address, longAddress)];
+      const bool speedStepsChanged = engine.speedSteps != speedSteps;
+      engine.speedSteps = speedSteps;
+      engine.speed = speed;
+      engine.directionForward = directionForward;
+
+      if(engine.session) // we're in control
+      {
+        if(speedStepsChanged)
+        {
+          sendSetEngineSessionMode(*engine.session, engine.speedSteps);
+        }
+        sendSetEngineSpeedDirection(*engine.session, engine.speed, engine.directionForward);
+      }
+      else // take control
+      {
+        sendGetEngineSession(address, longAddress);
+      }
+    });
+}
+
+void Kernel::setEngineFunction(uint16_t address, bool longAddress, uint8_t number, bool value)
+{
+  assert(isEventLoopThread());
+
+  m_ioContext.post(
+    [this, address, longAddress, number, value]()
+    {
+      auto& engine = m_engines[makeAddressKey(address, longAddress)];
+      engine.functions[number] = value;
+      if(engine.session) // we're in control
+      {
+        sendSetEngineFunction(*engine.session, number, value);
+      }
+      else // take control
+      {
+        sendGetEngineSession(address, longAddress);
+      }
     });
 }
 
@@ -310,6 +461,43 @@ void Kernel::send(const Message& message)
   if(auto ec = m_ioHandler->send(message); ec)
   {
     (void)ec; // FIXME: handle error
+  }
+}
+
+void Kernel::sendGetEngineSession(uint16_t address, bool longAddress)
+{
+  assert(isKernelThread());
+  const auto key = makeAddressKey(address, longAddress);
+  if(!m_engineGLOCs.contains(key))
+  {
+    m_engineGLOCs.emplace(key);
+    send(GetEngineSession(address, longAddress, GetEngineSession::Mode::Steal));
+  }
+}
+
+void Kernel::sendSetEngineSessionMode(uint8_t session, uint8_t speedSteps)
+{
+  assert(isKernelThread());
+  // FIXME: what to do with: serviceMode and soundControlMode?
+  send(SetEngineSessionMode(session, toSpeedMode(speedSteps), false, false));
+}
+
+void Kernel::sendSetEngineSpeedDirection(uint8_t session, uint8_t speed, bool directionForward)
+{
+  assert(isKernelThread());
+  send(SetEngineSpeedDirection(session, speed, directionForward));
+}
+
+void Kernel::sendSetEngineFunction(uint8_t session, uint8_t number, bool value)
+{
+  assert(isKernelThread());
+  if(value)
+  {
+    send(SetEngineFunctionOn(session, number));
+  }
+  else
+  {
+    send(SetEngineFunctionOff(session, number));
   }
 }
 

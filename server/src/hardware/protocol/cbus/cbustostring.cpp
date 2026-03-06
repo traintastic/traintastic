@@ -26,6 +26,54 @@
 
 namespace CBUS {
 
+namespace {
+
+template<typename T>
+requires(std::is_base_of_v<Message, T>)
+std::string formatEngineAddress(const T& message)
+{
+  return std::format(" {}={}", message.isLongAddress() ? "long_address" : "short_address", message.address());
+}
+
+constexpr std::string_view toString(GetEngineSession::Mode mode) noexcept
+{
+  switch(mode)
+  {
+    using enum GetEngineSession::Mode;
+
+    case Request:
+      return "request";
+
+    case Steal:
+      return "steal";
+
+    case Share:
+      return "share";
+  }
+  return {};
+}
+
+constexpr std::string_view toString(SetEngineSessionMode::SpeedMode mode) noexcept
+{
+  switch(mode)
+  {
+    case SetEngineSessionMode::SpeedMode128:
+      return "128";
+
+    case SetEngineSessionMode::SpeedMode14:
+      return "14";
+
+    case SetEngineSessionMode::SpeedMode28WithInterleaveSteps:
+      return "28+interleave";
+
+    case SetEngineSessionMode::SpeedMode28:
+      return "28";
+  }
+  return {};
+}
+
+}
+
 std::string toString(const Message& message)
 {
   std::string s(toString(message.opCode));
@@ -57,7 +105,7 @@ std::string toString(const Message& message)
     case QLOC:
     case DKEEP:
     {
-      const auto& m = static_cast<const EngineMessage&>(message);
+      const auto& m = static_cast<const EngineSessionMessage&>(message);
       s.append(std::format(" session={}", m.session));
       break;
     }
@@ -69,8 +117,11 @@ std::string toString(const Message& message)
 
     // 40–5F - 2 data byte packets:
     case RLOC:
+    {
+      const auto& m = static_cast<const RequestEngineSession&>(message);
+      s.append(formatEngineAddress(m));
       break;
-
+    }
     case QCON:
       break;
 
@@ -81,8 +132,11 @@ std::string toString(const Message& message)
       break;
 
     case STMOD:
+    {
+      const auto& m = static_cast<const SetEngineSessionMode&>(message);
+      s.append(std::format(" session={} speed_mode={} service_mode={} sound_control_mode={}", m.session, toString(m.speedMode()), m.serviceMode(), m.soundControlMode()));
       break;
-
+    }
     case PCON:
       break;
 
@@ -90,17 +144,26 @@ std::string toString(const Message& message)
       break;
 
     case DSPD:
+    {
+      const auto& m = static_cast<const SetEngineSpeedDirection&>(message);
+      s.append(std::format(" session={} speed={} direction={}", m.session, m.speed(), m.directionForward() ? "fwd" : "rev"));
       break;
-
+    }
     case DFLG:
       break;
 
     case DFNON:
+    {
+      const auto& m = static_cast<const SetEngineFunctionOn&>(message);
+      s.append(std::format(" session={} number={}", m.session, m.number));
       break;
-
+    }
     case DFNOF:
+    {
+      const auto& m = static_cast<const SetEngineFunctionOff&>(message);
+      s.append(std::format(" session={} number={}", m.session, m.number));
       break;
-
+    }
     case SSTAT:
       break;
 
@@ -160,11 +223,44 @@ std::string toString(const Message& message)
       break;
 
     case GLOC:
+    {
+      const auto& m = static_cast<const GetEngineSession&>(message);
+      s.append(formatEngineAddress(m));
+      s.append(std::format(" mode={}", toString(m.mode())));
       break;
-
+    }
     case ERR:
-      break;
+    {
+      const auto& m = static_cast<const CommandStationErrorMessage&>(message);
+      s.append(std::format(" error={}", toString(m.errorCode)));
+      switch(m.errorCode)
+      {
+        using enum DCCErr;
 
+        case LocoStackFull:
+        case LocoAddressTaken:
+        case InvalidRequest:
+        {
+          s.append(formatEngineAddress(static_cast<const CommandStationLocoStackFullError&>(message)));
+          break;
+        }
+        case SessionNotPresent:
+        case LocoNotFound:
+        case SessionCancelled:
+        {
+          s.append(std::format(" session={}", static_cast<const CommandStationSessionNotPresentError&>(message).session()));
+          break;
+        }
+        case ConsistEmpty:
+        {
+          s.append(std::format(" consist={}", static_cast<const CommandStationConsistEmptyError&>(message).consist()));
+          break;
+        }
+        case CANBusError:
+          break;
+      }
+      break;
+    }
     case CMDERR:
       break;
 
@@ -304,8 +400,18 @@ std::string toString(const Message& message)
       break;
 
     case PLOC:
+    {
+      const auto& m = static_cast<const EngineReport&>(message);
+      s.append(std::format(" session={}", m.session));
+      s.append(formatEngineAddress(m));
+      s.append(std::format(" speed={} direction={} f0={} f1={} f2={} f3={} f4={} f5={} f6={} f7={} f8={} f9={} f10={} f11={} f12={}",
+        m.speed(),
+        m.directionForward() ? "fwd" : "rev",
+        m.f0(), m.f1(), m.f2(), m.f3(), m.f4(),
+        m.f5(), m.f6(), m.f7(), m.f8(),
+        m.f9(), m.f10(), m.f11(), m.f12()));
       break;
-
+    }
     case NAME:
       break;
 
@@ -362,7 +468,7 @@ std::string toString(const Message& message)
   }
 
   s.append(" [");
-  s.append(toHex(&message, message.size()));
+  s.append(toHex(&message, message.size(), true));
   s.append("]");
 
   return s;

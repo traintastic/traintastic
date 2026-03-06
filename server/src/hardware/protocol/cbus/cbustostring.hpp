@@ -25,6 +25,7 @@
 #include <string>
 #include <string_view>
 #include "cbusopcode.hpp"
+#include "cbusdccerr.hpp"
 
 namespace CBUS {
 
@@ -170,6 +171,24 @@ constexpr std::string_view toString(OpCode opCode)
     case ARSON3: return "ARSON3";
     case ARSOF3: return "ARSOF3";
     case EXTC6: return "EXTC6";
+  }
+  return {};
+}
+
+constexpr std::string_view toString(DCCErr ec)
+{
+  switch(ec)
+  {
+    using enum DCCErr;
+
+    case LocoStackFull: return "LocoStackFull";
+    case LocoAddressTaken: return "LocoAddressTaken";
+    case SessionNotPresent: return "SessionNotPresent";
+    case ConsistEmpty: return "ConsistEmpty";
+    case LocoNotFound: return "LocoNotFound";
+    case CANBusError: return "CANBusError";
+    case InvalidRequest: return "InvalidRequest";
+    case SessionCancelled: return "SessionCancelled";
   }
   return {};
 }
