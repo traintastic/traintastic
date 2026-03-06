@@ -20,6 +20,7 @@
  */
 
 #include "cbuscancmd.hpp"
+#include <algorithm>
 #include "../../cbusmessages.hpp"
 
 namespace CBUS::Module {
