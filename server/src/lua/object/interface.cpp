@@ -116,7 +116,7 @@ int Interface::get_input(lua_State* L)
 
 int Interface::get_output(lua_State* L)
 {
-  checkArguments(L, 2);
+  checkArguments(L, 2, 3);
   auto outputController = std::dynamic_pointer_cast<::OutputController>(check<::Interface>(L, lua_upvalueindex(1)));
   assert(outputController);
   auto channel = check<::OutputChannel>(L, 1);
@@ -131,12 +131,18 @@ int Interface::get_output(lua_State* L)
     case AccessoryMotorola:
     case DCCext:
     case Turnout:
-    case LongEvent:
     case ShortEvent:
+      checkArguments(L, 2);
       location = OutputAddress(check<uint32_t>(L, 2));
       break;
 
+    case LongEvent:
+      checkArguments(L, 3);
+      location = OutputNodeAddress(check<uint32_t>(L, 2), check<uint32_t>(L, 3));
+      break;
+
     case ECoSObject:
+      checkArguments(L, 2);
       location = OutputECoSObject(check<uint16_t>(L, 2));
       break;
   }
