@@ -360,20 +360,20 @@ void Kernel::setAccessoryShort(uint16_t deviceNumber, bool on)
     });
 }
 
-void Kernel::setAccessory(uint16_t eventNumber, bool on)
+void Kernel::setAccessory(uint16_t nodeNumber, uint16_t eventNumber, bool on)
 {
   assert(isEventLoopThread());
 
   m_ioContext.post(
-    [this, eventNumber, on]()
+    [this, nodeNumber, eventNumber, on]()
     {
       if(on)
       {
-        send(AccessoryOn(Config::nodeId, eventNumber));
+        send(AccessoryOn(nodeNumber, eventNumber));
       }
       else
       {
-        send(AccessoryOff(Config::nodeId, eventNumber));
+        send(AccessoryOff(nodeNumber, eventNumber));
       }
     });
 }

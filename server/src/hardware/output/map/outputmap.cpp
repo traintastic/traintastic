@@ -127,8 +127,8 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
               case OutputChannel::AccessoryMotorola:
               case OutputChannel::DCCext:
               case OutputChannel::Turnout:
-              case OutputChannel::CBUSAccessory:
-              case OutputChannel::CBUSAccessoryShort:
+              case OutputChannel::LongEvent:
+              case OutputChannel::ShortEvent:
               {
                 const uint32_t address = newValue->getUnusedOutputAddress(channel);
                 addresses.appendInternal(address);
@@ -176,8 +176,8 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
           case OutputChannel::AccessoryMotorola:
           case OutputChannel::DCCext:
           case OutputChannel::Turnout:
-          case OutputChannel::CBUSAccessory:
-          case OutputChannel::CBUSAccessoryShort:
+          case OutputChannel::LongEvent:
+          case OutputChannel::ShortEvent:
             ecosObject.setValueInternal(0);
             for(uint32_t address : addresses)
             {
@@ -426,8 +426,8 @@ void OutputMap::load(WorldLoader& loader, const nlohmann::json& data)
       case OutputChannel::AccessoryMotorola:
       case OutputChannel::DCCext:
       case OutputChannel::Turnout:
-      case OutputChannel::CBUSAccessory:
-      case OutputChannel::CBUSAccessoryShort:
+      case OutputChannel::LongEvent:
+      case OutputChannel::ShortEvent:
         for(uint32_t address : addresses)
         {
           addOutput(channel, outputLocation(channel, node, address));
@@ -496,8 +496,8 @@ void OutputMap::channelChanged()
       case OutputChannel::AccessoryMotorola:
       case OutputChannel::DCCext:
       case OutputChannel::Turnout:
-      case OutputChannel::CBUSAccessory:
-      case OutputChannel::CBUSAccessoryShort:
+      case OutputChannel::LongEvent:
+      case OutputChannel::ShortEvent:
       {
         Attributes::setVisible(node, hasNode(channel));
         Attributes::setVisible({addresses, addAddress, removeAddress}, true);

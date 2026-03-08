@@ -77,8 +77,8 @@ OutputType OutputController::outputType(OutputChannel channel) const
   {
     case OutputChannel::Output:
     case OutputChannel::Turnout:
-    case OutputChannel::CBUSAccessory:
-    case OutputChannel::CBUSAccessoryShort:
+    case OutputChannel::LongEvent:
+    case OutputChannel::ShortEvent:
       return OutputType::Single;
 
     case OutputChannel::Accessory:
@@ -116,8 +116,8 @@ std::pair<uint32_t, uint32_t> OutputController::outputAddressMinMax(OutputChanne
     case OutputChannel::Output:
     case OutputChannel::Accessory:
     case OutputChannel::Turnout:
-    case OutputChannel::CBUSAccessory:
-    case OutputChannel::CBUSAccessoryShort:
+    case OutputChannel::LongEvent:
+    case OutputChannel::ShortEvent:
       break;
 
     case OutputChannel::ECoSObject:
@@ -148,8 +148,8 @@ bool OutputController::isOutputLocation(OutputChannel channel, const OutputLocat
     case OutputChannel::Output:
     case OutputChannel::Accessory:
     case OutputChannel::Turnout:
-    case OutputChannel::CBUSAccessory:
-    case OutputChannel::CBUSAccessoryShort:
+    case OutputChannel::LongEvent:
+    case OutputChannel::ShortEvent:
       if(hasNode(channel))
       {
         return inRange(std::get<OutputNodeAddress>(location).address, outputAddressMinMax(channel));

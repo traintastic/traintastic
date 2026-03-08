@@ -74,8 +74,9 @@ public:
 
   // OutputController:
   std::span<const OutputChannel> outputChannels() const final;
+  std::pair<uint32_t, uint32_t> outputNodeMinMax(OutputChannel channel) const final;
   std::pair<uint32_t, uint32_t> outputAddressMinMax(OutputChannel channel) const final;
-  [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t address, OutputValue value) final;
+  [[nodiscard]] bool setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value) final;
 
 protected:
   void addToWorld() final;

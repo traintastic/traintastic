@@ -35,8 +35,8 @@ enum class OutputChannel : uint16_t
   DCCext = 5, //!< DCCext, see RCN-213
   Turnout = 6, //!< DCC-EX turnout
   ECoSObject = 7, //!< ECoS switch object
-  CBUSAccessory = 9,
-  CBUSAccessoryShort = 10,
+  LongEvent = 9,
+  ShortEvent = 10,
 };
 
 TRAINTASTIC_ENUM(OutputChannel, "output_channel", 9,
@@ -48,8 +48,8 @@ TRAINTASTIC_ENUM(OutputChannel, "output_channel", 9,
   {OutputChannel::DCCext, "dcc_ext"},
   {OutputChannel::Turnout, "turnout"},
   {OutputChannel::ECoSObject, "ecos_object"},
-  {OutputChannel::CBUSAccessory, "cbus_accessory"},
-  {OutputChannel::CBUSAccessoryShort, "cbus_accessory_short"},
+  {OutputChannel::LongEvent, "long_event"},
+  {OutputChannel::ShortEvent, "short_event"},
 });
 
 inline constexpr std::array<OutputChannel, 9> outputChannelValues{{
@@ -60,8 +60,8 @@ inline constexpr std::array<OutputChannel, 9> outputChannelValues{{
   OutputChannel::DCCext,
   OutputChannel::Turnout,
   OutputChannel::ECoSObject,
-  OutputChannel::CBUSAccessory,
-  OutputChannel::CBUSAccessoryShort,
+  OutputChannel::LongEvent,
+  OutputChannel::ShortEvent,
 }};
 
 constexpr bool isAccessory(OutputChannel value)
@@ -74,7 +74,7 @@ constexpr bool isAccessory(OutputChannel value)
 
 constexpr bool hasNode(OutputChannel value)
 {
-  return false;
+  return (value == OutputChannel::LongEvent);
 }
 
 template<>
