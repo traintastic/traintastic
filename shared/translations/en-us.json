@@ -2036,8 +2036,16 @@
         "definition": "ECoS object"
     },
     {
+        "term": "output_channel:long_event",
+        "definition": "Long event"
+    },
+    {
         "term": "output_channel:output",
         "definition": "Output"
+    },
+    {
+        "term": "output_channel:short_event",
+        "definition": "Short event"
     },
     {
         "term": "output_channel:turnout",

@@ -42,7 +42,7 @@
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
-constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Node | OutputListColumn::Address;
 
 CREATE_IMPL(CBUSInterface)
 
@@ -156,20 +156,25 @@ void CBUSInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags ch
 std::span<const OutputChannel> CBUSInterface::outputChannels() const
 {
   static const std::array<OutputChannel, 2> channels{
-    OutputChannel::CBUSAccessoryShort,
-    OutputChannel::CBUSAccessory,
+    OutputChannel::ShortEvent,
+    OutputChannel::LongEvent,
     //OutputChannel::AccessoryDCC,
     //OutputChannel::DCCext,
   };
   return channels;
 }
 
+std::pair<uint32_t, uint32_t> CBUSInterface::outputNodeMinMax(OutputChannel /*channel*/) const
+{
+  return {std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint16_t>::max()};
+}
+
 std::pair<uint32_t, uint32_t> CBUSInterface::outputAddressMinMax(OutputChannel channel) const
 {
   switch(channel)
   {
-    case OutputChannel::CBUSAccessory:
-    case OutputChannel::CBUSAccessoryShort:
+    case OutputChannel::LongEvent:
+    case OutputChannel::ShortEvent:
       return {std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint16_t>::max()};
 
     default:
@@ -177,24 +182,27 @@ std::pair<uint32_t, uint32_t> CBUSInterface::outputAddressMinMax(OutputChannel c
   }
 }
 
-bool CBUSInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+bool CBUSInterface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
   if(m_kernel)
   {
     switch(channel)
     {
-      case OutputChannel::CBUSAccessoryShort:
+      case OutputChannel::ShortEvent:
         if(auto v = std::get<TriState>(value); v != TriState::Undefined)
         {
-          m_kernel->setAccessoryShort(static_cast<uint16_t>(address), v == TriState::True);
+          const auto address = static_cast<uint16_t>(std::get<OutputAddress>(location).address);
+          m_kernel->setAccessoryShort(address, v == TriState::True);
           return true;
         }
         break;
 
-      case OutputChannel::CBUSAccessory:
+      case OutputChannel::LongEvent:
         if(auto v = std::get<TriState>(value); v != TriState::Undefined)
         {
-          m_kernel->setAccessory(static_cast<uint16_t>(address), v == TriState::True);
+          const auto node = static_cast<uint16_t>(std::get<OutputNodeAddress>(location).node);
+          const auto address = static_cast<uint16_t>(std::get<OutputNodeAddress>(location).address);
+          m_kernel->setAccessory(node, address, v == TriState::True);
           return true;
         }
         break;
