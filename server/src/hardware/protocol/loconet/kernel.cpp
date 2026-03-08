@@ -1,7 +1,6 @@
 /**
- * server/src/hardware/protocol/loconet/loconet.cpp
- *
- * This file is part of the traintastic source code.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) 2019-2026 Reinder Feenstra
  *
@@ -510,7 +509,7 @@ void Kernel::receive(const Message& message)
             EventLoop::call(
               [this, address=switchRequest.address(), value]()
               {
-                m_outputController->updateOutputValue(OutputChannel::Accessory, address, value);
+                m_outputController->updateOutputValue(OutputChannel::Accessory, OutputAddress(address), value);
               });
           }
         }

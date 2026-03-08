@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/aspectoutput.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,7 +40,7 @@ class AspectOutput final : public AddressOutput
     Method<bool(int16_t)> setValue;
     Event<int16_t, const std::shared_ptr<AspectOutput>&> onValueChanged;
 
-    AspectOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, uint32_t address_);
+    AspectOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, std::optional<uint32_t> node_, uint32_t address_);
 };
 
 #endif

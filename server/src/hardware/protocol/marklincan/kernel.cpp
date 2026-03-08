@@ -386,7 +386,7 @@ void Kernel::receive(const Message& message)
         EventLoop::call(
           [this, channel, address, value]()
           {
-            m_outputController->updateOutputValue(channel, address, value);
+            m_outputController->updateOutputValue(channel, OutputAddress(address), value);
           });
       }
       break;

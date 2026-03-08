@@ -792,6 +792,10 @@
         "definition": "Interface"
     },
     {
+        "term": "hardware:node",
+        "definition": "Node"
+    },
+    {
         "term": "hardware:output_keyboard",
         "definition": "Output keyboard"
     },

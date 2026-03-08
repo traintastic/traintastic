@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/ecos/kernel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -397,7 +396,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
 }
 
-bool Kernel::setOutput(OutputChannel channel, uint32_t id, OutputValue value)
+bool Kernel::setOutput(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
   assert(isEventLoopThread());
 
@@ -408,7 +407,7 @@ bool Kernel::setOutput(OutputChannel channel, uint32_t id, OutputValue value)
     {
       const auto switchProtocol = (channel == OutputChannel::AccessoryDCC) ? SwitchProtocol::DCC : SwitchProtocol::Motorola;
       m_ioContext.post(
-        [this, switchProtocol, address=id, port=(std::get<OutputPairValue>(value) == OutputPairValue::Second)]()
+        [this, switchProtocol, address=std::get<OutputAddress>(location).address, port=(std::get<OutputPairValue>(value) == OutputPairValue::Second)]()
         {
           switchManager().setSwitch(switchProtocol, address, port);
         });
@@ -417,9 +416,9 @@ bool Kernel::setOutput(OutputChannel channel, uint32_t id, OutputValue value)
     case OutputChannel::ECoSObject:
     {
       m_ioContext.post(
-        [this, id, state=std::get<uint8_t>(value)]()
+        [this, object=std::get<OutputECoSObject>(location).object, state=std::get<uint8_t>(value)]()
         {
-          if(auto it = m_objects.find(id); it != m_objects.end())
+          if(auto it = m_objects.find(object); it != m_objects.end())
           {
             if(auto* sw = dynamic_cast<Switch*>(it->second.get()))
             {
@@ -525,7 +524,7 @@ void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address, Ou
       EventLoop::call(
         [this, address, value]()
         {
-          m_outputController->updateOutputValue(OutputChannel::AccessoryDCC, address, value);
+          m_outputController->updateOutputValue(OutputChannel::AccessoryDCC, OutputAddress(address), value);
         });
       break;
 
@@ -533,7 +532,7 @@ void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address, Ou
       EventLoop::call(
         [this, address, value]()
         {
-          m_outputController->updateOutputValue(OutputChannel::AccessoryMotorola, address, value);
+          m_outputController->updateOutputValue(OutputChannel::AccessoryMotorola, OutputAddress(address), value);
         });
       break;
 
@@ -553,7 +552,7 @@ void Kernel::switchStateChanged(uint16_t objectId, uint8_t state)
   EventLoop::call(
     [this, objectId, state]()
     {
-      m_outputController->updateOutputValue(OutputChannel::ECoSObject, objectId, state);
+      m_outputController->updateOutputValue(OutputChannel::ECoSObject, OutputECoSObject(objectId), state);
     });
 }
 

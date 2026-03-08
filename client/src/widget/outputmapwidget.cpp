@@ -1,9 +1,8 @@
 /**
- * client/src/widget/outputmapwidget.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -90,6 +89,10 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
     auto* comboBox = new PropertyComboBox(*channel, this);
     setComboBoxMinimumWidth(comboBox);
     form->addRow(new InterfaceItemNameLabel(*channel, this), comboBox);
+  }
+  if(auto* node = dynamic_cast<Property*>(m_object->getProperty("node")))
+  {
+    form->addRow(new InterfaceItemNameLabel(*node, this), createWidget(*node));
   }
   if(m_addresses)
   {

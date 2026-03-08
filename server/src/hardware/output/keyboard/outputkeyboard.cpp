@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/keyboard/outputkeyboard.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2022,2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -51,7 +50,7 @@ std::string OutputKeyboard::getObjectId() const
   return "";
 }
 
-void OutputKeyboard::fireOutputUsedChanged(uint32_t id, bool used)
+void OutputKeyboard::fireOutputUsedChanged(uint32_t address, bool used)
 {
-  fireEvent(outputUsedChanged, id, used);
+  fireEvent(outputUsedChanged, address, used);
 }

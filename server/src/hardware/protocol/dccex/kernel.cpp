@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/dccex/kernel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -162,7 +161,7 @@ void Kernel::receive(std::string_view message)
             EventLoop::call(
               [this, id, value]()
               {
-                m_outputController->updateOutputValue(OutputChannel::Turnout, id, value);
+                m_outputController->updateOutputValue(OutputChannel::Turnout, OutputAddress(id), value);
               });
           }
         }
@@ -240,7 +239,7 @@ void Kernel::receive(std::string_view message)
             EventLoop::call(
               [this, id, value]()
               {
-                m_outputController->updateOutputValue(OutputChannel::Output, id, value);
+                m_outputController->updateOutputValue(OutputChannel::Output, OutputAddress(id), value);
               });
           }
         }
@@ -329,7 +328,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue valu
           EventLoop::call(
             [this, address, value]()
             {
-              m_outputController->updateOutputValue(OutputChannel::Accessory, address, value);
+              m_outputController->updateOutputValue(OutputChannel::Accessory, OutputAddress(address), value);
             });
         });
       return true;

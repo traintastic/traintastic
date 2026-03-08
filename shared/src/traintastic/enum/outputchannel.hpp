@@ -72,4 +72,19 @@ constexpr bool isAccessory(OutputChannel value)
     (value == OutputChannel::AccessoryMotorola);
 }
 
+constexpr bool hasNode(OutputChannel value)
+{
+  return false;
+}
+
+template<>
+struct std::hash<OutputChannel>
+{
+  size_t operator()(OutputChannel const& value) const noexcept
+  {
+    using UT = std::underlying_type_t<OutputChannel>;
+    return std::hash<UT>{}(static_cast<UT>(value));
+  }
+};
+
 #endif

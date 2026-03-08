@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/dccex/kernel.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +29,7 @@
 #include <traintastic/enum/outputchannel.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
-#include "../../output/outputvalue.hpp"
+#include "../../output/outputtypes.hpp"
 
 class Decoder;
 enum class DecoderChangeFlags;
