@@ -1,9 +1,8 @@
 /**
- * server/src/lua/object/interface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024-2025 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -121,9 +120,28 @@ int Interface::get_output(lua_State* L)
   auto outputController = std::dynamic_pointer_cast<::OutputController>(check<::Interface>(L, lua_upvalueindex(1)));
   assert(outputController);
   auto channel = check<::OutputChannel>(L, 1);
-  auto id = check<uint32_t>(L, 2);
+  OutputLocation location;
+  switch(channel)
+  {
+    using enum OutputChannel;
+
+    case Output:
+    case Accessory:
+    case AccessoryDCC:
+    case AccessoryMotorola:
+    case DCCext:
+    case Turnout:
+    case CBUSAccessory:
+    case CBUSAccessoryShort:
+      location = OutputAddress(check<uint32_t>(L, 2));
+      break;
+
+    case ECoSObject:
+      location = OutputECoSObject(check<uint16_t>(L, 2));
+      break;
+  }
   auto& stateData = Lua::Sandbox::getStateData(L);
-  auto output = outputController->getOutput(channel, id, stateData.script());
+  auto output = outputController->getOutput(channel, location, stateData.script());
   if(output)
   {
     stateData.registerOutput(outputController, output);

@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/ecosinterface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -133,21 +132,21 @@ std::pair<std::span<const uint16_t>, std::span<const std::string>> ECoSInterface
   return OutputController::getOutputECoSObjects(channel);
 }
 
-bool ECoSInterface::isOutputId(OutputChannel channel, uint32_t outputId) const
+bool ECoSInterface::isOutputLocation(OutputChannel channel, const OutputLocation& location) const
 {
   if(channel == OutputChannel::ECoSObject)
   {
-    return inRange<uint32_t>(outputId, ECoS::ObjectId::switchMin, ECoS::ObjectId::switchMax);
+    return inRange<uint16_t>(std::get<OutputECoSObject>(location).object, ECoS::ObjectId::switchMin, ECoS::ObjectId::switchMax);
   }
-  return OutputController::isOutputId(channel, outputId);
+  return OutputController::isOutputLocation(channel, location);
 }
 
-bool ECoSInterface::setOutputValue(OutputChannel channel, uint32_t outputId, OutputValue value)
+bool ECoSInterface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
   return
     m_kernel &&
-    isOutputId(channel, outputId) &&
-    m_kernel->setOutput(channel, outputId, value);
+    isOutputLocation(channel, location) &&
+    m_kernel->setOutput(channel, location, value);
 }
 
 bool ECoSInterface::setOnline(bool& value, bool simulation)

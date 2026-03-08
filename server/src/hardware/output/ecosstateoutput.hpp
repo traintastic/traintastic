@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/ecosstateoutput.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,9 +43,9 @@ class ECoSStateOutput final : public Output
 
     ECoSStateOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, uint16_t ecosObjectId_);
 
-    uint32_t id() const final
+    OutputLocation location() const final
     {
-      return ecosObjectId.value();
+      return OutputECoSObject(ecosObjectId);
     }
 };
 

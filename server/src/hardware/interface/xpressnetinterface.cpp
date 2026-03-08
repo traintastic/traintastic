@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/xpressnetinterface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -230,9 +229,10 @@ std::pair<uint32_t, uint32_t> XpressNetInterface::outputAddressMinMax(OutputChan
   return {XpressNet::Kernel::accessoryOutputAddressMin, XpressNet::Kernel::accessoryOutputAddressMax};
 }
 
-bool XpressNetInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+bool XpressNetInterface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
   assert(isOutputChannel(channel));
+  const auto address = std::get<OutputAddress>(location).address;
   return
       m_kernel &&
       inRange(address, outputAddressMinMax(channel)) &&

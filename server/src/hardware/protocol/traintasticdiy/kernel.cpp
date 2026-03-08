@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/traintasticdiy/kernel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022-2025 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -237,11 +236,11 @@ void Kernel::receive(const Message& message)
             {
               if(state == OutputState::Invalid)
               {
-                if(m_outputController->outputMap().count({OutputChannel::Output, address}) != 0)
+                if(m_outputController->outputMap().count({OutputChannel::Output, OutputAddress(address)}) != 0)
                   Log::log(logId, LogMessage::W2005_OUTPUT_ADDRESS_X_IS_INVALID, address);
               }
               else
-                m_outputController->updateOutputValue(OutputChannel::Output, address, toTriState(state));
+                m_outputController->updateOutputValue(OutputChannel::Output, OutputAddress(address), toTriState(state));
             });
         }
       }
@@ -378,7 +377,7 @@ void Kernel::receive(const Message& message)
           [this]()
           {
             for(const auto& it : m_outputController->outputMap())
-              postSend(GetOutputState(static_cast<uint16_t>(it.first.id)));
+              postSend(GetOutputState(static_cast<uint16_t>(std::get<OutputAddress>(it.first.location).address)));
           });
       break;
     }

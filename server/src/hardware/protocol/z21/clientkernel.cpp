@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/z21/clientkernel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -87,7 +86,7 @@ void ClientKernel::receive(const Message& message)
             EventLoop::call(
               [this, address=reply.address(), value]()
               {
-                m_outputController->updateOutputValue(OutputChannel::Accessory, address, value);
+                m_outputController->updateOutputValue(OutputChannel::Accessory, OutputAddress(address), value);
               });
           }
           break;
@@ -101,7 +100,7 @@ void ClientKernel::receive(const Message& message)
               EventLoop::call(
                 [this, address=reply.address(), value=reply.aspect()]()
                 {
-                  m_outputController->updateOutputValue(OutputChannel::DCCext, address, value);
+                  m_outputController->updateOutputValue(OutputChannel::DCCext, OutputAddress(address), value);
                 });
             }
           }

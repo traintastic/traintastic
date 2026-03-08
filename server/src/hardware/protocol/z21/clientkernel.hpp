@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/z21/clientkernel.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +30,7 @@
 #include <traintastic/enum/inputchannel.hpp>
 #include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/tristate.hpp>
-#include "../../output/outputvalue.hpp"
+#include "../../output/outputtypes.hpp"
 
 enum class SimulateInputAction;
 class InputController;

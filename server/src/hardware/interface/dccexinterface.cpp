@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/dccexinterface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -201,8 +200,9 @@ std::pair<uint32_t, uint32_t> DCCEXInterface::outputAddressMinMax(OutputChannel 
   }
 }
 
-bool DCCEXInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+bool DCCEXInterface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
+  const auto address = std::get<OutputAddress>(location).address;
   return
     m_kernel &&
     inRange(address, outputAddressMinMax(channel)) &&

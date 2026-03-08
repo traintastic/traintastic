@@ -1,9 +1,8 @@
 /**
- * server/src/utils/displayname.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,6 +58,7 @@ namespace DisplayName
     constexpr std::string_view interface = "hardware:interface";
     constexpr std::string_view loconet = "hardware:loconet";
     constexpr std::string_view marklinCAN = "hardware:marklin_can";
+    constexpr std::string_view node = "hardware:node";
     constexpr std::string_view outputKeyboard = "hardware:output_keyboard";
     constexpr std::string_view outputs = "hardware:outputs";
     constexpr std::string_view speedSteps = "hardware:speed_steps";
