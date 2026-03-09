@@ -34,8 +34,8 @@ OutputDir=output
 OutputBaseFilename=traintastic-setup-v{#VersionFull}
 SolidCompression=yes
 WizardStyle=modern
-ArchitecturesInstallIn64BitMode=x64
-ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64compatible
+ArchitecturesAllowed=x64compatible
 MinVersion=10.0
 
 [Languages]
@@ -45,6 +45,7 @@ Name: de; MessagesFile: "compiler:Languages\German.isl,de-de.isl"
 Name: it; MessagesFile: "compiler:Languages\Italian.isl,it-it.isl"
 Name: sv; MessagesFile: "Languages\Swedish.isl,sv-se.isl"
 Name: fr; MessagesFile: "compiler:Languages\French.isl,fr-fr.isl"
+Name: pl; MessagesFile: "compiler:Languages\Polish.isl,pl-pl.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -67,8 +68,7 @@ Source: "..\..\client\build\Release\tls\*.dll"; DestDir: "{app}\client\tls"; Fla
 ; Shared
 Source: "..\..\shared\translations\*.lang"; DestDir: "{commonappdata}\traintastic\translations"; Flags: ignoreversion;
 ; Manual
-Source: "..\..\manual\build\*"; DestDir: "{commonappdata}\traintastic\manual"; Flags: ignoreversion recursesubdirs
-Source: "..\..\manual\build.luadoc\*"; DestDir: "{commonappdata}\traintastic\manual-lua"; Flags: ignoreversion recursesubdirs
+Source: "..\..\manual\output\*"; DestDir: "{commonappdata}\traintastic\manual"; Flags: ignoreversion recursesubdirs
 ; LNCV XML
 Source: "..\..\shared\data\lncv\xml\*.xml"; DestDir: "{commonappdata}\traintastic\lncv"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\shared\data\lncv\xml\lncvmodule.xsd"; DestDir: "{commonappdata}\traintastic\lncv"; Flags: ignoreversion; Check: InstallClient
@@ -137,6 +137,7 @@ const
 var
   Components : DWORD;
   ComponentsPage : TWizardPage;
+  ComponentsCLI : string;
   ClientAndServerRadioButton : TRadioButton;
   ClientOnlyRadioButton : TRadioButton;
 
@@ -152,12 +153,12 @@ end;
 
 procedure RegWriteTraintasticComponents(Value: DWORD);
 begin
-  RegWriteDWORDValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Value);
+  RegWriteDWORDValue(HKEY_LOCAL_MACHINE, ExpandConstant('{#AppSubKey}'), ComponentsValueName, Value);
 end;
 
 function RegReadTraintasticComponents: DWORD;
 begin
-  if not RegQueryDWORDValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Result) then begin
+  if not RegQueryDWORDValue(HKEY_LOCAL_MACHINE, ExpandConstant('{#AppSubKey}'), ComponentsValueName, Result) then begin
     Result := 0;
   end;
 end;
@@ -182,21 +183,49 @@ function NextButtonClick(CurPageID: Integer): Boolean;
 begin
   if CurPageID = ComponentsPage.ID then begin
     Components := 0;
-    
+
     if ClientAndServerRadioButton.Checked then
       Components := Components or ComponentServer or ComponentClient
     else if ClientOnlyRadioButton.Checked then
       Components := Components or ComponentClient;
-    
+
     RegWriteTraintasticComponents(Components);
   end;
   Result := True;
 end;
+
+function InitializeSetup: Boolean;
+var
+  I: Integer;
+  Param: string;
+begin
+  Result := True;
+
+  for I := 1 to ParamCount do begin
+    Param := ParamStr(I);
+    if CompareText(Copy(Param, 1, 12), '/Components=') = 0 then begin
+      ComponentsCLI := Copy(Param, 13, MaxInt);
+      if (ComponentsCLI <> 'ClientAndServer') and (ComponentsCLI <> 'ClientOnly') then begin
+        Log('Invalid /Components value: ' + ComponentsCLI)
+        Result := False;
+      end;
+    end;
+  end;
+end;
+
 procedure InitializeWizard;
 var
   Lbl: TLabel;
 begin
-  Components := RegReadTraintasticComponents;
+  if ComponentsCLI <> '' then
+    Components := ComponentsCLI // override from CLI
+  else
+    Components := RegReadTraintasticComponents;
+
+  if (Components = '') and WizardSilent then begin
+    Log('Silent install without known Components value, defaulting to: ClientAndServer');
+    Components := 'ClientAndServer';
+  end;
 
   ComponentsPage := CreateCustomPage(wpSelectComponents, SetupMessage(msgWizardSelectComponents), SetupMessage(msgSelectComponentsDesc));
 
@@ -242,6 +271,7 @@ begin
     'it': Result := 'it-it';
     'sv': Result := 'sv-se';
     'fr': Result := 'fr-fr';
+    'pl': Result := 'pl-pl';
   else
     Result := 'en-us';
   end;

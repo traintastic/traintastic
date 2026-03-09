@@ -20,6 +20,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include "../src/core/eventloop.hpp"
 #include "../src/world/world.hpp"
 #include "../src/world/worldloader.hpp"
 #include "../src/world/worldsaver.hpp"
@@ -34,6 +35,8 @@
 
 TEST_CASE("Train: Save/Load", "[train][train-saveload]")
 {
+  EventLoop::reset();
+
   std::filesystem::path ctw;
   std::string worldUUID;
 
@@ -44,11 +47,14 @@ TEST_CASE("Train: Save/Load", "[train][train-saveload]")
     {
       worldUUID = world->uuid;
 
-      auto decoder = world->decoders->create();
+      REQUIRE(world->decoders->length == 0);
+      REQUIRE(world->railVehicles->length == 0);
 
       auto locomotive = world->railVehicles->create(Locomotive::classId);
-      locomotive->decoder = decoder;
-      REQUIRE(decoder->vehicle.value() == locomotive);
+      REQUIRE(world->decoders->length == 1);
+      REQUIRE(world->railVehicles->length == 1);
+      REQUIRE(locomotive->decoder);
+      REQUIRE(locomotive->decoder->vehicle.value() == locomotive);
 
       auto train = world->trains->create();
       train->vehicles->add(locomotive);

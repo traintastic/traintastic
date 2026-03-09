@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_DECODERFUNCTIONTYPE_HPP
 
 #include <cstdint>
+#include <array>
 #include "enum.hpp"
 
 enum class DecoderFunctionType : uint8_t
@@ -43,5 +44,13 @@ TRAINTASTIC_ENUM(DecoderFunctionType, "decoder_function_type", 5,
   {DecoderFunctionType::AlwaysOff, "always_off"},
   {DecoderFunctionType::AlwaysOn, "always_on"},
 });
+
+inline constexpr std::array<DecoderFunctionType, 5> decoderFunctionTypeValues{{
+  DecoderFunctionType::OnOff,
+  DecoderFunctionType::Momentary,
+  DecoderFunctionType::Hold,
+  DecoderFunctionType::AlwaysOff,
+  DecoderFunctionType::AlwaysOn,
+}};
 
 #endif

@@ -33,7 +33,6 @@ std::filesystem::path getLocalAppDataPath();
 std::filesystem::path getSimulatorLayoutPath();
 std::filesystem::path getLocalePath();
 std::filesystem::path getManualPath();
-std::filesystem::path getLuaManualPath();
 std::filesystem::path getLNCVXMLPath();
 
 #endif

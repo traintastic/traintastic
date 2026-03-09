@@ -1,9 +1,8 @@
 /**
- * server/src/network/server.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022-2025 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,8 +21,12 @@
 
 #include "server.hpp"
 #include <boost/beast/http/buffer_body.hpp>
+#include <boost/beast/http/file_body.hpp>
+#include <boost/url/url_view.hpp>
+#include <boost/url/parse.hpp>
 #include <span>
 #include <traintastic/network/message.hpp>
+#include <traintastic/utils/standardpaths.hpp>
 #include <version.hpp>
 #include "clientconnection.hpp"
 #include "httpconnection.hpp"
@@ -31,7 +34,10 @@
 #include "../core/eventloop.hpp"
 #include "../log/log.hpp"
 #include "../log/logmessageexception.hpp"
+#include "../utils/endswith.hpp"
 #include "../utils/setthreadname.hpp"
+#include "../utils/startswith.hpp"
+#include "../utils/stripprefix.hpp"
 
 //#define SERVE_FROM_FS // Development option, NOT for production!
 #ifdef SERVE_FROM_FS
@@ -46,7 +52,7 @@
 #include <resource/www/css/normalize.css.hpp>
 #include <resource/shared/gfx/appicon.ico.hpp>
 
-#define IS_SERVER_THREAD (std::this_thread::get_id() == m_thread.get_id())
+#define IS_SERVER_THREAD (std::this_thread::get_id() == m_threadId)
 
 namespace beast = boost::beast;
 namespace http = beast::http;
@@ -60,6 +66,53 @@ static constexpr std::string_view contentTypeTextHtml{"text/html"};
 static constexpr std::string_view contentTypeTextCss{"text/css"};
 static constexpr std::string_view contentTypeTextJavaScript{"text/javascript"};
 static constexpr std::string_view contentTypeImageXIcon{"image/x-icon"};
+static constexpr std::string_view contentTypeImagePng{"image/png"};
+static constexpr std::string_view contentTypeApplicationGzip{"application/gzip"};
+static constexpr std::string_view contentTypeApplicationJson{"application/json"};
+static constexpr std::string_view contentTypeApplicationXml{"application/xml"};
+
+static constexpr std::array<std::string_view, 7> manualAllowedExtensions{{
+  ".html",
+  ".css",
+  ".js",
+  ".json",
+  ".png",
+  ".xml",
+  ".xml.gz",
+}};
+
+std::string_view getContentType(std::string_view filename)
+{
+  if(endsWith(filename, ".html"))
+  {
+    return contentTypeTextHtml;
+  }
+  else if(endsWith(filename, ".png"))
+  {
+    return contentTypeImagePng;
+  }
+  else if(endsWith(filename, ".css"))
+  {
+    return contentTypeTextCss;
+  }
+  else if(endsWith(filename, ".js"))
+  {
+    return contentTypeTextJavaScript;
+  }
+  else if(endsWith(filename, ".json"))
+  {
+    return contentTypeApplicationJson;
+  }
+  else if(endsWith(filename, ".xml"))
+  {
+    return contentTypeApplicationXml;
+  }
+  else if(endsWith(filename, ".gz"))
+  {
+    return contentTypeApplicationGzip;
+  }
+  return {};
+}
 
 http::message_generator notFound(const http::request<http::string_body>& request)
 {
@@ -155,6 +208,53 @@ http::message_generator textJavaScript(const http::request<http::string_body>& r
   return text(request, contentTypeTextJavaScript, body);
 }
 
+http::message_generator serveFileFromFileSystem(const http::request<http::string_body>& request, std::string_view target, const std::filesystem::path& root, std::span<const std::string_view> allowedExtensions)
+{
+  if(request.method() != http::verb::get && request.method() != http::verb::head)
+  {
+    return methodNotAllowed(request, {http::verb::get, http::verb::head});
+  }
+
+  if(const auto url = boost::urls::parse_origin_form(target))
+  {
+    const std::filesystem::path path = std::filesystem::weakly_canonical(root / url->path().substr(1));
+
+    if(std::mismatch(path.begin(), path.end(), root.begin(), root.end()).second == root.end() && std::filesystem::exists(path))
+    {
+      const auto filename = path.string();
+
+      if(endsWith(filename, allowedExtensions))
+      {
+        http::file_body::value_type file;
+        boost::system::error_code ec;
+
+        file.open(filename.c_str(), boost::beast::file_mode::scan, ec);
+        if(!ec)
+        {
+          http::response<http::file_body> response{
+            std::piecewise_construct,
+            std::make_tuple(std::move(file)),
+            std::make_tuple(http::status::ok, request.version())};
+
+          response.set(http::field::server, serverHeader);
+          response.set(http::field::content_type, getContentType(filename));
+          response.content_length(file.size());
+          response.keep_alive(request.keep_alive());
+
+          if(request.method() == http::verb::head)
+          {
+            response.body().close(); // don’t send file contents
+          }
+
+          return response;
+        }
+      }
+    }
+  }
+
+  return notFound(request);
+}
+
 }
 
 Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
@@ -162,6 +262,7 @@ Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
   , m_acceptor{m_ioContext}
   , m_socketUDP{m_ioContext}
   , m_localhostOnly{localhostOnly}
+  , m_manualPath{getManualPath()}
 {
   assert(isEventLoopThread());
 
@@ -213,14 +314,6 @@ Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
 
   Log::log(id, LogMessage::N1007_LISTENING_AT_X_X, m_acceptor.local_endpoint().address().to_string(), m_acceptor.local_endpoint().port());
 
-  m_thread = std::thread(
-    [this]()
-    {
-      setThreadName("server");
-      auto work = std::make_shared<boost::asio::io_context::work>(m_ioContext);
-      m_ioContext.run();
-    });
-
   m_ioContext.post(
     [this, discoverable]()
     {
@@ -228,6 +321,16 @@ Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
         doReceive();
 
       doAccept();
+    });
+
+  m_thread = std::thread(
+    [this]()
+    {
+#ifndef NDEBUG
+      m_threadId = std::this_thread::get_id();
+#endif
+      setThreadName("server");
+      m_ioContext.run();
     });
 }
 
@@ -237,6 +340,11 @@ Server::~Server()
 
   if(!m_ioContext.stopped())
   {
+    for(const auto& connection : m_connections)
+    {
+      connection->disconnect();
+    }
+
     m_ioContext.post(
       [this]()
       {
@@ -248,15 +356,10 @@ Server::~Server()
 
         m_socketUDP.close();
       });
-
-    m_ioContext.stop();
   }
 
   if(m_thread.joinable())
     m_thread.join();
-
-  while(!m_connections.empty())
-    m_connections.front()->disconnect();
 }
 
 void Server::connectionGone(const std::shared_ptr<WebSocketConnection>& connection)
@@ -298,8 +401,10 @@ void Server::doReceive()
         }
         doReceive();
       }
-      else
+      else if(ec != boost::asio::error::operation_aborted)
+      {
         Log::log(id, LogMessage::E1003_UDP_RECEIVE_ERROR_X, ec.message());
+      }
     });
 }
 
@@ -332,7 +437,7 @@ void Server::doAccept()
 
         doAccept();
       }
-      else
+      else if(ec != boost::asio::error::operation_aborted)
       {
         Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
       }
@@ -355,6 +460,7 @@ http::message_generator Server::handleHTTPRequest(http::request<http::string_bod
       "<body>"
         "<h1>Traintastic <small>v" TRAINTASTIC_VERSION_FULL "</small></h1>"
         "<ul>"
+          "<li><a href=\"/manual/en/index.html\">Manual</a></li>"
           "<li><a href=\"/throttle\">Web throttle</a></li>"
         "</ul>"
       "</body>"
@@ -398,6 +504,14 @@ http::message_generator Server::handleHTTPRequest(http::request<http::string_bod
   if(target == "/version")
   {
     return textPlain(request, TRAINTASTIC_VERSION_FULL);
+  }
+  if(startsWith(target, "/manual"))
+  {
+    return serveFileFromFileSystem(
+      request,
+      stripPrefix(target, "/manual"),
+      m_manualPath,
+      manualAllowedExtensions);
   }
   return notFound(request);
 }
@@ -445,7 +559,7 @@ bool Server::acceptWebSocketUpgradeRequest(http::request<http::string_body>&& re
             m_connections.push_back(connection);
           });
       }
-      else
+      else if(ec != boost::asio::error::operation_aborted)
       {
         Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
       }

@@ -79,6 +79,15 @@ QString Object::getPropertyValueString(const QString& name, const QString& defau
   return defaultValue;
 }
 
+QVariant Object::getPropertyValue(const QString& name, const QVariant& defaultValue) const
+{
+  if(const auto* property = getProperty(name))
+  {
+    return property->toVariant();
+  }
+  return defaultValue;
+}
+
 const UnitProperty* Object::getUnitProperty(const QString& name) const
 {
   return dynamic_cast<UnitProperty*>(m_interfaceItems.find(name));
@@ -118,6 +127,22 @@ void Object::setPropertyValue(const QString& name, bool value)
 {
   if(AbstractProperty* property = getProperty(name))
     property->setValueBool(value);
+  else
+    Q_ASSERT(false);
+}
+
+void Object::setPropertyValue(const QString& name, int value)
+{
+  if(AbstractProperty* property = getProperty(name))
+    property->setValueInt(value);
+  else
+    Q_ASSERT(false);
+}
+
+void Object::setPropertyValue(const QString& name, const QVariant& value)
+{
+  if(AbstractProperty* property = getProperty(name))
+    property->setValueVariant(value);
   else
     Q_ASSERT(false);
 }

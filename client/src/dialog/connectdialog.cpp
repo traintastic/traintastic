@@ -151,6 +151,13 @@ void ConnectDialog::socketReadyRead()
 
     m_udpSocket->readDatagram(static_cast<char*>(*message), message.size(), &host, &port);
 
+    // Convert mapped IPv4 to IPv4:
+    bool ok = false;
+    if(const auto ipv4 = host.toIPv4Address(&ok); ok)
+    {
+      host.setAddress(ipv4);
+    }
+
     if(message.command() == Message::Command::Discover && message.isResponse() && !message.isError())
     {
       QString name = QString::fromUtf8(message.read<QByteArray>());

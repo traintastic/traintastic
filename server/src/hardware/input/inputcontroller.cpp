@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,9 +28,11 @@
 #include "../../core/attributes.hpp"
 #include "../../core/controllerlist.hpp"
 #include "../../core/objectproperty.tpp"
+#include "../../utils/contains.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
+#include "../../world/getworld.hpp"
 
 InputController::InputController(IdObject& interface)
   : inputs{&interface, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
@@ -38,18 +40,13 @@ InputController::InputController(IdObject& interface)
   Attributes::addDisplayName(inputs, DisplayName::Hardware::inputs);
 }
 
-bool InputController::isInputChannel(uint32_t channel) const
+bool InputController::isInputChannel(InputChannel channel) const
 {
-  const auto* channels = inputChannels();
-  if(!channels || channels->empty())
-    return channel == defaultInputChannel;
-
-  auto it = std::find(channels->begin(), channels->end(), channel);
-  assert(it == channels->end() || *it != defaultInputChannel);
-  return it != channels->end();
+  assert(!inputChannels().empty());
+  return contains(inputChannels(), channel);
 }
 
-bool InputController::isInputAddressAvailable(uint32_t channel, uint32_t address) const
+bool InputController::isInputAvailable(InputChannel channel, uint32_t address) const
 {
   assert(isInputChannel(channel));
   return
@@ -57,68 +54,85 @@ bool InputController::isInputAddressAvailable(uint32_t channel, uint32_t address
     m_inputs.find({channel, address}) == m_inputs.end();
 }
 
-uint32_t InputController::getUnusedInputAddress(uint32_t channel) const
+std::optional<uint32_t> InputController::getUnusedInputAddress(InputChannel channel) const
 {
   assert(isInputChannel(channel));
   const auto end = m_inputs.cend();
   const auto range = inputAddressMinMax(channel);
   for(uint32_t address = range.first; address < range.second; address++)
+  {
     if(m_inputs.find({channel, address}) == end)
+    {
       return address;
-  return Input::invalidAddress;
-}
-
-bool InputController::changeInputChannelAddress(Input& input, uint32_t newChannel, uint32_t newAddress)
-{
-  assert(input.interface.value().get() == this);
-  assert(isInputChannel(newChannel));
-
-  if(!isInputAddressAvailable(newChannel, newAddress))
-    return false;
-
-  auto node = m_inputs.extract({input.channel, input.address});
-  node.key() = {newChannel, newAddress};
-  m_inputs.insert(std::move(node));
-  input.value.setValueInternal(TriState::Undefined);
-
-  return true;
-}
-
-bool InputController::addInput(Input& input)
-{
-  if(isInputChannel(input.channel) && isInputAddressAvailable(input.channel, input.address))
-  {
-    m_inputs.insert({{input.channel, input.address}, input.shared_ptr<Input>()});
-    input.value.setValueInternal(TriState::Undefined);
-    inputs->addObject(input.shared_ptr<Input>());
-    return true;
+    }
   }
-  return false;
+  return std::nullopt;
 }
 
-bool InputController::removeInput(Input& input)
+std::shared_ptr<Input> InputController::getInput(InputChannel channel, uint32_t address, Object& usedBy)
 {
-  assert(input.interface.value().get() == this);
-  auto it = m_inputs.find({input.channel, input.address});
-  if(it != m_inputs.end() && it->second.get() == &input)
+  if(!isInputChannel(channel) || !inRange(address, inputAddressMinMax(channel)))
   {
-    m_inputs.erase(it);
-    input.value.setValueInternal(TriState::Undefined);
-    inputs->removeObject(input.shared_ptr<Input>());
-    return true;
+    return {};
   }
-  return false;
+
+  // Check if already exists:
+  if(auto it = m_inputs.find({channel, address}); it != m_inputs.end())
+  {
+    it->second->m_usedBy.emplace(usedBy.shared_from_this());
+    return it->second;
+  }
+
+  // Create new input:
+  auto input = std::make_shared<Input>(shared_ptr(), channel, address);
+  input->m_usedBy.emplace(usedBy.shared_from_this());
+  m_inputs.emplace(InputMapKey{channel, address}, input);
+  inputs->addObject(input);
+  getWorld(inputs.object()).inputs->addObject(input);
+
+  if(auto monitor = m_inputMonitors[channel].lock())
+  {
+    monitor->fireInputUsedChanged(address, true);
+  }
+
+  return input;
 }
 
-void InputController::updateInputValue(uint32_t channel, uint32_t address, TriState value)
+void InputController::releaseInput(Input& input, Object& usedBy)
+{
+  auto inputShared = input.shared_ptr<Input>();
+  input.m_usedBy.erase(usedBy.shared_from_this());
+  if(input.m_usedBy.empty())
+  {
+    const auto channel = input.channel.value();
+    const auto address = input.address.value();
+
+    m_inputs.erase({channel, address});
+    inputs->removeObject(inputShared);
+    getWorld(inputs.object()).inputs->removeObject(inputShared);
+    inputShared->destroy();
+    inputShared.reset();
+
+    if(auto monitor = m_inputMonitors[channel].lock())
+    {
+      monitor->fireInputUsedChanged(address, false);
+    }
+  }
+}
+
+void InputController::updateInputValue(InputChannel channel, uint32_t address, TriState value)
 {
   if(auto it = m_inputs.find({channel, address}); it != m_inputs.end())
+  {
     it->second->updateValue(value);
+  }
   if(auto monitor = m_inputMonitors[channel].lock())
-    monitor->inputValueChanged(*monitor, address, value);
+  {
+    monitor->fireInputValueChanged(address, value);
+  }
 }
 
-std::shared_ptr<InputMonitor> InputController::inputMonitor(uint32_t channel)
+std::shared_ptr<InputMonitor> InputController::inputMonitor(InputChannel channel)
 {
   assert(isInputChannel(channel));
   auto monitor = m_inputMonitors[channel].lock();
@@ -144,7 +158,9 @@ void InputController::destroying()
   {
     const auto& input = inputs->front();
     assert(input->interface.value() == std::dynamic_pointer_cast<InputController>(object.shared_from_this()));
-    input->interface = nullptr; // removes object form the list
+    input->interface.setValueInternal(nullptr);
+    input->destroy(); // notify consumers we're dying
+    inputs->removeObject(input);
   }
   object.world().inputControllers->remove(std::dynamic_pointer_cast<InputController>(object.shared_from_this()));
 }
@@ -154,4 +170,11 @@ IdObject& InputController::interface()
   auto* object = dynamic_cast<IdObject*>(this);
   assert(object);
   return *object;
+}
+
+std::shared_ptr<InputController> InputController::shared_ptr()
+{
+  auto self = std::dynamic_pointer_cast<InputController>(inputs.object().shared_from_this());
+  assert(self);
+  return self;
 }

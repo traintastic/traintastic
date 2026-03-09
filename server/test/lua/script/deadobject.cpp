@@ -38,6 +38,7 @@ using Catch::Matchers::EndsWith;
 TEST_CASE("Lua script: dead object", "[lua][lua-script][lua-script-dead-object]")
 {
   Log::enableMemoryLogger(100);
+  EventLoop::reset();
   EventLoop::threadId = std::this_thread::get_id(); // else MemoryLogger will post it to the event loop
 
   auto world = World::create();

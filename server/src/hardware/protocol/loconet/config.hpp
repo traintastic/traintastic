@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@ struct Config
 {
   static constexpr uint16_t timeoutMin = 100; //!< Minimum timeout in milliseconds
   static constexpr uint16_t timeoutMax = 10000; //!< Maximum timeout in milliseconds
+  static constexpr uint16_t lncvReadResponseTimeout = 100;
 
   uint16_t echoTimeout; //!< Wait for echo timeout in milliseconds
   uint16_t responseTimeout; //!< Wait for response timeout in milliseconds

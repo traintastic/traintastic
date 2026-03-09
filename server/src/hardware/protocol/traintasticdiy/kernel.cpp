@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2024 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -208,11 +208,11 @@ void Kernel::receive(const Message& message)
             {
               if(state == InputState::Invalid)
               {
-                if(m_inputController->inputMap().count({InputController::defaultInputChannel, address}) != 0)
+                if(m_inputController->inputMap().count({InputChannel::Input, address}) != 0)
                   Log::log(logId, LogMessage::W2004_INPUT_ADDRESS_X_IS_INVALID, address);
               }
               else
-                m_inputController->updateInputValue(InputController::defaultInputChannel, address, toTriState(state));
+                m_inputController->updateInputValue(InputChannel::Input, address, toTriState(state));
             });
         }
       }

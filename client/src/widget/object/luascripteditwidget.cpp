@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022,2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 #include <traintastic/locale/locale.hpp>
 #include <traintastic/utils/standardpaths.hpp>
 #include "../../misc/methodaction.hpp"
+#include "../../network/connection.hpp"
 #include "../../network/object.hpp"
 #include "../../network/property.hpp"
 #include "../../network/method.hpp"
@@ -62,7 +63,7 @@ LuaScriptEditWidget::LuaScriptEditWidget(const QString& id, QWidget* parent) :
 void LuaScriptEditWidget::buildForm()
 {
   setObjectWindowTitle();
-  setWindowIcon(Theme::getIconForClassId(m_object->classId()));
+  Theme::setWindowIcon(*this, m_object->classId());
 
   m_propertyState = dynamic_cast<Property*>(m_object->getProperty("state"));
   m_methodStart = m_object->getMethod("start");
@@ -95,6 +96,11 @@ void LuaScriptEditWidget::buildForm()
       if(name == AttributeName::Enabled)
         m_start->setEnabled(value.toBool());
     });
+#ifdef Q_OS_MAC
+  m_start->setShortcut(Qt::META | Qt::Key_R);
+#else
+  m_start->setShortcut(Qt::Key_F5);
+#endif
 
   m_stop = toolbar->addAction(Theme::getIcon("stop"), m_methodStop->displayName(),
     [this]()
@@ -108,7 +114,11 @@ void LuaScriptEditWidget::buildForm()
       if(name == AttributeName::Enabled)
         m_stop->setEnabled(value.toBool());
     });
-
+#ifdef Q_OS_MAC
+  m_stop->setShortcut(Qt::META | Qt::SHIFT | Qt::Key_R);
+#else
+  m_stop->setShortcut(Qt::SHIFT | Qt::Key_F5);
+#endif
 
   if(auto* method = m_object->getMethod("clear_persistent_variables"))
   {
@@ -126,13 +136,17 @@ void LuaScriptEditWidget::buildForm()
   toolbar->addWidget(spacer);
 
   toolbar->addAction(Theme::getIcon("help"), Locale::tr("qtapp.mainmenu:help"),
-    []()
+    [this]()
     {
-      const auto manual = QString::fromStdString((getLuaManualPath() / "index.html").string());
-      if(QFile::exists(manual))
-        QDesktopServices::openUrl(QUrl::fromLocalFile(manual));
-      else
-        QDesktopServices::openUrl(QString("https://traintastic.org/manual-lua?version=" TRAINTASTIC_VERSION_FULL));
+      if(const auto& connection = m_object->connection()) [[likely]]
+      {
+          QUrl url;
+          url.setScheme("http");
+          url.setHost(connection->peerAddress().toString());
+          url.setPort(connection->peerPort());
+          url.setPath("/manual/en/appendix/lua/index.html");
+          QDesktopServices::openUrl(url);
+      }
     });
 
   l->addLayout(form);

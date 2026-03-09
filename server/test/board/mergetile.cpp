@@ -21,6 +21,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include "../src/core/eventloop.hpp"
 #include "../src/world/world.hpp"
 #include "../src/core/method.tpp"
 #include "../src/core/objectproperty.tpp"
@@ -33,6 +34,8 @@
 
 TEST_CASE("Board: Merge tile, brigde 90", "[board][board-merge]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();
@@ -65,6 +68,8 @@ TEST_CASE("Board: Merge tile, brigde 90", "[board][board-merge]")
 
 TEST_CASE("Board: Merge tile, brigde 45 left", "[board][board-merge]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();
@@ -97,6 +102,8 @@ TEST_CASE("Board: Merge tile, brigde 45 left", "[board][board-merge]")
 
 TEST_CASE("Board: Merge tile, brigde 45 right", "[board][board-merge]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();

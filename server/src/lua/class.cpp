@@ -1,9 +1,8 @@
 /**
- * server/src/lua/classid.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +29,7 @@
 
 #include "../board/board.hpp"
 #include "../board/boardlist.hpp"
+#include "../board/pathfinder/trainpathfinder.hpp"
 
 #include "../board/tile/misc/labeltile.hpp"
 #include "../board/tile/misc/pushbuttontile.hpp"
@@ -103,9 +103,13 @@
 #include "../vehicle/rail/freightwagon.hpp"
 
 #include "../train/train.hpp"
+#include "../train/trainblockstatus.hpp"
 #include "../train/trainlist.hpp"
+#include "../train/trainzonestatus.hpp"
 
 #include "../world/world.hpp"
+
+#include "../zone/zone.hpp"
 
 namespace Lua {
 
@@ -158,6 +162,7 @@ void Class::registerValues(lua_State* L)
 
   registerValue<Board>(L, "BOARD");
   registerValue<BoardList>(L, "BOARD_LIST");
+  registerValue<TrainPathFinder>(L, "TRAIN_PATH_FINDER");
 
   registerValue<LabelTile>(L, "LABEL_TILE");
   registerValue<PushButtonTile>(L, "PUSH_BUTTON_TILE");
@@ -227,9 +232,13 @@ void Class::registerValues(lua_State* L)
   registerValue<FreightWagon>(L, "FREIGHT_WAGON");
 
   registerValue<Train>(L, "TRAIN");
+  registerValue<TrainBlockStatus>(L, "TRAIN_BLOCK_STATUS");
   registerValue<TrainList>(L, "TRAIN_LIST");
+  registerValue<TrainZoneStatus>(L, "TRAIN_ZONE_STATUS");
 
   registerValue<World>(L, "WORLD");
+
+  registerValue<Zone>(L, "ZONE");
 }
 
 void Class::push(lua_State* L, std::string_view classId)

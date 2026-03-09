@@ -1,9 +1,8 @@
 /**
- * shared/src/message.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -70,8 +69,6 @@ class Message
       TableModelUpdateRegion = 24,
 
       InputMonitorGetInputInfo = 30,
-      InputMonitorInputIdChanged = 31,
-      InputMonitorInputValueChanged = 32,
 
       OutputKeyboardGetOutputInfo = 33,
 
@@ -84,6 +81,7 @@ class Message
       ObjectSetVectorProperty = 46,
 
       ObjectListGetObjects = 47,
+      CallMethod = 48,
 
       Discover = 255,
     };

@@ -143,7 +143,7 @@ void TrayIcon::run(bool isRestart)
   menuSetItemChecked(s_menuSettings, MenuItem::StartAutomaticallyAtLogon, startUpApproved);
 
   // setup tray icon:
-  static NOTIFYICONDATA notifyIconData;
+  static NOTIFYICONDATAW notifyIconData;
   memset(&notifyIconData, 0, sizeof(notifyIconData));
   notifyIconData.cbSize = sizeof(notifyIconData);
   notifyIconData.hWnd = s_window;
@@ -151,21 +151,21 @@ void TrayIcon::run(bool isRestart)
   notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_SHOWTIP;
   notifyIconData.uCallbackMessage = WM_NOTIFYICON_CALLBACK;
   notifyIconData.hIcon = static_cast<HICON>(LoadImageA(GetModuleHandleA(nullptr), "APPICON", IMAGE_ICON, 0, 0, LR_DEFAULTSIZE));
-  const std::string_view toolTip{"Traintastic server v" TRAINTASTIC_VERSION_FULL};
-  std::memcpy(notifyIconData.szTip, toolTip.data(), std::min(toolTip.size(), sizeof(notifyIconData.szTip) - 1));
+  const std::wstring_view toolTip{L"Traintastic server v" TRAINTASTIC_VERSION_FULL};
+  std::memcpy(notifyIconData.szTip, toolTip.data(), sizeof(WCHAR) * std::min(toolTip.size(), sizeof(notifyIconData.szTip) - 1));
 
-  const std::string_view infoTitle{"Traintastic server"};
-  const std::string_view infoMessage = Locale::tr("tray_icon.notify:message_running");
-  const std::string_view infoMessageRestarted = Locale::tr("tray_icon.notify:message_restarting");
-  std::memcpy(notifyIconData.szInfoTitle, infoTitle.data(), std::min(infoTitle.size(), sizeof(notifyIconData.szInfoTitle) - 1));
+  const std::wstring_view infoTitle{L"Traintastic server"};
+  const auto infoMessage = utf8ToWString(Locale::tr("tray_icon.notify:message_running"));
+  const auto infoMessageRestarted = utf8ToWString(Locale::tr("tray_icon.notify:message_restarting"));
+  std::memcpy(notifyIconData.szInfoTitle, infoTitle.data(), sizeof(WCHAR) * std::min(infoTitle.size(), sizeof(notifyIconData.szInfoTitle) - 1));
   if(isRestart)
-    std::memcpy(notifyIconData.szInfo, infoMessageRestarted.data(), std::min(infoMessageRestarted.size(), sizeof(notifyIconData.szInfo) - 1));
+    std::memcpy(notifyIconData.szInfo, infoMessageRestarted.data(), sizeof(WCHAR) * std::min(infoMessageRestarted.size(), sizeof(notifyIconData.szInfo) - 1));
   else
-    std::memcpy(notifyIconData.szInfo, infoMessage.data(), std::min(infoMessage.size(), sizeof(notifyIconData.szInfo) - 1));
+    std::memcpy(notifyIconData.szInfo, infoMessage.data(), sizeof(WCHAR) * std::min(infoMessage.size(), sizeof(notifyIconData.szInfo) - 1));
   notifyIconData.dwInfoFlags = NIIF_INFO | NIIF_LARGE_ICON;
   notifyIconData.uFlags |= NIF_INFO;
 
-  Shell_NotifyIcon(NIM_ADD, &notifyIconData);
+  Shell_NotifyIconW(NIM_ADD, &notifyIconData);
 
   // Get settings:
   EventLoop::call(getSettings);
@@ -182,7 +182,7 @@ void TrayIcon::run(bool isRestart)
   }
 
   // remove tray icon:
-  Shell_NotifyIcon(NIM_DELETE, &notifyIconData);
+  Shell_NotifyIconW(NIM_DELETE, &notifyIconData);
 
   if(notifyIconData.hIcon)
     DestroyIcon(notifyIconData.hIcon);

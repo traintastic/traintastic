@@ -1,9 +1,8 @@
 /**
- * client/src/mainwindow.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,6 +38,7 @@
 #include <traintastic/utils/standardpaths.hpp>
 #include "mdiarea.hpp"
 #include "mainwindow/mainwindowstatusbar.hpp"
+#include "board/blockhighlight.hpp"
 #include "clock/clock.hpp"
 #include "dialog/connectdialog.hpp"
 #include "settings/settingsdialog.hpp"
@@ -107,10 +107,12 @@ static SubWindow* createSubWindow(SubWindowType type, Args... args)
 
 MainWindow::MainWindow(QWidget* parent) :
   QMainWindow(parent),
+  m_windowTitle{QStringLiteral("Traintastic v" TRAINTASTIC_VERSION_FULL)},
   m_splitter{new QSplitter(Qt::Vertical, this)},
   m_mdiArea{new MdiArea(m_splitter)},
   m_statusBar{new MainWindowStatusBar(*this)},
   m_serverLog{nullptr},
+  m_blockHighlight{new BlockHighlight(this)},
   m_toolbar{new QToolBar(this)}
 {
   instance = this;
@@ -405,7 +407,20 @@ MainWindow::MainWindow(QWidget* parent) :
     menu->addAction(Locale::tr("world:inputs") + "...", [this](){ showObject("world.inputs", Locale::tr("world:inputs")); });
     menu->addAction(Locale::tr("world:outputs") + "...", [this](){ showObject("world.outputs", Locale::tr("world:outputs")); });
     menu->addAction(Locale::tr("hardware:identifications") + "...", [this](){ showObject("world.identifications", Locale::tr("hardware:identifications")); });
+    menu->addAction(Locale::tr("hardware:boosters").append("..."),
+      [this]()
+      {
+        showObject("world.boosters", Locale::tr("hardware:boosters"));
+      });
     boardsAction = m_menuObjects->addAction(Theme::getIcon("board"), Locale::tr("world:boards") + "...", [this](){ showObject("world.boards", Locale::tr("world:boards")); });
+    m_menuObjects->addAction(
+      Theme::getIcon("zone"),
+      Locale::tr("world:zones") + "...",
+      [this]()
+      {
+        showObject("world.zones", Locale::tr("world:zones"));
+      }
+    );
     m_menuObjects->addAction(Theme::getIcon("clock"), Locale::tr("world:clock") + "...", [this](){ showObject("world.clock", Locale::tr("world:clock")); });
     trainsAction = m_menuObjects->addAction(Theme::getIcon("train"), Locale::tr("world:trains") + "...",
       [this]()
@@ -501,14 +516,31 @@ MainWindow::MainWindow(QWidget* parent) :
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:help"));
     menu->addAction(Theme::getIcon("help"), Locale::tr("qtapp.mainmenu:help"),
+      [this]()
+      {
+        if(m_connection)
+        {
+          QUrl url;
+          url.setScheme("http");
+          url.setHost(m_connection->peerAddress().toString());
+          url.setPort(m_connection->peerPort());
+          url.setPath("/manual/en/index.html");
+          QDesktopServices::openUrl(url);
+        }
+        else if(const auto manual = QString::fromStdString((getManualPath() / "en" / "index.html").string()); QFile::exists(manual))
+        {
+          QDesktopServices::openUrl(QUrl::fromLocalFile(manual));
+        }
+        else
+        {
+          QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL));
+        }
+      })->setShortcut(QKeySequence::HelpContents);
+    menu->addAction(Locale::tr("qtapp.mainmenu:community_forum"),
       []()
       {
-        const auto manual = QString::fromStdString((getManualPath() / "en-us.html").string());
-        if(QFile::exists(manual))
-          QDesktopServices::openUrl(QUrl::fromLocalFile(manual));
-        else
-          QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL));
-      })->setShortcut(QKeySequence::HelpContents);
+        QDesktopServices::openUrl(QStringLiteral("https://discourse.traintastic.org"));
+      });
     auto* subMenu = menu->addMenu(Locale::tr("qtapp.mainmenu:wizards"));
     subMenu->addAction(Locale::tr("wizard.introduction:title"), this, &MainWindow::showIntroductionWizard);
     m_actionAddInterfaceWizard = subMenu->addAction(Locale::tr("wizard.add_interface.welcome:title"), this, &MainWindow::showAddInterfaceWizard);
@@ -732,6 +764,19 @@ void MainWindow::worldChanged()
 
       m_worldSimulationAction->setEnabled(simulation->getAttributeBool(AttributeName::Enabled, true));
     }
+
+    if(auto* property = m_world->getProperty("lua_scripts")) [[likely]]
+    {
+      connect(property, &AbstractProperty::attributeChanged,
+        [this](AttributeName name, const QVariant& value)
+        {
+          if(name == AttributeName::Visible)
+          {
+            m_actionLuaScript->setVisible(value.toBool());
+          }
+        });
+      m_actionLuaScript->setVisible(property->getAttributeBool(AttributeName::Visible, true));
+    }
   }
 
   static_cast<MainWindowStatusBar*>(statusBar())->worldChanged();
@@ -752,7 +797,7 @@ void MainWindow::worldChanged()
 
 void MainWindow::updateWindowTitle()
 {
-  QString title = "Traintastic v" TRAINTASTIC_VERSION_FULL;
+  QString title = m_windowTitle;
   if(m_world)
     title = m_world->getProperty("name")->toString() + " - " + title;
   setWindowTitle(title);
@@ -961,7 +1006,16 @@ NewBoardWizard* MainWindow::showNewBoardWizard(const ObjectPtr& board)
   }
 
   auto* newBoardWizard = new NewBoardWizard(board, this);
-  newBoardWizard->setAttribute(Qt::WA_DeleteOnClose);
+  m_wizard.newBoardWizards.emplace_back(newBoardWizard);
+  connect(newBoardWizard, &NewBoardWizard::finished,
+    [this, newBoardWizard]()
+    {
+      if(auto it = std::find(m_wizard.newBoardWizards.begin(), m_wizard.newBoardWizards.end(), newBoardWizard); it != m_wizard.newBoardWizards.end()) [[likely]]
+      {
+        m_wizard.newBoardWizards.erase(it);
+      }
+      newBoardWizard->deleteLater();
+    });
   newBoardWizard->open();
   return newBoardWizard;
 }
@@ -1037,8 +1091,6 @@ void MainWindow::updateActions()
   worldStateChanged(haveWorld ? m_connection->world()->getProperty("state")->toInt64() : 0);
 
   setMenuEnabled(m_menuObjects, haveWorld);
-  if(haveWorld && !m_connection->world()->hasProperty("lua_scripts"))
-    m_actionLuaScript->setEnabled(false);
 
   if(connected && !haveWorld)
   {

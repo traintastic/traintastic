@@ -1,9 +1,8 @@
 /**
- * server/src/traintastic/traintastic.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -69,7 +68,7 @@ std::shared_ptr<Traintastic> Traintastic::instance;
 Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_restart{false},
   m_dataDir{std::filesystem::absolute(dataDir)},
-  m_signalSet(EventLoop::ioContext),
+  m_signalSet(EventLoop::ioContext()),
   about{this, "about", std::string(versionCopyrightAndLicense), PropertyFlags::ReadOnly},
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   version{this, "version", TRAINTASTIC_VERSION_FULL, PropertyFlags::ReadOnly},
@@ -260,6 +259,8 @@ Traintastic::RunStatus Traintastic::run(const std::string& worldUUID, bool simul
 
 void Traintastic::exit()
 {
+  m_signalSet.cancel();
+
   if(m_restart)
     Log::log(*this, LogMessage::N1003_RESTARTING);
   else

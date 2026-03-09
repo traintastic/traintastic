@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/decoder/decodercontroller.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2023,2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -58,6 +57,7 @@ std::pair<uint16_t, uint16_t> DecoderController::decoderAddressMinMax(DecoderPro
       return {1, 112};
 
     case DecoderProtocol::MFX: // no address -> MFX UID is used
+    case DecoderProtocol::Analog:
     case DecoderProtocol::None:
       return noAddressMinMax;
   }
@@ -89,6 +89,9 @@ std::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol pr
 
     case DecoderProtocol::None:
       return {};
+
+    case DecoderProtocol::Analog:
+      break; // must be handle by interface
   }
   assert(false);
   return {};

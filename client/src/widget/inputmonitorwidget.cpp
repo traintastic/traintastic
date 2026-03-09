@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -119,17 +119,15 @@ InputMonitorWidget::InputMonitorWidget(std::shared_ptr<InputMonitor> object, QWi
   l->addLayout(grid);
   setLayout(l);
 
-  connect(m_object.get(), &InputMonitor::inputIdChanged, this,
-    [this](uint32_t address, QString id)
+  connect(m_object.get(), &InputMonitor::inputStateChanged, this,
+    [this](uint32_t address)
     {
       if(auto* led = getLED(address))
-        led->setEnabled(!id.isEmpty());
-    });
-  connect(m_object.get(), &InputMonitor::inputValueChanged, this,
-    [this](uint32_t address, TriState value)
-    {
-      if(auto* led = getLED(address))
-        led->setState(toState(value));
+      {
+        const auto& inputState = m_object->getInputState(address);
+        led->setEnabled(inputState.used);
+        led->setState(toState(inputState.value));
+      }
     });
 
   updateLEDs();
@@ -203,8 +201,9 @@ void InputMonitorWidget::updateLEDs()
 
   for(auto* led : m_leds)
   {
-    led->setEnabled(!m_object->getInputId(address).isEmpty());
-    led->setState(toState(m_object->getInputState(address)));
+    const auto& inputState = m_object->getInputState(address);
+    led->setEnabled(inputState.used);
+    led->setState(toState(inputState.value));
     if(m_groupBy > 1)
       led->setText(QString("%1.%2").arg(1 + (address - addressMin) / m_groupBy).arg(addressMin + (address - addressMin) % m_groupBy));
     else

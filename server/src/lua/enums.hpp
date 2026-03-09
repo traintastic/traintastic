@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2024 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,16 +25,19 @@
 
 #include <lua.hpp>
 #include "enum.hpp"
+#include <traintastic/enum/blockstate.hpp>
 #include <traintastic/enum/blocktraindirection.hpp>
 #include <traintastic/enum/color.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
 #include "../../src/enum/direction.hpp"
 #include "../../src/enum/directioncontrolstate.hpp"
 #include <traintastic/enum/identificationeventtype.hpp>
+#include <traintastic/enum/inputchannel.hpp>
 #include <traintastic/enum/interfacestate.hpp>
 #include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/outputtype.hpp>
 #include <traintastic/enum/outputpairvalue.hpp>
+#include <traintastic/enum/sensorstate.hpp>
 #include <traintastic/enum/speedunit.hpp>
 #include <traintastic/enum/textalign.hpp>
 #include "../../src/enum/tristate.hpp"
@@ -42,14 +45,17 @@
 #include "../../src/enum/signalaspect.hpp"
 #include <traintastic/enum/worldevent.hpp>
 #include "../../src/enum/worldscale.hpp"
+#include <traintastic/enum/zonetrainstate.hpp>
 
 #define LUA_ENUMS \
+  BlockState, \
   BlockTrainDirection, \
   Color, \
   DecoderProtocol, \
   Direction, \
   DirectionControlState, \
   IdentificationEventType, \
+  InputChannel, \
   InterfaceState, \
   OutputChannel, \
   OutputType, \
@@ -58,9 +64,11 @@
   TextAlign, \
   TriState, \
   TurnoutPosition, \
+  SensorState, \
   SignalAspect, \
   WorldEvent, \
-  WorldScale
+  WorldScale, \
+  ZoneTrainState
 
 namespace Lua {
 

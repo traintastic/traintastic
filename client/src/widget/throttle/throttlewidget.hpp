@@ -45,6 +45,8 @@ enum class Direction : uint8_t;
 
 class ThrottleWidget final : public QWidget
 {
+  friend class ScreenShotDialog;
+
   private:
     struct VehicleDecoder
     {

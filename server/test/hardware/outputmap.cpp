@@ -21,6 +21,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include "../../src/core/eventloop.hpp"
 #include "../../src/core/method.tpp"
 #include "../../src/core/objectproperty.tpp"
 #include "../../src/world/world.hpp"
@@ -38,6 +39,8 @@
 
 TEST_CASE("OutputMap: Channel: Accessory -> ECoSObject -> Accessory", "[outputmap]")
 {
+  EventLoop::reset();
+
   // Create world:
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
@@ -125,6 +128,8 @@ TEST_CASE("OutputMap: Channel: Accessory -> ECoSObject -> Accessory", "[outputma
 
 TEST_CASE("OutputMap: Channel: preserve mapping", "[outputmap]")
 {
+  EventLoop::reset();
+
   // Create world:
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
@@ -197,6 +202,8 @@ TEST_CASE("OutputMap: Channel: preserve mapping", "[outputmap]")
 
 TEST_CASE("OutputMap: Change interface, preserve mapping", "[outputmap]")
 {
+  EventLoop::reset();
+
   // Create world:
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;

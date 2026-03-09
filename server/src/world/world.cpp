@@ -1,9 +1,8 @@
 /**
- * server/src/world/world.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,6 +42,8 @@
 #include "../core/abstractvectorproperty.hpp"
 #include "../core/controllerlist.hpp"
 
+#include "../hardware/booster/booster.hpp"
+#include "../hardware/booster/list/boosterlist.hpp"
 #include "../hardware/input/input.hpp"
 #include "../hardware/input/monitor/inputmonitor.hpp"
 #include "../hardware/input/list/inputlist.hpp"
@@ -59,9 +60,14 @@
 
 #include "../board/board.hpp"
 #include "../board/boardlist.hpp"
+#include "../board/list/blockrailtilelist.hpp"
 #include "../board/list/linkrailtilelist.hpp"
 #include "../board/nx/nxmanager.hpp"
+#include "../board/pathfinder/trainpathfinder.hpp"
 #include "../board/tile/rail/nxbuttonrailtile.hpp"
+
+#include "../zone/zone.hpp"
+#include "../zone/zonelist.hpp"
 
 #include "../throttle/list/throttlelist.hpp"
 #include "../train/train.hpp"
@@ -74,7 +80,7 @@
 using nlohmann::json;
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Interface | DecoderListColumn::Protocol | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Interface | InputListColumn::Channel | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Interface | InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Interface | OutputListColumn::Channel | OutputListColumn::Address;
 constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface /*| IdentificationListColumn::Channel*/ | IdentificationListColumn::Address;
 constexpr auto throttleListColumns = ThrottleListColumn::Name | ThrottleListColumn::Train | ThrottleListColumn::Interface;
@@ -119,21 +125,26 @@ void World::init(World& world)
   world.outputControllers.setValueInternal(std::make_shared<ControllerList<OutputController>>(world, world.outputControllers.name()));
   world.identificationControllers.setValueInternal(std::make_shared<ControllerList<IdentificationController>>(world, world.identificationControllers.name()));
   world.lncvProgrammingControllers.setValueInternal(std::make_shared<ControllerList<LNCVProgrammingController>>(world, world.lncvProgrammingControllers.name()));
+  world.loconetInterfaces.setValueInternal(std::make_shared<ControllerList<LocoNetInterface>>(world, world.loconetInterfaces.name()));
 
   world.interfaces.setValueInternal(std::make_shared<InterfaceList>(world, world.interfaces.name()));
   world.decoders.setValueInternal(std::make_shared<DecoderList>(world, world.decoders.name(), decoderListColumns));
   world.inputs.setValueInternal(std::make_shared<InputList>(world, world.inputs.name(), inputListColumns));
   world.outputs.setValueInternal(std::make_shared<OutputList>(world, world.outputs.name(), outputListColumns));
   world.identifications.setValueInternal(std::make_shared<IdentificationList>(world, world.outputs.name(), identificationListColumns));
+  world.boosters.setValueInternal(std::make_shared<BoosterList>(world, world.boosters.name()));
   world.boards.setValueInternal(std::make_shared<BoardList>(world, world.boards.name()));
+  world.zones.setValueInternal(std::make_shared<ZoneList>(world, world.zones.name()));
   world.clock.setValueInternal(std::make_shared<Clock>(world, world.clock.name()));
   world.throttles.setValueInternal(std::make_shared<ThrottleList>(world, world.throttles.name(), throttleListColumns));
   world.trains.setValueInternal(std::make_shared<TrainList>(world, world.trains.name()));
   world.railVehicles.setValueInternal(std::make_shared<RailVehicleList>(world, world.railVehicles.name()));
   world.luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(world, world.luaScripts.name()));
 
+  world.blockRailTiles.setValueInternal(std::make_shared<BlockRailTileList>(world, world.blockRailTiles.name()));
   world.linkRailTiles.setValueInternal(std::make_shared<LinkRailTileList>(world, world.linkRailTiles.name()));
   world.nxManager.setValueInternal(std::make_shared<NXManager>(world, world.nxManager.name()));
+  world.trainPathFinder.setValueInternal(std::make_shared<TrainPathFinder>(world, world.trainPathFinder.name()));
 
   world.simulationStatus.setValueInternal(std::make_shared<SimulationStatus>(world, world.simulationStatus.name()));
 }
@@ -163,24 +174,37 @@ World::World(Private /*unused*/) :
   correctOutputPosWhenLocked{this, "correct_output_pos_when_locked", true, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   extOutputChangeAction{this, "ext_output_change_action", ExternalOutputChangeAction::EmergencyStopTrain, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
   pathReleaseDelay{this, "path_release_delay", 5000, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
-  decoderControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+    featureScripting{this, "feature_scripting", true, PropertyFlags::ReadWrite | PropertyFlags::Store,
+    [this](bool value)
+    {
+      setFeature(WorldFeature::Scripting, value);
+    }},
+  debugBlockEvents{this, "debug_block_events", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
+  debugTrainEvents{this, "debug_train_events", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
+  debugZoneEvents{this, "debug_zone_events", false, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript},
+  decoderControllers{this, "decoder_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputControllers{this, "input_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   identificationControllers{this, "identification_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   lncvProgrammingControllers{this, "lncv_programming_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  loconetInterfaces{this, "loconet_interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   interfaces{this, "interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   decoders{this, "decoders", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   inputs{this, "inputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   outputs{this, "outputs", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   identifications{this, "identifications", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  boosters{this, "boosters", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   boards{this, "boards", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
+  zones{this, "zones", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   throttles{this, "throttles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   trains{this, "trains", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  blockRailTiles{this, "block_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   linkRailTiles{this, "link_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   nxManager{this, "nx_manager", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  trainPathFinder{this, "train_path_finder", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   statuses(*this, "statuses", {}, PropertyFlags::ReadOnly | PropertyFlags::Store),
   hardwareThrottles{this, "hardware_throttles", 0, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::NoScript},
   state{this, "state", WorldState(), PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
@@ -352,6 +376,18 @@ World::World(Private /*unused*/) :
   Attributes::addMinMax(pathReleaseDelay, {0, 15000}); // Up to 15 seconds
   m_interfaceItems.add(pathReleaseDelay);
 
+  // Features:
+  Attributes::addCategory(featureScripting, Category::features);
+  m_interfaceItems.add(featureScripting);
+
+  // Debug options:
+  Attributes::addCategory(debugBlockEvents, Category::debug);
+  m_interfaceItems.add(debugBlockEvents);
+  Attributes::addCategory(debugTrainEvents, Category::debug);
+  m_interfaceItems.add(debugTrainEvents);
+  Attributes::addCategory(debugZoneEvents, Category::debug);
+  m_interfaceItems.add(debugZoneEvents);
+
   Attributes::addObjectEditor(decoderControllers, false);
   m_interfaceItems.add(decoderControllers);
   Attributes::addObjectEditor(inputControllers, false);
@@ -362,6 +398,8 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(identificationControllers);
   Attributes::addObjectEditor(lncvProgrammingControllers, false);
   m_interfaceItems.add(lncvProgrammingControllers);
+  Attributes::addObjectEditor(loconetInterfaces, false);
+  m_interfaceItems.add(loconetInterfaces);
 
   Attributes::addObjectEditor(interfaces, false);
   m_interfaceItems.add(interfaces);
@@ -373,10 +411,16 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(outputs);
   Attributes::addObjectEditor(identifications, false);
   m_interfaceItems.add(identifications);
+  Attributes::addObjectEditor(boosters, false);
+  m_interfaceItems.add(boosters);
   Attributes::addObjectEditor(throttles, false);
   m_interfaceItems.add(throttles);
   Attributes::addObjectEditor(boards, false);
   m_interfaceItems.add(boards);
+
+  Attributes::addObjectEditor(zones, false);
+  m_interfaceItems.add(zones);
+
   Attributes::addObjectEditor(clock, false);
   m_interfaceItems.add(clock);
   Attributes::addObjectEditor(trains, false);
@@ -384,12 +428,18 @@ World::World(Private /*unused*/) :
   Attributes::addObjectEditor(railVehicles, false);
   m_interfaceItems.add(railVehicles);
   Attributes::addObjectEditor(luaScripts, false);
+  Attributes::addVisible(luaScripts, featureScripting);
   m_interfaceItems.add(luaScripts);
+
+  Attributes::addObjectEditor(blockRailTiles, false);
+  m_interfaceItems.add(blockRailTiles);
 
   Attributes::addObjectEditor(linkRailTiles, false);
   m_interfaceItems.add(linkRailTiles);
   Attributes::addObjectEditor(nxManager, false);
   m_interfaceItems.add(nxManager);
+  Attributes::addObjectEditor(trainPathFinder, false);
+  m_interfaceItems.add(trainPathFinder);
 
   Attributes::addObjectEditor(statuses, false);
   m_interfaceItems.add(statuses);
@@ -434,15 +484,17 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(onEvent);
 
   updateEnabled();
+  updateFeatures();
 }
 
 World::~World()
 {
+  luaScripts->stopAll(); // no surprise event actions during destruction
+
   deleteAll(*interfaces);
-  deleteAll(*decoders);
-  deleteAll(*inputs);
   deleteAll(*identifications);
   deleteAll(*boards);
+  deleteAll(*zones);
   deleteAll(*throttles);
   deleteAll(*trains);
   deleteAll(*railVehicles);
@@ -528,6 +580,7 @@ void World::export_(std::vector<std::byte>& data)
 
 void World::loaded()
 {
+  updateFeatures();
   updateScaleRatio();
   Object::loaded();
 }
@@ -543,6 +596,13 @@ void World::worldEvent(WorldState worldState, WorldEvent worldEvent)
   Attributes::setEnabled(scaleRatio, editState && !runState);
 
   fireEvent(onEvent, worldState, worldEvent);
+}
+
+void World::worldFeaturesChanged(const WorldFeatures features, WorldFeature changed)
+{
+  Object::worldFeaturesChanged(features, changed);
+
+  Attributes::setVisible(luaScripts, features[WorldFeature::Scripting]);
 }
 
 void World::event(const WorldEvent value)
@@ -627,6 +687,20 @@ void World::event(const WorldEvent value)
     it.second.lock()->worldEvent(worldState, value);
 }
 
+void World::setFeature(WorldFeature feature, bool value)
+{
+  if(m_features[feature] != value)
+  {
+    m_features.set(feature, value);
+
+    worldFeaturesChanged(m_features, feature);
+    for(auto& it : m_objects)
+    {
+      it.second.lock()->worldFeaturesChanged(m_features, feature);
+    }
+  }
+}
+
 void World::updateEnabled()
 {
   const bool isOnline = contains(state.value(), WorldState::Online);
@@ -634,6 +708,12 @@ void World::updateEnabled()
   const bool isRunning = contains(state.value(), WorldState::Run);
 
   Attributes::setEnabled(simulation, !isOnline && !isPoweredOn && !isRunning);
+}
+
+void World::updateFeatures()
+{
+  m_features.set(WorldFeature::Scripting, featureScripting);
+  Attributes::setVisible(luaScripts, feature(WorldFeature::Scripting));
 }
 
 void World::updateScaleRatio()

@@ -40,9 +40,10 @@ if(BUILD_TESTING)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_options(Catch2 PRIVATE -Wno-restrict) # workaround GCC bug
   endif()
-  add_executable(traintastic-server-test test/main.cpp
+  add_executable(traintastic-server-test
     ../shared/src/traintastic/simulator/simulator.cpp
     ../shared/src/traintastic/simulator/simulatorconnection.cpp
+    test/zone.cpp
   )
   add_dependencies(traintastic-server-test traintastic-lang)
   target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
@@ -68,6 +69,7 @@ file(GLOB SOURCES
   "src/board/map/*.cpp"
   "src/board/nx/*.hpp"
   "src/board/nx/*.cpp"
+  "src/board/pathfinder/*.cpp"
   "src/board/tile/*.hpp"
   "src/board/tile/*.cpp"
   "src/board/tile/hidden/*.cpp"
@@ -84,6 +86,9 @@ file(GLOB SOURCES
   "src/core/*.hpp"
   "src/core/*.cpp"
   "src/enum/*.hpp"
+  "src/hardware/booster/*.cpp"
+  "src/hardware/booster/drivers/*.cpp"
+  "src/hardware/booster/list/*.cpp"
   "src/hardware/decoder/*.hpp"
   "src/hardware/decoder/*.cpp"
   "src/hardware/decoder/list/*.hpp"
@@ -134,6 +139,7 @@ file(GLOB SOURCES
   "src/hardware/protocol/loconet/message/uhlenbrock/*.cpp"
   "src/hardware/protocol/loconet/iohandler/*.hpp"
   "src/hardware/protocol/loconet/iohandler/*.cpp"
+  "src/hardware/protocol/loconet/lncv/*.cpp"
   "src/hardware/protocol/marklincan/*.hpp"
   "src/hardware/protocol/marklincan/*.cpp"
   "src/hardware/protocol/marklincan/iohandler/*.hpp"
@@ -187,6 +193,8 @@ file(GLOB SOURCES
   "src/utils/*.cpp"
   "src/world/*.hpp"
   "src/world/*.cpp"
+  "src/zone/*.hpp"
+  "src/zone/*.cpp"
   "../shared/src/traintastic/locale/locale.cpp"
   "../shared/src/traintastic/utils/standardpaths.cpp")
 
@@ -324,7 +332,7 @@ if(WIN32 AND NOT MSVC)
 endif()
 
 # boost
-find_package(Boost 1.81 REQUIRED COMPONENTS program_options)
+find_package(Boost 1.81 REQUIRED COMPONENTS program_options url)
 target_include_directories(traintastic-server SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
 target_link_libraries(traintastic-server PRIVATE ${Boost_LIBRARIES})
 if(BUILD_TESTING)

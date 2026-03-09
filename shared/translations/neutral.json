@@ -100,6 +100,10 @@
         "definition": "WiThrottle"
     },
     {
+        "term": "length_unit:cm",
+        "definition": "cm"
+    },
+    {
         "term": "length_unit:ft",
         "definition": "ft"
     },

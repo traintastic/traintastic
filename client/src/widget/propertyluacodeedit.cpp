@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,12 @@
 #include <QFontDatabase>
 #include <QPainter>
 #include <QTextBlock>
+
+namespace {
+
+const auto indent = QStringLiteral("  ");
+
+}
 
 PropertyLuaCodeEdit::PropertyLuaCodeEdit(Property& property, QWidget* parent) :
   QPlainTextEdit(parent),
@@ -91,6 +97,29 @@ void PropertyLuaCodeEdit::updateViewportMargins()
   setViewportMargins(calcLineNumbersWidth(), 0, 0, 0);
 }
 
+void PropertyLuaCodeEdit::keyPressEvent(QKeyEvent* event)
+{
+  const bool shiftModifier = (event->modifiers() & Qt::ShiftModifier);
+  if(event->key() == Qt::Key_Tab && !shiftModifier)
+  {
+    if(textCursor().hasSelection())
+    {
+      indentSelection();
+    }
+    else
+    {
+      textCursor().insertText(indent);
+    }
+    return;
+  }
+  if(event->key() == Qt::Key_Backtab || (event->key() == Qt::Key_Tab && shiftModifier))
+  {
+    unindentSelection();
+    return;
+  }
+  QPlainTextEdit::keyPressEvent(event);
+}
+
 void PropertyLuaCodeEdit::resizeEvent(QResizeEvent* event)
 {
   QPlainTextEdit::resizeEvent(event);
@@ -123,6 +152,67 @@ void PropertyLuaCodeEdit::paintLineNumbers(QPaintEvent* event)
         bottom = top + qRound(blockBoundingRect(block).height());
         ++blockNumber;
     }
+}
+
+void PropertyLuaCodeEdit::indentSelection()
+{
+  QTextCursor cursor = textCursor();
+
+  if(!cursor.hasSelection())
+  {
+    return;
+  }
+
+  cursor.beginEditBlock();
+
+  const int start = cursor.selectionStart();
+  int end = cursor.selectionEnd();
+
+  cursor.setPosition(start);
+  cursor.movePosition(QTextCursor::StartOfLine);
+
+  while(cursor.position() < end)
+  {
+    cursor.insertText(indent);
+    end += indent.size();
+    cursor.movePosition(QTextCursor::Down);
+    cursor.movePosition(QTextCursor::StartOfLine);
+  }
+
+  cursor.endEditBlock();
+}
+
+void PropertyLuaCodeEdit::unindentSelection()
+{
+  QTextCursor cursor = textCursor();
+
+  cursor.beginEditBlock();
+
+  const int start = cursor.selectionStart();
+  int end = cursor.selectionEnd();
+
+  cursor.setPosition(start);
+  cursor.movePosition(QTextCursor::StartOfLine);
+
+  while(cursor.position() < end)
+  {
+    cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, indent.size());
+    const QString leading = cursor.selectedText();
+    cursor.movePosition(QTextCursor::StartOfLine);
+    for(auto c : leading)
+    {
+      if(c != ' ')
+      {
+        break;
+      }
+      cursor.deleteChar();
+      end--;
+    }
+    cursor.clearSelection();
+    cursor.movePosition(QTextCursor::Down);
+  }
+
+  cursor.endEditBlock();
 }
 
 

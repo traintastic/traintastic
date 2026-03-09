@@ -411,7 +411,7 @@ bool Kernel::setOutput(OutputChannel channel, uint32_t id, OutputValue value)
   return false;
 }
 
-void Kernel::simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void Kernel::simulateInputChange(InputChannel channel, uint32_t address, SimulateInputAction action)
 {
   if(!m_simulation)
     return;
@@ -421,7 +421,7 @@ void Kernel::simulateInputChange(uint32_t channel, uint32_t address, SimulateInp
     {
       switch(channel)
       {
-        case InputChannel::s88:
+        case InputChannel::S88:
         {
           uint16_t id = ObjectId::s88;
           uint32_t port = address - 1;
@@ -471,8 +471,12 @@ void Kernel::simulateInputChange(uint32_t channel, uint32_t address, SimulateInp
           }
           break;
         }
-        case InputChannel::ecosDetector:
+        case InputChannel::ECoSDetector:
           //! \todo Implement ECoS detector simulation
+          break;
+
+        default: [[unlikely]]
+          assert(false);
           break;
       }
     });
@@ -553,7 +557,7 @@ void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value
     EventLoop::call(
       [this, address=offset + port, value]()
       {
-        m_inputController->updateInputValue(InputChannel::s88, address, value);
+        m_inputController->updateInputValue(InputChannel::S88, address, value);
       });
   }
   else // ECoS Detector
@@ -564,7 +568,7 @@ void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value
     EventLoop::call(
       [this, address, value]()
       {
-        m_inputController->updateInputValue(InputChannel::ecosDetector, address, value);
+        m_inputController->updateInputValue(InputChannel::ECoSDetector, address, value);
       });
   }
 }

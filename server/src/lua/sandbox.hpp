@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2022-2025 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,8 @@
 #include <vector>
 #include <lua.hpp>
 
+class InputController;
+class Input;
 class OutputController;
 class Output;
 class ScriptThrottle;
@@ -54,6 +56,7 @@ class Sandbox
     static int __index(lua_State* L);
     static int __newindex(lua_State* L);
 
+    static void* alloc(void* ud, void* ptr, size_t osize, size_t nsize);
     static void hook(lua_State* L, lua_Debug* /*ar*/);
 
   public:
@@ -64,6 +67,11 @@ class Sandbox
         lua_Integer m_eventHandlerId;
         std::map<lua_Integer, std::shared_ptr<EventHandler>> m_eventHandlers;
         std::map<
+          std::weak_ptr<InputController>,
+          std::set<std::weak_ptr<Input>, std::owner_less<std::weak_ptr<Input>>>,
+          std::owner_less<std::weak_ptr<InputController>>
+          > m_inputs;
+        std::map<
           std::weak_ptr<OutputController>,
           std::set<std::weak_ptr<Output>, std::owner_less<std::weak_ptr<Output>>>,
           std::owner_less<std::weak_ptr<OutputController>>
@@ -71,6 +79,8 @@ class Sandbox
         std::vector<std::shared_ptr<ScriptThrottle>> m_throttles;
 
       public:
+        static constexpr size_t memoryLimit = 1024 * 1024; // 1 MiB
+        size_t memoryUsed = 0;
         std::chrono::time_point<std::chrono::steady_clock> pcallStart;
         bool pcallExecutionTimeViolation;
 
@@ -121,6 +131,11 @@ class Sandbox
 
           if(it != m_eventHandlers.end())
             m_eventHandlers.erase(it);
+        }
+
+        void registerInput(std::weak_ptr<InputController> inputController, std::weak_ptr<Input> input)
+        {
+          m_inputs[inputController].emplace(input);
         }
 
         void registerOutput(std::weak_ptr<OutputController> outputController, std::weak_ptr<Output> output)

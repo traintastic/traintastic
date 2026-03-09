@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/marklincan/kernel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2023-2025 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -396,7 +395,7 @@ void Kernel::receive(const Message& message)
               EventLoop::call(
                 [this, address=feedbackState.contactId(), value]()
                 {
-                  m_inputController->updateInputValue(InputController::defaultInputChannel, address, value);
+                  m_inputController->updateInputValue(InputChannel::Input, address, value);
                 });
             }
           }
@@ -593,8 +592,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       }
       break;
 
-    case DecoderProtocol::None:
-    case DecoderProtocol::Selectrix:
+    default: [[unlikely]]
       assert(false);
       break;
   }

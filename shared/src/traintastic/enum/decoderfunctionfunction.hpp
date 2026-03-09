@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 #define TRAINTASTIC_SHARED_TRAINTASTIC_ENUM_DECODERFUNCTIONFUNCTION_HPP
 
 #include <cstdint>
+#include <array>
 #include "enum.hpp"
 
 enum class DecoderFunctionFunction : uint16_t
@@ -43,5 +44,13 @@ TRAINTASTIC_ENUM(DecoderFunctionFunction, "decoder_function_function", 5,
   {DecoderFunctionFunction::Mute, "mute"},
   {DecoderFunctionFunction::Smoke, "smoke"},
 });
+
+inline constexpr std::array<DecoderFunctionFunction, 5> decoderFunctionFunctionValues{{
+  DecoderFunctionFunction::Generic,
+  DecoderFunctionFunction::Light,
+  DecoderFunctionFunction::Sound,
+  DecoderFunctionFunction::Mute,
+  DecoderFunctionFunction::Smoke,
+}};
 
 #endif

@@ -97,14 +97,17 @@ class LocoNetInterface final
     //! \return \c true if send to command station, \c false otherwise.
     bool immPacket(std::span<uint8_t> dccPacket, uint8_t repeat);
 
+    void readLNCV(uint16_t moduleId, uint16_t address, uint16_t lncv, std::function<void(uint16_t, std::error_code)> callback);
+
     // DecoderController:
     std::span<const DecoderProtocol> decoderProtocols() const final;
     std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final;
-    void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
+    std::span<const InputChannel> inputChannels() const final;
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
+    void inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action) final;
 
     // OutputController:
     std::span<const OutputChannel> outputChannels() const final;

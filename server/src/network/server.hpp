@@ -1,9 +1,8 @@
 /**
- * server/src/network/server.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022-2025 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +26,7 @@
 #include <array>
 #include <list>
 #include <thread>
+#include <filesystem>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/udp.hpp>
@@ -45,12 +45,16 @@ class Server : public std::enable_shared_from_this<Server>
   private:
     boost::asio::io_context m_ioContext;
     std::thread m_thread;
+#ifndef NDEBUG
+    std::thread::id m_threadId;
+#endif
     boost::asio::ip::tcp::acceptor m_acceptor;
     boost::asio::ip::udp::socket m_socketUDP;
     std::array<char, 8> m_udpBuffer;
     boost::asio::ip::udp::endpoint m_remoteEndpoint;
     const bool m_localhostOnly;
     std::list<std::shared_ptr<WebSocketConnection>> m_connections;
+    std::filesystem::path m_manualPath;
 
     void doReceive();
     static std::unique_ptr<Message> processMessage(const Message& message);

@@ -21,6 +21,8 @@
  */
 
 #include <catch2/catch_template_test_macros.hpp>
+#include "../../src/core/eventloop.hpp"
+
 #include "../../src/lua/push.hpp"
 
 // Enums:
@@ -146,6 +148,8 @@ TEMPLATE_TEST_CASE("Lua::push<>", "[lua][lua-push]", LUA_SETS)
 
 TEMPLATE_TEST_CASE("Lua::push<>", "[lua][lua-push]", World)
 {
+  EventLoop::reset();
+
   lua_State* L = luaL_newstate();
   const int top = lua_gettop(L);
 

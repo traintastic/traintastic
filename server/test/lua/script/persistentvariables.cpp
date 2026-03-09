@@ -21,6 +21,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include "../../../src/core/eventloop.hpp"
 #include "../../../src/core/method.tpp"
 #include "../../../src/core/objectproperty.tpp"
 #include "../../../src/lua/scriptlist.hpp"
@@ -33,6 +34,8 @@
 
 TEST_CASE("Lua script: pv - save/restore - bool", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -59,6 +62,8 @@ TEST_CASE("Lua script: pv - save/restore - bool", "[lua][lua-script][lua-script-
 
 TEST_CASE("Lua script: pv - save/restore - int", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -85,6 +90,8 @@ TEST_CASE("Lua script: pv - save/restore - int", "[lua][lua-script][lua-script-p
 
 TEST_CASE("Lua script: pv - save/restore - float", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -111,6 +118,8 @@ TEST_CASE("Lua script: pv - save/restore - float", "[lua][lua-script][lua-script
 
 TEST_CASE("Lua script: pv - save/restore - string", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -137,6 +146,8 @@ TEST_CASE("Lua script: pv - save/restore - string", "[lua][lua-script][lua-scrip
 
 TEST_CASE("Lua script: pv - save/restore - enum", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -163,6 +174,8 @@ TEST_CASE("Lua script: pv - save/restore - enum", "[lua][lua-script][lua-script-
 
 TEST_CASE("Lua script: pv - save/restore - set", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -189,6 +202,8 @@ TEST_CASE("Lua script: pv - save/restore - set", "[lua][lua-script][lua-script-p
 
 TEST_CASE("Lua script: pv - save/restore - object", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -215,6 +230,8 @@ TEST_CASE("Lua script: pv - save/restore - object", "[lua][lua-script][lua-scrip
 
 TEST_CASE("Lua script: pv - save/restore - vector property", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -245,6 +262,8 @@ TEST_CASE("Lua script: pv - save/restore - vector property", "[lua][lua-script][
 
 TEST_CASE("Lua script: pv - save/restore - method", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -271,6 +290,8 @@ TEST_CASE("Lua script: pv - save/restore - method", "[lua][lua-script][lua-scrip
 
 TEST_CASE("Lua script: pv - save/restore - event", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -297,6 +318,8 @@ TEST_CASE("Lua script: pv - save/restore - event", "[lua][lua-script][lua-script
 
 TEST_CASE("Lua script: pv - unsupported - function", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -314,6 +337,8 @@ TEST_CASE("Lua script: pv - unsupported - function", "[lua][lua-script][lua-scri
 
 TEST_CASE("Lua script: pv - save/restore - table, empty", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -340,6 +365,8 @@ TEST_CASE("Lua script: pv - save/restore - table, empty", "[lua][lua-script][lua
 
 TEST_CASE("Lua script: pv - save/restore - table, array like", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -366,6 +393,8 @@ TEST_CASE("Lua script: pv - save/restore - table, array like", "[lua][lua-script
 
 TEST_CASE("Lua script: pv - save/restore - table, array length", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -392,6 +421,8 @@ TEST_CASE("Lua script: pv - save/restore - table, array length", "[lua][lua-scri
 
 TEST_CASE("Lua script: pv - save/restore - table, map like", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -418,6 +449,8 @@ TEST_CASE("Lua script: pv - save/restore - table, map like", "[lua][lua-script][
 
 TEST_CASE("Lua script: pv - save/restore - bool as key", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -444,6 +477,8 @@ TEST_CASE("Lua script: pv - save/restore - bool as key", "[lua][lua-script][lua-
 
 TEST_CASE("Lua script: pv - save/restore - float as key", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -470,6 +505,8 @@ TEST_CASE("Lua script: pv - save/restore - float as key", "[lua][lua-script][lua
 
 TEST_CASE("Lua script: pv - save/restore - enum key as key", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -496,6 +533,8 @@ TEST_CASE("Lua script: pv - save/restore - enum key as key", "[lua][lua-script][
 
 TEST_CASE("Lua script: pv - save/restore - set as key", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -522,6 +561,8 @@ TEST_CASE("Lua script: pv - save/restore - set as key", "[lua][lua-script][lua-s
 
 TEST_CASE("Lua script: pv - save/restore - object as key", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -548,6 +589,8 @@ TEST_CASE("Lua script: pv - save/restore - object as key", "[lua][lua-script][lu
 
 TEST_CASE("Lua script: pv - save/restore - vector property as key", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -578,6 +621,8 @@ TEST_CASE("Lua script: pv - save/restore - vector property as key", "[lua][lua-s
 
 TEST_CASE("Lua script: pv - save/restore - method as key", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -604,6 +649,8 @@ TEST_CASE("Lua script: pv - save/restore - method as key", "[lua][lua-script][lu
 
 TEST_CASE("Lua script: pv - save/restore - event as key", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -630,6 +677,8 @@ TEST_CASE("Lua script: pv - save/restore - event as key", "[lua][lua-script][lua
 
 TEST_CASE("Lua script: pv - unsupported - function as key", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -647,6 +696,8 @@ TEST_CASE("Lua script: pv - unsupported - function as key", "[lua][lua-script][l
 
 TEST_CASE("Lua script: pv - unsupported - table as key", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -664,6 +715,8 @@ TEST_CASE("Lua script: pv - unsupported - table as key", "[lua][lua-script][lua-
 
 TEST_CASE("Lua script: pv - unsupported - table recursion", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -684,6 +737,8 @@ TEST_CASE("Lua script: pv - unsupported - table recursion", "[lua][lua-script][l
 
 TEST_CASE("Lua script: pv - unsupported - table recursion 2", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -709,6 +764,8 @@ TEST_CASE("Lua script: pv - unsupported - table recursion 2", "[lua][lua-script]
 
 TEST_CASE("Lua script: pv - pairs()", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -742,6 +799,8 @@ TEST_CASE("Lua script: pv - pairs()", "[lua][lua-script][lua-script-pv]")
 
 TEST_CASE("Lua script: pv - ipairs()", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -783,6 +842,8 @@ TEST_CASE("Lua script: pv - ipairs()", "[lua][lua-script][lua-script-pv]")
 
 TEST_CASE("Lua script: pv - clear", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -817,6 +878,8 @@ TEST_CASE("Lua script: pv - clear", "[lua][lua-script][lua-script-pv]")
 
 TEST_CASE("Lua script: pv - save/load", "[lua][lua-script][lua-script-pv]")
 {
+  EventLoop::reset();
+
   static const std::string code =
     "pv.bool = true\n"
     "pv.int = 42\n"

@@ -1,9 +1,8 @@
 /**
- * client/src/board/boardareawidget.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,24 +33,23 @@
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/turnoutposition.hpp>
 #include <traintastic/enum/color.hpp>
+#include "boardareagrid.hpp"
 #include "boardcolorscheme.hpp"
 #include "../network/abstractproperty.hpp"
 #include "../network/objectptr.hpp"
 
+class BoardWidget;
+class BlockHighlight;
 class Board;
+enum class BlockTrainDirection : uint8_t;
 
 class BoardAreaWidget : public QWidget
 {
   Q_OBJECT
 
-  public:
-    enum class Grid
-    {
-      None = 0,
-      Line,
-      Dot,
-    };
+  friend class ScreenShotDialog;
 
+  public:
     enum class MouseMoveAction
     {
       None,
@@ -71,13 +69,18 @@ class BoardAreaWidget : public QWidget
     AbstractProperty* m_boardTop;
     AbstractProperty* m_boardRight;
     AbstractProperty* m_boardBottom;
-    Grid m_grid;
+    BoardAreaGrid m_grid;
     int m_zoomLevel;
+
+    BlockHighlight& m_blockHighlight;
 
     bool m_mouseLeftButtonPressed;
     TileLocation m_mouseLeftButtonPressedTileLocation;
     bool m_mouseRightButtonPressed;
     QPoint m_mouseRightButtonPressedPoint;
+
+    QPoint m_dragStartPosition;
+    bool m_dragStarted = false;
 
     MouseMoveAction m_mouseMoveAction;
     TileId m_mouseMoveTileId;
@@ -107,6 +110,9 @@ class BoardAreaWidget : public QWidget
     bool getNXButtonEnabled(const TileLocation& l) const;
     bool getNXButtonPressed(const TileLocation& l) const;
     TileLocation pointToTileLocation(const QPoint& p);
+    QRect tileRect(int x, int y, int width, int height) const;
+    QRect tileRect(const Object& tile) const;
+    BlockTrainDirection getBlockTrainDirection(const Object& tile, const QPoint& point) const;
     QString getTileToolTip(const TileLocation& l) const;
 
     bool event(QEvent* event) final;
@@ -131,8 +137,6 @@ class BoardAreaWidget : public QWidget
 
     BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent = nullptr);
 
-    Grid grid() const { return m_grid; }
-    void nextGrid();
     int zoomLevel() const { return m_zoomLevel; }
     float zoomRatio() const { return static_cast<float>(getTileSize()) / getTileSize(0); }
 
@@ -145,16 +149,15 @@ class BoardAreaWidget : public QWidget
     void setMouseMoveTileSize(uint8_t x, uint8_t y);
     void setMouseMoveHideTileLocation(TileLocation l);
     void setMouseMoveTileSizeMax(uint8_t width, uint8_t height);
+    void updateGrid();
 
   public slots:
     void tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& object);
-    void setGrid(Grid value);
     void setZoomLevel(int value);
     void zoomIn() { setZoomLevel(zoomLevel() + 1); }
     void zoomOut() { setZoomLevel(zoomLevel() - 1); }
 
   signals:
-    void gridChanged(Grid);
     void zoomLevelChanged(int);
     void tileClicked(int16_t x, int16_t y);
     void rightClicked();

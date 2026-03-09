@@ -42,6 +42,7 @@ class ControllerListBaseTableModel final : public TableModel
     static bool isListedProperty(std::string_view name);
 
     ControllerListBaseTableModel(ControllerListBase& list);
+    ~ControllerListBaseTableModel() final;
 
     std::string getText(uint32_t column, uint32_t row) const final;
 };

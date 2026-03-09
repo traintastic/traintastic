@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022,2024 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,14 +24,16 @@
 #include "../../../world/world.hpp"
 #include "../../../core/method.tpp"
 #include "../../../core/attributes.hpp"
+#include "../../../utils/category.hpp"
 #include "../../../utils/displayname.hpp"
 
 CREATE_IMPL(PushButtonTile)
 
 PushButtonTile::PushButtonTile(World& world, std::string_view _id)
   : Tile(world, _id, TileId::PushButton)
-  , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
-  , color{this, "color", Color::Yellow, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
+  , color{this, "color", Color::Yellow, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadWrite}
+  , text{this, "text", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadWrite}
+  , textColor{this, "text_color", Color::Black, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadWrite}
   , pressed{*this, "pressed",
       [this]()
       {
@@ -39,28 +41,21 @@ PushButtonTile::PushButtonTile(World& world, std::string_view _id)
       }}
   , onPressed{*this, "on_pressed", EventFlags::Scriptable}
 {
-  const bool editable = contains(m_world.state.value(), WorldState::Edit);
+  Attributes::setMax<uint8_t>(height, 16);
+  Attributes::setMax<uint8_t>(width, 16);
 
-  Attributes::addDisplayName(name, DisplayName::Object::name);
-  Attributes::addEnabled(name, editable);
-  m_interfaceItems.add(name);
-
-  Attributes::addEnabled(color, editable);
+  Attributes::addCategory(color, Category::colors);
   Attributes::addValues(color, colorValuesWithoutNone);
   m_interfaceItems.add(color);
+
+  m_interfaceItems.add(text);
+
+  Attributes::addCategory(textColor, Category::colors);
+  Attributes::addValues(textColor, colorValuesWithoutNone);
+  m_interfaceItems.add(textColor);
 
   Attributes::addObjectEditor(pressed, false);
   m_interfaceItems.add(pressed);
 
   m_interfaceItems.add(onPressed);
-}
-
-void PushButtonTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
-{
-  Tile::worldEvent(worldState, worldEvent);
-
-  const bool editable = contains(worldState, WorldState::Edit);
-
-  Attributes::setEnabled(name, editable);
-  Attributes::setEnabled(color, editable);
 }

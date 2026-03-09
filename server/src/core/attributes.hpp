@@ -31,6 +31,12 @@
 #include "unitproperty.hpp"
 #include "vectorproperty.hpp"
 #include <span>
+#include <type_traits>
+
+template<typename T>
+concept StringOrStringView =
+    std::same_as<std::remove_cvref_t<T>, std::string> ||
+    std::same_as<std::remove_cvref_t<T>, std::string_view>;
 
 struct Attributes
 {
@@ -58,16 +64,24 @@ struct Attributes
     property.setAttribute(AttributeName::AliasValues, values);
   }
 
-  template<class T>
-  static inline void addAliases(Property<T>& property, std::span<const T> keys, std::span<const std::string> values)
+  template<class T, StringOrStringView S>
+  static inline void addAliases(Property<T>& property, std::span<const T> keys, std::span<const S> values)
   {
     assert(keys.size() == values.size());
     property.addAttribute(AttributeName::AliasKeys, keys);
     property.addAttribute(AttributeName::AliasValues, values);
   }
 
-  template<class T>
-  static inline void setAliases(Property<T>& property, std::span<const T> keys, std::span<const std::string> values)
+  template<StringOrStringView S>
+  static inline void addAliases(Property<std::string>& property, std::span<const S> keys, std::span<const S> values)
+  {
+    assert(keys.size() == values.size());
+    property.addAttribute(AttributeName::AliasKeys, keys);
+    property.addAttribute(AttributeName::AliasValues, values);
+  }
+
+  template<class T, StringOrStringView S>
+  static inline void setAliases(Property<T>& property, std::span<const T> keys, std::span<const S> values)
   {
     assert(keys.size() == values.size());
     property.setAttribute(AttributeName::AliasKeys, keys);
@@ -93,9 +107,20 @@ struct Attributes
     item.addAttribute(AttributeName::ClassList, classList);
   }
 
+  template<typename T>
+  static inline void addCustom(Property<T>& property, bool value)
+  {
+    property.addAttribute(AttributeName::Custom, value);
+  }
+
   static inline void addDisplayName(InterfaceItem& item, std::string_view value)
   {
     item.addAttribute(AttributeName::DisplayName, value);
+  }
+
+  static inline void addHelp(InterfaceItem& item, std::string_view value)
+  {
+    item.addAttribute(AttributeName::Help, value);
   }
 
   static inline void setDisplayName(InterfaceItem& item, std::string_view value)
@@ -274,6 +299,14 @@ struct Attributes
     setMinMax(property, range.first, range.second);
   }
 
+  template<typename T>
+  requires(std::is_integral_v<T> || std::is_floating_point_v<T>)
+  static inline void addStep(Property<T>& property, T value)
+  {
+    assert(value > 0);
+    property.addAttribute(AttributeName::Step, value);
+  }
+
   static inline void addVisible(InterfaceItem& item, bool value)
   {
     item.addAttribute(AttributeName::Visible, value);
@@ -323,6 +356,11 @@ struct Attributes
 
   template<typename T, size_t N>
   static inline void addValues(Property<T>& property, std::span<const T, N> values)
+  {
+    property.addAttribute(AttributeName::Values, values);
+  }
+
+  static inline void addValues(Property<std::string>& property, std::span<const std::string_view> values)
   {
     property.addAttribute(AttributeName::Values, values);
   }

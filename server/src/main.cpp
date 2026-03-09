@@ -1,9 +1,8 @@
 /**
- * server/src/main.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +22,7 @@
 #include <iostream>
 #include <functional>
 #include "options.hpp"
+#include "core/eventloop.hpp"
 #include "traintastic/traintastic.hpp"
 #include "log/log.hpp"
 #include <traintastic/locale/locale.hpp>
@@ -95,13 +95,23 @@ int main(int argc, char* argv[])
 
   do
   {
-    {
-      const auto settings = Settings::getPreStartSettings(dataDir);
+    EventLoop::reset();
 
+    {
       const auto localePath = getLocalePath();
       try
       {
         Locale::instance = std::make_unique<Locale>(localePath / "en-us.lang", std::make_unique<Locale>(localePath / "neutral.lang"));
+      }
+      catch(const std::exception& e)
+      {
+        std::cerr << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+      }
+
+      const auto settings = Settings::getPreStartSettings(dataDir);
+      try
+      {
         if(settings.language != "en-us")
         {
           Locale::instance = std::make_unique<Locale>((localePath / settings.language) += ".lang", std::move(Locale::instance));

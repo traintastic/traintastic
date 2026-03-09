@@ -1,9 +1,8 @@
 /**
- * server/src/lua/scriptlist.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,7 +33,9 @@ namespace Lua {
 class ScriptList final : public ObjectList<Script>
 {
   protected:
+    void loaded() final;
     void worldEvent(WorldState state, WorldEvent event) final;
+    void worldFeaturesChanged(const WorldFeatures features, WorldFeature changed) final;
     void objectAdded(const std::shared_ptr<Script>& /*object*/) final;
     void objectRemoved(const std::shared_ptr<Script>& /*object*/) final;
     bool isListedProperty(std::string_view name) final;
@@ -55,6 +56,10 @@ class ScriptList final : public ObjectList<Script>
     TableModelPtr getModel() final;
 
     void updateEnabled();
+
+private:
+  void addStatus();
+  void removeStatus();
 };
 
 }

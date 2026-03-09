@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
 
 #include "turnoutsliprailtile.hpp"
 #include "../../../../core/attributes.hpp"
+#include "../../../../utils/category.hpp"
 
 std::optional<OutputActionValue> TurnoutSlipRailTile::getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
 {
@@ -66,6 +67,7 @@ TurnoutSlipRailTile::TurnoutSlipRailTile(World& world, std::string_view _id, Til
         dualMotorChanged();
       }}
 {
+  Attributes::addCategory(dualMotor, Category::options);
   Attributes::addDisplayName(dualMotor, "board_tile.rail.turnout_slip:dual_motor");
   m_interfaceItems.add(dualMotor);
 }

@@ -45,4 +45,18 @@ constexpr double valueStep(double value, double step, bool up)
   return up ? valueStepUp(value, step) : valueStepDown(value, step);
 }
 
+template<typename T>
+requires(std::is_integral_v<T> || std::is_floating_point_v<T>)
+constexpr T valueStepRound(T value, T step)
+{
+  if constexpr(std::is_integral_v<T>)
+  {
+    return ((value / step) + (((value % step) >= step / 2) ? 1 : 0)) * step;
+  }
+  else // float
+  {
+    return std::round(value / step) * step;
+  }
+}
+
 #endif

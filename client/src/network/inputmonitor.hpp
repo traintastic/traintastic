@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,13 +31,21 @@ class InputMonitor final : public Object
 {
   Q_OBJECT
 
+  public:
+    struct InputState
+    {
+      bool used = false;
+      TriState value = TriState::Undefined;
+    };
+
   private:
     int m_requestId;
-    std::unordered_map<uint32_t, QString> m_inputIds;
-    std::unordered_map<uint32_t, TriState> m_inputValues;
+    std::unordered_map<uint32_t, InputState> m_inputStates;
+    Method* m_simulateInputChange = nullptr;
+    Event* m_inputUsedChanged = nullptr;
+    Event* m_inputValueChanged = nullptr;
 
-  protected:
-    void processMessage(const Message& message) final;
+    void created() final;
 
   public:
     inline static const QString classId = QStringLiteral("input_monitor");
@@ -45,14 +53,12 @@ class InputMonitor final : public Object
     InputMonitor(const std::shared_ptr<Connection>& connection, Handle handle, const QString& classId_);
     ~InputMonitor() final;
 
-    TriState getInputState(uint32_t address) const;
-    QString getInputId(uint32_t address) const;
+    const InputState& getInputState(uint32_t address) const;
 
     void simulateInputChange(uint32_t address);
 
   signals:
-    void inputIdChanged(uint32_t address, QString id);
-    void inputValueChanged(uint32_t address, TriState value);
+    void inputStateChanged(uint32_t address);
 };
 
 #endif

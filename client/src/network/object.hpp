@@ -24,6 +24,7 @@
 #define TRAINTASTIC_CLIENT_NETWORK_OBJECT_HPP
 
 #include <QObject>
+#include <QVariant>
 #include <memory>
 #include "handle.hpp"
 #include "interfaceitems.hpp"
@@ -105,6 +106,8 @@ class Object : public QObject
     //! \return Property value or \c defaultValue if property doesn't exist or isn't an string
     QString getPropertyValueString(const QString& name, const QString& defaultValue = {}) const;
 
+    QVariant getPropertyValue(const QString& name, const QVariant& defaultValue = {}) const;
+
     ObjectProperty* getObjectProperty(const QString& name) const;
     ObjectProperty* getObjectProperty(const QString& name);
 
@@ -118,6 +121,8 @@ class Object : public QObject
     UnitProperty* getUnitProperty(const QString& name);
 
     void setPropertyValue(const QString& name, bool value);
+    void setPropertyValue(const QString& name, int value);
+    void setPropertyValue(const QString& name, const QVariant& value);
 
     const Method* getMethod(const QString& name) const;
     Method* getMethod(const QString& name);

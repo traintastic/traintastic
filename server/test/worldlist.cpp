@@ -25,6 +25,8 @@
 
 TEST_CASE("Create worldlist and model => destroy worldlist", "[worldlist]")
 {
+  EventLoop::reset();
+
   const auto path = std::filesystem::temp_directory_path() / "traintastic-8emltd";
   {
     auto worldList = std::make_shared<WorldList>(path);
@@ -47,6 +49,8 @@ TEST_CASE("Create worldlist and model => destroy worldlist", "[worldlist]")
 
 TEST_CASE("Create worldlist and model => destroy model", "[worldlist]")
 {
+  EventLoop::reset();
+
   const auto path = std::filesystem::temp_directory_path() / "traintastic-27oz9v";
   {
     auto worldList = std::make_shared<WorldList>(path);

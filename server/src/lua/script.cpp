@@ -1,9 +1,8 @@
 /**
- * server/src/lua/script.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -155,12 +154,19 @@ void Script::loaded()
       break;
 
     case LuaScriptState::Running:
-      startSandbox();
-      if(state == LuaScriptState::Running)
+      if(m_world.feature(WorldFeature::Scripting))
       {
-        updateEnabled(); // setState doesn't updateEnabled() because the state is already running
-        auto& running = m_world.luaScripts->status->running;
-        running.setValueInternal(running + 1); // setState doesn't increment because the state is already running
+        startSandbox();
+        if(state == LuaScriptState::Running)
+        {
+          updateEnabled(); // setState doesn't updateEnabled() because the state is already running
+          auto& running = m_world.luaScripts->status->running;
+          running.setValueInternal(running + 1); // setState doesn't increment because the state is already running
+        }
+      }
+      else
+      {
+        state.setValueInternal(LuaScriptState::Stopped);
       }
       break;
 
@@ -176,6 +182,18 @@ void Script::worldEvent(WorldState worldState, WorldEvent worldEvent)
   updateEnabled();
 }
 
+void Script::worldFeaturesChanged(const WorldFeatures features, WorldFeature changed)
+{
+  IdObject::worldFeaturesChanged(features, changed);
+
+  if(!features[WorldFeature::Scripting] && m_sandbox)
+  {
+    stopSandbox();
+  }
+
+  updateEnabled();
+}
+
 void Script::updateEnabled()
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit) && state != LuaScriptState::Running;
@@ -186,7 +204,7 @@ void Script::updateEnabled()
   Attributes::setEnabled(disabled, editable);
   Attributes::setEnabled(code, editable);
 
-  Attributes::setEnabled(start, stoppedOrError);
+  Attributes::setEnabled(start, stoppedOrError && m_world.feature(WorldFeature::Scripting));
   Attributes::setEnabled(stop, state == LuaScriptState::Running);
   Attributes::setEnabled(clearPersistentVariables, stoppedOrError && !m_persistentVariables.empty());
 
@@ -231,6 +249,12 @@ void Script::setState(LuaScriptState value)
 void Script::startSandbox()
 {
   assert(!m_sandbox);
+
+  if(!m_world.feature(WorldFeature::Scripting))
+  {
+    return;
+  }
+
   if((m_sandbox = Sandbox::create(*this)))
   {
     Log::log(*this, LogMessage::N9001_STARTING_SCRIPT);
@@ -267,17 +291,6 @@ void Script::stopSandbox()
     setState(LuaScriptState::Stopped);
     Log::log(*this, LogMessage::I9001_STOPPED_SCRIPT);
   }
-}
-
-bool Script::pcall(lua_State* L, int nargs, int nresults)
-{
-  const bool success = Sandbox::pcall(L, nargs, nresults) == LUA_OK;
-  if(!success)
-  {
-    Log::log(*this, LogMessage::F9003_CALLING_FUNCTION_FAILED_X, lua_tostring(L, -1));
-    lua_pop(L, 1); // pop error message from the stack
-  }
-  return success;
 }
 
 }

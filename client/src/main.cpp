@@ -31,6 +31,7 @@
 #endif
 #include <version.hpp>
 #include "mainwindow.hpp"
+#include "dialog/screenshotdialog.hpp"
 #include "settings/generalsettings.hpp"
 #include "settings/developersettings.hpp"
 #include "style/materialdarkstyle.hpp"
@@ -43,6 +44,7 @@
 struct Options
 {
   bool fullscreen;
+  bool screenShot;
   QString connectTo;
 };
 
@@ -59,10 +61,15 @@ void parseOptions(QCoreApplication& app, Options& options)
   QCommandLineOption connect({"c", "connect"}, "Connect to server.", "hostname[:port]");
   parser.addOption(connect);
 
+  QCommandLineOption screenShot("screenshot");
+  screenShot.setFlags(QCommandLineOption::HiddenFromHelp);
+  parser.addOption(screenShot);
+
   parser.process(app);
 
   options.fullscreen = parser.isSet(fullscreen);
   options.connectTo = parser.value(connect);
+  options.screenShot = parser.isSet(screenShot);
 }
 
 static void saveMissing(QDir path, const Locale& locale)
@@ -138,7 +145,18 @@ int main(int argc, char* argv[])
 #endif
 
   MainWindow mw;
-  if(options.fullscreen)
+  if(options.screenShot)
+  {
+    mw.show();
+    mw.move(50, 50);
+    mw.resize(1024, 768);
+
+    auto* d = new ScreenShotDialog(mw);
+    d->show();
+    d->move(mw.pos().x() + mw.width() + 50, mw.pos().y());
+    d->resize(400, d->minimumSizeHint().height());
+  }
+  else if(options.fullscreen)
     mw.showFullScreen();
   else
     mw.show();

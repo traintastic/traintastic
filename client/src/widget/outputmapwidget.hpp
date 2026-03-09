@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +38,8 @@ class Property;
 class OutputMapWidget : public QWidget
 {
   Q_OBJECT
+
+  friend class ScreenShotDialog;
 
   protected:
     ObjectPtr m_object;

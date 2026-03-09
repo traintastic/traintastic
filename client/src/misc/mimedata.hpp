@@ -1,9 +1,8 @@
 /**
- * client/src/misc/mimedata.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +23,31 @@
 #define TRAINTASTIC_CLIENT_MISC_MIMEDATA_HPP
 
 #include <QMimeData>
+#include <QIODevice>
+#include <traintastic/enum/blocktraindirection.hpp>
+
+class BlockReservePathMimeData : public QMimeData
+{
+public:
+  inline static const auto mimeType = QLatin1String("application/vnd.traintastic.block_reserve_path");
+
+  explicit BlockReservePathMimeData(const QString& blockId, BlockTrainDirection direction)
+  {
+    QByteArray payload;
+    QDataStream out(&payload, QIODevice::WriteOnly);
+    out << blockId << static_cast<std::underlying_type_t<BlockTrainDirection>>(direction);
+    setData(mimeType, payload);
+  }
+
+  inline std::tuple<QString, BlockTrainDirection> values() const
+  {
+    QString blockId;
+    std::underlying_type_t<BlockTrainDirection> directionRaw;
+    QDataStream in(data(mimeType));
+    in >> blockId >> directionRaw;
+    return std::make_tuple(blockId, static_cast<BlockTrainDirection>(directionRaw));
+  }
+};
 
 class AssignTrainMimeData : public QMimeData
 {
