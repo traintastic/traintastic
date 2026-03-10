@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +22,9 @@
 #include <catch2/catch_template_test_macros.hpp>
 #include <bitset>
 #include "interfaces.hpp"
+#include "../src/board/board.hpp"
+#include "../src/board/boardlist.hpp"
+#include "../src/board/tile/rail/sensorrailtile.hpp"
 #include "../src/core/eventloop.hpp"
 #include "../src/core/method.tpp"
 #include "../src/core/objectproperty.tpp"
@@ -115,6 +118,16 @@ TEMPLATE_TEST_CASE("Input", "[input]",
   interfaceWeak.lock()->simulator->useSimulator = true;
   interfaceWeak.lock()->simulator->port = simulator->serverPort();
 
+  std::weak_ptr<Board> boardWeak = world->boards->create();
+  REQUIRE(boardWeak.lock()->addTile(0, 0, TileRotate::Deg0, SensorRailTile::classId, false));
+  std::weak_ptr<SensorRailTile> sensor1 = std::dynamic_pointer_cast<SensorRailTile>(boardWeak.lock()->getTile({0, 0}));
+  REQUIRE(boardWeak.lock()->addTile(0, 1, TileRotate::Deg0, SensorRailTile::classId, false));
+  std::weak_ptr<SensorRailTile> sensor2 = std::dynamic_pointer_cast<SensorRailTile>(boardWeak.lock()->getTile({0, 1}));
+  REQUIRE(boardWeak.lock()->addTile(0, 2, TileRotate::Deg0, SensorRailTile::classId, false));
+  std::weak_ptr<SensorRailTile> sensor3 = std::dynamic_pointer_cast<SensorRailTile>(boardWeak.lock()->getTile({0, 2}));
+  REQUIRE(boardWeak.lock()->addTile(0, 3, TileRotate::Deg0, SensorRailTile::classId, false));
+  std::weak_ptr<SensorRailTile> sensor4 = std::dynamic_pointer_cast<SensorRailTile>(boardWeak.lock()->getTile({0, 3}));
+
   using InputState = std::bitset<4>;
   InputState inputStateKnown(0);
   InputState inputState(0);
@@ -122,58 +135,59 @@ TEMPLATE_TEST_CASE("Input", "[input]",
   inputStates.reserve(16);
   inputStates.push_back(inputState);
 
-  auto inputValueChangedHandler =
-    [&](bool value, const std::shared_ptr<Input>& input)
+  auto sensorStateChangedHandler =
+    [&](SensorState state, const std::shared_ptr<SensorRailTile>& sensor)
     {
-      const auto index = input->address.value() - 1;
+      const bool value = (state == SensorState::Occupied);
+      const auto index = sensor->address.value() - 1;
       REQUIRE((!inputStateKnown[index] || inputState[index] != value));
       inputState[index] = value;
       inputStateKnown[index] = true;
       inputStates.push_back(inputState);
     };
 
-  std::weak_ptr<Input> input1 = interfaceWeak.lock()->inputs->create();
-  input1.lock()->address = 1;
-  REQUIRE(input1.lock()->address == 1);
-  input1.lock()->onValueChanged.connect(inputValueChangedHandler);
+  sensor1.lock()->interface = interfaceWeak.lock();
+  sensor1.lock()->address = 1;
+  REQUIRE(sensor1.lock()->address == 1);
+  sensor1.lock()->onStateChanged.connect(sensorStateChangedHandler);
   if constexpr(std::is_same_v<TestType, Z21Interface>)
   {
-    input1.lock()->channel = Z21::ClientKernel::InputChannel::rbus;
-    REQUIRE(input1.lock()->channel == Z21::ClientKernel::InputChannel::rbus);
-    REQUIRE(input1.lock()->address == 1);
+    sensor1.lock()->channel = InputChannel::RBus;
+    REQUIRE(sensor1.lock()->channel == InputChannel::RBus);
+    REQUIRE(sensor1.lock()->address == 1);
   }
 
-  std::weak_ptr<Input> input2 = interfaceWeak.lock()->inputs->create();
-  input2.lock()->address = 2;
-  REQUIRE(input2.lock()->address == 2);
-  input2.lock()->onValueChanged.connect(inputValueChangedHandler);
+  sensor2.lock()->interface = interfaceWeak.lock();
+  sensor2.lock()->address = 2;
+  REQUIRE(sensor2.lock()->address == 2);
+  sensor2.lock()->onStateChanged.connect(sensorStateChangedHandler);
   if constexpr(std::is_same_v<TestType, Z21Interface>)
   {
-    input2.lock()->channel = Z21::ClientKernel::InputChannel::rbus;
-    REQUIRE(input2.lock()->channel == Z21::ClientKernel::InputChannel::rbus);
-    REQUIRE(input2.lock()->address == 2);
+    sensor2.lock()->channel = InputChannel::RBus;
+    REQUIRE(sensor2.lock()->channel == InputChannel::RBus);
+    REQUIRE(sensor2.lock()->address == 2);
   }
 
-  std::weak_ptr<Input> input3 = interfaceWeak.lock()->inputs->create();
-  input3.lock()->address = 3;
-  REQUIRE(input3.lock()->address == 3);
-  input3.lock()->onValueChanged.connect(inputValueChangedHandler);
+  sensor3.lock()->interface = interfaceWeak.lock();
+  sensor3.lock()->address = 3;
+  REQUIRE(sensor3.lock()->address == 3);
+  sensor3.lock()->onStateChanged.connect(sensorStateChangedHandler);
   if constexpr(std::is_same_v<TestType, Z21Interface>)
   {
-    input3.lock()->channel = Z21::ClientKernel::InputChannel::loconet;
-    REQUIRE(input3.lock()->channel == Z21::ClientKernel::InputChannel::loconet);
-    REQUIRE(input3.lock()->address == 3);
+    sensor3.lock()->channel = InputChannel::LocoNet;
+    REQUIRE(sensor3.lock()->channel == InputChannel::LocoNet);
+    REQUIRE(sensor3.lock()->address == 3);
   }
 
-  std::weak_ptr<Input> input4 = interfaceWeak.lock()->inputs->create();
-  input4.lock()->address = 4;
-  REQUIRE(input4.lock()->address == 4);
-  input4.lock()->onValueChanged.connect(inputValueChangedHandler);
+  sensor4.lock()->interface = interfaceWeak.lock();
+  sensor4.lock()->address = 4;
+  REQUIRE(sensor4.lock()->address == 4);
+  sensor4.lock()->onStateChanged.connect(sensorStateChangedHandler);
   if constexpr(std::is_same_v<TestType, Z21Interface>)
   {
-    input4.lock()->channel = Z21::ClientKernel::InputChannel::loconet;
-    REQUIRE(input4.lock()->channel == Z21::ClientKernel::InputChannel::loconet);
-    REQUIRE(input4.lock()->address == 4);
+    sensor4.lock()->channel = InputChannel::LocoNet;
+    REQUIRE(sensor4.lock()->channel == InputChannel::LocoNet);
+    REQUIRE(sensor4.lock()->address == 4);
   }
 
   REQUIRE(interfaceWeak.lock()->inputs->length.value() == 4);
@@ -263,10 +277,10 @@ TEMPLATE_TEST_CASE("Input", "[input]",
   world.reset();
   REQUIRE(worldWeak.expired());
   REQUIRE(interfaceWeak.expired());
-  REQUIRE(input1.expired());
-  REQUIRE(input2.expired());
-  REQUIRE(input3.expired());
-  REQUIRE(input4.expired());
+  REQUIRE(sensor1.expired());
+  REQUIRE(sensor2.expired());
+  REQUIRE(sensor3.expired());
+  REQUIRE(sensor4.expired());
 
   EventLoop::stop();
 }
