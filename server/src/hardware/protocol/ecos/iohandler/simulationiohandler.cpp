@@ -193,6 +193,9 @@ void SimulationIOHandler::start()
                 return locomotive.protocol == LocomotiveProtocol::SX32 && locomotive.address == address;
               });
             break;
+
+          case DecoderProtocol::Analog:
+            break;
         }
 
         const uint8_t speedStep = emergencyStop ? 0 : speed;
