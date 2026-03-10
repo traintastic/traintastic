@@ -35,6 +35,9 @@
 #include "wlanmausinterface.hpp"
 #include "xpressnetinterface.hpp"
 #include "z21interface.hpp"
+#include "Marklin6050Interface.hpp"
+#include "Marklin6023Interface.hpp"
+
 
 std::span<const std::string_view> Interfaces::classList()
 {
@@ -48,7 +51,9 @@ std::span<const std::string_view> Interfaces::classList()
     WiThrottleInterface::classId,
     WlanMausInterface::classId,
     XpressNetInterface::classId,
-    Z21Interface::classId
+    Z21Interface::classId,
+    Marklin6050Interface::classId,
+    Marklin6023Interface::classId
   );
   return classes;
 }
@@ -65,5 +70,7 @@ std::shared_ptr<Interface> Interfaces::create(World& world, std::string_view cla
   IF_CLASSID_CREATE(WlanMausInterface)
   IF_CLASSID_CREATE(XpressNetInterface)
   IF_CLASSID_CREATE(Z21Interface)
+  IF_CLASSID_CREATE(Marklin6050Interface)
+  IF_CLASSID_CREATE(Marklin6023Interface)
   return std::shared_ptr<Interface>();
 }
