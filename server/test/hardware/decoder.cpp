@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -112,14 +112,13 @@ TEMPLATE_TEST_CASE("Decoder - forward, reverse", "[decoder]",
   interfaceWeak.lock()->simulator->useSimulator = true;
   interfaceWeak.lock()->simulator->port = simulator->serverPort();
 
-  std::weak_ptr<Decoder> decoderWeak = interfaceWeak.lock()->decoders->create();
-  decoderWeak.lock()->address = 3;
-  REQUIRE(decoderWeak.lock()->address.value() == 3);
-
   std::weak_ptr<Locomotive> locomotiveWeak = std::dynamic_pointer_cast<Locomotive>(world->railVehicles->create(Locomotive::classId));
-  locomotiveWeak.lock()->decoder = decoderWeak.lock();
   locomotiveWeak.lock()->speedMax.setUnit(SpeedUnit::KiloMeterPerHour);
   locomotiveWeak.lock()->speedMax.setValue(50.0);
+
+  std::weak_ptr<Decoder> decoderWeak = locomotiveWeak.lock()->decoder.value();
+  decoderWeak.lock()->address = 3;
+  REQUIRE(decoderWeak.lock()->address.value() == 3);
 
   std::weak_ptr<Train> trainWeak = world->trains->create();
   trainWeak.lock()->vehicles->add(locomotiveWeak.lock());
