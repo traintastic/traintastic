@@ -97,6 +97,8 @@ TEMPLATE_TEST_CASE("Input", "[input]",
     }}
   };
 
+  EventLoop::reset();
+
   // Setup simulator:
   auto simulator = std::make_shared<Simulator>(layout);
   simulator->enableServer(true, 0); // set port to 0 to let the OS choose a free port

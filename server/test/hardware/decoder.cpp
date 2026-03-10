@@ -78,6 +78,8 @@ TEMPLATE_TEST_CASE("Decoder - forward, reverse", "[decoder]",
     }}
   };
 
+  EventLoop::reset();
+
   // Setup simulator:
   auto simulator = std::make_shared<Simulator>(layout);
   simulator->enableServer(true, 0); // set port to 0 to let the OS choose a free port
