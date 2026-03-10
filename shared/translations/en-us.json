@@ -3374,5 +3374,101 @@
     {
         "term": "zone:speed_limit",
         "definition": "Speed limit"
+    },
+    {
+        "term": "category:marklin_6050",
+        "definition": "Märklin 6050"
+    },
+    {
+        "term": "category:programmer",
+        "definition": "Programmer"
+    },
+    {
+        "term": "marklin6050_settings:accessory_off_time",
+        "definition": "Accessory OFF time"
+    },
+    {
+        "term": "marklin6050_settings:accessory_off_time.help",
+        "definition": "Time in milliseconds after which an activated accessory (turnout/signal) is automatically deactivated. Protects solenoid coils from overheating."
+    },
+    {
+        "term": "marklin6050_settings:analog",
+        "definition": "Analog mode"
+    },
+    {
+        "term": "marklin6050_settings:analog.help",
+        "definition": "Enables analog operation. Only available for 6027 and 6029. In analog mode, no locomotive functions are supported and no digital addresses are used."
+    },
+    {
+        "term": "marklin6050_settings:central_unit_version",
+        "definition": "Central unit version"
+    },
+    {
+        "term": "marklin6050_settings:central_unit_version.help",
+        "definition": "Select the connected central unit. This determines the supported protocol (Motorola/DCC), address range, and available functions."
+    },
+    {
+        "term": "marklin6050_settings:change_address",
+        "definition": "Change address"
+    },
+    {
+        "term": "marklin6050_settings:change_address.help",
+        "definition": "Programs a new address into the locomotive decoder. The locomotive must be alone on the programming track. Requires an online connection."
+    },
+    {
+        "term": "marklin6050_settings:command_redundancy",
+        "definition": "Command redundancy"
+    },
+    {
+        "term": "marklin6050_settings:command_redundancy.help",
+        "definition": "Number of repetitions for locomotive and accessory commands. Increases reliability with poor signal quality but slows down command processing. Direction changes are never repeated."
+    },
+    {
+        "term": "marklin6050_settings:feedback_module",
+        "definition": "Extension module"
+    },
+    {
+        "term": "marklin6050_settings:feedback_module.help",
+        "definition": "Enables the extended address range. Requires a compatible extension module connected to the central unit."
+    },
+    {
+        "term": "marklin6050_settings:new_loco_address",
+        "definition": "New loco address"
+    },
+    {
+        "term": "marklin6050_settings:old_loco_address",
+        "definition": "Old loco address"
+    },
+    {
+        "term": "marklin6050_settings:redundancy_off",
+        "definition": "Off"
+    },
+    {
+        "term": "marklin6050_settings:s88_call_interval",
+        "definition": "S88 poll interval"
+    },
+    {
+        "term": "marklin6050_settings:s88_call_interval.help",
+        "definition": "Time interval between polling the S88 feedback modules. Shorter intervals increase responsiveness but generate more traffic on the serial bus."
+    },
+    {
+        "term": "marklin6050_settings:s88_module_amount",
+        "definition": "S88 module count"
+    },
+    {
+        "term": "marklin6050_settings:s88_module_amount.help",
+        "definition": "Number of connected S88 feedback modules (16 contacts each). Maximum 61 modules for 976 feedback contacts."
+    },
+    {
+        "term": "wizard.add_interface.interface_marklin6050:title",
+        "definition": "Märklin 6050/51 interface"
+    },
+    {
+        "term": "interface.marklin6050:settings",
+        "definition": "Settings"
+    },
+    {
+        "term": "interface.marklin6023:settings",
+        "definition": "Settings"
     }
 ]
