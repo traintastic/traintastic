@@ -2076,6 +2076,10 @@
         "definition": "Add address"
     },
     {
+        "term": "output_map:add_event",
+        "definition": "Add event"
+    },
+    {
         "term": "output_map:address_x",
         "definition": "Address %1"
     },
@@ -2084,8 +2088,20 @@
         "definition": "ECoS object"
     },
     {
+        "term": "output_map:event",
+        "definition": "Event"
+    },
+    {
+        "term": "output_map:events",
+        "definition": "Events"
+    },
+    {
         "term": "output_map:remove_address",
         "definition": "Remove address"
+    },
+    {
+        "term": "output_map:remove_event",
+        "definition": "Remove event"
     },
     {
         "term": "output_map:swap_outputs",

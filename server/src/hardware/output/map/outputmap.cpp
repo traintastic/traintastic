@@ -392,12 +392,12 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
 
   m_interfaceItems.add(items);
 
-  Attributes::addDisplayName(addAddress, "output_map:add_address");
+  Attributes::addDisplayName(addAddress, DisplayName::OutputMap::addAddress);
   Attributes::addEnabled(addAddress, false);
   Attributes::addVisible(addAddress, false);
   m_interfaceItems.add(addAddress);
 
-  Attributes::addDisplayName(removeAddress, "output_map:remove_address");
+  Attributes::addDisplayName(removeAddress, DisplayName::OutputMap::removeAddress);
   Attributes::addEnabled(removeAddress, false);
   Attributes::addVisible(removeAddress, false);
   m_interfaceItems.add(removeAddress);
@@ -567,11 +567,9 @@ void OutputMap::channelChanged()
 
 void OutputMap::addressesSizeChanged()
 {
-  Attributes::setDisplayName(addresses, addresses.size() == 1 ? DisplayName::Hardware::address : DisplayName::Hardware::addresses);
   assert(addresses.size() == m_outputs.size());
-
+  updateAddressDisplayName();
   updateOutputActions();
-
   updateEnabled();
 }
 
@@ -762,5 +760,32 @@ void OutputMap::releaseOutputs(Outputs& outputs)
       releaseOutput(outputs.back());
     }
     outputs.pop_back();
+  }
+}
+
+void OutputMap::updateAddressDisplayName()
+{
+  switch(channel)
+  {
+    using enum OutputChannel;
+
+    case Output:
+    case Accessory:
+    case AccessoryDCC:
+    case AccessoryMotorola:
+    case DCCext:
+    case Turnout:
+    case ECoSObject:
+      Attributes::setDisplayName(addresses, addresses.size() == 1 ? DisplayName::Hardware::address : DisplayName::Hardware::addresses);
+      Attributes::setDisplayName(addAddress, DisplayName::OutputMap::addAddress);
+      Attributes::setDisplayName(removeAddress, DisplayName::OutputMap::removeAddress);
+      break;
+
+    case LongEvent:
+    case ShortEvent:
+      Attributes::setDisplayName(addresses, addresses.size() == 1 ? DisplayName::OutputMap::event : DisplayName::OutputMap::events);
+      Attributes::setDisplayName(addAddress, DisplayName::OutputMap::addEvent);
+      Attributes::setDisplayName(removeAddress, DisplayName::OutputMap::removeEvent);
+      break;
   }
 }

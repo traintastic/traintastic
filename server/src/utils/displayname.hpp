@@ -92,6 +92,15 @@ namespace DisplayName
     constexpr std::string_view name = "object:name";
     constexpr std::string_view notes = "object:notes";
   }
+  namespace OutputMap
+  {
+    constexpr std::string_view addAddress = "output_map:add_address";
+    constexpr std::string_view addEvent = "output_map:add_event";
+    constexpr std::string_view event = "output_map:event";
+    constexpr std::string_view events = "output_map:events";
+    constexpr std::string_view removeAddress = "output_map:remove_address";
+    constexpr std::string_view removeEvent = "output_map:remove_event";
+  }
   namespace Serial
   {
     constexpr std::string_view device = "serial:device";

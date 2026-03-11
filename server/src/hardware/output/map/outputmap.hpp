@@ -59,6 +59,8 @@ class OutputMap : public SubObject
     void releaseOutput(OutputConnectionPair& outputConnPair);
     void releaseOutputs(Outputs& outputs);
 
+    void updateAddressDisplayName();
+
   protected:
     Outputs m_outputs;
 
