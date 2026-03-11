@@ -282,5 +282,5 @@ TEMPLATE_TEST_CASE("Input", "[input]",
   REQUIRE(sensor3.expired());
   REQUIRE(sensor4.expired());
 
-  EventLoop::stop();
+  EventLoop::ioContext().stop();
 }

@@ -208,7 +208,7 @@ TEMPLATE_TEST_CASE("Decoder - forward, reverse", "[decoder]",
   REQUIRE(locomotiveWeak.expired());
   REQUIRE(trainWeak.expired());
 
-  EventLoop::stop();
+  EventLoop::ioContext().stop();
 }
 
 #endif
