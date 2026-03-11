@@ -222,7 +222,7 @@ begin
   else
     Components := RegReadTraintasticComponents;
 
-  if (Components = '') and WizardSilent then begin
+  if (Components = 0) and WizardSilent then begin
     Log('Silent install without known Components value, defaulting to: ClientAndServer');
     Components := 'ClientAndServer';
   end;
