@@ -1,19 +1,25 @@
 /**
- * server/src/hardware/interface/Marklin6023Interface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025
+ * Copyright (C) 2026 Kamil Kasprzak
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#if defined(_WIN32)
-#define WIN32_LEAN_AND_MEAN
-#include <winsock2.h>
-#include <windows.h>
-#endif
+
 
 #include "Marklin6023Interface.hpp"
 #include "../output/list/outputlist.hpp"
@@ -21,6 +27,7 @@
 #include "../decoder/list/decoderlist.hpp"
 #include "../decoder/list/decoderlisttablemodel.hpp"
 #include "../decoder/decoderchangeflags.hpp"
+#include "../decoder/decoder.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/makearray.hpp"
 #include "../../world/world.hpp"
@@ -30,26 +37,32 @@
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 
-constexpr auto inputListColumns6023 = InputListColumn::Address;
-constexpr auto outputListColumns6023 = OutputListColumn::Channel | OutputListColumn::Address;
-constexpr auto decoderListColumns6023 = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
+constexpr auto inputListColumns6023  = InputListColumn::Address;
+constexpr auto outputListColumns6023 =
+    OutputListColumn::Channel | OutputListColumn::Address;
+constexpr auto decoderListColumns6023 =
+    DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 
 CREATE_IMPL(Marklin6023Interface)
 
+// ---------------------------------------------------------------------------
+// Construction
+// ---------------------------------------------------------------------------
+
 Marklin6023Interface::Marklin6023Interface(World& world, std::string_view objId)
-    : Interface(world, objId)
-    , OutputController(static_cast<IdObject&>(*this))
-    , InputController(static_cast<IdObject&>(*this))
-    , DecoderController(*this, decoderListColumns6023)
-    , serialPort(this, "serialPort", "", PropertyFlags::ReadWrite | PropertyFlags::Store)
-    , baudrate(this, "baudrate", 9600, PropertyFlags::ReadWrite | PropertyFlags::Store)
+    : Interface{world, objId}
+    , OutputController{static_cast<IdObject&>(*this)}
+    , InputController{static_cast<IdObject&>(*this)}
+    , DecoderController{*this, decoderListColumns6023}
+    , serialPort{this, "serialPort", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
+    , baudrate{this, "baudrate", 9600, PropertyFlags::ReadWrite | PropertyFlags::Store}
     , settings{this, "settings", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject}
 {
-    name = "Märklin 6023";
+    name = "M�rklin 6023/6223";
 
-    settings.setValueInternal(std::make_shared<Marklin6050::Settings6023>(*this, settings.name()));
+    settings.setValueInternal(
+        std::make_shared<Marklin6023::Settings>(*this, settings.name()));
 
-    // --- Connection ---
     Attributes::addDisplayName(serialPort, DisplayName::Serial::device);
     Attributes::addEnabled(serialPort, !online);
     Attributes::addVisible(serialPort, true);
@@ -63,16 +76,15 @@ Marklin6023Interface::Marklin6023Interface(World& world, std::string_view objId)
     });
     m_interfaceItems.insertBefore(baudrate, notes);
 
-    // --- Settings ---
     m_interfaceItems.insertBefore(settings, notes);
-
-    // --- Lists ---
-    m_interfaceItems.insertBefore(inputs, notes);
-    m_interfaceItems.insertBefore(outputs, notes);
+    m_interfaceItems.insertBefore(inputs,   notes);
+    m_interfaceItems.insertBefore(outputs,  notes);
     m_interfaceItems.insertBefore(decoders, notes);
 }
 
-// --- Lifecycle ---
+// ---------------------------------------------------------------------------
+// Lifecycle
+// ---------------------------------------------------------------------------
 
 void Marklin6023Interface::addToWorld()
 {
@@ -96,7 +108,9 @@ void Marklin6023Interface::destroying()
     DecoderController::destroying();
 }
 
-// --- State ---
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
 
 void Marklin6023Interface::worldEvent(WorldState state, WorldEvent event)
 {
@@ -108,16 +122,9 @@ void Marklin6023Interface::worldEvent(WorldState state, WorldEvent event)
 
     switch(event)
     {
-        case WorldEvent::Stop:
-            m_kernel->sendGlobalStop();
-            break;
-
-        case WorldEvent::Run:
-            m_kernel->sendGlobalGo();
-            break;
-
-        default:
-            break;
+        case WorldEvent::Stop: m_kernel->sendGlobalStop(); break;
+        case WorldEvent::Run:  m_kernel->sendGlobalGo();  break;
+        default: break;
     }
 }
 
@@ -129,11 +136,13 @@ void Marklin6023Interface::onlineChanged(bool /*value*/)
 void Marklin6023Interface::updateEnabled()
 {
     Attributes::setEnabled(serialPort, !online);
-    Attributes::setEnabled(baudrate, !online);
+    Attributes::setEnabled(baudrate,   !online);
     settings->updateEnabled(online);
 }
 
-// --- Connection ---
+// ---------------------------------------------------------------------------
+// Connection
+// ---------------------------------------------------------------------------
 
 bool Marklin6023Interface::setOnline(bool& value, bool simulation)
 {
@@ -149,13 +158,15 @@ bool Marklin6023Interface::setOnline(bool& value, bool simulation)
 
             try
             {
-                m_kernel = std::make_unique<Marklin6050::Kernel>(id.value(), cfg);
+                m_kernel = std::make_unique<Marklin6023::Kernel>(
+                    id.value(), cfg, serialPort.value(), baudrate.value());
+
                 m_kernel->s88Callback = [this](uint32_t address, bool state)
                 {
-                    this->onS88Input(address, state);
+                    onS88Input(address, state);
                 };
-                m_kernel->start(serialPort, baudrate.value());
-                m_kernel->startInputThread(cfg.s88amount, cfg.s88interval);
+
+                m_kernel->start();
             }
             catch(const LogMessageException& e)
             {
@@ -184,7 +195,9 @@ bool Marklin6023Interface::setOnline(bool& value, bool simulation)
     return true;
 }
 
-// --- Input ---
+// ---------------------------------------------------------------------------
+// Input
+// ---------------------------------------------------------------------------
 
 std::span<const InputChannel> Marklin6023Interface::inputChannels() const
 {
@@ -192,59 +205,49 @@ std::span<const InputChannel> Marklin6023Interface::inputChannels() const
     return values;
 }
 
-std::pair<uint32_t, uint32_t> Marklin6023Interface::inputAddressMinMax(InputChannel channel) const
+std::pair<uint32_t, uint32_t>
+Marklin6023Interface::inputAddressMinMax(InputChannel channel) const
 {
-    switch(channel)
-    {
-        case InputChannel::S88:
-        {
-            const uint32_t moduleCount = settings->s88amount.value();
-            return {1, moduleCount * 16};
-        }
-        default:
-            return {0, 0};
-    }
+    if(channel == InputChannel::S88)
+        return {1, settings->s88amount.value() * 16};
+    return {0, 0};
 }
 
-void Marklin6023Interface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
+void Marklin6023Interface::inputSimulateChange(
+    InputChannel channel, uint32_t address, SimulateInputAction action)
 {
     if(!m_simulation || channel != InputChannel::S88)
         return;
 
     switch(action)
     {
-        case SimulateInputAction::SetFalse:
-            onS88Input(address, false);
-            break;
-
-        case SimulateInputAction::SetTrue:
-            onS88Input(address, true);
-            break;
-
-        case SimulateInputAction::Toggle:
-            onS88Input(address, true);
-            break;
+        case SimulateInputAction::SetFalse: onS88Input(address, false); break;
+        case SimulateInputAction::SetTrue:  onS88Input(address, true);  break;
+        case SimulateInputAction::Toggle:   onS88Input(address, true);  break;
     }
 }
 
 void Marklin6023Interface::onS88Input(uint32_t address, bool state)
 {
-    updateInputValue(InputChannel::S88, address, state ? TriState::True : TriState::False);
+    updateInputValue(InputChannel::S88, address,
+                     state ? TriState::True : TriState::False);
 }
 
-// --- Output ---
+// ---------------------------------------------------------------------------
+// Output
+// ---------------------------------------------------------------------------
 
 std::span<const OutputChannel> Marklin6023Interface::outputChannels() const
 {
     static const auto values = makeArray(
         OutputChannel::Accessory,
         OutputChannel::Turnout,
-        OutputChannel::Output
-    );
+        OutputChannel::Output);
     return values;
 }
 
-std::pair<uint32_t, uint32_t> Marklin6023Interface::outputAddressMinMax(OutputChannel channel) const
+std::pair<uint32_t, uint32_t>
+Marklin6023Interface::outputAddressMinMax(OutputChannel channel) const
 {
     switch(channel)
     {
@@ -252,13 +255,13 @@ std::pair<uint32_t, uint32_t> Marklin6023Interface::outputAddressMinMax(OutputCh
         case OutputChannel::Turnout:
         case OutputChannel::Output:
             return {1, 256};
-
         default:
             return OutputController::outputAddressMinMax(channel);
     }
 }
 
-bool Marklin6023Interface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+bool Marklin6023Interface::setOutputValue(
+    OutputChannel channel, uint32_t address, OutputValue value)
 {
     if(!m_kernel || m_simulation)
         return false;
@@ -273,11 +276,10 @@ bool Marklin6023Interface::setOutputValue(OutputChannel channel, uint32_t addres
             if(address < min || address > max)
                 return false;
 
-            // turnouttime=0: CU handles timing in ASCII mode
-            const bool result = m_kernel->setAccessory(address, value, 0);
+            // The 6023/6223 CU handles solenoid timing internally.
+            const bool result = m_kernel->setAccessory(address, value);
             if(result)
                 updateOutputValue(channel, address, value);
-
             return result;
         }
         default:
@@ -285,65 +287,57 @@ bool Marklin6023Interface::setOutputValue(OutputChannel channel, uint32_t addres
     }
 }
 
-// --- Decoder ---
+// ---------------------------------------------------------------------------
+// Decoder
+// ---------------------------------------------------------------------------
 
 std::span<const DecoderProtocol> Marklin6023Interface::decoderProtocols() const
 {
-    // 6023/6223 only supports Motorola
-    static constexpr std::array<DecoderProtocol, 1> protocols{DecoderProtocol::Motorola};
-    return protocols;
+    // 6023/6223 supports only Motorola
+    static constexpr std::array<DecoderProtocol, 1> p{DecoderProtocol::Motorola};
+    return p;
 }
 
-std::pair<uint16_t, uint16_t> Marklin6023Interface::decoderAddressMinMax(DecoderProtocol /*protocol*/) const
+std::pair<uint16_t, uint16_t>
+Marklin6023Interface::decoderAddressMinMax(DecoderProtocol /*protocol*/) const
 {
-    // 6023/6223: address range 10-40
     return {10, 40};
 }
 
-std::span<const uint8_t> Marklin6023Interface::decoderSpeedSteps(DecoderProtocol /*protocol*/) const
+std::span<const uint8_t> Marklin6023Interface::decoderSpeedSteps(DecoderProtocol) const
 {
     static constexpr uint8_t steps[] = {14};
     return steps;
 }
 
 void Marklin6023Interface::decoderChanged(
-    const Decoder& decoder,
-    DecoderChangeFlags changes,
-    uint32_t functionNumber)
+    const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
     if(!m_kernel || m_simulation)
         return;
 
     const uint8_t address = static_cast<uint8_t>(decoder.address);
-    const bool f0 = decoder.getFunctionValue(0);
-    const uint8_t speed = decoder.emergencyStop
-        ? 0
-        : Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 14);
+    const bool    f0      = decoder.getFunctionValue(0);
+    const uint8_t speed   = decoder.emergencyStop
+        ? 0 : Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 14);
 
     // 6023/6223: only F0 supported, no F1-F4
 
-    // emergency stop: double direction toggle
     if(has(changes, DecoderChangeFlags::EmergencyStop) && decoder.emergencyStop)
     {
         m_kernel->setLocoEmergencyStop(address, f0);
         return;
     }
-
-    // direction toggle
     if(has(changes, DecoderChangeFlags::Direction))
     {
         m_kernel->setLocoDirection(address, f0);
         return;
     }
-
-    // speed update (including resume from e-stop)
     if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle))
     {
         m_kernel->setLocoSpeed(address, speed, f0);
         return;
     }
-
-    // F0 change — resend speed with updated function
     if(has(changes, DecoderChangeFlags::FunctionValue) && functionNumber == 0)
     {
         m_kernel->setLocoFunction(address, speed, f0);
