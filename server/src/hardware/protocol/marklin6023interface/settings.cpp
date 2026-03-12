@@ -82,6 +82,7 @@ Settings::Settings(Object& parent, std::string_view parentPropertyName)
   m_interfaceItems.add(redundancy);
 
   // debugLogRXTX — always enabled
+  Attributes::addCategory(debugLogRXTX, "category:marklin_6023");
   Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
   m_interfaceItems.add(debugLogRXTX);
 }

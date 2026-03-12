@@ -33,16 +33,7 @@ using namespace std::chrono_literals;
 
 namespace Marklin6023 {
 
-// ---------------------------------------------------------------------------
-// S88 response timeout: if the device doesn't reply within this period,
-// we skip the current contact and continue — prevents the cycle hanging.
-// ---------------------------------------------------------------------------
 static constexpr auto kS88ResponseTimeout = std::chrono::milliseconds(1000);
-
-// ---------------------------------------------------------------------------
-// Interpreted command logging helpers
-// ---------------------------------------------------------------------------
-
 static std::string interpretTx(const std::string& cmd)
 {
   if(cmd.empty())
@@ -116,10 +107,6 @@ static std::string interpretRx(const std::string& line, uint32_t queriedContact)
   return line;
 }
 
-// ---------------------------------------------------------------------------
-// Construction
-// ---------------------------------------------------------------------------
-
 Kernel::Kernel(std::string logId_, const Config& config)
   : KernelBase{std::move(logId_)}
   , m_config{config}
@@ -136,13 +123,8 @@ void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
   m_ioHandler = std::move(handler);
 }
 
-// ---------------------------------------------------------------------------
-// Lifecycle
-// ---------------------------------------------------------------------------
-
 void Kernel::started()
 {
-  m_started = true;
   if(m_config.s88amount > 0)
   startS88Cycle();
 }
@@ -170,10 +152,6 @@ void Kernel::stop()
   if(m_ioThread.joinable())
   m_ioThread.join();
 }
-
-// ---------------------------------------------------------------------------
-// Public command API
-// ---------------------------------------------------------------------------
 
 void Kernel::sendGlobalGo()
 {
@@ -256,10 +234,6 @@ bool Kernel::setAccessory(uint32_t address, OutputValue value)
   return true;
 }
 
-// ---------------------------------------------------------------------------
-// IOHandler callbacks  (arrive on m_strand)
-// ---------------------------------------------------------------------------
-
 void Kernel::receiveLine(std::string line)
 {
   if(m_config.debugLogRXTX)
@@ -297,10 +271,6 @@ void Kernel::writeError(const boost::system::error_code& ec)
     });
 }
 
-// ---------------------------------------------------------------------------
-// Internal send helpers  (must be on m_strand)
-// ---------------------------------------------------------------------------
-
 void Kernel::sendCmd(std::string cmd)
 {
   if(!m_ioHandler)
@@ -336,10 +306,6 @@ void Kernel::sendCmdWithRedundancy(std::string cmd)
         }));
   }
 }
-
-// ---------------------------------------------------------------------------
-// S88 polling
-// ---------------------------------------------------------------------------
 
 void Kernel::startS88Cycle()
 {

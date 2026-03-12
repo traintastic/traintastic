@@ -139,6 +139,7 @@ Settings::Settings(Object& parent, std::string_view parentPropertyName)
   m_interfaceItems.add(extensions);
 
   // debugLogRXTX — always enabled, no need to add enabled attribute
+  Attributes::addCategory(debugLogRXTX, "category:marklin_6050");
   Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
   m_interfaceItems.add(debugLogRXTX);
 }

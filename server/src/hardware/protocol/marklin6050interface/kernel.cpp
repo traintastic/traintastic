@@ -34,10 +34,6 @@ using namespace std::chrono_literals;
 
 namespace Marklin6050 {
 
-// ---------------------------------------------------------------------------
-// Interpreted command logging helpers
-// ---------------------------------------------------------------------------
-
 static std::string interpretTx1(uint8_t b)
 {
   if(b == GlobalGo)   return "Global go";
@@ -90,11 +86,6 @@ static std::string interpretTx2(uint8_t b1, uint8_t b2)
   return buf;
 }
 
-
-// ---------------------------------------------------------------------------
-// Construction
-// ---------------------------------------------------------------------------
-
 Kernel::Kernel(std::string logId_, const Config& config)
   : KernelBase{std::move(logId_)}
   , m_config{config}
@@ -111,14 +102,8 @@ void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
   m_ioHandler = std::move(handler);
 }
 
-// ---------------------------------------------------------------------------
-// Lifecycle
-// ---------------------------------------------------------------------------
-
 void Kernel::started()
 {
-  m_started = true;
-
   if(m_config.s88amount > 0)
   scheduleS88Poll();
 
@@ -149,10 +134,6 @@ void Kernel::stop()
   if(m_ioThread.joinable())
   m_ioThread.join();
 }
-
-// ---------------------------------------------------------------------------
-// Public command API  (posts onto the strand)
-// ---------------------------------------------------------------------------
 
 void Kernel::sendGlobalGo()
 {
@@ -313,10 +294,6 @@ bool Kernel::setAccessory(uint32_t address, OutputValue value, unsigned int time
   return true;
 }
 
-// ---------------------------------------------------------------------------
-// IOHandler callbacks  (arrive on m_strand)
-// ---------------------------------------------------------------------------
-
 void Kernel::receive(uint8_t byte)
 {
   if(m_config.debugLogRXTX)
@@ -418,10 +395,6 @@ void Kernel::writeError(const boost::system::error_code& ec)
     });
 }
 
-// ---------------------------------------------------------------------------
-// Internal send helpers  (must be on m_strand)
-// ---------------------------------------------------------------------------
-
 void Kernel::sendRaw(uint8_t b1, uint8_t b2)
 {
   if(m_ioHandler)
@@ -488,10 +461,6 @@ void Kernel::sendWithRedundancy(uint8_t b1, uint8_t b2)
   }
 }
 
-// ---------------------------------------------------------------------------
-// S88 polling
-// ---------------------------------------------------------------------------
-
 void Kernel::scheduleS88Poll()
 {
   m_s88Timer.expires_after(std::chrono::milliseconds(m_config.s88interval));
@@ -514,10 +483,6 @@ void Kernel::doS88Poll()
   m_s88Expect = m_config.s88amount * 2;
   m_s88Module = 0;
 }
-
-// ---------------------------------------------------------------------------
-// Extension polling
-// ---------------------------------------------------------------------------
 
 void Kernel::scheduleExtensionPoll()
 {
