@@ -34,6 +34,9 @@
 #include <traintastic/copyright.hpp>
 #include <traintastic/utils/standardpaths.hpp>
 
+#include <QMessageBox>
+#include <QKeyEvent>
+
 namespace
 {
 
@@ -91,6 +94,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         {
           settings.setValue("LastLoadDir", QFileInfo(filename).absoluteFilePath());
           load(filename);
+          QMetaObject::invokeMethod(m_view, &SimulatorView::zoomToFit, Qt::QueuedConnection);
         }
       });
     menu->addAction("Quit", this, &MainWindow::close);
@@ -164,11 +168,21 @@ void MainWindow::load(const QString& filename)
   QFile file(filename);
   if(file.open(QIODeviceBase::ReadOnly))
   {
-    m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString(),
-                                                                           nullptr,
-                                                                           true, true)),
-                         mLocalOnly, mDiscoverable);
-    QMetaObject::invokeMethod(m_view, &SimulatorView::zoomToFit, Qt::QueuedConnection);
+    try
+    {
+      m_view->setSimulator(std::make_shared<Simulator>(nlohmann::json::parse(file.readAll().toStdString(),
+                                                                             nullptr,
+                                                                             true, true)),
+                           mLocalOnly, mDiscoverable);
+    }
+    catch(std::exception &e)
+    {
+      qDebug() << "Error loading:" << filename << e.what();
+      QMessageBox::warning(this, tr("Load Error"),
+                           e.what());
+      return;
+    }
+
   }
 }
 
@@ -178,17 +192,33 @@ void MainWindow::setFullScreen(bool value)
   toggleFullScreen();
 }
 
-void MainWindow::keyPressEvent(QKeyEvent* event)
+void MainWindow::keyPressEvent(QKeyEvent* ev)
 {
-  if(event->key() == Qt::Key_F11) // Once fullscreen the QAction does't receive the key press because it is hidden.
+  if(ev->key() == Qt::Key_F11) // Once fullscreen the QAction does't receive the key press because it is hidden.
   {
     m_actFullScreen->setChecked(!m_actFullScreen->isChecked());
     toggleFullScreen();
+    return;
   }
-  else
+
+  if(ev->modifiers() == Qt::ControlModifier && ev->key() == Qt::Key_L)
   {
-    QMainWindow::keyPressEvent(event);
+    // Reload if not power on
+    if(windowFilePath().isEmpty() || m_power->isChecked())
+      return;
+
+    const float zoomLevel = m_view->getZoomLevel();
+    const auto &cameraPt = m_view->getCamera();
+
+    load(windowFilePath());
+
+    m_view->setZoomLevel(zoomLevel);
+    m_view->setCamera(cameraPt);
+
+    return;
   }
+
+  QMainWindow::keyPressEvent(ev);
 }
 
 void MainWindow::toggleFullScreen()

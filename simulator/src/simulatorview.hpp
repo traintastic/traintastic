@@ -27,6 +27,8 @@
 #include <QOpenGLFunctions>
 #include <traintastic/simulator/simulator.hpp>
 
+#include <QBasicTimer>
+
 class SimulatorView
   : public QOpenGLWidget
   , protected QOpenGLFunctions
@@ -56,6 +58,23 @@ public:
   void zoomOut();
   void zoomToFit();
 
+  inline Simulator::Point getCamera() const
+  {
+      return {m_cameraX, m_cameraY};
+  }
+
+  void setCamera(const Simulator::Point& cameraPt);
+
+  inline Simulator::Point mapToSim(const QPointF& p)
+  {
+    return {m_cameraX + float(p.x()) / m_zoomLevel,
+            m_cameraY + float(p.y()) / m_zoomLevel};
+  }
+
+  inline float getZoomLevel() const { return m_zoomLevel; }
+
+  void setZoomLevel(float zoomLevel);
+
 signals:
   void tickActiveChanged(float value);
   void powerOnChanged(bool value);
@@ -71,6 +90,7 @@ protected:
   void mouseMoveEvent(QMouseEvent* event) override;
   void mouseReleaseEvent(QMouseEvent* event) override;
   void wheelEvent(QWheelEvent* event) override;
+  void timerEvent(QTimerEvent *e) override;
 
 private:
   struct Turnout
@@ -101,14 +121,14 @@ private:
   QPoint m_rightMousePos;
   bool m_showTrackOccupancy = true;
   size_t m_trainIndex = 0;
+  QBasicTimer turnoutBlinkTimer;
+  bool turnoutBlinkState = false;
 
-  void mouseLeftClick(QPointF pos);
+  void mouseLeftClick(const Simulator::Point &point, bool shiftPressed);
 
   void drawTracks();
   void drawTrains();
   void drawMisc();
-
-  void setZoomLevel(float zoomLevel);
 
   void updateProjection();
 
