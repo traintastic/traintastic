@@ -54,7 +54,7 @@ std::span<const std::string_view> Interfaces::classList()
     WiThrottleInterface::classId,
     WlanMausInterface::classId,
     XpressNetInterface::classId,
-    Z21Interface::classId,
+    Z21Interface::classId
     
   );
   return classes;
