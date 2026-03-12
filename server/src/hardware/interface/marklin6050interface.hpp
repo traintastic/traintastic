@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+
 #ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLIN6050INTERFACE_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLIN6050INTERFACE_HPP
 
@@ -56,7 +57,7 @@ protected:
   bool setOnline(bool& value, bool simulation) final;
 
 public:
-  SerialDeviceProperty serialPort;
+  SerialDeviceProperty device;
   Property<uint32_t>   baudrate;
   ObjectProperty<Marklin6050::Settings> settings;
 
