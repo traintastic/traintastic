@@ -45,7 +45,9 @@ void SimulationIOHandler::stop()
 void SimulationIOHandler::send(std::initializer_list<uint8_t> bytes)
 {
   if(bytes.size() != 1)
+  {
     return; // only single-byte commands trigger a simulated response
+  }
 
   const uint8_t b = *bytes.begin();
 

@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+
 #include "kernel.hpp"
 #include "iohandler/iohandler.hpp"
 #include "protocol.hpp"
@@ -33,41 +34,59 @@ using namespace std::chrono_literals;
 
 namespace Marklin6023 {
 
+// ---------------------------------------------------------------------------
+// S88 response timeout: if the device doesn't reply within this period,
+// we skip the current contact and continue — prevents the cycle hanging.
+// ---------------------------------------------------------------------------
 static constexpr auto kS88ResponseTimeout = std::chrono::milliseconds(1000);
+
+// ---------------------------------------------------------------------------
+// Interpreted command logging helpers
+// ---------------------------------------------------------------------------
+
 static std::string interpretTx(const std::string& cmd)
 {
   if(cmd.empty())
+  {
     return cmd;
+  }
 
   // "G" – Global Go
   if(cmd == "G")
+  {
     return "Global go";
+  }
 
   // "S" – Global Stop
   if(cmd == "S")
+  {
     return "Global stop";
+  }
 
   // "L <addr> S <spd> F <f0>" – loco speed + F0
   // "L <addr> D"              – loco direction toggle
   if(cmd.size() >= 2 && cmd[0] == 'L' && cmd[1] == ' ')
   {
-    // find addr (after "L ")
     const std::size_t addrStart = 2;
     const std::size_t spaceAfterAddr = cmd.find(' ', addrStart);
     if(spaceAfterAddr == std::string::npos)
+    {
       return cmd;
+    }
     const std::string addr = cmd.substr(addrStart, spaceAfterAddr - addrStart);
     const std::string rest = cmd.substr(spaceAfterAddr + 1);
 
     if(!rest.empty() && rest[0] == 'D')
+    {
       return "Loco " + addr + ": direction toggle";
+    }
 
-    // "S <spd> F <f0>"
-    // rest = "S 5 F 0"
     unsigned int spd = 0, f0 = 0;
     if(std::sscanf(rest.c_str(), "S %u F %u", &spd, &f0) == 2)
+    {
       return "Loco " + addr + ": speed " + std::to_string(spd) +
-                   ", F0=" + (f0 ? "on" : "off");
+             ", F0=" + (f0 ? "on" : "off");
+    }
 
     return cmd;
   }
@@ -82,7 +101,7 @@ static std::string interpretTx(const std::string& cmd)
       const std::string addr = cmd.substr(addrStart, spaceAfterAddr - addrStart);
       const char dir = cmd[spaceAfterAddr + 1];
       return std::string("Accessory ") + addr +
-                   (dir == 'R' ? ": red (diverging)" : ": green (straight)");
+             (dir == 'R' ? ": red (diverging)" : ": green (straight)");
     }
   }
 
@@ -107,6 +126,10 @@ static std::string interpretRx(const std::string& line, uint32_t queriedContact)
   return line;
 }
 
+// ---------------------------------------------------------------------------
+// Construction
+// ---------------------------------------------------------------------------
+
 Kernel::Kernel(std::string logId_, const Config& config)
   : KernelBase{std::move(logId_)}
   , m_config{config}
@@ -123,10 +146,16 @@ void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
   m_ioHandler = std::move(handler);
 }
 
+// ---------------------------------------------------------------------------
+// Lifecycle
+// ---------------------------------------------------------------------------
+
 void Kernel::started()
 {
   if(m_config.s88amount > 0)
-  startS88Cycle();
+  {
+    startS88Cycle();
+  }
 }
 
 void Kernel::start()
@@ -139,19 +168,27 @@ void Kernel::start()
 void Kernel::stop()
 {
   m_strand.post(
-  [this]()
-  {
+    [this]()
+    {
       m_s88Timer.cancel();
       m_s88ResponseTimer.cancel();
       m_redundancyTimers.clear();
       if(m_ioHandler)
-    m_ioHandler->stop();
+      {
+        m_ioHandler->stop();
+      }
       m_ioContext.stop();
-  });
+    });
 
   if(m_ioThread.joinable())
-  m_ioThread.join();
+  {
+    m_ioThread.join();
+  }
 }
+
+// ---------------------------------------------------------------------------
+// Public command API
+// ---------------------------------------------------------------------------
 
 void Kernel::sendGlobalGo()
 {
@@ -199,7 +236,9 @@ void Kernel::setLocoEmergencyStop(uint8_t address, bool /*f0*/)
           [this, cmd](const boost::system::error_code& ec)
           {
             if(!ec && m_ioHandler)
+            {
               sendCmd(cmd);
+            }
           }));
     });
 }
@@ -212,7 +251,9 @@ void Kernel::setLocoFunction(uint8_t address, uint8_t currentSpeed, bool f0)
 bool Kernel::setAccessory(uint32_t address, OutputValue value)
 {
   if(address < 1 || address > 256)
+  {
     return false;
+  }
 
   char dir = 'G';
   std::visit(
@@ -220,9 +261,13 @@ bool Kernel::setAccessory(uint32_t address, OutputValue value)
     {
       using T = std::decay_t<decltype(v)>;
       if constexpr(std::is_same_v<T, OutputPairValue>)
+      {
         dir = (v == OutputPairValue::First) ? 'R' : 'G';
+      }
       else if constexpr(std::is_same_v<T, TriState>)
+      {
         dir = (v == TriState::True) ? 'R' : 'G';
+      }
     }, value);
 
   m_strand.post(
@@ -233,6 +278,10 @@ bool Kernel::setAccessory(uint32_t address, OutputValue value)
 
   return true;
 }
+
+// ---------------------------------------------------------------------------
+// IOHandler callbacks  (arrive on m_strand)
+// ---------------------------------------------------------------------------
 
 void Kernel::receiveLine(std::string line)
 {
@@ -245,12 +294,14 @@ void Kernel::receiveLine(std::string line)
       [this, raw = line, interp]()
       {
         Log::log(logId, LogMessage::D2002_RX_X,
-                         raw + "  [" + interp + "]");
+                 raw + "  [" + interp + "]");
       });
   }
 
   if(m_s88WaitingReply)
+  {
     onS88Response(line);
+  }
 }
 
 void Kernel::readError(const boost::system::error_code& ec)
@@ -271,10 +322,16 @@ void Kernel::writeError(const boost::system::error_code& ec)
     });
 }
 
+// ---------------------------------------------------------------------------
+// Internal send helpers  (must be on m_strand)
+// ---------------------------------------------------------------------------
+
 void Kernel::sendCmd(std::string cmd)
 {
   if(!m_ioHandler)
+  {
     return;
+  }
 
   if(m_config.debugLogRXTX)
   {
@@ -283,7 +340,7 @@ void Kernel::sendCmd(std::string cmd)
       [this, raw = cmd, interp]()
       {
         Log::log(logId, LogMessage::D2001_TX_X,
-                         raw + "  [" + interp + "]");
+                 raw + "  [" + interp + "]");
       });
   }
 
@@ -302,10 +359,16 @@ void Kernel::sendCmdWithRedundancy(std::string cmd)
         [this, cmd](const boost::system::error_code& ec)
         {
           if(!ec && m_ioHandler)
+          {
             sendCmd(cmd);
+          }
         }));
   }
 }
+
+// ---------------------------------------------------------------------------
+// S88 polling
+// ---------------------------------------------------------------------------
 
 void Kernel::startS88Cycle()
 {
@@ -319,7 +382,9 @@ void Kernel::startS88Cycle()
       [this](const boost::system::error_code& ec)
       {
         if(ec || !m_ioHandler)
+        {
           return;
+        }
         queryNextContact();
       }));
 }
@@ -327,7 +392,9 @@ void Kernel::startS88Cycle()
 void Kernel::queryNextContact()
 {
   if(!m_ioHandler)
+  {
     return;
+  }
 
   const unsigned int total = m_config.s88amount * 16;
   if(m_s88NextContact > total)
@@ -348,7 +415,9 @@ void Kernel::queryNextContact()
       [this](const boost::system::error_code& ec)
       {
         if(ec) // cancelled normally (response arrived)
+        {
           return;
+        }
         onS88ResponseTimeout();
       }));
 }
@@ -360,8 +429,13 @@ void Kernel::onS88Response(const std::string& line)
   m_s88WaitingReply = false;
 
   bool state = false;
-  try { state = (std::stoi(line) != 0); }
-  catch(...) {}
+  try
+  {
+    state = (std::stoi(line) != 0);
+  }
+  catch(...)
+  {
+  }
 
   const uint32_t contact = m_s88NextContact++;
 
@@ -371,7 +445,9 @@ void Kernel::onS88Response(const std::string& line)
       [this, contact, state]()
       {
         if(s88Callback)
+        {
           s88Callback(contact, state);
+        }
       });
   }
 
@@ -386,8 +462,8 @@ void Kernel::onS88ResponseTimeout()
     [this, contact]()
     {
       Log::log(logId, LogMessage::W9999_X,
-                     "S88 no response for contact " + std::to_string(contact) +
-                     ", skipping");
+               "S88 no response for contact " + std::to_string(contact) +
+               ", skipping");
     });
 
   m_s88WaitingReply = false;

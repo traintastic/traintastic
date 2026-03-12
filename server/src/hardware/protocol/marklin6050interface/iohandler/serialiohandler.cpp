@@ -76,14 +76,18 @@ void SerialIOHandler::send(std::initializer_list<uint8_t> bytes)
       [this, buf](const boost::system::error_code& ec, std::size_t)
       {
         if(ec && ec != boost::asio::error::operation_aborted)
+        {
           writeError(ec); // logs E2001_SERIAL_WRITE_FAILED_X
+        }
       }));
 }
 
 void SerialIOHandler::startRead()
 {
   if(!m_serialPort.is_open())
+  {
     return;
+  }
 
   m_serialPort.async_read_some(
     boost::asio::buffer(m_readBuffer),
@@ -99,7 +103,9 @@ void SerialIOHandler::onRead(const boost::system::error_code& ec, std::size_t by
   if(ec)
   {
     if(ec != boost::asio::error::operation_aborted)
+    {
       readError(ec); // logs E2002_SERIAL_READ_FAILED_X
+    }
     return;
   }
 

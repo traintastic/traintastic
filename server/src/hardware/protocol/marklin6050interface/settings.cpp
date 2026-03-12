@@ -179,7 +179,9 @@ void Settings::updateEnabled(bool online)
   Attributes::setEnabled(turnouttime, (ver != 6021) && !online);
 
   if(!analogSupport)
+  {
     analog.setValueInternal(false);
+  }
 }
 
 void Settings::centralUnitVersionChanged(uint16_t /*value*/)

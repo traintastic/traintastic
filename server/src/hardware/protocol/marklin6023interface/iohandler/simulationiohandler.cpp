@@ -43,8 +43,6 @@ void SimulationIOHandler::stop()
 
 void SimulationIOHandler::sendString(std::string str)
 {
-  // Respond to S88 contact queries with "0" (clear) so the polling
-  // cycle runs normally without real hardware. Format: "C <n>\r"
   if(str.size() >= 3 && str[0] == 'C' && str[1] == ' ')
   {
     m_strand.post(
@@ -53,7 +51,6 @@ void SimulationIOHandler::sendString(std::string str)
         m_kernel.receiveLine("0");
       });
   }
-  // All other commands (G, S, L ..., M ...) are silently consumed.
 }
 
 } // namespace Marklin6023
