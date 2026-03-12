@@ -29,14 +29,15 @@
 #include "ecosinterface.hpp"
 #include "hsi88.hpp"
 #include "loconetinterface.hpp"
+#include "marklin6023interface.hpp"
+#include "marklin6050interface.hpp"
 #include "marklincaninterface.hpp"
 #include "traintasticdiyinterface.hpp"
 #include "withrottleinterface.hpp"
 #include "wlanmausinterface.hpp"
 #include "xpressnetinterface.hpp"
 #include "z21interface.hpp"
-#include "Marklin6050Interface.hpp"
-#include "Marklin6023Interface.hpp"
+
 
 
 std::span<const std::string_view> Interfaces::classList()
@@ -46,14 +47,14 @@ std::span<const std::string_view> Interfaces::classList()
     ECoSInterface::classId,
     HSI88Interface::classId,
     LocoNetInterface::classId,
-    Marklin6023Interface::classId,
+	Marklin6023Interface::classId,
     Marklin6050Interface::classId,
     MarklinCANInterface::classId,
     TraintasticDIYInterface::classId,
     WiThrottleInterface::classId,
     WlanMausInterface::classId,
     XpressNetInterface::classId,
-    Z21Interface::classId
+    Z21Interface::classId,
     
   );
   return classes;
@@ -65,14 +66,13 @@ std::shared_ptr<Interface> Interfaces::create(World& world, std::string_view cla
   IF_CLASSID_CREATE(ECoSInterface)
   IF_CLASSID_CREATE(HSI88Interface)
   IF_CLASSID_CREATE(LocoNetInterface)
-  IF_CLASSID_CREATE(Marklin6023Interface)  
-  IF_CLASSID_CREATE(Marklin6050Interface)
   IF_CLASSID_CREATE(MarklinCANInterface)
   IF_CLASSID_CREATE(TraintasticDIYInterface)
   IF_CLASSID_CREATE(WiThrottleInterface)
   IF_CLASSID_CREATE(WlanMausInterface)
   IF_CLASSID_CREATE(XpressNetInterface)
   IF_CLASSID_CREATE(Z21Interface)
-  
+  IF_CLASSID_CREATE(Marklin6050Interface)
+  IF_CLASSID_CREATE(Marklin6023Interface)
   return std::shared_ptr<Interface>();
 }
