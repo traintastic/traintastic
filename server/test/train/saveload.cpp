@@ -32,6 +32,7 @@
 #include "../src/train/train.hpp"
 #include "../src/train/trainlist.hpp"
 #include "../src/train/trainvehiclelist.hpp"
+#include "../src/train/trainvehiclelistitem.hpp"
 
 TEST_CASE("Train: Save/Load", "[train][train-saveload]")
 {
@@ -100,8 +101,8 @@ TEST_CASE("Train: Save/Load", "[train][train-saveload]")
       REQUIRE(locomotive->trains.size() == 1);
       REQUIRE(locomotive->trains[0] == train);
 
-      REQUIRE(train->vehicles->length == 1);
-      REQUIRE(train->vehicles->operator[](0) == locomotive);
+      REQUIRE(train->vehicles->size() == 1);
+      REQUIRE(train->vehicles->operator[](0)->vehicle.value() == locomotive);
     }
   }
 

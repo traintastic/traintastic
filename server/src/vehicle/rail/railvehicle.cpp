@@ -45,7 +45,7 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
   totalWeight{*this, "total_weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , mute{this, "mute", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , noSmoke{this, "no_smoke", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
-  , activeTrain{this, "active_train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::StoreState}
+  , activeTrain{this, "active_train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::NoStore}
   , trains{*this, "trains", {}, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::NoStore}
   , createDecoder{*this, "create_decoder", MethodFlags::NoScript,
       [this]()
@@ -172,7 +172,9 @@ void RailVehicle::destroying()
   }
   for(const auto& train : trains)
   {
-    train->vehicles->remove(self);
+    auto item = train->vehicles->getItemFromVehicle(self);
+    if(item)
+      train->vehicles->remove(item);
   }
   m_world.railVehicles->removeObject(self);
   IdObject::destroying();
