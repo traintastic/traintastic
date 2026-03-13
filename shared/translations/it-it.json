@@ -2836,6 +2836,10 @@
         "definition": "Decoder"
     },
     {
+        "term": "vehicle.rail:invert_direction",
+        "definition": "Inverti direzione"
+    },
+    {
         "term": "vehicle.rail:length",
         "definition": "Lunghezza"
     },
