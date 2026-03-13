@@ -30,7 +30,6 @@
 #include "../../hardware/decoder/decoderchangeflags.hpp"
 #include "../../train/train.hpp"
 
-
 PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   : RailVehicle(world, id_)
   , power{*this, "power", 0, PowerUnit::KiloWatt, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -43,6 +42,34 @@ PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   Attributes::addEnabled(power, editable);
   Attributes::addObjectEditor(power, false); // FIXME: remove once used
   m_interfaceItems.add(power);
+
+  propertyChanged.connect(
+    [this](BaseProperty &prop)
+    {
+      if(prop.name() == "decoder")
+        registerDecoder();
+    });
+}
+
+PoweredRailVehicle::~PoweredRailVehicle()
+{
+  assert(!decoder);
+  assert(!decoderConnection.connected());
+}
+
+void PoweredRailVehicle::destroying()
+{
+  // decoder is reset by RailVehicle, but propertyChanged is not emitted when object is dying
+  // So disconnect manually
+  decoderConnection.disconnect();
+  RailVehicle::destroying();
+}
+
+void PoweredRailVehicle::loaded()
+{
+  RailVehicle::loaded();
+  updateMaxSpeed();
+  registerDecoder();
 }
 
 void PoweredRailVehicle::setDirection(Direction value)
