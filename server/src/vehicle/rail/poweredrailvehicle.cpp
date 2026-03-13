@@ -68,7 +68,6 @@ void PoweredRailVehicle::destroying()
 void PoweredRailVehicle::loaded()
 {
   RailVehicle::loaded();
-  updateMaxSpeed();
   registerDecoder();
 }
 
@@ -120,4 +119,34 @@ void PoweredRailVehicle::worldEvent(WorldState state, WorldEvent event)
   const bool editable = contains(state, WorldState::Edit);
 
   Attributes::setEnabled(power, editable);
+}
+
+void PoweredRailVehicle::registerDecoder()
+{
+  //Disconnect from previous decoder
+  decoderConnection.disconnect();
+
+  auto decoderVal = decoder.value();
+  if(!decoderVal)
+    return;
+
+  //Connect to new decoder
+  decoderConnection = decoderVal->decoderChanged.connect(
+    [this](Decoder& self, DecoderChangeFlags flags, uint32_t /*functionNumber*/)
+    {
+      if(!activeTrain)
+        return;
+
+      if(has(flags, DecoderChangeFlags::Direction))
+      {
+        if(self.direction == lastTrainSetDirection)
+          return; //Direction change was caused by Train itself, no need propagate back
+        activeTrain->handleDecoderDirection(this->shared_ptr<PoweredRailVehicle>(), self.direction);
+      }
+
+      if(has(flags, DecoderChangeFlags::EmergencyStop))
+      {
+        activeTrain->emergencyStop.setValue(self.emergencyStop);
+      }
+    });
 }

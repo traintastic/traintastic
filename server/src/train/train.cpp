@@ -557,11 +557,11 @@ void Train::updateSpeedMax()
   {
     const auto itEnd = vehicles->end();
     auto it = vehicles->begin();
-    double kmph = (*it)->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+    double kmph = (*it)->vehicle->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
     for(; it != itEnd; ++it)
     {
-      const double v = (*it)->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
-      if((v > 0 || isPowered(**it)) && v < kmph)
+      const double v = (*it)->vehicle->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+      if((v > 0 || isPowered(*(*it)->vehicle)) && v < kmph)
         kmph = v;
     }
     speedMax.setValueInternal(convertUnit(kmph, SpeedUnit::KiloMeterPerHour, speedMax.unit()));
@@ -874,7 +874,6 @@ void Train::propagateDirection(Direction newDirection)
   if(!active)
     return;
 
-  m_accelerationIsImmediate = false; // Reset for next speed change
   const Direction oppositeDirection = newDirection == Direction::Forward ? Direction::Reverse : Direction::Forward;
   for(const auto& item : *vehicles)
   {
