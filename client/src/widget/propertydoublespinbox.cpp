@@ -132,6 +132,6 @@ void PropertyDoubleSpinBox::focusOutEvent(QFocusEvent* event)
 void PropertyDoubleSpinBox::updateRange()
 {
   setRange(
-    m_property.getAttributeDouble(AttributeName::Min, std::numeric_limits<double>::min()),
+    m_property.getAttributeDouble(AttributeName::Min, std::numeric_limits<double>::lowest()),
     m_property.getAttributeDouble(AttributeName::Max, std::numeric_limits<double>::max()));
 }
