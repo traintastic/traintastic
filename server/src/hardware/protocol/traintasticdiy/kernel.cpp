@@ -207,11 +207,11 @@ void Kernel::receive(const Message& message)
             {
               if(state == InputState::Invalid)
               {
-                if(m_inputController->inputMap().count({InputChannel::Input, address}) != 0)
+                if(m_inputController->inputMap().count({InputChannel::Input, InputAddress(address)}) != 0)
                   Log::log(logId, LogMessage::W2004_INPUT_ADDRESS_X_IS_INVALID, address);
               }
               else
-                m_inputController->updateInputValue(InputChannel::Input, address, toTriState(state));
+                m_inputController->updateInputValue(InputChannel::Input, InputAddress(address), toTriState(state));
             });
         }
       }
@@ -369,7 +369,7 @@ void Kernel::receive(const Message& message)
           [this]()
           {
             for(const auto& it : m_inputController->inputMap())
-              postSend(GetInputState(static_cast<uint16_t>(it.first.address)));
+              postSend(GetInputState(static_cast<uint16_t>(std::get<InputAddress>(it.first.location).address)));
           });
 
       if(hasFeatureOutput())

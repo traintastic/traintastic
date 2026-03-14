@@ -354,7 +354,7 @@ void ClientKernel::receive(const Message& message)
             EventLoop::call(
               [this, address=rbusAddressMin + index, value]()
               {
-                m_inputController->updateInputValue(InputChannel::RBus, address, value);
+                m_inputController->updateInputValue(InputChannel::RBus, InputAddress(address), value);
               });
           }
         }
@@ -378,7 +378,7 @@ void ClientKernel::receive(const Message& message)
               EventLoop::call(
                 [this, address=loconetAddressMin + index, value]()
                 {
-                  m_inputController->updateInputValue(InputChannel::LocoNet, address, value);
+                  m_inputController->updateInputValue(InputChannel::LocoNet, InputAddress(address), value);
                 });
             }
             break;

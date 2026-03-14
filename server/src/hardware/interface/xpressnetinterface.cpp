@@ -212,8 +212,10 @@ std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(InputChanne
   return {XpressNet::Kernel::inputAddressMin, XpressNet::Kernel::inputAddressMax};
 }
 
-void XpressNetInterface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
+void XpressNetInterface::inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action)
 {
+  assert(std::holds_alternative<InputAddress>(location));
+  const auto address = std::get<InputAddress>(location).address;
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);
 }

@@ -27,6 +27,7 @@
 #include "../check.hpp"
 #include "../checkarguments.hpp"
 #include "../checkvector.hpp"
+#include "../enum.hpp"
 #include "../push.hpp"
 #include "../to.hpp"
 #include "../metatable.hpp"
@@ -92,16 +93,47 @@ int Interface::__index(lua_State* L)
 
 int Interface::get_input(lua_State* L)
 {
+  checkArguments(L, 1, 3);
   auto inputController = std::dynamic_pointer_cast<::InputController>(check<::Interface>(L, lua_upvalueindex(1)));
   assert(inputController);
   const auto inputChannels = inputController->inputChannels();
   assert(!inputChannels.empty());
-  const bool channelOptional = inputChannels.size() == 1;
-  const int argc = checkArguments(L, channelOptional ? 1 : 2, 2);
-  const auto channel = (argc == 2) ? check<InputChannel>(L, 1) : inputChannels.front();
-  const auto address = check<uint32_t>(L, argc);
+
+  int index = 1;
+
+  InputChannel channel;
+  if(inputChannels.size() != 1) // channel required
+  {
+    channel = Enum<InputChannel>::check(L, index);
+    index++;
+  }
+  else if(Enum<InputChannel>::test(L, index, channel)) // channel optional
+  {
+    index++;
+  }
+  else // channel implicit (there is only one)
+  {
+    channel = inputChannels.front();
+  }
+
+  InputLocation location;
+  if(hasAddressLocation(channel))
+  {
+    checkArguments(L, index);
+    location = InputAddress(check<uint32_t>(L, index));
+  }
+  else if(hasNodeAddressLocation(channel))
+  {
+    checkArguments(L, index + 1);
+    location = InputNodeAddress(check<uint32_t>(L, index), check<uint32_t>(L, index + 1));
+  }
+  else [[unlikely]]
+  {
+    assert(false);
+    errorInternal(L);
+  }
   auto& stateData = Lua::Sandbox::getStateData(L);
-  auto input = inputController->getInput(channel, address, stateData.script());
+  auto input = inputController->getInput(channel, location, stateData.script());
   if(input)
   {
     stateData.registerInput(inputController, input);

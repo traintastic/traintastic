@@ -214,7 +214,7 @@ void Kernel::receive(std::string_view message)
               EventLoop::call(
                 [this, id, value]()
                 {
-                  m_inputController->updateInputValue(InputChannel::Input, id, toTriState(value));
+                  m_inputController->updateInputValue(InputChannel::Input, InputAddress(id), toTriState(value));
                 });
             }
           }

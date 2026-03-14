@@ -114,8 +114,10 @@ std::pair<uint32_t, uint32_t> TraintasticDIYInterface::inputAddressMinMax(InputC
   return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax};
 }
 
-void TraintasticDIYInterface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
+void TraintasticDIYInterface::inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action)
 {
+  assert(std::holds_alternative<InputAddress>(location));
+  const auto address = std::get<InputAddress>(location).address;
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);
 }

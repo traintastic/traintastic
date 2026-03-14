@@ -136,8 +136,10 @@ std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(InputChannel chan
   }
 }
 
-void Z21Interface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
+void Z21Interface::inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action)
 {
+  assert(std::holds_alternative<InputAddress>(location));
+  const auto address = std::get<InputAddress>(location).address;
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(channel, address, action);
 }

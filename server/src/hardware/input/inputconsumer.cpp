@@ -70,7 +70,7 @@ InputConsumer::InputConsumer(Object& object, const World& world)
             address.setValueInternal(addr ? *addr : addressMinMax.first);
           }
 
-          setInput(newValue->getInput(channel, address, m_object));
+          setInput(newValue->getInput(channel, inputLocation(channel, node, address), m_object));
         }
 
         return true;
@@ -82,7 +82,18 @@ InputConsumer::InputConsumer(Object& object, const World& world)
       },
       [this](const InputChannel& newValue)
       {
-        if(auto obj = interface->getInput(newValue, address, m_object))
+        if(auto obj = interface->getInput(newValue, inputLocation(newValue, node, address), m_object))
+        {
+          setInput(obj);
+          return true;
+        }
+        return false;
+      }}
+  , node{&object, "node", 0, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript,
+      nullptr,
+      [this](uint32_t& newValue)
+      {
+        if(auto obj = interface->getInput(channel, inputLocation(channel, newValue, address), m_object))
         {
           setInput(obj);
           return true;
@@ -92,7 +103,7 @@ InputConsumer::InputConsumer(Object& object, const World& world)
   , address{&object, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript, nullptr,
       [this](const uint32_t& newValue)
       {
-        if(auto obj = interface->getInput(channel, newValue, m_object))
+        if(auto obj = interface->getInput(channel, inputLocation(channel, node, newValue), m_object))
         {
           setInput(obj);
           return true;
@@ -116,6 +127,11 @@ InputConsumer::InputConsumer(Object& object, const World& world)
   Attributes::addEnabled(channel, editableAndStopped);
   Attributes::addValues(channel, std::span<const InputChannel>());
   Attributes::addVisible(channel, false);
+
+  Attributes::addCategory(node, Category::input);
+  Attributes::addDisplayName(node, DisplayName::Hardware::node);
+  Attributes::addEnabled(node, editableAndStopped);
+  Attributes::addVisible(node, false);
 
   Attributes::addCategory(address, Category::input);
   Attributes::addDisplayName(address, DisplayName::Hardware::address);
@@ -149,7 +165,7 @@ void InputConsumer::loaded()
 {
   if(interface)
   {
-    if(auto object = interface->getInput(channel, address, m_object))
+    if(auto object = interface->getInput(channel, inputLocation(channel, node, address), m_object))
     {
       setInput(object);
       interfaceChanged();
@@ -170,6 +186,7 @@ void InputConsumer::worldEvent(WorldState worldState, WorldEvent /*worldEvent*/)
   Attributes::setEnabled(interface, editableAndStopped);
   Attributes::setEnabled(channel, editableAndStopped);
   Attributes::setEnabled(address, editableAndStopped);
+  Attributes::setEnabled(node, editableAndStopped);
   Attributes::setEnabled(onDelay, editable);
   Attributes::setEnabled(offDelay, editable);
 }
@@ -179,6 +196,7 @@ void InputConsumer::addInterfaceItems(InterfaceItems& items)
   items.add(interface);
   items.add(channel);
   items.add(address);
+  items.add(node);
   items.add(onDelay);
   items.add(offDelay);
 }
@@ -251,11 +269,13 @@ void InputConsumer::channelChanged()
 {
   if(interface)
   {
+    Attributes::setVisible(node, hasNodeAddressLocation(channel));
     const auto limits = interface->inputAddressMinMax(channel);
     Attributes::setMinMax(address, limits.first, limits.second);
   }
   else
   {
+    Attributes::setVisible(node, false);
     Attributes::setMinMax(address, Input::addressMinDefault, Input::addressMaxDefault);
   }
 }

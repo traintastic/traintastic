@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/hsi88.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022-2025 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -102,11 +101,11 @@ std::pair<uint32_t, uint32_t> HSI88Interface::inputAddressMinMax(InputChannel /*
   return {inputAddressMin, inputAddressMax};
 }
 
-void HSI88Interface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
+void HSI88Interface::inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action)
 {
   //! \todo add simulation support
   (void)channel;
-  (void)address;
+  (void)location;
   (void)action;
 }
 
@@ -327,11 +326,11 @@ void HSI88Interface::receive(std::string_view message)
               {
                 const auto moduleIndex = index / inputsPerModule;
                 if(moduleIndex < modulesLeft.value())
-                  updateInputValue(InputChannel::S88_Left, inputAddressMin + index, value);
+                  updateInputValue(InputChannel::S88_Left, InputAddress(inputAddressMin + index), value);
                 else if(moduleIndex < (modulesLeft.value() + modulesMiddle.value()))
-                  updateInputValue(InputChannel::S88_Middle, inputAddressMin + index - modulesLeft.value() * inputsPerModule, value);
+                  updateInputValue(InputChannel::S88_Middle, InputAddress(inputAddressMin + index - modulesLeft.value() * inputsPerModule), value);
                 else
-                  updateInputValue(InputChannel::S88_Right, inputAddressMin + index - (modulesLeft.value() + modulesMiddle.value()) * inputsPerModule, value);
+                  updateInputValue(InputChannel::S88_Right, InputAddress(inputAddressMin + index - (modulesLeft.value() + modulesMiddle.value()) * inputsPerModule), value);
               });
           }
         }

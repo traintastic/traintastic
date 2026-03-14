@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/input/inputcontroller.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +27,7 @@
 #include <unordered_map>
 #include <memory>
 #include <optional>
-#include <traintastic/enum/inputchannel.hpp>
+#include "inputlocation.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../enum/tristate.hpp"
 #include "../../enum/simulateinputaction.hpp"
@@ -50,20 +49,26 @@ class InputController
     struct InputMapKey
     {
       InputChannel channel;
-      uint32_t address;
+      InputLocation location;
 
       inline bool operator ==(const InputMapKey other) const noexcept
       {
-        return channel == other.channel && address == other.address;
+        return channel == other.channel && location == other.location;
       }
     };
-    static_assert(sizeof(InputMapKey) == sizeof(uint64_t));
 
     struct InputMapKeyHash
     {
       std::size_t operator()(const InputMapKey& value) const noexcept
       {
-        return (static_cast<uint64_t>(value.channel) << (8 * sizeof(value.address))) | value.address;
+        auto hash = std::hash<InputChannel>{}(value.channel);
+        hash ^= value.location.index();
+        std::visit(
+          [&hash](auto const& v)
+          {
+            hash ^= std::hash<std::decay_t<decltype(v)>>{}(v);
+          }, value.location);
+        return hash;
       }
     };
 
@@ -100,6 +105,8 @@ class InputController
      */
     bool isInputChannel(InputChannel channel) const;
 
+    virtual bool isInputLocation(InputChannel channel, const InputLocation& location) const;
+
     /**
      *
      */
@@ -108,7 +115,7 @@ class InputController
     /**
      *
      */
-    [[nodiscard]] virtual bool isInputAvailable(InputChannel channel, uint32_t address) const;
+    [[nodiscard]] virtual bool isInputAvailable(InputChannel channel, const InputLocation& location) const;
 
     /**
      * \brief Try get the lowest unused input address
@@ -120,18 +127,18 @@ class InputController
     /**
      * \brief Get an input.
      *
-     * For each channel/address combination an input object is create once,
+     * For each channel/location combination an input object is create once,
      * if an input is requested multiple time they all share the same instance.
      * Once the object that uses the input is no longer using it,
      * it must be released using \ref releaseInput .
      * The input object will be destroyed when the are zero users.
      *
      * \param[in] channel The input channel.
-     * \param[in] address The input address.
+     * \param[in] location The input location.
      * \param[in] usedBy The object the will use the input.
      * \return An input object if the channel/address combination is valid, \c nullptr otherwise.
      */
-    std::shared_ptr<Input> getInput(InputChannel channel, uint32_t address, Object& usedBy);
+    std::shared_ptr<Input> getInput(InputChannel channel, const InputLocation& location, Object& usedBy);
 
     /**
      * \brief Release an input.
@@ -148,10 +155,10 @@ class InputController
      * This function should be called by the hardware layer whenever the input value changes.
      *
      * @param[in] channel Input channel
-     * @param[in] address Input address
+     * @param[in] location Input location
      * @param[in] value New input value
      */
-    void updateInputValue(InputChannel channel, uint32_t address, TriState value);
+    void updateInputValue(InputChannel channel, const InputLocation& location, TriState value);
 
     /**
      *
@@ -162,10 +169,10 @@ class InputController
     /**
      * \brief Simulate input change
      * \param[in] channel Input channel
-     * \param[in] address Input address
+     * \param[in] location Input location
      * \param[in] action Simulation action to perform
      */
-    virtual void inputSimulateChange(InputChannel /*channel*/, uint32_t /*address*/, SimulateInputAction /*action*/) {}
+    virtual void inputSimulateChange(InputChannel /*channel*/, const InputLocation& /*location*/, SimulateInputAction /*action*/) {}
 };
 
 #endif

@@ -586,7 +586,7 @@ void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value
     EventLoop::call(
       [this, address=offset + port, value]()
       {
-        m_inputController->updateInputValue(InputChannel::S88, address, value);
+        m_inputController->updateInputValue(InputChannel::S88, InputAddress(address), value);
       });
   }
   else // ECoS Detector
@@ -597,7 +597,7 @@ void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value
     EventLoop::call(
       [this, address, value]()
       {
-        m_inputController->updateInputValue(InputChannel::ECoSDetector, address, value);
+        m_inputController->updateInputValue(InputChannel::ECoSDetector, InputAddress(address), value);
       });
   }
 }
