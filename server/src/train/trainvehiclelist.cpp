@@ -36,7 +36,7 @@
 
 TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropertyName)
   : SubObject(train_, parentPropertyName)
-  , items{*this, "items", {}, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::StoreState | PropertyFlags::SubObject}
+  , items{*this, "items", {}, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , add{*this, "add",
       [this](const std::shared_ptr<RailVehicle>& vehicle)
       {
@@ -96,8 +96,7 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
 
 void TrainVehicleList::load(WorldLoader& loader, const nlohmann::json& data)
 {
-  nlohmann::json state = loader.getState(getObjectId());
-  nlohmann::json objects = state.value("items", nlohmann::json::array());
+  nlohmann::json objects = data.value("items", nlohmann::json::array());
   if(!objects.empty())
   {
     std::vector<std::shared_ptr<TrainVehicleListItem>> values;

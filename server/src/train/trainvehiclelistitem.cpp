@@ -31,8 +31,8 @@
 TrainVehicleListItem::TrainVehicleListItem(const std::shared_ptr<RailVehicle> &vehicle_, TrainVehicleList &parent, uint32_t itemId)
   : m_parent(parent)
   , m_itemId(itemId)
-  , vehicle(this, "vehicle", vehicle_, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::StoreState)
-  , invertDirection(this, "invert_direction", false, PropertyFlags::ReadWrite | PropertyFlags::ScriptReadWrite | PropertyFlags::StoreState)
+  , vehicle(this, "vehicle", vehicle_, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::Store)
+  , invertDirection(this, "invert_direction", false, PropertyFlags::ReadWrite | PropertyFlags::ScriptReadWrite | PropertyFlags::Store)
 {
   auto& world = getWorld(m_parent);
 
