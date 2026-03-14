@@ -83,6 +83,9 @@ void Simulator::shortEvent(uint16_t eventNumber, SimulateInputAction action)
         value = true;
       }
       break;
+
+    default: [[unlikely]]
+      return;
   }
 
   if(value)
@@ -128,6 +131,9 @@ void Simulator::longEvent(uint16_t nodeNumber, uint16_t eventNumber, SimulateInp
         value = true;
       }
       break;
+
+    default: [[unlikely]]
+      return;
   }
 
   if(value)
