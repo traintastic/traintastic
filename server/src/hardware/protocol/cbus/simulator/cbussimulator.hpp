@@ -23,9 +23,11 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_SIMULATOR_CBUSSIMULATOR_HPP
 
 #include <memory>
+#include <map>
 #include <vector>
-#include "../messages/cbusmessage.hpp"
 #include "module/cbuscanmodule.hpp"
+#include "../messages/cbusmessage.hpp"
+#include "../../../../enum/simulateinputaction.hpp"
 
 namespace CBUS
 {
@@ -43,8 +45,15 @@ public:
 
   void receive(const Message& message);
 
+  void shortEvent(uint16_t eventNumber, SimulateInputAction action);
+  void longEvent(uint16_t nodeNumber, uint16_t eventNumber, SimulateInputAction action);
+
 private:
   std::vector<std::unique_ptr<Module::CANModule>> m_modules;
+  std::map<uint16_t, bool> m_shortEvents;
+  std::map<std::pair<uint16_t, uint16_t>, bool> m_longEvents;
+
+  void send(uint8_t canId, const Message& message);
 };
 
 }

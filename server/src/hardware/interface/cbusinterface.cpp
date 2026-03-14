@@ -24,6 +24,7 @@
 #include "../decoder/decoderchangeflags.hpp"
 #include "../decoder/list/decoderlist.hpp"
 #include "../decoder/list/decoderlisttablemodel.hpp"
+#include "../input/list/inputlist.hpp"
 #include "../output/list/outputlist.hpp"
 #include "../protocol/cbus/cbusconst.hpp"
 #include "../protocol/cbus/cbuskernel.hpp"
@@ -39,16 +40,22 @@
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
 #include "../../utils/displayname.hpp"
+#include "../../utils/inrange.hpp"
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Channel | InputListColumn::Node | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Node | OutputListColumn::Address;
+
+constexpr auto nodeNumberRange = std::make_pair(std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint16_t>::max());
+constexpr auto eventNumberRange = std::make_pair(std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint16_t>::max());
 
 CREATE_IMPL(CBUSInterface)
 
 CBUSInterface::CBUSInterface(World& world, std::string_view _id)
   : Interface(world, _id)
   , DecoderController(*this, decoderListColumns)
+  , InputController(static_cast<IdObject&>(*this))
   , OutputController(static_cast<IdObject&>(*this))
   , type{this, "type", CBUSInterfaceType::CANUSB, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](CBUSInterfaceType /*value*/)
@@ -85,6 +92,8 @@ CBUSInterface::CBUSInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(cbus, notes);
 
   m_interfaceItems.insertBefore(decoders, notes);
+
+  m_interfaceItems.insertBefore(inputs, notes);
 
   m_interfaceItems.insertBefore(outputs, notes);
 
@@ -153,6 +162,56 @@ void CBUSInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags ch
   }
 }
 
+std::span<const InputChannel> CBUSInterface::inputChannels() const
+{
+  static const std::array<InputChannel, 2> channels{
+    InputChannel::ShortEvent,
+    InputChannel::LongEvent,
+  };
+  return channels;
+}
+
+bool CBUSInterface::isInputLocation(InputChannel channel, const InputLocation& location) const
+{
+  if(hasNodeAddressLocation(channel))
+  {
+    return
+      inRange<uint32_t>(std::get<InputNodeAddress>(location).node, nodeNumberRange) &&
+      inRange<uint32_t>(std::get<InputNodeAddress>(location).address, inputAddressMinMax(channel));
+  }
+  return InputController::isInputLocation(channel, location);
+}
+
+std::pair<uint32_t, uint32_t> CBUSInterface::inputAddressMinMax(InputChannel /*channel*/) const
+{
+  return eventNumberRange;
+}
+
+void CBUSInterface::inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action)
+{
+  if(m_simulator)
+  {
+    m_kernel->ioContext().post(
+      [this, channel, location, action]
+      {
+        switch(channel)
+        {
+          case InputChannel::ShortEvent:
+            m_simulator->shortEvent(std::get<InputAddress>(location).address, action);
+            break;
+
+          case InputChannel::LongEvent:
+            m_simulator->longEvent(std::get<InputNodeAddress>(location).node, std::get<InputNodeAddress>(location).address, action);
+            break;
+
+          default: [[unlikely]]
+            assert(false);
+            break;
+        }
+      });
+  }
+}
+
 std::span<const OutputChannel> CBUSInterface::outputChannels() const
 {
   static const std::array<OutputChannel, 2> channels{
@@ -166,7 +225,7 @@ std::span<const OutputChannel> CBUSInterface::outputChannels() const
 
 std::pair<uint32_t, uint32_t> CBUSInterface::outputNodeMinMax(OutputChannel /*channel*/) const
 {
-  return {std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint16_t>::max()};
+  return eventNumberRange;
 }
 
 std::pair<uint32_t, uint32_t> CBUSInterface::outputAddressMinMax(OutputChannel channel) const
@@ -219,6 +278,7 @@ void CBUSInterface::addToWorld()
 {
   Interface::addToWorld();
   DecoderController::addToWorld();
+  InputController::addToWorld(inputListColumns);
   OutputController::addToWorld(outputListColumns);
 }
 
@@ -233,6 +293,7 @@ void CBUSInterface::destroying()
 {
   m_cbusPropertyChanged.disconnect();
   OutputController::destroying();
+  InputController::destroying();
   DecoderController::destroying();
   Interface::destroying();
 }
@@ -329,6 +390,18 @@ bool CBUSInterface::setOnline(bool& value, bool simulation)
         [this]()
         {
           m_world.stop();
+        };
+      m_kernel->onShortEvent =
+        [this](uint16_t eventNumber, bool on)
+        {
+          updateInputValue(InputChannel::ShortEvent, InputAddress(eventNumber), toTriState(on));
+          updateOutputValue(OutputChannel::ShortEvent, OutputAddress(eventNumber), toTriState(on));
+        };
+      m_kernel->onLongEvent =
+        [this](uint16_t nodeNumber, uint16_t eventNumber, bool on)
+        {
+          updateInputValue(InputChannel::LongEvent, InputNodeAddress(nodeNumber, eventNumber), toTriState(on));
+          updateOutputValue(OutputChannel::LongEvent, OutputNodeAddress(nodeNumber, eventNumber), toTriState(on));
         };
 
       m_kernel->start();

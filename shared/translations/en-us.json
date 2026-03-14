@@ -824,6 +824,10 @@
         "definition": "On delay"
     },
     {
+        "term": "input_channel:long_event",
+        "definition": "Long event"
+    },
+    {
         "term": "input_channel:s88_left",
         "definition": "S88 left"
     },
@@ -834,6 +838,10 @@
     {
         "term": "input_channel:s88_right",
         "definition": "S88 right"
+    },
+    {
+        "term": "input_channel:short_event",
+        "definition": "Short event"
     },
     {
         "term": "input_list:bus",

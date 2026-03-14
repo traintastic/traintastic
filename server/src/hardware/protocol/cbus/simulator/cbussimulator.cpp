@@ -21,6 +21,15 @@
 
 #include "cbussimulator.hpp"
 #include <algorithm>
+#include "../messages/cbusaccessorymessages.hpp"
+#include "../messages/cbusaccessoryshortmessages.hpp"
+
+namespace {
+
+static constexpr uint8_t simCanId = 84;
+static constexpr uint16_t simNodeNumber = 0x84B7;
+
+}
 
 namespace CBUS
 {
@@ -49,6 +58,122 @@ void Simulator::receive(const Message& message)
   {
     module->receive(message);
   }
+}
+
+void Simulator::shortEvent(uint16_t eventNumber, SimulateInputAction action)
+{
+  bool value;
+  switch(action)
+  {
+    case SimulateInputAction::SetTrue:
+      value = true;
+      break;
+
+    case SimulateInputAction::SetFalse:
+      value = false;
+      break;
+
+    case SimulateInputAction::Toggle:
+      if(auto it = m_shortEvents.find(eventNumber); it != m_shortEvents.end())
+      {
+        value = !it->second;
+      }
+      else
+      {
+        value = true;
+      }
+      break;
+  }
+
+  if(value)
+  {
+    send(simCanId, AccessoryShortOn(simNodeNumber, eventNumber));
+  }
+  else
+  {
+    send(simCanId, AccessoryShortOff(simNodeNumber, eventNumber));
+  }
+}
+
+void Simulator::longEvent(uint16_t nodeNumber, uint16_t eventNumber, SimulateInputAction action)
+{
+  uint8_t canId = simCanId;
+  if(auto it = std::find_if(m_modules.begin(), m_modules.end(),
+    [nodeNumber](const auto& module)
+    {
+      return module->nodeNumber == nodeNumber;
+    }); it != m_modules.end())
+  {
+    canId = (**it).canId;
+  }
+
+  bool value;
+  switch(action)
+  {
+    case SimulateInputAction::SetTrue:
+      value = true;
+      break;
+
+    case SimulateInputAction::SetFalse:
+      value = false;
+      break;
+
+    case SimulateInputAction::Toggle:
+      if(auto it = m_longEvents.find({nodeNumber, eventNumber}); it != m_longEvents.end())
+      {
+        value = !it->second;
+      }
+      else
+      {
+        value = true;
+      }
+      break;
+  }
+
+  if(value)
+  {
+    send(canId, AccessoryOn(nodeNumber, eventNumber));
+  }
+  else
+  {
+    send(canId, AccessoryOff(nodeNumber, eventNumber));
+  }
+}
+
+void Simulator::send(uint8_t canId, const Message& message)
+{
+  switch(message.opCode)
+  {
+    using enum OpCode;
+
+    case ASON:
+    {
+      const auto& ason = static_cast<const AccessoryShortOn&>(message);
+      m_shortEvents[ason.deviceNumber()] = true;
+      break;
+    }
+    case ASOF:
+    {
+      const auto& asof = static_cast<const AccessoryShortOff&>(message);
+      m_shortEvents[asof.deviceNumber()] = false;
+      break;
+    }
+    case ACON:
+    {
+      const auto& acon = static_cast<const AccessoryOn&>(message);
+      m_longEvents[{acon.nodeNumber(), acon.eventNumber()}] = true;
+      break;
+    }
+    case ACOF:
+    {
+      const auto& acof = static_cast<const AccessoryOff&>(message);
+      m_longEvents[{acof.nodeNumber(), acof.eventNumber()}] = false;
+      break;
+    }
+    default:
+      break;
+  }
+  onSend(canId, message);
 }
 
 }

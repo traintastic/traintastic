@@ -39,6 +39,8 @@ public:
   std::function<void()> onTrackOn;
   std::function<void()> onEmergencyStop;
   std::function<void(uint16_t address, bool isLongAddress)> onEngineSessionCancelled;
+  std::function<void(uint16_t eventNumber, bool on)> onShortEvent;
+  std::function<void(uint16_t nodeNumber, uint16_t eventNumber, bool on)> onLongEvent;
 
   /**
    * @brief Create kernel and IO handler

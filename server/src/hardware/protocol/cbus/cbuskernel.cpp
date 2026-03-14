@@ -173,6 +173,32 @@ void Kernel::receive(uint8_t /*canId*/, const Message& message)
       }
       break;
 
+    case OpCode::ASON:
+    {
+      const auto& ason = static_cast<const AccessoryShortOn&>(message);
+      EventLoop::call(
+        [this, eventNumber=ason.deviceNumber()]()
+        {
+          if(onShortEvent) [[likely]]
+          {
+            onShortEvent(eventNumber, true);
+          }
+        });
+      break;
+    }
+    case OpCode::ASOF:
+    {
+      const auto& asof = static_cast<const AccessoryShortOff&>(message);
+      EventLoop::call(
+        [this, eventNumber=asof.deviceNumber()]()
+        {
+          if(onShortEvent) [[likely]]
+          {
+            onShortEvent(eventNumber, false);
+          }
+        });
+      break;
+    }
     case OpCode::ERR:
     {
       switch(static_cast<const CommandStationErrorMessage&>(message).errorCode)
@@ -218,6 +244,32 @@ void Kernel::receive(uint8_t /*canId*/, const Message& message)
         case InvalidRequest:
           break;
       }
+      break;
+    }
+    case OpCode::ACON:
+    {
+      const auto& acon = static_cast<const AccessoryOn&>(message);
+      EventLoop::call(
+        [this, nodeNumber=acon.nodeNumber(), eventNumber=acon.eventNumber()]()
+        {
+          if(onLongEvent) [[likely]]
+          {
+            onLongEvent(nodeNumber, eventNumber, false);
+          }
+        });
+      break;
+    }
+    case OpCode::ACOF:
+    {
+      const auto& acof = static_cast<const AccessoryOff&>(message);
+      EventLoop::call(
+        [this, nodeNumber=acof.nodeNumber(), eventNumber=acof.eventNumber()]()
+        {
+          if(onLongEvent) [[likely]]
+          {
+            onLongEvent(nodeNumber, eventNumber, false);
+          }
+        });
       break;
     }
     case OpCode::PLOC:

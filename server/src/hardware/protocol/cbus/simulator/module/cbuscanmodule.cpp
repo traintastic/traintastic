@@ -33,7 +33,7 @@ CANModule::CANModule(Simulator& simulator, uint16_t nodeNumber_, uint8_t canId_)
 
 void CANModule::send(const Message& message)
 {
-  m_simulator.onSend(canId, message);
+  m_simulator.send(canId, message);
 }
 
 }
