@@ -22,7 +22,7 @@
 #ifndef TRAINTASTIC_SERVER_UTILS_UNREACHABLE_HPP
 #define TRAINTASTIC_SERVER_UTILS_UNREACHABLE_HPP
 
-[[noreturn]] constexpr void unreachable()
+[[noreturn]] inline void unreachable()
 {
 #if defined(__GNUC__) || defined(__clang__)
   __builtin_unreachable();
