@@ -1,9 +1,8 @@
 /**
- * client/src/utils/enum.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +33,7 @@
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/directioncontrolstate.hpp>
 #include <traintastic/enum/externaloutputchangeaction.hpp>
+#include <traintastic/enum/inputchannel.hpp>
 #include <traintastic/enum/lengthunit.hpp>
 #include <traintastic/enum/loconetf9f28.hpp>
 #include <traintastic/enum/loconetfastclock.hpp>
@@ -107,6 +107,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(Direction)
   TRANSLATE_ENUM(DirectionControlState)
   TRANSLATE_ENUM(ExternalOutputChangeAction)
+  TRANSLATE_ENUM(InputChannel)
   TRANSLATE_ENUM(LengthUnit)
   TRANSLATE_ENUM(LocoNetF9F28)
   TRANSLATE_ENUM(LocoNetFastClock)

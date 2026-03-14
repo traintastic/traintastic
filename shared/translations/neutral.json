@@ -84,6 +84,22 @@
         "definition": "Z21"
     },
     {
+        "term": "input_channel:loconet",
+        "definition": "LocoNet"
+    },
+    {
+        "term": "input_channel:rbus",
+        "definition": "RBus"
+    },
+    {
+        "term": "input_channel:s88",
+        "definition": "S88"
+    },
+    {
+        "term": "input_channel:ecos_detector",
+        "definition": "ECoS Detector"
+    },
+    {
         "term": "interface.dccplusplus:dcc_plus_plus",
         "definition": "DCC++(EX)"
     },

@@ -808,18 +808,6 @@
         "definition": "Throttles"
     },
     {
-        "term": "hsi88:s88_left",
-        "definition": "S88 left"
-    },
-    {
-        "term": "hsi88:s88_middle",
-        "definition": "S88 middle"
-    },
-    {
-        "term": "hsi88:s88_right",
-        "definition": "S88 right"
-    },
-    {
         "term": "identification:opc_multi_sense_direction",
         "definition": "OPC_MULTI_SENSE direction"
     },
@@ -830,6 +818,18 @@
     {
         "term": "input:on_delay",
         "definition": "On delay"
+    },
+    {
+        "term": "input_channel:s88_left",
+        "definition": "S88 left"
+    },
+    {
+        "term": "input_channel:s88_middle",
+        "definition": "S88 middle"
+    },
+    {
+        "term": "input_channel:s88_right",
+        "definition": "S88 right"
     },
     {
         "term": "input_list:bus",
