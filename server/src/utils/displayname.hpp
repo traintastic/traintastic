@@ -86,6 +86,20 @@ namespace DisplayName
     constexpr std::string_view moveDown = "list:move_down";
     constexpr std::string_view remove = "list:remove";
   }
+  namespace Marklin6050
+  {
+    constexpr std::string_view accessoryOffTime = "marklin6050_settings:accessory_off_time";
+    constexpr std::string_view analog = "marklin6050_settings:analog";
+    constexpr std::string_view centralUnitVersion = "marklin6050_settings:central_unit_version";
+    constexpr std::string_view changeAddress = "marklin6050_settings:change_address";
+    constexpr std::string_view commandRedundancy = "marklin6050_settings:command_redundancy";
+    constexpr std::string_view feedbackModule = "marklin6050_settings:feedback_module";
+    constexpr std::string_view newLocoAddress = "marklin6050_settings:new_loco_address";
+    constexpr std::string_view oldLocoAddress = "marklin6050_settings:old_loco_address";
+    constexpr std::string_view s88CallInterval = "marklin6050_settings:s88_call_interval";
+    constexpr std::string_view s88ModuleAmount = "marklin6050_settings:s88_module_amount";
+    constexpr std::string_view redundancy_off = "marklin6050_settings:redundancy_off";
+  }
   namespace Object
   {
     constexpr std::string_view id = "object:id";

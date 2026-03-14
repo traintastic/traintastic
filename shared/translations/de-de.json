@@ -3298,5 +3298,101 @@
     {
         "term": "zone:speed_limit",
         "definition": "Geschwindigkeitbegrenzung"
-    }
+    },
+    {
+        "term": "category:marklin_6050",
+        "definition": "Märklin 6050"
+    },
+    {
+        "term": "category:programmer",
+        "definition": "Programmierer"
+    },
+    {
+        "term": "marklin6050_settings:accessory_off_time",
+        "definition": "Magnetartikel Ausschaltzeit"
+    },
+    {
+        "term": "marklin6050_settings:accessory_off_time.help",
+        "definition": "Zeit in Millisekunden, nach der ein aktivierter Magnetartikel (Weiche/Signal) automatisch abgeschaltet wird. Schützt die Spulen vor Überhitzung."
+    },
+    {
+        "term": "marklin6050_settings:analog",
+        "definition": "Analogbetrieb"
+    },
+    {
+        "term": "marklin6050_settings:analog.help",
+        "definition": "Aktiviert den Analogbetrieb. Nur verfügbar für 6027 und 6029. Im Analogbetrieb werden keine Lokfunktionen unterstützt und keine digitalen Adressen verwendet."
+    },
+    {
+        "term": "marklin6050_settings:central_unit_version",
+        "definition": "Zentraleinheit Version"
+    },
+    {
+        "term": "marklin6050_settings:central_unit_version.help",
+        "definition": "Wählen Sie die angeschlossene Zentraleinheit. Dies bestimmt das unterstützte Protokoll (Motorola/DCC), den Adressbereich und die verfügbaren Funktionen."
+    },
+    {
+        "term": "marklin6050_settings:change_address",
+        "definition": "Adresse ändern"
+    },
+    {
+        "term": "marklin6050_settings:change_address.help",
+        "definition": "Programmiert eine neue Adresse in den Lokdecoder. Die Lok muss allein auf dem Programmiergleis stehen. Erfordert eine Online-Verbindung."
+    },
+    {
+        "term": "marklin6050_settings:command_redundancy",
+        "definition": "Befehlswiederholung"
+    },
+    {
+        "term": "marklin6050_settings:command_redundancy.help",
+        "definition": "Anzahl der Wiederholungen für Lok- und Magnetartikelbefehle. Erhöht die Zuverlässigkeit bei gestörter Übertragung, verlangsamt aber die Befehlsverarbeitung. Richtungswechsel werden nie wiederholt."
+    },
+    {
+        "term": "marklin6050_settings:feedback_module",
+        "definition": "Erweiterungsmodul"
+    },
+    {
+        "term": "marklin6050_settings:feedback_module.help",
+        "definition": "Aktiviert den erweiterten Adressbereich. Benötigt ein kompatibles Erweiterungsmodul an der Zentraleinheit."
+    },
+    {
+        "term": "marklin6050_settings:new_loco_address",
+        "definition": "Neue Lokadresse"
+    },
+    {
+        "term": "marklin6050_settings:old_loco_address",
+        "definition": "Alte Lokadresse"
+    },
+    {
+        "term": "marklin6050_settings:redundancy_off",
+        "definition": "Aus"
+    },
+    {
+        "term": "marklin6050_settings:s88_call_interval",
+        "definition": "S88-Abfrageintervall"
+    },
+    {
+        "term": "marklin6050_settings:s88_call_interval.help",
+        "definition": "Zeitintervall zwischen den Abfragen der S88-Rückmeldemodule. Kürzere Intervalle erhöhen die Reaktionsgeschwindigkeit, erzeugen aber mehr Datenverkehr auf dem seriellen Bus."
+    },
+    {
+        "term": "marklin6050_settings:s88_module_amount",
+        "definition": "Anzahl S88-Module"
+    },
+    {
+        "term": "marklin6050_settings:s88_module_amount.help",
+        "definition": "Anzahl der angeschlossenen S88-Rückmeldemodule (je 16 Kontakte). Maximal 61 Module für 976 Rückmeldekontakte."
+    },
+    {
+        "term": "wizard.add_interface.interface_marklin6050:title",
+        "definition": "Märklin 6050/51 interface"
+    },
+    {
+        "term": "interface.marklin6050:settings",
+        "definition": "Einstellungen"
+    },
+    {
+        "term": "interface.marklin6023:settings",
+        "definition": "Einstellungen"
+    } 
 ]

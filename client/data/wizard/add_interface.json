@@ -85,6 +85,30 @@
             }
           },
           {
+            "name": "Märklin 6023/6223",
+            "next": "serial_port_marklin",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.marklin6023"
+              },
+              "set_variables": {
+                "command_station": "Märklin 6023/6223"
+              }
+            }
+          },
+          {
+            "name": "Märklin 6050/6051",
+            "next": "serial_port_marklin",
+            "actions": {
+              "create_interface": {
+                "class_id": "interface.marklin6050"
+              },
+              "set_variables": {
+                "command_station": "Märklin 6050/6051"
+              }
+            }
+          },
+          {
             "name": "Uhlenbrock IB-COM",
             "next": "connection_ibusb",
             "actions": {
@@ -550,6 +574,16 @@
         "object": "interface",
         "properties": [
           "device"
+        ],
+        "next": "name"
+      },
+      "serial_port_marklin": {
+        "title": "$wizard.add_interface.serial_port:title$",
+        "text": "$wizard.add_interface.serial_port:text$",
+        "type": "property",
+        "object": "interface",
+        "properties": [
+          "serialPort"
         ],
         "next": "name"
       },

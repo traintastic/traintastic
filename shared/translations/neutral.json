@@ -16,6 +16,14 @@
         "definition": "LocoNet"
     },
     {
+        "term": "class_id:interface.marklin6050",
+        "definition": "Märklin 6050/51"
+    },
+    {
+        "term": "class_id:interface.marklin6023",
+        "definition": "Märklin 6023/223"
+    },
+    {
         "term": "class_id:interface.traintastic_diy",
         "definition": "Traintastic DIY"
     },
