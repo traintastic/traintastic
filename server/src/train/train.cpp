@@ -874,12 +874,11 @@ void Train::propagateDirection(Direction newDirection)
   if(!active)
     return;
 
-  const Direction oppositeDirection = newDirection == Direction::Forward ? Direction::Reverse : Direction::Forward;
   for(const auto& item : *vehicles)
   {
     Direction dir = newDirection;
     if(item->invertDirection)
-      dir = oppositeDirection;
+      dir = ~dir;
 
     auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(item->vehicle.value());
     if(poweredVehicle)
