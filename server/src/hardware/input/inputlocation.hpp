@@ -25,6 +25,7 @@
 #include <variant>
 #include <cstdint>
 #include <traintastic/enum/inputchannel.hpp>
+#include "../../utils/unreachable.hpp"
 
 struct InputAddress
 {
@@ -95,7 +96,7 @@ constexpr InputLocation inputLocation(InputChannel channel, uint32_t node, uint3
   {
     return InputNodeAddress(node, address);
   }
-  return {}; // uninitialized, this should never happen
+  unreachable();
 }
 
 template<>
