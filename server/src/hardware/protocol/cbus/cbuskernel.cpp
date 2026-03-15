@@ -288,7 +288,7 @@ void Kernel::receive(uint8_t /*canId*/, const Message& message)
           sendSetEngineSessionMode(ploc.session, engine.speedSteps);
           sendSetEngineSpeedDirection(ploc.session, engine.speed, engine.directionForward);
 
-          for(const auto [number, value] : engine.functions)
+          for(const auto& [number, value] : engine.functions)
           {
             sendSetEngineFunction(ploc.session, number, value);
           }

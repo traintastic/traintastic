@@ -26,6 +26,7 @@
 #include <map>
 #include <span>
 #include <set>
+#include <optional>
 #include <traintastic/enum/direction.hpp>
 #include "cbusconfig.hpp"
 #include "iohandler/cbusiohandler.hpp"
