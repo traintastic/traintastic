@@ -260,7 +260,7 @@ void Kernel::receive(uint8_t /*canId*/, const Message& message)
         {
           if(onLongEvent) [[likely]]
           {
-            onLongEvent(nodeNumber, eventNumber, false);
+            onLongEvent(nodeNumber, eventNumber, true);
           }
         });
       break;
