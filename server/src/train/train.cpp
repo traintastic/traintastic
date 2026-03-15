@@ -19,12 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <cmath>
 #include "train.hpp"
-#include "trainlist.hpp"
-#include "trainvehiclelist.hpp"
-#include "../world/world.hpp"
 #include "trainblockstatus.hpp"
+#include "trainlist.hpp"
 #include "trainlisttablemodel.hpp"
+#include "trainvehiclelist.hpp"
+#include "trainvehiclelistitem.hpp"
+#include "../world/world.hpp"
 #include "../core/attributes.hpp"
 #include "../core/errorcode.hpp"
 #include "../core/method.tpp"
@@ -39,6 +41,8 @@
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
 #include "../zone/zone.hpp"
+
+#include <memory>
 
 CREATE_IMPL(Train)
 
@@ -67,8 +71,7 @@ Train::Train(World& world, std::string_view _id) :
         status->direction.setValueInternal(!status->direction.value());
       blocks.reverseInternal(); // index 0 is head of train
 
-      for(const auto& vehicle : m_poweredVehicles)
-        vehicle->setDirection(value);
+      propagateDirection(value);
       updateEnabled();
     },
     [](Direction& value)
@@ -144,6 +147,7 @@ Train::Train(World& world, std::string_view _id) :
   active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly,
     [this](bool value)
     {
+      propagateDirection(direction); //Sync all vehicles direction
       updateSpeed();
       if(!value && m_throttle)
       {
@@ -279,9 +283,9 @@ void Train::updateMute()
     mute.setValueInternal(value);
     if(active)
     {
-      for(const auto& vehicle : *vehicles)
+      for(const auto& item : *vehicles)
       {
-        vehicle->updateMute();
+        item->vehicle->updateMute();
       }
     }
   }
@@ -306,9 +310,9 @@ void Train::updateNoSmoke()
     noSmoke.setValueInternal(value);
     if(active)
     {
-      for(const auto& vehicle : *vehicles)
+      for(const auto& item : *vehicles)
       {
-        vehicle->updateNoSmoke();
+        item->vehicle->updateNoSmoke();
       }
     }
   }
@@ -343,9 +347,10 @@ void Train::addToWorld()
 void Train::destroying()
 {
   auto self = shared_ptr<Train>();
-  for(const auto& vehicle : *vehicles)
+  for(const auto& item : *vehicles)
   {
-    vehicle->trains.removeInternal(self);
+    item->vehicle->trains.removeInternal(self);
+    item->destroy();
   }
   m_world.trains->removeObject(self);
   IdObject::destroying();
@@ -358,21 +363,63 @@ void Train::loaded()
   Attributes::setEnabled(length, overrideLength);
   Attributes::setEnabled(weight, overrideWeight);
 
-  auto self = shared_ptr<Train>();
-  for(auto& vehicle : *vehicles)
+  if(active)
   {
-    vehicle->trains.appendInternal(self);
+    // Try activating all vehicles
+    bool allVehiclesFree = true;
+
+    for(const auto& item : *vehicles)
+    {
+      if(item->vehicle->activeTrain.value())
+      {
+        allVehiclesFree = false;
+        break;
+      }
+    }
+
+    if(allVehiclesFree && !vehicles->empty())
+    {
+      for(const auto& item : *vehicles)
+      {
+        item->vehicle->activeTrain.setValueInternal(shared_ptr<Train>());
+      }
+    }
+    else
+    {
+      // Maybe there was a file corruption, deactivate Train
+      active.setValueInternal(false);
+    }
   }
 
+  // Update vehicle list state
   vehiclesChanged();
   updateMute();
   updateNoSmoke();
 
   if(active)
   {
+    if(!emergencyStop)
+    {
+      // If one vehicle is in Emergency stop, sync all Train
+      bool atLeastOneEmergencyStop = false;
+
+      for(const auto& vehicle : m_poweredVehicles)
+      {
+        if(vehicle->decoder && vehicle->decoder->emergencyStop)
+        {
+          atLeastOneEmergencyStop = true;
+          break;
+        }
+      }
+      if(atLeastOneEmergencyStop)
+        emergencyStop.setValueInternal(atLeastOneEmergencyStop);
+    }
+
+    // Manually sync emergency stop
+    // NOTE: direction already synced when train becomes active (See OnChanged)
     for(const auto& vehicle : m_poweredVehicles)
     {
-      vehicle->setDirection(direction);
+      vehicle->setEmergencyStop(emergencyStop);
     }
   }
 }
@@ -479,8 +526,8 @@ void Train::updateLength()
     return;
 
   double mm = 0;
-  for(const auto& vehicle : *vehicles)
-    mm += vehicle->length.getValue(LengthUnit::MilliMeter);
+  for(const auto& item : *vehicles)
+    mm += item->vehicle->length.getValue(LengthUnit::MilliMeter);
   length.setValueInternal(convertUnit(mm, LengthUnit::MilliMeter, length.unit()));
 }
 
@@ -490,16 +537,16 @@ void Train::updateWeight()
     return;
 
   double ton = 0;
-  for(const auto& vehicle : *vehicles)
-    ton += vehicle->totalWeight.getValue(WeightUnit::Ton);
+  for(const auto& item : *vehicles)
+    ton += item->vehicle->totalWeight.getValue(WeightUnit::Ton);
   weight.setValueInternal(convertUnit(ton, WeightUnit::Ton, weight.unit()));
 }
 
 void Train::updatePowered()
 {
   m_poweredVehicles.clear();
-  for(const auto& vehicle : *vehicles)
-    if(auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(vehicle))
+  for(const auto& item : *vehicles)
+    if(auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(item->vehicle.value()))
       m_poweredVehicles.emplace_back(poweredVehicle);
   powered.setValueInternal(!m_poweredVehicles.empty());
 }
@@ -510,11 +557,11 @@ void Train::updateSpeedMax()
   {
     const auto itEnd = vehicles->end();
     auto it = vehicles->begin();
-    double kmph = (*it)->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+    double kmph = (*it)->vehicle->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
     for(; it != itEnd; ++it)
     {
-      const double v = (*it)->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
-      if((v > 0 || isPowered(**it)) && v < kmph)
+      const double v = (*it)->vehicle->speedMax.getValue(SpeedUnit::KiloMeterPerHour);
+      if((v > 0 || isPowered(*(*it)->vehicle)) && v < kmph)
         kmph = v;
     }
     speedMax.setValueInternal(convertUnit(kmph, SpeedUnit::KiloMeterPerHour, speedMax.unit()));
@@ -542,6 +589,12 @@ void Train::updateEnabled()
   Attributes::setEnabled(vehicles->remove, stopped);
   Attributes::setEnabled(vehicles->move, stopped);
   Attributes::setEnabled(vehicles->reverse, stopped);
+
+  for(const auto& item : *vehicles)
+  {
+    Attributes::setEnabled(item->vehicle, stopped);
+    Attributes::setEnabled(item->invertDirection, stopped);
+  }
 }
 
 bool Train::setTrainActive(bool val)
@@ -556,15 +609,15 @@ bool Train::setTrainActive(bool val)
     }
 
     //To activate a train, ensure all vehicles are stopped and free
-    for(const auto& vehicle : *vehicles)
+    for(const auto& item : *vehicles)
     {
-      assert(vehicle->activeTrain.value() != self);
-      if(vehicle->activeTrain.value())
+      assert(item->vehicle->activeTrain.value() != self);
+      if(item->vehicle->activeTrain.value())
       {
         return false; //Not free
       }
 
-      if(auto decoder = vehicle->decoder.value(); decoder && !almostZero(decoder->throttle.value()))
+      if(auto decoder = item->vehicle->decoder.value(); decoder && !almostZero(decoder->throttle.value()))
       {
         return false; //Already running
       }
@@ -572,9 +625,9 @@ bool Train::setTrainActive(bool val)
 
     //Now really activate
     //Register this train as activeTrain
-    for(const auto& vehicle : *vehicles)
+    for(const auto& item : *vehicles)
     {
-      vehicle->setActiveTrain(self);
+      item->vehicle->setActiveTrain(self);
     }
 
     //Sync Emergency Stop state
@@ -589,10 +642,10 @@ bool Train::setTrainActive(bool val)
       return false;
 
     //Deactivate all vehicles
-    for(const auto& vehicle : *vehicles)
+    for(const auto& item : *vehicles)
     {
-      assert(vehicle->activeTrain.value() == self);
-      vehicle->setActiveTrain(nullptr);
+      assert(item->vehicle->activeTrain.value() == self);
+      item->vehicle->setActiveTrain(nullptr);
     }
   }
 
@@ -814,4 +867,51 @@ void Train::fireZoneRemoved(const std::shared_ptr<Zone>& zone)
     Log::log(*this, LogMessage::D3025_TRAIN_X_REMOVED_FROM_ZONE_X, name.value(), zone->name.value());
   }
   fireEvent(onZoneRemoved, shared_ptr<Train>(), zone);
+}
+
+void Train::propagateDirection(Direction newDirection)
+{
+  if(!active)
+    return;
+
+  for(const auto& item : *vehicles)
+  {
+    Direction dir = newDirection;
+    if(item->invertDirection)
+      dir = ~dir;
+
+    auto poweredVehicle = std::dynamic_pointer_cast<PoweredRailVehicle>(item->vehicle.value());
+    if(poweredVehicle)
+    {
+      poweredVehicle->lastTrainSetDirection = dir;
+      poweredVehicle->setDirection(dir);
+    }
+  }
+}
+
+void Train::handleDecoderDirection(const std::shared_ptr<PoweredRailVehicle>& vehicle, Direction newDirection)
+{
+  //! \todo assert vehicle contained in train?
+  if(!active || newDirection == Direction::Unknown)
+    return;
+
+  //Check if vehicle is inverted
+  bool isInverted = false;
+  for(const auto& item : *vehicles)
+  {
+    if(item->vehicle.value() == vehicle)
+    {
+      if(item->invertDirection)
+        isInverted = true;
+      break;
+    }
+  }
+
+  if(isInverted)
+    newDirection = newDirection == Direction::Forward ? Direction::Reverse : Direction::Forward;
+
+  if(direction == newDirection)
+    return; //No change
+
+  direction = newDirection;
 }

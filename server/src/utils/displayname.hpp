@@ -111,6 +111,7 @@ namespace DisplayName
       constexpr std::string_view totalWeight = "vehicle.rail:total_weight";
       constexpr std::string_view train = "vehicle.rail:train";
       constexpr std::string_view weight = "vehicle.rail:weight";
+      constexpr std::string_view invertDirection = "vehicle.rail:invert_direction";
     }
   }
   namespace World

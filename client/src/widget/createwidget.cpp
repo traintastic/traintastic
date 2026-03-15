@@ -1,9 +1,8 @@
 /**
- * client/src/widget/createwidget.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2025 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +25,7 @@
 #include "objectlist/interfacelistwidget.hpp"
 #include "objectlist/throttleobjectlistwidget.hpp"
 #include "objectlist/trainlistwidget.hpp"
+#include "objectlist/trainvehiclelistwidget.hpp"
 #include "objectlist/zoneblocklistwidget.hpp"
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
@@ -74,6 +74,10 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
   if(classId == "list.train")
   {
     return new TrainListWidget(object, parent);
+  }
+  if(classId == "list.train_vehicle")
+  {
+    return new TrainVehicleListWidget(object, parent);
   }
   if(classId == "list.zone_block")
   {
