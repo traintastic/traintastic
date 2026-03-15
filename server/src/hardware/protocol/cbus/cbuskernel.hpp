@@ -27,6 +27,7 @@
 #include <span>
 #include <set>
 #include <optional>
+#include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/direction.hpp>
 #include "cbusconfig.hpp"
 #include "iohandler/cbusiohandler.hpp"
@@ -112,12 +113,16 @@ private:
     uint8_t speedSteps = 126;
     bool directionForward = true;
     std::map<uint8_t, bool> functions;
+    std::chrono::steady_clock::time_point lastCommand;
   };
 
   std::unique_ptr<IOHandler> m_ioHandler;
   const bool m_simulation;
   Config m_config;
   bool m_trackOn = false;
+  uint8_t m_engineKeepAliveSession;
+  bool m_engineKeepAliveTimerActive = false;
+  boost::asio::steady_timer m_engineKeepAliveTimer;
   std::map<uint16_t, Engine> m_engines;
   std::set<uint16_t> m_engineGLOCs;
 
@@ -133,6 +138,8 @@ private:
   void sendSetEngineSessionMode(uint8_t session, uint8_t speedSteps);
   void sendSetEngineSpeedDirection(uint8_t session, uint8_t speed, bool directionForward);
   void sendSetEngineFunction(uint8_t session, uint8_t number, bool value);
+
+  void restartEngineKeepAliveTimer();
 };
 
 }

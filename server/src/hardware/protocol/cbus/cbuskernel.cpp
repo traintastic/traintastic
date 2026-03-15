@@ -62,6 +62,7 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
   , m_simulation{simulation}
   , m_config{config}
+  , m_engineKeepAliveTimer{ioContext()}
 {
   assert(isEventLoopThread());
 }
@@ -225,6 +226,11 @@ void Kernel::receive(uint8_t /*canId*/, const Message& message)
           {
             it->second.session = std::nullopt;
 
+            if(m_engineKeepAliveTimerActive && m_engineKeepAliveSession == *it->second.session)
+            {
+              restartEngineKeepAliveTimer();
+            }
+
             EventLoop::call(
               [this, key=it->first]()
               {
@@ -291,6 +297,13 @@ void Kernel::receive(uint8_t /*canId*/, const Message& message)
           for(const auto& [number, value] : engine.functions)
           {
             sendSetEngineFunction(ploc.session, number, value);
+          }
+
+          engine.lastCommand = std::chrono::steady_clock::now();
+
+          if(!m_engineKeepAliveTimerActive)
+          {
+            restartEngineKeepAliveTimer();
           }
         }
         else // we're no longer in need of control (rare but possible)
@@ -366,6 +379,13 @@ void Kernel::setEngineSpeedDirection(uint16_t address, bool longAddress, uint8_t
           sendSetEngineSessionMode(*engine.session, engine.speedSteps);
         }
         sendSetEngineSpeedDirection(*engine.session, engine.speed, engine.directionForward);
+
+        engine.lastCommand = std::chrono::steady_clock::now();
+
+        if(!m_engineKeepAliveTimerActive || (m_engineKeepAliveTimerActive && m_engineKeepAliveSession == *engine.session))
+        {
+          restartEngineKeepAliveTimer();
+        }
       }
       else // take control
       {
@@ -386,6 +406,13 @@ void Kernel::setEngineFunction(uint16_t address, bool longAddress, uint8_t numbe
       if(engine.session) // we're in control
       {
         sendSetEngineFunction(*engine.session, number, value);
+
+        engine.lastCommand = std::chrono::steady_clock::now();
+
+        if(!m_engineKeepAliveTimerActive || (m_engineKeepAliveTimerActive && m_engineKeepAliveSession == *engine.session))
+        {
+          restartEngineKeepAliveTimer();
+        }
       }
       else // take control
       {
@@ -550,6 +577,50 @@ void Kernel::sendSetEngineFunction(uint8_t session, uint8_t number, bool value)
   else
   {
     send(SetEngineFunctionOff(session, number));
+  }
+}
+
+void Kernel::restartEngineKeepAliveTimer()
+{
+  m_engineKeepAliveTimer.cancel();
+
+  // find first expiring engine:
+  std::chrono::steady_clock::time_point lastUpdate = std::chrono::steady_clock::time_point::max();
+  for(const auto& [_, engine] : m_engines)
+  {
+    if(engine.session && engine.lastCommand < lastUpdate)
+    {
+      lastUpdate = engine.lastCommand;
+      m_engineKeepAliveSession = *engine.session;
+    }
+  }
+
+  m_engineKeepAliveTimerActive = (lastUpdate < std::chrono::steady_clock::time_point::max());
+
+  if(m_engineKeepAliveTimerActive)
+  {
+    m_engineKeepAliveTimer.expires_at(lastUpdate + m_config.engineKeepAlive);
+    m_engineKeepAliveTimer.async_wait(
+      [this](std::error_code ec)
+      {
+        if(ec)
+        {
+          return;
+        }
+
+        send(SessionKeepAlive(m_engineKeepAliveSession));
+
+        if(auto it = std::find_if(m_engines.begin(), m_engines.end(),
+            [session=m_engineKeepAliveSession](const auto& item)
+            {
+              return item.second.session && *item.second.session == session;
+            }); it != m_engines.end()) [[likely]]
+        {
+          it->second.lastCommand = std::chrono::steady_clock::now();
+        }
+
+        restartEngineKeepAliveTimer();
+      });
   }
 }
 

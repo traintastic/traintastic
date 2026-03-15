@@ -288,6 +288,10 @@
         "definition": "Trains"
     },
     {
+        "term": "cbus_settings:engine_keep_alive",
+        "definition": "Engine keep alive"
+    },
+    {
         "term": "class_id:board_tile.misc.label",
         "definition": "Label"
     },

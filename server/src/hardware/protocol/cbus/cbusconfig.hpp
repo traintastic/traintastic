@@ -22,12 +22,15 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSCONFIG_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSCONFIG_HPP
 
+#include <chrono>
+
 namespace CBUS {
 
 struct Config
 {
   static constexpr uint16_t nodeId = 0xFFFC; //!< CANUSB fixed node id
 
+  std::chrono::seconds engineKeepAlive;
   bool debugLogRXTX;
 };
 

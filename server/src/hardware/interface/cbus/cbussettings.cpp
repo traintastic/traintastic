@@ -22,11 +22,17 @@
 #include "cbussettings.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
+#include "../../../utils/unit.hpp"
 
 CBUSSettings::CBUSSettings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
+  , engineKeepAlive{this, "engine_keep_alive", engineKeepAliveDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
+  Attributes::addMinMax(engineKeepAlive, engineKeepAliveMin, engineKeepAliveMax);
+  Attributes::addUnit(engineKeepAlive, Unit::seconds);
+  m_interfaceItems.add(engineKeepAlive);
+
   Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
   //Attributes::addGroup(debugLogRXTX, Group::debug);
   m_interfaceItems.add(debugLogRXTX);
@@ -35,6 +41,7 @@ CBUSSettings::CBUSSettings(Object& _parent, std::string_view parentPropertyName)
 CBUS::Config CBUSSettings::config() const
 {
   return CBUS::Config{
+    .engineKeepAlive = std::chrono::seconds(engineKeepAlive),
     .debugLogRXTX = debugLogRXTX,
   };
 }

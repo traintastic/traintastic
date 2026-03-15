@@ -31,11 +31,17 @@ class CBUSSettings final : public SubObject
   CLASS_ID("cbus_settings")
 
 public:
+  Property<uint8_t> engineKeepAlive;
   Property<bool> debugLogRXTX;
 
   CBUSSettings(Object& _parent, std::string_view parentPropertyName);
 
   CBUS::Config config() const;
+
+private:
+  static constexpr uint8_t engineKeepAliveMin = 1;
+  static constexpr uint8_t engineKeepAliveDefault = 4;
+  static constexpr uint8_t engineKeepAliveMax = 30;
 };
 
 #endif
