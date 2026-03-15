@@ -1,5 +1,13 @@
 [
     {
+        "term": "cbus_interface_type:canusb",
+        "definition": "CANUSB"
+    },
+    {
+        "term": "cbus_interface_type:canether",
+        "definition": "CANEther"
+    },
+    {
         "term": "class_id:interface.cbus",
         "definition": "CBUS/VLCB"
     },
@@ -102,6 +110,10 @@
     {
         "term": "input_channel:ecos_detector",
         "definition": "ECoS Detector"
+    },
+    {
+        "term": "interface.cbus:cbus",
+        "definition": "CBUS/VLCB"
     },
     {
         "term": "interface.dccplusplus:dcc_plus_plus",

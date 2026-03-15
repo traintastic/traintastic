@@ -24,6 +24,7 @@
 #include <traintastic/locale/locale.hpp>
 #include <traintastic/enum/autoyesno.hpp>
 #include <traintastic/enum/blockstate.hpp>
+#include <traintastic/enum/cbusinterfacetype.hpp>
 #include <traintastic/enum/color.hpp>
 #include <traintastic/enum/dccexinterfacetype.hpp>
 #include <traintastic/enum/decoderfunctionfunction.hpp>
@@ -98,6 +99,7 @@ QString translateEnum(const QString& enumName, qint64 value)
 {
   TRANSLATE_ENUM(AutoYesNo)
   TRANSLATE_ENUM(BlockState)
+  TRANSLATE_ENUM(CBUSInterfaceType)
   TRANSLATE_ENUM(Color)
   TRANSLATE_ENUM(DCCEXInterfaceType)
   TRANSLATE_ENUM(DecoderFunctionFunction)
