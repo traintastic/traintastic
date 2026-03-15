@@ -46,6 +46,10 @@ void CANCMD::receive(const Message& message)
       send(TrackOn());
       break;
 
+    case RESTP:
+      send(EmergencyStop());
+      break;
+
     case RLOC:
     {
       const auto& rloc = static_cast<const RequestEngineSession&>(message);

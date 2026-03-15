@@ -379,17 +379,26 @@ bool CBUSInterface::setOnline(bool& value, bool simulation)
       m_kernel->onTrackOff =
         [this]()
         {
-          m_world.powerOff();
+          if(contains(m_world.state, WorldState::PowerOn))
+          {
+            m_world.powerOff();
+          }
         };
       m_kernel->onTrackOn =
         [this]()
         {
-          m_world.powerOn();
+          if(!contains(m_world.state, WorldState::PowerOn))
+          {
+            m_world.powerOn();
+          }
         };
       m_kernel->onEmergencyStop =
         [this]()
         {
-          m_world.stop();
+          if(contains(m_world.state, WorldState::Run))
+          {
+            m_world.stop();
+          }
         };
       m_kernel->onShortEvent =
         [this](uint16_t eventNumber, bool on)
