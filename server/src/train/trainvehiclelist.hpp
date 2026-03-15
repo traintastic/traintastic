@@ -1,9 +1,8 @@
 /**
- * server/src/train/trainvehiclelist.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,6 +67,7 @@ class TrainVehicleList : public SubObject, public Table
     Method<void(const std::shared_ptr<TrainVehicleListItem>&)> remove;
     Method<void(uint32_t, uint32_t)> move;
     Method<void()> reverse;
+    Method<void(const std::shared_ptr<TrainVehicleListItem>&)> toggleDirectionInvert;
 
     TrainVehicleList(Train& train_, std::string_view parentPropertyName);
 

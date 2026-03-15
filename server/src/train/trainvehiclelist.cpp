@@ -1,9 +1,9 @@
 /**
- * server/src/train/trainvehiclelist.cpp
+/**
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2023-2025 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -73,6 +73,14 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
         items.reverseInternal();
         rowsChanged(0, items.size() - 1);
       }}
+  , toggleDirectionInvert{*this, "toggle_direction_invert",
+      [this](const std::shared_ptr<TrainVehicleListItem>& item)
+      {
+        if(item) [[likely]]
+        {
+          item->invertDirection = !item->invertDirection;
+        }
+      }}
 {
   const auto& world = getWorld(parent());
 
@@ -92,6 +100,9 @@ TrainVehicleList::TrainVehicleList(Train& train_, std::string_view parentPropert
 
   Attributes::addEnabled(reverse, false);
   m_interfaceItems.add(reverse);
+
+  //Attributes::addEnabled(toggleDirectionInvert, false);
+  m_interfaceItems.add(toggleDirectionInvert);
 }
 
 void TrainVehicleList::load(WorldLoader& loader, const nlohmann::json& data)
