@@ -98,34 +98,61 @@
       "sensor_address": 11
     }
   ],
+  "vehicles": [
+    {
+      "name": "1",
+      "length": 40.0,
+      "color": "green"
+    },
+    {
+      "name": "2",
+      "length": 30.0,
+      "color": "olive"
+    },
+    {
+      "name": "3",
+      "length": 30.0,
+      "color": "olive"
+    },
+    {
+      "name": "4",
+      "length": 30.0,
+      "color": "olive"
+    },
+    {
+      "name": "5",
+      "length": 30.0,
+      "color": "olive"
+    },
+    {
+      "name": "6",
+      "length": 30.0,
+      "color": "olive"
+    }
+  ],
   "trains": [
     {
+      "name": "REG1",
       "address": 3,
       "track_id": "top",
       "vehicles": [
         {
-          "length": 40.0,
-          "color": "green"
+          "name": "1"
         },
         {
-          "length": 30.0,
-          "color": "olive"
+          "name": "2"
         },
         {
-          "length": 30.0,
-          "color": "olive"
+          "name": "3"
         },
         {
-          "length": 30.0,
-          "color": "olive"
+          "name": "4"
         },
         {
-          "length": 30.0,
-          "color": "olive"
+          "name": "5"
         },
         {
-          "length": 30.0,
-          "color": "olive"
+          "name": "6"
         }
       ]
     }
