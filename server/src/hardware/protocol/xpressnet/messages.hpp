@@ -39,7 +39,25 @@ constexpr uint16_t shortAddressMax = 99;
 constexpr uint16_t longAddressMin = 100;
 constexpr uint16_t longAddressMax = 9999;
 
+constexpr uint8_t idSetSpeed14 = 0x10;
+constexpr uint8_t idSetSpeed27 = 0x11;
+constexpr uint8_t idSetSpeed28 = 0x12;
+constexpr uint8_t idSetSpeed128 = 0x13;
+
+constexpr uint8_t idSetFuncGroup1 = 0x20;
+constexpr uint8_t idSetFuncGroup2 = 0x21;
+constexpr uint8_t idSetFuncGroup3 = 0x22;
+constexpr uint8_t idSetFuncGroup4 = 0x23;
+constexpr uint8_t idSetFuncGroup5 = 0x28;
+constexpr uint8_t idSetFuncGroup6 = 0x29;
+constexpr uint8_t idSetFuncGroup7 = 0x2A;
+constexpr uint8_t idSetFuncGroup8 = 0x2B;
+
 constexpr uint8_t idFeedbackBroadcast = 0x40;
+
+constexpr uint8_t idSetFuncGroup9 = 0x50;
+constexpr uint8_t idSetFuncGroup10 = 0x51;
+
 constexpr uint8_t idLocomotiveBusy = 0xE4;
 
 struct Message;
@@ -341,18 +359,47 @@ struct LocomotiveInstruction : Message
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LocomotiveInstruction) == 4);
 
+// 3.42.3
 struct SpeedAndDirectionInstruction : LocomotiveInstruction
 {
   uint8_t speedAndDirection;
   uint8_t checksum;
 
-  SpeedAndDirectionInstruction(uint16_t address, bool emergencyStop, Direction direction) :
+  SpeedAndDirectionInstruction(uint16_t address, bool emergencyStop, Direction dir) :
     LocomotiveInstruction(address)
   {
-    assert(direction != Direction::Unknown);
+    assert(dir != Direction::Unknown);
     speedAndDirection = emergencyStop ? 0x01 : 0x00;
-    if(direction == Direction::Forward)
+    if(dir == Direction::Forward)
       speedAndDirection |= 0x80;
+  }
+
+  uint8_t speedSteps() const
+  {
+    switch(identification)
+    {
+    case idSetSpeed14:
+      return 14;
+    case idSetSpeed27:
+      return 27;
+    case idSetSpeed28:
+      return 28;
+    case idSetSpeed128:
+      return 128;
+    default:
+      break;
+    }
+    return 0;
+  }
+
+  bool isEmergencyStop() const
+  {
+    return speedAndDirection == 0x01;
+  }
+
+  Direction direction() const
+  {
+    return ((speedAndDirection & 0x80) == 0x80) ? Direction::Forward : Direction::Reverse;
   }
 } ATTRIBUTE_PACKED;
 
@@ -362,12 +409,29 @@ struct SpeedAndDirectionInstruction14 : SpeedAndDirectionInstruction
     SpeedAndDirectionInstruction(address, emergencyStop, direction)
   {
     assert(speedStep <= 14);
-    identification = 0x10;
+    identification = idSetSpeed14;
     if(!emergencyStop && speedStep > 0)
       speedAndDirection |= speedStep + 1;
     if(fl)
       speedAndDirection |= 0x10;
     checksum = calcChecksum(*this);
+  }
+
+  bool getFl() const
+  {
+    return (speedAndDirection & 0x10) == 0x10;
+  }
+
+  uint8_t getSpeedStep() const
+  {
+    if(isEmergencyStop())
+      return 0;
+
+    const uint8_t speed = speedAndDirection & 0x0F;
+    if(speed >= 2)
+      return speed - 1;
+
+    return 0;
   }
 } ATTRIBUTE_PACKED;
 
@@ -377,10 +441,22 @@ struct SpeedAndDirectionInstruction27 : SpeedAndDirectionInstruction
     SpeedAndDirectionInstruction(address, emergencyStop, direction)
   {
     assert(speedStep <= 27);
-    identification = 0x11;
+    identification = idSetSpeed27;
     if(!emergencyStop && speedStep > 0)
       speedAndDirection |= (((speedStep + 1) & 0x01) << 4) | ((speedStep + 1) >> 1);
     checksum = calcChecksum(*this);
+  }
+
+  uint8_t getSpeedStep() const
+  {
+    if(isEmergencyStop())
+      return 0;
+
+    const uint8_t speed = ((speedAndDirection >> 4) & 0x01) | ((speedAndDirection & 0x0F) << 1);
+    if(speed >= 2)
+      return speed - 1;
+
+    return 0;
   }
 } ATTRIBUTE_PACKED;
 
@@ -390,10 +466,22 @@ struct SpeedAndDirectionInstruction28 : SpeedAndDirectionInstruction
     SpeedAndDirectionInstruction(address, emergencyStop, direction)
   {
     assert(speedStep <= 28);
-    identification = 0x12;
+    identification = idSetSpeed28;
     if(!emergencyStop && speedStep > 0)
       speedAndDirection |= (((speedStep + 1) & 0x01) << 4) | ((speedStep + 1) >> 1);
     checksum = calcChecksum(*this);
+  }
+
+  uint8_t getSpeedStep() const
+  {
+    if(isEmergencyStop())
+      return 0;
+
+    const uint8_t speed = ((speedAndDirection >> 4) & 0x01) | ((speedAndDirection & 0x0F) << 1);
+    if(speed >= 2)
+      return speed - 1;
+
+    return 0;
   }
 } ATTRIBUTE_PACKED;
 
@@ -403,13 +491,26 @@ struct SpeedAndDirectionInstruction128 : SpeedAndDirectionInstruction
     SpeedAndDirectionInstruction(address, emergencyStop, direction)
   {
     assert(speedStep <= 126);
-    identification = 0x13;
+    identification = idSetSpeed128;
     if(!emergencyStop && speedStep > 0)
       speedAndDirection |= speedStep + 1;
     checksum = calcChecksum(*this);
   }
+
+  uint8_t getSpeedStep() const
+  {
+    if(isEmergencyStop())
+      return 0;
+
+    const uint8_t speed = speedAndDirection & 0x7F;
+    if(speed >= 2)
+      return speed - 1;
+
+    return 0;
+  }
 } ATTRIBUTE_PACKED;
 
+// 3.42.4
 struct FunctionInstructionGroup : LocomotiveInstruction
 {
   uint8_t functions = 0x00;
@@ -418,8 +519,62 @@ struct FunctionInstructionGroup : LocomotiveInstruction
   FunctionInstructionGroup(uint16_t address, uint8_t group) :
     LocomotiveInstruction(address)
   {
-    assert(group >= 1 && group <= 5);
-    identification = (group == 5) ? 0x28 : (0x1F + group);
+    assert(group >= 1 && group <= 10);
+    if(group < 5)
+      identification = idSetFuncGroup1 + (group - 1);
+    else if(group < 8)
+      identification = idSetFuncGroup5 + (group - 5);
+    else
+      identification = idSetFuncGroup9 + (group - 9);
+  }
+
+  uint8_t getGroup() const
+  {
+    if(identification < idSetFuncGroup1)
+      return 0;
+    if(identification <= idSetFuncGroup4)
+      return identification - idSetFuncGroup1 + 1;
+
+    if(identification < idSetFuncGroup5)
+      return 0;
+    if(identification <= idSetFuncGroup8)
+      return identification - idSetFuncGroup5 + 5;
+
+    if(identification < idSetFuncGroup9)
+      return 0;
+    if(identification <= idSetFuncGroup10)
+      return identification - idSetFuncGroup9 + 9;
+
+    return 0;
+  }
+
+  static uint8_t getMaxFunctionIndex(uint8_t group)
+  {
+    assert(group >= 1 && group <= 10);
+    if(group <= 3)
+      return group * 4;
+    return (group - 4) * 8 + 20;
+  }
+
+  static uint8_t getMinFunctionIndex(uint8_t group)
+  {
+    assert(group >= 1 && group <= 10);
+    if(group == 1)
+      return 0;
+    return getMaxFunctionIndex(group - 1) + 1;
+    return 0;
+  }
+
+  bool getFunction(uint8_t index) const
+  {
+    const uint8_t group = getGroup();
+    const uint8_t minIndex = getMinFunctionIndex(group);
+    assert(minIndex <= index);
+    assert(getMaxFunctionIndex(group) >= index);
+
+    if(group == 1 && index == 0)
+      return (functions & 0x10) == 0x10;
+    return (functions >> (index - minIndex) & 0x01);
   }
 } ATTRIBUTE_PACKED;
 
@@ -531,6 +686,136 @@ struct FunctionInstructionGroup5 : FunctionInstructionGroup
   }
 } ATTRIBUTE_PACKED;
 
+struct FunctionInstructionGroup6 : FunctionInstructionGroup
+{
+  FunctionInstructionGroup6(uint16_t address, bool f29, bool f30, bool f31, bool f32, bool f33, bool f34, bool f35, bool f36) :
+    FunctionInstructionGroup(address, 6)
+  {
+    if(f29)
+      functions |= 0x01;
+    if(f30)
+      functions |= 0x02;
+    if(f31)
+      functions |= 0x04;
+    if(f32)
+      functions |= 0x08;
+    if(f33)
+      functions |= 0x10;
+    if(f34)
+      functions |= 0x20;
+    if(f35)
+      functions |= 0x40;
+    if(f36)
+      functions |= 0x80;
+
+    checksum = calcChecksum(*this);
+  }
+} ATTRIBUTE_PACKED;
+
+struct FunctionInstructionGroup7 : FunctionInstructionGroup
+{
+  FunctionInstructionGroup7(uint16_t address, bool f37, bool f38, bool f39, bool f40, bool f41, bool f42, bool f43, bool f44) :
+    FunctionInstructionGroup(address, 7)
+  {
+    if(f37)
+      functions |= 0x01;
+    if(f38)
+      functions |= 0x02;
+    if(f39)
+      functions |= 0x04;
+    if(f40)
+      functions |= 0x08;
+    if(f41)
+      functions |= 0x10;
+    if(f42)
+      functions |= 0x20;
+    if(f43)
+      functions |= 0x40;
+    if(f44)
+      functions |= 0x80;
+
+    checksum = calcChecksum(*this);
+  }
+} ATTRIBUTE_PACKED;
+
+struct FunctionInstructionGroup8 : FunctionInstructionGroup
+{
+  FunctionInstructionGroup8(uint16_t address, bool f45, bool f46, bool f47, bool f48, bool f49, bool f50, bool f51, bool f52) :
+    FunctionInstructionGroup(address, 8)
+  {
+    if(f45)
+      functions |= 0x01;
+    if(f46)
+      functions |= 0x02;
+    if(f47)
+      functions |= 0x04;
+    if(f48)
+      functions |= 0x08;
+    if(f49)
+      functions |= 0x10;
+    if(f50)
+      functions |= 0x20;
+    if(f51)
+      functions |= 0x40;
+    if(f52)
+      functions |= 0x80;
+
+    checksum = calcChecksum(*this);
+  }
+} ATTRIBUTE_PACKED;
+
+struct FunctionInstructionGroup9 : FunctionInstructionGroup
+{
+  FunctionInstructionGroup9(uint16_t address, bool f53, bool f54, bool f55, bool f56, bool f57, bool f58, bool f59, bool f60) :
+    FunctionInstructionGroup(address, 9)
+  {
+    if(f53)
+      functions |= 0x01;
+    if(f54)
+      functions |= 0x02;
+    if(f55)
+      functions |= 0x04;
+    if(f56)
+      functions |= 0x08;
+    if(f57)
+      functions |= 0x10;
+    if(f58)
+      functions |= 0x20;
+    if(f59)
+      functions |= 0x40;
+    if(f60)
+      functions |= 0x80;
+
+    checksum = calcChecksum(*this);
+  }
+} ATTRIBUTE_PACKED;
+
+struct FunctionInstructionGroup10 : FunctionInstructionGroup
+{
+  FunctionInstructionGroup10(uint16_t address, bool f61, bool f62, bool f63, bool f64, bool f65, bool f66, bool f67, bool f68) :
+    FunctionInstructionGroup(address, 10)
+  {
+    if(f61)
+      functions |= 0x01;
+    if(f62)
+      functions |= 0x02;
+    if(f63)
+      functions |= 0x04;
+    if(f64)
+      functions |= 0x08;
+    if(f65)
+      functions |= 0x10;
+    if(f66)
+      functions |= 0x20;
+    if(f67)
+      functions |= 0x40;
+    if(f68)
+      functions |= 0x80;
+
+    checksum = calcChecksum(*this);
+  }
+} ATTRIBUTE_PACKED;
+
 /*
 struct setFunctionStateGroup : LocomotiveInstruction
 {
@@ -560,6 +845,21 @@ struct LocomotiveBusy : LocomotiveInstruction
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LocomotiveBusy) == 5);
+
+// 3.41.3 Query Locomotive state (from Central version 3.0)
+struct QueryLocomotiveV3 : LocomotiveInstruction
+{
+  uint8_t checksum;
+
+  QueryLocomotiveV3(uint16_t address)
+    : LocomotiveInstruction(address)
+  {
+    header = 0xE3;
+    identification = 0;
+    checksum = calcChecksum(*this);
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(QueryLocomotiveV3) == 5);
 
 struct AccessoryDecoderOperationRequest : Message
 {

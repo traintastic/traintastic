@@ -108,6 +108,100 @@ std::string toString(const Message& message, bool raw)
       s.append(req.activate() ? " activate" : " deactivate");
       break;
     }
+    case 0xE3:
+    {
+      const auto& fakeReq = static_cast<const LocomotiveInstruction&>(message);
+      switch (fakeReq.identification)
+      {
+      case 0:
+      {
+        s = "QueryLocomotive";
+        s.append(" address=").append(std::to_string(fakeReq.address()));
+        break;
+      }
+      default:
+        break;
+      }
+      break;
+    }
+    case 0xE4:
+    {
+      const auto& req = static_cast<const LocomotiveInstruction&>(message);
+      switch (req.identification)
+      {
+      case idLocomotiveBusy:
+      {
+        s = "LocomotiveBusy";
+        s.append(" address=").append(std::to_string(req.address()));
+        break;
+      }
+      case idSetSpeed14:
+      case idSetSpeed27:
+      case idSetSpeed28:
+      case idSetSpeed128:
+      {
+        const auto& spd = static_cast<const SpeedAndDirectionInstruction&>(message);
+
+        s = "SpeedAndDirectionInstruction" + std::to_string(spd.speedSteps());
+        s.append(" address=").append(std::to_string(spd.address()));
+        if(spd.isLongAddress())
+          s.append("/long");
+        s.append(" direction=").append(spd.direction() == Direction::Forward ? "fwd" : "rev");
+        s.append(" speed=");
+        if(spd.isEmergencyStop())
+          s.append("estop");
+        else
+        {
+          uint8_t step = 0;
+          switch (spd.identification)
+          {
+          case idSetSpeed14:
+            step = static_cast<const SpeedAndDirectionInstruction14&>(spd).getSpeedStep();
+            break;
+          case idSetSpeed27:
+            step = static_cast<const SpeedAndDirectionInstruction27&>(spd).getSpeedStep();
+            break;
+          case idSetSpeed28:
+            step = static_cast<const SpeedAndDirectionInstruction28&>(spd).getSpeedStep();
+            break;
+          case idSetSpeed128:
+            step = static_cast<const SpeedAndDirectionInstruction128&>(spd).getSpeedStep();
+            break;
+          default:
+            break;
+          }
+
+          s.append(std::to_string(step)).append("/").append(std::to_string(spd.speedSteps()));
+        }
+
+        if(spd.identification == idSetSpeed14)
+          s.append(" f0=").append(static_cast<const SpeedAndDirectionInstruction14&>(spd).getFl() ? "1" : "0");
+
+        break;
+      }
+      default:
+      {
+        const auto& setFunc = static_cast<const FunctionInstructionGroup&>(message);
+        const uint8_t funcGroup = setFunc.getGroup();
+        if(funcGroup > 0)
+        {
+          const uint8_t funcMin = FunctionInstructionGroup::getMinFunctionIndex(funcGroup);
+          const uint8_t funcMax = FunctionInstructionGroup::getMaxFunctionIndex(funcGroup);
+
+          s = "FunctionInstructionGroup" + std::to_string(funcGroup);
+          for(uint8_t i = funcMin; i <= funcMax; i++)
+            s.append(" f").append(std::to_string(i)).append("=").append(setFunc.getFunction(i) ? "1" : "0");
+        }
+        else if((req.identification & 0xF0) == 0)
+        {
+          s = "LocomotiveInformationV3";
+          break;
+        }
+        break;
+      }
+      }
+      break;
+    }
     default:
     {
       raw = true;
