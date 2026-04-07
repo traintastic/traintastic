@@ -75,6 +75,8 @@ class RailVehicle : public Vehicle
 
     void updateMute();
     void updateNoSmoke();
+
+    void setEmergencyStop(bool value);
 };
 
 #endif

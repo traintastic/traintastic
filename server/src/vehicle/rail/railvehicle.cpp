@@ -287,3 +287,9 @@ void RailVehicle::setDecoder(const std::shared_ptr<Decoder> &newDecoder)
       }
     });
 }
+
+void RailVehicle::setEmergencyStop(bool value)
+{
+  if(decoder)
+    decoder->emergencyStop = value;
+}

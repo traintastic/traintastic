@@ -403,7 +403,7 @@ void Train::loaded()
       // If one vehicle is in Emergency stop, sync all Train
       bool atLeastOneEmergencyStop = false;
 
-      for(const auto& item : vehicles)
+      for(const auto& item : *vehicles)
       {
         if(item->vehicle->decoder && item->vehicle->decoder->emergencyStop)
         {
@@ -417,7 +417,7 @@ void Train::loaded()
 
     // Manually sync emergency stop
     // NOTE: direction already synced when train becomes active (See OnChanged)
-    for(const auto& item : vehicles)
+    for(const auto& item : *vehicles)
     {
       item->vehicle->setEmergencyStop(emergencyStop);
     }
@@ -633,7 +633,7 @@ bool Train::setTrainActive(bool val)
 
     //Sync Emergency Stop state
     const bool stopValue = emergencyStop;
-    for(const auto& item : vehicles)
+    for(const auto& item : *vehicles)
       item->vehicle->setEmergencyStop(stopValue);
 
     if(vehicles->size() == 1)

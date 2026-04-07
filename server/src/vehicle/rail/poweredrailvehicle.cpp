@@ -43,12 +43,6 @@ PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   m_interfaceItems.add(power);
 }
 
-void PoweredRailVehicle::setEmergencyStop(bool value)
-{
-  if(decoder)
-    decoder->emergencyStop = value;
-}
-
 void PoweredRailVehicle::setSpeed(double kmph)
 {
   if(!decoder)
