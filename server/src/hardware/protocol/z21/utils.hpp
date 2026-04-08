@@ -47,6 +47,7 @@ constexpr bool isEmergencyStop(uint8_t db, uint8_t speedSteps)
 {
   switch(speedSteps)
   {
+    case 128:
     case 126:
       return (db & 0x7F) == 0x01;
 
@@ -71,6 +72,7 @@ constexpr uint8_t getSpeedStep(uint8_t db, uint8_t speedSteps)
 
   switch(speedSteps)
   {
+    case 128:
     case 126:
       db &= 0x7F;
       break;
@@ -97,6 +99,7 @@ constexpr void setSpeedStep(uint8_t& db, uint8_t speedSteps, uint8_t speedStep)
   if(++speedStep > 1)
     switch(speedSteps)
     {
+      case 128:
       case 126:
         db |= speedStep & 0x7F;
         break;

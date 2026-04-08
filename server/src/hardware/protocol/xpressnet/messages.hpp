@@ -31,6 +31,7 @@
 #include "../../../utils/packed.hpp"
 #include "../../../utils/endian.hpp"
 #include "../../../utils/byte.hpp"
+#include "../z21/utils.hpp"
 
 namespace XpressNet {
 
@@ -52,6 +53,10 @@ constexpr uint8_t idSetFuncGroup5 = 0x28;
 constexpr uint8_t idSetFuncGroup6 = 0x29;
 constexpr uint8_t idSetFuncGroup7 = 0x2A;
 constexpr uint8_t idSetFuncGroup8 = 0x2B;
+
+constexpr uint8_t idQueryFuncGroup1to3 = 0x07;
+constexpr uint8_t idQueryFuncGroup4 = 0x08;
+constexpr uint8_t idQueryFuncGroup5above = 0x0A;
 
 constexpr uint8_t idFeedbackBroadcast = 0x40;
 
@@ -398,7 +403,7 @@ struct SpeedAndDirectionInstruction : LocomotiveInstruction
     case idSetSpeed28:
       return 28;
     case idSetSpeed128:
-      return 128;
+      return 126;
     default:
       break;
     }
@@ -841,6 +846,144 @@ struct setFunctionStateGroup : LocomotiveInstruction
 */
 
 // 2.19.1 Locomotive information response (from Central version 3.0)
+struct LocomotiveInfo : Message
+{
+  static constexpr uint8_t db2_busy_flag = 0x08;
+  static constexpr uint8_t db2_speed_steps_14 = 0x00;
+  static constexpr uint8_t db2_speed_steps_28 = 0x02;
+  static constexpr uint8_t db2_speed_steps_128 = 0x04;
+  static constexpr uint8_t db2_speed_steps_mask = 0x07;
+  static constexpr uint8_t directionFlag = 0x80;
+  static constexpr uint8_t speedStepMask = 0x7F;
+  static constexpr uint8_t flagF0 = 0x10;
+  static constexpr uint8_t supportedFunctionIndexMax = 31; ///< \sa functionIndexMax
+
+  static constexpr uint8_t minMessageSize = 7 + 7;
+  static constexpr uint8_t maxMessageSize = 7 + 14;
+
+  uint8_t identification;
+  uint8_t speedAndDirection = 0x00;
+  uint8_t functions1 = 0x00;
+  uint8_t functions2 = 0x00;
+  uint8_t checksum = 0x00;
+
+  LocomotiveInfo() :
+    Message(SET_LOCO)
+  {
+  }
+
+  inline bool isBusy() const
+  {
+    return identification & db2_busy_flag;
+  }
+
+  inline void setBusy(bool value)
+  {
+    if(value)
+      identification |= db2_busy_flag;
+    else
+      identification &= ~db2_busy_flag;
+  }
+
+  inline uint8_t speedSteps() const
+  {
+    switch(identification & db2_speed_steps_mask)
+    {
+      case db2_speed_steps_14:  return 14;
+      case db2_speed_steps_28:  return 28;
+      case db2_speed_steps_128: return 126;
+    }
+    return 0;
+  }
+
+  inline void setSpeedSteps(uint8_t value)
+  {
+    identification &= ~db2_speed_steps_mask;
+    switch(value)
+    {
+      case 14:  identification |= db2_speed_steps_14;  break;
+      case 28:  identification |= db2_speed_steps_28;  break;
+      case 126:
+      case 128:
+      default:  identification |= db2_speed_steps_128; break;
+    }
+  }
+
+  inline Direction direction() const
+  {
+    return Z21::Utils::getDirection(speedAndDirection);
+  }
+
+  inline void setDirection(Direction value)
+  {
+    Z21::Utils::setDirection(speedAndDirection, value);
+  }
+
+  inline bool isEmergencyStop() const
+  {
+    return Z21::Utils::isEmergencyStop(speedAndDirection, speedSteps());
+  }
+
+  inline void setEmergencyStop()
+  {
+    Z21::Utils::setEmergencyStop(speedAndDirection);
+  }
+
+  inline uint8_t speedStep() const
+  {
+    return Z21::Utils::getSpeedStep(speedAndDirection, speedSteps());
+  }
+
+  inline void setSpeedStep(uint8_t value)
+  {
+    Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
+  }
+
+  bool getFunction(uint8_t index) const
+  {
+    if(index == 0)
+      return functions1 & flagF0;
+    else if(index <= 4)
+      return functions1 & (1 << (index - 1));
+    else if(index <= 12)
+      return functions2 & (1 << (index - 5));
+    else
+      return false;
+  }
+
+  void setFunction(uint8_t index, bool value)
+  {
+    if(index == 0)
+    {
+      if(value)
+        functions1 |= flagF0;
+      else
+        functions1 &= ~flagF0;
+    }
+    else if(index <= 4)
+    {
+      const uint8_t flag = (1 << (index - 1));
+      if(value)
+        functions1 |= flag;
+      else
+        functions1 &= ~flag;
+    }
+    else if(index <= 12)
+    {
+      const uint8_t flag = (1 << (index - 5));
+      if(value)
+        functions2 |= flag;
+      else
+        functions2 &= ~flag;
+    }
+  }
+
+  inline void updateChecksum()
+  {
+    checksum = calcChecksum(*this);
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LocomotiveInfo) == 6);
 
 // 2.19.7 Locomotive is Occupied (from Central version 3.0)
 struct LocomotiveBusy : LocomotiveInstruction
@@ -856,7 +999,7 @@ struct LocomotiveBusy : LocomotiveInstruction
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LocomotiveBusy) == 5);
 
-// 3.40.3 Query Locomotive state (from Central version 3.0)
+// 3.41.3 Query Locomotive state (from Central version 3.0)
 struct QueryLocomotiveV3 : LocomotiveInstruction
 {
   uint8_t checksum;
@@ -866,6 +1009,27 @@ struct QueryLocomotiveV3 : LocomotiveInstruction
   {
     header = GET_LOCO_INFO;
     identification = 0;
+    checksum = calcChecksum(*this);
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(QueryLocomotiveV3) == 5);
+
+// 3.41.4 Query Locomotive functions (from Central version 3.0)
+struct QueryLocomotiveFunctions : LocomotiveInstruction
+{
+  uint8_t checksum;
+
+  QueryLocomotiveFunctions(uint16_t address, uint8_t group)
+    : LocomotiveInstruction(address)
+  {
+    header = GET_LOCO_INFO;
+
+    if(group <= 3)
+      identification = idQueryFuncGroup1to3;
+    else if(group == 4)
+      identification = idQueryFuncGroup4;
+    else
+      identification = idQueryFuncGroup5above;
     checksum = calcChecksum(*this);
   }
 } ATTRIBUTE_PACKED;
