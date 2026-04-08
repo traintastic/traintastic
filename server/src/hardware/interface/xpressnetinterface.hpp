@@ -31,6 +31,7 @@
 #include "../../enum/xpressnetinterfacetype.hpp"
 #include "../../enum/xpressnetserialinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
+#include <boost/asio/steady_timer.hpp>
 
 namespace XpressNet {
 class Kernel;
@@ -54,12 +55,17 @@ class XpressNetInterface final
     std::unique_ptr<XpressNet::Kernel> m_kernel;
     boost::signals2::connection m_xpressnetPropertyChanged;
 
+    boost::asio::steady_timer m_pollTimer;
+    int m_lastPolledIdx = 0;
+
     void addToWorld() final;
     void loaded() final;
     void destroying() final;
     void worldEvent(WorldState state, WorldEvent event) final;
 
     void updateVisible();
+
+    void pollDecoders();
 
   protected:
     bool setOnline(bool& value, bool simulation) final;

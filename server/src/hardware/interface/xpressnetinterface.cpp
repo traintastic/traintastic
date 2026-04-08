@@ -54,6 +54,7 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
   , OutputController(static_cast<IdObject&>(*this))
+  , m_pollTimer{EventLoop::ioContext()}
   , type{this, "type", XpressNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](XpressNetInterfaceType /*value*/)
       {
@@ -157,7 +158,10 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   updateVisible();
 }
 
-XpressNetInterface::~XpressNetInterface() = default;
+XpressNetInterface::~XpressNetInterface()
+{
+  m_pollTimer.cancel();
+}
 
 std::span<const DecoderProtocol> XpressNetInterface::decoderProtocols() const
 {
@@ -293,12 +297,15 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
         [this]()
         {
           setState(InterfaceState::Online);
+          pollDecoders();
         });
       m_kernel->setOnError(
         [this]()
         {
           setState(InterfaceState::Error);
           online = false; // communication no longer possible
+
+          m_pollTimer.cancel();
         });
       m_kernel->setOnTrackPowerChanged(
         [this](bool powerOn, bool isStopped)
@@ -375,6 +382,8 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
     EventLoop::deleteLater(m_kernel.release());
 
     setState(InterfaceState::Offline);
+
+    m_pollTimer.cancel();
   }
   return true;
 }
@@ -464,4 +473,23 @@ void XpressNetInterface::updateVisible()
   const bool isRoSoftS88XPressNetLI = isSerial && (serialInterfaceType == XpressNetSerialInterfaceType::RoSoftS88XPressNetLI);
   Attributes::setVisible(s88StartAddress, isRoSoftS88XPressNetLI);
   Attributes::setVisible(s88ModuleCount, isRoSoftS88XPressNetLI);
+}
+
+void XpressNetInterface::pollDecoders()
+{
+  if(!m_kernel)
+    return;
+
+  m_pollTimer.expires_after(boost::asio::chrono::milliseconds(1000));
+  m_pollTimer.async_wait(
+    [this](const boost::system::error_code& ec)
+    {
+      if(!ec)
+        pollDecoders();
+    });
+
+  for(auto decoder : *decoders.value().get())
+  {
+    m_kernel->pollDecoder(*decoder);
+  }
 }

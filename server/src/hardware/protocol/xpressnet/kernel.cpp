@@ -466,6 +466,11 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
       });
 }
 
+void Kernel::pollDecoder(const Decoder& decoder)
+{
+  postSend(QueryLocomotiveV3(decoder.address));
+}
+
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
 {
   assert(handler);

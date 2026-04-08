@@ -271,6 +271,8 @@ class Kernel : public ::KernelBase
      * \param[in] action Simulation action to perform
      */
     void simulateInputChange(uint16_t address, SimulateInputAction action);
+
+    void pollDecoder(const Decoder& decoder);
 };
 
 }
