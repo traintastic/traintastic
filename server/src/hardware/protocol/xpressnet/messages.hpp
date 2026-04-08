@@ -572,8 +572,12 @@ struct FunctionInstructionGroup : LocomotiveInstruction
     assert(minIndex <= index);
     assert(getMaxFunctionIndex(group) >= index);
 
-    if(group == 1 && index == 0)
-      return (functions & 0x10) == 0x10;
+    if(group == 1)
+    {
+      if(index == 0)
+        return (functions & 0x10) == 0x10;
+      return (functions >> (index - minIndex - 1) & 0x01);
+    }
     return (functions >> (index - minIndex) & 0x01);
   }
 } ATTRIBUTE_PACKED;
