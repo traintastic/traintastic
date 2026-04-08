@@ -51,7 +51,7 @@ std::string toString(const Message& message, bool raw)
   // Human readable:
   switch(message.header)
   {
-    case 0x21:
+    case STOP_REQUEST:
     {
       if(message == ResumeOperationsRequest())
       {
@@ -65,7 +65,7 @@ std::string toString(const Message& message, bool raw)
         raw = true;
       break;
     }
-    case 0x61:
+    case BC_HEADER:
     {
       if(message == NormalOperationResumed())
       {
@@ -79,7 +79,7 @@ std::string toString(const Message& message, bool raw)
         raw = true;
       break;
     }
-    case 0x80:
+    case SET_STOP_LOCO:
     {
       if(message == StopAllLocomotivesRequest())
       {
@@ -89,7 +89,7 @@ std::string toString(const Message& message, bool raw)
         raw = true;
       break;
     }
-    case 0x81:
+    case BC_STOPPED:
     {
       if(message == EmergencyStop())
       {
@@ -99,7 +99,16 @@ std::string toString(const Message& message, bool raw)
         raw = true;
       break;
     }
-    case 0x52:
+    case SET_ACCESSORY_OLD:
+    {
+      const auto& req = static_cast<const AccessoryDecoderOperationRequestOLD&>(message);
+      s.append("AccessoryDecoderOperationRequestOLD");
+      s.append(" address=").append(std::to_string(req.address()));
+      s.append(" port=").append(req.port() ? "2" : "1");
+      s.append(req.activate() ? " activate" : " deactivate");
+      break;
+    }
+    case SET_ACCESSORY:
     {
       const auto& req = static_cast<const AccessoryDecoderOperationRequest&>(message);
       s.append("AccessoryDecoderOperationRequest");
@@ -108,7 +117,7 @@ std::string toString(const Message& message, bool raw)
       s.append(req.activate() ? " activate" : " deactivate");
       break;
     }
-    case 0xE3:
+    case GET_LOCO_INFO:
     {
       const auto& fakeReq = static_cast<const LocomotiveInstruction&>(message);
       switch (fakeReq.identification)
@@ -124,7 +133,7 @@ std::string toString(const Message& message, bool raw)
       }
       break;
     }
-    case 0xE4:
+    case SET_LOCO:
     {
       const auto& req = static_cast<const LocomotiveInstruction&>(message);
       switch (req.identification)
@@ -151,32 +160,10 @@ std::string toString(const Message& message, bool raw)
         if(spd.isEmergencyStop())
           s.append("estop");
         else
-        {
-          uint8_t step = 0;
-          switch (spd.identification)
-          {
-          case idSetSpeed14:
-            step = static_cast<const SpeedAndDirectionInstruction14&>(spd).getSpeedStep();
-            break;
-          case idSetSpeed27:
-            step = static_cast<const SpeedAndDirectionInstruction27&>(spd).getSpeedStep();
-            break;
-          case idSetSpeed28:
-            step = static_cast<const SpeedAndDirectionInstruction28&>(spd).getSpeedStep();
-            break;
-          case idSetSpeed128:
-            step = static_cast<const SpeedAndDirectionInstruction128&>(spd).getSpeedStep();
-            break;
-          default:
-            break;
-          }
-
-          s.append(std::to_string(step)).append("/").append(std::to_string(spd.speedSteps()));
-        }
+          s.append(std::to_string(spd.speedStep())).append("/").append(std::to_string(spd.speedSteps()));
 
         if(spd.identification == idSetSpeed14)
           s.append(" f0=").append(static_cast<const SpeedAndDirectionInstruction14&>(spd).getFl() ? "1" : "0");
-
         break;
       }
       default:

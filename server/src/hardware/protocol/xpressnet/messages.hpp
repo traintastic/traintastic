@@ -60,6 +60,19 @@ constexpr uint8_t idSetFuncGroup10 = 0x51;
 
 constexpr uint8_t idLocomotiveBusy = 0xE4;
 
+enum Header : uint8_t
+{
+  STOP_REQUEST = 0x21,
+  SET_ACCESSORY_OLD = 0x52,
+  SET_ACCESSORY = 0x53,
+  BC_HEADER = 0x61,
+  GET_LOCO_INFO = 0xE3,
+  SET_LOCO = 0xE4,
+  LOCO_INFO = 0xEF,
+  SET_STOP_LOCO = 0x80,
+  BC_STOPPED = 0x81
+};
+
 struct Message;
 
 inline uint8_t calcChecksum(const Message& msg);
@@ -112,7 +125,7 @@ struct NormalOperationResumed : Message
 
   NormalOperationResumed()
   {
-    header = 0x61;
+    header = BC_HEADER;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(NormalOperationResumed) == 3);
@@ -125,7 +138,7 @@ struct TrackPowerOff : Message
 
   TrackPowerOff()
   {
-    header = 0x61;
+    header = BC_HEADER;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(TrackPowerOff) == 3);
@@ -138,7 +151,7 @@ struct EmergencyStop : Message
 
   EmergencyStop()
   {
-    header = 0x81;
+    header = BC_STOPPED;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(EmergencyStop) == 3);
@@ -151,7 +164,7 @@ struct CommandStationBusy : Message
 
   CommandStationBusy()
   {
-    header = 0x61;
+    header = BC_HEADER;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(CommandStationBusy) == 3);
@@ -164,7 +177,7 @@ struct CommandUnknown : Message
 
   CommandUnknown()
   {
-    header = 0x61;
+    header = BC_HEADER;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(CommandUnknown) == 3);
@@ -268,7 +281,7 @@ struct ResumeOperationsRequest : Message
 
   ResumeOperationsRequest()
   {
-    header = 0x21;
+    header = STOP_REQUEST;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(ResumeOperationsRequest) == 3);
@@ -281,7 +294,7 @@ struct StopOperationsRequest : Message
 
   StopOperationsRequest()
   {
-    header = 0x21;
+    header = STOP_REQUEST;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(StopOperationsRequest) == 3);
@@ -293,7 +306,7 @@ struct StopAllLocomotivesRequest : Message
 
   StopAllLocomotivesRequest()
   {
-    header = 0x80;
+    header = SET_STOP_LOCO;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(StopAllLocomotivesRequest) == 2);
@@ -332,7 +345,7 @@ struct LocomotiveInstruction : Message
 
   LocomotiveInstruction(uint16_t address)
   {
-    header = 0xE4;
+    header = SET_LOCO;
     if(address >= longAddressMin)
     {
       assert(address >= longAddressMin && address <= longAddressMax);
@@ -359,7 +372,7 @@ struct LocomotiveInstruction : Message
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LocomotiveInstruction) == 4);
 
-// 3.42.3
+// 3.41.3 Drive locomotive 14/27/28/128 (from Central version 3.0)
 struct SpeedAndDirectionInstruction : LocomotiveInstruction
 {
   uint8_t speedAndDirection;
@@ -374,7 +387,7 @@ struct SpeedAndDirectionInstruction : LocomotiveInstruction
       speedAndDirection |= 0x80;
   }
 
-  uint8_t speedSteps() const
+  [[nodiscard]] uint8_t speedSteps() const
   {
     switch(identification)
     {
@@ -392,14 +405,50 @@ struct SpeedAndDirectionInstruction : LocomotiveInstruction
     return 0;
   }
 
-  bool isEmergencyStop() const
+  [[nodiscard]] bool isEmergencyStop() const
   {
     return speedAndDirection == 0x01;
   }
 
-  Direction direction() const
+  [[nodiscard]] Direction direction() const
   {
     return ((speedAndDirection & 0x80) == 0x80) ? Direction::Forward : Direction::Reverse;
+  }
+
+  [[nodiscard]] uint8_t speedStep() const
+  {
+    if(isEmergencyStop())
+      return 0;
+
+    switch (identification)
+    {
+    case idSetSpeed14:
+    {
+      const uint8_t speed = speedAndDirection & 0x0F;
+      if(speed >= 2)
+        return speed - 1;
+      break;
+    }
+    case idSetSpeed27:
+    case idSetSpeed28:
+    {
+      const uint8_t speed = ((speedAndDirection >> 4) & 0x01) | ((speedAndDirection & 0x0F) << 1);
+      if(speed >= 2)
+        return speed - 1;
+      break;
+    }
+    case idSetSpeed128:
+    {
+      const uint8_t speed = speedAndDirection & 0x7F;
+      if(speed >= 2)
+        return speed - 1;
+      break;
+    }
+    default:
+      break;
+    }
+
+    return 0;
   }
 } ATTRIBUTE_PACKED;
 
@@ -417,21 +466,9 @@ struct SpeedAndDirectionInstruction14 : SpeedAndDirectionInstruction
     checksum = calcChecksum(*this);
   }
 
-  bool getFl() const
+  [[nodiscard]] bool getFl() const
   {
     return (speedAndDirection & 0x10) == 0x10;
-  }
-
-  uint8_t getSpeedStep() const
-  {
-    if(isEmergencyStop())
-      return 0;
-
-    const uint8_t speed = speedAndDirection & 0x0F;
-    if(speed >= 2)
-      return speed - 1;
-
-    return 0;
   }
 } ATTRIBUTE_PACKED;
 
@@ -446,18 +483,6 @@ struct SpeedAndDirectionInstruction27 : SpeedAndDirectionInstruction
       speedAndDirection |= (((speedStep + 1) & 0x01) << 4) | ((speedStep + 1) >> 1);
     checksum = calcChecksum(*this);
   }
-
-  uint8_t getSpeedStep() const
-  {
-    if(isEmergencyStop())
-      return 0;
-
-    const uint8_t speed = ((speedAndDirection >> 4) & 0x01) | ((speedAndDirection & 0x0F) << 1);
-    if(speed >= 2)
-      return speed - 1;
-
-    return 0;
-  }
 } ATTRIBUTE_PACKED;
 
 struct SpeedAndDirectionInstruction28 : SpeedAndDirectionInstruction
@@ -470,18 +495,6 @@ struct SpeedAndDirectionInstruction28 : SpeedAndDirectionInstruction
     if(!emergencyStop && speedStep > 0)
       speedAndDirection |= (((speedStep + 1) & 0x01) << 4) | ((speedStep + 1) >> 1);
     checksum = calcChecksum(*this);
-  }
-
-  uint8_t getSpeedStep() const
-  {
-    if(isEmergencyStop())
-      return 0;
-
-    const uint8_t speed = ((speedAndDirection >> 4) & 0x01) | ((speedAndDirection & 0x0F) << 1);
-    if(speed >= 2)
-      return speed - 1;
-
-    return 0;
   }
 } ATTRIBUTE_PACKED;
 
@@ -496,21 +509,9 @@ struct SpeedAndDirectionInstruction128 : SpeedAndDirectionInstruction
       speedAndDirection |= speedStep + 1;
     checksum = calcChecksum(*this);
   }
-
-  uint8_t getSpeedStep() const
-  {
-    if(isEmergencyStop())
-      return 0;
-
-    const uint8_t speed = speedAndDirection & 0x7F;
-    if(speed >= 2)
-      return speed - 1;
-
-    return 0;
-  }
 } ATTRIBUTE_PACKED;
 
-// 3.42.4
+// 3.41.4 Set locomotive function
 struct FunctionInstructionGroup : LocomotiveInstruction
 {
   uint8_t functions = 0x00;
@@ -582,6 +583,7 @@ struct FunctionInstructionGroup : LocomotiveInstruction
   }
 } ATTRIBUTE_PACKED;
 
+// (from Central version 3.0)
 struct FunctionInstructionGroup1 : FunctionInstructionGroup
 {
   FunctionInstructionGroup1(uint16_t address, bool f0, bool f1, bool f2, bool f3, bool f4) :
@@ -638,6 +640,7 @@ struct FunctionInstructionGroup3 : FunctionInstructionGroup
   }
 } ATTRIBUTE_PACKED;
 
+// (from Central version 3.6)
 struct FunctionInstructionGroup4 : FunctionInstructionGroup
 {
   FunctionInstructionGroup4(uint16_t address, bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20) :
@@ -690,6 +693,7 @@ struct FunctionInstructionGroup5 : FunctionInstructionGroup
   }
 } ATTRIBUTE_PACKED;
 
+// (from Central version 4.0)
 struct FunctionInstructionGroup6 : FunctionInstructionGroup
 {
   FunctionInstructionGroup6(uint16_t address, bool f29, bool f30, bool f31, bool f32, bool f33, bool f34, bool f35, bool f36) :
@@ -829,12 +833,14 @@ struct setFunctionStateGroup : LocomotiveInstruction
   setFunctionStateGroup(uint8_t group, uint16_t address)
   {
     assert(group >= 1 && group <= 3);
-    header = 0xE4;
+    header = SET_LOCO;
     identification = 0x23 + group;
     addressLowHigh(address, addressLow, addressHigh);
   }
 } ATTRIBUTE_PACKED;
 */
+
+// 2.19.1 Locomotive information response (from Central version 3.0)
 
 // 2.19.7 Locomotive is Occupied (from Central version 3.0)
 struct LocomotiveBusy : LocomotiveInstruction
@@ -850,7 +856,7 @@ struct LocomotiveBusy : LocomotiveInstruction
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LocomotiveBusy) == 5);
 
-// 3.41.3 Query Locomotive state (from Central version 3.0)
+// 3.40.3 Query Locomotive state (from Central version 3.0)
 struct QueryLocomotiveV3 : LocomotiveInstruction
 {
   uint8_t checksum;
@@ -858,14 +864,15 @@ struct QueryLocomotiveV3 : LocomotiveInstruction
   QueryLocomotiveV3(uint16_t address)
     : LocomotiveInstruction(address)
   {
-    header = 0xE3;
+    header = GET_LOCO_INFO;
     identification = 0;
     checksum = calcChecksum(*this);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(QueryLocomotiveV3) == 5);
 
-struct AccessoryDecoderOperationRequest : Message
+// 3.38 Set accessory state (OLD! up to Central version 3.6)
+struct AccessoryDecoderOperationRequestOLD : Message
 {
   static constexpr uint8_t db2Port = 0x01;
   static constexpr uint8_t db2Activate = 0x08;
@@ -874,8 +881,8 @@ struct AccessoryDecoderOperationRequest : Message
   uint8_t db2 = 0x80;
   uint8_t checksum;
 
-  AccessoryDecoderOperationRequest(uint16_t address_, bool port_, bool activate_)
-    : Message(0x52)
+  AccessoryDecoderOperationRequestOLD(uint16_t address_, bool port_, bool activate_)
+    : Message(SET_ACCESSORY_OLD)
   {
     assert(address_ >= 1 && address_ <= 1024);
     address_--;
@@ -907,7 +914,54 @@ struct AccessoryDecoderOperationRequest : Message
     return db2 & db2Activate;
   }
 } ATTRIBUTE_PACKED;
-static_assert(sizeof(AccessoryDecoderOperationRequest) == 4);
+static_assert(sizeof(AccessoryDecoderOperationRequestOLD) == 4);
+
+// 3.39 Set accessory state (from Central version 3.8)
+struct AccessoryDecoderOperationRequest : Message
+{
+  static constexpr uint8_t db3Port = 0x01;
+  static constexpr uint8_t db3Activate = 0x08;
+
+  uint8_t addressHigh = 0x00;
+  uint8_t addressLow = 0x00;
+  uint8_t db3 = 0x80;
+  uint8_t checksum;
+
+  AccessoryDecoderOperationRequest(uint16_t address_, bool port_, bool activate_)
+    : Message(SET_ACCESSORY)
+  {
+    assert(address_ >= 1 && address_ <= 2048);
+    address_--;
+    addressHigh = address_ >> 10;
+    addressLow = (address_ >> 2) & 0xFF;
+    db3 |= static_cast<uint8_t>(address_ & 0x03) << 1;
+    if(port_)
+    {
+      db3 |= db3Port;
+    }
+    if(activate_)
+    {
+      db3 |= db3Activate;
+    }
+    checksum = calcChecksum(*this);
+  }
+
+  uint16_t address() const
+  {
+    return 1 + ((((static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow) << 2) | ((db3 >> 1) & 0x03));
+  }
+
+  bool port() const
+  {
+    return db3 & db3Port;
+  }
+
+  bool activate() const
+  {
+    return db3 & db3Activate;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(AccessoryDecoderOperationRequest) == 5);
 
 namespace RocoMultiMAUS
 {

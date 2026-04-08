@@ -47,14 +47,14 @@ bool SimulationIOHandler::send(const Message& message)
 {
   switch(message.header)
   {
-    case 0x21:
+    case STOP_REQUEST:
       if(message == ResumeOperationsRequest())
         reply(NormalOperationResumed(), 3);
       else if(message == StopOperationsRequest())
         reply(TrackPowerOff(), 3);
       break;
 
-    case 0x80:
+    case SET_STOP_LOCO:
       if(message == StopAllLocomotivesRequest())
         reply(EmergencyStop(), 3);
       break;
