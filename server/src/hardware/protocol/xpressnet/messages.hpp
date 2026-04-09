@@ -62,6 +62,8 @@ constexpr uint8_t idFeedbackBroadcast = 0x40;
 
 constexpr uint8_t idSetFuncGroup9 = 0x50;
 constexpr uint8_t idSetFuncGroup10 = 0x51;
+constexpr uint8_t idReplyFuncF13F28 = 0x52;
+constexpr uint8_t idReplyFuncF29F68 = 0x53;
 
 constexpr uint8_t idLocomotiveBusy = 0xE4;
 
@@ -71,11 +73,13 @@ enum Header : uint8_t
   SET_ACCESSORY_OLD = 0x52,
   SET_ACCESSORY = 0x53,
   BC_HEADER = 0x61,
+  SET_STOP_LOCO = 0x80,
+  BC_STOPPED = 0x81,
+  SET_STOP_LOCO_SINGLE = 0x92,
   GET_LOCO_INFO = 0xE3,
   SET_LOCO = 0xE4,
-  LOCO_INFO = 0xEF,
-  SET_STOP_LOCO = 0x80,
-  BC_STOPPED = 0x81
+  FUNC_INFO_V4 = 0xE6,
+  LOCO_INFO = 0xEF
 };
 
 struct Message;
@@ -88,7 +92,7 @@ void updateChecksum(Message& msg);
 inline bool isChecksumValid(const Message& msg);
 bool isChecksumValid(const Message& msg, const int dataSize);
 
-std::string toString(const Message& message, bool raw = true);
+std::string toString(const Message& message, bool raw = true, uint16_t optAddress = 0);
 
 // Chapters are based on:
 // Lenz Dokumentation XpressNet Version 4.0 02/2022
@@ -323,21 +327,31 @@ struct EmergencyStopLocomotive : Message
   uint8_t addressLow;
   uint8_t checksum;
 
-  EmergencyStopLocomotive(uint16_t address)
+  EmergencyStopLocomotive(uint16_t address_)
   {
-    header = 0x92;
-    if(address >= longAddressMin)
+    header = SET_STOP_LOCO_SINGLE;
+    if(address_ >= longAddressMin)
     {
-      assert(address >= longAddressMin && address <= longAddressMax);
-      addressHigh = 0xC0 | address >> 8;
-      addressLow = address & 0xff;
+      assert(address_ >= longAddressMin && address_ <= longAddressMax);
+      addressHigh = 0xC0 | address_ >> 8;
+      addressLow = address_ & 0xff;
     }
     else
     {
-      assert(address >= shortAddressMin && address <= shortAddressMax);
+      assert(address_ >= shortAddressMin && address_ <= shortAddressMax);
       addressHigh = 0x00;
-      addressLow = address & 0x7f;
+      addressLow = address_ & 0x7f;
     }
+  }
+
+  inline uint16_t address() const
+  {
+    return (static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow;
+  }
+
+  inline bool isLongAddress() const
+  {
+    return (addressHigh & 0xC0) == 0xC0;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(EmergencyStopLocomotive) == 4);
@@ -845,10 +859,10 @@ struct setFunctionStateGroup : LocomotiveInstruction
 } ATTRIBUTE_PACKED;
 */
 
-// 2.19.1 Locomotive information response (from Central version 3.0)
+// 2.19.1 Locomotive information reply (from Central version 3.0)
 struct LocomotiveInfo : Message
 {
-  static constexpr uint8_t db2_busy_flag = 0x08;
+  static constexpr uint8_t indentificationMask = 0xF0;
   static constexpr uint8_t db2_speed_steps_14 = 0x00;
   static constexpr uint8_t db2_speed_steps_28 = 0x02;
   static constexpr uint8_t db2_speed_steps_128 = 0x04;
@@ -941,6 +955,7 @@ struct LocomotiveInfo : Message
 
   bool getFunction(uint8_t index) const
   {
+    assert(index >= 0 && index <= 12);
     if(index == 0)
       return functions1 & flagF0;
     else if(index <= 4)
@@ -953,6 +968,7 @@ struct LocomotiveInfo : Message
 
   void setFunction(uint8_t index, bool value)
   {
+    assert(index >= 0 && index <= 12);
     if(index == 0)
     {
       if(value)
@@ -984,6 +1000,180 @@ struct LocomotiveInfo : Message
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LocomotiveInfo) == 6);
+
+// 2.19.2 Function status reply F13 to F28  (from Central version 3.6)
+struct FunctionInfoF13F28 : Message
+{
+  uint8_t identification;
+  uint8_t functions1 = 0;
+  uint8_t functions2 = 0;
+  uint8_t checksum = 0;
+
+  FunctionInstructionF13F20() :
+    Message(GET_LOCO_INFO)
+  {
+    identification = idReplyFuncF13F28;
+  }
+
+  FunctionInstructionF13F20(bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20,
+                            bool f21, bool f22, bool f23, bool f24, bool f25, bool f26, bool f27, bool f28) :
+    FunctionInstructionF13F20()
+  {
+    if(f13)
+      functions1 |= 0x01;
+    if(f14)
+      functions1 |= 0x02;
+    if(f15)
+      functions1 |= 0x04;
+    if(f16)
+      functions1 |= 0x08;
+    if(f17)
+      functions1 |= 0x10;
+    if(f18)
+      functions1 |= 0x20;
+    if(f19)
+      functions1 |= 0x40;
+    if(f20)
+      functions1 |= 0x80;
+
+    if(f21)
+      functions2 |= 0x01;
+    if(f22)
+      functions2 |= 0x02;
+    if(f23)
+      functions2 |= 0x04;
+    if(f24)
+      functions2 |= 0x08;
+    if(f25)
+      functions2 |= 0x10;
+    if(f26)
+      functions2 |= 0x20;
+    if(f27)
+      functions2 |= 0x40;
+    if(f28)
+      functions2 |= 0x80;
+
+    checksum = calcChecksum(*this);
+  }
+
+  bool getFunction(uint8_t index) const
+  {
+    assert(index >= 13 && index <= 28);
+    if(index <= 20)
+      return functions1 & (1 << (index - 13));
+    else
+      return functions2 & (1 << (index - 21));
+  }
+
+  void setFunction(uint8_t index, bool value)
+  {
+    assert(index >= 13 && index <= 28);
+    if(index <= 20)
+    {
+      const uint8_t flag = (1 << (index - 13));
+      if(value)
+        functions1 |= flag;
+      else
+        functions1 &= ~flag;
+    }
+    else
+    {
+      const uint8_t flag = (1 << (index - 21));
+      if(value)
+        functions2 |= flag;
+      else
+        functions2 &= ~flag;
+    }
+  }
+
+  inline void updateChecksum()
+  {
+    checksum = calcChecksum(*this);
+  }
+} ATTRIBUTE_PACKED;
+
+// 2.19.3 Function status reply F29 to F68  (from Central version 4.0)
+struct FunctionInfoF29F68 : Message
+{
+  uint8_t identification;
+  uint8_t functions1 = 0;
+  uint8_t functions2 = 0;
+  uint8_t functions3 = 0;
+  uint8_t functions4 = 0;
+  uint8_t functions5 = 0;
+  uint8_t checksum = 0;
+
+  FunctionInfoF29F68() :
+    Message(FUNC_INFO_V4)
+  {
+    identification = idReplyFuncF29F68;
+  }
+
+  bool getFunction(uint8_t index) const
+  {
+    assert(index >= 29 && index <= 68);
+    if(index <= 36)
+      return functions1 & (1 << (index - 29));
+    else if(index <= 44)
+      return functions2 & (1 << (index - 37));
+    else if(index <= 52)
+      return functions3 & (1 << (index - 45));
+    else if(index <= 60)
+      return functions4 & (1 << (index - 53));
+    else
+      return functions5 & (1 << (index - 61));
+  }
+
+  void setFunction(uint8_t index, bool value)
+  {
+    assert(index >= 29 && index <= 68);
+    if(index <= 36)
+    {
+      const uint8_t flag = (1 << (index - 29));
+      if(value)
+        functions1 |= flag;
+      else
+        functions1 &= ~flag;
+    }
+    else if(index <= 44)
+    {
+      const uint8_t flag = (1 << (index - 37));
+      if(value)
+        functions2 |= flag;
+      else
+        functions2 &= ~flag;
+    }
+    else if(index <= 52)
+    {
+      const uint8_t flag = (1 << (index - 45));
+      if(value)
+        functions3 |= flag;
+      else
+        functions3 &= ~flag;
+    }
+    else if(index <= 60)
+    {
+      const uint8_t flag = (1 << (index - 53));
+      if(value)
+        functions4 |= flag;
+      else
+        functions4 &= ~flag;
+    }
+    else
+    {
+      const uint8_t flag = (1 << (index - 61));
+      if(value)
+        functions5 |= flag;
+      else
+        functions5 &= ~flag;
+    }
+  }
+
+  inline void updateChecksum()
+  {
+    checksum = calcChecksum(*this);
+  }
+} ATTRIBUTE_PACKED;
 
 // 2.19.7 Locomotive is Occupied (from Central version 3.0)
 struct LocomotiveBusy : LocomotiveInstruction

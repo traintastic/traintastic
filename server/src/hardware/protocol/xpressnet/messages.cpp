@@ -44,7 +44,7 @@ bool isChecksumValid(const Message& msg, const int dataSize)
   return calcChecksum(msg, dataSize) == *(reinterpret_cast<const uint8_t*>(&msg) + dataSize + 1);
 }
 
-std::string toString(const Message& message, bool raw)
+std::string toString(const Message& message, bool raw, uint16_t optAddress)
 {
   std::string s = toHex(message.identification());
 
@@ -63,6 +63,24 @@ std::string toString(const Message& message, bool raw)
       }
       else
         raw = true;
+      break;
+    }
+    case SET_ACCESSORY_OLD:
+    {
+      const auto& req = static_cast<const AccessoryDecoderOperationRequestOLD&>(message);
+      s.append("AccessoryDecoderOperationRequestOLD");
+      s.append(" address=").append(std::to_string(req.address()));
+      s.append(" port=").append(req.port() ? "2" : "1");
+      s.append(req.activate() ? " activate" : " deactivate");
+      break;
+    }
+    case SET_ACCESSORY:
+    {
+      const auto& req = static_cast<const AccessoryDecoderOperationRequest&>(message);
+      s.append("AccessoryDecoderOperationRequest");
+      s.append(" address=").append(std::to_string(req.address()));
+      s.append(" port=").append(req.port() ? "2" : "1");
+      s.append(req.activate() ? " activate" : " deactivate");
       break;
     }
     case BC_HEADER:
@@ -99,22 +117,13 @@ std::string toString(const Message& message, bool raw)
         raw = true;
       break;
     }
-    case SET_ACCESSORY_OLD:
+    case SET_STOP_LOCO_SINGLE:
     {
-      const auto& req = static_cast<const AccessoryDecoderOperationRequestOLD&>(message);
-      s.append("AccessoryDecoderOperationRequestOLD");
-      s.append(" address=").append(std::to_string(req.address()));
-      s.append(" port=").append(req.port() ? "2" : "1");
-      s.append(req.activate() ? " activate" : " deactivate");
-      break;
-    }
-    case SET_ACCESSORY:
-    {
-      const auto& req = static_cast<const AccessoryDecoderOperationRequest&>(message);
-      s.append("AccessoryDecoderOperationRequest");
-      s.append(" address=").append(std::to_string(req.address()));
-      s.append(" port=").append(req.port() ? "2" : "1");
-      s.append(req.activate() ? " activate" : " deactivate");
+      const auto& stopLoco = static_cast<const EmergencyStopLocomotive&>(message);
+      s = "EmergencyStopLocomotive";
+      s.append(" address=").append(std::to_string(stopLoco.address()));
+      if(stopLoco.isLongAddress())
+        s.append("/long");
       break;
     }
     case GET_LOCO_INFO:
@@ -128,7 +137,17 @@ std::string toString(const Message& message, bool raw)
         s.append(" address=").append(std::to_string(fakeReq.address()));
         break;
       }
+      case idReplyFuncF13F28:
+      {
+        const auto& funcInfo = static_cast<const FunctionInfoF13F28&>(message);
+        s = "FunctionInfoF13F28";
+        s.append(" address=").append(std::to_string(optAddress));
+        for(uint8_t i = 13; i <= 28; i++)
+          s.append(" f").append(std::to_string(i)).append("=").append(funcInfo.getFunction(i) ? "1" : "0");
+        break;
+      }
       default:
+        raw = true;
         break;
       }
       break;
@@ -176,17 +195,48 @@ std::string toString(const Message& message, bool raw)
           const uint8_t funcMax = FunctionInstructionGroup::getMaxFunctionIndex(funcGroup);
 
           s = "FunctionInstructionGroup" + std::to_string(funcGroup);
+          s.append(" address=").append(std::to_string(setFunc.address()));
           for(uint8_t i = funcMin; i <= funcMax; i++)
             s.append(" f").append(std::to_string(i)).append("=").append(setFunc.getFunction(i) ? "1" : "0");
         }
-        else if((req.identification & 0xF0) == 0)
+        else if((req.identification & LocomotiveInfo::identification) == 0)
         {
-          s = "LocomotiveInformationV3";
+          const auto& locoInfo = static_cast<const LocomotiveInfo&>(message);
+          s = "LocomotiveInfo";
+          s.append(" address=").append(std::to_string(optAddress));
+          s.append(" direction=").append(locoInfo.direction() == Direction::Forward ? "fwd" : "rev");
+          s.append(" speed=");
+          if(locoInfo.isEmergencyStop())
+            s.append("estop");
+          else
+            s.append(std::to_string(locoInfo.speedStep())).append("/").append(std::to_string(locoInfo.speedSteps()));
+
+          for(uint8_t i = 0; i <= 12; i++)
+            s.append(" f").append(std::to_string(i)).append("=").append(locoInfo.getFunction(i) ? "1" : "0");
+
+          s.append(" busy=").append(locoInfo.isBusy() ? "1" : "0");
           break;
         }
+
+        raw = true;
         break;
       }
       }
+      break;
+    }
+    case FUNC_INFO_V4:
+    {
+      const auto& funcInfo = static_cast<const FunctionInfoF29F68&>(message);
+      if(funcInfo.identification == idReplyFuncF29F68)
+      {
+        s = "FunctionInfoF29F68";
+        s.append(" address=").append(std::to_string(optAddress));
+        for(uint8_t i = 29; i <= 68; i++)
+          s.append(" f").append(std::to_string(i)).append("=").append(funcInfo.getFunction(i) ? "1" : "0");
+        break;
+      }
+
+      raw = true;
       break;
     }
     default:
