@@ -97,6 +97,23 @@ class Kernel : public ::KernelBase
 
     Config m_config;
 
+    struct PendingQuery
+    {
+      enum QueryType : uint8_t
+      {
+        LocoInfoAndF0F12 = 0,
+        FuncInfoF13F28 = 1,
+        FuncInfoF29F68= 2
+      };
+
+      uint16_t address = 0;
+      QueryType type = QueryType::LocoInfoAndF0F12;
+    };
+
+    std::vector<PendingQuery> pendingQueries;
+
+    void sendQuery(const PendingQuery& query);
+
     Kernel(std::string logId_, const Config& config, bool simulation);
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);

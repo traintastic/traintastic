@@ -32,6 +32,18 @@
 
 namespace XpressNet {
 
+void Kernel::sendQuery(const PendingQuery &query)
+{
+  for(const PendingQuery& other : std::as_const(pendingQueries))
+  {
+    if(other.address == query.address && other.type == query.type)
+      return; // Already pending
+  }
+
+  pendingQueries.push_back(query);
+  //TODO start query and pass it to to_string to match type and start failed query timer to go to next
+}
+
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
   , m_simulation{simulation}
