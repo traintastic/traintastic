@@ -44,7 +44,7 @@ bool isChecksumValid(const Message& msg, const int dataSize)
   return calcChecksum(msg, dataSize) == *(reinterpret_cast<const uint8_t*>(&msg) + dataSize + 1);
 }
 
-std::string toString(const Message& message, bool raw, uint16_t optAddress)
+std::string toString(const Message& message, bool raw, const PendingQuery &pendingQuery)
 {
   std::string s = toHex(message.identification());
 
@@ -141,7 +141,11 @@ std::string toString(const Message& message, bool raw, uint16_t optAddress)
       {
         const auto& funcInfo = static_cast<const FunctionInfoF13F28&>(message);
         s = "FunctionInfoF13F28";
-        s.append(" address=").append(std::to_string(optAddress));
+        s.append(" address=");
+        if(pendingQuery.address != 0 && pendingQuery.type == PendingQuery::FuncInfoF13F28)
+          s.append(std::to_string(pendingQuery.address));
+        else
+          s.append("ERR!");
         for(uint8_t i = 13; i <= 28; i++)
           s.append(" f").append(std::to_string(i)).append("=").append(funcInfo.getFunction(i) ? "1" : "0");
         break;
@@ -203,7 +207,11 @@ std::string toString(const Message& message, bool raw, uint16_t optAddress)
         {
           const auto& locoInfo = static_cast<const LocomotiveInfo&>(message);
           s = "LocomotiveInfo";
-          s.append(" address=").append(std::to_string(optAddress));
+          s.append(" address=");
+          if(pendingQuery.address != 0 && pendingQuery.type == PendingQuery::LocoInfoAndF0F12)
+            s.append(std::to_string(pendingQuery));
+          else
+            s.append("ERR!");
           s.append(" direction=").append(locoInfo.direction() == Direction::Forward ? "fwd" : "rev");
           s.append(" speed=");
           if(locoInfo.isEmergencyStop())
@@ -230,7 +238,11 @@ std::string toString(const Message& message, bool raw, uint16_t optAddress)
       if(funcInfo.identification == idReplyFuncF29F68)
       {
         s = "FunctionInfoF29F68";
-        s.append(" address=").append(std::to_string(optAddress));
+        s.append(" address=");
+        if(pendingQuery.address != 0 && pendingQuery.type == PendingQuery::FuncInfoF29F68)
+          s.append(std::to_string(pendingQuery));
+        else
+          s.append("ERR!");
         for(uint8_t i = 29; i <= 68; i++)
           s.append(" f").append(std::to_string(i)).append("=").append(funcInfo.getFunction(i) ? "1" : "0");
         break;

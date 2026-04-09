@@ -84,6 +84,19 @@ enum Header : uint8_t
 
 struct Message;
 
+struct PendingQuery
+{
+  enum QueryType : uint8_t
+  {
+    LocoInfoAndF0F12 = 0,
+    FuncInfoF13F28 = 1,
+    FuncInfoF29F68= 2
+  };
+
+  uint16_t address = 0;
+  QueryType type = QueryType::LocoInfoAndF0F12;
+};
+
 inline uint8_t calcChecksum(const Message& msg);
 uint8_t calcChecksum(const Message& msg, const int dataSize);
 
@@ -92,7 +105,7 @@ void updateChecksum(Message& msg);
 inline bool isChecksumValid(const Message& msg);
 bool isChecksumValid(const Message& msg, const int dataSize);
 
-std::string toString(const Message& message, bool raw = true, uint16_t optAddress = 0);
+std::string toString(const Message& message, bool raw = true, const PendingQuery &pendingQuery = {});
 
 // Chapters are based on:
 // Lenz Dokumentation XpressNet Version 4.0 02/2022
@@ -1091,6 +1104,7 @@ struct FunctionInfoF13F28 : Message
     checksum = calcChecksum(*this);
   }
 } ATTRIBUTE_PACKED;
+static_assert(sizeof(FunctionInfoF13F28) == 5);
 
 // 2.19.3 Function status reply F29 to F68  (from Central version 4.0)
 struct FunctionInfoF29F68 : Message
@@ -1174,6 +1188,7 @@ struct FunctionInfoF29F68 : Message
     checksum = calcChecksum(*this);
   }
 } ATTRIBUTE_PACKED;
+static_assert(sizeof(FunctionInfoF29F68) == 8);
 
 // 2.19.7 Locomotive is Occupied (from Central version 3.0)
 struct LocomotiveBusy : LocomotiveInstruction
@@ -1223,7 +1238,7 @@ struct QueryLocomotiveFunctions : LocomotiveInstruction
     checksum = calcChecksum(*this);
   }
 } ATTRIBUTE_PACKED;
-static_assert(sizeof(QueryLocomotiveV3) == 5);
+static_assert(sizeof(QueryLocomotiveFunctions) == 5);
 
 // 3.38 Set accessory state (OLD! up to Central version 3.6)
 struct AccessoryDecoderOperationRequestOLD : Message
