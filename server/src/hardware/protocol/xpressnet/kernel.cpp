@@ -32,16 +32,83 @@
 
 namespace XpressNet {
 
-void Kernel::sendQuery(const PendingQuery &query)
+void Kernel::postQuery(const PendingQuery &query)
 {
+  assert(query.address >= shortAddressMin && query.address <= longAddressMax);
+
   for(const PendingQuery& other : std::as_const(pendingQueries))
   {
     if(other.address == query.address && other.type == query.type)
       return; // Already pending
   }
 
+  const bool wasEmpty = pendingQueries.empty();
   pendingQueries.push_back(query);
-  //TODO start query and pass it to to_string to match type and start failed query timer to go to next
+
+  if(wasEmpty)
+    sendCurrentQuery();
+}
+
+void Kernel::sendCurrentQuery()
+{
+  if(pendingQueries.empty())
+    return;
+
+  switch (pendingQueries.at(0).type)
+  {
+  case PendingQuery::LocoInfoAndF0F12:
+  {
+    send(QueryLocomotiveV3(pendingQueries.at(0).address));
+    break;
+  }
+  case PendingQuery::FuncInfoF13F28:
+  {
+    send(QueryLocomotiveFunctions(pendingQueries.at(0).address, 4));
+    break;
+  }
+  case PendingQuery::FuncInfoF29F68:
+  {
+    send(QueryLocomotiveFunctions(pendingQueries.at(0).address, 6));
+    break;
+  }
+  default:
+    break;
+  }
+
+  boost::system::error_code ec;
+  pendingQueryTimeout.cancel(ec);
+  pendingQueryTimeout.expires_after(boost::asio::chrono::milliseconds(800));
+  pendingQueryTimeout.async_wait(std::bind(&Kernel::onPendingQueryTimeout, this, std::placeholders::_1));
+}
+
+void Kernel::onPendingQueryTimeout(const boost::system::error_code& ec)
+{
+  if(ec == boost::asio::error::operation_aborted)
+    return;
+
+  if(pendingQueries.empty())
+    return;
+
+  // Remove first query which did not get reply
+  pendingQueries.erase(pendingQueries.begin());
+
+  // Go on to next query
+  sendCurrentQuery();
+}
+
+uint16_t Kernel::popAddressQuerySendNext(PendingQuery::QueryType type)
+{
+  if(pendingQueries.empty() || pendingQueries.at(0).type != type)
+    return 0;
+
+  uint16_t address = pendingQueries.at(0).address;
+
+  // Remove first query which completed succesfully
+  pendingQueries.erase(pendingQueries.begin());
+
+  // Go on to next query
+  sendCurrentQuery();
+  return address;
 }
 
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
@@ -51,6 +118,7 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   , m_inputController{nullptr}
   , m_outputController{nullptr}
   , m_config{config}
+  , pendingQueryTimeout{m_ioContext}
 {
 }
 
@@ -110,6 +178,9 @@ void Kernel::stop()
   boost::asio::post(m_ioContext, 
     [this]()
     {
+      boost::system::error_code ec;
+      pendingQueryTimeout.cancel(ec);
+
       m_ioHandler->stop();
 
       m_ioContext.stop();
@@ -132,11 +203,16 @@ void Kernel::started()
 void Kernel::receive(const Message& message)
 {
   if(m_config.debugLogRXTX)
+  {
+    PendingQuery optAddress;
+    if(!pendingQueries.empty())
+      optAddress = pendingQueries.at(0);
     EventLoop::call(
-      [this, msg=toString(message)]()
+      [this, msg=toString(message, true, optAddress)]()
       {
         Log::log(logId, LogMessage::D2002_RX_X, msg);
       });
+  }
 
   switch(message.identification())
   {
@@ -240,6 +316,53 @@ void Kernel::receive(const Message& message)
                 m_onTrackPowerChanged(true, true);
             }
           });
+      }
+      break;
+    }
+    case 0xE0:
+    {
+      switch(message.header)
+      {
+      case GET_LOCO_INFO:
+      {
+        const auto& funcInfo13 = static_cast<const FunctionInfoF13F28&>(message);
+        if(funcInfo13.identification != idReplyFuncF13F28)
+          break; // Not a F13F28 info message
+
+        const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::FuncInfoF13F28);
+        if(!replyAddress)
+          break; // We did not ask for function info, ignore it
+
+        break;
+      }
+      case SET_LOCO:
+      {
+        const auto& locoInfo = static_cast<const LocomotiveInfo&>(message);
+        if((locoInfo.identification & LocomotiveInfo::identificationMask) != 0)
+          break; // Not a locomotive info message
+
+        const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::LocoInfoAndF0F12);
+        if(!replyAddress)
+          break; // We did not ask for locomotive info, ignore it
+
+        // After receiving basic loco info, query higher functions
+        // TODO: only if decoder has registered functions in this range
+        postQuery({replyAddress, PendingQuery::FuncInfoF13F28});
+
+        break;
+      }
+      case FUNC_INFO_V4:
+      {
+        const auto& funcInfo29 = static_cast<const FunctionInfoF29F68&>(message);
+        if(funcInfo29.identification != idReplyFuncF29F68)
+          break; // Not a F29F68 info message
+
+        const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::LocoInfoAndF0F12);
+        if(!replyAddress)
+          break; // We did not ask for function info, ignore it
+
+        break;
+      }
       }
       break;
     }
@@ -480,7 +603,11 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
 
 void Kernel::pollDecoder(const Decoder& decoder)
 {
-  postSend(QueryLocomotiveV3(decoder.address));
+  m_ioContext.post(
+    [this, address=decoder.address.value()]()
+    {
+      postQuery({address, PendingQuery::LocoInfoAndF0F12});
+    });
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)

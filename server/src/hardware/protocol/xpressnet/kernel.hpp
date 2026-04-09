@@ -30,6 +30,7 @@
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/outputpairvalue.hpp>
 #include "config.hpp"
+#include "utils.hpp"
 #include "iohandler/iohandler.hpp"
 
 class Decoder;
@@ -97,22 +98,13 @@ class Kernel : public ::KernelBase
 
     Config m_config;
 
-    struct PendingQuery
-    {
-      enum QueryType : uint8_t
-      {
-        LocoInfoAndF0F12 = 0,
-        FuncInfoF13F28 = 1,
-        FuncInfoF29F68= 2
-      };
-
-      uint16_t address = 0;
-      QueryType type = QueryType::LocoInfoAndF0F12;
-    };
-
     std::vector<PendingQuery> pendingQueries;
+    boost::asio::steady_timer pendingQueryTimeout;
 
-    void sendQuery(const PendingQuery& query);
+    void postQuery(const PendingQuery& query);
+    void sendCurrentQuery();
+    void onPendingQueryTimeout(const boost::system::error_code &ec);
+    uint16_t popAddressQuerySendNext(PendingQuery::QueryType type);
 
     Kernel(std::string logId_, const Config& config, bool simulation);
 

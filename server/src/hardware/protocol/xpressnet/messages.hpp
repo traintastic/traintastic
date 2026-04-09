@@ -32,6 +32,7 @@
 #include "../../../utils/endian.hpp"
 #include "../../../utils/byte.hpp"
 #include "../z21/utils.hpp"
+#include "utils.hpp"
 
 namespace XpressNet {
 
@@ -83,19 +84,6 @@ enum Header : uint8_t
 };
 
 struct Message;
-
-struct PendingQuery
-{
-  enum QueryType : uint8_t
-  {
-    LocoInfoAndF0F12 = 0,
-    FuncInfoF13F28 = 1,
-    FuncInfoF29F68= 2
-  };
-
-  uint16_t address = 0;
-  QueryType type = QueryType::LocoInfoAndF0F12;
-};
 
 inline uint8_t calcChecksum(const Message& msg);
 uint8_t calcChecksum(const Message& msg, const int dataSize);
@@ -875,7 +863,8 @@ struct setFunctionStateGroup : LocomotiveInstruction
 // 2.19.1 Locomotive information reply (from Central version 3.0)
 struct LocomotiveInfo : Message
 {
-  static constexpr uint8_t indentificationMask = 0xF0;
+  static constexpr uint8_t identificationMask = 0xF0;
+  static constexpr uint8_t db2_busy_flag = 0x08;
   static constexpr uint8_t db2_speed_steps_14 = 0x00;
   static constexpr uint8_t db2_speed_steps_28 = 0x02;
   static constexpr uint8_t db2_speed_steps_128 = 0x04;
@@ -1022,15 +1011,15 @@ struct FunctionInfoF13F28 : Message
   uint8_t functions2 = 0;
   uint8_t checksum = 0;
 
-  FunctionInstructionF13F20() :
+  FunctionInfoF13F28() :
     Message(GET_LOCO_INFO)
   {
     identification = idReplyFuncF13F28;
   }
 
-  FunctionInstructionF13F20(bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20,
+  FunctionInfoF13F28(bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20,
                             bool f21, bool f22, bool f23, bool f24, bool f25, bool f26, bool f27, bool f28) :
-    FunctionInstructionF13F20()
+    FunctionInfoF13F28()
   {
     if(f13)
       functions1 |= 0x01;

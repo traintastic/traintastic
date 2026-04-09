@@ -203,13 +203,13 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
           for(uint8_t i = funcMin; i <= funcMax; i++)
             s.append(" f").append(std::to_string(i)).append("=").append(setFunc.getFunction(i) ? "1" : "0");
         }
-        else if((req.identification & LocomotiveInfo::identification) == 0)
+        else if((req.identification & LocomotiveInfo::identificationMask) == 0)
         {
           const auto& locoInfo = static_cast<const LocomotiveInfo&>(message);
           s = "LocomotiveInfo";
           s.append(" address=");
           if(pendingQuery.address != 0 && pendingQuery.type == PendingQuery::LocoInfoAndF0F12)
-            s.append(std::to_string(pendingQuery));
+            s.append(std::to_string(pendingQuery.address));
           else
             s.append("ERR!");
           s.append(" direction=").append(locoInfo.direction() == Direction::Forward ? "fwd" : "rev");
@@ -240,7 +240,7 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
         s = "FunctionInfoF29F68";
         s.append(" address=");
         if(pendingQuery.address != 0 && pendingQuery.type == PendingQuery::FuncInfoF29F68)
-          s.append(std::to_string(pendingQuery));
+          s.append(std::to_string(pendingQuery.address));
         else
           s.append("ERR!");
         for(uint8_t i = 29; i <= 68; i++)
