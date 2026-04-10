@@ -354,21 +354,67 @@ void Kernel::receive(const Message& message)
         if(!replyAddress)
           break; // We did not ask for function info, ignore it
 
+        // After receiving basic loco info, query super-higher functions
+        for(Locomotive &loco : m_locomotives)
+        {
+          if(loco.address != replyAddress)
+            continue;
+
+          if((loco.flags & Locomotive::Flags::HasF29F68) == Locomotive::Flags::HasF29F68)
+            postQuery({replyAddress, PendingQuery::FuncInfoF29F68});
+
+          break;
+        }
+
         break;
       }
       case SET_LOCO:
       {
-        const auto& locoInfo = static_cast<const LocomotiveInfo&>(message);
-        if((locoInfo.identification & LocomotiveInfo::identificationMask) != 0)
-          break; // Not a locomotive info message
+        const auto& locoInstr = static_cast<const LocomotiveInstruction&>(message);
+        if(locoInstr.identification == idLocomotiveBusy)
+        {
+          auto loco = std::find_if(m_locomotives.begin(), m_locomotives.end(),
+                                   [replyAddress](const Locomotive &item) -> bool
+                                   {
+                                     return item.address == replyAddress;
+                                   });
 
-        const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::LocoInfoAndF0F12);
-        if(!replyAddress)
-          break; // We did not ask for locomotive info, ignore it
+          if(loco == m_locomotives.end())
+            break;
 
-        // After receiving basic loco info, query higher functions
-        // TODO: only if decoder has registered functions in this range
-        postQuery({replyAddress, PendingQuery::FuncInfoF13F28});
+          loco->flags |= Locomotive::Flags::OwnedByXBus;
+          break;
+        }
+        else if((locoInstr.identification & LocomotiveInfo::identificationMask) == 0)
+        {
+          const auto& locoInfo = static_cast<const LocomotiveInfo&>(message);
+
+          const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::LocoInfoAndF0F12);
+          if(!replyAddress)
+            break; // We did not ask for locomotive info, ignore it
+
+          // After receiving basic loco info, query higher functions
+          auto loco = std::find_if(m_locomotives.begin(), m_locomotives.end(),
+            [replyAddress](const Locomotive &item) -> bool
+            {
+              return item.address == replyAddress;
+            });
+
+          if(loco == m_locomotives.end())
+            break;
+
+          if((loco->flags & Locomotive::Flags::HasF13F28) == Locomotive::Flags::HasF13F28)
+            postQuery({replyAddress, PendingQuery::FuncInfoF13F28});
+          else if((loco->flags & Locomotive::Flags::HasF29F68) == Locomotive::Flags::HasF29F68)
+            postQuery({replyAddress, PendingQuery::FuncInfoF29F68});
+
+          // Enable/disable polling for this locomotive
+          // When disabling, complete last poll cycle
+          if(locoInfo.isBusy())
+            loco->flags |= Locomotive::Flags::OwnedByXBus;
+          else
+            loco->flags &= ~Locomotive::Flags::OwnedByXBus;
+        }
 
         break;
       }
