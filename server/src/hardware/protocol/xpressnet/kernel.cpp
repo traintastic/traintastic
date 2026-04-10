@@ -610,6 +610,24 @@ void Kernel::pollDecoder(const Decoder& decoder)
     });
 }
 
+void Kernel::sendHexMessage(const std::vector<uint8_t> &msgVec)
+{
+  const Message *msg = reinterpret_cast<const Message *>(msgVec.data());
+  if(msg->size() != msgVec.size())
+    return;
+
+  auto* bytes = new std::byte[msgVec.size()];
+  std::memcpy(bytes, msgVec.data(), msgVec.size());
+  bytes[msgVec.size() - 1] = std::byte(calcChecksum(*msg));
+  auto ptr = std::shared_ptr<std::byte[]>{bytes};
+
+  m_ioContext.post(
+      [this, ptr]()
+      {
+        send(*reinterpret_cast<const Message*>(ptr.get()));
+      });
+}
+
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
 {
   assert(handler);

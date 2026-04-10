@@ -97,6 +97,11 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   , s88StartAddress{this, "s88_start_address", XpressNet::RoSoftS88XpressNetLI::S88StartAddress::startAddressDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88ModuleCount{this, "s88_module_count", XpressNet::RoSoftS88XpressNetLI::S88ModuleCount::moduleCountDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
+  , luaSendMsg{*this, "send_msg", MethodFlags::ScriptCallable,
+      [this](const std::string &msgHexStr)
+      {
+        sendHexMsg(msgHexStr);
+      }}
 {
   name = "XpressNet";
   xpressnet.setValueInternal(std::make_shared<XpressNet::Settings>(*this, xpressnet.name()));
@@ -154,6 +159,8 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(inputs, notes);
 
   m_interfaceItems.insertBefore(outputs, notes);
+
+  m_interfaceItems.add(luaSendMsg);
 
   updateVisible();
 }
@@ -492,4 +499,45 @@ void XpressNetInterface::pollDecoders()
   {
     m_kernel->pollDecoder(*decoder);
   }
+}
+
+void XpressNetInterface::sendHexMsg(const std::string &msgHexStr)
+{
+  std::string str;
+  str.reserve(msgHexStr.size());
+  for(char ch : msgHexStr)
+  {
+    if((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'F'))
+      str += ch;
+    else if(ch >= 'a' && ch <= 'f')
+      str += (ch - 'a' + 'A');
+  }
+
+  if(str.size() % 2 != 0)
+    str.pop_back();
+
+  std::vector<uint8_t> msgVec;
+  msgVec.resize(str.size() / 2 + 1);
+
+  for(size_t i = 0; i < msgVec.size() - 1; i++)
+  {
+    char high = str.at(i * 2);
+    char low = str.at(i * 2 + 1);
+
+    uint8_t val = 0;
+    if((high >= '0' && high <= '9'))
+      val = uint8_t((high - '0') << 4);
+    if((high >= 'A' && high <= 'F'))
+      val = uint8_t((high - 'A' + 0xA) << 4);
+
+    if((low >= '0' && low <= '9'))
+      val += uint8_t(low - '0');
+    if((low >= 'A' && low <= 'F'))
+      val += uint8_t(low - 'A' + 0xA);
+
+    msgVec[i] = val;
+  }
+
+  if(m_kernel)
+    m_kernel->sendHexMessage(msgVec);
 }

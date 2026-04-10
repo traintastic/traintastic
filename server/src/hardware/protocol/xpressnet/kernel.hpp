@@ -282,6 +282,8 @@ class Kernel : public ::KernelBase
     void simulateInputChange(uint16_t address, SimulateInputAction action);
 
     void pollDecoder(const Decoder& decoder);
+
+    void sendHexMessage(const std::vector<uint8_t> &msgVec);
 };
 
 }

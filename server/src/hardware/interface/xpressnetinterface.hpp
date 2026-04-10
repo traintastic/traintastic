@@ -33,6 +33,10 @@
 #include "../../enum/serialflowcontrol.hpp"
 #include <boost/asio/steady_timer.hpp>
 
+// TODO: just debug purpose, send messages from Lua
+#include "../../core/method.hpp"
+#include "../../core/method.tpp"
+
 namespace XpressNet {
 class Kernel;
 class Settings;
@@ -67,6 +71,8 @@ class XpressNetInterface final
 
     void pollDecoders();
 
+    void sendHexMsg(const std::string& msgHexStr);
+
   protected:
     bool setOnline(bool& value, bool simulation) final;
 
@@ -81,6 +87,8 @@ class XpressNetInterface final
     Property<uint8_t> s88StartAddress;
     Property<uint8_t> s88ModuleCount;
     ObjectProperty<XpressNet::Settings> xpressnet;
+
+    Method<void(std::string)> luaSendMsg;
 
     XpressNetInterface(World& world, std::string_view _id);
     ~XpressNetInterface() final;
