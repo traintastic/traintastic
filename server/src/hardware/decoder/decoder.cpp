@@ -487,3 +487,9 @@ void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)
     interface->decoderChanged(*this, changes, functionNumber);
   decoderChanged(*this, changes, functionNumber);
 }
+
+void Decoder::functionsChanged()
+{
+  if(interface)
+    interface->decoderChanged(*this, changes, functionNumber);
+}

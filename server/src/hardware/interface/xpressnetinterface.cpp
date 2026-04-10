@@ -54,7 +54,6 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
   , OutputController(static_cast<IdObject&>(*this))
-  , m_pollTimer{EventLoop::ioContext()}
   , type{this, "type", XpressNetInterfaceType::Serial, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](XpressNetInterfaceType /*value*/)
       {
@@ -162,13 +161,16 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
 
   m_interfaceItems.add(luaSendMsg);
 
+  decoderAddedRemovedConn = static_cast<Object *>(decoders)->propertyChanged.connect(
+    [this](BaseProperty &prop)
+    {
+      updateKernelDecoderList();
+    });
+
   updateVisible();
 }
 
-XpressNetInterface::~XpressNetInterface()
-{
-  m_pollTimer.cancel();
-}
+XpressNetInterface::~XpressNetInterface() = default;
 
 std::span<const DecoderProtocol> XpressNetInterface::decoderProtocols() const
 {
@@ -210,6 +212,26 @@ void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFla
 {
   if(m_kernel)
     m_kernel->decoderChanged(decoder, changes, functionNumber);
+}
+
+void XpressNetInterface::decoderFunctionsChanged(const Decoder &decoder)
+{
+  if(!m_kernel) //TODO: when decoder changes address? How to prevent duplicate addresses?
+    return;
+
+  XpressNet::Kernel::Locomotive::Flags flags = XpressNet::Kernel::Locomotive::Flags::None;
+  for(const DecoderFunction& f : *decoder.functions)
+  {
+    if(f.number >= 29)
+      flags |= XpressNet::Kernel::Locomotive::Flags::HasF29F68;
+    else if(f.number >= 13)
+      flags |= XpressNet::Kernel::Locomotive::Flags::HasF13F28;
+
+    if(flags == (XpressNet::Kernel::Locomotive::Flags::HasF13F28 | XpressNet::Kernel::Locomotive::Flags::HasF29F68))
+      break;
+  }
+
+  m_kernel->updateDecoder(decoder.address, flags);
 }
 
 std::span<const InputChannel> XpressNetInterface::inputChannels() const
@@ -304,15 +326,13 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
         [this]()
         {
           setState(InterfaceState::Online);
-          pollDecoders();
+          updateKernelDecoderList();
         });
       m_kernel->setOnError(
         [this]()
         {
           setState(InterfaceState::Error);
           online = false; // communication no longer possible
-
-          m_pollTimer.cancel();
         });
       m_kernel->setOnTrackPowerChanged(
         [this](bool powerOn, bool isStopped)
@@ -389,8 +409,6 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
     EventLoop::deleteLater(m_kernel.release());
 
     setState(InterfaceState::Offline);
-
-    m_pollTimer.cancel();
   }
   return true;
 }
@@ -482,23 +500,33 @@ void XpressNetInterface::updateVisible()
   Attributes::setVisible(s88ModuleCount, isRoSoftS88XPressNetLI);
 }
 
-void XpressNetInterface::pollDecoders()
+void XpressNetInterface::updateKernelDecoderList()
 {
   if(!m_kernel)
     return;
 
-  m_pollTimer.expires_after(boost::asio::chrono::milliseconds(1000));
-  m_pollTimer.async_wait(
-    [this](const boost::system::error_code& ec)
-    {
-      if(!ec)
-        pollDecoders();
-    });
+  std::vector<XpressNet::Kernel::Locomotive> locoVec;
 
-  for(auto decoder : *decoders.value().get())
+  for(const Decoder &decoder : *decoders.value().get())
   {
-    m_kernel->pollDecoder(*decoder);
+    XpressNet::Kernel::Locomotive loco;
+    loco.address = decoder.address;
+
+    for(const DecoderFunction& f : *decoder.functions)
+    {
+      if(f.number >= 29)
+        loco.flags |= XpressNet::Kernel::Locomotive::Flags::HasF29F68;
+      else if(f.number >= 13)
+        loco.flags |= XpressNet::Kernel::Locomotive::Flags::HasF13F28;
+
+      if(loco.flags == (XpressNet::Kernel::Locomotive::Flags::HasF13F28 | XpressNet::Kernel::Locomotive::Flags::HasF29F68))
+        break;
+    }
+
+    locoVec.push_back(loco);
   }
+
+  m_kernel->setDecoderList(locoVec);
 }
 
 void XpressNetInterface::sendHexMsg(const std::string &msgHexStr)

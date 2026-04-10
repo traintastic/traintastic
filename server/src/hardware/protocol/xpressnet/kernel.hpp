@@ -98,13 +98,32 @@ class Kernel : public ::KernelBase
 
     Config m_config;
 
-    std::vector<PendingQuery> pendingQueries;
-    boost::asio::steady_timer pendingQueryTimeout;
+    std::vector<PendingQuery> m_pendingQueries;
+    boost::asio::steady_timer m_pendingQueryTimeout;
+    boost::asio::steady_timer m_pollTimer;
+
+    struct Locomotive
+    {
+      uint16_t address = 0;
+
+      enum Flags : uint8_t
+      {
+        None = 0x0,
+        OwnedByXBus = 0x1,
+        HasF13F28 = 0x2,
+        HasF29F68 = 0x3
+      };
+
+      Flags flags = Flags::OwnedByXBus;
+    };
+
+    std::vector<Locomotive> m_locomotives;
 
     void postQuery(const PendingQuery& query);
     void sendCurrentQuery();
     void onPendingQueryTimeout(const boost::system::error_code &ec);
     uint16_t popAddressQuerySendNext(PendingQuery::QueryType type);
+    void pollDecoders();
 
     Kernel(std::string logId_, const Config& config, bool simulation);
 
@@ -281,9 +300,10 @@ class Kernel : public ::KernelBase
      */
     void simulateInputChange(uint16_t address, SimulateInputAction action);
 
-    void pollDecoder(const Decoder& decoder);
-
     void sendHexMessage(const std::vector<uint8_t> &msgVec);
+
+    void setDecoderList(const std::vector<Locomotive> &locoVec);
+    void updateDecoder(uint16_t address, Locomotive::Flags decoderFunctions);
 };
 
 }

@@ -36,6 +36,7 @@ DecoderFunction::DecoderFunction(Decoder& decoder, uint8_t _number) :
     {
       if(m_decoder.hasFunction(fn))
         throw LogMessageException(LogMessage::E2012_FUNCTION_NUMBER_ALREADY_IN_USE);
+      m_decoder.functionsChanged();
       return true;
     }},
   name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store},

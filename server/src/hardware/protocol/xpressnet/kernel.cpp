@@ -36,14 +36,14 @@ void Kernel::postQuery(const PendingQuery &query)
 {
   assert(query.address >= shortAddressMin && query.address <= longAddressMax);
 
-  for(const PendingQuery& other : std::as_const(pendingQueries))
+  for(const PendingQuery& other : std::as_const(m_pendingQueries))
   {
     if(other.address == query.address && other.type == query.type)
       return; // Already pending
   }
 
-  const bool wasEmpty = pendingQueries.empty();
-  pendingQueries.push_back(query);
+  const bool wasEmpty = m_pendingQueries.empty();
+  m_pendingQueries.push_back(query);
 
   if(wasEmpty)
     sendCurrentQuery();
@@ -51,24 +51,24 @@ void Kernel::postQuery(const PendingQuery &query)
 
 void Kernel::sendCurrentQuery()
 {
-  if(pendingQueries.empty())
+  if(m_pendingQueries.empty())
     return;
 
-  switch (pendingQueries.at(0).type)
+  switch (m_pendingQueries.at(0).type)
   {
   case PendingQuery::LocoInfoAndF0F12:
   {
-    send(QueryLocomotiveV3(pendingQueries.at(0).address));
+    send(QueryLocomotiveV3(m_pendingQueries.at(0).address));
     break;
   }
   case PendingQuery::FuncInfoF13F28:
   {
-    send(QueryLocomotiveFunctions(pendingQueries.at(0).address, 4));
+    send(QueryLocomotiveFunctions(m_pendingQueries.at(0).address, 4));
     break;
   }
   case PendingQuery::FuncInfoF29F68:
   {
-    send(QueryLocomotiveFunctions(pendingQueries.at(0).address, 6));
+    send(QueryLocomotiveFunctions(m_pendingQueries.at(0).address, 6));
     break;
   }
   default:
@@ -76,9 +76,9 @@ void Kernel::sendCurrentQuery()
   }
 
   boost::system::error_code ec;
-  pendingQueryTimeout.cancel(ec);
-  pendingQueryTimeout.expires_after(boost::asio::chrono::milliseconds(800));
-  pendingQueryTimeout.async_wait(std::bind(&Kernel::onPendingQueryTimeout, this, std::placeholders::_1));
+  m_pendingQueryTimeout.cancel(ec);
+  m_pendingQueryTimeout.expires_after(boost::asio::chrono::milliseconds(800));
+  m_pendingQueryTimeout.async_wait(std::bind(&Kernel::onPendingQueryTimeout, this, std::placeholders::_1));
 }
 
 void Kernel::onPendingQueryTimeout(const boost::system::error_code& ec)
@@ -86,11 +86,11 @@ void Kernel::onPendingQueryTimeout(const boost::system::error_code& ec)
   if(ec == boost::asio::error::operation_aborted)
     return;
 
-  if(pendingQueries.empty())
+  if(m_pendingQueries.empty())
     return;
 
   // Remove first query which did not get reply
-  pendingQueries.erase(pendingQueries.begin());
+  m_pendingQueries.erase(m_pendingQueries.begin());
 
   // Go on to next query
   sendCurrentQuery();
@@ -98,17 +98,34 @@ void Kernel::onPendingQueryTimeout(const boost::system::error_code& ec)
 
 uint16_t Kernel::popAddressQuerySendNext(PendingQuery::QueryType type)
 {
-  if(pendingQueries.empty() || pendingQueries.at(0).type != type)
+  if(m_pendingQueries.empty() || m_pendingQueries.at(0).type != type)
     return 0;
 
-  uint16_t address = pendingQueries.at(0).address;
+  uint16_t address = m_pendingQueries.at(0).address;
 
   // Remove first query which completed succesfully
-  pendingQueries.erase(pendingQueries.begin());
+  m_pendingQueries.erase(m_pendingQueries.begin());
 
   // Go on to next query
   sendCurrentQuery();
   return address;
+}
+
+void Kernel::pollDecoders()
+{
+  m_pollTimer.expires_after(boost::asio::chrono::milliseconds(1000));
+  m_pollTimer.async_wait(
+      [this](const boost::system::error_code& ec)
+      {
+        if(!ec)
+          pollDecoders();
+      });
+
+  for(const Locomotive& loco : m_locomotives)
+  {
+    if((loco.flags & Locomotive::Flags::OwnedByXBus) == Locomotive::Flags::OwnedByXBus)
+      postQuery({loco.address, PendingQuery::LocoInfoAndF0F12});
+  }
 }
 
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
@@ -118,7 +135,8 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   , m_inputController{nullptr}
   , m_outputController{nullptr}
   , m_config{config}
-  , pendingQueryTimeout{m_ioContext}
+  , m_pendingQueryTimeout{m_ioContext}
+  , m_pollTimer{m_ioContext}
 {
 }
 
@@ -179,7 +197,8 @@ void Kernel::stop()
     [this]()
     {
       boost::system::error_code ec;
-      pendingQueryTimeout.cancel(ec);
+      m_pendingQueryTimeout.cancel(ec);
+      m_pollTimer.cancel(ec);
 
       m_ioHandler->stop();
 
@@ -198,6 +217,8 @@ void Kernel::started()
   assert(isKernelThread());
 
   KernelBase::started();
+
+  pollDecoders();
 }
 
 void Kernel::receive(const Message& message)
@@ -205,8 +226,8 @@ void Kernel::receive(const Message& message)
   if(m_config.debugLogRXTX)
   {
     PendingQuery optAddress;
-    if(!pendingQueries.empty())
-      optAddress = pendingQueries.at(0);
+    if(!m_pendingQueries.empty())
+      optAddress = m_pendingQueries.at(0);
     EventLoop::call(
       [this, msg=toString(message, true, optAddress)]()
       {
@@ -601,15 +622,6 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
       });
 }
 
-void Kernel::pollDecoder(const Decoder& decoder)
-{
-  m_ioContext.post(
-    [this, address=decoder.address.value()]()
-    {
-      postQuery({address, PendingQuery::LocoInfoAndF0F12});
-    });
-}
-
 void Kernel::sendHexMessage(const std::vector<uint8_t> &msgVec)
 {
   const Message *msg = reinterpret_cast<const Message *>(msgVec.data());
@@ -625,6 +637,32 @@ void Kernel::sendHexMessage(const std::vector<uint8_t> &msgVec)
       [this, ptr]()
       {
         send(*reinterpret_cast<const Message*>(ptr.get()));
+      });
+}
+
+void Kernel::setDecoderList(const std::vector<Locomotive> &locoVec)
+{
+  m_ioContext.post(
+      [this, vec=locoVec]()
+      {
+        m_locomotives = vec;
+      });
+}
+
+void Kernel::updateDecoder(uint16_t address, Locomotive::Flags decoderFunctions)
+{
+  m_ioContext.post(
+      [this, address, decoderFunctions]()
+      {
+        for(Locomotive &loco : m_locomotives)
+        {
+          if(loco.address != address)
+            continue;
+
+          // Do an initial poll of new functions
+          loco.flags = decoderFunctions | Locomotive::OwnedByXBus;
+          break;
+        }
       });
 }
 

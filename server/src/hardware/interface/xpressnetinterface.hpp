@@ -31,7 +31,7 @@
 #include "../../enum/xpressnetinterfacetype.hpp"
 #include "../../enum/xpressnetserialinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
-#include <boost/asio/steady_timer.hpp>
+#include <boost/signals2/connection.hpp>
 
 // TODO: just debug purpose, send messages from Lua
 #include "../../core/method.hpp"
@@ -59,9 +59,6 @@ class XpressNetInterface final
     std::unique_ptr<XpressNet::Kernel> m_kernel;
     boost::signals2::connection m_xpressnetPropertyChanged;
 
-    boost::asio::steady_timer m_pollTimer;
-    int m_lastPolledIdx = 0;
-
     void addToWorld() final;
     void loaded() final;
     void destroying() final;
@@ -69,7 +66,8 @@ class XpressNetInterface final
 
     void updateVisible();
 
-    void pollDecoders();
+    void updateKernelDecoderList();
+    boost::signals2::scoped_connection decoderAddedRemovedConn;
 
     void sendHexMsg(const std::string& msgHexStr);
 
@@ -98,6 +96,7 @@ class XpressNetInterface final
     std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const final;
     std::span<const uint8_t> decoderSpeedSteps(DecoderProtocol protocol) const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
+    void decoderFunctionsChanged(const Decoder& decoder) final;
 
     // InputController:
     std::span<const InputChannel> inputChannels() const final;
