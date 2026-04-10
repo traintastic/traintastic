@@ -93,6 +93,14 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       {
         s = "TRACK_POWER_OFF";
       }
+      else if(message == CommandStationBusy())
+      {
+        s = "CS_BUSY";
+      }
+      else if(message == CommandUnknown())
+      {
+        s = "CS_COMMAND_UNKNOWN";
+      }
       else
         raw = true;
       break;
