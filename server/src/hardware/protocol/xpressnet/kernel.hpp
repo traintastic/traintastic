@@ -114,7 +114,7 @@ class Kernel : public ::KernelBase
         HasF29F68 = 0x3
       };
 
-      Flags flags = Flags::OwnedByXBus;
+      uint8_t flags = Flags::OwnedByXBus;
     };
 
     std::vector<Locomotive> m_locomotives;

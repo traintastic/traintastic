@@ -374,15 +374,18 @@ void Kernel::receive(const Message& message)
         if(locoInstr.identification == idLocomotiveBusy)
         {
           auto loco = std::find_if(m_locomotives.begin(), m_locomotives.end(),
-                                   [replyAddress](const Locomotive &item) -> bool
+                                   [address=locoInstr.address()](const Locomotive &item) -> bool
                                    {
-                                     return item.address == replyAddress;
+                                     return item.address == address;
                                    });
 
           if(loco == m_locomotives.end())
             break;
 
           loco->flags |= Locomotive::Flags::OwnedByXBus;
+
+          // Immediately start querying
+          postQuery({locoInstr.address(), PendingQuery::LocoInfoAndF0F12});
           break;
         }
         else if((locoInstr.identification & LocomotiveInfo::identificationMask) == 0)
