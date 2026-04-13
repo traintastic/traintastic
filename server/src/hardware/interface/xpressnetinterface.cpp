@@ -161,8 +161,8 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
 
   m_interfaceItems.add(luaSendMsg);
 
-  decoderAddedRemovedConn = static_cast<Object *>(decoders)->propertyChanged.connect(
-    [this](BaseProperty &prop)
+  decoderAddedRemovedConn = std::static_pointer_cast<Object>(decoders.value())->propertyChanged.connect(
+    [this](BaseProperty &)
     {
       updateKernelDecoderList();
     });
@@ -219,12 +219,12 @@ void XpressNetInterface::decoderFunctionsChanged(const Decoder &decoder)
   if(!m_kernel) //TODO: when decoder changes address? How to prevent duplicate addresses?
     return;
 
-  XpressNet::Kernel::Locomotive::Flags flags = XpressNet::Kernel::Locomotive::Flags::None;
-  for(const DecoderFunction& f : *decoder.functions)
+  uint8_t flags = XpressNet::Kernel::Locomotive::Flags::None;
+  for(const auto& f : *decoder.functions)
   {
-    if(f.number >= 29)
+    if(f->number >= 29)
       flags |= XpressNet::Kernel::Locomotive::Flags::HasF29F68;
-    else if(f.number >= 13)
+    else if(f->number >= 13)
       flags |= XpressNet::Kernel::Locomotive::Flags::HasF13F28;
 
     if(flags == (XpressNet::Kernel::Locomotive::Flags::HasF13F28 | XpressNet::Kernel::Locomotive::Flags::HasF29F68))
@@ -507,16 +507,16 @@ void XpressNetInterface::updateKernelDecoderList()
 
   std::vector<XpressNet::Kernel::Locomotive> locoVec;
 
-  for(const Decoder &decoder : *decoders.value().get())
+  for(const auto& decoder : *decoders.value().get())
   {
     XpressNet::Kernel::Locomotive loco;
-    loco.address = decoder.address;
+    loco.address = decoder->address;
 
-    for(const DecoderFunction& f : *decoder.functions)
+    for(const auto& f : *decoder->functions)
     {
-      if(f.number >= 29)
+      if(f->number >= 29)
         loco.flags |= XpressNet::Kernel::Locomotive::Flags::HasF29F68;
-      else if(f.number >= 13)
+      else if(f->number >= 13)
         loco.flags |= XpressNet::Kernel::Locomotive::Flags::HasF13F28;
 
       if(loco.flags == (XpressNet::Kernel::Locomotive::Flags::HasF13F28 | XpressNet::Kernel::Locomotive::Flags::HasF29F68))

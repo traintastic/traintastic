@@ -792,7 +792,7 @@ void Kernel::setDecoderList(const std::vector<Locomotive> &locoVec)
       });
 }
 
-void Kernel::updateDecoder(uint16_t address, Locomotive::Flags decoderFunctions)
+void Kernel::updateDecoder(uint16_t address, uint8_t decoderFunctions)
 {
   m_ioContext.post(
       [this, address, decoderFunctions]()

@@ -52,6 +52,21 @@ class Kernel : public ::KernelBase
     static constexpr uint16_t accessoryOutputAddressMin = 1;
     static constexpr uint16_t accessoryOutputAddressMax = 1024;
 
+    struct Locomotive
+    {
+      uint16_t address = 0;
+
+      enum Flags : uint8_t
+      {
+        None = 0x0,
+        OwnedByXBus = 0x1,
+        HasF13F28 = 0x2,
+        HasF29F68 = 0x3
+      };
+
+      uint8_t flags = Flags::OwnedByXBus;
+    };
+
   private:
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
@@ -102,21 +117,6 @@ class Kernel : public ::KernelBase
     boost::asio::steady_timer m_pendingQueryTimeout;
     boost::asio::steady_timer m_pollTimer;
     bool m_isUpdatingDecoderFromKernel = false;
-
-    struct Locomotive
-    {
-      uint16_t address = 0;
-
-      enum Flags : uint8_t
-      {
-        None = 0x0,
-        OwnedByXBus = 0x1,
-        HasF13F28 = 0x2,
-        HasF29F68 = 0x3
-      };
-
-      uint8_t flags = Flags::OwnedByXBus;
-    };
 
     std::vector<Locomotive> m_locomotives;
 
@@ -304,7 +304,7 @@ class Kernel : public ::KernelBase
     void sendHexMessage(const std::vector<uint8_t> &msgVec);
 
     void setDecoderList(const std::vector<Locomotive> &locoVec);
-    void updateDecoder(uint16_t address, Locomotive::Flags decoderFunctions);
+    void updateDecoder(uint16_t address, uint8_t decoderFunctions);
 };
 
 }
