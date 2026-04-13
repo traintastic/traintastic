@@ -683,7 +683,7 @@ struct LanXGetLocoInfo : LanX
 
   inline uint16_t address() const
   {
-    return (static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow;
+    return to16(addressLow, addressHigh & 0x3F);
   }
 
   inline bool isLongAddress() const
@@ -715,7 +715,7 @@ struct LanXSetLocoDrive : LanX
 
   inline uint16_t address() const
   {
-    return (static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow;
+    return to16(addressLow, addressHigh & 0x3F);
   }
 
   inline bool isLongAddress() const
@@ -829,7 +829,7 @@ struct LanXSetLocoFunction : LanX
 
   inline uint16_t address() const
   {
-    return (static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow;
+    return to16(addressLow, addressHigh & 0x3F);
   }
 
   inline bool isLongAddress() const
@@ -1058,7 +1058,7 @@ struct LanLocoNetDetectorTransponderEntersExitsBlock : LanLocoNetDetector
 
   uint16_t transponderAddress() const
   {
-    return (static_cast<uint16_t>(transponderAddressHigh) << 8) | transponderAddressLow;
+    return to16(transponderAddressLow, transponderAddressHigh & 0x3F);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanLocoNetDetectorTransponderEntersExitsBlock) == 9);
@@ -1181,7 +1181,7 @@ struct LanGetHardwareInfoReply : Message
   LanGetHardwareInfoReply(HardwareType _hardwareType, uint8_t _firmwareVersionMajor, uint8_t _firmwareVersionMinor) :
     Message(sizeof(LanGetHardwareInfoReply), LAN_GET_HWINFO),
     hardwareTypeLE{host_to_le(_hardwareType)},
-    firmwareVersionLE{host_to_le(static_cast<uint32_t>(Z21::Utils::toBCD(_firmwareVersionMajor)) << 8 | Z21::Utils::toBCD(_firmwareVersionMinor))}
+    firmwareVersionLE{host_to_le(static_cast<uint32_t>(to16(Z21::Utils::toBCD(_firmwareVersionMinor), Z21::Utils::toBCD(_firmwareVersionMajor))))}
   {
   }
 
@@ -1378,7 +1378,7 @@ struct LanXLocoInfo : LanX
 
   inline uint16_t address() const
   {
-    return (static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow;
+    return to16(addressLow, addressHigh & 0x3F);
   }
 
   inline bool isLongAddress() const

@@ -78,6 +78,7 @@ constexpr uint8_t getSpeedStep(uint8_t db, uint8_t speedSteps)
       break;
 
     case 28:
+    case 27:
       db = ((db & 0x0F) << 1) | ((db & 0x10) >> 4); //! @todo check
       if(db >= 3)
           db -= 2;
@@ -105,6 +106,7 @@ constexpr void setSpeedStep(uint8_t& db, uint8_t speedSteps, uint8_t speedStep)
         break;
 
       case 28:
+      case 27:
         speedStep += 2;
         db |= ((speedStep >> 1) & 0x0F) | ((speedStep & 0x01) << 4);
         break;

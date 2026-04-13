@@ -354,7 +354,7 @@ struct EmergencyStopLocomotive : Message
 
   inline uint16_t address() const
   {
-    return (static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow;
+    return to16(addressLow, addressHigh & 0x3F);
   }
 
   inline bool isLongAddress() const
@@ -389,7 +389,7 @@ struct LocomotiveInstruction : Message
 
   inline uint16_t address() const
   {
-    return (static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow;
+    return to16(addressLow, addressHigh & 0x3F);
   }
 
   inline bool isLongAddress() const
@@ -402,6 +402,10 @@ static_assert(sizeof(LocomotiveInstruction) == 4);
 // 3.41.3 Drive locomotive 14/27/28/128 (from Central version 3.0)
 struct SpeedAndDirectionInstruction : LocomotiveInstruction
 {
+  static constexpr uint8_t directionBit = 0x80;
+  static constexpr uint8_t stop = 0x00;
+  static constexpr uint8_t eStop = 0x01;
+
   uint8_t speedAndDirection;
   uint8_t checksum;
 
@@ -409,9 +413,9 @@ struct SpeedAndDirectionInstruction : LocomotiveInstruction
     LocomotiveInstruction(address)
   {
     assert(dir != Direction::Unknown);
-    speedAndDirection = emergencyStop ? 0x01 : 0x00;
+    speedAndDirection = emergencyStop ? eStop : stop;
     if(dir == Direction::Forward)
-      speedAndDirection |= 0x80;
+      speedAndDirection |= directionBit;
   }
 
   [[nodiscard]] uint8_t speedSteps() const
@@ -432,51 +436,57 @@ struct SpeedAndDirectionInstruction : LocomotiveInstruction
     return 0;
   }
 
-  [[nodiscard]] bool isEmergencyStop() const
+  inline void setSpeedSteps(uint8_t steps)
   {
-    return speedAndDirection == 0x01;
-  }
-
-  [[nodiscard]] Direction direction() const
-  {
-    return ((speedAndDirection & 0x80) == 0x80) ? Direction::Forward : Direction::Reverse;
-  }
-
-  [[nodiscard]] uint8_t speedStep() const
-  {
-    if(isEmergencyStop())
-      return 0;
-
-    switch (identification)
+    switch(steps)
     {
-    case idSetSpeed14:
-    {
-      const uint8_t speed = speedAndDirection & 0x0F;
-      if(speed >= 2)
-        return speed - 1;
+    case 14:
+      identification = idSetSpeed14;
       break;
-    }
-    case idSetSpeed27:
-    case idSetSpeed28:
-    {
-      const uint8_t speed = ((speedAndDirection >> 4) & 0x01) | ((speedAndDirection & 0x0F) << 1);
-      if(speed >= 2)
-        return speed - 1;
+    case 27:
+      identification = idSetSpeed27;
       break;
-    }
-    case idSetSpeed128:
-    {
-      const uint8_t speed = speedAndDirection & 0x7F;
-      if(speed >= 2)
-        return speed - 1;
+    case 28:
+      identification = idSetSpeed28;
       break;
-    }
+    case 126:
+    case 128:
     default:
+      identification = idSetSpeed128;
       break;
     }
-
-    return 0;
   }
+
+  [[nodiscard]] inline Direction direction() const
+  {
+    return Z21::Utils::getDirection(speedAndDirection);
+  }
+
+  inline void setDirection(Direction value)
+  {
+    Z21::Utils::setDirection(speedAndDirection, value);
+  }
+
+  [[nodiscard]] inline bool isEmergencyStop() const
+  {
+    return Z21::Utils::isEmergencyStop(speedAndDirection, speedSteps());
+  }
+
+  inline void setEmergencyStop()
+  {
+    Z21::Utils::setEmergencyStop(speedAndDirection);
+  }
+
+  [[nodiscard]] inline uint8_t speedStep() const
+  {
+    return Z21::Utils::getSpeedStep(speedAndDirection, speedSteps());
+  }
+
+  inline void setSpeedStep(uint8_t value)
+  {
+    Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
+  }
+
 } ATTRIBUTE_PACKED;
 
 struct SpeedAndDirectionInstruction14 : SpeedAndDirectionInstruction
@@ -1298,7 +1308,7 @@ struct AccessoryDecoderOperationRequest : Message
 
   uint16_t address() const
   {
-    return 1 + ((((static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow) << 2) | ((db3 >> 1) & 0x03));
+    return 1 + ((to16(addressLow, addressHigh & 0x3F) << 2) | ((db3 >> 1) & 0x03));
   }
 
   bool port() const
