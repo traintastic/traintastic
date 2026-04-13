@@ -491,5 +491,5 @@ void Decoder::changed(DecoderChangeFlags changes, uint32_t functionNumber)
 void Decoder::functionsChanged()
 {
   if(interface)
-    interface->decoderChanged(*this, changes, functionNumber);
+    interface->decoderFunctionsChanged(*this);
 }
