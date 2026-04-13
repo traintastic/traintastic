@@ -71,6 +71,8 @@ constexpr uint8_t idLocomotiveBusy = 0xE4;
 enum Header : uint8_t
 {
   STOP_REQUEST = 0x21,
+  ACCESSORY_REPLY_OLD = 0x42,
+  ACCESSORY_REPLY = 0x43,
   SET_ACCESSORY_OLD = 0x52,
   SET_ACCESSORY = 0x53,
   BC_HEADER = 0x61,
@@ -123,6 +125,11 @@ struct Message
   constexpr uint8_t size() const
   {
     return 2 + dataSize();
+  }
+
+  inline void updateChecksum()
+  {
+    XpressNet::updateChecksum(*this);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(Message) == 1);
@@ -995,11 +1002,6 @@ struct LocomotiveInfo : Message
         functions2 &= ~flag;
     }
   }
-
-  inline void updateChecksum()
-  {
-    checksum = calcChecksum(*this);
-  }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LocomotiveInfo) == 6);
 
@@ -1087,11 +1089,6 @@ struct FunctionInfoF13F28 : Message
         functions2 &= ~flag;
     }
   }
-
-  inline void updateChecksum()
-  {
-    checksum = calcChecksum(*this);
-  }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(FunctionInfoF13F28) == 5);
 
@@ -1170,11 +1167,6 @@ struct FunctionInfoF29F68 : Message
       else
         functions5 &= ~flag;
     }
-  }
-
-  inline void updateChecksum()
-  {
-    checksum = calcChecksum(*this);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(FunctionInfoF29F68) == 8);
