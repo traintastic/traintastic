@@ -145,6 +145,21 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
         s.append(" address=").append(std::to_string(fakeReq.address()));
         break;
       }
+      case idQueryFuncGroup1to3:
+      case idQueryFuncGroup4:
+      case idQueryFuncGroup5above:
+      {
+        const auto& queryFunc = static_cast<const QueryLocomotiveFunctions&>(message);
+        s = "QueryLocomotiveFunctions";
+        if(queryFunc.identification == idQueryFuncGroup1to3)
+          s += "1to3";
+        else if(queryFunc.identification == idQueryFuncGroup4)
+          s += "4";
+        else
+          s += "5to10";
+        s.append(" address=").append(std::to_string(fakeReq.address()));
+        break;
+      }
       case idReplyFuncF13F28:
       {
         const auto& funcInfo = static_cast<const FunctionInfoF13F28&>(message);
@@ -195,6 +210,16 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
 
         if(spd.identification == idSetSpeed14)
           s.append(" f0=").append(static_cast<const SpeedAndDirectionInstruction14&>(spd).getFl() ? "1" : "0");
+        break;
+      }
+      case idSetFuncGroup4_Roco:
+      {
+        const auto& setFunc = static_cast<const RocoMultiMAUS::FunctionInstructionF13F20&>(message);
+
+        s = "ROCOFunctionInstructionF13F20";
+        s.append(" address=").append(std::to_string(setFunc.address()));
+        for(uint8_t i = 13; i <= 20; i++)
+          s.append(" f").append(std::to_string(i)).append("=").append(setFunc.getFunction(i) ? "1" : "0");
         break;
       }
       default:
