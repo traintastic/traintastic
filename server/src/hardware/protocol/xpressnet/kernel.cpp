@@ -711,7 +711,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     }
     else if(functionNumber <= 44)
     {
-      postSend(FunctionInstructionGroup6(
+      postSend(FunctionInstructionGroup7(
         decoder.address,
         decoder.getFunctionValue(37),
         decoder.getFunctionValue(38),
@@ -724,7 +724,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     }
     else if(functionNumber <= 52)
     {
-      postSend(FunctionInstructionGroup6(
+      postSend(FunctionInstructionGroup8(
         decoder.address,
         decoder.getFunctionValue(45),
         decoder.getFunctionValue(46),
@@ -737,7 +737,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     }
     else if(functionNumber <= 60)
     {
-      postSend(FunctionInstructionGroup6(
+      postSend(FunctionInstructionGroup9(
         decoder.address,
         decoder.getFunctionValue(53),
         decoder.getFunctionValue(54),
@@ -750,7 +750,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
     }
     else if(functionNumber <= 68)
     {
-      postSend(FunctionInstructionGroup5(
+      postSend(FunctionInstructionGroup10(
         decoder.address,
         decoder.getFunctionValue(61),
         decoder.getFunctionValue(62),
