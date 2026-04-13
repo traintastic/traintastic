@@ -61,7 +61,7 @@ class Kernel : public ::KernelBase
         None = 0x0,
         OwnedByXBus = 0x1,
         HasF13F28 = 0x2,
-        HasF29F68 = 0x3
+        HasF29F68 = 0x4
       };
 
       uint8_t flags = Flags::OwnedByXBus;

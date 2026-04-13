@@ -506,6 +506,7 @@ void XpressNetInterface::updateKernelDecoderList()
     return;
 
   std::vector<XpressNet::Kernel::Locomotive> locoVec;
+  const uint8_t bothFuncFlags = (XpressNet::Kernel::Locomotive::Flags::HasF13F28 | XpressNet::Kernel::Locomotive::Flags::HasF29F68);
 
   for(const auto& decoder : *decoders.value().get())
   {
@@ -519,7 +520,7 @@ void XpressNetInterface::updateKernelDecoderList()
       else if(f->number >= 13)
         loco.flags |= XpressNet::Kernel::Locomotive::Flags::HasF13F28;
 
-      if(loco.flags == (XpressNet::Kernel::Locomotive::Flags::HasF13F28 | XpressNet::Kernel::Locomotive::Flags::HasF29F68))
+      if((loco.flags & bothFuncFlags) == bothFuncFlags)
         break;
     }
 

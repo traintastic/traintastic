@@ -42,10 +42,10 @@ class SimulationIOHandler final : public IOHandler
 
       Locomotive()
       {
-        info.setDirection(Direction::Forward);
-        info.setEmergencyStop();
-        info.setBusy(false);
         info.setSpeedSteps(126);
+        info.setEmergencyStop();
+        info.setDirection(Direction::Forward);
+        info.setBusy(false);
         info.updateChecksum();
         func13.updateChecksum();
         func29.updateChecksum();
