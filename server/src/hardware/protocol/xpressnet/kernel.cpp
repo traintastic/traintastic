@@ -24,6 +24,7 @@
 #include "messages.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
+#include "../../protocol/dcc/dcc.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../core/eventloop.hpp"
@@ -366,6 +367,29 @@ void Kernel::receive(const Message& message)
           break;
         }
 
+        const FunctionInfoF13F28 funcInfoCopy = funcInfo13;
+
+        EventLoop::call(
+          [this, replyAddress, funcInfoCopy]()
+          {
+            try
+            {
+              if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(replyAddress), replyAddress))
+              {
+                //Function get always updated because we do not store a copy in cache
+                //so there is no way to tell in advance if they changed
+                for(int i = 13; i <= 28; i++)
+                {
+                  decoder->setFunctionValue(i, funcInfoCopy.getFunction(i));
+                }
+              }
+            }
+            catch(...)
+            {
+
+            }
+          });
+
         break;
       }
       case SET_LOCO:
@@ -417,6 +441,43 @@ void Kernel::receive(const Message& message)
             loco->flags |= Locomotive::Flags::OwnedByXBus;
           else
             loco->flags &= ~Locomotive::Flags::OwnedByXBus;
+
+          const LocomotiveInfo locoInfoCopy = locoInfo;
+
+          EventLoop::call(
+            [this, replyAddress, locoInfoCopy]()
+            {
+              try
+              {
+                if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(replyAddress), replyAddress))
+                {
+                  float throttle = Decoder::speedStepToThrottle(locoInfoCopy.speedStep(), locoInfoCopy.speedSteps());
+
+                  m_isUpdatingDecoderFromKernel = true;
+                  decoder->emergencyStop = locoInfoCopy.isEmergencyStop();
+
+                  m_isUpdatingDecoderFromKernel = true;
+                  decoder->direction = locoInfoCopy.direction();
+
+                  m_isUpdatingDecoderFromKernel = true;
+                  decoder->throttle = throttle;
+
+                  //Reset flag guard at end
+                  m_isUpdatingDecoderFromKernel = false;
+
+                  //Function get always updated because we do not store a copy in cache
+                  //so there is no way to tell in advance if they changed
+                  for(int i = 0; i <= 12; i++)
+                  {
+                    decoder->setFunctionValue(i, locoInfoCopy.getFunction(i));
+                  }
+                }
+              }
+              catch(...)
+              {
+
+              }
+            });
         }
 
         break;
@@ -430,6 +491,29 @@ void Kernel::receive(const Message& message)
         const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::LocoInfoAndF0F12);
         if(!replyAddress)
           break; // We did not ask for function info, ignore it
+
+        const FunctionInfoF29F68 funcInfoCopy = funcInfo29;
+
+        EventLoop::call(
+          [this, replyAddress, funcInfoCopy]()
+          {
+            try
+            {
+              if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(replyAddress), replyAddress))
+              {
+                //Function get always updated because we do not store a copy in cache
+                //so there is no way to tell in advance if they changed
+                for(int i = 29; i <= 68; i++)
+                {
+                  decoder->setFunctionValue(i, funcInfoCopy.getFunction(i));
+                }
+              }
+            }
+            catch(...)
+            {
+
+            }
+          });
 
         break;
       }
@@ -483,6 +567,16 @@ void Kernel::stopAllLocomotives()
 
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
+  if(m_isUpdatingDecoderFromKernel)
+  {
+    // This change was caused by Xpressnet message so there is not point
+    // on informing back Xpressnet with another message
+    // Reset the guard to allow Train and other parts of code
+    // to react to this change and further edit decoder state
+    m_isUpdatingDecoderFromKernel = false;
+    return;
+  }
+
   if(m_config.useEmergencyStopLocomotiveCommand && changes == DecoderChangeFlags::EmergencyStop && decoder.emergencyStop)
   {
     postSend(EmergencyStopLocomotive(decoder.address));

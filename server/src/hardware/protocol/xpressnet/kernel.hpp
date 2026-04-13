@@ -101,6 +101,7 @@ class Kernel : public ::KernelBase
     std::vector<PendingQuery> m_pendingQueries;
     boost::asio::steady_timer m_pendingQueryTimeout;
     boost::asio::steady_timer m_pollTimer;
+    bool m_isUpdatingDecoderFromKernel = false;
 
     struct Locomotive
     {
