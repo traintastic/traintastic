@@ -695,6 +695,72 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
         decoder.getFunctionValue(27),
         decoder.getFunctionValue(28)));
     }
+    else if(functionNumber <= 36)
+    {
+      // TODO: check command station version
+      postSend(FunctionInstructionGroup6(
+        decoder.address,
+        decoder.getFunctionValue(29),
+        decoder.getFunctionValue(30),
+        decoder.getFunctionValue(31),
+        decoder.getFunctionValue(32),
+        decoder.getFunctionValue(33),
+        decoder.getFunctionValue(34),
+        decoder.getFunctionValue(35),
+        decoder.getFunctionValue(36)));
+    }
+    else if(functionNumber <= 44)
+    {
+      postSend(FunctionInstructionGroup6(
+        decoder.address,
+        decoder.getFunctionValue(37),
+        decoder.getFunctionValue(38),
+        decoder.getFunctionValue(39),
+        decoder.getFunctionValue(40),
+        decoder.getFunctionValue(41),
+        decoder.getFunctionValue(42),
+        decoder.getFunctionValue(43),
+        decoder.getFunctionValue(44)));
+    }
+    else if(functionNumber <= 52)
+    {
+      postSend(FunctionInstructionGroup6(
+        decoder.address,
+        decoder.getFunctionValue(45),
+        decoder.getFunctionValue(46),
+        decoder.getFunctionValue(47),
+        decoder.getFunctionValue(48),
+        decoder.getFunctionValue(49),
+        decoder.getFunctionValue(50),
+        decoder.getFunctionValue(51),
+        decoder.getFunctionValue(52)));
+    }
+    else if(functionNumber <= 60)
+    {
+      postSend(FunctionInstructionGroup6(
+        decoder.address,
+        decoder.getFunctionValue(53),
+        decoder.getFunctionValue(54),
+        decoder.getFunctionValue(55),
+        decoder.getFunctionValue(56),
+        decoder.getFunctionValue(57),
+        decoder.getFunctionValue(58),
+        decoder.getFunctionValue(59),
+        decoder.getFunctionValue(60)));
+    }
+    else if(functionNumber <= 68)
+    {
+      postSend(FunctionInstructionGroup5(
+        decoder.address,
+        decoder.getFunctionValue(61),
+        decoder.getFunctionValue(62),
+        decoder.getFunctionValue(63),
+        decoder.getFunctionValue(64),
+        decoder.getFunctionValue(65),
+        decoder.getFunctionValue(66),
+        decoder.getFunctionValue(67),
+        decoder.getFunctionValue(68)));
+    }
   }
 }
 

@@ -67,6 +67,7 @@ constexpr uint8_t idReplyFuncF13F28 = 0x52;
 constexpr uint8_t idReplyFuncF29F68 = 0x53;
 
 constexpr uint8_t idLocomotiveBusy = 0xE4;
+constexpr uint8_t idSetFuncGroup4_Roco = 0xF3;
 
 enum Header : uint8_t
 {
@@ -1333,7 +1334,7 @@ namespace RocoMultiMAUS
     FunctionInstructionF13F20(uint16_t address, bool f13, bool f14, bool f15, bool f16, bool f17, bool f18, bool f19, bool f20) :
       LocomotiveInstruction(address)
     {
-      identification = 0xF3;
+      identification = idSetFuncGroup4_Roco;
 
       if(f13)
         functions |= 0x01;
@@ -1353,6 +1354,12 @@ namespace RocoMultiMAUS
         functions |= 0x80;
 
       checksum = calcChecksum(*this);
+    }
+
+    bool getFunction(uint8_t index) const
+    {
+      assert(index >= 13 && index <= 20);
+      return (functions >> (index - 13) & 0x01);
     }
   } ATTRIBUTE_PACKED;
 }
