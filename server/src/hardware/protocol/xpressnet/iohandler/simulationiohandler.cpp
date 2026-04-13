@@ -101,6 +101,19 @@ bool SimulationIOHandler::send(const Message& message)
           speedAndDirectionInstruction(static_cast<const SpeedAndDirectionInstruction&>(locomotiveInstruction));
           break;
         }
+        case idSetFuncGroup4_Roco:
+        {
+          const auto& funcInstruction = static_cast<const RocoMultiMAUS::FunctionInstructionF13F20&>(message);
+
+          Locomotive& loco = m_locomotives[funcInstruction.address()];
+          loco.info.setBusy(false);
+          loco.info.updateChecksum();
+
+          for(int i = 13; i <= 20; i++)
+            loco.func13.setFunction(i, funcInstruction.getFunction(i));
+          loco.func13.updateChecksum();
+          break;
+        }
         default:
         {
           const auto& funcInstruction = static_cast<const FunctionInstructionGroup&>(message);
@@ -112,18 +125,24 @@ bool SimulationIOHandler::send(const Message& message)
           loco.info.setBusy(false);
           if(group <= 3)
           {
-            for(int i = 0; i <= 12; i++)
+            uint8_t i = FunctionInstructionGroup::getMinFunctionIndex(group);
+            const uint8_t maxFuncIndex = FunctionInstructionGroup::getMaxFunctionIndex(group);
+            for(; i <= maxFuncIndex; i++)
               loco.info.setFunction(i, funcInstruction.getFunction(i));
           }
-          else if(group == 4)
+          else if(group == 4 || group == 5)
           {
-            for(int i = 13; i <= 28; i++)
+            uint8_t i = FunctionInstructionGroup::getMinFunctionIndex(group);
+            const uint8_t maxFuncIndex = FunctionInstructionGroup::getMaxFunctionIndex(group);
+            for(; i <= maxFuncIndex; i++)
               loco.func13.setFunction(i, funcInstruction.getFunction(i));
             loco.func13.updateChecksum();
           }
           else
           {
-            for(int i = 29; i <= 68; i++)
+            uint8_t i = FunctionInstructionGroup::getMinFunctionIndex(group);
+            const uint8_t maxFuncIndex = FunctionInstructionGroup::getMaxFunctionIndex(group);
+            for(; i <= maxFuncIndex; i++)
               loco.func29.setFunction(i, funcInstruction.getFunction(i));
             loco.func29.updateChecksum();
 
