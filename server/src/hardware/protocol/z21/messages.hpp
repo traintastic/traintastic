@@ -301,6 +301,35 @@ struct LanX : Message
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanX) == 5);
 
+struct LanXLocoBase : LanX
+{
+  uint8_t db0 = 0;
+  uint8_t addressHigh = 0;
+  uint8_t addressLow = 0;
+
+  LanXLocoBase(uint16_t _dataLen, uint8_t _xheader) :
+    LanX(_dataLen, _xheader)
+  {
+  }
+
+  inline uint16_t address() const
+  {
+    return to16(addressLow, addressHigh & 0x3F);
+  }
+
+  inline bool isLongAddress() const
+  {
+    return (addressHigh & 0xC0) == 0xC0;
+  }
+
+  inline void setAddress(uint16_t address, bool longAddress)
+  {
+    addressHigh = longAddress ? (0xC0 | high8(address)) : 0x00;
+    addressLow = longAddress ? low8(address) : address & 0x7F;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXLocoBase) == 8);
+
 //=============================================================================
 // Client to Z21
 
@@ -667,66 +696,29 @@ struct LanXSetStop : LanX
 static_assert(sizeof(LanXSetStop) == 6);
 
 // LAN_X_GET_LOCO_INFO
-struct LanXGetLocoInfo : LanX
+struct LanXGetLocoInfo : LanXLocoBase
 {
-  uint8_t db0 = 0xF0;
-  uint8_t addressHigh;
-  uint8_t addressLow;
   uint8_t checksum;
 
-  LanXGetLocoInfo(uint16_t address, bool longAddress) :
-    LanX(sizeof(LanXGetLocoInfo), LAN_X_GET_LOCO_INFO)
+  LanXGetLocoInfo(uint16_t address_, bool longAddress) :
+    LanXLocoBase(sizeof(LanXGetLocoInfo), LAN_X_GET_LOCO_INFO)
   {
-    setAddress(address, longAddress);
+    db0 = 0xF0;
+    setAddress(address_, longAddress);
     updateChecksum();
-  }
-
-  inline uint16_t address() const
-  {
-    return to16(addressLow, addressHigh & 0x3F);
-  }
-
-  inline bool isLongAddress() const
-  {
-    return (addressHigh & 0xC0) == 0xC0;
-  }
-
-  inline void setAddress(uint16_t address, bool longAddress)
-  {
-    addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
-    addressLow = longAddress ? address & 0xFF : address & 0x7F;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetLocoInfo) == 9);
 
 // LAN_X_SET_LOCO_DRIVE
-struct LanXSetLocoDrive : LanX
+struct LanXSetLocoDrive : LanXLocoBase
 {
-  uint8_t db0;
-  uint8_t addressHigh;
-  uint8_t addressLow;
   uint8_t speedAndDirection = 0;
   uint8_t checksum;
 
   LanXSetLocoDrive() :
-    LanX(sizeof(LanXSetLocoDrive), LAN_X_SET_LOCO)
+    LanXLocoBase(sizeof(LanXSetLocoDrive), LAN_X_SET_LOCO)
   {
-  }
-
-  inline uint16_t address() const
-  {
-    return to16(addressLow, addressHigh & 0x3F);
-  }
-
-  inline bool isLongAddress() const
-  {
-    return (addressHigh & 0xC0) == 0xC0;
-  }
-
-  inline void setAddress(uint16_t address, bool longAddress)
-  {
-    addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
-    addressLow = longAddress ? address & 0xFF : address & 0x7F;
   }
 
   inline void setSpeedSteps(uint8_t steps)
@@ -792,7 +784,7 @@ struct LanXSetLocoDrive : LanX
 static_assert(sizeof(LanXSetLocoDrive) == 10);
 
 // LAN_X_SET_LOCO_FUNCTION
-struct LanXSetLocoFunction : LanX
+struct LanXSetLocoFunction : LanXLocoBase
 {
   enum class SwitchType
   {
@@ -807,15 +799,13 @@ struct LanXSetLocoFunction : LanX
   static constexpr uint8_t switchTypeMask = 0xC0;
   static constexpr uint8_t switchTypeShift = 6;
 
-  uint8_t db0 = 0xf8;
-  uint8_t addressHigh;
-  uint8_t addressLow;
   uint8_t db3 = 0;
   uint8_t checksum;
 
   LanXSetLocoFunction() :
-    LanX(sizeof(LanXSetLocoFunction), LAN_X_SET_LOCO)
+    LanXLocoBase(sizeof(LanXSetLocoFunction), LAN_X_SET_LOCO)
   {
+    db0 = 0xF8;
   }
 
   LanXSetLocoFunction(uint16_t address, bool longAddress, uint8_t functionIndex, SwitchType value)
@@ -825,22 +815,6 @@ struct LanXSetLocoFunction : LanX
     setFunctionIndex(functionIndex);
     setSwitchType(value);
     updateChecksum();
-  }
-
-  inline uint16_t address() const
-  {
-    return to16(addressLow, addressHigh & 0x3F);
-  }
-
-  inline bool isLongAddress() const
-  {
-    return (addressHigh & 0xC0) == 0xC0;
-  }
-
-  inline void setAddress(uint16_t address, bool longAddress)
-  {
-    addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
-    addressLow = longAddress ? address & 0xFF : address & 0x7F;
   }
 
   inline SwitchType switchType() const
@@ -1050,8 +1024,8 @@ struct LanLocoNetDetectorTransponderEntersExitsBlock : LanLocoNetDetector
 
   LanLocoNetDetectorTransponderEntersExitsBlock(Type type_, uint16_t feedbackAddress, uint16_t transponderAddress)
     : LanLocoNetDetector(sizeof(LanLocoNetDetectorTransponderEntersExitsBlock), type_, feedbackAddress)
-    , transponderAddressLow(transponderAddress >> 8)
-    , transponderAddressHigh(transponderAddress & 0xFF)
+    , transponderAddressLow(low8(transponderAddress))
+    , transponderAddressHigh(high8(transponderAddress))
   {
     assert(type == Type::TransponderEntersBlock || type == Type::TransponderExitsBlock);
   }
@@ -1192,12 +1166,12 @@ struct LanGetHardwareInfoReply : Message
 
   uint8_t firmwareVersionMajor() const
   {
-    return Utils::fromBCD((le_to_host(firmwareVersionLE) >> 8) & 0xFF);
+    return Utils::fromBCD(high8(le_to_host(firmwareVersionLE)));
   }
 
   uint8_t firmwareVersionMinor() const
   {
-    return Utils::fromBCD(le_to_host(firmwareVersionLE) & 0xFF);
+    return Utils::fromBCD(low8(le_to_host(firmwareVersionLE)));
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanGetHardwareInfoReply) == 12);
@@ -1388,8 +1362,8 @@ struct LanXLocoInfo : LanX
 
   inline void setAddress(uint16_t address, bool longAddress)
   {
-    addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
-    addressLow = longAddress ? address & 0xFF : address & 0x7F;
+    addressHigh = longAddress ? (0xC0 | high8(address)) : 0x00;
+    addressLow = longAddress ? low8(address) : address & 0x7F;
   }
 
   inline bool isBusy() const
