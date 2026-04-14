@@ -583,183 +583,56 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
   else if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps))
   {
-    switch(decoder.speedSteps)
-    {
-      case 14:
-        postSend(SpeedAndDirectionInstruction14(
-          decoder.address,
-          decoder.emergencyStop,
-          decoder.direction,
-          Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 14),
-          decoder.getFunctionValue(0)));
-        break;
+    SpeedAndDirectionInstruction spd(
+      decoder.address,
+      decoder.emergencyStop,
+      decoder.direction);
 
-      case 27:
-        postSend(SpeedAndDirectionInstruction27(
-          decoder.address,
-          decoder.emergencyStop,
-          decoder.direction,
-          Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 27)));
-        break;
+    spd.setSpeedSteps(decoder.speedSteps);
+    assert(spd.speedSteps() == decoder.speedSteps);
 
-      case 28:
-        postSend(SpeedAndDirectionInstruction28(
-          decoder.address,
-          decoder.emergencyStop,
-          decoder.direction,
-          Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 28)));
-        break;
+    if(!decoder.emergencyStop)
+      spd.setSpeedStep(Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, decoder.speedSteps));
 
-      case 128:
-        postSend(SpeedAndDirectionInstruction128(
-          decoder.address,
-          decoder.emergencyStop,
-          decoder.direction,
-          Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 126)));
-        break;
+    if(decoder.speedSteps == 14)
+      static_cast<SpeedAndDirectionInstruction14&>(spd).setFl(decoder.getFunctionValue(0));
 
-      default:
-        assert(false);
-        break;
-    }
+    spd.updateChecksum();
+    postSend(spd);
   }
   else if(has(changes, DecoderChangeFlags::FunctionValue))
   {
-    if(functionNumber <= 4)
+    uint8_t maxSupportedGroup = 10; // TODO: check command station version
+    for(uint8_t group = 1; group <= maxSupportedGroup; group++)
     {
-      postSend(FunctionInstructionGroup1(
-        decoder.address,
-        decoder.getFunctionValue(0),
-        decoder.getFunctionValue(1),
-        decoder.getFunctionValue(2),
-        decoder.getFunctionValue(3),
-        decoder.getFunctionValue(4)));
-    }
-    else if(functionNumber <= 8)
-    {
-      postSend(FunctionInstructionGroup2(
-        decoder.address,
-        decoder.getFunctionValue(5),
-        decoder.getFunctionValue(6),
-        decoder.getFunctionValue(7),
-        decoder.getFunctionValue(8)));
-    }
-    else if(functionNumber <= 12)
-    {
-      postSend(FunctionInstructionGroup3(
-        decoder.address,
-        decoder.getFunctionValue(9),
-        decoder.getFunctionValue(10),
-        decoder.getFunctionValue(11),
-        decoder.getFunctionValue(12)));
-    }
-    else if(functionNumber <= 20)
-    {
-      if(m_config.useRocoF13F20Command)
+      const uint8_t minIndex = FunctionInstructionGroup::getMinFunctionIndex(group);
+      const uint8_t maxIndex = FunctionInstructionGroup::getMaxFunctionIndex(group);
+
+      if(functionNumber < minIndex || functionNumber > maxIndex)
+        continue;
+
+      if(group == 4 && m_config.useRocoF13F20Command)
       {
         postSend(RocoMultiMAUS::FunctionInstructionF13F20(
-          decoder.address,
-          decoder.getFunctionValue(13),
-          decoder.getFunctionValue(14),
-          decoder.getFunctionValue(15),
-          decoder.getFunctionValue(16),
-          decoder.getFunctionValue(17),
-          decoder.getFunctionValue(18),
-          decoder.getFunctionValue(19),
-          decoder.getFunctionValue(20)));
+            decoder.address,
+            decoder.getFunctionValue(13),
+            decoder.getFunctionValue(14),
+            decoder.getFunctionValue(15),
+            decoder.getFunctionValue(16),
+            decoder.getFunctionValue(17),
+            decoder.getFunctionValue(18),
+            decoder.getFunctionValue(19),
+            decoder.getFunctionValue(20)));
       }
       else
       {
-        postSend(FunctionInstructionGroup4(
-          decoder.address,
-          decoder.getFunctionValue(13),
-          decoder.getFunctionValue(14),
-          decoder.getFunctionValue(15),
-          decoder.getFunctionValue(16),
-          decoder.getFunctionValue(17),
-          decoder.getFunctionValue(18),
-          decoder.getFunctionValue(19),
-          decoder.getFunctionValue(20)));
+        FunctionInstructionGroup setFunc(decoder.address, group);
+        for(uint8_t i = minIndex; i <= maxIndex; i++)
+          setFunc.setFunction(i, decoder.getFunctionValue(i));
+        setFunc.updateChecksum();
+        postSend(setFunc);
       }
-    }
-    else if(functionNumber <= 28)
-    {
-      postSend(FunctionInstructionGroup5(
-        decoder.address,
-        decoder.getFunctionValue(21),
-        decoder.getFunctionValue(22),
-        decoder.getFunctionValue(23),
-        decoder.getFunctionValue(24),
-        decoder.getFunctionValue(25),
-        decoder.getFunctionValue(26),
-        decoder.getFunctionValue(27),
-        decoder.getFunctionValue(28)));
-    }
-    else if(functionNumber <= 36)
-    {
-      // TODO: check command station version
-      postSend(FunctionInstructionGroup6(
-        decoder.address,
-        decoder.getFunctionValue(29),
-        decoder.getFunctionValue(30),
-        decoder.getFunctionValue(31),
-        decoder.getFunctionValue(32),
-        decoder.getFunctionValue(33),
-        decoder.getFunctionValue(34),
-        decoder.getFunctionValue(35),
-        decoder.getFunctionValue(36)));
-    }
-    else if(functionNumber <= 44)
-    {
-      postSend(FunctionInstructionGroup7(
-        decoder.address,
-        decoder.getFunctionValue(37),
-        decoder.getFunctionValue(38),
-        decoder.getFunctionValue(39),
-        decoder.getFunctionValue(40),
-        decoder.getFunctionValue(41),
-        decoder.getFunctionValue(42),
-        decoder.getFunctionValue(43),
-        decoder.getFunctionValue(44)));
-    }
-    else if(functionNumber <= 52)
-    {
-      postSend(FunctionInstructionGroup8(
-        decoder.address,
-        decoder.getFunctionValue(45),
-        decoder.getFunctionValue(46),
-        decoder.getFunctionValue(47),
-        decoder.getFunctionValue(48),
-        decoder.getFunctionValue(49),
-        decoder.getFunctionValue(50),
-        decoder.getFunctionValue(51),
-        decoder.getFunctionValue(52)));
-    }
-    else if(functionNumber <= 60)
-    {
-      postSend(FunctionInstructionGroup9(
-        decoder.address,
-        decoder.getFunctionValue(53),
-        decoder.getFunctionValue(54),
-        decoder.getFunctionValue(55),
-        decoder.getFunctionValue(56),
-        decoder.getFunctionValue(57),
-        decoder.getFunctionValue(58),
-        decoder.getFunctionValue(59),
-        decoder.getFunctionValue(60)));
-    }
-    else if(functionNumber <= 68)
-    {
-      postSend(FunctionInstructionGroup10(
-        decoder.address,
-        decoder.getFunctionValue(61),
-        decoder.getFunctionValue(62),
-        decoder.getFunctionValue(63),
-        decoder.getFunctionValue(64),
-        decoder.getFunctionValue(65),
-        decoder.getFunctionValue(66),
-        decoder.getFunctionValue(67),
-        decoder.getFunctionValue(68)));
+      break;
     }
   }
 }

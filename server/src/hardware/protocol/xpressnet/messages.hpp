@@ -339,17 +339,22 @@ struct EmergencyStopLocomotive : Message
   EmergencyStopLocomotive(uint16_t address_)
   {
     header = SET_STOP_LOCO_SINGLE;
+    setAddress(address_);
+  }
+
+  void setAddress(uint16_t address_)
+  {
     if(address_ >= longAddressMin)
     {
       assert(address_ >= longAddressMin && address_ <= longAddressMax);
-      addressHigh = 0xC0 | address_ >> 8;
-      addressLow = address_ & 0xff;
+      addressHigh = 0xC0 | high8(address_);
+      addressLow = low8(address_);
     }
     else
     {
       assert(address_ >= shortAddressMin && address_ <= shortAddressMax);
       addressHigh = 0x00;
-      addressLow = address_ & 0x7f;
+      addressLow = address_ & 0x7F;
     }
   }
 
@@ -371,20 +376,25 @@ struct LocomotiveInstruction : Message
   uint8_t addressHigh;
   uint8_t addressLow;
 
-  LocomotiveInstruction(uint16_t address)
+  LocomotiveInstruction(uint16_t address_)
   {
     header = SET_LOCO;
-    if(address >= longAddressMin)
+    setAddress(address_);
+  }
+
+  void setAddress(uint16_t address_)
+  {
+    if(address_ >= longAddressMin)
     {
-      assert(address >= longAddressMin && address <= longAddressMax);
-      addressHigh = 0xC0 | address >> 8;
-      addressLow = address & 0xFF;
+      assert(address_ >= longAddressMin && address_ <= longAddressMax);
+      addressHigh = 0xC0 | high8(address_);
+      addressLow = low8(address_);
     }
     else
     {
-      assert(address >= shortAddressMin && address <= shortAddressMax);
+      assert(address_ >= shortAddressMin && address_ <= shortAddressMax);
       addressHigh = 0x00;
-      addressLow = address & 0x7F;
+      addressLow = address_ & 0x7F;
     }
   }
 
@@ -492,6 +502,8 @@ struct SpeedAndDirectionInstruction : LocomotiveInstruction
 
 struct SpeedAndDirectionInstruction14 : SpeedAndDirectionInstruction
 {
+  static constexpr uint8_t f0_flag = 0x10;
+
   SpeedAndDirectionInstruction14(uint16_t address, bool emergencyStop, Direction direction, uint8_t speedStep, bool fl) :
     SpeedAndDirectionInstruction(address, emergencyStop, direction)
   {
@@ -499,14 +511,21 @@ struct SpeedAndDirectionInstruction14 : SpeedAndDirectionInstruction
     identification = idSetSpeed14;
     if(!emergencyStop && speedStep > 0)
       speedAndDirection |= speedStep + 1;
-    if(fl)
-      speedAndDirection |= 0x10;
+    setFl(fl);
     checksum = calcChecksum(*this);
   }
 
-  [[nodiscard]] bool getFl() const
+  [[nodiscard]] inline bool getFl() const
   {
-    return (speedAndDirection & 0x10) == 0x10;
+    return (speedAndDirection & f0_flag) == f0_flag;
+  }
+
+  inline void setFl(bool value)
+  {
+    if(value)
+      speedAndDirection |= f0_flag;
+    else
+      speedAndDirection &= ~f0_flag;
   }
 } ATTRIBUTE_PACKED;
 
@@ -618,6 +637,32 @@ struct FunctionInstructionGroup : LocomotiveInstruction
       return (functions >> (index - minIndex - 1) & 0x01);
     }
     return (functions >> (index - minIndex) & 0x01);
+  }
+
+  void setFunction(uint8_t index, bool value)
+  {
+    const uint8_t group = getGroup();
+    const uint8_t minIndex = getMinFunctionIndex(group);
+    assert(minIndex <= index);
+    assert(getMaxFunctionIndex(group) >= index);
+
+    uint8_t flagBit = 0;
+    if(group == 1)
+    {
+      if(index == 0)
+        flagBit = 0x10;
+      else
+        flagBit = 1 << (index - minIndex - 1);
+    }
+    else
+    {
+      flagBit = 1 << (index - minIndex);
+    }
+
+    if(value)
+      functions |= flagBit;
+    else
+      functions &= ~flagBit;
   }
 } ATTRIBUTE_PACKED;
 
