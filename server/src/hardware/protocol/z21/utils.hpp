@@ -52,6 +52,7 @@ constexpr bool isEmergencyStop(uint8_t db, uint8_t speedSteps)
       return (db & 0x7F) == 0x01;
 
     case 28:
+    case 27:
       return (db & 0x1F) == 0x01 || (db & 0x1F) == 0x11;
 
     case 14:
