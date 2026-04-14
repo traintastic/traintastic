@@ -102,7 +102,7 @@ uint16_t Kernel::popAddressQuerySendNext(PendingQuery::QueryType type)
   if(m_pendingQueries.empty() || m_pendingQueries.at(0).type != type)
     return 0;
 
-  uint16_t address = m_pendingQueries.at(0).address;
+  const uint16_t address = m_pendingQueries.at(0).address;
 
   // Remove first query which completed succesfully
   m_pendingQueries.erase(m_pendingQueries.begin());
@@ -356,7 +356,7 @@ void Kernel::receive(const Message& message)
           break; // We did not ask for function info, ignore it
 
         // After receiving basic loco info, query super-higher functions
-        for(Locomotive &loco : m_locomotives)
+        for(const Locomotive &loco : std::as_const(m_locomotives))
         {
           if(loco.address != replyAddress)
             continue;
@@ -447,7 +447,7 @@ void Kernel::receive(const Message& message)
               {
                 if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(replyAddress), replyAddress))
                 {
-                  float throttle = Decoder::speedStepToThrottle(locoInfoCopy.speedStep(), locoInfoCopy.speedSteps());
+                  const float throttle = Decoder::speedStepToThrottle(locoInfoCopy.speedStep(), locoInfoCopy.speedSteps());
 
                   m_isUpdatingDecoderFromKernel = true;
                   decoder->emergencyStop = locoInfoCopy.isEmergencyStop();
