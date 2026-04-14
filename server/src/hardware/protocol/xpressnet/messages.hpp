@@ -55,9 +55,8 @@ constexpr uint8_t idSetFuncGroup6 = 0x29;
 constexpr uint8_t idSetFuncGroup7 = 0x2A;
 constexpr uint8_t idSetFuncGroup8 = 0x2B;
 
-constexpr uint8_t idQueryFuncGroup1to3 = 0x07;
-constexpr uint8_t idQueryFuncGroup4 = 0x08;
-constexpr uint8_t idQueryFuncGroup5above = 0x0A;
+constexpr uint8_t idQueryFuncGroup4and5 = 0x09;
+constexpr uint8_t idQueryFuncGroup6above = 0x0B;
 
 constexpr uint8_t idFeedbackBroadcast = 0x40;
 
@@ -1241,7 +1240,7 @@ struct LocomotiveBusy : LocomotiveInstruction
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LocomotiveBusy) == 5);
 
-// 3.41.3 Query Locomotive state (from Central version 3.0)
+// 3.40.3 Query Locomotive state (from Central version 3.0)
 struct QueryLocomotiveV3 : LocomotiveInstruction
 {
   uint8_t checksum;
@@ -1256,7 +1255,7 @@ struct QueryLocomotiveV3 : LocomotiveInstruction
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(QueryLocomotiveV3) == 5);
 
-// 3.41.4 Query Locomotive functions (from Central version 3.0)
+// 3.40.7 Query Locomotive functions (from Central version 3.6), and 3.40.8 (from Central version 4.0)
 struct QueryLocomotiveFunctions : LocomotiveInstruction
 {
   uint8_t checksum;
@@ -1264,14 +1263,13 @@ struct QueryLocomotiveFunctions : LocomotiveInstruction
   QueryLocomotiveFunctions(uint16_t address, uint8_t group)
     : LocomotiveInstruction(address)
   {
+    assert(group >= 4 && group <= 10);
     header = GET_LOCO_INFO;
 
-    if(group <= 3)
-      identification = idQueryFuncGroup1to3;
-    else if(group == 4)
-      identification = idQueryFuncGroup4;
+    if(group == 4 || group == 5)
+      identification = idQueryFuncGroup4and5;
     else
-      identification = idQueryFuncGroup5above;
+      identification = idQueryFuncGroup6above;
     checksum = calcChecksum(*this);
   }
 } ATTRIBUTE_PACKED;

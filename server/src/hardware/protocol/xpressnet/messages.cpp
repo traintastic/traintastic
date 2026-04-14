@@ -145,18 +145,15 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
         s.append(" address=").append(std::to_string(fakeReq.address()));
         break;
       }
-      case idQueryFuncGroup1to3:
-      case idQueryFuncGroup4:
-      case idQueryFuncGroup5above:
+      case idQueryFuncGroup4and5:
+      case idQueryFuncGroup6above:
       {
         const auto& queryFunc = static_cast<const QueryLocomotiveFunctions&>(message);
         s = "QueryLocomotiveFunctions";
-        if(queryFunc.identification == idQueryFuncGroup1to3)
-          s += "1to3";
-        else if(queryFunc.identification == idQueryFuncGroup4)
-          s += "4";
+        if(queryFunc.identification == idQueryFuncGroup4and5)
+          s += "4and5";
         else
-          s += "5to10";
+          s += "6to10";
         s.append(" address=").append(std::to_string(fakeReq.address()));
         break;
       }

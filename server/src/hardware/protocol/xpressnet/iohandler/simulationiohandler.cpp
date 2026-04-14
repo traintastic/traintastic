@@ -67,19 +67,18 @@ bool SimulationIOHandler::send(const Message& message)
       switch(locomotiveInstruction.identification)
       {
         case 0:
-        case idQueryFuncGroup1to3:
         {
           Locomotive& loco = m_locomotives[locomotiveInstruction.address()];
           reply(loco.info);
           break;
         }
-        case idQueryFuncGroup4:
+        case idQueryFuncGroup4and5:
         {
           Locomotive& loco = m_locomotives[locomotiveInstruction.address()];
           reply(loco.func13);
           break;
         }
-        case idQueryFuncGroup5above:
+        case idQueryFuncGroup6above:
         {
           Locomotive& loco = m_locomotives[locomotiveInstruction.address()];
           reply(loco.func29);
