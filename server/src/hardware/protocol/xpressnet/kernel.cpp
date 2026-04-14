@@ -367,10 +367,8 @@ void Kernel::receive(const Message& message)
           break;
         }
 
-        const FunctionInfoF13F28 funcInfoCopy = funcInfo13;
-
         EventLoop::call(
-          [this, replyAddress, funcInfoCopy]()
+          [this, replyAddress, funcInfoCopy=funcInfo13]()
           {
             try
             {
@@ -442,10 +440,8 @@ void Kernel::receive(const Message& message)
           else
             loco->flags &= ~Locomotive::Flags::OwnedByXBus;
 
-          const LocomotiveInfo locoInfoCopy = locoInfo;
-
           EventLoop::call(
-            [this, replyAddress, locoInfoCopy]()
+            [this, replyAddress, locoInfoCopy=locoInfo]()
             {
               try
               {
@@ -492,10 +488,8 @@ void Kernel::receive(const Message& message)
         if(!replyAddress)
           break; // We did not ask for function info, ignore it
 
-        const FunctionInfoF29F68 funcInfoCopy = funcInfo29;
-
         EventLoop::call(
-          [this, replyAddress, funcInfoCopy]()
+          [this, replyAddress, funcInfoCopy=funcInfo29]()
           {
             try
             {
@@ -614,15 +608,15 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       if(group == 4 && m_config.useRocoF13F20Command)
       {
         postSend(RocoMultiMAUS::FunctionInstructionF13F20(
-            decoder.address,
-            decoder.getFunctionValue(13),
-            decoder.getFunctionValue(14),
-            decoder.getFunctionValue(15),
-            decoder.getFunctionValue(16),
-            decoder.getFunctionValue(17),
-            decoder.getFunctionValue(18),
-            decoder.getFunctionValue(19),
-            decoder.getFunctionValue(20)));
+          decoder.address,
+          decoder.getFunctionValue(13),
+          decoder.getFunctionValue(14),
+          decoder.getFunctionValue(15),
+          decoder.getFunctionValue(16),
+          decoder.getFunctionValue(17),
+          decoder.getFunctionValue(18),
+          decoder.getFunctionValue(19),
+          decoder.getFunctionValue(20)));
       }
       else
       {
