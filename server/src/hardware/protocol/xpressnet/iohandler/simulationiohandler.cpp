@@ -189,7 +189,7 @@ void SimulationIOHandler::reply(const Message& message, const size_t count)
 void SimulationIOHandler::speedAndDirectionInstruction(const SpeedAndDirectionInstruction& message)
 {
   Locomotive& loco = m_locomotives[message.address()];
-  loco.info.setBusy(true);
+  loco.info.setBusy(false);
   loco.info.setDirection(message.direction());
   loco.info.setSpeedSteps(message.speedSteps());
   if(message.isEmergencyStop())

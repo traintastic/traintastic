@@ -45,7 +45,7 @@ class SimulationIOHandler final : public IOHandler
         info.setSpeedSteps(126);
         info.setEmergencyStop();
         info.setDirection(Direction::Forward);
-        info.setBusy(false);
+        info.setBusy(true);
         info.updateChecksum();
         func13.updateChecksum();
         func29.updateChecksum();
