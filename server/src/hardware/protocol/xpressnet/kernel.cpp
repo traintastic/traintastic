@@ -347,51 +347,6 @@ void Kernel::receive(const Message& message)
       {
       case GET_LOCO_INFO:
       {
-        const auto& funcInfo13 = static_cast<const FunctionInfoF13F28&>(message);
-        if(funcInfo13.identification != idReplyFuncF13F28)
-          break; // Not a F13F28 info message
-
-        const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::FuncInfoF13F28);
-        if(!replyAddress)
-          break; // We did not ask for function info, ignore it
-
-        // After receiving basic loco info, query super-higher functions
-        for(const Locomotive &loco : std::as_const(m_locomotives))
-        {
-          if(loco.address != replyAddress)
-            continue;
-
-          if((loco.flags & Locomotive::Flags::HasF29F68) == Locomotive::Flags::HasF29F68)
-            postQuery({replyAddress, PendingQuery::FuncInfoF29F68});
-
-          break;
-        }
-
-        EventLoop::call(
-          [this, replyAddress, funcInfoCopy=funcInfo13]()
-          {
-            try
-            {
-              if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(replyAddress), replyAddress))
-              {
-                //Function get always updated because we do not store a copy in cache
-                //so there is no way to tell in advance if they changed
-                for(int i = 13; i <= 28; i++)
-                {
-                  decoder->setFunctionValue(i, funcInfoCopy.getFunction(i));
-                }
-              }
-            }
-            catch(...)
-            {
-
-            }
-          });
-
-        break;
-      }
-      case SET_LOCO:
-      {
         const auto& locoInstr = static_cast<const LocomotiveInstruction&>(message);
         if(locoInstr.identification == idLocomotiveBusy)
         {
@@ -410,7 +365,52 @@ void Kernel::receive(const Message& message)
           postQuery({locoInstr.address(), PendingQuery::LocoInfoAndF0F12});
           break;
         }
-        else if((locoInstr.identification & LocomotiveInfo::identificationMask) == 0)
+        else if(locoInstr.identification == idReplyFuncF13F28)
+        {
+          const auto& funcInfo13 = static_cast<const FunctionInfoF13F28&>(message);
+          const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::FuncInfoF13F28);
+          if(!replyAddress)
+            break; // We did not ask for function info, ignore it
+
+          // After receiving basic loco info, query super-higher functions
+          for(const Locomotive &loco : std::as_const(m_locomotives))
+          {
+            if(loco.address != replyAddress)
+              continue;
+
+            if((loco.flags & Locomotive::Flags::HasF29F68) == Locomotive::Flags::HasF29F68)
+              postQuery({replyAddress, PendingQuery::FuncInfoF29F68});
+            break;
+          }
+
+          EventLoop::call(
+            [this, replyAddress, funcInfoCopy=funcInfo13]()
+            {
+              try
+              {
+                if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(replyAddress), replyAddress))
+                {
+                  //Function get always updated because we do not store a copy in cache
+                  //so there is no way to tell in advance if they changed
+                  for(int i = 13; i <= 28; i++)
+                  {
+                    decoder->setFunctionValue(i, funcInfoCopy.getFunction(i));
+                  }
+                }
+              }
+              catch(...)
+              {
+
+              }
+            });
+          break;
+        }
+        break;
+      }
+      case SET_LOCO:
+      {
+        const auto& locoInstr = static_cast<const LocomotiveInstruction&>(message);
+        if((locoInstr.identification & LocomotiveInfo::identificationMask) == 0)
         {
           const auto& locoInfo = static_cast<const LocomotiveInfo&>(message);
 
@@ -474,6 +474,7 @@ void Kernel::receive(const Message& message)
 
               }
             });
+          break;
         }
 
         break;

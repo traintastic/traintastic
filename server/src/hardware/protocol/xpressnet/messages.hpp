@@ -1234,6 +1234,7 @@ struct LocomotiveBusy : LocomotiveInstruction
   LocomotiveBusy(uint16_t address)
     : LocomotiveInstruction(address)
   {
+    header = GET_LOCO_INFO;
     identification = idLocomotiveBusy;
     checksum = calcChecksum(*this);
   }

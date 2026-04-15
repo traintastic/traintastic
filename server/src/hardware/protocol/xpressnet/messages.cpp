@@ -170,6 +170,12 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
           s.append(" f").append(std::to_string(i)).append("=").append(funcInfo.getFunction(i) ? "1" : "0");
         break;
       }
+      case idLocomotiveBusy:
+      {
+        s = "LocomotiveBusy";
+        s.append(" address=").append(std::to_string(req.address()));
+        break;
+      }
       default:
         raw = true;
         break;
@@ -181,12 +187,6 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       const auto& req = static_cast<const LocomotiveInstruction&>(message);
       switch (req.identification)
       {
-      case idLocomotiveBusy:
-      {
-        s = "LocomotiveBusy";
-        s.append(" address=").append(std::to_string(req.address()));
-        break;
-      }
       case idSetSpeed14:
       case idSetSpeed27:
       case idSetSpeed28:
@@ -232,6 +232,7 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
           s.append(" address=").append(std::to_string(setFunc.address()));
           for(uint8_t i = funcMin; i <= funcMax; i++)
             s.append(" f").append(std::to_string(i)).append("=").append(setFunc.getFunction(i) ? "1" : "0");
+          break;
         }
         else if((req.identification & LocomotiveInfo::identificationMask) == 0)
         {
