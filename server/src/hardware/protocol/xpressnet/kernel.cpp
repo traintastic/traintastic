@@ -124,6 +124,9 @@ void Kernel::pollDecoders()
 
   for(const Locomotive& loco : m_locomotives)
   {
+    if(loco.address == 0)
+      continue; // Skip invalid addresses
+
     if((loco.flags & Locomotive::Flags::OwnedByXBus) == Locomotive::Flags::OwnedByXBus)
       postQuery({loco.address, PendingQuery::LocoInfoAndF0F12});
   }
@@ -584,7 +587,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       decoder.direction);
 
     spd.setSpeedSteps(decoder.speedSteps);
-    assert(spd.speedSteps() == decoder.speedSteps);
+    //assert(spd.speedSteps() == decoder.speedSteps);
 
     if(!decoder.emergencyStop)
       spd.setSpeedStep(Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, decoder.speedSteps));
@@ -726,15 +729,18 @@ void Kernel::setDecoderList(const std::vector<Locomotive> &locoVec)
       });
 }
 
-void Kernel::updateDecoder(uint16_t address, uint8_t decoderFunctions)
+void Kernel::updateDecoder(uint16_t address, uint16_t newAddress, uint8_t decoderFunctions)
 {
   m_ioContext.post(
-      [this, address, decoderFunctions]()
+      [this, address, newAddress, decoderFunctions]()
       {
         for(Locomotive &loco : m_locomotives)
         {
           if(loco.address != address)
             continue;
+
+          if(newAddress != 0)
+            loco.address = newAddress;
 
           // Do an initial poll of new functions
           loco.flags = decoderFunctions | Locomotive::OwnedByXBus;

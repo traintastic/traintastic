@@ -97,6 +97,7 @@ class XpressNetInterface final
     std::span<const uint8_t> decoderSpeedSteps(DecoderProtocol protocol) const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
     void decoderFunctionsChanged(const Decoder& decoder) final;
+    void decoderAddressChanged(const Decoder& decoder, uint16_t oldAddress, uint16_t newAddress) final;
 
     // InputController:
     std::span<const InputChannel> inputChannels() const final;

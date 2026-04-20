@@ -304,7 +304,7 @@ class Kernel : public ::KernelBase
     void sendHexMessage(const std::vector<uint8_t> &msgVec);
 
     void setDecoderList(const std::vector<Locomotive> &locoVec);
-    void updateDecoder(uint16_t address, uint8_t decoderFunctions);
+    void updateDecoder(uint16_t address, uint16_t newAddress = 0, uint8_t decoderFunctions = 0);
 };
 
 }

@@ -76,6 +76,7 @@ class Decoder : public IdObject
     void updateEditable(bool editable);
     void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);
     void functionsChanged();
+    void addressChanged(uint16_t oldAddress, uint16_t newAddress);
 
   public:
     CLASS_ID("decoder")

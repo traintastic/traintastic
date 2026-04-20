@@ -79,7 +79,12 @@ Decoder::Decoder(World& world, std::string_view _id) :
       protocolChanged();
       updateEditable();
     }},
-  address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
+  address{this, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
+    [this](uint16_t &newAddress) -> bool
+    {
+      addressChanged(address, newAddress);
+      return true;
+    }},
   mfxUID{this, "mfx_uid", 0, PropertyFlags::ReadWrite | PropertyFlags::Store},
   emergencyStop{this, "emergency_stop", false, PropertyFlags::ReadWrite,
     [this](const bool& /*value*/)
@@ -492,4 +497,10 @@ void Decoder::functionsChanged()
 {
   if(interface)
     interface->decoderFunctionsChanged(*this);
+}
+
+void Decoder::addressChanged(uint16_t oldAddress, uint16_t newAddress)
+{
+  if(interface)
+    interface->decoderAddressChanged(*this, oldAddress, newAddress);
 }

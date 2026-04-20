@@ -216,7 +216,7 @@ void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFla
 
 void XpressNetInterface::decoderFunctionsChanged(const Decoder &decoder)
 {
-  if(!m_kernel) //TODO: when decoder changes address? How to prevent duplicate addresses?
+  if(!m_kernel)
     return;
 
   const uint8_t bothFuncFlags = (XpressNet::Kernel::Locomotive::Flags::HasF13F28 | XpressNet::Kernel::Locomotive::Flags::HasF29F68);
@@ -232,7 +232,28 @@ void XpressNetInterface::decoderFunctionsChanged(const Decoder &decoder)
       break;
   }
 
-  m_kernel->updateDecoder(decoder.address, flags);
+  m_kernel->updateDecoder(decoder.address, 0, flags);
+}
+
+void XpressNetInterface::decoderAddressChanged(const Decoder &decoder, uint16_t oldAddress, uint16_t newAddress)
+{
+  if(!m_kernel)
+    return;
+
+  const uint8_t bothFuncFlags = (XpressNet::Kernel::Locomotive::Flags::HasF13F28 | XpressNet::Kernel::Locomotive::Flags::HasF29F68);
+  uint8_t flags = XpressNet::Kernel::Locomotive::Flags::None;
+  for(const auto& f : *decoder.functions)
+  {
+    if(f->number >= 29)
+      flags |= XpressNet::Kernel::Locomotive::Flags::HasF29F68;
+    else if(f->number >= 13)
+      flags |= XpressNet::Kernel::Locomotive::Flags::HasF13F28;
+
+    if((flags & bothFuncFlags) == bothFuncFlags)
+      break;
+  }
+
+  m_kernel->updateDecoder(oldAddress, newAddress, flags);
 }
 
 std::span<const InputChannel> XpressNetInterface::inputChannels() const

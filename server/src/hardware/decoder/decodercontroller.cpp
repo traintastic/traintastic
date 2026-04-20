@@ -133,6 +133,11 @@ void DecoderController::decoderFunctionsChanged(const Decoder &/*decoder*/)
 
 }
 
+void DecoderController::decoderAddressChanged(const Decoder &/*decoder*/, uint16_t /*oldAddress*/, uint16_t /*newAddress*/)
+{
+
+}
+
 void DecoderController::addToWorld()
 {
   auto& object = interface();
