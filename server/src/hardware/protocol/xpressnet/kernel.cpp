@@ -37,6 +37,13 @@ void Kernel::postQuery(const PendingQuery &query)
 {
   assert(query.address >= shortAddressMin && query.address <= longAddressMax);
 
+  if(query.type == PendingQuery::FuncInfoF29F68 && m_centralVersion < XNet_4_0)
+    return;
+
+  if(query.type == PendingQuery::FuncInfoF29F68 && m_centralVersion < XNet_3_6
+     && !m_config.useRocoF13F20Command)
+    return;
+
   for(const PendingQuery& other : std::as_const(m_pendingQueries))
   {
     if(other.address == query.address && other.type == query.type)
@@ -132,6 +139,16 @@ void Kernel::pollDecoders()
   }
 }
 
+void Kernel::setCentralVersion(uint8_t version)
+{
+  assert(isKernelThread());
+  m_centralVersion = CentralVersion(version);
+  EventLoop::call([this, version]()
+  {
+    m_centralVersionEventLoop = CentralVersion(version);
+  });
+}
+
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
   , m_simulation{simulation}
@@ -221,6 +238,8 @@ void Kernel::started()
   assert(isKernelThread());
 
   KernelBase::started();
+
+  send(QueryCentralVersion());
 
   pollDecoders();
 }
@@ -322,7 +341,23 @@ void Kernel::receive(const Message& message)
                 m_onTrackPowerChanged(true, false);
             }
           });
+      }
+      else if(message.header == REPLY_VERSION_2_3)
+      {
+        const auto& reply = static_cast<const CentralVersionReplyOLD&>(message);
+        if(reply.db1 == idCentralVersion)
+        {
+          setCentralVersion(reply.versionHex);
         }
+      }
+      else if(message.header == REPLY_VERSION_3_0)
+      {
+        const auto& reply = static_cast<const CentralVersionReplyV3&>(message);
+        if(reply.db1 == idCentralVersion)
+        {
+          setCentralVersion(reply.versionHex);
+        }
+      }
       break;
     }
     case 0x80:
@@ -600,7 +635,12 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
   else if(has(changes, DecoderChangeFlags::FunctionValue))
   {
-    uint8_t maxSupportedGroup = 10; // TODO: check command station version
+    uint8_t maxSupportedGroup = 3;
+    if(m_centralVersionEventLoop >= XNet_4_0)
+      maxSupportedGroup = 10;
+    else if(m_centralVersionEventLoop >= XNet_3_6)
+      maxSupportedGroup = 5;
+
     for(uint8_t group = 1; group <= maxSupportedGroup; group++)
     {
       const uint8_t minIndex = FunctionInstructionGroup::getMinFunctionIndex(group);
@@ -643,11 +683,23 @@ bool Kernel::setOutput(uint16_t address, OutputPairValue value)
   boost::asio::post(m_ioContext, 
     [this, address, value]()
     {
-      send(
-        AccessoryDecoderOperationRequest(
-          m_config.useRocoAccessoryAddressing ? address + 4 : address,
-          value == OutputPairValue::Second,
-          true));
+      if(m_centralVersion >= XNet_3_8)
+      {
+        send(
+          AccessoryDecoderOperationRequest(
+            m_config.useRocoAccessoryAddressing ? address + 4 : address,
+            value == OutputPairValue::Second,
+            true));
+      }
+      else if(address <= 1024)
+      {
+        send(
+          AccessoryDecoderOperationRequestOLD(
+            m_config.useRocoAccessoryAddressing ? address + 4 : address,
+            value == OutputPairValue::Second,
+            true));
+      }
+
     });
   return true;
 }

@@ -54,6 +54,7 @@ constexpr uint8_t idSetFuncGroup5 = 0x28;
 constexpr uint8_t idSetFuncGroup6 = 0x29;
 constexpr uint8_t idSetFuncGroup7 = 0x2A;
 constexpr uint8_t idSetFuncGroup8 = 0x2B;
+constexpr uint8_t idCentralVersion = idSetFuncGroup2;
 
 constexpr uint8_t idQueryFuncGroup4and5 = 0x09;
 constexpr uint8_t idQueryFuncGroup6above = 0x0B;
@@ -76,6 +77,8 @@ enum Header : uint8_t
   SET_ACCESSORY_OLD = 0x52,
   SET_ACCESSORY = 0x53,
   BC_HEADER = 0x61,
+  REPLY_VERSION_2_3 = 0x62,
+  REPLY_VERSION_3_0 = 0x63,
   SET_STOP_LOCO = 0x80,
   BC_STOPPED = 0x81,
   SET_STOP_LOCO_SINGLE = 0x92,
@@ -172,6 +175,65 @@ struct EmergencyStop : Message
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(EmergencyStop) == 3);
+
+// 2.7.1 Software version reply (OLD! up to Central version 2.3)
+struct CentralVersionReplyOLD : Message
+{
+  uint8_t db1 = idCentralVersion;
+  uint8_t versionHex = 0x00;
+  uint8_t checksum = 0x81;
+
+  CentralVersionReplyOLD(uint8_t versionHex_)
+  {
+    header = REPLY_VERSION_2_3;
+    versionHex = versionHex_;
+    updateChecksum();
+  }
+
+  uint8_t versionMajor() const
+  {
+    return (versionHex >> 4) & 0x0F;
+  }
+
+  uint8_t versionMinor() const
+  {
+    return versionHex & 0x0F;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(CentralVersionReplyOLD) == 4);
+
+// 2.7.2 Software version reply (from Central version 3.0)
+struct CentralVersionReplyV3 : Message
+{
+  uint8_t db1 = idCentralVersion;
+  uint8_t versionHex = 0x00;
+  uint8_t db_csId = 0x00;
+  uint8_t checksum = 0x81;
+
+  CentralVersionReplyV3(uint8_t versionHex_, uint8_t csId_)
+  {
+    header = REPLY_VERSION_2_3;
+    versionHex = versionHex_;
+    db_csId = csId_;
+    updateChecksum();
+  }
+
+  uint8_t versionMajor() const
+  {
+    return (versionHex >> 4) & 0x0F;
+  }
+
+  uint8_t versionMinor() const
+  {
+    return versionHex & 0x0F;
+  }
+
+  uint8_t commandStationId() const
+  {
+    return db_csId;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(CentralVersionReplyV3) == 5);
 
 // 2.13
 struct CommandStationBusy : Message
@@ -1240,6 +1302,19 @@ struct LocomotiveBusy : LocomotiveInstruction
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LocomotiveBusy) == 5);
+
+// 3.24 Software version request
+struct QueryCentralVersion : Message
+{
+  uint8_t db1 = idCentralVersion;
+  uint8_t checksum = 0x00;
+
+  QueryCentralVersion()
+  {
+    header = STOP_REQUEST;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(CentralVersionReplyOLD) == 4);
 
 // 3.40.3 Query Locomotive state (from Central version 3.0)
 struct QueryLocomotiveV3 : LocomotiveInstruction

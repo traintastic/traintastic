@@ -61,6 +61,10 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       {
         s = "STOP_OPERATIONS_REQUEST";
       }
+      else if(message == QueryCentralVersion())
+      {
+        s = "QUERY_CENTRAL_VERSION";
+      }
       else
         raw = true;
       break;
@@ -105,6 +109,38 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
         raw = true;
       break;
     }
+    case REPLY_VERSION_2_3:
+    {
+      const auto& reply = static_cast<const CentralVersionReplyOLD&>(message);
+      if(reply.db1 == idCentralVersion)
+      {
+        s = "CS_VERSION_OLD";
+        s.append(" version=");
+        s.append(std::to_string(reply.versionMajor()));
+        s.append(".");
+        s.append(std::to_string(reply.versionMinor()));
+      }
+      else
+        raw = true;
+      break;
+    }
+  case REPLY_VERSION_3_0:
+  {
+    const auto& reply = static_cast<const CentralVersionReplyV3&>(message);
+    if(reply.db1 == idCentralVersion)
+    {
+      s = "CS_VERSION_V3";
+      s.append(" version=");
+      s.append(std::to_string(reply.versionMajor()));
+      s.append(".");
+      s.append(std::to_string(reply.versionMinor()));
+      s.append(" id=");
+      s.append(std::to_string(reply.commandStationId()));
+    }
+    else
+      raw = true;
+    break;
+  }
     case SET_STOP_LOCO:
     {
       if(message == StopAllLocomotivesRequest())

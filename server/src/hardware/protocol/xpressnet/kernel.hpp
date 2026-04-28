@@ -50,7 +50,7 @@ class Kernel : public ::KernelBase
     static constexpr uint16_t inputAddressMin = 1;
     static constexpr uint16_t inputAddressMax = 2048;
     static constexpr uint16_t accessoryOutputAddressMin = 1;
-    static constexpr uint16_t accessoryOutputAddressMax = 1024;
+    static constexpr uint16_t accessoryOutputAddressMax = 2048; // TODO: depends on XBus version (1024 up to 3.6)
 
     struct Locomotive
     {
@@ -113,6 +113,18 @@ class Kernel : public ::KernelBase
 
     Config m_config;
 
+    enum CentralVersion : uint8_t
+    {
+        XNet_2_3 = 0x23,
+        XNet_3_0 = 0x30,
+        XNet_3_6 = 0x36,
+        XNet_3_8 = 0x38,
+        XNet_4_0 = 0x40
+    };
+
+    CentralVersion m_centralVersion = CentralVersion::XNet_3_0;
+    CentralVersion m_centralVersionEventLoop = CentralVersion::XNet_3_0;
+
     std::vector<PendingQuery> m_pendingQueries;
     boost::asio::steady_timer m_pendingQueryTimeout;
     boost::asio::steady_timer m_pollTimer;
@@ -125,6 +137,7 @@ class Kernel : public ::KernelBase
     void onPendingQueryTimeout(const boost::system::error_code &ec);
     uint16_t popAddressQuerySendNext(PendingQuery::QueryType type);
     void pollDecoders();
+    void setCentralVersion(uint8_t version);
 
     Kernel(std::string logId_, const Config& config, bool simulation);
 
