@@ -99,9 +99,9 @@ void Kernel::stop()
     [this]()
     {
       m_ioHandler->stop();
-    });
 
-  m_ioContext.stop();
+      m_ioContext.stop();
+    });
 
   m_thread.join();
 
