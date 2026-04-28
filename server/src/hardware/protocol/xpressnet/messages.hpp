@@ -65,7 +65,7 @@ constexpr uint8_t idSetFuncGroup10 = 0x51;
 constexpr uint8_t idReplyFuncF13F28 = 0x52;
 constexpr uint8_t idReplyFuncF29F68 = 0x53;
 
-constexpr uint8_t idLocomotiveBusy = 0xE4;
+constexpr uint8_t idLocomotiveBusy = 0x40;
 constexpr uint8_t idSetFuncGroup4_Roco = 0xF3;
 
 enum Header : uint8_t

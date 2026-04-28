@@ -173,7 +173,7 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       case idLocomotiveBusy:
       {
         s = "LocomotiveBusy";
-        s.append(" address=").append(std::to_string(req.address()));
+        s.append(" address=").append(std::to_string(fakeReq.address()));
         break;
       }
       default:
