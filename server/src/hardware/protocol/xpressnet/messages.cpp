@@ -68,7 +68,7 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
     case SET_ACCESSORY_OLD:
     {
       const auto& req = static_cast<const AccessoryDecoderOperationRequestOLD&>(message);
-      s.append("AccessoryDecoderOperationRequestOLD");
+      s = "AccessoryDecoderOperationRequestOLD";
       s.append(" address=").append(std::to_string(req.address()));
       s.append(" port=").append(req.port() ? "2" : "1");
       s.append(req.activate() ? " activate" : " deactivate");
@@ -77,7 +77,7 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
     case SET_ACCESSORY:
     {
       const auto& req = static_cast<const AccessoryDecoderOperationRequest&>(message);
-      s.append("AccessoryDecoderOperationRequest");
+      s = "AccessoryDecoderOperationRequest";
       s.append(" address=").append(std::to_string(req.address()));
       s.append(" port=").append(req.port() ? "2" : "1");
       s.append(req.activate() ? " activate" : " deactivate");
