@@ -24,6 +24,7 @@
 
 #ifdef USE_FMT
   #include <fmt/core.h>
+  #include <fmt/chrono.h>
   namespace std {
     using fmt::format;
   }
