@@ -25,6 +25,7 @@
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../protocol/dcc/dcc.hpp"
+#include "../../output/outputcontroller.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../core/eventloop.hpp"
@@ -275,12 +276,34 @@ void Kernel::receive(const Message& message)
         switch(pair.type())
         {
           case FeedbackBroadcast::Pair::Type::AccessoryDecoderWithoutFeedback:
-            break; // not yet implemented
-
           case FeedbackBroadcast::Pair::Type::AccessoryDecoderWithFeedback:
-            break; // not yet implemented
+          {
+            if(m_outputController)
+            {
+              const uint16_t baseAddress = pair.groupAddress() * 2;
 
+              for(uint16_t j = 0; j < 2; j++)
+              {
+                const uint16_t fullAddress = baseAddress + j;
+                const uint8_t status = (pair.statusNibble() >> (j * 2)) & 0x03;
+
+                OutputPairValue value = OutputPairValue::Undefined;
+                if(status == 1)
+                  value = OutputPairValue::First;
+                else if(status == 2)
+                  value = OutputPairValue::Second;
+
+                EventLoop::call(
+                  [this, address=1 + fullAddress, value]()
+                  {
+                    m_outputController->updateOutputValue(OutputChannel::Accessory, OutputAddress(address), value);
+                  });
+              }
+            }
+            break;
+          }
           case FeedbackBroadcast::Pair::Type::FeedbackModule:
+          {
             if(m_inputController)
             {
               const uint16_t baseAddress = pair.groupAddress() << 2;
@@ -309,7 +332,7 @@ void Kernel::receive(const Message& message)
               }
             }
             break;
-
+          }
           case FeedbackBroadcast::Pair::Type::ReservedForFutureUse:
             break;
         }
