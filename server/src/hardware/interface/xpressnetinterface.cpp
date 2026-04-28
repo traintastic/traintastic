@@ -38,6 +38,7 @@
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
+#include "../../utils/category.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
 #include "../../utils/makearray.hpp"
@@ -96,6 +97,8 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   , s88StartAddress{this, "s88_start_address", XpressNet::RoSoftS88XpressNetLI::S88StartAddress::startAddressDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88ModuleCount{this, "s88_module_count", XpressNet::RoSoftS88XpressNetLI::S88ModuleCount::moduleCountDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
+  , xbusVersion{this, "xbus_version", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , commandStationType{this, "command_station_type", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , luaSendMsg{*this, "send_msg", MethodFlags::ScriptCallable,
       [this](const std::string &msgHexStr)
       {
@@ -158,6 +161,12 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(inputs, notes);
 
   m_interfaceItems.insertBefore(outputs, notes);
+
+  Attributes::addCategory(xbusVersion, Category::info);
+  m_interfaceItems.insertBefore(xbusVersion, notes);
+
+  Attributes::addCategory(commandStationType, Category::info);
+  m_interfaceItems.insertBefore(commandStationType, notes);
 
   m_interfaceItems.add(luaSendMsg);
 
@@ -356,6 +365,20 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
           setState(InterfaceState::Error);
           online = false; // communication no longer possible
         });
+      m_kernel->setOnHardwareInfoChanged(
+        [this](XpressNet::HardwareType hwType, uint8_t versionMajor, uint8_t versionMinor)
+        {
+          commandStationType.setValueInternal(std::string(XpressNet::toString(hwType)));
+          Log::log(*this, LogMessage::I2002_HARDWARE_TYPE_X, commandStationType.value());
+
+          if(versionMajor != 0)
+          {
+            xbusVersion.setValueInternal(std::to_string(versionMajor).append(".").append(std::to_string(versionMinor)));
+            Log::log(*this, LogMessage::I2003_FIRMWARE_VERSION_X, xbusVersion.value());
+          }
+          else
+            xbusVersion.setValueInternal("");
+        });
       m_kernel->setOnTrackPowerChanged(
         [this](bool powerOn, bool isStopped)
         {
@@ -431,6 +454,8 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
     EventLoop::deleteLater(m_kernel.release());
 
     setState(InterfaceState::Offline);
+    xbusVersion.setValueInternal("");
+    commandStationType.setValueInternal("");
   }
   return true;
 }

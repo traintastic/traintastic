@@ -116,9 +116,9 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       {
         s = "CS_VERSION_OLD";
         s.append(" version=");
-        s.append(std::to_string(reply.versionMajor()));
+        s.append(std::to_string(xbusVersionMajor(reply.versionHex)));
         s.append(".");
-        s.append(std::to_string(reply.versionMinor()));
+        s.append(std::to_string(xbusVersionMinor(reply.versionHex)));
       }
       else
         raw = true;
@@ -131,9 +131,9 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
     {
       s = "CS_VERSION_V3";
       s.append(" version=");
-      s.append(std::to_string(reply.versionMajor()));
+      s.append(std::to_string(xbusVersionMajor(reply.versionHex)));
       s.append(".");
-      s.append(std::to_string(reply.versionMinor()));
+      s.append(std::to_string(xbusVersionMinor(reply.versionHex)));
       s.append(" id=");
       s.append(std::to_string(reply.commandStationId()));
     }

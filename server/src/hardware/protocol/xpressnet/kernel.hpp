@@ -43,6 +43,7 @@ class OutputController;
 namespace XpressNet {
 
 struct Message;
+enum HardwareType : uint8_t;
 
 class Kernel : public ::KernelBase
 {
@@ -70,6 +71,8 @@ class Kernel : public ::KernelBase
   private:
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
+
+    std::function<void(HardwareType, uint8_t, uint8_t)> m_onHardwareInfoChanged;
 
     /*!
      * \brief m_trackPowerOn caches command station track power state.
@@ -137,7 +140,7 @@ class Kernel : public ::KernelBase
     void onPendingQueryTimeout(const boost::system::error_code &ec);
     uint16_t popAddressQuerySendNext(PendingQuery::QueryType type);
     void pollDecoders();
-    void setCentralVersion(uint8_t version);
+    void setCentralVersion(uint8_t version, uint8_t commandStationId);
 
     Kernel(std::string logId_, const Config& config, bool simulation);
 
@@ -201,6 +204,17 @@ class Kernel : public ::KernelBase
      * @param[in] config The XpressNet configuration
      */
     void setConfig(const Config& config);
+
+    /**
+     * @brief ...
+     * @param[in] callback ...
+     * @note This function may not be called when the kernel is running.
+     */
+    inline void setOnHardwareInfoChanged(std::function<void(HardwareType, uint8_t, uint8_t)> callback)
+    {
+      assert(!m_started);
+      m_onHardwareInfoChanged = std::move(callback);
+    }
 
     /**
      * @brief ...

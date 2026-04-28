@@ -85,6 +85,8 @@ class XpressNetInterface final
     Property<uint8_t> s88StartAddress;
     Property<uint8_t> s88ModuleCount;
     ObjectProperty<XpressNet::Settings> xpressnet;
+    Property<std::string> xbusVersion;
+    Property<std::string> commandStationType;
 
     Method<void(std::string)> luaSendMsg;
 

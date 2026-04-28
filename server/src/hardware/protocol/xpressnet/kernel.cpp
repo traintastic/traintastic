@@ -139,13 +139,18 @@ void Kernel::pollDecoders()
   }
 }
 
-void Kernel::setCentralVersion(uint8_t version)
+void Kernel::setCentralVersion(uint8_t version, uint8_t commandStationId)
 {
   assert(isKernelThread());
   m_centralVersion = CentralVersion(version);
-  EventLoop::call([this, version]()
+  EventLoop::call([this, version, commandStationId]()
   {
     m_centralVersionEventLoop = CentralVersion(version);
+
+    if(m_onHardwareInfoChanged)
+      m_onHardwareInfoChanged(HardwareType(commandStationId),
+                              xbusVersionMajor(version),
+                              xbusVersionMinor(version));
   });
 }
 
@@ -347,7 +352,7 @@ void Kernel::receive(const Message& message)
         const auto& reply = static_cast<const CentralVersionReplyOLD&>(message);
         if(reply.db1 == idCentralVersion)
         {
-          setCentralVersion(reply.versionHex);
+          setCentralVersion(reply.versionHex, HardwareType::HWT_UNKNOWN);
         }
       }
       else if(message.header == REPLY_VERSION_3_0)
@@ -355,7 +360,7 @@ void Kernel::receive(const Message& message)
         const auto& reply = static_cast<const CentralVersionReplyV3&>(message);
         if(reply.db1 == idCentralVersion)
         {
-          setCentralVersion(reply.versionHex);
+          setCentralVersion(reply.versionHex, reply.commandStationId());
         }
       }
       break;

@@ -40,6 +40,16 @@ struct PendingQuery
   QueryType type = QueryType::LocoInfoAndF0F12;
 };
 
+static constexpr uint8_t xbusVersionMajor(uint8_t versionHex)
+{
+  return (versionHex >> 4) & 0x0F;
+}
+
+static constexpr uint8_t xbusVersionMinor(uint8_t versionHex)
+{
+  return versionHex & 0x0F;
+}
+
 }
 
 #endif

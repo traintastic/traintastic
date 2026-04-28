@@ -88,6 +88,39 @@ enum Header : uint8_t
   LOCO_INFO = 0xEF
 };
 
+enum HardwareType : uint8_t
+{
+  HWT_LZ100 = 0x00,
+  HWT_LZ200 = 0x01,
+  HWT_DPC = 0x02,
+  HWT_multiMAUS = 0x10,
+  HWT_UNKNOWN = 0xFF
+};
+
+constexpr std::string_view toString(HardwareType value)
+{
+  switch(value)
+  {
+    case HWT_LZ100:
+      return "Lenz LZ100";
+
+    case HWT_LZ200:
+      return "Lenz LZ200";
+
+    case HWT_DPC:
+      return "Lenz DPC (Compact und Commander)";
+
+    case HWT_multiMAUS:
+      return "ROCO multiMAUS";
+
+    case HWT_UNKNOWN:
+    default:
+      break;
+  }
+
+  return {};
+}
+
 struct Message;
 
 inline uint8_t calcChecksum(const Message& msg);
@@ -189,16 +222,6 @@ struct CentralVersionReplyOLD : Message
     versionHex = versionHex_;
     updateChecksum();
   }
-
-  uint8_t versionMajor() const
-  {
-    return (versionHex >> 4) & 0x0F;
-  }
-
-  uint8_t versionMinor() const
-  {
-    return versionHex & 0x0F;
-  }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(CentralVersionReplyOLD) == 4);
 
@@ -218,19 +241,9 @@ struct CentralVersionReplyV3 : Message
     updateChecksum();
   }
 
-  uint8_t versionMajor() const
+  HardwareType commandStationId() const
   {
-    return (versionHex >> 4) & 0x0F;
-  }
-
-  uint8_t versionMinor() const
-  {
-    return versionHex & 0x0F;
-  }
-
-  uint8_t commandStationId() const
-  {
-    return db_csId;
+    return HardwareType(db_csId);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(CentralVersionReplyV3) == 5);
