@@ -414,11 +414,8 @@ FeedbackMap::InputConnectionPair FeedbackMap::getInput(InputChannel ch, const In
   if(!input)
     return {};
 
-  boost::signals2::connection conn = input->onValueChanged.connect(
-    [this](bool, const std::shared_ptr<Input>&)
-    {
-      inputValueChanged();
-    });
+  boost::signals2::connection conn = input->onValueChanged.connect(std::bind_front(&FeedbackMap::inputValueChanged, this));
+
   return {input, conn};
 }
 
@@ -440,12 +437,34 @@ void FeedbackMap::releaseInputs(Inputs& inputs)
   }
 }
 
-void FeedbackMap::inputValueChanged()
+void FeedbackMap::inputValueChanged(bool value, const std::shared_ptr<Input>& input)
 {
+  const size_t invalidIndex = std::numeric_limits<size_t>::max();
+  size_t inputIndex = invalidIndex;
+  for(size_t i = 0; i < m_inputs.size(); ++i)
+  {
+    if(m_inputs[i].first == input)
+    {
+      inputIndex = i;
+      break;
+    }
+  }
+  if(inputIndex == invalidIndex) [[unlikely]]
+  {
+    assert(false);
+    return;
+  }
+
+  const auto condition = value ? InputCondition::On : InputCondition::Off;
   size_t matchCount = 0;
   size_t matchIndex = 0;
   for(size_t i = 0; i < items.size(); ++i)
   {
+    if(items[i]->inputConditions[inputIndex]->condition.value() != condition)
+    {
+      continue; // eliminate when condition does not match
+    }
+
     if(items[i]->matches())
     {
       matchCount++;
