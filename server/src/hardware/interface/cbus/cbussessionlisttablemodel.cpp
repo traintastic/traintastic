@@ -24,41 +24,42 @@
 #include "../../../compat/stdformat.hpp"
 #include "../../../utils/utf8.hpp"
 
-constexpr uint32_t columnSession = 0;
-constexpr uint32_t columnAddress = 1;
-constexpr uint32_t columnLong = 2;
-constexpr uint32_t columnSpeed = 3;
-constexpr uint32_t columnDirection = 4;
-constexpr uint32_t columnF0 = 5;
-constexpr uint32_t columnF1 = 6;
-constexpr uint32_t columnF2 = 7;
-constexpr uint32_t columnF3 = 8;
-constexpr uint32_t columnF4 = 9;
-constexpr uint32_t columnF5 = 10;
-constexpr uint32_t columnF6 = 11;
-constexpr uint32_t columnF7 = 12;
-constexpr uint32_t columnF8 = 13;
-constexpr uint32_t columnF9 = 14;
-constexpr uint32_t columnF10 = 15;
-constexpr uint32_t columnF11 = 16;
-constexpr uint32_t columnF12 = 17;
-constexpr uint32_t columnF13 = 18;
-constexpr uint32_t columnF14 = 19;
-constexpr uint32_t columnF15 = 20;
-constexpr uint32_t columnF16 = 21;
-constexpr uint32_t columnF17 = 22;
-constexpr uint32_t columnF18 = 23;
-constexpr uint32_t columnF19 = 24;
-constexpr uint32_t columnF20 = 25;
-constexpr uint32_t columnF21 = 26;
-constexpr uint32_t columnF22 = 27;
-constexpr uint32_t columnF23 = 28;
-constexpr uint32_t columnF24 = 29;
-constexpr uint32_t columnF25 = 30;
-constexpr uint32_t columnF26 = 31;
-constexpr uint32_t columnF27 = 32;
-constexpr uint32_t columnF28 = 33;
-constexpr uint32_t columnSteps = 34;
+constexpr uint32_t columnAddress = 0;
+constexpr uint32_t columnLong = 1;
+constexpr uint32_t columnSession = 2;
+constexpr uint32_t columnControlledBy = 3;
+constexpr uint32_t columnSpeed = 4;
+constexpr uint32_t columnDirection = 5;
+constexpr uint32_t columnF0 = 6;
+constexpr uint32_t columnF1 = 7;
+constexpr uint32_t columnF2 = 8;
+constexpr uint32_t columnF3 = 9;
+constexpr uint32_t columnF4 = 10;
+constexpr uint32_t columnF5 = 11;
+constexpr uint32_t columnF6 = 12;
+constexpr uint32_t columnF7 = 13;
+constexpr uint32_t columnF8 = 14;
+constexpr uint32_t columnF9 = 15;
+constexpr uint32_t columnF10 = 16;
+constexpr uint32_t columnF11 = 17;
+constexpr uint32_t columnF12 = 18;
+constexpr uint32_t columnF13 = 19;
+constexpr uint32_t columnF14 = 20;
+constexpr uint32_t columnF15 = 21;
+constexpr uint32_t columnF16 = 22;
+constexpr uint32_t columnF17 = 23;
+constexpr uint32_t columnF18 = 24;
+constexpr uint32_t columnF19 = 25;
+constexpr uint32_t columnF20 = 26;
+constexpr uint32_t columnF21 = 27;
+constexpr uint32_t columnF22 = 28;
+constexpr uint32_t columnF23 = 29;
+constexpr uint32_t columnF24 = 30;
+constexpr uint32_t columnF25 = 31;
+constexpr uint32_t columnF26 = 32;
+constexpr uint32_t columnF27 = 33;
+constexpr uint32_t columnF28 = 34;
+constexpr uint32_t columnSteps = 35;
 
 CBUSSessionListTableModel::CBUSSessionListTableModel(CBUSSessionList& list)
   : m_list{list.shared_ptr<CBUSSessionList>()}
@@ -67,9 +68,10 @@ CBUSSessionListTableModel::CBUSSessionListTableModel(CBUSSessionList& list)
   m_list->m_models.push_back(this);
 
   setColumnHeaders({
-    std::string_view{"cbus_session_list:session"},
     std::string_view{"hardware:address"},
     std::string_view{"cbus_session_list:long"},
+    std::string_view{"cbus_session_list:session"},
+    std::string_view{"cbus_session_list:controlled_by"},
     std::string_view{"cbus_session_list:speed"},
     std::string_view{"cbus_session_list:direction"},
     std::string_view{"function:f0"},
@@ -122,6 +124,13 @@ std::string CBUSSessionListTableModel::getText(uint32_t column, uint32_t row) co
 
     switch(column)
     {
+
+      case columnAddress:
+        return std::to_string(session.address);
+
+      case columnLong:
+        return session.isLongAddress ? UTF8_CHECKMARK : "";
+
       case columnSession:
         if(session.session)
         {
@@ -129,11 +138,12 @@ std::string CBUSSessionListTableModel::getText(uint32_t column, uint32_t row) co
         }
         break;
 
-      case columnAddress:
-        return std::to_string(session.address);
-
-      case columnLong:
-        return session.isLongAddress ? UTF8_CHECKMARK : "";
+      case columnControlledBy:
+        if(session.external)
+        {
+          return *session.external ? "CBUS/VLCB" : "Traintastic";
+        }
+        break;
 
       case columnSpeed:
         if(session.speed)

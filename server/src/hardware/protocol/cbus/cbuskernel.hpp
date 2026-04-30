@@ -32,16 +32,13 @@
 #include <traintastic/enum/direction.hpp>
 #include "cbusconfig.hpp"
 #include "iohandler/cbusiohandler.hpp"
+#include "messages/cbusenginemessages.hpp"
 #include "messages/cbusnodeparametermessages.hpp"
 #include "../dcc/messages.hpp"
 
 namespace CBUS {
 
 class IOHub;
-struct SetEngineFunction;
-struct SetEngineFunctions;
-struct SetEngineSpeedDirection;
-struct ReleaseEngine;
 
 class Kernel : public ::KernelBase
 {
@@ -51,7 +48,7 @@ public:
   std::function<void()> onTrackOff;
   std::function<void()> onTrackOn;
   std::function<void()> onEmergencyStop;
-  std::function<void(uint8_t session, uint16_t address, bool isLongAddress)> onEngineSessionAcquire;
+  std::function<void(uint8_t session, bool external, uint16_t address, bool isLongAddress)> onEngineSessionAcquire;
   std::function<void(uint8_t session, uint8_t speed, bool forward)> onEngineSpeedDirectionChanged;
   std::function<void(uint8_t session, uint8_t number, bool on)> onEngineFunctionChanged;
   std::function<void(uint8_t session)> onEngineSessionReleased;
@@ -139,9 +136,16 @@ private:
     Started // must be last
   };
 
+  enum class Owner
+  {
+    Traintastic = 1,
+    CBUS = 2,
+  };
+
   struct Engine
   {
     std::optional<uint8_t> session;
+    Owner owner;
     uint8_t speed = 0;
     uint8_t speedSteps = 126;
     bool directionForward = true;
@@ -169,7 +173,7 @@ private:
   bool m_engineKeepAliveTimerActive = false;
   boost::asio::steady_timer m_engineKeepAliveTimer;
   std::map<uint16_t, Engine> m_engines;
-  std::set<uint16_t> m_engineGLOCs;
+  std::map<uint16_t, Owner> m_engineGLOCs;
   std::queue<std::pair<std::chrono::steady_clock::time_point, DCC::SetSimpleAccessory>> m_dccAccessoryQueue;
   boost::asio::steady_timer m_dccAccessoryTimer;
 
@@ -187,6 +191,7 @@ private:
   void sendSetEngineFunction(uint8_t session, uint8_t number, bool value);
 
   void receive(const CAN::Message& canMessage);
+  void receiveGLOC(uint16_t address, bool longAddress, GetEngineSession::Mode mode);
   void receiveDFUN(const SetEngineFunctions& message);
   void receiveDFNOx(const SetEngineFunction& message);
   void receiveDSPD(const SetEngineSpeedDirection& message);

@@ -542,16 +542,17 @@ bool CBUSInterface::setOnline(bool& value, bool simulation)
           }
         };
       m_kernel->onEngineSessionAcquire =
-        [this](uint8_t session, uint16_t address, bool isLongAddress)
+        [this](uint8_t session, bool external, uint16_t address, bool isLongAddress)
         {
           if(auto it = cbusSessionList->findEngine(address, isLongAddress); it != cbusSessionList->end())
           {
             it->session = session;
+            it->external = external;
             cbusSessionList->rowChanged(static_cast<uint32_t>(std::distance(cbusSessionList->begin(), it)));
           }
           else
           {
-            cbusSessionList->add({session, address, isLongAddress});
+            cbusSessionList->add({session, external, address, isLongAddress});
           }
         };
       m_kernel->onEngineSpeedDirectionChanged =
@@ -580,6 +581,7 @@ bool CBUSInterface::setOnline(bool& value, bool simulation)
           if(auto it = cbusSessionList->findSession(session); it != cbusSessionList->end())
           {
             it->session = std::nullopt;
+            it->external = std::nullopt;
             cbusSessionList->rowChanged(static_cast<uint32_t>(std::distance(cbusSessionList->begin(), it)));
           }
         };

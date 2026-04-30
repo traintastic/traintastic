@@ -43,15 +43,17 @@ public:
     std::optional<uint8_t> session;
     uint16_t address;
     bool isLongAddress;
+    std::optional<bool> external;
     std::optional<uint8_t> speed;
     Direction direction = Direction::Unknown;
     std::array<TriState, 29> functions;
     uint8_t steps = 128;
 
-    Session(uint8_t session_, uint16_t address_, bool isLongAddress_)
+    Session(uint8_t session_, bool external_, uint16_t address_, bool isLongAddress_)
       : session{session_}
       , address{address_}
       , isLongAddress{isLongAddress_}
+      , external{external_}
     {
       std::fill(functions.begin(), functions.end(), TriState::Undefined);
     }

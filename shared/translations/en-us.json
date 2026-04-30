@@ -320,6 +320,10 @@
         "definition": "Version"
     },
     {
+        "term": "cbus_session_list:controlled_by",
+        "definition": "Controlled by"
+    },
+    {
         "term": "cbus_session_list:direction",
         "definition": "Direction"
     },
