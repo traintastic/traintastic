@@ -581,12 +581,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - name: "package appimages (x86_64)"
+        - name: "ubuntu_24.04"
           os: ubuntu-24.04
           arch: x86_64
           run_apt: true
 
-        - name: "package appimages (arm64)"
+        - name: "raspberrypios_arm64"
           os: [self-hosted, ARM64, RaspberryPi]
           arch: arm64
           run_apt: false
@@ -610,13 +610,13 @@ jobs:
     - name: "Download: traintastic-client"
       uses: actions/download-artifact@v4
       with:
-        name: traintastic-client-ubuntu_24.04
+        name: traintastic-client-${{matrix.config.name}}
         path: ${{github.workspace}}/client/build
 
     - name: "Download: traintastic-server"
       uses: actions/download-artifact@v4
       with:
-        name: traintastic-server-ubuntu_24.04
+        name: traintastic-server-${{matrix.config.name}}
         path: ${{github.workspace}}/server/build
 
     - name: "Download: translations"
