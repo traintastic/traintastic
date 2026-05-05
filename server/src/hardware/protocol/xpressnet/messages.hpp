@@ -214,7 +214,7 @@ struct CentralVersionReplyOLD : Message
 {
   uint8_t db1 = idCentralVersion;
   uint8_t versionHex = 0x00;
-  uint8_t checksum = 0x81;
+  uint8_t checksum = 0;
 
   CentralVersionReplyOLD(uint8_t versionHex_)
   {
@@ -231,7 +231,7 @@ struct CentralVersionReplyV3 : Message
   uint8_t db1 = idCentralVersion;
   uint8_t versionHex = 0x00;
   uint8_t db_csId = 0x00;
-  uint8_t checksum = 0x81;
+  uint8_t checksum = 0;
 
   CentralVersionReplyV3(uint8_t versionHex_, uint8_t csId_)
   {
