@@ -235,7 +235,7 @@ struct CentralVersionReplyV3 : Message
 
   CentralVersionReplyV3(uint8_t versionHex_, uint8_t csId_)
   {
-    header = REPLY_VERSION_2_3;
+    header = REPLY_VERSION_3_0;
     versionHex = versionHex_;
     db_csId = csId_;
     updateChecksum();
