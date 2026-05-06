@@ -61,7 +61,7 @@ SOURCE_LANG="../../shared/translations"
 SOURCE_MANUAL="../../manual"
 SOURCE_LNCVXML="../../shared/data/lncv/xml"
 
-# Copy the build files also to TraintasticApp
+# Create output directory
 if [ ! -d $OUTDIR ];then
     mkdir $OUTDIR
 fi
@@ -141,18 +141,18 @@ if [[ -f "$SOURCE_SERVER" && -f "$SOURCE_CLIENT" ]]; then
     if [ "$MODE" = "client" ];then
         cp "$SOURCE_CLIENT" "$APP_DIR/usr/bin/traintastic-client"
         chmod +x "$APP_DIR/usr/bin/traintastic-client"
-        cp "$SOURCE_CLIENT" $OUTDIR
+        # cp "$SOURCE_CLIENT" $OUTDIR
     elif [ "$MODE" = "server" ];then
         cp "$SOURCE_SERVER" "$APP_DIR/usr/bin/traintastic-server"
         chmod +x "$APP_DIR/usr/bin/traintastic-server"
-        cp "$SOURCE_SERVER" $OUTDIR
+        # cp "$SOURCE_SERVER" $OUTDIR
     else
         cp "$SOURCE_CLIENT" "$APP_DIR/usr/bin/traintastic-client"
         chmod +x "$APP_DIR/usr/bin/traintastic-client"
         cp "$SOURCE_SERVER" "$APP_DIR/usr/bin/traintastic-server"
         chmod +x "$APP_DIR/usr/bin/traintastic-server"
-        cp "$SOURCE_CLIENT" $OUTDIR
-        cp "$SOURCE_SERVER" $OUTDIR
+        # cp "$SOURCE_CLIENT" $OUTDIR
+        # cp "$SOURCE_SERVER" $OUTDIR
     fi
     echo "[OK] binary files copied"
 else
@@ -163,6 +163,16 @@ fi
 if [ "$MODE" = "both" ]; then
 cat << 'EOF' > "$APP_DIR/AppRun"
 #!/bin/bash
+unset QT_PLUGIN_PATH
+unset QT_QPA_PLATFORM_PLUGIN_PATH
+unset QML2_IMPORT_PATH
+unset QT_STYLE_OVERRIDE
+unset QT_QPA_PLATFORMTHEME
+export QT_PLUGIN_PATH="$APPDIR/usr/plugins"
+export QT_QPA_PLATFORM_PLUGIN_PATH="$APPDIR/usr/plugins/platforms"
+export LD_LIBRARY_PATH="$APPDIR/usr/lib:$APPDIR/usr/lib/x86_64-linux-gnu"
+unset QT_PLUGIN_PATH_SYSTEM
+unset QT_QPA_PLATFORM_PLUGIN_PATH_SYSTEM
 HERE="$(dirname "$(readlink -f "${0}")")"
 export TRAINTASTIC_LOCALE_PATH="$APPDIR/traintastic/translations"
 export TRAINTASTIC_MANUAL_PATH="$APPDIR/traintastic/manual"
@@ -182,10 +192,20 @@ EOF
 elif [ "$MODE" = "server" ]; then
 cat << 'EOF' > "$APP_DIR/AppRun"
 #!/bin/bash
+unset QT_PLUGIN_PATH
+unset QT_QPA_PLATFORM_PLUGIN_PATH
+unset QML2_IMPORT_PATH
+unset QT_STYLE_OVERRIDE
+unset QT_QPA_PLATFORMTHEME
+export QT_PLUGIN_PATH="$APPDIR/usr/plugins"
+export QT_QPA_PLATFORM_PLUGIN_PATH="$APPDIR/usr/plugins/platforms"
+export LD_LIBRARY_PATH="$APPDIR/usr/lib:$APPDIR/usr/lib/x86_64-linux-gnu"
+unset QT_PLUGIN_PATH_SYSTEM
+unset QT_QPA_PLATFORM_PLUGIN_PATH_SYSTEM
 HERE="$(dirname "$(readlink -f "${0}")")"
 export TRAINTASTIC_LOCALE_PATH="$APPDIR/traintastic/translations"
 export TRAINTASTIC_MANUAL_PATH="$APPDIR/traintastic/manual"
-LOGDIR="$HOME/.traintastic"
+LOGDIR="$HOME/.config/traintastic-server/log"
 mkdir -p "$LOGDIR"
 # run server in foreground
 exec "$HERE/usr/bin/traintastic-server" "$@"
@@ -194,6 +214,16 @@ EOF
 elif [ "$MODE" = "client" ]; then
 cat << 'EOF' > "$APP_DIR/AppRun"
 #!/bin/bash
+unset QT_PLUGIN_PATH
+unset QT_QPA_PLATFORM_PLUGIN_PATH
+unset QML2_IMPORT_PATH
+unset QT_STYLE_OVERRIDE
+unset QT_QPA_PLATFORMTHEME
+export QT_PLUGIN_PATH="$APPDIR/usr/plugins"
+export QT_QPA_PLATFORM_PLUGIN_PATH="$APPDIR/usr/plugins/platforms"
+export LD_LIBRARY_PATH="$APPDIR/usr/lib:$APPDIR/usr/lib/x86_64-linux-gnu"
+unset QT_PLUGIN_PATH_SYSTEM
+unset QT_QPA_PLATFORM_PLUGIN_PATH_SYSTEM
 HERE="$(dirname "$(readlink -f "${0}")")"
 export TRAINTASTIC_LOCALE_PATH="$APPDIR/traintastic/translations"
 export TRAINTASTIC_MANUAL_PATH="$APPDIR/traintastic/manual"
@@ -222,6 +252,7 @@ echo "[OK] traintastic.desktop created for $MODE"
 # copy app icon
 if [[ -f "$SOURCE_ICON" ]]; then
     cp "$SOURCE_ICON" "$APP_DIR/usr/share/icons/hicolor/256x256/apps/traintastic.png"
+    ln -s "$APP_DIR/usr/share/icons/hicolor/256x256/apps/traintastic.png" "$APP_DIR/.DirIcon"
 else
     # Fallback: if no icon exists, create an empty icon
     touch "$APP_DIR/usr/share/icons/hicolor/256x256/apps/traintastic.png"
@@ -247,12 +278,23 @@ if [ ! -f "./${LINUXDEPLOY}" ]; then
     wget -q "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/${LINUXDEPLOY}"
     chmod +x "${LINUXDEPLOY}"
 fi
+QTPLUGIN="linuxdeploy-plugin-qt-${ARCH}.AppImage"
+if [ ! -f "./${QTPLUGIN}" ]; then
+    echo "download linuxdeploy qt plugin"
+    wget -q "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/${QTPLUGIN}"
+    chmod +x "${QTPLUGIN}"
+fi
+export LINUXDEPLOY_PLUGIN_QT="./linuxdeploy-plugin-qt-${ARCH}.AppImage"
+export QMAKE=/usr/bin/qmake6
 # Build the image with linuxdeploy
 echo "Build the AppImage with ${LINUXDEPLOY}"
-
 export ARCH
-"./${LINUXDEPLOY}" --appdir "$APP_DIR" --output appimage
 
+if [ "$MODE" = "server" ];then
+    "./${LINUXDEPLOY}" --appdir "$APP_DIR" --output appimage
+else
+    "./${LINUXDEPLOY}" --appdir "$APP_DIR" --plugin qt --output appimage
+fi
 # Copy generated appimage
 APPIMAGE_FILE=$(find . -maxdepth 1 -name "$APP_NAME*.AppImage" | head -n 1)
 if [ -n "$APPIMAGE_FILE" ]; then
