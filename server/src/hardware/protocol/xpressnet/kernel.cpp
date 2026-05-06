@@ -41,8 +41,11 @@ void Kernel::postQuery(const PendingQuery &query)
   if(query.type == PendingQuery::FuncInfoF29F68 && m_centralVersion < XNet_4_0)
     return;
 
-  if(query.type == PendingQuery::FuncInfoF29F68 && m_centralVersion < XNet_3_6
-     && !m_config.useRocoF13F20Command)
+  if(query.type == PendingQuery::FuncInfoF13F28 && m_centralVersion < XNet_3_6)
+    return;
+
+  if(query.type == PendingQuery::ROCOCumulativeLocoInfo
+      && (m_centralVersion < XNet_3_0 || !m_config.useRocoF13F20Command))
     return;
 
   for(const PendingQuery& other : std::as_const(m_pendingQueries))
@@ -78,6 +81,11 @@ void Kernel::sendCurrentQuery()
   case PendingQuery::FuncInfoF29F68:
   {
     send(QueryLocomotiveFunctions(m_pendingQueries.at(0).address, 6));
+    break;
+  }
+  case PendingQuery::ROCOCumulativeLocoInfo:
+  {
+    send(RocoMultiMAUS::QueryLocomotiveCumulative(m_pendingQueries.at(0).address));
     break;
   }
   default:
@@ -124,11 +132,11 @@ void Kernel::pollDecoders()
 {
   m_pollTimer.expires_after(boost::asio::chrono::milliseconds(1000));
   m_pollTimer.async_wait(
-      [this](const boost::system::error_code& ec)
-      {
-        if(!ec)
-          pollDecoders();
-      });
+    [this](const boost::system::error_code& ec)
+    {
+      if(!ec)
+        pollDecoders();
+    });
 
   for(const Locomotive& loco : m_locomotives)
   {
@@ -136,7 +144,10 @@ void Kernel::pollDecoders()
       continue; // Skip invalid addresses
 
     if((loco.flags & Locomotive::Flags::OwnedByXBus) == Locomotive::Flags::OwnedByXBus)
-      postQuery({loco.address, PendingQuery::LocoInfoAndF0F12});
+      postQuery({loco.address,
+                 m_config.useRocoF13F20Command ?
+                     PendingQuery::ROCOCumulativeLocoInfo :
+                     PendingQuery::LocoInfoAndF0F12});
   }
 }
 
@@ -417,10 +428,10 @@ void Kernel::receive(const Message& message)
         if(locoInstr.identification == idLocomotiveBusy)
         {
           auto loco = std::find_if(m_locomotives.begin(), m_locomotives.end(),
-                                   [address=locoInstr.address()](const Locomotive &item) -> bool
-                                   {
-                                     return item.address == address;
-                                   });
+            [address=locoInstr.address()](const Locomotive &item) -> bool
+            {
+              return item.address == address;
+            });
 
           if(loco == m_locomotives.end())
             break;
@@ -428,7 +439,10 @@ void Kernel::receive(const Message& message)
           loco->flags |= Locomotive::Flags::OwnedByXBus;
 
           // Immediately start querying
-          postQuery({locoInstr.address(), PendingQuery::LocoInfoAndF0F12});
+          postQuery({locoInstr.address(),
+                     m_config.useRocoF13F20Command ?
+                         PendingQuery::ROCOCumulativeLocoInfo :
+                         PendingQuery::LocoInfoAndF0F12});
           break;
         }
         else if(locoInstr.identification == idReplyFuncF13F28)
@@ -551,7 +565,7 @@ void Kernel::receive(const Message& message)
         if(funcInfo29.identification != idReplyFuncF29F68)
           break; // Not a F29F68 info message
 
-        const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::LocoInfoAndF0F12);
+        const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::FuncInfoF29F68);
         if(!replyAddress)
           break; // We did not ask for function info, ignore it
 
@@ -575,6 +589,71 @@ void Kernel::receive(const Message& message)
 
             }
           });
+
+        break;
+      }
+      case LOCO_INFO_CUMULATIVE:
+      {
+        const auto& locoInfo = static_cast<const RocoMultiMAUS::LocomotiveCumulativeInfo&>(message);
+        if((locoInfo.identification & RocoMultiMAUS::LocomotiveCumulativeInfo::identificationMask) == 0)
+        {
+          const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::ROCOCumulativeLocoInfo);
+          if(!replyAddress)
+            break; // We did not ask for locomotive info, ignore it
+
+          // After receiving basic loco info, query higher functions
+          auto loco = std::find_if(m_locomotives.begin(), m_locomotives.end(),
+            [replyAddress](const Locomotive &item) -> bool
+            {
+              return item.address == replyAddress;
+            });
+
+          if(loco == m_locomotives.end())
+            break;
+
+          // Enable/disable polling for this locomotive
+          // When disabling, complete last poll cycle
+          if(locoInfo.isBusy())
+            loco->flags |= Locomotive::Flags::OwnedByXBus;
+          else
+            loco->flags &= ~Locomotive::Flags::OwnedByXBus;
+
+          EventLoop::call(
+            [this, replyAddress, locoInfoCopy=locoInfo]()
+            {
+              try
+              {
+                if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(replyAddress), replyAddress))
+                {
+                  const float throttle = Decoder::speedStepToThrottle(locoInfoCopy.speedStep(), locoInfoCopy.speedSteps());
+
+                  m_isUpdatingDecoderFromKernel = true;
+                  decoder->emergencyStop = locoInfoCopy.isEmergencyStop();
+
+                  m_isUpdatingDecoderFromKernel = true;
+                  decoder->direction = locoInfoCopy.direction();
+
+                  m_isUpdatingDecoderFromKernel = true;
+                  decoder->throttle = throttle;
+
+                  //Reset flag guard at end
+                  m_isUpdatingDecoderFromKernel = false;
+
+                  //Function get always updated because we do not store a copy in cache
+                  //so there is no way to tell in advance if they changed
+                  for(int i = 0; i <= 20; i++)
+                  {
+                    decoder->setFunctionValue(i, locoInfoCopy.getFunction(i));
+                  }
+                }
+              }
+              catch(...)
+              {
+
+              }
+            });
+          break;
+        }
 
         break;
       }

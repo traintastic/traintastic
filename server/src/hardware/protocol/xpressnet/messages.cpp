@@ -325,9 +325,9 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       {
         s = "LocomotiveInfoCumulative";
         s.append(" address=");
-        // if(pendingQuery.address != 0 && pendingQuery.type == PendingQuery::LocoInfoAndF0F12)
-        //   s.append(std::to_string(pendingQuery.address));
-        // else
+        if(pendingQuery.address != 0 && pendingQuery.type == PendingQuery::ROCOCumulativeLocoInfo)
+          s.append(std::to_string(pendingQuery.address));
+        else
           s.append("ERR!");
         s.append(" direction=").append(locoInfo.direction() == Direction::Forward ? "fwd" : "rev");
         s.append(" speed=");
@@ -336,7 +336,7 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
         else
           s.append(std::to_string(locoInfo.speedStep())).append("/").append(std::to_string(locoInfo.speedSteps()));
 
-        for(uint8_t i = 0; i <= 12; i++)
+        for(uint8_t i = 0; i <= 20; i++)
           s.append(" f").append(std::to_string(i)).append("=").append(locoInfo.getFunction(i) ? "1" : "0");
 
         s.append(" busy=").append(locoInfo.isBusy() ? "1" : "0");

@@ -33,7 +33,8 @@ struct PendingQuery
   {
     LocoInfoAndF0F12 = 0,
     FuncInfoF13F28 = 1,
-    FuncInfoF29F68= 2
+    FuncInfoF29F68= 2,
+    ROCOCumulativeLocoInfo = 3
   };
 
   uint16_t address = 0;

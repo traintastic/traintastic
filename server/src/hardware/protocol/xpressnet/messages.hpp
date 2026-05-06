@@ -998,31 +998,26 @@ struct setFunctionStateGroup : LocomotiveInstruction
 } ATTRIBUTE_PACKED;
 */
 
-// 2.19.1 Locomotive information reply (from Central version 3.0)
-struct LocomotiveInfo : Message
+struct LocomotiveInfoBase : Message
 {
   static constexpr uint8_t identificationMask = 0xF0;
   static constexpr uint8_t db2_busy_flag = 0x08;
   static constexpr uint8_t db2_speed_steps_14 = 0x00;
+  static constexpr uint8_t db2_speed_steps_27 = 0x01;
   static constexpr uint8_t db2_speed_steps_28 = 0x02;
   static constexpr uint8_t db2_speed_steps_128 = 0x04;
   static constexpr uint8_t db2_speed_steps_mask = 0x07;
   static constexpr uint8_t directionFlag = 0x80;
   static constexpr uint8_t speedStepMask = 0x7F;
   static constexpr uint8_t flagF0 = 0x10;
-  static constexpr uint8_t supportedFunctionIndexMax = 31; ///< \sa functionIndexMax
-
-  static constexpr uint8_t minMessageSize = 7 + 7;
-  static constexpr uint8_t maxMessageSize = 7 + 14;
 
   uint8_t identification;
   uint8_t speedAndDirection = 0x00;
   uint8_t functions1 = 0x00;
   uint8_t functions2 = 0x00;
-  uint8_t checksum = 0x00;
 
-  LocomotiveInfo() :
-    Message(SET_LOCO)
+  LocomotiveInfoBase(uint8_t _header) :
+    Message(_header)
   {
   }
 
@@ -1043,9 +1038,10 @@ struct LocomotiveInfo : Message
   {
     switch(identification & db2_speed_steps_mask)
     {
-      case db2_speed_steps_14:  return 14;
-      case db2_speed_steps_28:  return 28;
-      case db2_speed_steps_128: return 126;
+    case db2_speed_steps_14:  return 14;
+    case db2_speed_steps_27:  return 27;
+    case db2_speed_steps_28:  return 28;
+    case db2_speed_steps_128: return 126;
     }
     return 0;
   }
@@ -1055,11 +1051,12 @@ struct LocomotiveInfo : Message
     identification &= ~db2_speed_steps_mask;
     switch(value)
     {
-      case 14:  identification |= db2_speed_steps_14;  break;
-      case 28:  identification |= db2_speed_steps_28;  break;
-      case 126:
-      case 128:
-      default:  identification |= db2_speed_steps_128; break;
+    case 14:  identification |= db2_speed_steps_14;  break;
+    case 27:  identification |= db2_speed_steps_27;  break;
+    case 28:  identification |= db2_speed_steps_28;  break;
+    case 126:
+    case 128:
+    default:  identification |= db2_speed_steps_128; break;
     }
   }
 
@@ -1093,7 +1090,8 @@ struct LocomotiveInfo : Message
     Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
 
-  bool getFunction(uint8_t index) const
+protected:
+  inline bool getFunctionBase(uint8_t index) const
   {
     assert(index >= 0 && index <= 12);
     if(index == 0)
@@ -1106,7 +1104,7 @@ struct LocomotiveInfo : Message
       return false;
   }
 
-  void setFunction(uint8_t index, bool value)
+  inline void setFunctionBase(uint8_t index, bool value)
   {
     assert(index >= 0 && index <= 12);
     if(index == 0)
@@ -1132,6 +1130,28 @@ struct LocomotiveInfo : Message
       else
         functions2 &= ~flag;
     }
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LocomotiveInfoBase) == 5);
+
+// 2.19.1 Locomotive information reply (from Central version 3.0)
+struct LocomotiveInfo : LocomotiveInfoBase
+{
+  uint8_t checksum = 0x00;
+
+  LocomotiveInfo() :
+    LocomotiveInfoBase(SET_LOCO)
+  {
+  }
+
+  inline bool getFunction(uint8_t index) const
+  {
+    return getFunctionBase(index);
+  }
+
+  inline void setFunction(uint8_t index, bool value)
+  {
+    return setFunctionBase(index, value);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LocomotiveInfo) == 6);
@@ -1513,144 +1533,36 @@ namespace RocoMultiMAUS
   static_assert(sizeof(QueryLocomotiveCumulative) == 5);
 
   // multiMAUS V1.02 Locomotive state reply up to F20 and speed, direction info
-  struct LocomotiveCumulativeInfo : Message
+  struct LocomotiveCumulativeInfo : LocomotiveInfoBase
   {
-    static constexpr uint8_t identificationMask = 0xF0;
-    static constexpr uint8_t db2_busy_flag = 0x08;
-    static constexpr uint8_t db2_speed_steps_14 = 0x00;
-    static constexpr uint8_t db2_speed_steps_28 = 0x02;
-    static constexpr uint8_t db2_speed_steps_128 = 0x04;
-    static constexpr uint8_t db2_speed_steps_mask = 0x07;
-    static constexpr uint8_t directionFlag = 0x80;
-    static constexpr uint8_t speedStepMask = 0x7F;
-    static constexpr uint8_t flagF0 = 0x10;
-    static constexpr uint8_t supportedFunctionIndexMax = 31; ///< \sa functionIndexMax
-
-    static constexpr uint8_t minMessageSize = 7 + 7;
-    static constexpr uint8_t maxMessageSize = 7 + 14;
-
-    uint8_t identification;
-    uint8_t speedAndDirection = 0x00;
-    uint8_t functions1 = 0x00;
-    uint8_t functions2 = 0x00;
     uint8_t unused0 = 0x00;
     uint8_t functions4 = 0x00;
     uint8_t unused1 = 0x00;
     uint8_t checksum = 0x00;
 
     LocomotiveCumulativeInfo() :
-      Message(LOCO_INFO_CUMULATIVE)
+      LocomotiveInfoBase(LOCO_INFO_CUMULATIVE)
     {
-      identification = idQueryLocoCumulative_Roco;
+
     }
 
-    inline bool isBusy() const
+    inline bool getFunction(uint8_t index) const
     {
-      return identification & db2_busy_flag;
-    }
-
-    inline void setBusy(bool value)
-    {
-      if(value)
-        identification |= db2_busy_flag;
-      else
-        identification &= ~db2_busy_flag;
-    }
-
-    inline uint8_t speedSteps() const
-    {
-      switch(identification & db2_speed_steps_mask)
-      {
-      case db2_speed_steps_14:  return 14;
-      case db2_speed_steps_28:  return 28;
-      case db2_speed_steps_128: return 126;
-      }
-      return 0;
-    }
-
-    inline void setSpeedSteps(uint8_t value)
-    {
-      identification &= ~db2_speed_steps_mask;
-      switch(value)
-      {
-      case 14:  identification |= db2_speed_steps_14;  break;
-      case 28:  identification |= db2_speed_steps_28;  break;
-      case 126:
-      case 128:
-      default:  identification |= db2_speed_steps_128; break;
-      }
-    }
-
-    inline Direction direction() const
-    {
-      return Z21::Utils::getDirection(speedAndDirection);
-    }
-
-    inline void setDirection(Direction value)
-    {
-      Z21::Utils::setDirection(speedAndDirection, value);
-    }
-
-    inline bool isEmergencyStop() const
-    {
-      return Z21::Utils::isEmergencyStop(speedAndDirection, speedSteps());
-    }
-
-    inline void setEmergencyStop()
-    {
-      Z21::Utils::setEmergencyStop(speedAndDirection);
-    }
-
-    inline uint8_t speedStep() const
-    {
-      return Z21::Utils::getSpeedStep(speedAndDirection, speedSteps());
-    }
-
-    inline void setSpeedStep(uint8_t value)
-    {
-      Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
-    }
-
-    bool getFunction(uint8_t index) const
-    {
-      assert(index >= 0 && index <= 12);
-      if(index == 0)
-        return functions1 & flagF0;
-      else if(index <= 4)
-        return functions1 & (1 << (index - 1));
-      else if(index <= 12)
-        return functions2 & (1 << (index - 5));
+      assert(index >= 0 && index <= 20);
+      if(index <= 12)
+        return getFunctionBase(index);
       else if(index <= 20)
         return functions4 & (1 << (index - 13));
       else
         return false;
     }
 
-    void setFunction(uint8_t index, bool value)
+    inline void setFunction(uint8_t index, bool value)
     {
-      assert(index >= 0 && index <= 12);
-      if(index == 0)
+      assert(index >= 0 && index <= 20);
+      if(index <= 12)
       {
-        if(value)
-          functions1 |= flagF0;
-        else
-          functions1 &= ~flagF0;
-      }
-      else if(index <= 4)
-      {
-        const uint8_t flag = (1 << (index - 1));
-        if(value)
-          functions1 |= flag;
-        else
-          functions1 &= ~flag;
-      }
-      else if(index <= 12)
-      {
-        const uint8_t flag = (1 << (index - 5));
-        if(value)
-          functions2 |= flag;
-        else
-          functions2 &= ~flag;
+        setFunctionBase(index, value);
       }
       else if(index <= 20)
       {
