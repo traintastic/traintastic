@@ -318,6 +318,37 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       raw = true;
       break;
     }
+    case LOCO_INFO_CUMULATIVE:
+    {
+      const auto& locoInfo = static_cast<const RocoMultiMAUS::LocomotiveCumulativeInfo&>(message);
+      if((locoInfo.identification & RocoMultiMAUS::LocomotiveCumulativeInfo::identificationMask) == 0)
+      {
+        s = "LocomotiveInfoCumulative";
+        s.append(" address=");
+        // if(pendingQuery.address != 0 && pendingQuery.type == PendingQuery::LocoInfoAndF0F12)
+        //   s.append(std::to_string(pendingQuery.address));
+        // else
+          s.append("ERR!");
+        s.append(" direction=").append(locoInfo.direction() == Direction::Forward ? "fwd" : "rev");
+        s.append(" speed=");
+        if(locoInfo.isEmergencyStop())
+          s.append("estop");
+        else
+          s.append(std::to_string(locoInfo.speedStep())).append("/").append(std::to_string(locoInfo.speedSteps()));
+
+        for(uint8_t i = 0; i <= 12; i++)
+          s.append(" f").append(std::to_string(i)).append("=").append(locoInfo.getFunction(i) ? "1" : "0");
+
+        s.append(" busy=").append(locoInfo.isBusy() ? "1" : "0");
+        break;
+      }
+      else
+      {
+        raw = true;
+        break;
+      }
+      break;
+    }
     default:
     {
       raw = true;

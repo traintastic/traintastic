@@ -1611,19 +1611,6 @@ namespace RocoMultiMAUS
       Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
     }
 
-    [[nodiscard]] inline bool getFl() const
-    {
-      return (speedAndDirection & flagF0) == flagF0;
-    }
-
-    inline void setFl(bool value)
-    {
-      if(value)
-        speedAndDirection |= flagF0;
-      else
-        speedAndDirection &= ~flagF0;
-    }
-
     bool getFunction(uint8_t index) const
     {
       assert(index >= 0 && index <= 12);
