@@ -881,24 +881,6 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
       });
 }
 
-void Kernel::sendHexMessage(const std::vector<uint8_t> &msgVec)
-{
-  const Message *msg = reinterpret_cast<const Message *>(msgVec.data());
-  if(msg->size() != msgVec.size())
-    return;
-
-  auto* bytes = new std::byte[msgVec.size()];
-  std::memcpy(bytes, msgVec.data(), msgVec.size());
-  bytes[msgVec.size() - 1] = std::byte(calcChecksum(*msg));
-  auto ptr = std::shared_ptr<std::byte[]>{bytes};
-
-  m_ioContext.post(
-      [this, ptr]()
-      {
-        send(*reinterpret_cast<const Message*>(ptr.get()));
-      });
-}
-
 void Kernel::setDecoderList(const std::vector<Locomotive> &locoVec)
 {
   m_ioContext.post(
@@ -948,6 +930,34 @@ void Kernel::send(const Message& message)
   }
   else
   {} // log message and go to error state
+}
+
+bool Kernel::send(std::vector<uint8_t> message, bool autoChecksum)
+{
+  assert(isEventLoopThread());
+
+  // At least Header + XOR, at most Header + 15 bytes + XOR
+  if(!inRange<size_t>(message.size(), 2, 0xF + 2))
+  {
+    return false;
+  }
+
+  Message *msg = reinterpret_cast<Message*>(message.data());
+  if(message.size() != msg->size())
+    return false;
+
+  if(autoChecksum)
+  {
+    msg->updateChecksum();
+  }
+
+  boost::asio::post(m_ioContext,
+    [this, msg_=std::move(message)]()
+    {
+      send(*reinterpret_cast<const Message*>(msg_.data()));
+    });
+
+  return true;
 }
 
 }

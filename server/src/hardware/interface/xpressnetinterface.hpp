@@ -33,10 +33,6 @@
 #include "../../enum/serialflowcontrol.hpp"
 #include <boost/signals2/connection.hpp>
 
-// TODO: just debug purpose, send messages from Lua
-#include "../../core/method.hpp"
-#include "../../core/method.tpp"
-
 namespace XpressNet {
 class Kernel;
 class Settings;
@@ -69,8 +65,6 @@ class XpressNetInterface final
     void updateKernelDecoderList();
     boost::signals2::scoped_connection decoderAddedRemovedConn;
 
-    void sendHexMsg(const std::string& msgHexStr);
-
   protected:
     bool setOnline(bool& value, bool simulation) final;
 
@@ -87,8 +81,6 @@ class XpressNetInterface final
     ObjectProperty<XpressNet::Settings> xpressnet;
     Property<std::string> xbusVersion;
     Property<std::string> commandStationType;
-
-    Method<void(std::string)> luaSendMsg;
 
     XpressNetInterface(World& world, std::string_view _id);
     ~XpressNetInterface() final;
@@ -110,6 +102,12 @@ class XpressNetInterface final
     std::span<const OutputChannel> outputChannels() const final;
     std::pair<uint32_t, uint32_t> outputAddressMinMax(OutputChannel /*channel*/) const final;
     [[nodiscard]] bool setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value) final;
+
+    //! \brief Send XpressNet message
+    //! \param[in] message XpressNet message bytes.
+    //! \param[in] autoChecksum Automatic calculation on XOR checksum in last message byte.
+    //! \return \c true if send, \c false otherwise.
+    bool send(std::vector<uint8_t> message, bool autoChecksum = false);
 };
 
 #endif

@@ -99,11 +99,6 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   , xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , xbusVersion{this, "xbus_version", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , commandStationType{this, "command_station_type", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
-  , luaSendMsg{*this, "send_msg", MethodFlags::ScriptCallable,
-      [this](const std::string &msgHexStr)
-      {
-        sendHexMsg(msgHexStr);
-      }}
 {
   name = "XpressNet";
   xpressnet.setValueInternal(std::make_shared<XpressNet::Settings>(*this, xpressnet.name()));
@@ -167,8 +162,6 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
 
   Attributes::addCategory(commandStationType, Category::info);
   m_interfaceItems.insertBefore(commandStationType, notes);
-
-  m_interfaceItems.add(luaSendMsg);
 
   decoderAddedRemovedConn = std::static_pointer_cast<Object>(decoders.value())->propertyChanged.connect(
     [this](BaseProperty &)
@@ -303,6 +296,15 @@ bool XpressNetInterface::setOutputValue(OutputChannel channel, const OutputLocat
       m_kernel &&
       inRange(address, outputAddressMinMax(channel)) &&
       m_kernel->setOutput(static_cast<uint16_t>(address), std::get<OutputPairValue>(value));
+}
+
+bool XpressNetInterface::send(std::vector<uint8_t> message, bool autoChecksum)
+{
+  if(m_kernel)
+  {
+    return m_kernel->send(std::move(message), autoChecksum);
+  }
+  return false;
 }
 
 bool XpressNetInterface::setOnline(bool& value, bool simulation)
@@ -575,45 +577,4 @@ void XpressNetInterface::updateKernelDecoderList()
   }
 
   m_kernel->setDecoderList(locoVec);
-}
-
-void XpressNetInterface::sendHexMsg(const std::string &msgHexStr)
-{
-  std::string str;
-  str.reserve(msgHexStr.size());
-  for(char ch : msgHexStr)
-  {
-    if((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'F'))
-      str += ch;
-    else if(ch >= 'a' && ch <= 'f')
-      str += (ch - 'a' + 'A');
-  }
-
-  if(str.size() % 2 != 0)
-    str.pop_back();
-
-  std::vector<uint8_t> msgVec;
-  msgVec.resize(str.size() / 2 + 1);
-
-  for(size_t i = 0; i < msgVec.size() - 1; i++)
-  {
-    char high = str.at(i * 2);
-    char low = str.at(i * 2 + 1);
-
-    uint8_t val = 0;
-    if((high >= '0' && high <= '9'))
-      val = uint8_t((high - '0') << 4);
-    if((high >= 'A' && high <= 'F'))
-      val = uint8_t((high - 'A' + 0xA) << 4);
-
-    if((low >= '0' && low <= '9'))
-      val += uint8_t(low - '0');
-    if((low >= 'A' && low <= 'F'))
-      val += uint8_t(low - 'A' + 0xA);
-
-    msgVec[i] = val;
-  }
-
-  if(m_kernel)
-    m_kernel->sendHexMessage(msgVec);
 }

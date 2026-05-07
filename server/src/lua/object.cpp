@@ -25,6 +25,7 @@
 #include "object/interface.hpp"
 #include "object/cbusinterface.hpp"
 #include "object/loconetinterface.hpp"
+#include "object/xpressnetinterface.hpp"
 #include "object/scriptthrottle.hpp"
 
 namespace Lua::Object {
@@ -38,6 +39,7 @@ void registerTypes(lua_State* L)
   Interface::registerType(L);
   CBUSInterface::registerType(L);
   LocoNetInterface::registerType(L);
+  XpressNetInterface::registerType(L);
   ScriptThrottle::registerType(L);
 
   // weak table for object userdata:
@@ -69,6 +71,10 @@ void push(lua_State* L, const ObjectPtr& value)
       if(dynamic_cast<::CBUSInterface*>(value.get()))
       {
         luaL_setmetatable(L, CBUSInterface::metaTableName);
+      }
+      else if(dynamic_cast<::XpressNetInterface*>(value.get()))
+      {
+        luaL_setmetatable(L, XpressNetInterface::metaTableName);
       }
       else if(dynamic_cast<::LocoNetInterface*>(value.get()))
         luaL_setmetatable(L, LocoNetInterface::metaTableName);
