@@ -133,7 +133,7 @@ constexpr std::string_view toString(HardwareType value)
   return {};
 }
 
-std::string toString(const Message& message, bool raw = true, const Utils::PendingQuery &pendingQuery = {});
+std::string toString(const Message& message, bool raw = false, const Utils::PendingQuery &pendingQuery = {});
 
 // Chapters are based on:
 // Lenz Dokumentation XpressNet Version 4.0 02/2022

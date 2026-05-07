@@ -269,7 +269,7 @@ void Kernel::receive(const Message& message)
     if(!m_pendingQueries.empty())
       optAddress = m_pendingQueries.at(0);
     EventLoop::call(
-      [this, msg=toString(message, true, optAddress)]()
+      [this, msg=toString(message, false, optAddress)]()
       {
         Log::log(logId, LogMessage::D2002_RX_X, msg);
       });
