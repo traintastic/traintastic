@@ -136,7 +136,7 @@ std::string toString(const Message& message, bool raw, const Utils::PendingQuery
         {
           if(has(statusReply.status, CentralStatusFlags::EStop))
             s.append("estop, ");
-          if(has(statusReply.status, CentralStatusFlags::EStop))
+          if(has(statusReply.status, CentralStatusFlags::PowerOff))
             s.append("poweroff, ");
           if(has(statusReply.status, CentralStatusFlags::ProgrammingModeOn))
             s.append("programming, ");
