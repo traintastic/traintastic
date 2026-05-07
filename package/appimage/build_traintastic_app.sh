@@ -293,7 +293,23 @@ export ARCH
 if [ "$MODE" = "server" ];then
     "./${LINUXDEPLOY}" --appdir "$APP_DIR" --output appimage
 else
-    "./${LINUXDEPLOY}" --appdir "$APP_DIR" --plugin qt --output appimage
+    "./${LINUXDEPLOY}" --appdir "$APP_DIR" \
+    --library /usr/lib/x86_64-linux-gnu/libglib-2.0.so.0 \
+    --library /usr/lib/x86_64-linux-gnu/libgobject-2.0.so.0 \
+    --library /usr/lib/x86_64-linux-gnu/libgio-2.0.so.0 \
+    --library /usr/lib/x86_64-linux-gnu/libatspi.so.0 \
+    --library /usr/lib/x86_64-linux-gnu/libatk-1.0.so.0 \
+    --library /usr/lib/x86_64-linux-gnu/libatk-bridge-2.0.so.0 \
+    --library /usr/lib/x86_64-linux-gnu/libatkmm-1.6.so.1 \
+    --library /usr/lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 \
+    --library /usr/lib/x86_64-linux-gnu/libgdk_pixbuf_xlib-2.0.so.0 \
+    --library /usr/lib/x86_64-linux-gnu/libpango-1.0.so \
+    --library /usr/lib/x86_64-linux-gnu/libpangocairo-1.0.so \
+    --library /usr/lib/x86_64-linux-gnu/libpangoft2-1.0.so \
+    --library /usr/lib/x86_64-linux-gnu/libpangomm-1.4.so.1 \
+    --library /usr/lib/x86_64-linux-gnu/libpangoxft-1.0.so \
+    --plugin qt \
+    --output appimage
 fi
 # Copy generated appimage
 APPIMAGE_FILE=$(find . -maxdepth 1 -name "$APP_NAME*.AppImage" | head -n 1)
