@@ -34,21 +34,21 @@
 
 namespace XpressNet {
 
-void Kernel::postQuery(const PendingQuery &query)
+void Kernel::postQuery(const Utils::PendingQuery &query)
 {
   assert(query.address >= shortAddressMin && query.address <= longAddressMax);
 
-  if(query.type == PendingQuery::FuncInfoF29F68 && m_centralVersion < XNet_4_0)
+  if(query.type == Utils::PendingQuery::FuncInfoF29F68 && m_centralVersion < XNet_4_0)
     return;
 
-  if(query.type == PendingQuery::FuncInfoF13F28 && m_centralVersion < XNet_3_6)
+  if(query.type == Utils::PendingQuery::FuncInfoF13F28 && m_centralVersion < XNet_3_6)
     return;
 
-  if(query.type == PendingQuery::ROCOCumulativeLocoInfo
+  if(query.type == Utils::PendingQuery::ROCOCumulativeLocoInfo
       && (m_centralVersion < XNet_3_0 || !m_config.useRocoF13F20Command))
     return;
 
-  for(const PendingQuery& other : std::as_const(m_pendingQueries))
+  for(const Utils::PendingQuery& other : std::as_const(m_pendingQueries))
   {
     if(other.address == query.address && other.type == query.type)
       return; // Already pending
@@ -68,22 +68,22 @@ void Kernel::sendCurrentQuery()
 
   switch (m_pendingQueries.at(0).type)
   {
-  case PendingQuery::LocoInfoAndF0F12:
+  case Utils::PendingQuery::LocoInfoAndF0F12:
   {
     send(QueryLocomotiveV3(m_pendingQueries.at(0).address));
     break;
   }
-  case PendingQuery::FuncInfoF13F28:
+  case Utils::PendingQuery::FuncInfoF13F28:
   {
     send(QueryLocomotiveFunctions(m_pendingQueries.at(0).address, 4));
     break;
   }
-  case PendingQuery::FuncInfoF29F68:
+  case Utils::PendingQuery::FuncInfoF29F68:
   {
     send(QueryLocomotiveFunctions(m_pendingQueries.at(0).address, 6));
     break;
   }
-  case PendingQuery::ROCOCumulativeLocoInfo:
+  case Utils::PendingQuery::ROCOCumulativeLocoInfo:
   {
     send(RocoMultiMAUS::QueryLocomotiveCumulative(m_pendingQueries.at(0).address));
     break;
@@ -113,7 +113,7 @@ void Kernel::onPendingQueryTimeout(const boost::system::error_code& ec)
   sendCurrentQuery();
 }
 
-uint16_t Kernel::popAddressQuerySendNext(PendingQuery::QueryType type)
+uint16_t Kernel::popAddressQuerySendNext(Utils::PendingQuery::QueryType type)
 {
   if(m_pendingQueries.empty() || m_pendingQueries.at(0).type != type)
     return 0;
@@ -146,8 +146,8 @@ void Kernel::pollDecoders()
     if((loco.flags & Locomotive::Flags::OwnedByXBus) == Locomotive::Flags::OwnedByXBus)
       postQuery({loco.address,
                  m_config.useRocoF13F20Command ?
-                     PendingQuery::ROCOCumulativeLocoInfo :
-                     PendingQuery::LocoInfoAndF0F12});
+                     Utils::PendingQuery::ROCOCumulativeLocoInfo :
+                     Utils::PendingQuery::LocoInfoAndF0F12});
   }
 }
 
@@ -161,8 +161,8 @@ void Kernel::setCentralVersion(uint8_t version, uint8_t commandStationId)
 
     if(m_onHardwareInfoChanged)
       m_onHardwareInfoChanged(HardwareType(commandStationId),
-                              xbusVersionMajor(version),
-                              xbusVersionMinor(version));
+                              Utils::xbusVersionMajor(version),
+                              Utils::xbusVersionMinor(version));
   });
 }
 
@@ -265,7 +265,7 @@ void Kernel::receive(const Message& message)
 {
   if(m_config.debugLogRXTX)
   {
-    PendingQuery optAddress;
+    Utils::PendingQuery optAddress;
     if(!m_pendingQueries.empty())
       optAddress = m_pendingQueries.at(0);
     EventLoop::call(
@@ -459,14 +459,14 @@ void Kernel::receive(const Message& message)
           // Immediately start querying
           postQuery({locoInstr.address(),
                      m_config.useRocoF13F20Command ?
-                         PendingQuery::ROCOCumulativeLocoInfo :
-                         PendingQuery::LocoInfoAndF0F12});
+                         Utils::PendingQuery::ROCOCumulativeLocoInfo :
+                         Utils::PendingQuery::LocoInfoAndF0F12});
           break;
         }
         else if(locoInstr.identification == idReplyFuncF13F28)
         {
           const auto& funcInfo13 = static_cast<const FunctionInfoF13F28&>(message);
-          const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::FuncInfoF13F28);
+          const uint16_t replyAddress = popAddressQuerySendNext(Utils::PendingQuery::FuncInfoF13F28);
           if(!replyAddress)
             break; // We did not ask for function info, ignore it
 
@@ -477,7 +477,7 @@ void Kernel::receive(const Message& message)
               continue;
 
             if((loco.flags & Locomotive::Flags::HasF29F68) == Locomotive::Flags::HasF29F68)
-              postQuery({replyAddress, PendingQuery::FuncInfoF29F68});
+              postQuery({replyAddress, Utils::PendingQuery::FuncInfoF29F68});
             break;
           }
 
@@ -512,7 +512,7 @@ void Kernel::receive(const Message& message)
         {
           const auto& locoInfo = static_cast<const LocomotiveInfo&>(message);
 
-          const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::LocoInfoAndF0F12);
+          const uint16_t replyAddress = popAddressQuerySendNext(Utils::PendingQuery::LocoInfoAndF0F12);
           if(!replyAddress)
             break; // We did not ask for locomotive info, ignore it
 
@@ -527,9 +527,9 @@ void Kernel::receive(const Message& message)
             break;
 
           if((loco->flags & Locomotive::Flags::HasF13F28) == Locomotive::Flags::HasF13F28)
-            postQuery({replyAddress, PendingQuery::FuncInfoF13F28});
+            postQuery({replyAddress, Utils::PendingQuery::FuncInfoF13F28});
           else if((loco->flags & Locomotive::Flags::HasF29F68) == Locomotive::Flags::HasF29F68)
-            postQuery({replyAddress, PendingQuery::FuncInfoF29F68});
+            postQuery({replyAddress, Utils::PendingQuery::FuncInfoF29F68});
 
           // Enable/disable polling for this locomotive
           // When disabling, complete last poll cycle
@@ -583,7 +583,7 @@ void Kernel::receive(const Message& message)
         if(funcInfo29.identification != idReplyFuncF29F68)
           break; // Not a F29F68 info message
 
-        const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::FuncInfoF29F68);
+        const uint16_t replyAddress = popAddressQuerySendNext(Utils::PendingQuery::FuncInfoF29F68);
         if(!replyAddress)
           break; // We did not ask for function info, ignore it
 
@@ -615,7 +615,7 @@ void Kernel::receive(const Message& message)
         const auto& locoInfo = static_cast<const RocoMultiMAUS::LocomotiveCumulativeInfo&>(message);
         if((locoInfo.identification & RocoMultiMAUS::LocomotiveCumulativeInfo::identificationMask) == 0)
         {
-          const uint16_t replyAddress = popAddressQuerySendNext(PendingQuery::ROCOCumulativeLocoInfo);
+          const uint16_t replyAddress = popAddressQuerySendNext(Utils::PendingQuery::ROCOCumulativeLocoInfo);
           if(!replyAddress)
             break; // We did not ask for locomotive info, ignore it
 

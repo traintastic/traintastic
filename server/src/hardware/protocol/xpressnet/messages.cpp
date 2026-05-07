@@ -44,7 +44,7 @@ bool isChecksumValid(const Message& msg, const int dataSize)
   return calcChecksum(msg, dataSize) == *(reinterpret_cast<const uint8_t*>(&msg) + dataSize + 1);
 }
 
-std::string toString(const Message& message, bool raw, const PendingQuery &pendingQuery)
+std::string toString(const Message& message, bool raw, const Utils::PendingQuery &pendingQuery)
 {
   std::string s = toHex(message.identification());
 
@@ -120,9 +120,9 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       {
         s = "CS_VERSION_OLD";
         s.append(" version=");
-        s.append(std::to_string(xbusVersionMajor(reply.versionHex)));
+        s.append(std::to_string(Utils::xbusVersionMajor(reply.versionHex)));
         s.append(".");
-        s.append(std::to_string(xbusVersionMinor(reply.versionHex)));
+        s.append(std::to_string(Utils::xbusVersionMinor(reply.versionHex)));
       }
       else if(reply.db1 == idCentralStatusReply)
       {
@@ -173,9 +173,9 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
     {
       s = "CS_VERSION_V3";
       s.append(" version=");
-      s.append(std::to_string(xbusVersionMajor(reply.versionHex)));
+      s.append(std::to_string(Utils::xbusVersionMajor(reply.versionHex)));
       s.append(".");
-      s.append(std::to_string(xbusVersionMinor(reply.versionHex)));
+      s.append(std::to_string(Utils::xbusVersionMinor(reply.versionHex)));
       s.append(" id=");
       s.append(std::to_string(reply.commandStationId()));
     }
@@ -240,7 +240,7 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
         const auto& funcInfo = static_cast<const FunctionInfoF13F28&>(message);
         s = "FunctionInfoF13F28";
         s.append(" address=");
-        if(pendingQuery.address != 0 && pendingQuery.type == PendingQuery::FuncInfoF13F28)
+        if(pendingQuery.address != 0 && pendingQuery.type == Utils::PendingQuery::FuncInfoF13F28)
           s.append(std::to_string(pendingQuery.address));
         else
           s.append("ERR!");
@@ -323,7 +323,7 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
           const auto& locoInfo = static_cast<const LocomotiveInfo&>(message);
           s = "LocomotiveInfo";
           s.append(" address=");
-          if(pendingQuery.address != 0 && pendingQuery.type == PendingQuery::LocoInfoAndF0F12)
+          if(pendingQuery.address != 0 && pendingQuery.type == Utils::PendingQuery::LocoInfoAndF0F12)
             s.append(std::to_string(pendingQuery.address));
           else
             s.append("ERR!");
@@ -354,7 +354,7 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       {
         s = "FunctionInfoF29F68";
         s.append(" address=");
-        if(pendingQuery.address != 0 && pendingQuery.type == PendingQuery::FuncInfoF29F68)
+        if(pendingQuery.address != 0 && pendingQuery.type == Utils::PendingQuery::FuncInfoF29F68)
           s.append(std::to_string(pendingQuery.address));
         else
           s.append("ERR!");
@@ -373,7 +373,7 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       {
         s = "ROCOLocoInfoCumulative";
         s.append(" address=");
-        if(pendingQuery.address != 0 && pendingQuery.type == PendingQuery::ROCOCumulativeLocoInfo)
+        if(pendingQuery.address != 0 && pendingQuery.type == Utils::PendingQuery::ROCOCumulativeLocoInfo)
           s.append(std::to_string(pendingQuery.address));
         else
           s.append("ERR!");

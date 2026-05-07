@@ -128,17 +128,17 @@ class Kernel : public ::KernelBase
     CentralVersion m_centralVersion = CentralVersion::XNet_3_0;
     CentralVersion m_centralVersionEventLoop = CentralVersion::XNet_3_0;
 
-    std::vector<PendingQuery> m_pendingQueries;
+    std::vector<Utils::PendingQuery> m_pendingQueries;
     boost::asio::steady_timer m_pendingQueryTimeout;
     boost::asio::steady_timer m_pollTimer;
     bool m_isUpdatingDecoderFromKernel = false;
 
     std::vector<Locomotive> m_locomotives;
 
-    void postQuery(const PendingQuery& query);
+    void postQuery(const Utils::PendingQuery& query);
     void sendCurrentQuery();
     void onPendingQueryTimeout(const boost::system::error_code &ec);
-    uint16_t popAddressQuerySendNext(PendingQuery::QueryType type);
+    uint16_t popAddressQuerySendNext(Utils::PendingQuery::QueryType type);
     void pollDecoders();
     void setCentralVersion(uint8_t version, uint8_t commandStationId);
 

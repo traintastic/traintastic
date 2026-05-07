@@ -27,8 +27,7 @@
 #include <cstring>
 #include <string>
 #include <traintastic/enum/direction.hpp>
-#include "utils.hpp"
-#include "../../../utils/packed.hpp"
+#include "../xpressnet/utils.hpp"
 #include "../../../utils/endian.hpp"
 #include "../../../utils/byte.hpp"
 
@@ -752,33 +751,33 @@ struct LanXSetLocoDrive : LanXLocoBase
 
   inline Direction direction() const
   {
-    return Utils::getDirection(speedAndDirection);
+    return XpressNet::Utils::getDirection(speedAndDirection);
   }
 
   inline void setDirection(Direction value)
   {
     assert(value != Direction::Unknown);
-    Utils::setDirection(speedAndDirection, value);
+    XpressNet::Utils::setDirection(speedAndDirection, value);
   }
 
   inline bool isEmergencyStop() const
   {
-    return Utils::isEmergencyStop(speedAndDirection, speedSteps());
+    return XpressNet::Utils::isEmergencyStop(speedAndDirection, speedSteps());
   }
 
   inline void setEmergencyStop()
   {
-    Utils::setEmergencyStop(speedAndDirection);
+    XpressNet::Utils::setEmergencyStop(speedAndDirection);
   }
 
   inline uint8_t speedStep() const
   {
-    return Utils::getSpeedStep(speedAndDirection, speedSteps());
+    return XpressNet::Utils::getSpeedStep(speedAndDirection, speedSteps());
   }
 
   inline void setSpeedStep(uint8_t value)
   {
-    Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
+    XpressNet::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXSetLocoDrive) == 10);
@@ -1088,13 +1087,13 @@ struct LanXGetVersionReply : LanX
 
   inline uint8_t xBusVersion() const
   {
-    return Utils::fromBCD(xBusVersionBCD);
+    return XpressNet::Utils::fromBCD(xBusVersionBCD);
   }
 
   inline void setXBusVersion(uint8_t value)
   {
     assert(value < 100);
-    xBusVersionBCD = Utils::toBCD(value);
+    xBusVersionBCD = XpressNet::Utils::toBCD(value);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetVersionReply) == 9);
@@ -1124,24 +1123,24 @@ struct LanXGetFirmwareVersionReply : LanX
 
   inline uint8_t versionMajor() const
   {
-    return Utils::fromBCD(majorBCD);
+    return XpressNet::Utils::fromBCD(majorBCD);
   }
 
   inline uint8_t versionMinor() const
   {
-    return Utils::fromBCD(minorBCD);
+    return XpressNet::Utils::fromBCD(minorBCD);
   }
 
   inline void setVersionMajor(uint8_t value)
   {
     assert(value < 100);
-    majorBCD = Utils::toBCD(value);
+    majorBCD = XpressNet::Utils::toBCD(value);
   }
 
   inline void setVersionMinor(uint8_t value)
   {
     assert(value < 100);
-    minorBCD = Utils::toBCD(value);
+    minorBCD = XpressNet::Utils::toBCD(value);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetFirmwareVersionReply) == 9);
@@ -1155,7 +1154,7 @@ struct LanGetHardwareInfoReply : Message
   LanGetHardwareInfoReply(HardwareType _hardwareType, uint8_t _firmwareVersionMajor, uint8_t _firmwareVersionMinor) :
     Message(sizeof(LanGetHardwareInfoReply), LAN_GET_HWINFO),
     hardwareTypeLE{host_to_le(_hardwareType)},
-    firmwareVersionLE{host_to_le(static_cast<uint32_t>(to16(Z21::Utils::toBCD(_firmwareVersionMinor), Z21::Utils::toBCD(_firmwareVersionMajor))))}
+    firmwareVersionLE{host_to_le(static_cast<uint32_t>(to16(XpressNet::Utils::toBCD(_firmwareVersionMinor), XpressNet::Utils::toBCD(_firmwareVersionMajor))))}
   {
   }
 
@@ -1166,12 +1165,12 @@ struct LanGetHardwareInfoReply : Message
 
   uint8_t firmwareVersionMajor() const
   {
-    return Utils::fromBCD(high8(le_to_host(firmwareVersionLE)));
+    return XpressNet::Utils::fromBCD(high8(le_to_host(firmwareVersionLE)));
   }
 
   uint8_t firmwareVersionMinor() const
   {
-    return Utils::fromBCD(low8(le_to_host(firmwareVersionLE)));
+    return XpressNet::Utils::fromBCD(low8(le_to_host(firmwareVersionLE)));
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanGetHardwareInfoReply) == 12);
@@ -1405,32 +1404,32 @@ struct LanXLocoInfo : LanX
 
   inline Direction direction() const
   {
-    return Z21::Utils::getDirection(speedAndDirection);
+    return XpressNet::Utils::getDirection(speedAndDirection);
   }
 
   inline void setDirection(Direction value)
   {
-    Z21::Utils::setDirection(speedAndDirection, value);
+    XpressNet::Utils::setDirection(speedAndDirection, value);
   }
 
   inline bool isEmergencyStop() const
   {
-    return Z21::Utils::isEmergencyStop(speedAndDirection, speedSteps());
+    return XpressNet::Utils::isEmergencyStop(speedAndDirection, speedSteps());
   }
 
   inline void setEmergencyStop()
   {
-    Z21::Utils::setEmergencyStop(speedAndDirection);
+    XpressNet::Utils::setEmergencyStop(speedAndDirection);
   }
 
   inline uint8_t speedStep() const
   {
-    return Z21::Utils::getSpeedStep(speedAndDirection, speedSteps());
+    return XpressNet::Utils::getSpeedStep(speedAndDirection, speedSteps());
   }
 
   inline void setSpeedStep(uint8_t value)
   {
-    Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
+    XpressNet::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
 
   inline bool supportsF29F31() const

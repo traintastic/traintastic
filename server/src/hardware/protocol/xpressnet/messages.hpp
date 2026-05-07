@@ -28,10 +28,7 @@
 #include <cstring>
 #include <string>
 #include <traintastic/enum/direction.hpp>
-#include "../../../utils/packed.hpp"
-#include "../../../utils/endian.hpp"
 #include "../../../utils/byte.hpp"
-#include "../z21/utils.hpp"
 #include "utils.hpp"
 
 namespace XpressNet {
@@ -136,54 +133,10 @@ constexpr std::string_view toString(HardwareType value)
   return {};
 }
 
-struct Message;
-
-inline uint8_t calcChecksum(const Message& msg);
-uint8_t calcChecksum(const Message& msg, const int dataSize);
-
-void updateChecksum(Message& msg);
-
-inline bool isChecksumValid(const Message& msg);
-bool isChecksumValid(const Message& msg, const int dataSize);
-
-std::string toString(const Message& message, bool raw = true, const PendingQuery &pendingQuery = {});
+std::string toString(const Message& message, bool raw = true, const Utils::PendingQuery &pendingQuery = {});
 
 // Chapters are based on:
 // Lenz Dokumentation XpressNet Version 4.0 02/2022
-struct Message
-{
-  uint8_t header;
-
-  Message()
-  {
-  }
-
-  Message(uint8_t _header) :
-    header{_header}
-  {
-  }
-
-  constexpr uint8_t identification() const
-  {
-    return header & 0xF0;
-  }
-
-  constexpr uint8_t dataSize() const
-  {
-    return header & 0x0F;
-  }
-
-  constexpr uint8_t size() const
-  {
-    return 2 + dataSize();
-  }
-
-  inline void updateChecksum()
-  {
-    XpressNet::updateChecksum(*this);
-  }
-} ATTRIBUTE_PACKED;
-static_assert(sizeof(Message) == 1);
 
 // 2.4.1
 struct NormalOperationResumed : Message
@@ -586,32 +539,32 @@ struct SpeedAndDirectionInstruction : LocomotiveInstruction
 
   [[nodiscard]] inline Direction direction() const
   {
-    return Z21::Utils::getDirection(speedAndDirection);
+    return Utils::getDirection(speedAndDirection);
   }
 
   inline void setDirection(Direction value)
   {
-    Z21::Utils::setDirection(speedAndDirection, value);
+    Utils::setDirection(speedAndDirection, value);
   }
 
   [[nodiscard]] inline bool isEmergencyStop() const
   {
-    return Z21::Utils::isEmergencyStop(speedAndDirection, speedSteps());
+    return Utils::isEmergencyStop(speedAndDirection, speedSteps());
   }
 
   inline void setEmergencyStop()
   {
-    Z21::Utils::setEmergencyStop(speedAndDirection);
+    Utils::setEmergencyStop(speedAndDirection);
   }
 
   [[nodiscard]] inline uint8_t speedStep() const
   {
-    return Z21::Utils::getSpeedStep(speedAndDirection, speedSteps());
+    return Utils::getSpeedStep(speedAndDirection, speedSteps());
   }
 
   inline void setSpeedStep(uint8_t value)
   {
-    Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
+    Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
 
 } ATTRIBUTE_PACKED;
@@ -1103,32 +1056,32 @@ struct LocomotiveInfoBase : Message
 
   inline Direction direction() const
   {
-    return Z21::Utils::getDirection(speedAndDirection);
+    return Utils::getDirection(speedAndDirection);
   }
 
   inline void setDirection(Direction value)
   {
-    Z21::Utils::setDirection(speedAndDirection, value);
+    Utils::setDirection(speedAndDirection, value);
   }
 
   inline bool isEmergencyStop() const
   {
-    return Z21::Utils::isEmergencyStop(speedAndDirection, speedSteps());
+    return Utils::isEmergencyStop(speedAndDirection, speedSteps());
   }
 
   inline void setEmergencyStop()
   {
-    Z21::Utils::setEmergencyStop(speedAndDirection);
+    Utils::setEmergencyStop(speedAndDirection);
   }
 
   inline uint8_t speedStep() const
   {
-    return Z21::Utils::getSpeedStep(speedAndDirection, speedSteps());
+    return Utils::getSpeedStep(speedAndDirection, speedSteps());
   }
 
   inline void setSpeedStep(uint8_t value)
   {
-    Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
+    Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
 
 protected:
@@ -1663,16 +1616,6 @@ namespace RoSoftS88XpressNetLI
     }
   } ATTRIBUTE_PACKED;
   static_assert(sizeof(S88ModuleCount) == 4);
-}
-
-inline uint8_t calcChecksum(const Message& msg)
-{
-  return calcChecksum(msg, msg.dataSize());
-}
-
-inline bool isChecksumValid(const Message& msg)
-{
-  return isChecksumValid(msg, msg.dataSize());
 }
 
 }
