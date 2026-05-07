@@ -172,4 +172,18 @@ set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://traintastic.org")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "traintastic-data (>= ${CPACK_PACKAGE_VERSION})")
 
+if(LINUX)
+  # add qt6-svg-plugins dependency if package exists:
+  execute_process(
+    COMMAND dpkg-query -W -f=$\{Version\} qt6-svg-plugins
+    OUTPUT_VARIABLE QT6_SVG_PLUGINS_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+  )
+  if(QT6_SVG_PLUGINS_VERSION)
+    message(STATUS "qt6-svg-plugins package version: ${QT6_SVG_PLUGINS_VERSION}")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "qt6-svg-plugins (>= ${QT6_SVG_PLUGINS_VERSION}), ${CPACK_DEBIAN_PACKAGE_DEPENDS}")
+  endif()
+endif()
+
 include(CPack)

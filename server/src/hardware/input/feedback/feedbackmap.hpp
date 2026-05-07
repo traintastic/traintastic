@@ -101,7 +101,7 @@ private:
   void releaseInput(InputConnectionPair& inputConnPair);
   void releaseInputs(Inputs& inputs);
 
-  void inputValueChanged();
+  void inputValueChanged(bool value, const std::shared_ptr<Input>& input);
 
   void updateAddressDisplayName();
 };
