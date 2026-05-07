@@ -388,6 +388,24 @@ void Kernel::receive(const Message& message)
         {
           setCentralVersion(reply.versionHex, HardwareType::HWT_UNKNOWN);
         }
+        else if(reply.db1 == idCentralStatusReply)
+        {
+          const auto& statusReply = static_cast<const CentralStatusReply&>(message);
+          bool isEStop = has(statusReply.status, CentralStatusFlags::EStop);
+          bool isPowerOn = !has(statusReply.status, CentralStatusFlags::PowerOff);
+
+          EventLoop::call(
+            [this, isEStop, isPowerOn]()
+            {
+              if(m_trackPowerOn != isPowerOn || m_emergencyStop != isEStop)
+              {
+                m_trackPowerOn = toTriState(isPowerOn);
+                m_emergencyStop = toTriState(isEStop);
+                if(m_onTrackPowerChanged)
+                  m_onTrackPowerChanged(isPowerOn, isEStop);
+              }
+            });
+        }
       }
       else if(message.header == REPLY_VERSION_3_0)
       {
@@ -747,6 +765,8 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       maxSupportedGroup = 10;
     else if(m_centralVersionEventLoop >= XNet_3_6)
       maxSupportedGroup = 5;
+    else if(m_config.useRocoF13F20Command)
+      maxSupportedGroup = 4;
 
     for(uint8_t group = 1; group <= maxSupportedGroup; group++)
     {
