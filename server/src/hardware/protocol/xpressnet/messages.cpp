@@ -175,7 +175,7 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       const auto& fakeReq = static_cast<const LocomotiveInstruction&>(message);
       switch (fakeReq.identification)
       {
-      case 0:
+      case idQueryLocoInfoBasic:
       {
         s = "QueryLocomotive";
         s.append(" address=").append(std::to_string(fakeReq.address()));
@@ -209,6 +209,12 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       case idLocomotiveBusy:
       {
         s = "LocomotiveBusy";
+        s.append(" address=").append(std::to_string(fakeReq.address()));
+        break;
+      }
+      case idQueryLocoCumulative_Roco:
+      {
+        s = "ROCOQueryLocoCumulative";
         s.append(" address=").append(std::to_string(fakeReq.address()));
         break;
       }
@@ -323,7 +329,7 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       const auto& locoInfo = static_cast<const RocoMultiMAUS::LocomotiveCumulativeInfo&>(message);
       if((locoInfo.identification & RocoMultiMAUS::LocomotiveCumulativeInfo::identificationMask) == 0)
       {
-        s = "LocomotiveInfoCumulative";
+        s = "ROCOLocoInfoCumulative";
         s.append(" address=");
         if(pendingQuery.address != 0 && pendingQuery.type == PendingQuery::ROCOCumulativeLocoInfo)
           s.append(std::to_string(pendingQuery.address));

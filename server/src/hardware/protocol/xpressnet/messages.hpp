@@ -41,6 +41,7 @@ constexpr uint16_t shortAddressMax = 99;
 constexpr uint16_t longAddressMin = 100;
 constexpr uint16_t longAddressMax = 9999;
 
+constexpr uint8_t idQueryLocoInfoBasic = 0x00;
 constexpr uint8_t idSetSpeed14 = 0x10;
 constexpr uint8_t idSetSpeed27 = 0x11;
 constexpr uint8_t idSetSpeed28 = 0x12;
@@ -1359,7 +1360,7 @@ struct QueryLocomotiveV3 : LocomotiveInstruction
     : LocomotiveInstruction(address)
   {
     header = GET_LOCO_INFO;
-    identification = 0;
+    identification = idQueryLocoInfoBasic;
     checksum = calcChecksum(*this);
   }
 } ATTRIBUTE_PACKED;
@@ -1535,8 +1536,8 @@ namespace RocoMultiMAUS
   // multiMAUS V1.02 Locomotive state reply up to F20 and speed, direction info
   struct LocomotiveCumulativeInfo : LocomotiveInfoBase
   {
-    uint8_t unused0 = 0x00;
     uint8_t functions4 = 0x00;
+    uint8_t unused0 = 0x00;
     uint8_t unused1 = 0x00;
     uint8_t checksum = 0x00;
 
