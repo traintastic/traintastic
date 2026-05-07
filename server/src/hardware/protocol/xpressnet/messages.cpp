@@ -65,6 +65,10 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
       {
         s = "QUERY_CENTRAL_VERSION";
       }
+      else if(message == CentralStatusRequest())
+      {
+        s = "CENTRAL_STATUS_REQUEST";
+      }
       else
         raw = true;
       break;
@@ -119,6 +123,44 @@ std::string toString(const Message& message, bool raw, const PendingQuery &pendi
         s.append(std::to_string(xbusVersionMajor(reply.versionHex)));
         s.append(".");
         s.append(std::to_string(xbusVersionMinor(reply.versionHex)));
+      }
+      else if(reply.db1 == idCentralStatusReply)
+      {
+        const auto& statusReply = static_cast<const CentralStatusReply&>(message);
+        s = "CS_STATUS_REPLY";
+        s.append(" status=");
+        if(has(statusReply.status,
+          CentralStatusFlags::EStop |
+          CentralStatusFlags::PowerOff |
+          CentralStatusFlags::ProgrammingModeOn))
+        {
+          if(has(statusReply.status, CentralStatusFlags::EStop))
+            s.append("estop, ");
+          if(has(statusReply.status, CentralStatusFlags::EStop))
+            s.append("poweroff, ");
+          if(has(statusReply.status, CentralStatusFlags::ProgrammingModeOn))
+            s.append("programming, ");
+        }
+        else
+        {
+          s.append("run, ");
+        }
+
+        if(has(statusReply.status, CentralStatusFlags::AutoStart))
+          s.append("auto-start, ");
+        else
+          s.append("maual-start, ");
+
+        if(has(statusReply.status, CentralStatusFlags::ColdStart))
+          s.append("cold-start, ");
+        if(has(statusReply.status, CentralStatusFlags::RAMCheckFailure))
+          s.append("RAM failure!, ");
+
+        if(s.ends_with(", "))
+        {
+          s.pop_back();
+          s.pop_back();
+        }
       }
       else
         raw = true;

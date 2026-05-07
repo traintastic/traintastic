@@ -56,6 +56,8 @@ constexpr uint8_t idSetFuncGroup6 = 0x29;
 constexpr uint8_t idSetFuncGroup7 = 0x2A;
 constexpr uint8_t idSetFuncGroup8 = 0x2B;
 constexpr uint8_t idCentralVersion = idSetFuncGroup2;
+constexpr uint8_t idCentralStatusReply = idSetFuncGroup3;
+constexpr uint8_t idCentralStatusRequest = 0x24;
 
 constexpr uint8_t idQueryFuncGroup4and5 = 0x09;
 constexpr uint8_t idQueryFuncGroup6above = 0x0B;
@@ -97,6 +99,17 @@ enum HardwareType : uint8_t
   HWT_DPC = 0x02,
   HWT_multiMAUS = 0x10,
   HWT_UNKNOWN = 0xFF
+};
+
+enum class CentralStatusFlags : uint8_t
+{
+  EStop = 0x01,
+  PowerOff = 0x02,
+  AutoStart = 0x04,
+  ProgrammingModeOn = 0x08,
+  // bits 4 and 5 are reserved
+  ColdStart = 0x40,
+  RAMCheckFailure = 0x80
 };
 
 constexpr std::string_view toString(HardwareType value)
@@ -249,6 +262,20 @@ struct CentralVersionReplyV3 : Message
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(CentralVersionReplyV3) == 5);
+
+// 2.8
+struct CentralStatusReply : Message
+{
+  uint8_t db1 = idCentralStatusReply;
+  CentralStatusFlags status = CentralStatusFlags(0);
+  uint8_t checksum = 0;
+
+  CentralStatusReply()
+  {
+    header = REPLY_VERSION_2_3;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(CentralStatusReply) == 4);
 
 // 2.13
 struct CommandStationBusy : Message
@@ -445,6 +472,19 @@ struct EmergencyStopLocomotive : Message
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(EmergencyStopLocomotive) == 4);
+
+// 3.26 Central status request
+struct CentralStatusRequest : Message
+{
+  uint8_t db1 = idCentralStatusRequest;
+  uint8_t checksum = 0x05;
+
+  CentralStatusRequest()
+  {
+    header = STOP_REQUEST;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(CentralStatusRequest) == 3);
 
 struct LocomotiveInstruction : Message
 {
@@ -1640,6 +1680,25 @@ inline bool isChecksumValid(const Message& msg)
 inline bool operator ==(const XpressNet::Message& lhs, const XpressNet::Message& rhs)
 {
   return lhs.size() == rhs.size() && std::memcmp(&lhs, &rhs, lhs.size()) == 0;
+}
+
+constexpr XpressNet::CentralStatusFlags operator |(XpressNet::CentralStatusFlags lhs, XpressNet::CentralStatusFlags rhs)
+{
+  return static_cast<XpressNet::CentralStatusFlags>(
+    static_cast<std::underlying_type_t<XpressNet::CentralStatusFlags>>(lhs) |
+    static_cast<std::underlying_type_t<XpressNet::CentralStatusFlags>>(rhs));
+}
+
+constexpr XpressNet::CentralStatusFlags operator &(XpressNet::CentralStatusFlags lhs, XpressNet::CentralStatusFlags rhs)
+{
+  return static_cast<XpressNet::CentralStatusFlags>(
+    static_cast<std::underlying_type_t<XpressNet::CentralStatusFlags>>(lhs) &
+    static_cast<std::underlying_type_t<XpressNet::CentralStatusFlags>>(rhs));
+}
+
+constexpr bool has(const XpressNet::CentralStatusFlags& value, const XpressNet::CentralStatusFlags& mask)
+{
+  return (static_cast<std::underlying_type_t<XpressNet::CentralStatusFlags>>(value) & static_cast<std::underlying_type_t<XpressNet::CentralStatusFlags>>(mask)) != 0;
 }
 
 #endif
