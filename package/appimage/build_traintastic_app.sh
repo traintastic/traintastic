@@ -25,6 +25,8 @@
 #    2026-04-26  Tom (DL7BJ)    Set environment for language and manual files
 #                               Rename Client&Server AppImage
 #    2026-04-26  Reinder        Added LNCV XML files
+#    2026-05-02  Tom (DL7BJ)    Add qt plugin to linuxdeploy
+#    2026-05-08  Tom (DL7BJ)    Add gtk plugin to linuxdeploy
 #
 #  Usage:
 #
@@ -65,7 +67,6 @@ SOURCE_LNCVXML="../../shared/data/lncv/xml"
 if [ ! -d $OUTDIR ];then
     mkdir $OUTDIR
 fi
-
 # Names for desktop icons and extension for appname
 case "$MODE" in
     server)
@@ -173,6 +174,13 @@ export QT_QPA_PLATFORM_PLUGIN_PATH="$APPDIR/usr/plugins/platforms"
 export LD_LIBRARY_PATH="$APPDIR/usr/lib:$APPDIR/usr/lib/x86_64-linux-gnu"
 unset QT_PLUGIN_PATH_SYSTEM
 unset QT_QPA_PLATFORM_PLUGIN_PATH_SYSTEM
+export GIO_MODULE_DIR="$APPDIR/usr/lib/x86_64-linux-gnu/gio/modules"
+export GI_TYPELIB_PATH="$APPDIR/usr/lib/x86_64-linux-gnu/girepository-1.0"
+export XDG_DATA_DIRS="$APPDIR/usr/share"
+export NO_AT_BRIDGE=1
+export GIO_MODULE_DIR=/dev/null
+export XDG_DATA_DIRS="$APPDIR/usr/share:/usr/share"
+export GDK_PIXBUF_MODULE_FILE="$APPDIR/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"
 HERE="$(dirname "$(readlink -f "${0}")")"
 export TRAINTASTIC_LOCALE_PATH="$APPDIR/traintastic/translations"
 export TRAINTASTIC_MANUAL_PATH="$APPDIR/traintastic/manual"
@@ -224,6 +232,13 @@ export QT_QPA_PLATFORM_PLUGIN_PATH="$APPDIR/usr/plugins/platforms"
 export LD_LIBRARY_PATH="$APPDIR/usr/lib:$APPDIR/usr/lib/x86_64-linux-gnu"
 unset QT_PLUGIN_PATH_SYSTEM
 unset QT_QPA_PLATFORM_PLUGIN_PATH_SYSTEM
+export GIO_MODULE_DIR="$APPDIR/usr/lib/x86_64-linux-gnu/gio/modules"
+export GI_TYPELIB_PATH="$APPDIR/usr/lib/x86_64-linux-gnu/girepository-1.0"
+export XDG_DATA_DIRS="$APPDIR/usr/share"
+export NO_AT_BRIDGE=1
+export GIO_MODULE_DIR=/dev/null
+export XDG_DATA_DIRS="$APPDIR/usr/share:/usr/share"
+export GDK_PIXBUF_MODULE_FILE="$APPDIR/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"
 HERE="$(dirname "$(readlink -f "${0}")")"
 export TRAINTASTIC_LOCALE_PATH="$APPDIR/traintastic/translations"
 export TRAINTASTIC_MANUAL_PATH="$APPDIR/traintastic/manual"
@@ -252,7 +267,9 @@ echo "[OK] traintastic.desktop created for $MODE"
 # copy app icon
 if [[ -f "$SOURCE_ICON" ]]; then
     cp "$SOURCE_ICON" "$APP_DIR/usr/share/icons/hicolor/256x256/apps/traintastic.png"
-    ln -s "$APP_DIR/usr/share/icons/hicolor/256x256/apps/traintastic.png" "$APP_DIR/.DirIcon"
+    if [ ! -f "APP_DIR/.DirIcon" ]; then
+        ln -s "$APP_DIR/usr/share/icons/hicolor/256x256/apps/traintastic.png" "$APP_DIR/.DirIcon"
+    fi
 else
     # Fallback: if no icon exists, create an empty icon
     touch "$APP_DIR/usr/share/icons/hicolor/256x256/apps/traintastic.png"
@@ -269,6 +286,19 @@ fi
 cp -a ${SOURCE_MANUAL}/output/. "$APP_DIR/traintastic/manual/"
 # copy lncv
 cp -a ${SOURCE_LNCVXML}/. "$APP_DIR/traintastic/lncv/"
+#
+# copy gdk-pixbuf loader
+#
+if [ "$ARCH" = "x86_64" ]; then
+    mkdir -p "$APP_DIR/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders"
+    cp -a /usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/* \
+       AppDir/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/
+    gdk-pixbuf-query-loaders > $APP_DIR/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
+    # gdk icon theme
+    cp -a /usr/share/icons/Adwaita $APP_DIR/usr/share/icons/
+    gtk-update-icon-cache $APP_DIR/usr/share/icons/Adwaita
+    export GTK_THEME=Adwaita
+fi
 
 # load linuxdeploy, if not exists
 LINUXDEPLOY="linuxdeploy-${ARCH}.AppImage"
@@ -284,8 +314,14 @@ if [ ! -f "./${QTPLUGIN}" ]; then
     wget -q "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/${QTPLUGIN}"
     chmod +x "${QTPLUGIN}"
 fi
+echo "download linuxdeploy gtk plugin"
+wget -c "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh"
+
+chmod +x linuxdeploy-plugin-gtk.sh
+
 export LINUXDEPLOY_PLUGIN_QT="./linuxdeploy-plugin-qt-${ARCH}.AppImage"
 export QMAKE=/usr/bin/qmake6
+export DEPLOY_GTK_VERSION=2
 # Build the image with linuxdeploy
 echo "Build the AppImage with ${LINUXDEPLOY}"
 export ARCH
@@ -293,23 +329,21 @@ export ARCH
 if [ "$MODE" = "server" ];then
     "./${LINUXDEPLOY}" --appdir "$APP_DIR" --output appimage
 else
-    "./${LINUXDEPLOY}" --appdir "$APP_DIR" \
-    --library /usr/lib/x86_64-linux-gnu/libglib-2.0.so.0 \
-    --library /usr/lib/x86_64-linux-gnu/libgobject-2.0.so.0 \
-    --library /usr/lib/x86_64-linux-gnu/libgio-2.0.so.0 \
-    --library /usr/lib/x86_64-linux-gnu/libatspi.so.0 \
-    --library /usr/lib/x86_64-linux-gnu/libatk-1.0.so.0 \
-    --library /usr/lib/x86_64-linux-gnu/libatk-bridge-2.0.so.0 \
-    --library /usr/lib/x86_64-linux-gnu/libatkmm-1.6.so.1 \
-    --library /usr/lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 \
-    --library /usr/lib/x86_64-linux-gnu/libgdk_pixbuf_xlib-2.0.so.0 \
-    --library /usr/lib/x86_64-linux-gnu/libpango-1.0.so \
-    --library /usr/lib/x86_64-linux-gnu/libpangocairo-1.0.so \
-    --library /usr/lib/x86_64-linux-gnu/libpangoft2-1.0.so \
-    --library /usr/lib/x86_64-linux-gnu/libpangomm-1.4.so.1 \
-    --library /usr/lib/x86_64-linux-gnu/libpangoxft-1.0.so \
-    --plugin qt \
-    --output appimage
+    if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "armv71" ]; then
+        echo "linuxdeploy for Raspberry"
+        "./${LINUXDEPLOY}" --appdir "$APP_DIR" \
+        --plugin qt \
+        --plugin gtk \
+        --output appimage
+    else
+        echo "linuxdeploy for x86_64"
+        "./${LINUXDEPLOY}" --appdir "$APP_DIR" \
+        --plugin qt \
+        --plugin gtk \
+        --library /lib/x86_64-linux-gnu/libatspi.so.0 \
+        --library /lib/x86_64-linux-gnu/libatk-bridge-2.0.so.0 \
+        --output appimage
+    fi
 fi
 # Copy generated appimage
 APPIMAGE_FILE=$(find . -maxdepth 1 -name "$APP_NAME*.AppImage" | head -n 1)
