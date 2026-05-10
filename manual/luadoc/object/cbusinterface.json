@@ -1,0 +1,23 @@
+{
+  "send": {
+    "parameters": [
+      {
+        "name": "message"
+      }
+    ],
+    "return_values": 1
+  },
+  "send_dcc": {
+    "parameters": [
+      {
+        "name": "dcc_packet"
+      },
+      {
+        "name": "repeat",
+        "optional": true,
+        "default": 2
+      }
+    ],
+    "return_values": 1
+  }
+}

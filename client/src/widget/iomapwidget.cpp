@@ -1,9 +1,8 @@
 /**
- * client/src/widget/outputmapwidget.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "outputmapwidget.hpp"
+#include "iomapwidget.hpp"
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QToolBar>
@@ -37,7 +36,6 @@
 #include "propertyspinbox.hpp"
 #include "objectpropertycombobox.hpp"
 #include "propertyaddresses.hpp"
-#include "outputmapoutputactionwidget.hpp"
 #include "methodicon.hpp"
 #include "../board/tilepainter.hpp"
 #include "../board/getboardcolorscheme.hpp"
@@ -64,7 +62,7 @@ static void setComboBoxMinimumWidth(QComboBox* comboBox)
   comboBox->setMinimumWidth(25 * comboBox->fontMetrics().averageCharWidth());
 }
 
-OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
+IOMapWidget::IOMapWidget(ObjectPtr object, QWidget* parent)
   : QWidget(parent)
   , m_object{std::move(object)}
   , m_hasUseColumn{hasUseColumn(m_object->classId())}
@@ -91,17 +89,21 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
     setComboBoxMinimumWidth(comboBox);
     form->addRow(new InterfaceItemNameLabel(*channel, this), comboBox);
   }
+  if(auto* node = dynamic_cast<Property*>(m_object->getProperty("node")))
+  {
+    form->addRow(new InterfaceItemNameLabel(*node, this), createWidget(*node));
+  }
   if(m_addresses)
   {
     form->addRow(new InterfaceItemNameLabel(*m_addresses, this), new PropertyAddresses(*m_addresses, m_object->getMethod("add_address"), m_object->getMethod("remove_address"), this));
-    connect(m_addresses, &AbstractVectorProperty::valueChanged, this, &OutputMapWidget::updateTableOutputColumns);
+    connect(m_addresses, &AbstractVectorProperty::valueChanged, this, &IOMapWidget::updateTableColumnLabels);
   }
   if(m_ecosObject)
   {
     auto* comboBox = new PropertyComboBox(*m_ecosObject, this);
     setComboBoxMinimumWidth(comboBox);
     form->addRow(new InterfaceItemNameLabel(*m_ecosObject, this), comboBox);
-    connect(m_ecosObject, &AbstractVectorProperty::valueChanged, this, &OutputMapWidget::updateTableOutputColumns);
+    connect(m_ecosObject, &AbstractVectorProperty::valueChanged, this, &IOMapWidget::updateTableColumnLabels);
   }
   l->addLayout(form);
 
@@ -159,11 +161,11 @@ OutputMapWidget::OutputMapWidget(ObjectPtr object, QWidget* parent)
         }
       });
 
-    connect(&BoardSettings::instance(), &BoardSettings::changed, this, &OutputMapWidget::updateKeyIcons);
+    connect(&BoardSettings::instance(), &BoardSettings::changed, this, &IOMapWidget::updateKeyIcons);
   }
 }
 
-OutputMapWidget::~OutputMapWidget()
+IOMapWidget::~IOMapWidget()
 {
   if(m_getParentRequestId != Connection::invalidRequestId)
   {
@@ -175,7 +177,7 @@ OutputMapWidget::~OutputMapWidget()
   }
 }
 
-void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
+void IOMapWidget::updateItems(const std::vector<ObjectPtr>& items)
 {
   m_table->setRowCount(static_cast<int>(items.size()));
   m_itemObjects = items;
@@ -241,23 +243,29 @@ void OutputMapWidget::updateItems(const std::vector<ObjectPtr>& items)
         });
     }
 
-    if(auto* outputActions = dynamic_cast<ObjectVectorProperty*>(items[i]->getVectorProperty("output_actions")))
+    auto* subItems = dynamic_cast<ObjectVectorProperty*>(items[i]->getVectorProperty("output_actions")); // OutputMap
+    if(!subItems)
     {
-      updateTableOutputActions(*outputActions, static_cast<int>(i));
+      subItems = dynamic_cast<ObjectVectorProperty*>(items[i]->getVectorProperty("input_conditions")); // FeedbackMap
+    }
 
-      connect(outputActions, &ObjectVectorProperty::valueChanged, this,
+    if(subItems)
+    {
+      updateSubItems(*subItems, static_cast<int>(i));
+
+      connect(subItems, &ObjectVectorProperty::valueChanged, this,
         [this, row=static_cast<int>(i)]()
         {
-          updateTableOutputActions(*dynamic_cast<ObjectVectorProperty*>(sender()), row);
+          updateSubItems(*dynamic_cast<ObjectVectorProperty*>(sender()), row);
         });
     }
   }
 
   updateKeyIcons();
-  updateTableOutputColumns();
+  updateTableColumnLabels();
 }
 
-void OutputMapWidget::updateKeyIcons()
+void IOMapWidget::updateKeyIcons()
 {
   if(!m_parentObject)
   {
@@ -312,7 +320,7 @@ void OutputMapWidget::updateKeyIcons()
   }
 }
 
-void OutputMapWidget::updateTableOutputColumns()
+void IOMapWidget::updateTableColumnLabels()
 {
   if(m_addresses && m_addresses->getAttributeBool(AttributeName::Visible, true))
   {
@@ -339,7 +347,7 @@ void OutputMapWidget::updateTableOutputColumns()
   }
 }
 
-bool OutputMapWidget::eventFilter(QObject* object, QEvent* event)
+bool IOMapWidget::eventFilter(QObject* object, QEvent* event)
 {
   if(m_swapOutputs && ((object == m_table && event->type() == QEvent::Resize) || (object == m_swapOutputs && event->type() == QEvent::Show)))
   {
@@ -350,7 +358,7 @@ bool OutputMapWidget::eventFilter(QObject* object, QEvent* event)
   return QWidget::eventFilter(object, event);
 }
 
-void OutputMapWidget::updateTableOutputActions(ObjectVectorProperty& property, int row)
+void IOMapWidget::updateSubItems(ObjectVectorProperty& property, int row)
 {
   if(!property.empty())
   {
@@ -360,7 +368,7 @@ void OutputMapWidget::updateTableOutputActions(ObjectVectorProperty& property, i
         const int columnCount = static_cast<int>(m_columnCountNonOutput + objects.size());
         if(columnCount > m_table->columnCount())
         {
-          updateTableOutputColumns();
+          updateTableColumnLabels();
         }
 
         auto& rowActions = m_actions[row];
@@ -380,6 +388,10 @@ void OutputMapWidget::updateTableOutputActions(ObjectVectorProperty& property, i
             else if(auto* state = dynamic_cast<Property*>(object->getProperty("state")))
             {
               m_table->setCellWidget(row, column, new PropertySpinBox(*state, this));
+            }
+            else if(auto* condition = dynamic_cast<Property*>(object->getProperty("condition")))
+            {
+              m_table->setCellWidget(row, column, createWidget(*condition, this));
             }
           }
           column++;

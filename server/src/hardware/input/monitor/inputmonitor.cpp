@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/input/monitor/inputmonitor.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +32,7 @@ InputMonitor::InputMonitor(InputController& controller, InputChannel channel)
   , simulateInputChange{*this, "simulate_input_change", MethodFlags::NoScript,
       [this](uint32_t address)
       {
-        m_controller.inputSimulateChange(m_channel, address, SimulateInputAction::Toggle);
+        m_controller.inputSimulateChange(m_channel, InputAddress(address), SimulateInputAction::Toggle);
       }}
   , inputUsedChanged(*this, "input_used_changed", EventFlags::Public)
   , inputValueChanged(*this, "input_value_changed", EventFlags::Public)

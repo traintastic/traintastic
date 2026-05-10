@@ -1,9 +1,8 @@
 /**
- * server/src/board/tile/rail/turnout/turnoutrailtile.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +37,7 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
+  feedbackMap{this, "feedback_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
   setPosition{*this, "set_position", MethodFlags::ScriptCallable, [this](TurnoutPosition value)
     {
       TurnoutPosition reservedPosition = getReservedPosition();
@@ -60,6 +60,9 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
 
   Attributes::addDisplayName(outputMap, DisplayName::BoardTile::outputMap);
   m_interfaceItems.add(outputMap);
+
+  Attributes::addDisplayName(feedbackMap, DisplayName::BoardTile::feedbackMap);
+  m_interfaceItems.add(feedbackMap);
 
   Attributes::addObjectEditor(setPosition, false);
   // setPosition is added by sub class
@@ -112,11 +115,13 @@ bool TurnoutRailTile::release(bool dryRun)
 void TurnoutRailTile::destroying()
 {
   outputMap->parentObject.setValueInternal(nullptr);
+  feedbackMap->parentObject.setValueInternal(nullptr);
   RailTile::destroying();
 }
 
 void TurnoutRailTile::addToWorld()
 {
+  feedbackMap->parentObject.setValueInternal(shared_from_this());
   outputMap->parentObject.setValueInternal(shared_from_this());
   RailTile::addToWorld();
 }
@@ -150,101 +155,119 @@ bool TurnoutRailTile::doSetPosition(TurnoutPosition value, bool skipAction)
   }
   if(!skipAction)
     (*outputMap)[value]->execute();
-  position.setValueInternal(value);
-  positionChanged(*this, value);
+  if(!hasFeedback())
+  {
+    position.setValueInternal(value);
+    positionChanged(*this, value);
+  }
   return true;
+}
+
+bool TurnoutRailTile::hasFeedback() const
+{
+  return feedbackMap->interface;
 }
 
 void TurnoutRailTile::connectOutputMap()
 {
+  // FIXME: use similar callback as FeedbackMap
   outputMap->onOutputStateMatchFound.connect([this](TurnoutPosition pos)
     {
-      bool changed = (pos != position);
-      if(!doSetPosition(pos, true) || !changed)
-        return; // No change
+      updatePosition(Source::OutputStateMatch, pos);
+    });
+}
 
-      TurnoutPosition reservedPosition = getReservedPosition();
-      if(reservedPosition == TurnoutPosition::Unknown || reservedPosition == position.value())
-        return; // Not locked
+void TurnoutRailTile::updatePosition(Source source, TurnoutPosition pos)
+{
+  if(hasFeedback() && source != Source::FeedbackMatch)
+  {
+    return; // Ignore
+  }
+  if(pos == position)
+  {
+    return; // No change
+  }
 
-      // If turnout is inside a reserved path, force it to reserved position
-      // This corrects accidental modifications of position done
-      // by the user with an handset or command station.
-      Log::log(id, LogMessage::W3003_LOCKED_TURNOUT_CHANGED);
+  position.setValueInternal(pos);
+  positionChanged(*this, pos);
 
-      if(m_world.correctOutputPosWhenLocked)
+  TurnoutPosition reservedPosition = getReservedPosition();
+  if(reservedPosition == TurnoutPosition::Unknown || reservedPosition == position.value())
+    return; // Not locked
+
+  // If turnout is inside a reserved path, force it to reserved position
+  // This corrects accidental modifications of position done
+  // by the user with an handset or command station.
+  Log::log(id, LogMessage::W3003_LOCKED_TURNOUT_CHANGED);
+
+  if(m_world.correctOutputPosWhenLocked)
+  {
+    auto now = std::chrono::steady_clock::now();
+    if((now - m_lastRetryStart) >= RETRY_DURATION)
+    {
+      // Reset retry count
+      m_lastRetryStart = now;
+      m_retryCount = 0;
+    }
+
+    if(m_retryCount < MAX_RETRYCOUNT)
+    {
+      // Try to reset output to reseved state
+      m_retryCount++;
+      doSetPosition(reservedPosition, false);
+
+      Log::log(id, LogMessage::N3003_TURNOUT_RESET_TO_RESERVED_POSITION);
+      return;
+    }
+  }
+
+  // We reached maximum retry count
+  // We cannot lock this turnout. Take action.
+  switch (m_world.extOutputChangeAction.value())
+  {
+    default:
+    case ExternalOutputChangeAction::DoNothing:
+      break; // Do nothing
+
+    case ExternalOutputChangeAction::EmergencyStopTrain:
+    {
+      if(auto blockPath = m_reservedPath.lock())
       {
-        auto now = std::chrono::steady_clock::now();
-        if((now - m_lastRetryStart) >= RETRY_DURATION)
+        std::vector<std::shared_ptr<Train>> alreadyStoppedTrains;
+
+        for(auto it : blockPath->fromBlock().trains)
         {
-          // Reset retry count
-          m_lastRetryStart = now;
-          m_retryCount = 0;
+          it->train.value()->emergencyStop.setValue(true);
+          alreadyStoppedTrains.push_back(it->train.value());
+          Log::log(it->train->id, LogMessage::E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED, id.value());
         }
 
-        if(m_retryCount < MAX_RETRYCOUNT)
+        auto toBlock = blockPath->toBlock();
+        if(toBlock)
         {
-          // Try to reset output to reseved state
-          m_retryCount++;
-          doSetPosition(reservedPosition, false);
-
-          Log::log(id, LogMessage::N3003_TURNOUT_RESET_TO_RESERVED_POSITION);
-          return;
-        }
-      }
-
-      // We reached maximum retry count
-      // We cannot lock this turnout. Take action.
-      switch (m_world.extOutputChangeAction.value())
-      {
-      default:
-      case ExternalOutputChangeAction::DoNothing:
-      {
-        // Do nothing
-        break;
-      }
-      case ExternalOutputChangeAction::EmergencyStopTrain:
-      {
-        if(auto blockPath = m_reservedPath.lock())
-        {
-          std::vector<std::shared_ptr<Train>> alreadyStoppedTrains;
-
-          for(auto it : blockPath->fromBlock().trains)
+          for(auto it : blockPath->toBlock()->trains)
           {
+            if(std::find(alreadyStoppedTrains.cbegin(), alreadyStoppedTrains.cend(), it->train.value()) != alreadyStoppedTrains.cend())
+              continue; // Do not stop train twice
+
             it->train.value()->emergencyStop.setValue(true);
-            alreadyStoppedTrains.push_back(it->train.value());
             Log::log(it->train->id, LogMessage::E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED, id.value());
           }
-
-          auto toBlock = blockPath->toBlock();
-          if(toBlock)
-          {
-            for(auto it : blockPath->toBlock()->trains)
-            {
-              if(std::find(alreadyStoppedTrains.cbegin(), alreadyStoppedTrains.cend(), it->train.value()) != alreadyStoppedTrains.cend())
-                continue; // Do not stop train twice
-
-              it->train.value()->emergencyStop.setValue(true);
-              Log::log(it->train->id, LogMessage::E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED, id.value());
-            }
-          }
         }
-        break;
       }
-      case ExternalOutputChangeAction::EmergencyStopWorld:
-      {
-        m_world.stop();
-        Log::log(m_world, LogMessage::E3007_WORLD_STOPPED_ON_TURNOUT_X_CHANGED, id.value());
-        break;
-      }
-      case ExternalOutputChangeAction::PowerOffWorld:
-      {
-        m_world.powerOff();
-        Log::log(m_world, LogMessage::E3009_WORLD_POWER_OFF_ON_TURNOUT_X_CHANGED, id.value());
-        break;
-      }
-      }
-    });
-
-  //TODO: disconnect somewhere?
+      break;
+    }
+    case ExternalOutputChangeAction::EmergencyStopWorld:
+    {
+      m_world.stop();
+      Log::log(m_world, LogMessage::E3007_WORLD_STOPPED_ON_TURNOUT_X_CHANGED, id.value());
+      break;
+    }
+    case ExternalOutputChangeAction::PowerOffWorld:
+    {
+      m_world.powerOff();
+      Log::log(m_world, LogMessage::E3009_WORLD_POWER_OFF_ON_TURNOUT_X_CHANGED, id.value());
+      break;
+    }
+  }
 }

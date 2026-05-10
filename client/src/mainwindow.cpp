@@ -41,6 +41,7 @@
 #include "board/blockhighlight.hpp"
 #include "clock/clock.hpp"
 #include "dialog/connectdialog.hpp"
+#include "dialog/diagnosticreportdialog.hpp"
 #include "settings/settingsdialog.hpp"
 #include "dialog/worldlistdialog.hpp"
 #include "network/connection.hpp"
@@ -546,6 +547,14 @@ MainWindow::MainWindow(QWidget* parent) :
     m_actionAddInterfaceWizard = subMenu->addAction(Locale::tr("wizard.add_interface.welcome:title"), this, &MainWindow::showAddInterfaceWizard);
     //menu->addSeparator();
     //menu->addAction(Locale::tr("qtapp.mainmenu:about_qt") + "...", qApp, &QApplication::aboutQt);
+    menu->addAction(Locale::tr("qtapp.mainmenu:diagnostic_report") + "...",
+      [this]()
+      {
+        auto* dialog = new DiagnosticReportDialog(this);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->setModal(true);
+        dialog->open();
+      });
     menu->addAction(Locale::tr("qtapp.mainmenu:about") + "...", this, &MainWindow::showAbout);
   }
 

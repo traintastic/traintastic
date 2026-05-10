@@ -66,6 +66,13 @@ Turnout3WayRailTile::Turnout3WayRailTile(World& world, std::string_view _id)
 
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right}, getDefaultActionValue));
 
+  feedbackMap.setValueInternal(
+    std::make_shared<TurnoutFeedbackMap>(
+      *this,
+      feedbackMap.name(),
+      std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right},
+      onFeedbackMatch()));
+
   Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);
 

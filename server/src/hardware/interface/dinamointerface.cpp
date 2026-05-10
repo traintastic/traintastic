@@ -269,24 +269,26 @@ std::pair<uint32_t, uint32_t> DinamoInterface::inputAddressMinMax(InputChannel /
   return {Dinamo::Kernel::inputAddressMin, Dinamo::Kernel::inputAddressMax};
 }
 
-void DinamoInterface::inputSimulateChange(InputChannel /*channel*/, uint32_t address, SimulateInputAction action)
+void DinamoInterface::inputSimulateChange(InputChannel /*channel*/, const InputLocation& location, SimulateInputAction action)
 {
   if(m_simulator) [[likely]]
   {
+    assert(std::holds_alternative<InputAddress>(location));
+    const auto address = static_cast<uint16_t>(std::get<InputAddress>(location).address);
     switch(action)
     {
       using enum SimulateInputAction;
 
       case SetFalse:
-        m_simulator->inputEvent(static_cast<uint16_t>(address), false);
+        m_simulator->inputEvent(address, false);
         break;
 
       case SetTrue:
-        m_simulator->inputEvent(static_cast<uint16_t>(address), true);
+        m_simulator->inputEvent(address, true);
         break;
 
       case Toggle:
-        m_simulator->inputEventToggle(static_cast<uint16_t>(address));
+        m_simulator->inputEventToggle(address);
         break;
     }
   }
@@ -311,10 +313,12 @@ std::pair<uint32_t, uint32_t> DinamoInterface::outputAddressMinMax(OutputChannel
   return {0, 0};
 }
 
-bool DinamoInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+bool DinamoInterface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
   if(m_kernel && channel == OutputChannel::OC32)
   {
+    assert(std::holds_alternative<OutputAddress>(location));
+    const auto address = static_cast<uint16_t>(std::get<OutputAddress>(location).address);
     m_kernel->setOC32Aspect(address, static_cast<uint8_t>(std::get<int16_t>(value)));
     return true;
   }
@@ -640,13 +644,13 @@ bool DinamoInterface::setOnline(bool& value, bool simulation)
       m_kernel->onFault =
         [this]()
         {
-          Log::log(*this, LogMessage::E2031_DINAMO_IN_FAULT_STATE);
+          Log::log(*this, LogMessage::E2034_DINAMO_IN_FAULT_STATE);
           m_world.powerOff();
         };
       m_kernel->onInputChanged =
         [this](uint16_t address, bool inputValue)
         {
-          updateInputValue(InputChannel::Input, address, toTriState(inputValue));
+          updateInputValue(InputChannel::Input, InputAddress(address), toTriState(inputValue));
         };
 
       m_kernel->start();

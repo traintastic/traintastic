@@ -204,6 +204,10 @@
         "definition": "Position"
     },
     {
+        "term": "board_tile:feedback_map",
+        "definition": "Feedback"
+    },
+    {
         "term": "board_tile:output_map",
         "definition": "Outputs"
     },
@@ -298,6 +302,78 @@
     {
         "term": "category:trains",
         "definition": "Trains"
+    },
+    {
+        "term": "cbus_interface_type:socket_can",
+        "definition": "SocketCAN (Linux only)"
+    },
+    {
+        "term": "cbus_node_list:manufacturer",
+        "definition": "Manufacturer"
+    },
+    {
+        "term": "cbus_node_list:mode",
+        "definition": "Mode"
+    },
+    {
+        "term": "cbus_node_list:module",
+        "definition": "Module"
+    },
+    {
+        "term": "cbus_node_list:node_number",
+        "definition": "Node number"
+    },
+    {
+        "term": "cbus_node_list:type",
+        "definition": "Type"
+    },
+    {
+        "term": "cbus_node_list:version",
+        "definition": "Version"
+    },
+    {
+        "term": "cbus_session_list:controlled_by",
+        "definition": "Controlled by"
+    },
+    {
+        "term": "cbus_session_list:direction",
+        "definition": "Direction"
+    },
+    {
+        "term": "cbus_session_list:long",
+        "definition": "Long"
+    },
+    {
+        "term": "cbus_session_list:session",
+        "definition": "Session"
+    },
+    {
+        "term": "cbus_session_list:speed",
+        "definition": "Speed"
+    },
+    {
+        "term": "cbus_settings:dcc_accessory_switch_time",
+        "definition": "DCC accessory switch time"
+    },
+    {
+        "term": "cbus_settings:engine_keep_alive",
+        "definition": "Engine keep alive"
+    },
+    {
+        "term": "cbus_settings:hub_enabled",
+        "definition": "Hub enabled"
+    },
+    {
+        "term": "cbus_settings:hub_localhost_only",
+        "definition": "Hub localhost only"
+    },
+    {
+        "term": "cbus_settings:hub_port",
+        "definition": "Hub port"
+    },
+    {
+        "term": "cbus_settings:short_event_node_number",
+        "definition": "Node number for short events"
     },
     {
         "term": "class_id:board_tile.misc.label",
@@ -752,6 +828,18 @@
         "definition": "Power off world"
     },
     {
+        "term": "feedback_map.turnout:key",
+        "definition": "Position"
+    },
+    {
+        "term": "function:off",
+        "definition": "Off"
+    },
+    {
+        "term": "function:on",
+        "definition": "On"
+    },
+    {
         "term": "hardware:address",
         "definition": "Address"
     },
@@ -788,6 +876,14 @@
         "definition": "Decoders"
     },
     {
+        "term": "hardware:event",
+        "definition": "Event"
+    },
+    {
+        "term": "hardware:events",
+        "definition": "Events"
+    },
+    {
         "term": "hardware:identifications",
         "definition": "Identifications"
     },
@@ -802,6 +898,10 @@
     {
         "term": "hardware:interface",
         "definition": "Interface"
+    },
+    {
+        "term": "hardware:node",
+        "definition": "Node"
     },
     {
         "term": "hardware:output_keyboard",
@@ -820,18 +920,6 @@
         "definition": "Throttles"
     },
     {
-        "term": "hsi88:s88_left",
-        "definition": "S88 left"
-    },
-    {
-        "term": "hsi88:s88_middle",
-        "definition": "S88 middle"
-    },
-    {
-        "term": "hsi88:s88_right",
-        "definition": "S88 right"
-    },
-    {
         "term": "identification:opc_multi_sense_direction",
         "definition": "OPC_MULTI_SENSE direction"
     },
@@ -842,6 +930,38 @@
     {
         "term": "input:on_delay",
         "definition": "On delay"
+    },
+    {
+        "term": "input_condition:dont_care",
+        "definition": "Don't care"
+    },
+    {
+        "term": "input_condition:off",
+        "definition": "Off"
+    },
+    {
+        "term": "input_condition:on",
+        "definition": "On"
+    },
+    {
+        "term": "input_channel:long_event",
+        "definition": "Long event"
+    },
+    {
+        "term": "input_channel:s88_left",
+        "definition": "S88 left"
+    },
+    {
+        "term": "input_channel:s88_middle",
+        "definition": "S88 middle"
+    },
+    {
+        "term": "input_channel:s88_right",
+        "definition": "S88 right"
+    },
+    {
+        "term": "input_channel:short_event",
+        "definition": "Short event"
     },
     {
         "term": "input_list:bus",
@@ -862,6 +982,14 @@
     {
         "term": "input_map_item.block:type",
         "definition": "Type"
+    },
+    {
+        "term": "interface.cbus:cbus_node_list",
+        "definition": "Nodes"
+    },
+    {
+        "term": "interface.cbus:cbus_session_list",
+        "definition": "Sessions"
     },
     {
         "term": "interface.ecos:ecos_detector",
@@ -958,6 +1086,10 @@
     {
         "term": "ip:port",
         "definition": "Port"
+    },
+    {
+        "term": "language:da-dk",
+        "definition": "Danish"
     },
     {
         "term": "language:de-de",
@@ -1601,18 +1733,31 @@
     },
     {
         "term": "message:E2028",
-        "definition": "DINAMO protocol version %1 not supported"
+        "definition": "Socket setsockopt failed (%1)"
     },
     {
         "term": "message:E2029",
-        "definition": "DINAMO system %1 v%2 not supported"
+        "definition": "TCP accept error (%1)"
     },
     {
         "term": "message:E2030",
+        "definition": "TCP socket listen failed (%1)"
+    },
+
+    {
+        "term": "message:E2031",
+        "definition": "DINAMO protocol version %1 not supported"
+    },
+    {
+        "term": "message:E2032",
+        "definition": "DINAMO system %1 v%2 not supported"
+    },
+    {
+        "term": "message:E2033",
         "definition": "Communication lost, no response within %1 ms"
     },
     {
-        "term": "message:E2031",
+        "term": "message:E2034",
         "definition": "DINAMO in Fault state"
     },
     {
@@ -1654,6 +1799,10 @@
     {
         "term": "message:E3010",
         "definition": "World was emergency powered off due to signal %1 aspect externally changed"
+    },
+    {
+        "term": "message:E3011",
+        "definition": "Feedback conflict: multiple options are valid"
     },
     {
         "term": "message:E9001",
@@ -1737,10 +1886,14 @@
     },
     {
         "term": "message:I2007",
-        "definition": "DINAMO protocol version: %1"
+        "definition": "New hub connection (%1:%2)"
     },
     {
         "term": "message:I2008",
+        "definition": "DINAMO protocol version: %1"
+    },
+    {
+        "term": "message:I2009",
         "definition": "DINAMO system: %1 v%2"
     },
     {
@@ -1898,6 +2051,10 @@
     {
         "term": "message:N2007",
         "definition": "Listen only mode: deactivated"
+    },
+    {
+        "term": "message:N2008",
+        "definition": "Hub listening at %1:%2"
     },
     {
         "term": "message:N3001",
@@ -2076,8 +2233,16 @@
         "definition": "ECoS object"
     },
     {
+        "term": "output_channel:long_event",
+        "definition": "Long event"
+    },
+    {
         "term": "output_channel:output",
         "definition": "Output"
+    },
+    {
+        "term": "output_channel:short_event",
+        "definition": "Short event"
     },
     {
         "term": "output_channel:turnout",
@@ -2108,6 +2273,10 @@
         "definition": "Add address"
     },
     {
+        "term": "output_map:add_event",
+        "definition": "Add event"
+    },
+    {
         "term": "output_map:address_x",
         "definition": "Address %1"
     },
@@ -2118,6 +2287,10 @@
     {
         "term": "output_map:remove_address",
         "definition": "Remove address"
+    },
+    {
+        "term": "output_map:remove_event",
+        "definition": "Remove event"
     },
     {
         "term": "output_map:swap_outputs",
@@ -2204,6 +2377,30 @@
         "definition": "Username"
     },
     {
+        "term": "qtapp.dialog:cancel",
+        "definition": "Cancel"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:create_report",
+        "definition": "Create report"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:explanation",
+        "definition": "This will generate a diagnostic report to help troubleshoot issues with Traintastic.\n\nThe report will include:\n\u2022 Basic client and server information (app version and operating system)\n\u2022 A screenshot of the client application window\n\u2022 The server log\n\u2022 An export of your world\n\nAll data will be saved into a Zip file on your computer. You can review its contents before sharing it with others (for example on the Traintastic forum).\n\nNo data is sent automatically."
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:window_title",
+        "definition": "Create diagnostic report"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:save_diagnostic_report",
+        "definition": "Save diagnostic report"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:zip_file",
+        "definition": "Zip file"
+    },
+    {
         "term": "qtapp.error:cant_read_from_file_x",
         "definition": "Can't read from file: %1"
     },
@@ -2238,6 +2435,10 @@
     {
         "term": "qtapp.mainmenu:connection",
         "definition": "Connection"
+    },
+    {
+        "term": "qtapp.mainmenu:diagnostic_report",
+        "definition": "Diagnostic report"
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
@@ -2756,8 +2957,16 @@
         "definition": "Steal"
     },
     {
+        "term": "throttle.stop",
+        "definition": "Stop"
+    },
+    {
         "term": "throttle_object_list:throttle",
         "definition": "Throttle"
+    },
+    {
+        "term": "train:acceleration_rate",
+        "definition": "Acceleration rate"
     },
     {
         "term": "train:active",
@@ -2766,6 +2975,10 @@
     {
         "term": "train:block",
         "definition": "Block"
+    },
+    {
+        "term": "train:braking_rate",
+        "definition": "Braking rate"
     },
     {
         "term": "train:length",

@@ -28,7 +28,9 @@
 #include <zlib.h>
 #include <version.hpp>
 #include <traintastic/copyright.hpp>
+#include <traintastic/os/systeminfo.hpp>
 #include <traintastic/utils/str.hpp>
+#include "../compat/stdformat.hpp"
 #include "../core/eventloop.hpp"
 #include "../network/server.hpp"
 #include "../core/attributes.hpp"
@@ -164,6 +166,28 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_interfaceItems.add(restart);
   Attributes::addEnabled(shutdown, false);
   m_interfaceItems.add(shutdown);
+}
+
+std::string Traintastic::getInfo()
+{
+  std::string info("### Traintastic Server ###\nVersion: " TRAINTASTIC_VERSION_FULL "\n\n");
+  info.append(getSystemInfo());
+  info.append(
+    std::format(
+      "\n"
+      "### Libraries ###\n"
+      "boost: {}.{}.{}\n"
+      "nlohmann::json: {}.{}.{}\n"
+      "libarchive: {}\n"
+      "zlib: {}\n"
+      "lua: {}\n",
+      BOOST_VERSION / 100000, BOOST_VERSION / 100 % 100, BOOST_VERSION % 100,
+      NLOHMANN_JSON_VERSION_MAJOR, NLOHMANN_JSON_VERSION_MINOR, NLOHMANN_JSON_VERSION_PATCH,
+      archive_version_details(),
+      zlibVersion(),
+      Lua::getVersion()
+    ));
+  return info;
 }
 
 void Traintastic::importWorld(const std::vector<std::byte>& worldData)

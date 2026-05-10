@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,9 @@
  */
 
 #include "sandbox.hpp"
+#if LUA_VERSION_NUM >= 505
+  #include <random>
+#endif
 #include "push.hpp"
 #include "method.hpp"
 #include "event.hpp"
@@ -127,6 +130,14 @@ static void addLib(lua_State* L, const char* libraryName, lua_CFunction openFunc
   lua_setfield(L, -2, libraryName);
 }
 
+#if LUA_VERSION_NUM >= 505
+static unsigned int makeSeed()
+{
+    std::random_device rd;
+    return static_cast<unsigned int>(rd());
+}
+#endif
+
 namespace Lua {
 
 void Sandbox::close(lua_State* L)
@@ -163,7 +174,11 @@ SandboxPtr Sandbox::create(Script& script)
 {
   auto* stateData = new StateData(script);
 
+#if LUA_VERSION_NUM >= 505
+  lua_State* L = lua_newstate(alloc, stateData, makeSeed());
+#else
   lua_State* L = lua_newstate(alloc, stateData);
+#endif
   *static_cast<StateData**>(lua_getextraspace(L)) = stateData;
 
   // register types:

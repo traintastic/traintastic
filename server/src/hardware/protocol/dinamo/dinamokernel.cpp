@@ -506,7 +506,7 @@ void Kernel::handleSystemCommand(std::span<const uint8_t> message)
       EventLoop::call(
         [this, version=m_protocolVersion]()
         {
-          Log::log(logId, LogMessage::I2007_DINAMO_PROTOCOL_VERSION_X, version.toString());
+          Log::log(logId, LogMessage::I2008_DINAMO_PROTOCOL_VERSION_X, version.toString());
         });
     }
     else
@@ -514,7 +514,7 @@ void Kernel::handleSystemCommand(std::span<const uint8_t> message)
       EventLoop::call(
         [this, version=m_protocolVersion]()
         {
-          Log::log(logId, LogMessage::E2028_DINAMO_PROTOCOL_VERSION_X_NOT_SUPPORTED, version.toString());
+          Log::log(logId, LogMessage::E2031_DINAMO_PROTOCOL_VERSION_X_NOT_SUPPORTED, version.toString());
           error();
         });
     }
@@ -534,7 +534,7 @@ void Kernel::handleSystemCommand(std::span<const uint8_t> message)
       EventLoop::call(
         [this, type=m_system.type, version=m_system.version]()
         {
-          Log::log(logId, LogMessage::I2008_DINAMO_SYSTEM_X_VX, toString(type), version.toString());
+          Log::log(logId, LogMessage::I2009_DINAMO_SYSTEM_X_VX, toString(type), version.toString());
         });
     }
     else
@@ -542,7 +542,7 @@ void Kernel::handleSystemCommand(std::span<const uint8_t> message)
       EventLoop::call(
         [this, type=m_system.type, version=m_system.version]()
         {
-          Log::log(logId, LogMessage::E2029_DINAMO_PROTOCOL_X_VX_NOT_SUPPORTED, toString(type), version.toString());
+          Log::log(logId, LogMessage::E2032_DINAMO_PROTOCOL_X_VX_NOT_SUPPORTED, toString(type), version.toString());
           error();
         });
     }

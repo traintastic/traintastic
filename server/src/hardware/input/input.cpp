@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/input/input.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,10 +30,11 @@
 #include "../../log/log.hpp"
 #include "../../utils/displayname.hpp"
 
-Input::Input(std::shared_ptr<InputController> inputController, InputChannel channel_, uint32_t address_)
+Input::Input(std::shared_ptr<InputController> inputController, InputChannel channel_, std::optional<uint32_t> node_, uint32_t address_)
   : interface{this, "interface", std::move(inputController), PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , channel{this, "channel", channel_, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , address{this, "address", address_, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , node{this, "node", node_ ? *node_ : 0, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , value{this, "value", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , onValueChanged{*this, "on_value_changed", EventFlags::Scriptable}
 {
@@ -44,6 +44,11 @@ Input::Input(std::shared_ptr<InputController> inputController, InputChannel chan
   m_interfaceItems.add(channel);
 
   m_interfaceItems.add(address);
+
+  if(node_)
+  {
+    m_interfaceItems.add(node);
+  }
 
   Attributes::addValues(value, TriStateValues);
   m_interfaceItems.add(value);
@@ -55,7 +60,7 @@ void Input::simulateChange(SimulateInputAction action)
 {
   assert(interface);
   assert(getWorld(dynamic_cast<Object*>(interface.value().get())).simulation.value()); // should only be called in simulation mode
-  interface->inputSimulateChange(channel, address, action);
+  interface->inputSimulateChange(channel, inputLocation(channel, node, address), action);
 }
 
 void Input::updateValue(TriState _value)

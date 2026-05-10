@@ -93,11 +93,11 @@
     },
     {
         "term": "board_tile.misc.switch:color_off",
-        "definition": "Farbe Ausgeschaltet"
+        "definition": "Farbe wenn ausgeschaltet"
     },
     {
         "term": "board_tile.misc.switch:color_on",
-        "definition": "Farbe Angeschaltet"
+        "definition": "Farbe wenn eingeschaltet"
     },
     {
         "term": "board_tile.misc.switch:text",
@@ -121,7 +121,7 @@
     },
     {
         "term": "board_tile.rail.block:flip_train",
-        "definition": "Zug Wenden"
+        "definition": "Zug wenden"
     },
     {
         "term": "board_tile.rail.block:input_map",
@@ -164,8 +164,8 @@
         "definition": "Verkn\u00fcpfung"
     },
     {
-        "term": "board_tile.rail.sensor:input",
-        "definition": "Eingang"
+        "term": "board_tile.rail.nx_button:block",
+        "definition": "Block"
     },
     {
         "term": "board_tile.rail.sensor:invert",
@@ -200,8 +200,48 @@
         "definition": "Ausg\u00e4nge"
     },
     {
+        "term": "booster:current",
+        "definition": "Strom"
+    },
+    {
+        "term": "booster:input_voltage",
+        "definition": "Eingangsspannung"
+    },
+    {
+        "term": "booster:load",
+        "definition": "Last"
+    },
+    {
+        "term": "booster:temperature",
+        "definition": "Temperatur"
+    },
+    {
+        "term": "booster:type",
+        "definition": "Typ"
+    },
+    {
+        "term": "booster:voltage",
+        "definition": "Spannung"
+    },
+    {
+        "term": "booster_driver:poll_interval",
+        "definition": "Abfrageintervall"
+    },
+    {
+        "term": "category:block",
+        "definition": "Block"
+    },
+    {
         "term": "category:cargo",
         "definition": "G\u00fcter"
+    },
+    {
+        "term": "category:colors",
+        "definition": "Farben"
+    },
+    {
+        "term": "category:colors_and_alignment",
+        "definition": "Farben und Ausrichtung"
     },
     {
         "term": "category:debug",
@@ -212,12 +252,20 @@
         "definition": "Entwickler"
     },
     {
+        "term": "category:features",
+        "definition": "Eigenschaften"
+    },
+    {
         "term": "category:general",
         "definition": "Allgemein"
     },
     {
         "term": "category:info",
         "definition": "Infos"
+    },
+    {
+        "term": "category:input",
+        "definition": "Eingang"
     },
     {
         "term": "category:log",
@@ -232,8 +280,80 @@
         "definition": "Optionen"
     },
     {
+        "term": "category:status",
+        "definition": "Status"
+    },
+    {
         "term": "category:trains",
         "definition": "Z\u00fcge"
+    },
+    {
+        "term": "cbus_interface_type:socket_can",
+        "definition": "SocketCAN (nur Linux)"
+    },
+    {
+        "term": "cbus_node_list:manufacturer",
+        "definition": "Hersteller"
+    },
+    {
+        "term": "cbus_node_list:mode",
+        "definition": "Modus"
+    },
+    {
+        "term": "cbus_node_list:module",
+        "definition": "Modul"
+    },
+    {
+        "term": "cbus_node_list:node_number",
+        "definition": "Node Nummer"
+    },
+    {
+        "term": "cbus_node_list:type",
+        "definition": "Typ"
+    },
+    {
+        "term": "cbus_node_list:version",
+        "definition": "Version"
+    },
+    {
+        "term": "cbus_session_list:direction",
+        "definition": "Richtung"
+    },
+    {
+        "term": "cbus_session_list:long",
+        "definition": "Lang"
+    },
+    {
+        "term": "cbus_session_list:session",
+        "definition": "Sitzung"
+    },
+    {
+        "term": "cbus_session_list:speed",
+        "definition": "Geschwindigkeit"
+    },
+    {
+        "term": "cbus_settings:dcc_accessory_switch_time",
+        "definition": "DCC Zubeh\u00f6r Schaltzeit"
+    },
+    {
+        "term": "cbus_settings:engine_keep_alive",
+        "definition": "Lok aktiv halten"
+    },
+    {
+        "term": "cbus_settings:hub_enabled",
+        "definition": "Hub aktiviert"
+    },
+    {
+        "term": "cbus_settings:hub_localhost_only",
+        "definition": "Hub nur f\u00fcr localhost"
+    },
+    {
+        "term": "cbus_settings:hub_port",
+        "definition": "Hub port"
+    },
+    {
+        "term": "cbus_settings:short_event_node_number",
+        "definition": "Node Nummer f\u00fcr kurze Ereignisse "
     },
     {
         "term": "class_id:board_tile.misc.label",
@@ -241,7 +361,7 @@
     },
     {
         "term": "class_id:board_tile.misc.push_button",
-        "definition": "Knopf"
+        "definition": "Taster"
     },
     {
         "term": "class_id:board_tile.misc.switch",
@@ -285,7 +405,7 @@
     },
     {
         "term": "class_id:board_tile.rail.decoupler",
-        "definition": "Entkoppler"
+        "definition": "Entkuppler"
     },
     {
         "term": "class_id:board_tile.rail.direction_control",
@@ -293,19 +413,11 @@
     },
     {
         "term": "class_id:board_tile.rail.link",
-        "definition": "Verkn\u00fcpfung"
+        "definition": "Verbindung"
     },
     {
         "term": "class_id:board_tile.rail.nx_button",
         "definition": "NX-Taste"
-    },
-    {
-        "term": "class_id:board_tile.rail.nx_button:block",
-        "definition": "Block"
-    },
-    {
-        "term": "class_id:board_tile.rail.nx_button:input",
-        "definition": "Eingang"
     },
     {
         "term": "class_id:board_tile.rail.one_way",
@@ -517,7 +629,7 @@
     },
     {
         "term": "decoder:long_address",
-        "definition": "DCC-Langadresse"
+        "definition": "lange DCC-Adresse"
     },
     {
         "term": "decoder:protocol",
@@ -609,11 +721,11 @@
     },
     {
         "term": "default_name:block",
-        "definition": "Blockabschnitt"
+        "definition": "Block"
     },
     {
         "term": "default_name:board",
-        "definition": "Brett"
+        "definition": "Layout"
     },
     {
         "term": "default_name:decoupler",
@@ -629,11 +741,11 @@
     },
     {
         "term": "default_name:nx_button",
-        "definition": "NX Knopf"
+        "definition": "NX Taster"
     },
     {
         "term": "default_name:push_button",
-        "definition": "Knopf"
+        "definition": "Taster"
     },
     {
         "term": "default_name:script",
@@ -689,11 +801,19 @@
     },
     {
         "term": "ext_output_change_action:estop_world",
-        "definition": "Welt Nothalt"
+        "definition": "Nothalt Anlage"
     },
     {
         "term": "ext_output_change_action:poweroff_world",
-        "definition": "Welt ausschalten"
+        "definition": "Anlage ausschalten"
+    },
+    {
+        "term": "function:off",
+        "definition": "Aus"
+    },
+    {
+        "term": "function:on",
+        "definition": "Ein"
     },
     {
         "term": "hardware:address",
@@ -704,12 +824,16 @@
         "definition": "Adressen"
     },
     {
+        "term": "hardware:boosters",
+        "definition": "Booster"
+    },
+    {
         "term": "hardware:channel",
         "definition": "Kanal"
     },
     {
         "term": "hardware:command_station",
-        "definition": "Befehls Zentrale"
+        "definition": "Zentrale"
     },
     {
         "term": "hardware:debug_log_input",
@@ -728,6 +852,14 @@
         "definition": "Dekoder"
     },
     {
+        "term": "hardware:event",
+        "definition": "Ereignis"
+    },
+    {
+        "term": "hardware:events",
+        "definition": "Ereignisse"
+    },
+    {
         "term": "hardware:identifications",
         "definition": "Kennzeichnungen"
     },
@@ -744,8 +876,12 @@
         "definition": "Schnittstelle"
     },
     {
+        "term": "hardware:node",
+        "definition": "Node"
+    },
+    {
         "term": "hardware:output_keyboard",
-        "definition": "Ausgang Tastatur"
+        "definition": "Ausg\u00e4nge Tastatur"
     },
     {
         "term": "hardware:outputs",
@@ -757,19 +893,7 @@
     },
     {
         "term": "hardware:throttles",
-        "definition": "Drosseln"
-    },
-    {
-        "term": "hsi88:s88_left",
-        "definition": "S88 Links"
-    },
-    {
-        "term": "hsi88:s88_middle",
-        "definition": "S88 Mitte"
-    },
-    {
-        "term": "hsi88:s88_right",
-        "definition": "S88 Rechts"
+        "definition": "Fahrregler"
     },
     {
         "term": "identification:opc_multi_sense_direction",
@@ -777,11 +901,31 @@
     },
     {
         "term": "input:off_delay",
-        "definition": "Aus Verz\u00fcgerung"
+        "definition": "Ausschaltverz\u00f6gerung"
     },
     {
         "term": "input:on_delay",
-        "definition": "An Verz\u00fcgerung"
+        "definition": "Einschaltverz\u00f6gerung"
+    },
+    {
+        "term": "input_channel:long_event",
+        "definition": "langes Ereignis"
+    },
+    {
+        "term": "input_channel:s88_left",
+        "definition": "S88 Links"
+    },
+    {
+        "term": "input_channel:s88_middle",
+        "definition": "S88 Mitte"
+    },
+    {
+        "term": "input_channel:s88_right",
+        "definition": "S88 Rechts"
+    },
+    {
+        "term": "input_channel:short_event",
+        "definition": "kurzes Ereignis"
     },
     {
         "term": "input_list:bus",
@@ -793,7 +937,7 @@
     },
     {
         "term": "input_map_item.block:input",
-        "definition": "Eing\u00e4ng"
+        "definition": "Eingang"
     },
     {
         "term": "input_map_item.block:invert",
@@ -802,6 +946,14 @@
     {
         "term": "input_map_item.block:type",
         "definition": "Typ"
+    },
+    {
+        "term": "interface.cbus:cbus_node_list",
+        "definition": "Nodes"
+    },
+    {
+        "term": "interface.cbus:cbus_session_list",
+        "definition": "Sitzungen"
     },
     {
         "term": "interface.ecos:ecos_detector",
@@ -873,7 +1025,7 @@
     },
     {
         "term": "interface_list:list_is_empty",
-        "definition": "Schnittstelle ist nicht leer.\nDr\u00fccke dem Plus-Knopf um eine \nneue Schnittstelle zu erstellen."
+        "definition": "Schnittstelle ist leer.\nDr\u00fccke dem Plus-Knopf um eine neue Schnittstelle zu erstellen."
     },
     {
         "term": "interface_state:error",
@@ -898,6 +1050,10 @@
     {
         "term": "ip:port",
         "definition": "Port"
+    },
+    {
+        "term": "language:da-dk",
+        "definition": "D\u00e4nisch"
     },
     {
         "term": "language:de-de",
@@ -929,7 +1085,7 @@
     },
     {
         "term": "language:pl-pl",
-        "definition": "Polnische"
+        "definition": "Polnisch"
     },
     {
         "term": "language:sv-se",
@@ -945,7 +1101,7 @@
     },
     {
         "term": "list.zone:highlight_zone",
-        "definition": "hervorgehobenen Bereich"
+        "definition": "Bereich hervorheben"
     },
     {
         "term": "list:add",
@@ -1073,7 +1229,7 @@
     },
     {
         "term": "loconet_settings:command_station",
-        "definition": "Befehlszentrale"
+        "definition": "Zentrale"
     },
     {
         "term": "loconet_settings:echo_timeout",
@@ -1097,7 +1253,7 @@
     },
     {
         "term": "loconet_settings:locomotive_slots",
-        "definition": "Lokomotiv-Stellen"
+        "definition": "Lokomotiv Slot"
     },
     {
         "term": "loconet_settings:pcap_output",
@@ -1205,7 +1361,7 @@
     },
     {
         "term": "message:C1001",
-        "definition": "Laden der Welt fehlgeschlagen (%1)"
+        "definition": "Laden der Anlage fehlgeschlagen (%1)"
     },
     {
         "term": "message:C1002",
@@ -1217,19 +1373,19 @@
     },
     {
         "term": "message:C1004",
-        "definition": "Welt lesen fehlgeschlagen (%1) (%2)"
+        "definition": "Anlage lesen fehlgeschlagen (%1) (%2)"
     },
     {
         "term": "message:C1005",
-        "definition": "Speichern der Welt fehlgeschlagen (%1)"
+        "definition": "Speichern der Anlage fehlgeschlagen (%1)"
     },
     {
         "term": "message:C1006",
-        "definition": "Erstellen der Weltsicherung fehlgeschlagen (%1)"
+        "definition": "Anlagen Sicherung fehlgeschlagen (%1)"
     },
     {
         "term": "message:C1007",
-        "definition": "Erstellen des Weltsicherungs-Verzeichnisses fehlgeschlagen (%1)"
+        "definition": "Erstellen des Anlagen Sicherungs Verzeichnisses fehlgeschlagen (%1)"
     },
     {
         "term": "message:C1008",
@@ -1241,11 +1397,11 @@
     },
     {
         "term": "message:C1010",
-        "definition": "Export der Welt gescheitert (%1)"
+        "definition": "Export der Anlage gescheitert (%1)"
     },
     {
         "term": "message:C1011",
-        "definition": "Importieren der Welt fehlgeschlagen (%1)"
+        "definition": "Importieren der Anlage fehlgeschlagen (%1)"
     },
     {
         "term": "message:C1012",
@@ -1253,7 +1409,7 @@
     },
     {
         "term": "message:C1013",
-        "definition": "Welt kann nicht geladen, die mit einer neueren Version gespeichert wurde, ben\u00f6tigt mindestens: %1"
+        "definition": "Anlage kann nicht geladen, die mit einer neueren Version gespeichert wurde, ben\u00f6tigt mindestens: %1"
     },
     {
         "term": "message:C1014",
@@ -1289,7 +1445,7 @@
     },
     {
         "term": "message:C2004",
-        "definition": "Kann keine freie Stelle bekommen"
+        "definition": "Kann keinen freien Slot bekommen"
     },
     {
         "term": "message:C2005",
@@ -1353,27 +1509,27 @@
     },
     {
         "term": "message:D3010",
-        "definition": "Zug \"%1\" zugewiesen zum Blockbereich \"%2\""
+        "definition": "Zug '%1' zugewiesen zum Blockbereich '%2'"
     },
     {
         "term": "message:D3011",
-        "definition": "Zug \"%1\" reserviert Blockbereich \"%2\""
+        "definition": "Zug '%1' belegt Block '%2'"
     },
     {
         "term": "message:D3012",
-        "definition": "Zug \"%1\" betrat Blockbereich \"%2\""
+        "definition": "Zug '%1' erreicht Block '%2'"
     },
     {
         "term": "message:D3013",
-        "definition": "Zug \"%1\" hat dem Blockbereich \"%2\" verlassen"
+        "definition": "Zug '%1' hat den Block '%2' verlassen"
     },
     {
         "term": "message:D3014",
-        "definition": "Zug \"%1\" vom Blockbereich \"%2\" entfernt"
+        "definition": "Zug '%1' aus Block '%2' entfernt"
     },
     {
         "term": "message:D3020",
-        "definition": "Zug \"%1\" zugewiesen zum Bereich \"%2\""
+        "definition": "Zug '%1' zugewiesen zum Bereich '%2'"
     },
     {
         "term": "message:D3021",
@@ -1381,27 +1537,27 @@
     },
     {
         "term": "message:D3022",
-        "definition": "Zug \"%1\" betrat Bereich \"%2\""
+        "definition": "Zug '%1' erreicht Bereich '%2'"
     },
     {
         "term": "message:D3023",
-        "definition": "Zug \"%1\"verl\u00e4sst Bereich \"%2\""
+        "definition": "Zug '%1' verl\u00e4sst Bereich '%2'"
     },
     {
         "term": "message:D3024",
-        "definition": "Zug \"%1\" verlies Bereich \"%2\""
+        "definition": "Zug '%1' hat Bereich '%2' verlassen"
     },
     {
         "term": "message:D3025",
-        "definition": "Zug \"%1\" aus Bereich \"%2\" entfernt"
+        "definition": "Zug '%1' aus Bereich '%2' entfernt"
     },
     {
         "term": "message:E1001",
-        "definition": "Ung\u00fcltige Welt-UUID: %1"
+        "definition": "Ung\u00fcltige Anlagen UUID: %1"
     },
     {
         "term": "message:E1002",
-        "definition": "Die Welt %1 existiert nicht"
+        "definition": "Die Anlage %1 existiert nicht"
     },
     {
         "term": "message:E1003",
@@ -1413,19 +1569,19 @@
     },
     {
         "term": "message:E1005",
-        "definition": "Herunterfahren der Schnittstelle fehlgeschlagen (%1)"
+        "definition": "Herunterfahren des Sockets fehlgeschlagen (%1)"
     },
     {
         "term": "message:E1006",
-        "definition": "Schnittstelle schreiben fehlgeschlagen (%1)"
+        "definition": "Socket schreiben fehlgeschlagen (%1)"
     },
     {
         "term": "message:E1007",
-        "definition": "Schnittstelle lesen fehlgeschlagen (%1)"
+        "definition": "Socket lesen fehlgeschlagen (%1)"
     },
     {
         "term": "message:E1008",
-        "definition": "Schnittstellen Annahmen-abbruch fehlgeschlagen (%1)"
+        "definition": "Socket konnte nicht beendet werden (%1)"
     },
     {
         "term": "message:E2001",
@@ -1437,31 +1593,31 @@
     },
     {
         "term": "message:E2003",
-        "definition": "Adressen erschaffung fehlgeschlagen (%1)"
+        "definition": "Erstellung der Adresse fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2004",
-        "definition": "Schnittstelle \u00f6ffnen fehlgeschlagen (%1)"
+        "definition": "Socket \u00f6ffnen fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2005",
-        "definition": "Schnittstellen-Verbindung fehlgeschlagen (%1)"
+        "definition": "Socket Verbindung fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2006",
-        "definition": "Schnittstellen-Bindung fehlgeschlagen (%1)"
+        "definition": "Socket Bindung fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2007",
-        "definition": "Schnittstellen-Schreiben fehlgeschlagen (%1)"
+        "definition": "Socket Schreiben fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2008",
-        "definition": "Schnittstellen-Lesen fehlgeschlagen (%1)"
+        "definition": "Socket Lesen fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2009",
-        "definition": "Schnittstellen-Empfang fehlgeschlagen (%1)"
+        "definition": "Socket Empfang fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2010",
@@ -1469,7 +1625,7 @@
     },
     {
         "term": "message:E2011",
-        "definition": "Schnittstellen-Senden fehlgeschlagen (%1)"
+        "definition": "Socket Senden fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2012",
@@ -1513,7 +1669,7 @@
     },
     {
         "term": "message:E2022",
-        "definition": "Socket-Erstellung fehlgeschlagen (%1)"
+        "definition": "Socket Erstellung fehlgeschlagen (%1)"
     },
     {
         "term": "message:E2023",
@@ -1522,6 +1678,30 @@
     {
         "term": "message:E2024",
         "definition": "Unbekannte Lokomotive MFX UID: %1"
+    },
+    {
+        "term": "message:E2025",
+        "definition": "Lesen der Softwareversion von Booster '%1' fehlgeschlagen: %2"
+    },
+    {
+        "term": "message:E2026",
+        "definition": "Lesen der Temperatur von Booster '%1' fehlgeschlagen: %2"
+    },
+    {
+        "term": "message:E2027",
+        "definition": "Lesen der Last von Booster '%1' fehlgeschlagen: %2"
+    },
+    {
+        "term": "message:E2028",
+        "definition": "Setzen der Socket Optionen fehlgeschlagen failed (%1)"
+    },
+    {
+        "term": "message:E2029",
+        "definition": "TCP accept error (%1)"
+    },
+    {
+        "term": "message:E2030",
+        "definition": "TCP Socket listen fehlgeschlagen (%1)"
     },
     {
         "term": "message:E3001",
@@ -1541,27 +1721,27 @@
     },
     {
         "term": "message:E3005",
-        "definition": "Zug kann nicht entfernt werden, Zug muss zuerst halten."
+        "definition": "Zug kann nicht entfernt werden, Zug muss erst halten."
     },
     {
         "term": "message:E3006",
-        "definition": "Zug kann nicht entfernt werden, Zug kann nur vom Kopf oder Fu\u00df des Blockabschnitts entfern werden"
+        "definition": "Der Zug kann nicht entfernt werden, sondern nur im Kopf- oder Endblock."
     },
     {
         "term": "message:E3007",
-        "definition": "Welt wurde wegen externer \u00c4nderung der Weichenstellung %1 notgestoppt."
+        "definition": "Anlage wurde wegen externer \u00c4nderung der Weichenstellung %1 notgestoppt."
     },
     {
         "term": "message:E3008",
-        "definition": "Welt wurde wegen externer \u00c4nderung der Signalstellung %1 notgestoppt."
+        "definition": "Anlage wurde wegen externer \u00c4nderung der Signalstellung %1 notgestoppt."
     },
     {
         "term": "message:E3009",
-        "definition": "Welt wurde wegen externer \u00c4nderung der Weichenstellung %1 notausgeschaltet."
+        "definition": "Anlage wurde wegen externer \u00c4nderung der Weichenstellung %1 notausgeschaltet."
     },
     {
         "term": "message:E3010",
-        "definition": "Welt wurde wegen externer \u00c4nderung der Signalstellung %1 notausgeschaltet."
+        "definition": "Anlage wurde wegen externer \u00c4nderung der Signalstellung %1 notausgeschaltet."
     },
     {
         "term": "message:E9001",
@@ -1638,6 +1818,14 @@
     {
         "term": "message:I2003",
         "definition": "Firmware-Version: %1"
+    },
+    {
+        "term": "message:I2006",
+        "definition": "Booster '%1' Software Version: %2"
+    },
+    {
+        "term": "message:I2007",
+        "definition": "Neue Hub Verbindung (%1:%2)"
     },
     {
         "term": "message:I3001",
@@ -1741,7 +1929,7 @@
     },
     {
         "term": "message:N1022",
-        "definition": "Gespeicherte Welt: %1"
+        "definition": "Gespeicherte Anlage: %1"
     },
     {
         "term": "message:N1023",
@@ -1753,19 +1941,19 @@
     },
     {
         "term": "message:N1025",
-        "definition": "Welt erfolgreich exportiert"
+        "definition": "Anlage erfolgreich exportiert"
     },
     {
         "term": "message:N1026",
-        "definition": "Welt erfolgreich importiert"
+        "definition": "Anlage erfolgreich importiert"
     },
     {
         "term": "message:N1027",
-        "definition": "Welt geladen: %1"
+        "definition": "Anlage geladen: %1"
     },
     {
         "term": "message:N1028",
-        "definition": "Welt geschlossen"
+        "definition": "Anlage geschlossen"
     },
     {
         "term": "message:N2001",
@@ -1796,6 +1984,10 @@
         "definition": "Nur-Mith\u00f6ren-Modus: Deaktiviert"
     },
     {
+        "term": "message:N2008",
+        "definition": "Hub h\u00f6rt auf IP %1 und Port %2"
+    },
+    {
         "term": "message:N3001",
         "definition": "Zug %1 wurde dem Block %2 zugewiesen"
     },
@@ -1817,7 +2009,7 @@
     },
     {
         "term": "message:N3006",
-        "definition": "Fahrregler %1 hat Zug %2 abgegeben ohne ihm zu stoppen"
+        "definition": "Fahrregler %1 hat Zug %2 abgegeben ohne zu stoppen"
     },
     {
         "term": "message:N9001",
@@ -1833,7 +2025,7 @@
     },
     {
         "term": "message:W1003",
-        "definition": "Lesen von Welt %1 fehlgeschlagen (Libarchive-Fehler %2: %3)"
+        "definition": "Lesen von Anlage %1 fehlgeschlagen (Libarchive-Fehler %2: %3)"
     },
     {
         "term": "message:W1004",
@@ -1865,7 +2057,7 @@
     },
     {
         "term": "message:W2007",
-        "definition": "UDie Befehlszentrale unterst\u00fctzt die Schnelle-Uhr-Schnittstelle nicht"
+        "definition": "Die Befehlszentrale unterst\u00fctzt die Schnelle-Uhr-Schnittstelle nicht"
     },
     {
         "term": "message:W2018",
@@ -1878,6 +2070,14 @@
     {
         "term": "message:W2020",
         "definition": "DCCext (RCN-213) wird nicht unterst\u00fctzt"
+    },
+    {
+        "term": "message:W2026",
+        "definition": "Lesen der Temperatur von Booster '%1' fehlgeschlagen: %2"
+    },
+    {
+        "term": "message:W2027",
+        "definition": "Lesen der Last von Booster '%1' fehlgeschlagen: %2"
     },
     {
         "term": "message:W3001",
@@ -1960,8 +2160,16 @@
         "definition": "ECoS-Objekt"
     },
     {
+        "term": "output_channel:long_event",
+        "definition": "langes Ereignis"
+    },
+    {
         "term": "output_channel:output",
         "definition": "Ausgang"
+    },
+    {
+        "term": "output_channel:short_event",
+        "definition": "kurzes Ereignis"
     },
     {
         "term": "output_channel:turnout",
@@ -1992,6 +2200,10 @@
         "definition": "Adresse hinzuf\u00fcgen"
     },
     {
+        "term": "output_map:add_event",
+        "definition": "Ereignis hinzuf\u00fcgen"
+    },
+    {
         "term": "output_map:address_x",
         "definition": "Adresse %1"
     },
@@ -2002,6 +2214,10 @@
     {
         "term": "output_map:remove_address",
         "definition": "Adresse entfernen"
+    },
+    {
+        "term": "output_map:remove_event",
+        "definition": "Ereignis entfernen"
     },
     {
         "term": "output_map:swap_outputs",
@@ -2041,7 +2257,7 @@
     },
     {
         "term": "protocol.loconet:command_station",
-        "definition": "Befehlszentrale"
+        "definition": "Zentrale"
     },
     {
         "term": "qtapp.about:traintastic_server",
@@ -2109,11 +2325,11 @@
     },
     {
         "term": "qtapp.mainmenu:close_world",
-        "definition": "Welt schlie\u00dfen"
+        "definition": "Anlage schlie\u00dfen"
     },
     {
         "term": "qtapp.mainmenu:community_forum",
-        "definition": "Gemeinschafts Forum"
+        "definition": "Forum"
     },
     {
         "term": "qtapp.mainmenu:connect_to_server",
@@ -2129,7 +2345,7 @@
     },
     {
         "term": "qtapp.mainmenu:export_world",
-        "definition": "Welt exportieren"
+        "definition": "Anlage exportieren"
     },
     {
         "term": "qtapp.mainmenu:file",
@@ -2149,15 +2365,15 @@
     },
     {
         "term": "qtapp.mainmenu:import_world",
-        "definition": "Welt importieren"
+        "definition": "Anlage importieren"
     },
     {
         "term": "qtapp.mainmenu:load_world",
-        "definition": "Welt laden"
+        "definition": "Anlage laden"
     },
     {
         "term": "qtapp.mainmenu:new_world",
-        "definition": "Neue Welt"
+        "definition": "Neue Anlage"
     },
     {
         "term": "qtapp.mainmenu:objects",
@@ -2181,11 +2397,11 @@
     },
     {
         "term": "qtapp.mainmenu:restart_server_question",
-        "definition": "Sind sie sicher dass sie den Server neustarten wollen?"
+        "definition": "Sind sie sicher, dass sie den Server neustarten wollen?"
     },
     {
         "term": "qtapp.mainmenu:save_world",
-        "definition": "Welt speichern"
+        "definition": "Anlage speichern"
     },
     {
         "term": "qtapp.mainmenu:server",
@@ -2229,11 +2445,11 @@
     },
     {
         "term": "qtapp.mainmenu:world",
-        "definition": "Welt"
+        "definition": "Anlage"
     },
     {
         "term": "qtapp.mainmenu:world_properties",
-        "definition": "Welteigenschaften"
+        "definition": "Anlageneigenschaften"
     },
     {
         "term": "qtapp.message_box:no",
@@ -2261,11 +2477,11 @@
     },
     {
         "term": "qtapp.settings.board:grid_edit_mode",
-        "definition": "Raster (Bearbeitungsmodus)"
+        "definition": "Bearbeitungsmodus"
     },
     {
         "term": "qtapp.settings.board:grid_operate_mode",
-        "definition": "Raster (Betriebsmodus)"
+        "definition": "Betriebsmodus"
     },
     {
         "term": "qtapp.settings.board:show_block_sensor_states",
@@ -2309,7 +2525,7 @@
     },
     {
         "term": "qtapp.settings:board",
-        "definition": "Schaltbrett"
+        "definition": "Stellwerk"
     },
     {
         "term": "qtapp.settings:developer",
@@ -2341,15 +2557,15 @@
     },
     {
         "term": "qtapp.world_list_dialog:world_list",
-        "definition": "Welt Liste"
+        "definition": "Anlagenliste"
     },
     {
         "term": "qtapp:board_properties",
-        "definition": "Brett eigenschften"
+        "definition": "Stellwerk Eigenschaften"
     },
     {
         "term": "qtapp:export_world_failed",
-        "definition": "Weltexport fehlgeschlagen"
+        "definition": "Export der Anlage fehlgeschlagen"
     },
     {
         "term": "qtapp:grid",
@@ -2357,7 +2573,7 @@
     },
     {
         "term": "qtapp:import_world_failed",
-        "definition": "Weltimport fehlgeschlagen"
+        "definition": "Import der Anlage fehlgeschlagen"
     },
     {
         "term": "qtapp:next",
@@ -2385,7 +2601,7 @@
     },
     {
         "term": "qtapp:traintastic_world",
-        "definition": "Traintastic Welt"
+        "definition": "Traintastic Anlage"
     },
     {
         "term": "qtapp:zoom_in",
@@ -2417,7 +2633,7 @@
     },
     {
         "term": "sensor_type:reed_switch",
-        "definition": "Reed-Kontakt"
+        "definition": "Magnetkontakt"
     },
     {
         "term": "serial:baudrate",
@@ -2429,7 +2645,7 @@
     },
     {
         "term": "serial:flow_control",
-        "definition": "Durchflusskontrolle"
+        "definition": "Flusskontrolle"
     },
     {
         "term": "serial:port",
@@ -2481,7 +2697,7 @@
     },
     {
         "term": "settings:load_last_world_on_startup",
-        "definition": "Lade letzte Welt beim Start"
+        "definition": "Lade letzte Anlage beim Start"
     },
     {
         "term": "settings:localhost_only",
@@ -2497,7 +2713,7 @@
     },
     {
         "term": "settings:save_world_uncompressed",
-        "definition": "Welt unkomprimiert speichern"
+        "definition": "Anlage unkomprimiert speichern"
     },
     {
         "term": "settings:select_folder",
@@ -2621,11 +2837,11 @@
     },
     {
         "term": "throttle.estop",
-        "definition": "EStopp"
+        "definition": "Nothalt"
     },
     {
         "term": "throttle.in_control",
-        "definition": "Du bist in Kontrolle"
+        "definition": "Du hast die Kontrolle"
     },
     {
         "term": "throttle.not_controlled",
@@ -2640,8 +2856,16 @@
         "definition": "Stehlen"
     },
     {
+        "term": "throttle.stop",
+        "definition": "Stopp"
+    },
+    {
         "term": "throttle_object_list:throttle",
-        "definition": "Drossel"
+        "definition": "Regler"
+    },
+    {
+        "term": "train:acceleration_rate",
+        "definition": "Beschleunigungszeit"
     },
     {
         "term": "train:active",
@@ -2650,6 +2874,10 @@
     {
         "term": "train:block",
         "definition": "Block"
+    },
+    {
+        "term": "train:braking_rate",
+        "definition": "Bremsverz\u00f6gerung"
     },
     {
         "term": "train:length",
@@ -2697,7 +2925,7 @@
     },
     {
         "term": "traintastic_diy_interface_type:serial",
-        "definition": "Seriel"
+        "definition": "Seriell"
     },
     {
         "term": "traintastic_diy_settings:debug_log_heartbeat",
@@ -2717,7 +2945,7 @@
     },
     {
         "term": "tray_icon.language_changed_message_box:text",
-        "definition": "Tritastic server muss neu gestartet werden, damit die Sprach\u00e4nderung wirksam wird. Jetzt Neustarten?"
+        "definition": "Traintastic Server muss neu gestartet werden, damit die Sprach\u00e4nderung wirksam wird. Jetzt Neustarten?"
     },
     {
         "term": "tray_icon.menu:advanced",
@@ -2725,11 +2953,11 @@
     },
     {
         "term": "tray_icon.menu:allow_client_to_restart_server",
-        "definition": "Erlaube dem Client dem Server neuzustarten"
+        "definition": "Erlaube dem Client den Server neuzustarten"
     },
     {
         "term": "tray_icon.menu:allow_client_to_shutdown_server",
-        "definition": "Erlaube dem Client dem Server herunterzufahren"
+        "definition": "Erlaube dem Client den Server herunterzufahren"
     },
     {
         "term": "tray_icon.menu:language",
@@ -2737,7 +2965,7 @@
     },
     {
         "term": "tray_icon.menu:open_data_directory",
-        "definition": "\u00d6ffne Inhaltsverzeichnis"
+        "definition": "\u00d6ffne Datenverzeichnis"
     },
     {
         "term": "tray_icon.menu:restart",
@@ -2761,11 +2989,11 @@
     },
     {
         "term": "tray_icon.notify:message_restarting",
-        "definition": "Tritastic server ist neugestartet"
+        "definition": "Traintastic Server wurde neugestartet"
     },
     {
         "term": "tray_icon.notify:message_running",
-        "definition": "Traintastic server l\u00e4uft im hintergrund."
+        "definition": "Traintastic Server l\u00e4uft im hintergrund."
     },
     {
         "term": "turnout_position:crossed",
@@ -2841,15 +3069,15 @@
     },
     {
         "term": "weight_unit:ton",
-        "definition": "tonnen"
+        "definition": "Tonnen"
     },
     {
         "term": "wizard.add_interface.command_station:text",
-        "definition": "Bitte w\u00e4hlen Sie Ihre Befehlszentrale:"
+        "definition": "Bitte w\u00e4hlen Sie Ihre Zentrale:"
     },
     {
         "term": "wizard.add_interface.command_station:title",
-        "definition": "Befehlszentrale"
+        "definition": "Zentrale"
     },
     {
         "term": "wizard.add_interface.connection:can_interface",
@@ -2945,7 +3173,7 @@
     },
     {
         "term": "wizard.add_interface.protocol_dr5000_usb:bottom_text",
-        "definition": "Die %command_station% unterst\u00fctzt zwei verschiedne Komunikationsprotokolle. Obwohl beide von Traintastic unterst\u00fctzt werden, wird LocoNet empfohlen."
+        "definition": "Die %command_station% unterst\u00fctzt zwei verschiedene Kommunikationsprotokolle. Obwohl beide von Traintastic unterst\u00fctzt werden, wird LocoNet empfohlen."
     },
     {
         "term": "wizard.add_interface.serial_port:text",
@@ -2989,7 +3217,7 @@
     },
     {
         "term": "wizard.introduction.edit_mode:text",
-        "definition": "Traintastic hat zwei Betriebsmodi:\n- Bearbeitungsmodus\n- Betriebsmodus\n\nIm Betriebsmodus ist nur die Bedienung der Anlage m\u00f6glich, um versehentliche \u00c4nderungen zu verhindern. Um z.B. eine Weichenadresse zu \u00e4ndern oder die Anlage zu modifizieren, muss der Bearbeitungsmodus aktiv sein.\n\nDas Umschalten zwischen Betriebs- und Bearbeitungsmodus erfolgt \u00fcber das Bleistiftsymbol rechts in der Hauptsymbolleiste oder \u00fcber das Hauptmen\u00fc: Welt \u2192 Welt bearbeiten."
+        "definition": "Traintastic hat zwei Betriebsmodi:\n- Bearbeitungsmodus\n- Betriebsmodus\n\nIm Betriebsmodus ist nur die Bedienung der Anlage m\u00f6glich, um versehentliche \u00c4nderungen zu verhindern. Um z.B. eine Weichenadresse zu \u00e4ndern oder die Anlage zu modifizieren, muss der Bearbeitungsmodus aktiv sein.\n\nDas Umschalten zwischen Betriebs- und Bearbeitungsmodus erfolgt \u00fcber das Bleistiftsymbol rechts in der Hauptsymbolleiste oder \u00fcber das Hauptmen\u00fc: Anlage \u2192 Anlage bearbeiten."
     },
     {
         "term": "wizard.introduction.edit_mode:title",
@@ -3013,11 +3241,11 @@
     },
     {
         "term": "wizard.introduction.world:text",
-        "definition": "Die Welt enth\u00e4lt alles, was auf der Anlage vorhanden ist, wie die Befehlszentrale, Z\u00fcge, Signale, Weichen usw. Bei Bedarf k\u00f6nnen mehrere Welten erstellt werden, aber es kann immer nur eine in Gebrauch sein.\n\nDie Welten werden auf dem PC gespeichert, auf dem der Traintastic-Server l\u00e4uft. Beim Speichern einer Welt wird automatisch ein Backup erstellt. \u00dcber das Hauptmen\u00fc: Datei \u2192 Welt exportieren ist es m\u00f6glich, eine Kopie der Welt als zus\u00e4tzliches Backup zu erhalten oder sie auf einen anderen Traintastic-Server zu \u00fcbertragen."
+        "definition": "Die Anlage enth\u00e4lt alles, was auf der Modellbahn vorhanden ist, wie die Zentrale, Z\u00fcge, Signale, Weichen usw. Bei Bedarf k\u00f6nnen mehrere Anlagen erstellt werden, aber es kann immer nur eine in Gebrauch sein.\n\nDie Anlagen werden auf dem PC gespeichert, auf dem der Traintastic-Server l\u00e4uft. Beim Speichern einer Anlage wird automatisch ein Backup erstellt. \u00dcber das Hauptmen\u00fc: Datei \u2192 Anlage exportieren ist es m\u00f6glich, eine Kopie der Anlage als zus\u00e4tzliches Backup zu erhalten oder sie auf einen anderen Traintastic-Server zu \u00fcbertragen."
     },
     {
         "term": "wizard.introduction.world:title",
-        "definition": "Die Welt"
+        "definition": "Die Anlage"
     },
     {
         "term": "wizard.introduction:title",
@@ -3025,7 +3253,7 @@
     },
     {
         "term": "wizard.new_board.adding:text",
-        "definition": "Das Hinzuf\u00fcgen neuer Elemente zum Brett kann mit Hilfe der in verschiedenen Men\u00fcs verf\u00fcgbaren Elemente erfolgen. Klicken Sie mit der linken Maustaste, um ein Element zu platzieren, klicken Sie mit der rechten Maustaste, um ein Element zu drehen.\n\nUm ein Element durch ein anderes zu ersetzen, halten Sie die Strg-Taste gedr\u00fcckt, w\u00e4hrend Sie mit der linken Maustaste klicken, andernfalls muss das alte Element zuerst gel\u00f6scht werden."
+        "definition": "Das Hinzuf\u00fcgen neuer Elemente zum Stellwerk kann mit Hilfe der in verschiedenen Men\u00fcs verf\u00fcgbaren Elemente erfolgen. Klicken Sie mit der linken Maustaste, um ein Element zu platzieren, klicken Sie mit der rechten Maustaste, um ein Element zu drehen.\n\nUm ein Element durch ein anderes zu ersetzen, halten Sie die Strg-Taste gedr\u00fcckt, w\u00e4hrend Sie mit der linken Maustaste klicken, andernfalls muss das alte Element zuerst gel\u00f6scht werden."
     },
     {
         "term": "wizard.new_board.adding:title",
@@ -3033,7 +3261,7 @@
     },
     {
         "term": "wizard.new_board.editing:text",
-        "definition": "Das Brett kann nur ver\u00e4ndert werden, wenn sich die Welt im Bearbeitungsmodus befindet und angehalten ist. Die Symbolleiste mit der Bearbeitungsoption wird automatisch angezeigt, wenn die Bearbeitung m\u00f6glich ist."
+        "definition": "Das Stellwerk kann nur ver\u00e4ndert werden, wenn sich die Anlage im Bearbeitungsmodus befindet und angehalten ist. Die Symbolleiste mit der Bearbeitungsoption wird automatisch angezeigt, wenn die Bearbeitung m\u00f6glich ist."
     },
     {
         "term": "wizard.new_board.editing:title",
@@ -3041,7 +3269,7 @@
     },
     {
         "term": "wizard.new_board.finalization:text",
-        "definition": "Lasst uns das Brett bauen!"
+        "definition": "Lass uns das Stellwerk bauen!"
     },
     {
         "term": "wizard.new_board.finalization:title",
@@ -3049,7 +3277,7 @@
     },
     {
         "term": "wizard.new_board.introduction.long:text",
-        "definition": "Dieser Assistent erkl\u00e4rt die Grundlagen des Bretts."
+        "definition": "Dieser Assistent erkl\u00e4rt die Grundlagen des Stellwerks"
     },
     {
         "term": "wizard.new_board.introduction.short:text",
@@ -3057,15 +3285,15 @@
     },
     {
         "term": "wizard.new_board.introduction:title",
-        "definition": "Neues Brett"
+        "definition": "Neues Stellwerk"
     },
     {
         "term": "wizard.new_board.name:text",
-        "definition": "Gib dem Brett einen Namen, z. B. Traintastic, Station Prima oder Bereitstellungsbereich:"
+        "definition": "Gib dem Stellwerk einen Namen, z. B. Traintastic, Station Prima oder Bereitstellungsbereich:"
     },
     {
         "term": "wizard.new_board.name:title",
-        "definition": "Name des Bretts"
+        "definition": "Name des Stellwerks"
     },
     {
         "term": "wizard.new_board:title",
@@ -3073,35 +3301,35 @@
     },
     {
         "term": "wizard.new_world.finalization:text",
-        "definition": "Die grundlegenden Welteigenschaften sind jetzt eingestellt, Sie k\u00f6nnen sie sp\u00e4ter jederzeit \u00fcber das Men\u00fc \u00e4ndern: Welt -> Eigenschaften."
+        "definition": "Die grundlegenden Anlageneigenschaften sind jetzt eingestellt, Sie k\u00f6nnen sie sp\u00e4ter jederzeit \u00fcber das Men\u00fc \u00e4ndern: Anlage -> Eigenschaften."
     },
     {
         "term": "wizard.new_world.finalization:title",
-        "definition": "Welt bereit"
+        "definition": "Anlage bereit"
     },
     {
         "term": "wizard.new_world.introduction:text",
-        "definition": "Dieser Assistent f\u00fchrt Sie durch die Einrichtung der grundlegenden Welteigenschaften."
+        "definition": "Dieser Assistent f\u00fchrt Sie durch die Einrichtung der grundlegenden Anlageneigenschaften."
     },
     {
         "term": "wizard.new_world.introduction:title",
-        "definition": "Neue Welt"
+        "definition": "Neue Anlage"
     },
     {
         "term": "wizard.new_world.name:text",
-        "definition": "Bennenen Sie die Welt. Der Name wird beim Laden einer Welt angezeigt."
+        "definition": "Bennene die Anlage. Der Name wird beim Laden einer Anlage angezeigt."
     },
     {
         "term": "wizard.new_world.name:title",
-        "definition": "Name der Welt"
+        "definition": "Name der Anlage"
     },
     {
         "term": "wizard.new_world.scale:text",
-        "definition": "W\u00e4hlen Sie den Weltma\u00dfstab, Traintastic verwendet diesen f\u00fcr die Berechnung von Entfernung und Geschwindigkeit."
+        "definition": "W\u00e4hlen Sie den Anlagenma\u00dfstab, Traintastic verwendet diesen f\u00fcr die Berechnung von Entfernung und Geschwindigkeit."
     },
     {
         "term": "wizard.new_world.scale:title",
-        "definition": "Weltma\u00dfstab"
+        "definition": "Anlagenma\u00dfstab"
     },
     {
         "term": "wizard.new_world:title",
@@ -3113,7 +3341,7 @@
     },
     {
         "term": "world:boards",
-        "definition": "Bretter"
+        "definition": "Stellwerke"
     },
     {
         "term": "world:clock",
@@ -3121,11 +3349,11 @@
     },
     {
         "term": "world:correct_output_pos_when_locked",
-        "definition": "Versuche dem Ausgangsstatus zu koregieren wenn extern w\u00e4hren speerung ge\u00e4ndert"
+        "definition": "Versuche den Ausgangsstatus zu korregieren, wenn extern w\u00e4hrend Sperrung ge\u00e4ndert"
     },
     {
         "term": "world:debug_block_events",
-        "definition": "Blockabschnitt Ereignis"
+        "definition": "Block Ereignis"
     },
     {
         "term": "world:debug_train_events",
@@ -3133,7 +3361,7 @@
     },
     {
         "term": "world:debug_zone_events",
-        "definition": "Bereich Ereigniss"
+        "definition": "Bereich Ereignis"
     },
     {
         "term": "world:decoders",
@@ -3141,11 +3369,15 @@
     },
     {
         "term": "world:edit",
-        "definition": "Welt bearbeiten"
+        "definition": "Anlage bearbeiten"
     },
     {
         "term": "world:ext_output_change_action",
-        "definition": " Aktion bei externer Ausgangs\u00e4nderung"
+        "definition": "Aktion bei externer Ausgangs\u00e4nderung"
+    },
+    {
+        "term": "world:feature_scripting",
+        "definition": "Scripting"
     },
     {
         "term": "world:inputs",
@@ -3185,7 +3417,7 @@
     },
     {
         "term": "world:path_release_delay",
-        "definition": "Blockabschnitt verlass Verz\u00f6gerung"
+        "definition": "Verz\u00f6gerung beim Verlassen des Blockabschnitts"
     },
     {
         "term": "world:power_off",
@@ -3253,7 +3485,7 @@
     },
     {
         "term": "xpressnet_interface_type:serial",
-        "definition": "Seriel"
+        "definition": "Seriell"
     },
     {
         "term": "xpressnet_serial_interface_type:custom",
@@ -3281,7 +3513,7 @@
     },
     {
         "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
-        "definition": "Einschaltung erlauben/Notabschaltung ausschalten"
+        "definition": "Einschalten erlauben/Notabschaltung ausschalten"
     },
     {
         "term": "zone:blocks",

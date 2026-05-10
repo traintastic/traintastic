@@ -1,9 +1,8 @@
 /**
- * server/src/board/tile/rail/turnout/turnoutrailtile.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +28,7 @@
 #include "../../../../core/objectproperty.hpp"
 #include "../../../../core/method.hpp"
 #include <traintastic/enum/turnoutposition.hpp>
+#include "../../../../hardware/input/feedback/turnoutfeedbackmap.hpp"
 #include "../../../../hardware/output/map/turnoutoutputmap.hpp"
 
 class BlockPath;
@@ -38,6 +38,12 @@ class TurnoutRailTile : public RailTile
   DEFAULT_ID("turnout")
 
   private:
+    enum class Source
+    {
+      OutputStateMatch,
+      FeedbackMatch,
+    };
+
     Node m_node;
     std::weak_ptr<BlockPath> m_reservedPath;
 
@@ -56,7 +62,16 @@ class TurnoutRailTile : public RailTile
     bool isValidPosition(TurnoutPosition value);
     virtual bool doSetPosition(TurnoutPosition value, bool skipAction = false);
 
+    bool hasFeedback() const;
+
     void connectOutputMap();
+
+    void updatePosition(Source source, TurnoutPosition value);
+
+    inline auto onFeedbackMatch()
+    {
+      return std::bind_front(&TurnoutRailTile::updatePosition, this, Source::FeedbackMatch);
+    }
 
   public:
     boost::signals2::signal<void (const TurnoutRailTile&, TurnoutPosition)> positionChanged;
@@ -64,6 +79,7 @@ class TurnoutRailTile : public RailTile
     Property<std::string> name;
     Property<TurnoutPosition> position;
     ObjectProperty<TurnoutOutputMap> outputMap;
+    ObjectProperty<TurnoutFeedbackMap> feedbackMap;
     Method<bool(TurnoutPosition)> setPosition;
 
     std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }

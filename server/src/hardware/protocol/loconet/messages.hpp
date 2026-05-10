@@ -56,10 +56,10 @@ constexpr uint8_t SLOT_LOCO_MAX = 119;
 constexpr uint8_t SLOT_PROGRAMMING_TRACK = 124;
 constexpr uint8_t SLOT_UNKNOWN = 255; //!< placeholder to indicate invalid slot
 
-constexpr uint8_t SPEED_STOP = 0;
-constexpr uint8_t SPEED_ESTOP = 1;
-constexpr uint8_t SPEED_MIN = 2;
-constexpr uint8_t SPEED_MAX = 127;
+constexpr uint8_t speedStop = 0;
+constexpr uint8_t speedEStop = 1;
+constexpr uint8_t speedMin = 2;
+constexpr uint8_t speedMax = 127;
 
 constexpr uint8_t SL_CONUP = 0x40;
 constexpr uint8_t SL_BUSY = 0x20;

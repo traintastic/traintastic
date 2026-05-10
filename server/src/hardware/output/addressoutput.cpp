@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/output.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2022,2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,9 +21,15 @@
 
 #include "addressoutput.hpp"
 
-AddressOutput::AddressOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, OutputType type_, uint32_t address_)
+AddressOutput::AddressOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, OutputType type_, std::optional<uint32_t> node_, uint32_t address_)
   : Output(std::move(outputController), channel_, type_)
+  , node{this, "node", node_ ? *node_ : 0, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , address{this, "address", address_, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , hasNode{node_}
 {
+  if(hasNode)
+  {
+    m_interfaceItems.add(node);
+  }
   m_interfaceItems.add(address);
 }

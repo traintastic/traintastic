@@ -1,9 +1,8 @@
 /**
- * server/src/traintastic/traintastic.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -83,6 +82,8 @@ class Traintastic final : public Object
 
     Traintastic(const std::filesystem::path& dataDir);
     ~Traintastic() final = default;
+
+    static std::string getInfo();
 
     std::string getObjectId() const final { return std::string(id); }
 

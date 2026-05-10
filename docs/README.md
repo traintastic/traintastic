@@ -24,7 +24,22 @@ When new objects are added or existing object are extended, all of the above wil
 
 ## Network communication
 
-...
+Traintastic runs a HTTP web server on port 5740 (can be changed), beside hosting the manual it also handles the client communication using RFC 6455 WebSocket.
+
+Currently there are two protocol implemented for client communication with the server:
+
+The **Traintastic client** application uses a binary protocol, this protocol handles object serialization, change event, method calls etc. Apart from a few special commands it is "just working", the client can interact easily with the object model.
+
+Related source files:
+- Message format: [message.hpp](../shared/src/traintastic/network/message.hpp)
+- Server side: [clientconnection.hpp](../server/src/network/clientconnection.hpp) and [session.cpp](../server/src/network/session.cpp)
+- Client side: [connection.cpp](../client/src/network/connection.cpp)
+
+The **Traintastic WebThrottle** uses a text based JSON protocol, it has a very limited feature set targeted at commands and events that are required for the WebThrottle.
+
+Related source files:
+- Server side: [webthrottleconnection.cpp](../server/src/network/webthrottleconnection.cpp)
+- Browser side: [throttle.js](../server/www/js/throttle.js)
 
 
 ## Hardware interfacing

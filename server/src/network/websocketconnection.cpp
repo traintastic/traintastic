@@ -66,7 +66,7 @@ void WebSocketConnection::disconnect()
 {
   assert(isEventLoopThread());
 
-  m_server.m_ioContext.post(
+  boost::asio::post(m_server.m_ioContext, 
     [this, serverWeak=m_server.weak_from_this()]()
     {
       if(m_ws->is_open())

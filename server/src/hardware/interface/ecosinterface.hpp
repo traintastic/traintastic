@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/ecosinterface.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -83,13 +82,13 @@ class ECoSInterface final
     // InputController:
     std::span<const InputChannel> inputChannels() const final;
     std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
-    void inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action) final;
+    void inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action) final;
 
     // OutputController:
     std::span<const OutputChannel> outputChannels() const final;
     std::pair<std::span<const uint16_t>, std::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const final;
-    bool isOutputId(OutputChannel channel, uint32_t id) const final;
-    [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t outputId, OutputValue value) final;
+    bool isOutputLocation(OutputChannel channel, const OutputLocation& location) const final;
+    [[nodiscard]] bool setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value) final;
 };
 
 #endif

@@ -1,7 +1,6 @@
 /**
- * server/src/hardware/protocol/loconet/loconet.cpp
- *
- * This file is part of the traintastic source code.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) 2019-2026 Reinder Feenstra
  *
@@ -51,16 +50,16 @@ static constexpr uint8_t multiplierFreeze = 0;
 
 static void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t speed)
 {
-  decoder->emergencyStop.setValueInternal(speed == SPEED_ESTOP);
+  decoder->emergencyStop.setValueInternal(speed == speedEStop);
 
-  if(speed == SPEED_STOP || speed == SPEED_ESTOP)
+  if(speed == speedStop || speed == speedEStop)
     decoder->throttle.setValueInternal(Decoder::throttleStop);
   else
   {
     speed--; // decrement one for ESTOP: 2..127 -> 1..126
-    const auto currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), SPEED_MAX - 1);
+    const auto currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), speedMax - 1);
     if(currentStep != speed) // only update trottle if it is a different step
-      decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed, SPEED_MAX - 1));
+      decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed, speedMax - 1));
   }
 }
 
@@ -104,7 +103,7 @@ void Kernel::setConfig(const Config& config)
       break;
   }
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, newConfig=config]()
     {
       if(newConfig.pcap != m_config.pcap)
@@ -228,14 +227,14 @@ void Kernel::start()
     [this]()
     {
       setThreadName("loconet");
-      auto work = std::make_shared<boost::asio::io_context::work>(m_ioContext);
+      boost::asio::executor_work_guard<decltype(m_ioContext.get_executor())> work{m_ioContext.get_executor()};
       m_ioContext.run();
     });
 
   if(m_config.fastClock == LocoNetFastClock::Master)
     enableClockEvents();
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       if(m_config.pcap)
@@ -268,7 +267,7 @@ void Kernel::stop()
 
   disableClockEvents();
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       m_waitingForEchoTimer.cancel();
@@ -489,7 +488,7 @@ void Kernel::receive(const Message& message)
             EventLoop::call(
               [this, address=1 + inputRep.fullAddress(), value]()
               {
-                m_inputController->updateInputValue(InputChannel::Input, address, value);
+                m_inputController->updateInputValue(InputChannel::Input, InputAddress(address), value);
               });
           }
         }
@@ -510,7 +509,7 @@ void Kernel::receive(const Message& message)
             EventLoop::call(
               [this, address=switchRequest.address(), value]()
               {
-                m_outputController->updateOutputValue(OutputChannel::Accessory, address, value);
+                m_outputController->updateOutputValue(OutputChannel::Accessory, OutputAddress(address), value);
               });
           }
         }
@@ -945,7 +944,7 @@ void Kernel::receive(const Message& message)
 void Kernel::setState(bool powerOn, bool run)
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, powerOn, run]()
     {
       if(!powerOn) // disable power
@@ -1039,7 +1038,7 @@ bool Kernel::send(std::span<uint8_t> packet)
   if(!isValid(*reinterpret_cast<Message*>(data.data())))
     return false;
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, message=std::move(data)]()
     {
       send(*reinterpret_cast<const Message*>(message.data()));
@@ -1063,7 +1062,7 @@ void Kernel::readLNCV(uint16_t moduleId, uint16_t address, uint16_t lncv, std::f
 {
   assert(isEventLoopThread());
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, moduleId, address, lncv, callback]()
     {
       m_lncvReads.emplace(LNCVRead{moduleId, address, lncv, std::move(callback)});
@@ -1077,11 +1076,11 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
 
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle))
   {
-    const auto speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, SPEED_MAX - 1);
-    if(m_emergencyStop == TriState::False || decoder.emergencyStop || speedStep == SPEED_STOP)
+    const auto speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, speedMax - 1);
+    if(m_emergencyStop == TriState::False || decoder.emergencyStop || speedStep == speedStop)
     {
       // only send speed updates if bus estop isn't active, except for speed STOP and ESTOP
-      LocoSpd message{static_cast<uint8_t>(decoder.emergencyStop ? SPEED_ESTOP : (speedStep > 0 ? 1 + speedStep : SPEED_STOP))};
+      LocoSpd message{static_cast<uint8_t>(decoder.emergencyStop ? speedEStop : (speedStep > 0 ? 1 + speedStep : speedStop))};
       postSend(decoder.address, message);
     }
   }
@@ -1265,7 +1264,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue valu
       if(!inRange(address, accessoryOutputAddressMin, accessoryOutputAddressMax))
         return false;
 
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, address, dir=std::get<OutputPairValue>(value) == OutputPairValue::Second]()
         {
           send(SwitchRequest(address, dir, true));
@@ -1290,7 +1289,7 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
   assert(isEventLoopThread());
   assert(inRange(address, inputAddressMin, inputAddressMax));
   if(m_simulation)
-    m_ioContext.post(
+    boost::asio::post(m_ioContext, 
       [this, fullAddress=address - 1, action]()
       {
         switch(action)
@@ -1315,7 +1314,7 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
 void Kernel::lncvStart(uint16_t moduleId, uint16_t moduleAddress)
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, moduleId, moduleAddress]()
     {
       if(m_lncvActive)
@@ -1331,7 +1330,7 @@ void Kernel::lncvStart(uint16_t moduleId, uint16_t moduleAddress)
 void Kernel::lncvRead(uint16_t lncv)
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, lncv]()
     {
       if(m_lncvActive)
@@ -1342,7 +1341,7 @@ void Kernel::lncvRead(uint16_t lncv)
 void Kernel::lncvWrite(uint16_t lncv, uint16_t value)
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, lncv, value]()
     {
       if(m_lncvActive)
@@ -1353,7 +1352,7 @@ void Kernel::lncvWrite(uint16_t lncv, uint16_t value)
 void Kernel::lncvStop()
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       if(!m_lncvActive)
@@ -1454,7 +1453,7 @@ void Kernel::send(uint16_t address, Message& message, uint8_t& slot)
     slot = addressToSlot->second;
 
     if(message.opCode == OPC_LOCO_SPD &&
-        static_cast<LocoSpd&>(message).speed >= SPEED_MIN &&
+        static_cast<LocoSpd&>(message).speed >= speedMin &&
         static_cast<LocoSpd&>(message).speed == m_slots[slot].speed)
       return; // same speed, don't send it (always send ESTOP and STOP)
 
@@ -1624,7 +1623,7 @@ void Kernel::enableClockEvents()
       m_fastClock.store(FastClock{event == Clock::ClockEvent::Freeze ? multiplierFreeze : multiplier, time.hour(), time.minute()});
       if(event == Clock::ClockEvent::Freeze || event == Clock::ClockEvent::Resume)
       {
-        m_ioContext.post(
+        boost::asio::post(m_ioContext, 
           [this]()
           {
             setFastClockMaster(true);

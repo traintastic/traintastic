@@ -68,12 +68,12 @@ public:
   // InputController:
   std::span<const InputChannel> inputChannels() const final;
   std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
-  void inputSimulateChange(InputChannel /*channel*/, uint32_t /*address*/, SimulateInputAction /*action*/) final;
+  void inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action) final;
 
   // OutputController:
   std::span<const OutputChannel> outputChannels() const final;
   std::pair<uint32_t, uint32_t> outputAddressMinMax(OutputChannel channel) const final;
-  [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t address, OutputValue value) final;
+  [[nodiscard]] bool setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value) final;
 
   // TrackDriverController:
   std::pair<uint32_t, uint32_t> trackDriverAddressMinMax() const final;

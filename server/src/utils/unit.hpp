@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,7 @@ struct Unit
 {
   static constexpr std::string_view ampere{"A"};
   static constexpr std::string_view degreeCelcius{"\u00B0C"};
+  static constexpr std::string_view meterPerSecondSquared{"m/s\u00B2"};
   static constexpr std::string_view milliSeconds{"ms"};
   static constexpr std::string_view percent{"%"};
   static constexpr std::string_view seconds{"s"};

@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/input/inputcontroller.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,53 +45,80 @@ bool InputController::isInputChannel(InputChannel channel) const
   return contains(inputChannels(), channel);
 }
 
-bool InputController::isInputAvailable(InputChannel channel, uint32_t address) const
+bool InputController::isInputLocation(InputChannel channel, const InputLocation& location) const
+{
+  if(hasAddressLocation(channel))
+  {
+    return inRange(std::get<InputAddress>(location).address, inputAddressMinMax(channel));
+  }
+  return false;
+}
+
+bool InputController::isInputAvailable(InputChannel channel, const InputLocation& location) const
 {
   assert(isInputChannel(channel));
   return
-    inRange(address, inputAddressMinMax(channel)) &&
-    m_inputs.find({channel, address}) == m_inputs.end();
+    isInputLocation(channel, location) &&
+    m_inputs.find({channel, location}) == m_inputs.end();
 }
 
 std::optional<uint32_t> InputController::getUnusedInputAddress(InputChannel channel) const
 {
   assert(isInputChannel(channel));
-  const auto end = m_inputs.cend();
-  const auto range = inputAddressMinMax(channel);
-  for(uint32_t address = range.first; address < range.second; address++)
+  if(hasAddressLocation(channel))
   {
-    if(m_inputs.find({channel, address}) == end)
+    const auto end = m_inputs.cend();
+    const auto range = inputAddressMinMax(channel);
+    for(uint32_t address = range.first; address < range.second; address++)
     {
-      return address;
+      if(m_inputs.find({channel, InputAddress(address)}) == end)
+      {
+        return address;
+      }
     }
   }
   return std::nullopt;
 }
 
-std::shared_ptr<Input> InputController::getInput(InputChannel channel, uint32_t address, Object& usedBy)
+std::shared_ptr<Input> InputController::getInput(InputChannel channel, const InputLocation& location, Object& usedBy)
 {
-  if(!isInputChannel(channel) || !inRange(address, inputAddressMinMax(channel)))
+  if(!isInputChannel(channel) || !isInputLocation(channel, location))
   {
     return {};
   }
 
   // Check if already exists:
-  if(auto it = m_inputs.find({channel, address}); it != m_inputs.end())
+  if(auto it = m_inputs.find({channel, location}); it != m_inputs.end())
   {
     it->second->m_usedBy.emplace(usedBy.shared_from_this());
     return it->second;
   }
 
   // Create new input:
-  auto input = std::make_shared<Input>(shared_ptr(), channel, address);
+  std::shared_ptr<Input> input;
+  if(hasAddressLocation(channel))
+  {
+    assert(std::holds_alternative<InputAddress>(location));
+    input = std::make_shared<Input>(shared_ptr(), channel, std::nullopt, std::get<InputAddress>(location).address);
+  }
+  else if(hasNodeAddressLocation(channel))
+  {
+    assert(std::holds_alternative<InputNodeAddress>(location));
+    input = std::make_shared<Input>(shared_ptr(), channel, std::get<InputNodeAddress>(location).node, std::get<InputNodeAddress>(location).address);
+  }
+  else [[unlikely]]
+  {
+    assert(false);
+    return {};
+  }
   input->m_usedBy.emplace(usedBy.shared_from_this());
-  m_inputs.emplace(InputMapKey{channel, address}, input);
+  m_inputs.emplace(InputMapKey{channel, location}, input);
   inputs->addObject(input);
   getWorld(inputs.object()).inputs->addObject(input);
 
-  if(auto monitor = m_inputMonitors[channel].lock())
+  if(auto monitor = m_inputMonitors[channel].lock(); monitor && hasAddressLocation(channel))
   {
-    monitor->fireInputUsedChanged(address, true);
+    monitor->fireInputUsedChanged(input->address, true);
   }
 
   return input;
@@ -105,30 +131,30 @@ void InputController::releaseInput(Input& input, Object& usedBy)
   if(input.m_usedBy.empty())
   {
     const auto channel = input.channel.value();
-    const auto address = input.address.value();
+    const auto location = input.location();
 
-    m_inputs.erase({channel, address});
+    m_inputs.erase({channel, location});
     inputs->removeObject(inputShared);
     getWorld(inputs.object()).inputs->removeObject(inputShared);
     inputShared->destroy();
     inputShared.reset();
 
-    if(auto monitor = m_inputMonitors[channel].lock())
+    if(auto monitor = m_inputMonitors[channel].lock(); monitor && hasAddressLocation(channel))
     {
-      monitor->fireInputUsedChanged(address, false);
+      monitor->fireInputUsedChanged(std::get<InputAddress>(location).address, false);
     }
   }
 }
 
-void InputController::updateInputValue(InputChannel channel, uint32_t address, TriState value)
+void InputController::updateInputValue(InputChannel channel, const InputLocation& location, TriState value)
 {
-  if(auto it = m_inputs.find({channel, address}); it != m_inputs.end())
+  if(auto it = m_inputs.find({channel, location}); it != m_inputs.end())
   {
     it->second->updateValue(value);
   }
-  if(auto monitor = m_inputMonitors[channel].lock())
+  if(auto monitor = m_inputMonitors[channel].lock(); monitor && std::holds_alternative<InputAddress>(location))
   {
-    monitor->fireInputValueChanged(address, value);
+    monitor->fireInputValueChanged(std::get<InputAddress>(location).address, value);
   }
 }
 

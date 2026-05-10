@@ -32,6 +32,7 @@
 #include "../../../core/vectorproperty.hpp"
 #include "../../../core/objectvectorproperty.hpp"
 #include "../output.hpp"
+#include "../outputtypes.hpp"
 #include "outputactionvalue.hpp"
 
 class OutputController;
@@ -52,10 +53,13 @@ class OutputMap : public SubObject
     boost::signals2::scoped_connection m_interfaceDestroying;
     boost::signals2::scoped_connection m_outputECoSObjectsChanged;
 
-    void addOutput(OutputChannel ch, uint32_t id);
-    void addOutput(OutputChannel ch, uint32_t id, OutputController& outputController);
-    OutputConnectionPair getOutput(OutputChannel ch, uint32_t id, OutputController& outputController);
+    void addOutput(OutputChannel ch, const OutputLocation& location);
+    void addOutput(OutputChannel ch, const OutputLocation& location, OutputController& outputController);
+    OutputConnectionPair getOutput(OutputChannel ch, const OutputLocation& location, OutputController& outputController);
     void releaseOutput(OutputConnectionPair& outputConnPair);
+    void releaseOutputs(Outputs& outputs);
+
+    void updateAddressDisplayName();
 
   protected:
     Outputs m_outputs;
@@ -84,6 +88,7 @@ class OutputMap : public SubObject
     ObjectProperty<Object> parentObject; // UI needs access to parent object
     ObjectProperty<OutputController> interface;
     Property<OutputChannel> channel;
+    Property<uint32_t> node;
     VectorProperty<uint32_t> addresses;
     Property<uint16_t> ecosObject;
     ObjectVectorProperty<OutputMapItem> items;

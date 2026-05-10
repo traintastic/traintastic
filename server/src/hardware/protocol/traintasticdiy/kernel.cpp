@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/traintasticdiy/kernel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022-2025 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -85,7 +84,7 @@ Kernel::Kernel(std::string logId_, World& world, const Config& config, bool simu
 
 void Kernel::setConfig(const Config& config)
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, newConfig=config]()
     {
       m_config = newConfig;
@@ -111,11 +110,11 @@ void Kernel::start()
     [this]()
     {
       setThreadName("traintasticdiy");
-      auto work = std::make_shared<boost::asio::io_context::work>(m_ioContext);
+      boost::asio::executor_work_guard<decltype(m_ioContext.get_executor())> work{m_ioContext.get_executor()};
       m_ioContext.run();
     });
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       try
@@ -144,7 +143,7 @@ void Kernel::stop()
   for(auto& it : m_decoderSubscriptions)
     it.second.connection.disconnect();
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       m_heartbeatTimeout.cancel();
@@ -208,11 +207,11 @@ void Kernel::receive(const Message& message)
             {
               if(state == InputState::Invalid)
               {
-                if(m_inputController->inputMap().count({InputChannel::Input, address}) != 0)
+                if(m_inputController->inputMap().count({InputChannel::Input, InputAddress(address)}) != 0)
                   Log::log(logId, LogMessage::W2004_INPUT_ADDRESS_X_IS_INVALID, address);
               }
               else
-                m_inputController->updateInputValue(InputChannel::Input, address, toTriState(state));
+                m_inputController->updateInputValue(InputChannel::Input, InputAddress(address), toTriState(state));
             });
         }
       }
@@ -237,11 +236,11 @@ void Kernel::receive(const Message& message)
             {
               if(state == OutputState::Invalid)
               {
-                if(m_outputController->outputMap().count({OutputChannel::Output, address}) != 0)
+                if(m_outputController->outputMap().count({OutputChannel::Output, OutputAddress(address)}) != 0)
                   Log::log(logId, LogMessage::W2005_OUTPUT_ADDRESS_X_IS_INVALID, address);
               }
               else
-                m_outputController->updateOutputValue(OutputChannel::Output, address, toTriState(state));
+                m_outputController->updateOutputValue(OutputChannel::Output, OutputAddress(address), toTriState(state));
             });
         }
       }
@@ -370,7 +369,7 @@ void Kernel::receive(const Message& message)
           [this]()
           {
             for(const auto& it : m_inputController->inputMap())
-              postSend(GetInputState(static_cast<uint16_t>(it.first.address)));
+              postSend(GetInputState(static_cast<uint16_t>(std::get<InputAddress>(it.first.location).address)));
           });
 
       if(hasFeatureOutput())
@@ -378,7 +377,7 @@ void Kernel::receive(const Message& message)
           [this]()
           {
             for(const auto& it : m_outputController->outputMap())
-              postSend(GetOutputState(static_cast<uint16_t>(it.first.id)));
+              postSend(GetOutputState(static_cast<uint16_t>(std::get<OutputAddress>(it.first.location).address)));
           });
       break;
     }
@@ -410,7 +409,7 @@ bool Kernel::setOutput(uint16_t address, bool value)
 void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
 {
   if(m_simulation)
-    m_ioContext.post(
+    boost::asio::post(m_ioContext, 
       [this, address, action]()
       {
         TraintasticDIY::InputState state;
@@ -561,7 +560,7 @@ void Kernel::throttleDecoderChanged(const Decoder& decoder, DecoderChangeFlags c
         speedMax = std::numeric_limits<uint8_t>::max();
     }
 
-    m_ioContext.post(
+    boost::asio::post(m_ioContext, 
       [this,
         key,
         direction=decoder.direction.value(),
@@ -578,7 +577,7 @@ void Kernel::throttleDecoderChanged(const Decoder& decoder, DecoderChangeFlags c
   {
     assert(functionNumber <= std::numeric_limits<uint8_t>::max());
 
-    m_ioContext.post(
+    boost::asio::post(m_ioContext, 
       [this,
         key,
         number=static_cast<uint8_t>(functionNumber),

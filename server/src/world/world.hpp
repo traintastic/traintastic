@@ -45,6 +45,7 @@ class OutputController;
 class IdentificationController;
 class LNCVProgrammingController;
 class TrackDriverController;
+class CBUSInterface;
 class LocoNetInterface;
 class InterfaceList;
 class DecoderList;
@@ -134,6 +135,7 @@ class World : public Object
     ObjectProperty<ControllerList<IdentificationController>> identificationControllers;
     ObjectProperty<ControllerList<LNCVProgrammingController>> lncvProgrammingControllers;
     ObjectProperty<ControllerList<TrackDriverController>> trackDriverControllers;
+    ObjectProperty<ControllerList<CBUSInterface>> cbusInterfaces;
     ObjectProperty<ControllerList<LocoNetInterface>> loconetInterfaces;
 
     ObjectProperty<InterfaceList> interfaces;

@@ -314,7 +314,7 @@ Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
 
   Log::log(id, LogMessage::N1007_LISTENING_AT_X_X, m_acceptor.local_endpoint().address().to_string(), m_acceptor.local_endpoint().port());
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, discoverable]()
     {
       if(discoverable)
@@ -345,7 +345,7 @@ Server::~Server()
       connection->disconnect();
     }
 
-    m_ioContext.post(
+    boost::asio::post(m_ioContext, 
       [this]()
       {
         boost::system::error_code ec;

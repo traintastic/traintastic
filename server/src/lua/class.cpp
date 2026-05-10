@@ -62,6 +62,7 @@
 
 #include "../clock/clock.hpp"
 
+#include "../hardware/interface/cbusinterface.hpp"
 #include "../hardware/interface/dccexinterface.hpp"
 #include "../hardware/interface/ecosinterface.hpp"
 #include "../hardware/interface/hsi88.hpp"
@@ -196,6 +197,7 @@ void Class::registerValues(lua_State* L)
   registerValue<Clock>(L, "CLOCK");
 
   // hardware - interface:
+  registerValue<CBUSInterface>(L, "CBUS_INTERFACE");
   registerValue<DCCEXInterface>(L, "DCCEX_INTERFACE");
   registerValue<ECoSInterface>(L, "ECOS_INTERFACE");
   registerValue<HSI88Interface>(L, "HSI88_INTERFACE");

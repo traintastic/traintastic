@@ -1,9 +1,8 @@
 /**
- * client/src/widget/outputmapwidget.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_OUTPUTMAPWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_OUTPUTMAPWIDGET_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_IOMAPWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_IOMAPWIDGET_HPP
 
 #include <QWidget>
 #include "../network/objectptr.hpp"
@@ -35,7 +34,7 @@ class AbstractVectorProperty;
 class ObjectVectorProperty;
 class Property;
 
-class OutputMapWidget : public QWidget
+class IOMapWidget : public QWidget
 {
   Q_OBJECT
 
@@ -57,16 +56,16 @@ class OutputMapWidget : public QWidget
     int m_getItemsRequestId;
     int m_dummy;
 
-    void updateTableOutputActions(ObjectVectorProperty& property, int row);
+    void updateSubItems(ObjectVectorProperty& property, int row);
     void updateItems(const std::vector<ObjectPtr>& items);
     void updateKeyIcons();
-    void updateTableOutputColumns();
+    void updateTableColumnLabels();
 
     bool eventFilter(QObject* object, QEvent* event) override;
 
   public:
-    explicit OutputMapWidget(ObjectPtr object, QWidget* parent = nullptr);
-    ~OutputMapWidget() override;
+    explicit IOMapWidget(ObjectPtr object, QWidget* parent = nullptr);
+    ~IOMapWidget() override;
 };
 
 #endif

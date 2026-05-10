@@ -333,7 +333,7 @@ void SerialIOHandler::startResponseTimeoutTimer()
           EventLoop::call(
             [this]()
             {
-              Log::log(m_kernel.logId, LogMessage::E2030_COMMUNICATION_LOST_NO_RESPONSE_WITHIN_X_MS, responseTimeout.count());
+              Log::log(m_kernel.logId, LogMessage::E2033_COMMUNICATION_LOST_NO_RESPONSE_WITHIN_X_MS, responseTimeout.count());
               m_kernel.error();
             });
         }

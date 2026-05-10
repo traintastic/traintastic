@@ -46,6 +46,7 @@ Name: it; MessagesFile: "compiler:Languages\Italian.isl,it-it.isl"
 Name: sv; MessagesFile: "Languages\Swedish.isl,sv-se.isl"
 Name: fr; MessagesFile: "compiler:Languages\French.isl,fr-fr.isl"
 Name: pl; MessagesFile: "compiler:Languages\Polish.isl,pl-pl.isl"
+Name: da; MessagesFile: "compiler:Languages\Danish.isl,da-dk.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -201,7 +202,7 @@ begin
     Log('Silent install without known Components value, defaulting to: ClientAndServer');
     Components := 'ClientAndServer';
   end;
-    
+
   ComponentsPage := CreateCustomPage(wpSelectComponents, SetupMessage(msgWizardSelectComponents), SetupMessage(msgSelectComponentsDesc));
 
   ClientAndServerRadioButton := TNewRadioButton.Create(ComponentsPage);
@@ -247,6 +248,7 @@ begin
     'sv': Result := 'sv-se';
     'fr': Result := 'fr-fr';
     'pl': Result := 'pl-pl';
+    'da': Result := 'da-dk';
   else
     Result := 'en-us';
   end;

@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/ecos/kernel.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +24,7 @@
 
 #include "../kernelbase.hpp"
 #include <unordered_map>
+#include <boost/asio/post.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
 #include <traintastic/enum/inputchannel.hpp>
@@ -33,7 +33,7 @@
 #include "iohandler/iohandler.hpp"
 #include "object/object.hpp"
 #include "object/switchprotocol.hpp"
-#include "../../output/outputvalue.hpp"
+#include "../../output/outputtypes.hpp"
 
 class Decoder;
 enum class DecoderChangeFlags;
@@ -112,7 +112,7 @@ class Kernel : public ::KernelBase
   public:// REMOVE!! just for testing
     void postSend(const std::string& message)
     {
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, message]()
         {
           send(message);
@@ -255,7 +255,7 @@ class Kernel : public ::KernelBase
      * @param[in] value Output value
      * @return \c true if send successful, \c false otherwise.
      */
-    bool setOutput(OutputChannel channel, uint32_t id, OutputValue value);
+    bool setOutput(OutputChannel channel, const OutputLocation& location, OutputValue value);
 
     void simulateInputChange(InputChannel channel, uint32_t address, SimulateInputAction action);
 

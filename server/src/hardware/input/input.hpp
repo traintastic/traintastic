@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/input/input.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,8 +23,9 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INPUT_INPUT_HPP
 
 #include "../../core/nonpersistentobject.hpp"
+#include <optional>
 #include <set>
-#include <traintastic/enum/inputchannel.hpp>
+#include "inputlocation.hpp"
 #include "../../core/property.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../core/event.hpp"
@@ -57,10 +57,16 @@ class Input : public NonPersistentObject
     ObjectProperty<InputController> interface;
     Property<InputChannel> channel;
     Property<uint32_t> address;
+    Property<uint32_t> node;
     Property<TriState> value;
     Event<bool, const std::shared_ptr<Input>&> onValueChanged;
 
-    Input(std::shared_ptr<InputController> inputController, InputChannel channel_, uint32_t address_);
+    Input(std::shared_ptr<InputController> inputController, InputChannel channel_, std::optional<uint32_t> node_, uint32_t address_);
+
+    InputLocation location() const
+    {
+      return inputLocation(channel, node, address);
+    }
 
     void simulateChange(SimulateInputAction action);
 };

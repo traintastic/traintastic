@@ -1,9 +1,8 @@
 /**
- * client/src/widget/outputmapoutputactionwidget.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021,2024 Reinder Feenstra
+ * Copyright (C) 2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,22 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_OUTPUTMAPOUTPUTACTIONWIDGET_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_OUTPUTMAPOUTPUTACTIONWIDGET_HPP
+#include "cbusiohandler.hpp"
 
-#include <QWidget>
-#include "../network/objectptr.hpp"
+namespace CBUS {
 
-class OutputMapOutputActionWidget : public QWidget
+IOHandler::IOHandler(Kernel& kernel)
+  : m_kernel{kernel}
 {
-  Q_OBJECT
+}
 
-  protected:
-    int m_getOutputActionRequestId;
-    ObjectPtr m_object;
-
-  public:
-    explicit OutputMapOutputActionWidget(const ObjectPtr& item, uint32_t outputIndex, QWidget* parent = nullptr);
-};
-
-#endif
+}
