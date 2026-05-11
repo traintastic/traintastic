@@ -1836,6 +1836,10 @@
         "definition": "Building world index"
     },
     {
+        "term": "message:I1010",
+        "definition": "Auto saved world: %1"
+    },
+    {
         "term": "message:I2001",
         "definition": "Unknown loco address: %1"
     },
@@ -2744,6 +2748,10 @@
         "definition": "Auto save world on exit"
     },
     {
+        "term": "settings:auto_save_interval",
+        "definition": "Auto save interval"
+    },
+    {
         "term": "settings:discoverable",
         "definition": "Discoverable"
     },
@@ -2762,6 +2770,10 @@
     {
         "term": "settings:memory_logger_size",
         "definition": "Memory logger size"
+    },
+    {
+        "term": "settings:off",
+        "definition": "Off"
     },
     {
         "term": "settings:port",

@@ -284,54 +284,10 @@ World::World(Private /*unused*/) :
   save{*this, "save", MethodFlags::NoScript,
     [this]()
     {
-      try
+      backupAndSave(false);
+      if(Traintastic::instance)
       {
-        // backup world:
-        const std::filesystem::path worldDir = Traintastic::instance->worldDir();
-        const std::filesystem::path worldBackupDir = Traintastic::instance->worldBackupDir();
-
-        if(!std::filesystem::is_directory(worldBackupDir))
-        {
-          std::error_code ec;
-          std::filesystem::create_directories(worldBackupDir, ec);
-          if(ec)
-            Log::log(*this, LogMessage::C1007_CREATING_WORLD_BACKUP_DIRECTORY_FAILED_X, ec);
-        }
-
-        if(std::filesystem::is_directory(worldDir / uuid.value()))
-        {
-          std::error_code ec;
-          std::filesystem::rename(worldDir / uuid.value(), worldBackupDir / uuid.value() += dateTimeStr(), ec);
-          if(ec)
-            Log::log(*this, LogMessage::C1006_CREATING_WORLD_BACKUP_FAILED_X, ec);
-        }
-
-        if(std::filesystem::is_regular_file(worldDir / uuid.value() += dotCTW))
-        {
-          std::error_code ec;
-          std::filesystem::rename(worldDir / uuid.value() += dotCTW, worldBackupDir / uuid.value() += dateTimeStr() += dotCTW, ec);
-          if(ec)
-            Log::log(*this, LogMessage::C1006_CREATING_WORLD_BACKUP_FAILED_X, ec);
-        }
-
-        // save world:
-        std::filesystem::path savePath = worldDir / uuid.value();
-        if(!Traintastic::instance->settings->saveWorldUncompressed)
-          savePath += dotCTW;
-
-        WorldSaver saver(*this, savePath);
-
-        if(Traintastic::instance)
-        {
-          Traintastic::instance->settings->lastWorld = uuid.value();
-          Traintastic::instance->worldList->update(*this, savePath);
-        }
-
-        Log::log(*this, LogMessage::N1022_SAVED_WORLD_X, name.value());
-      }
-      catch(const std::exception& e)
-      {
-        Log::log(*this, LogMessage::C1005_SAVING_WORLD_FAILED_X, e);
+        Traintastic::instance->restartAutoSaveTimer();
       }
     }}
   , getObject_{*this, "get_object", MethodFlags::Internal | MethodFlags::ScriptCallable,
@@ -568,11 +524,20 @@ ObjectPtr World::getObjectByPath(std::string_view path) const
   return obj;
 }
 
+void World::autoSave()
+{
+  backupAndSave(true);
+}
+
 void World::export_(std::vector<std::byte>& data)
 {
   try
   {
-    WorldSaver saver(*this, data);
+    WorldSaver saver(*this, data,
+      WorldSaver::Options{
+        .isAutoSave = false,
+        .isExport = true,
+      });
     Log::log(*this, LogMessage::N1025_EXPORTED_WORLD_SUCCESSFULLY);
     //return true;
   }
@@ -702,6 +667,63 @@ void World::setFeature(WorldFeature feature, bool value)
     {
       it.second.lock()->worldFeaturesChanged(m_features, feature);
     }
+  }
+}
+
+void World::backupAndSave(bool isAutoSave)
+{
+  try
+  {
+    // backup world:
+    const std::filesystem::path worldDir = Traintastic::instance->worldDir();
+    const std::filesystem::path worldBackupDir = Traintastic::instance->worldBackupDir();
+
+    if(!std::filesystem::is_directory(worldBackupDir))
+    {
+      std::error_code ec;
+      std::filesystem::create_directories(worldBackupDir, ec);
+      if(ec)
+        Log::log(*this, LogMessage::C1007_CREATING_WORLD_BACKUP_DIRECTORY_FAILED_X, ec);
+    }
+
+    if(std::filesystem::is_directory(worldDir / uuid.value()))
+    {
+      std::error_code ec;
+      std::filesystem::rename(worldDir / uuid.value(), worldBackupDir / uuid.value() += dateTimeStr(), ec);
+      if(ec)
+        Log::log(*this, LogMessage::C1006_CREATING_WORLD_BACKUP_FAILED_X, ec);
+    }
+
+    if(std::filesystem::is_regular_file(worldDir / uuid.value() += dotCTW))
+    {
+      std::error_code ec;
+      std::filesystem::rename(worldDir / uuid.value() += dotCTW, worldBackupDir / uuid.value() += dateTimeStr() += dotCTW, ec);
+      if(ec)
+        Log::log(*this, LogMessage::C1006_CREATING_WORLD_BACKUP_FAILED_X, ec);
+    }
+
+    // save world:
+    std::filesystem::path savePath = worldDir / uuid.value();
+    if(!Traintastic::instance->settings->saveWorldUncompressed)
+      savePath += dotCTW;
+
+    WorldSaver saver(*this, savePath,
+      WorldSaver::Options{
+        .isAutoSave = isAutoSave,
+        .isExport = false,
+      });
+
+    if(Traintastic::instance)
+    {
+      Traintastic::instance->settings->lastWorld = uuid.value();
+      Traintastic::instance->worldList->update(*this, savePath);
+    }
+
+    Log::log(*this, isAutoSave ? LogMessage::I1010_AUTO_SAVED_WORLD_X : LogMessage::N1022_SAVED_WORLD_X, name.value());
+  }
+  catch(const std::exception& e)
+  {
+    Log::log(*this, LogMessage::C1005_SAVING_WORLD_FAILED_X, e);
   }
 }
 

@@ -55,6 +55,8 @@ class Settings : public Object
   public:
     CLASS_ID("settings")
 
+    static constexpr uint8_t autoSaveIntervalOff = 0;
+
     struct PreStart
     {
       uint32_t memoryLoggerSize = Default::memoryLoggerSize;
@@ -75,6 +77,7 @@ class Settings : public Object
     Property<std::string> lastWorld;
     Property<bool> loadLastWorldOnStartup;
     Property<bool> autoSaveWorldOnExit;
+    Property<uint8_t> autoSaveInterval;
     Property<bool> saveWorldUncompressed;
     Property<bool> allowClientServerRestart;
     Property<bool> allowClientServerShutdown;
