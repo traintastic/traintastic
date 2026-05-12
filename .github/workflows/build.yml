@@ -11,8 +11,8 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_msvc"
-          os: windows-latest
-          generator: "Visual Studio 17 2022"
+          os: windows-2025-vs2026
+          generator: "Visual Studio 18 2026"
           arch: "-A x64"
           target: traintastic-client
           jobs: 4
@@ -196,8 +196,8 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_clang"
-          os: windows-latest
-          generator: "Visual Studio 17 2022"
+          os: windows-2025-vs2026
+          generator: "Visual Studio 18 2026"
           arch: "-A x64"
           toolset: "-T ClangCL"
           target: ALL_BUILD
@@ -527,7 +527,7 @@ jobs:
 
   package-innosetup:
     name: package innosetup
-    runs-on: windows-2022
+    runs-on: windows-2025-vs2026
     needs: [build-client, build-server, build-lang, build-manual]
 
     steps:
