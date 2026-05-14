@@ -53,6 +53,7 @@ class Traintastic final : public Object
     std::shared_ptr<Server> m_server;
 
     boost::asio::signal_set m_signalSet;
+    boost::asio::steady_timer m_autoSaveTimer;
 
     bool start();
     void stop();
@@ -96,6 +97,8 @@ class Traintastic final : public Object
     std::filesystem::path debugDir() const { return dataDir() / "debug"; }
 
     void importWorld(const std::vector<std::byte>& worldData);
+
+    void restartAutoSaveTimer();
 
     RunStatus run(const std::string& worldUUID = {}, bool simulate = false, bool online = false, bool power = false, bool run = false);
     void exit();
