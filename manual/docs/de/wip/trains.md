@@ -1,63 +1,63 @@
-# Trains
+# Züge
 
-In Traintastic, **only trains** can be directly controlled. Trains are composed of one or more vehicles, and understanding how trains and vehicles interact is crucial for setting up and operating a layout effectively.
+In Traintastic können **nur Züge** direkt gesteuert werden. Züge bestehen aus einem oder mehreren Fahrzeugen, und das Verständnis der Beziehung zwischen Zügen und Fahrzeugen ist entscheidend für das Einrichten und Betreiben eines Layouts.
 
-## What is a Train?
+## Was ist ein Zug?
 
-A **train** in Traintastic is a logical grouping of vehicles that move together. A train can include:
+Ein **Zug** in Traintastic ist eine logische Gruppierung von Fahrzeugen, die gemeinsam bewegt werden. Ein Zug kann enthalten:
 
-- **Powered vehicles** such as locomotives or self-propelled railcars.
-- **Unpowered vehicles** such as wagons or coaches.
+- **Angetriebene Fahrzeuge** wie Lokomotiven oder Triebwagen.
+- **Nicht angetriebene Fahrzeuge** wie Wagen oder Reisezugwagen.
 
-Trains are **not static**: they can be created, modified, activated, deactivated, and reused dynamically.
+Züge sind **nicht statisch**: Sie können dynamisch erstellt, verändert, aktiviert, deaktiviert und wiederverwendet werden.
 
-## Vehicles vs Trains
+## Fahrzeuge vs. Züge
 
-Vehicles are managed **independently** from trains. This means:
+Fahrzeuge werden im System **unabhängig** von Zügen verwaltet. Das bedeutet:
 
-- Vehicles are defined separately in the system.
-- A **single vehicle** can be a part of **multiple train definitions**.
-- A train is essentially a list of vehicle references, not a container that owns the vehicles.
+- Fahrzeuge werden separat im System definiert.
+- Ein **einzelnes Fahrzeug** kann Teil von **mehreren Zugdefinitionen** sein.
+- Ein Zug ist im Wesentlichen eine Liste von Fahrzeugreferenzen, kein Container, der die Fahrzeuge besitzt.
 
-This separation allows flexibility, such as creating alternate train consists using the same locomotive or rolling stock.
+Diese Trennung ermöglicht Flexibilität, zum Beispiel das Erstellen alternativer Zugzusammenstellungen mit derselben Lokomotive oder denselben Wagen.
 
-## Powered Vehicles
+## Angetriebene Fahrzeuge
 
-A train can include **one or more powered vehicles**. However, in order for a train to be activated and controlled, **at least one powered vehicle** is required.
+Ein Zug kann **ein oder mehrere angetriebene Fahrzeuge** enthalten. Damit ein Zug jedoch aktiviert und gesteuert werden kann, wird **mindestens ein angetriebenes Fahrzeug** benötigt.
 
-Unpowered trains (e.g. a consist of only wagons) **cannot be activated** and will remain inactive in the system.
+Züge ohne Antrieb (z. B. nur Wagen) **können nicht aktiviert werden** und bleiben im System inaktiv.
 
-## Train Activation
+## Zugaktivierung
 
-Before a train can be controlled, it must be **activated**. Activation ensures that:
+Bevor ein Zug gesteuert werden kann, muss er **aktiviert** werden. Die Aktivierung stellt sicher, dass:
 
-- None of its vehicles are already part of another **active** train.
-- The train has at least one **powered vehicle**.
+- keines seiner Fahrzeuge bereits Teil eines anderen **aktiven Zuges** ist.
+- der Zug mindestens ein **angetriebenes Fahrzeug** enthält.
 
-A vehicle can only belong to **one active train at a time**. Attempting to activate a train that includes a vehicle already in use will result in an error.
+Ein Fahrzeug kann jeweils nur zu **einem aktiven Zug gleichzeitig** gehören. Der Versuch, einen Zug zu aktivieren, der ein bereits verwendetes Fahrzeug enthält, führt zu einem Fehler.
 
-## Throttle Control
+## Fahrsteuerung (Throttle Control)
 
-To control a train, it must be **acquired** by a **throttle**. A throttle provides the interface to:
+Um einen Zug zu steuern, muss er von einem **Fahrregler (Throttle)** übernommen werden. Ein Fahrregler bietet die Schnittstelle für:
 
-- Set speed and direction
-- Issue emergency stops
-- Monitor train state
+- Geschwindigkeit und Fahrtrichtung setzen
+- Notstopps auslösen
+- Zugstatus überwachen
 
-Important rules around throttle control:
+Wichtige Regeln zur Fahrsteuerung:
 
-- A train can have **zero or one active throttle** at any given time.
-- A throttle can **steal control** from another throttle that currently holds it.
-- Throttle control is required for manual or script-based operation.
+- Ein Zug kann zu jedem Zeitpunkt **null oder genau einen aktiven Fahrregler** haben.
+- Ein Fahrregler kann die Kontrolle von einem anderen Fahrregler **übernehmen**.
+- Die Fahrreglersteuerung ist für manuelle oder skriptbasierte Bedienung erforderlich.
 
-## Throttle Types
+## Arten von Fahrreglern
 
-Traintastic supports various throttle types, allowing both manual and automated control:
+Traintastic unterstützt verschiedene Arten von Fahrreglern, die sowohl manuelle als auch automatisierte Steuerung ermöglichen:
 
-- **Client throttle**: The primary throttle used in the Traintastic client application.
-- **Web throttle**: A web-based interface accessible via browsers.
-- **Hardware throttles**: External devices like those using the **WiThrottle** protocol.
-- **Lua script throttle**: A programmable throttle controlled by custom Lua scripts for automation and logic.
+- **Client-Fahrregler**: Der primäre Fahrregler in der Traintastic-Client-Anwendung.
+- **Web-Fahrregler**: Eine webbasierte Oberfläche, die über Browser erreichbar ist.
+- **Hardware-Fahrregler**: Externe Geräte, z. B. über das **WiThrottle-Protokoll**.
+- **Lua-Skript-Fahrregler**: Ein programmierbarer Fahrregler für Automatisierung und Logik mittels Lua-Skripten.
 
-These different throttle types can coexist, and you can choose the one that best fits your control style or automation requirements.
+Diese verschiedenen Fahrreglertypen können parallel existieren, und der passende Typ kann je nach Steuerungsstil oder Automatisierungsanforderung gewählt werden.
 

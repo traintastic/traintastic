@@ -1,4 +1,3 @@
-```markdown id="scripting_basics_de"
 # Grundlagen des Skriptings
 
 Traintastic enthält eine integrierte **Lua-Skript-Engine**.  
@@ -46,4 +45,3 @@ In diesem Dialog stehen folgende Funktionen zur Verfügung:
 - Beispiele finden sich unter [Lua-Skript-Beispiele](../appendix/lua/examples.md).
 - Austausch und Fragen im [Community-Forum (Scripting)](https://discourse.traintastic.org/c/lua-scripting).
 - Offizielle Lua-Dokumentation: [lua.org](https://www.lua.org).
-```

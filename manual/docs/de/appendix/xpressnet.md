@@ -1,4 +1,3 @@
-```markdown id="xpressnet_reference_de"
 # XpressNet Referenz
 
 XpressNet (ursprünglich X-Bus genannt) ist ein Kommunikationsbus, der von der Lenz Elektronik GmbH entwickelt wurde.  
@@ -51,4 +50,3 @@ Dies ist nützlich für:
 
 !!! footnote
     Vollständige Protokolldetails finden sich im offiziellen [XpressNet-Spezifikationsdokument im *23151 Interface LAN und USB* Handbuch (PDF, Deutsch)](https://www.lenz-elektronik.de/media/37/8b/2f/1734009949/b_23151.pdf), veröffentlicht von Lenz.
-```

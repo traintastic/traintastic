@@ -1,4 +1,3 @@
-```markdown id="interface_config_de"
 # Schnittstellenkonfiguration
 
 Traintastic unterstützt eine Vielzahl von digitalen Zentralen, Rückmeldesystemen und drahtlosen Fahrpulten.  
@@ -19,6 +18,7 @@ Diese ermöglichen die Kommunikation von Traintastic mit dem Digitalsystem der A
 - [Märklin CAN](marklin-can.md) - Märklin CS2/CS3
 - [XpressNet](xpressnet.md) - Lenz, Roco MultiMAUS
 - [Z21](z21.md)
+- [MERG CBUS/VLCB](cbus.md) - MERG CBUS/VLCB (CAN)
 
 ### Drahtlose Fahrpulte
 
@@ -57,4 +57,4 @@ Jede Seite in diesem Abschnitt enthält dazu Schritt-für-Schritt-Anleitungen, e
 !!! tip "Community-Unterstützung"
     Falls eine Schnittstelle oder ein Gerät nicht aufgeführt ist oder Probleme bei der Einrichtung auftreten, lohnt sich ein Blick ins [Community-Forum](https://discourse.traintastic.org).  
     Das Teilen von Erfahrungen hilft dabei, Traintastic weiter zu verbessern und die Hardware-Unterstützung auszubauen.
-```
+

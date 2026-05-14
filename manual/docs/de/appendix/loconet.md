@@ -1,4 +1,3 @@
-```markdown id="locointro_de1"
 # LocoNet reference
 
 LocoNet ist ein Netzwerkbus, der Anfang der 1990er Jahre von Digitrax Inc. für eigene Produkte entwickelt wurde.
@@ -135,4 +134,3 @@ These functions bypass Traintastic’s internal logic.
 - requires solid understanding of LocoNet/DCC  
 - may cause side effects not tracked by Traintastic  
 - misuse can lead to inconsistent system state  
-```

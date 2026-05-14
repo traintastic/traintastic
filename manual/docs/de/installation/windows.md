@@ -1,9 +1,7 @@
-```markdown id="windows_install_de"
 # Windows-Installation
 
-Die Installation von Traintastic unter Windows dauert nur wenige Minuten.  
-Der Installer wird heruntergeladen, ggf. von Windows Defender bestätigt und anschließend über einen Assistenten eingerichtet.  
-Diese Anleitung führt Schritt für Schritt durch den gesamten Prozess mit Screenshots.
+Die Installation von Traintastic unter Windows dauert nur wenige Minuten.
+Der Installer wird heruntergeladen, ggf. von Windows Defender bestätigt und anschließend über einen Assistenten eingerichtet. Diese Anleitung führt Schritt für Schritt durch den gesamten Prozess mit Screenshots.
 
 Die aktuelle Version kann von [traintastic.org/download](https://traintastic.org/download) heruntergeladen werden. Danach den Installer starten und den folgenden Schritten folgen.
 
@@ -65,6 +63,5 @@ Auf *Installieren* klicken, um die Installation zu starten.
 Auf *Fertigstellen* klicken, um den Installer zu beenden. Die Installation ist damit abgeschlossen.
 
 ---
-
 Nach der Installation weiter mit: [Schnellstart-Serie](../quickstart/index.md).
-```
+

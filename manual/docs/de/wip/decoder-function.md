@@ -1,11 +1,10 @@
-# Decoder function
+# Decoder-Funktion
 
-
-## Id
+## ID
 
 TODO
 
-## Number
+## Nummer
 
 TODO
 
@@ -13,26 +12,27 @@ TODO
 
 TODO
 
-## Type
+## Typ
 
-Function type:
+Funktions-Typ:
 
-- **On/Off**: Indicates a generic on/off function.
-- **Momentary**: Indicates a momentary function, e.g. a horn or bell. The function is automatically disabled after the *momentary duration*.
-- **Hold**: Indicates a push and hold function. The function is enabled as long as the button is pressed.
-- **AlwaysOff**: Forces a function to be off.
-- **AlwaysOn**: Forces a function to be on.
+- **On/Off**: Kennzeichnet eine allgemeine Ein/Aus-Funktion.
+- **Momentary**: Kennzeichnet eine Momentfunktion, z. B. Horn oder Glocke. Die Funktion wird nach Ablauf der *Momentary-Dauer* automatisch deaktiviert.
+- **Hold**: Kennzeichnet eine Drücken-und-Halten-Funktion. Die Funktion ist aktiv, solange die Taste gedrückt wird.
+- **AlwaysOff**: Erzwingt, dass die Funktion immer deaktiviert ist.
+- **AlwaysOn**: Erzwingt, dass die Funktion immer aktiviert ist.
 
-## Function
+## Funktion
 
-Function function:
+Funktions-Kategorie:
 
-- **Generic**: Indicates a generic function.
-- **Light**: Indicates the light function, usally F0 or FL.
-- **Sound**: Indicates the sound function. All sound functions are temporary disabled as long as the world *mute* option is active. If the decoder has a *mute* function, the *mute* function is prefered.
-- **Mute**: Indicates the mute function. All mute functions are temporary enabled as long as the world *mute* option is active.
-- **Smoke**: Indicates a smoke generator function. All smoke functions are temporary disabled as long as the world *no smoke* option is active.
+- **Generic**: Allgemeine Funktion.
+- **Light**: Lichtfunktion, meist F0 oder FL.
+- **Sound**: Soundfunktion. Alle Soundfunktionen werden vorübergehend deaktiviert, solange die Weltoption *Mute* aktiv ist. Falls der Decoder eine eigene *Mute*-Funktion besitzt, wird diese bevorzugt verwendet.
+- **Mute**: Stummschaltfunktion. Alle Mute-Funktionen werden vorübergehend aktiviert, solange die Weltoption *Mute* aktiv ist.
+- **Smoke**: Rauchgenerator-Funktion. Alle Rauchfunktionen werden vorübergehend deaktiviert, solange die Weltoption *No Smoke* aktiv ist.
 
-## Momentary duration
+## Momentdauer
 
 TODO
+

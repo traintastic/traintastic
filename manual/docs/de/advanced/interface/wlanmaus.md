@@ -1,4 +1,3 @@
-```markdown id="wlanmaus_de"
 # WLANmaus Schnittstellenkonfiguration
 
 Diese Seite beschreibt die Konfiguration des WLANmaus-Servers in Traintastic.
@@ -21,4 +20,3 @@ Wenn aktiviert, fungiert Traintastic als **WLANmaus-Server**, mit dem sich diese
 !!! tip "Hilfe bei Problemen"
     Wenn es Probleme bei der Nutzung von WLANmaus mit Traintastic gibt, hilft ein Blick ins [Community-Forum](https://discourse.traintastic.org).  
     Das Teilen von Erfahrungen hilft dabei, Traintastic weiter zu verbessern.
-```

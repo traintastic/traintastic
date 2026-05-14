@@ -1,24 +1,23 @@
-# Hardware product index
+# Hardware-Produktindex
 
-This page lists hardware products for which Traintastic provides **specific notes, configuration details,
-or device-specific behavior**.
+Diese Seite listet Hardwareprodukte, für die Traintastic **spezifische Hinweise, Konfigurationsdetails
+oder gerätespezifisches Verhalten** bereitstellt.
 
-It is **not** a complete list of all hardware that works with Traintastic.
+Es handelt sich **nicht** um eine vollständige Liste aller Hardware, die mit Traintastic funktioniert.
 
-Many devices, such as standard DCC accessory decoders for turnouts or signals,
-do not require dedicated documentation and work automatically when connected through
-a supported command station.
+Viele Geräte, wie z. B. Standard-DCC-Weichendecoder für Weichen oder Signale,
+benötigen keine eigene Dokumentation und funktionieren automatisch über eine unterstützte Zentraleinheit.
 
-Use this index if:
+Dieser Index ist sinnvoll, wenn:
 
-- you own a specific device and want to check whether special setup or notes apply, or
-- you are looking for detailed information about advanced or smart hardware.
+- ein bestimmtes Gerät verwendet wird und geprüft werden soll, ob spezielle Konfigurationen oder Hinweise gelten, oder
+- detaillierte Informationen zu fortgeschrittener oder intelligenter Hardware benötigt werden.
 
 !!! note
-    Absence from this list does **not** imply that a device is unsupported.
-    Only hardware with documented configuration steps or special behavior is included here.
+    Das Fehlen eines Geräts in dieser Liste bedeutet **nicht**, dass es nicht unterstützt wird.
+    Nur Hardware mit dokumentierten Konfigurationsschritten oder besonderem Verhalten ist hier aufgeführt.
 
-## Product list (by vendor)
+## Produktliste (nach Hersteller)
 
 ### Digikeijs
 
@@ -26,12 +25,11 @@ Use this index if:
 
 ### Uhlenbrock
 
-The following **Uhlenbrock Power** boosters share the same configuration and behavior
-and are documented together:
+Die folgenden **Uhlenbrock Power**-Booster teilen sich Konfiguration und Verhalten
+und werden gemeinsam dokumentiert:
 
 - [Power 4 (63240)](boosters/uhlenbrock-power-4-7-22-40-70.md)
 - [Power 7 (63270)](boosters/uhlenbrock-power-4-7-22-40-70.md)
 - [Power 22 (63210)](boosters/uhlenbrock-power-4-7-22-40-70.md)
 - [Power 40 (63220)](boosters/uhlenbrock-power-4-7-22-40-70.md)
 - [Power 70 (63230)](boosters/uhlenbrock-power-4-7-22-40-70.md)
-

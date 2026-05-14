@@ -1,10 +1,8 @@
 # Schnellstart: Schematische Anlage erstellen
 
-Um Züge in Traintastic realistisch zu betreiben, wird ein **schematischer Plan** der Modellbahnanlage benötigt.  
-In diesem Plan werden Gleise, Weichen, Blöcke, Sensoren und Signale platziert – und später auch die gesamte Steuerung der Züge durchgeführt.
+Um Züge in Traintastic realistisch zu betreiben, wird ein **schematischer Plan** der Modellbahnanlage benötigt. In diesem Plan werden Gleise, Weichen, Blöcke, Sensoren und Signale platziert – und später auch die gesamte Steuerung der Züge durchgeführt.
 
-Dieser Abschnitt des Schnellstart-Leitfadens zeigt die **Grundlagen** zum Erstellen eines schematischen Layouts.  
-Jede Seite behandelt ein Thema Schritt für Schritt:
+Dieser Abschnitt des Schnellstart-Leitfadens zeigt die **Grundlagen** zum Erstellen eines schematischen Layouts. Jede Seite behandelt ein Thema Schritt für Schritt:
 
 1. [Grundlagen des Zeichnens](drawing-basics.md) — lernen, wie Gleise platziert und ein erstes Schema aufgebaut wird.
 2. [Weichensteuerung](turnouts.md) — Weichen hinzufügen und mit der Zentrale verbinden, um sie fernzusteuern.
@@ -13,4 +11,4 @@ Jede Seite behandelt ein Thema Schritt für Schritt:
 
 !!! note
     Diese Seiten decken nur die wichtigsten Grundlagen ab, um schnell starten zu können.  
-    Für erweiterte Einstellungen und vollständige Details siehe das [Board-Kapitel](../../user-guide/board/index.md).
+    Für erweiterte Einstellungen und vollständige Details siehe das [Stellwerk-Kapitel](../../user-guide/board/index.md).

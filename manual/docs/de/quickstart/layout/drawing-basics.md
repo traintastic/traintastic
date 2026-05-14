@@ -1,31 +1,29 @@
 # Schnellstart: Grundlagen des Zeichnens
 
-In Traintastic werden Schaltpläne auf einem **Board** gezeichnet.  
-Ein Board ist eine Zeichenfläche, auf der Gleise, Weichen, Signale und andere Objekte platziert werden, um die reale Modellbahnanlage als Schema darzustellen.  
-Es können mehrere Boards erstellt werden, zum Beispiel eines für die **Hauptanlage** und eines für den **Schattenbahnhof**.
+In Traintastic werden Schaltpläne auf einem **Stellwerk** gezeichnet. Ein Stellwerk ist eine Zeichenfläche, auf der Gleise, Weichen, Signale und andere Objekte platziert werden, um die reale Modellbahnanlage als Schema darzustellen. Es können mehrere Boards erstellt werden, zum Beispiel eines für die **Hauptanlage** und eines für den **Schattenbahnhof**.
 
-## Schritt 1: Board-Liste öffnen
+## Schritt 1: Stellwerk-Liste öffnen
 
 1. Sicherstellen, dass der **Bearbeitungsmodus** aktiv ist (![Stift](../../assets/images/icons/light/edit.png#only-light)![Stift](../../assets/images/icons/dark/edit.png#only-dark) oben rechts).  
-2. Die Board-Liste öffnen:
-    - Über das Hauptmenü: **Objekte → Boards**
+2. Die Stellwerk-Liste öffnen:
+    - Über das Hauptmenü: **Objekte → Stellwerke**
     - Oder über die ![Board](../../assets/images/icons/light/board.png#only-light)![Board](../../assets/images/icons/dark/board.png#only-dark)-Schaltfläche in der Werkzeugleiste
 
 ![Leere Board-Liste](../../assets/images/getting-started/board-list-empty.png)
 
-## Schritt 2: Neues Board erstellen
+## Schritt 2: Neues Stellwerk erstellen
 
-1. In der Board-Liste auf die ![Plus](../../assets/images/icons/light/add.png#only-light)![Plus](../../assets/images/icons/dark/add.png#only-dark)-Schaltfläche klicken.
-2. Der **Board-Einrichtungsassistent** öffnet sich.  
-   Aktuell wird nur ein **Name für das Board** abgefragt (z. B. *Hauptanlage* oder *Schattenbahnhof*).
-3. Assistent abschließen, um das Board einzurichten.
+1. In der Stellwerk-Liste auf die ![Plus](../../assets/images/icons/light/add.png#only-light)![Plus](../../assets/images/icons/dark/add.png#only-dark)-Schaltfläche klicken.
+2. Der **Stellwerk-Einrichtungsassistent** öffnet sich.  
+   Aktuell wird nur ein **Name für das Stellwerk** abgefragt (z. B. *Hauptanlage* oder *Schattenbahnhof*).
+3. Assistent abschließen, um das Stellwerk einzurichten.
 
 Nun kann mit dem Zeichnen begonnen werden.
 
 ## Schritt 3: Kacheln platzieren und drehen
 
 1. Eine **Kachel** aus der Werkzeugleiste auswählen (Gerade, Bogen, Weiche usw.).  
-2. Auf das Board klicken, um sie zu platzieren.  
+2. Auf das Stellwerk klicken, um sie zu platzieren.  
 3. Zum **Drehen** vor dem Platzieren:
     - **Rechtsklick** — im Uhrzeigersinn drehen
     - ++shift++ + **Rechtsklick** — gegen den Uhrzeigersinn drehen
@@ -59,7 +57,7 @@ Mit diesen Grundlagen lässt sich eine Anlage Schritt für Schritt aufbauen und 
 
 !!! tip
     Bei größeren Anlagen zuerst nur einen **kleinen Abschnitt** zeichnen.  
-    Das erleichtert das Verständnis des Board-Editors erheblich.
+    Das erleichtert das Verständnis des Stellwerk-Editors erheblich.
 
 Hier ein **einfaches Beispiel einer Anlage**:
 

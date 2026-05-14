@@ -1,4 +1,3 @@
-```markdown id="traintastic_diy_de"
 # Traintastic DIY Schnittstellenkonfiguration
 
 Diese Seite beschreibt die Konfiguration der **Traintastic DIY-Schnittstelle**, die für Hobbyentwickler gedacht ist, die eigene Fahrregler, Eingabe-/Ausgabegeräte oder Rückmeldemodule entwickeln.
@@ -37,4 +36,3 @@ DIY-Geräte können auf folgende Arten mit Traintastic verbunden werden:
 !!! tip "Hilfe bei Problemen"
     Beim Bau oder Testen eines DIY-Geräts lohnt sich ein Blick ins [Community-Forum](https://discourse.traintastic.org).  
     Dort können eigene Projekte geteilt und Erfahrungen mit anderen Entwicklern ausgetauscht werden.
-```

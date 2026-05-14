@@ -1,8 +1,6 @@
-```markdown id="zones_de"
 # Zonen
 
-Zonen ermöglichen es, gemeinsame Regeln oder Einschränkungen auf eine Gruppe von Blöcken anzuwenden.  
-Zum Beispiel kann eine **Abstellzone** erstellt werden, in der Züge stummgeschaltet werden, oder eine **Rangierzone** mit Geschwindigkeitsbegrenzung.
+Zonen ermöglichen es, gemeinsame Regeln oder Einschränkungen auf eine Gruppe von Blöcken anzuwenden. Zum Beispiel kann eine **Abstellzone** erstellt werden, in der Züge stummgeschaltet werden, oder eine **Rangierzone** mit Geschwindigkeitsbegrenzung.
 
 - Ein Block kann mehreren Zonen zugeordnet sein.
 - Eine Zone kann beliebige Blöcke enthalten, auch wenn diese nicht direkt benachbart sind.

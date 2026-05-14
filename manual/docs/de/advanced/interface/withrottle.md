@@ -1,4 +1,3 @@
-```markdown id="withrottle_de"
 # WiThrottle Schnittstellenkonfiguration
 
 Diese Seite beschreibt die Konfiguration des WiThrottle-Servers in Traintastic.
@@ -27,4 +26,3 @@ Wenn aktiviert, fungiert Traintastic als **WiThrottle-Server**, mit dem sich mob
 !!! tip "Hilfe bei Problemen"
     Wenn es Probleme beim Verbinden eines Fahrpults mit Traintastic gibt, hilft ein Blick ins [Community-Forum](https://discourse.traintastic.org).  
     Das Teilen von Erfahrungen hilft dabei, Traintastic weiter zu verbessern.
-```

@@ -1,8 +1,6 @@
-```markdown id="board_tiles_de"
 # Board-Kachel-Referenz
 
-Diese Seite listet alle verfügbaren Kacheln zum Erstellen schematischer Zeichnungen in Traintastic auf.  
-Kacheln werden auf einem Board platziert und repräsentieren Gleise, Signale, Steuerungen und weitere Elemente.
+Diese Seite listet alle verfügbaren Kacheln zum Erstellen schematischer Zeichnungen in Traintastic auf. Kacheln werden auf einem Board platziert und repräsentieren Gleise, Signale, Steuerungen und weitere Elemente.
 
 ## Eisenbahn
 
@@ -80,4 +78,3 @@ Diese Kacheln besitzen keine Funktionen oder Einstellungen.
 
 !!! tip
     Dies ist nur eine grundlegende Referenz. Einige Kacheln besitzen zusätzliche Eigenschaften und Konfigurationsmöglichkeiten.
-```

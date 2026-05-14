@@ -1,8 +1,6 @@
-````markdown id="linux_install_de"
 # Linux-Installation
 
-Traintastic stellt Debian-Pakete für **Ubuntu (amd64/arm64)** und für den **Raspberry Pi (armel/arm64)** bereit.  
-Es stehen drei Pakete zur Verfügung:
+Traintastic stellt Debian-Pakete für **Ubuntu (amd64/arm64)** und für den **Raspberry Pi (armel/arm64)** bereit. Es stehen drei Pakete zur Verfügung:
 
 - **traintastic-data** – benötigtes Datenpaket (muss immer installiert werden)
 - **traintastic-server** – der Hauptserver, erforderlich wenn dieser Rechner die Anlage steuert
@@ -65,8 +63,4 @@ sudo systemctl disable traintastic-server.service
 Wenn das Client-Paket installiert wurde, kann es über das Anwendungsmenü der Desktop-Umgebung gestartet werden (Eintrag „Traintastic“).
 
 ---
-
 Nach der Installation weiter mit: [Schnellstart-Serie](../quickstart/index.md).
-
-```
-```

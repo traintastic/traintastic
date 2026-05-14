@@ -1,29 +1,28 @@
 # Digikeijs DR5033
 
-The **Digikeijs DR5033** is a smart LocoNet booster with basic diagnostic feedback and remote control support.
+Der **Digikeijs DR5033** ist ein Smart-LocoNet-Booster mit grundlegender Diagnose-Rückmeldung und Unterstützung für Fernsteuerung.
 
-## Supported diagnostics
+## Unterstützte Diagnosen
 
-- Load
-- Temperature *(reported but not functional)*
+- Last
+- Temperatur *(wird gemeldet, ist jedoch nicht funktional)*
 
-## Control capabilities
+## Steuerungsmöglichkeiten
 
-- Power district can be enabled/disabled using an accessory address
+- Stromkreis kann über eine Zubehöradresse ein- und ausgeschaltet werden
 
-## Requirements and notes
+## Anforderungen und Hinweise
 
-- The **temperature value always reports zero**, even though the booster exposes this field
-- The **load value remains zero** until the track current reaches approximately **400–500 mA**
-- Status feedback is limited compared to newer smart boosters
+- Der **Temperaturwert wird immer als 0 gemeldet**, obwohl der Booster dieses Feld bereitstellt
+- Der **Lastwert bleibt ebenfalls 0**, bis der Gleisstrom ungefähr **400–500 mA** erreicht
+- Die Statusrückmeldungen sind im Vergleich zu neueren Smart-Boostern eingeschränkt
 
-## Configuration
+## Konfiguration
 
-- **Interface** – The LocoNet interface used to communicate with the booster
-- **Address** – Booster LNCV address (factory default: **1**)
-- **Polling interval** – Interval (in seconds) at which diagnostic data is requested (default: **5 seconds**)
+- **Schnittstelle** – Die verwendete LocoNet-Schnittstelle zur Kommunikation mit dem Booster
+- **Adresse** – LNCV-Adresse des Boosters (Werkseinstellung: **1**)
+- **Abfrageintervall** – Intervall (in Sekunden), in dem Diagnosedaten abgefragt werden (Standard: **5 Sekunden**)
 
 !!! warning
-    Using a **very short polling interval** increases traffic on the LocoNet bus and may negatively affect overall system performance.
-    The default value is recommended unless faster updates are really needed.
-
+    Ein **sehr kurzes Abfrageintervall** erhöht den Datenverkehr auf dem LocoNet-Bus und kann die Gesamtleistung des Systems negativ beeinflussen.
+    Der Standardwert wird empfohlen, sofern keine schnelleren Aktualisierungen wirklich erforderlich sind.

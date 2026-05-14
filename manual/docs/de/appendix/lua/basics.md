@@ -1,98 +1,101 @@
-# Lua Language Basics
+# Lua-Sprachgrundlagen
 
-This page introduces the basic syntax and concepts of the Lua programming language.
-If you are already familiar with Lua, you can skip this page and continue with the [Globals](globals.md).
+Diese Seite führt in die grundlegende Syntax und die Konzepte der Programmiersprache Lua ein.
+Wer bereits mit Lua vertraut ist, kann diese Seite überspringen und direkt mit den [Globals](globals.md) fortfahren.
 
-Lua is a lightweight and easy-to-learn scripting language. It is designed to be simple, flexible, and embeddable.
-Traintastic uses Lua to allow you to write scripts that interact with your model railway world.
+Lua ist eine leichtgewichtige und einfach zu erlernende Skriptsprache. Sie ist bewusst einfach, flexibel und gut einbettbar.
+Traintastic verwendet Lua, um Skripte zu ermöglichen, die mit der Modellbahnwelt interagieren.
 
-## Variables
+## Variablen
 
-Variables are used to store values.
+Variablen werden verwendet, um Werte zu speichern.
 
 ```lua
 name = "Traintastic"
 speed = 80
 enabled = true
-```
+````
 
-- Strings are written in quotes (`"text"`).
-- Numbers can be integers or decimals.
-- Booleans are `true` or `false`.
+* Zeichenketten werden in Anführungszeichen geschrieben (`"Text"`).
+* Zahlen können Ganzzahlen oder Dezimalzahlen sein.
+* Boolesche Werte sind `true` oder `false`.
 
-## Comments
+## Kommentare
 
-Comments are ignored by Lua but help you explain your code.
+Kommentare werden von Lua ignoriert, helfen aber beim Verständnis des Codes.
 
 ```lua
--- This is a single-line comment
+-- Das ist ein einzeiliger Kommentar
 
 --[[
-This is a
-multi-line comment
+Das ist ein
+mehrzeiliger Kommentar
 ]]
 ```
 
-## Control structures
+## Kontrollstrukturen
 
-Lua uses familiar programming constructs.
+Lua verwendet klassische Programmierkonstrukte.
 
 ### If / else
+
 ```lua
 if speed > 60 then
-  log.info("Fast!")
+  log.info("Schnell!")
 else
-  log.info("Slow.")
+  log.info("Langsam.")
 end
 ```
 
-### Loops
+### Schleifen
+
 ```lua
 for i = 1, 5 do
-  log.debug("Step", i)
+  log.debug("Schritt", i)
 end
 ```
 
 ```lua
 while enabled do
-  log.debug("Running...")
+  log.debug("Läuft...")
   break
 end
 ```
 
-## Functions
+## Funktionen
 
-Functions group code into reusable blocks.
+Funktionen fassen Code in wiederverwendbare Blöcke zusammen.
 
 ```lua
 function greet(name)
-  log.info("Hello " .. name)
+  log.info("Hallo " .. name)
 end
 
 greet("Traintastic")
 ```
 
-## Tables
+## Tabellen
 
-Tables are Lua’s only data structure. They work as lists, dictionaries, or objects.
+Tabellen sind die einzige Datenstruktur in Lua. Sie funktionieren als Listen, Dictionaries oder Objekte.
 
 ```lua
-car = { type = "freight", cargo = "coal" }
-log.debug(car.type)        -- "freight"
+car = { type = "Güterwagen", cargo = "Kohle" }
+log.debug(car.type)        -- "Güterwagen"
 
 numbers = { 10, 20, 30 }
 log.debug(numbers[1])      -- 10
 ```
 
-## Putting it together
+## Alles zusammen
 
-With just these basics—variables, control flow, functions, and tables—you can already create useful scripts in Traintastic.
+Mit diesen Grundlagen – Variablen, Kontrollstrukturen, Funktionen und Tabellen – lassen sich bereits nützliche Skripte in Traintastic erstellen.
 
 !!! tip
-    Don’t worry about learning everything at once. Start simple and build up as you go.
+Nicht alles muss sofort gelernt werden. Am besten klein anfangen und Schritt für Schritt erweitern.
 
-## Next steps
+## Nächste Schritte
 
-- See what Traintastic adds on top of Lua in [Globals](globals.md).
-- Explore [Persistent variables](pv.md) to keep data between sessions.
-- Browse the [Examples](examples.md) to learn by doing.
+* Erweiterungen von Traintastic in [Globals](globals.md) kennenlernen.
+* [Persistente Variablen](pv.md) verwenden, um Daten zwischen Sitzungen zu speichern.
+* In den [Beispielen](examples.md) praktische Anwendungen entdecken.
+

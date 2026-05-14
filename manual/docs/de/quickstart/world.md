@@ -1,13 +1,12 @@
 # Schnellstart: Erste Welt erstellen
 
-In Traintastic beginnt alles mit einer **Welt**.  
-Eine Welt ist deine Projektdatei – sie repräsentiert deine Modellbahnanlage mit Lokomotiven, Zubehör, Fahrstraßen und Automatisierung.  
-Jeder Erbauer erstellt seine eigene Welt, so wie jede Modellbahn ihre eigene kleine Welt darstellt.
+In Traintastic beginnt alles mit einer **Welt**. Eine Welt ist deine Projektdatei – sie repräsentiert deine Modellbahnanlage mit Lokomotiven, Zubehör, Fahrstraßen und Automatisierung. Jeder Erbauer erstellt seine eigene Welt, so wie jede Modellbahn ihre eigene kleine Welt darstellt.
 
 ## Schritt 1: Server und Client starten
 
 1. Den **Server** auf dem Computer (oder einem Gerät wie einem Raspberry Pi) starten.  
 2. Den **Client** starten. Der Client sucht automatisch nach dem Server und verbindet sich.
+3. Wenn Du ein AppImage verwendest, musst Du nur dieses Starten, da der Server und Client in dem AppImage enthalten ist.
 
 Wenn auf dem Server keine Welt geladen ist (Standard bei einer frischen Installation), zeigt der Client drei Optionen:
 

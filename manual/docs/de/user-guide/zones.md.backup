@@ -1,0 +1,46 @@
+```markdown id="zones_de"
+# Zonen
+
+Zonen ermöglichen es, gemeinsame Regeln oder Einschränkungen auf eine Gruppe von Blöcken anzuwenden. Zum Beispiel kann eine **Abstellzone** erstellt werden, in der Züge stummgeschaltet werden, oder eine **Rangierzone** mit Geschwindigkeitsbegrenzung.
+
+- Ein Block kann mehreren Zonen zugeordnet sein.
+- Eine Zone kann beliebige Blöcke enthalten, auch wenn diese nicht direkt benachbart sind.
+
+## Zonenliste
+
+Die Zonenliste über das Hauptmenü öffnen: *Objekte* → *Zonen*.  
+Hier werden alle Zonen der Anlage verwaltet:
+
+- **Neue Zone hinzufügen** — Auf die ![Plus](../assets/images/icons/light/add.png#only-light)![Plus](../assets/images/icons/dark/add.png#only-dark)-Schaltfläche klicken, um eine neue Zone zu erstellen.
+- **Zone entfernen** — Eine Zone auswählen und auf die ![Papierkorb](../assets/images/icons/light/delete.png#only-light)![Papierkorb](../assets/images/icons/dark/delete.png#only-dark)-Schaltfläche klicken.
+- **Zone bearbeiten** — Doppelklick auf eine Zone oder über die ![Stift](../assets/images/icons/light/edit.png#only-light)![Stift](../assets/images/icons/dark/edit.png#only-dark)-Schaltfläche die Eigenschaften öffnen.
+
+## Zoneneigenschaften
+
+Jede Zone besitzt Eigenschaften, die ihr Verhalten bestimmen.
+
+### Identifikation
+- **Name** — Kurzbeschreibung der Zone, z. B. *Rangierbereich* oder *Abstellgruppe*.
+- **ID** — Eindeutiger Bezeichner der Zone.
+    - Muss eindeutig innerhalb aller Objekte sein.
+    - Wird für den Zugriff über die [Lua-Skriptsprache](../advanced/scripting-basics.md) verwendet.
+    - Muss mit einem Buchstaben (`a–z`) beginnen.
+    - Darf nur Kleinbuchstaben (`a–z`), Ziffern (`0–9`) und Unterstriche (`_`) enthalten.
+
+### Blockzuordnung
+- **Blöcke** — Liste der zur Zone gehörenden Blöcke.  
+  Über die ![Plus](../assets/images/icons/light/add.png#only-light)![Plus](../assets/images/icons/dark/add.png#only-dark)- und
+  ![Minus](../assets/images/icons/light/remove.png#only-light)![Minus](../assets/images/icons/dark/remove.png#only-dark)-Schaltflächen können Blöcke hinzugefügt oder entfernt werden.  
+  Die ![Hervorheben](../assets/images/icons/light/highlight_zone.png#only-light)![Hervorheben](../assets/images/icons/dark/highlight_zone.png#only-dark)-Schaltfläche zeigt alle Blöcke der Zone auf geöffneten Boards an.
+
+### Verhaltensoptionen
+- **Stumm schalten** — Wenn aktiviert, werden alle Züge in der Zone oder beim Einfahren in die Zone stummgeschaltet (Standard: aus).
+- **Rauch deaktivieren** — Wenn aktiviert, werden Rauchgeneratoren von Zügen in der Zone oder beim Einfahren deaktiviert (Standard: aus).
+- **Geschwindigkeitsbegrenzung** — Legt die maximale Geschwindigkeit für Züge in der Zone fest.  
+  Dies gilt **nicht** für manuell gesteuerte Züge.  
+  Standardmäßig ist keine Begrenzung aktiv.
+
+!!! note "Stumm und Rauch deaktivieren"
+    Damit *Stumm schalten* funktioniert, muss eine Decoder-Funktion als **Sound** oder **Mute** konfiguriert sein.  
+    Damit *Rauch deaktivieren* funktioniert, muss eine Decoder-Funktion als **Smoke** konfiguriert sein.
+```

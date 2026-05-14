@@ -1,68 +1,69 @@
-# CBUS/VLCB reference
+# CBUS/VLCB Referenz
 
-CBUS is a Layout Control Bus developed by Mike Bolton and Gil Fuchs, members of the Model Electronic Railway Group (MERG).
-CBUS uses the Controller Area Network (CAN) for communication between the CBUS modules.
+CBUS ist ein Layout-Control-Bus, entwickelt von Mike Bolton und Gil Fuchs, Mitgliedern der Model Electronic Railway Group (MERG).
+CBUS verwendet das Controller Area Network (CAN) zur Kommunikation zwischen CBUS-Modulen.
 
-VLCB is a CBUS backwards compatible extension developed by MERG members to add additional commands and introduced a stricter priority system for commands.
+VLCB ist eine abwärtskompatible Erweiterung von CBUS, ebenfalls von MERG-Mitgliedern entwickelt. Sie ergänzt zusätzliche Befehle und führt ein strengeres Prioritätssystem für Nachrichten ein.
 
-This appendix does **not** explain the CBUS/VLCB protocol.
-Instead, it **how Traintastic implements and uses CBUS/VLCB** and which protocol messages are recognized.
-It is intended for advanced users who are already familiar with the basics of the CBUS/VLCB protocol.
+Dieser Anhang beschreibt **nicht** das CBUS/VLCB-Protokoll selbst.
+Stattdessen beschreibt er **wie Traintastic CBUS/VLCB implementiert und verwendet** sowie welche Protokollnachrichten unterstützt werden.
+Er richtet sich an fortgeschrittene Anwender, die bereits mit den Grundlagen des CBUS/VLCB-Protokolls vertraut sind.
 
-## Supported hardware
+## Unterstützte Hardware
 
-*TODO: under development*
+*TODO: in Entwicklung*
 
-## Message support
+## Nachrichtenunterstützung
 
-### General
-- Node discovery: `QNN`, `PNN` - Partly supported
-- Track on/off: `TOF`, `TON`, `RTOF`, `RTON` - Supported
-- Emergency stop: `ESTOP`, `RESTP` - Supported
-- Command station status: `RSTAT`, `STAT` - Partly supported
+### Allgemein
+- Node-Erkennung: `QNN`, `PNN` – teilweise unterstützt
+- Gleisspannung ein/aus: `TOF`, `TON`, `RTOF`, `RTON` – unterstützt
+- Notstopp: `ESTOP`, `RESTP` – unterstützt
+- Command-Station-Status: `RSTAT`, `STAT` – teilweise unterstützt
 
-### Locomotive control
-- Session management: `GLOC`, `KLOC`, `DKEEP`, `PLOC`, `ERR` - Partly supported
-- Speed/direction control: `DSPD`, `STMOD` - Supported
-- Function control: `DFNON`, `DFNOF` - Supported
-- Consisting - Not supported
+### Lokomotivsteuerung
+- Session-Management: `GLOC`, `KLOC`, `DKEEP`, `PLOC`, `ERR` – teilweise unterstützt
+- Geschwindigkeits-/Richtungssteuerung: `DSPD`, `STMOD` – unterstützt
+- Funktionssteuerung: `DFNON`, `DFNOF` – unterstützt
+- Consisting (Mehrfachtraktion): – nicht unterstützt
 
-### Turnouts, signals, and outputs
-- Short events: `ASON`, `ASOF` - Supported
-- Long events: `ACON`, `ACOF` - Supported
+### Weichen, Signale und Ausgänge
+- Kurze Events: `ASON`, `ASOF` – unterstützt
+- Lange Events: `ACON`, `ACOF` – unterstützt
 
-### Feedback sensors
-- Short events: `ASON`, `ASOF` - Supported
-- Long events: `ACON`, `ACOF` - Supported
+### Rückmeldesensoren
+- Kurze Events: `ASON`, `ASOF` – unterstützt
+- Lange Events: `ACON`, `ACOF` – unterstützt
 
-### Other
-- Sending raw DCC packets: `RDCC3`, `RDCC4`, `RDCC5`, `RDCC6` - Supported
+### Sonstiges
+- Senden roher DCC-Pakete: `RDCC3`, `RDCC4`, `RDCC5`, `RDCC6` – unterstützt
 
-## Debugging and monitoring
+## Debugging und Monitoring
 
-Traintastic provides a debug option for CBUS/VLCB that logs all bus traffic.
-Messages are shown in **hexadecimal format**, and for many message types a human-readable textual description of the content is also provided.
+Traintastic bietet eine Debug-Option für CBUS/VLCB, die den gesamten Busverkehr protokolliert.
+Nachrichten werden im **Hexadezimalformat** angezeigt, und für viele Nachrichtentypen wird zusätzlich eine menschenlesbare Beschreibung des Inhalts angezeigt.
 
-This is useful for:
+Dies ist nützlich für:
 
-- Diagnosing compatibility issues with specific modules.
-- Verifying that messages are transmitted and received as expected.
+- Diagnose von Kompatibilitätsproblemen mit bestimmten Modulen
+- Überprüfung, ob Nachrichten korrekt gesendet und empfangen werden
 
-### Sending raw messages
+### Senden von Rohnachrichten
 
-Through [**Lua scripting**](../advanced/scripting-basics.md), it is also possible to:
+Über [**Lua-Skripting**](../advanced/scripting-basics.md) ist es außerdem möglich:
 
-- Send **raw CBUS/VLCB messages**, see [`send()`](lua/object/cbusinterface.md#send).
-- Send **raw DCC track commands** (`RDCCn`), see [`send_dcc()`](lua/object/cbusinterface.md#send_dcc).
+- **Roh-CBUS/VLCB-Nachrichten** zu senden, siehe [`send()`](lua/object/cbusinterface.md#send)
+- **Roh-DCC-Track-Kommandos** (`RDCCn`) zu senden, siehe [`send_dcc()`](lua/object/cbusinterface.md#send_dcc)
 
-!!! warning "Use this with caution!"
-    - These messages bypass Traintastic’s normal handling.
-    - You need a solid understanding of CBUS/VLCB and DCC to avoid conflicts.
-    - Side effects may occur that Traintastic is not aware of or cannot manage.
+!!! warning "Mit Vorsicht verwenden!"
+    - Diese Nachrichten umgehen die normale Verarbeitung von Traintastic.
+    - Ein gutes Verständnis von CBUS/VLCB und DCC ist erforderlich, um Konflikte zu vermeiden.
+    - Es können Nebenwirkungen auftreten, die Traintastic nicht erkennt oder nicht verwalten kann.
 
 ---
 
 <small>
-CBUS® is a registered trademark of Dr Mike Bolton. \
-CBUS® protocol documents are a copyright of Mike Bolton and Gil Fuchs.
+CBUS® ist eine eingetragene Marke von Dr. Mike Bolton. \
+CBUS® Protokolldokumente sind urheberrechtlich geschützt von Mike Bolton und Gil Fuchs.
 </small>
+```

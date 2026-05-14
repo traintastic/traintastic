@@ -1,4 +1,3 @@
-```markdown id="marklin_can_de"
 # Märklin CAN Schnittstellenkonfiguration
 
 Diese Seite beschreibt die Konfiguration einer Märklin CAN-Zentrale in Traintastic.
@@ -52,4 +51,4 @@ Traintastic registriert sich im Märklin CAN-Bus als eigener Knoten. Bei Konflik
 !!! tip "Hilfe bei Problemen"
     Bei Problemen mit der Konfiguration oder unerwartetem Verhalten hilft ein Blick ins [Community-Forum](https://discourse.traintastic.org).  
     Das Teilen von Konfigurationen und Erfahrungen hilft auch anderen und verbessert Traintastic.
-```
+

@@ -31,7 +31,7 @@ def detect_version():
 class TraintasticHelp:
 
     version = ''
-    language = 'de'
+    language = 'en'
     _luadoc = None
 
     def __init__(self, base_dir: str):

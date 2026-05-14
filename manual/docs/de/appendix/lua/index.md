@@ -1,43 +1,43 @@
-# Scripting Reference – Introduction
+# Scripting-Referenz – Einführung
 
-Traintastic embeds a [Lua](https://www.lua.org) scripting engine that allows you to extend and automate your model railway world.
-This reference describes all scripting features available inside Traintastic: built-in globals, libraries, objects, and custom extensions.
+Traintastic integriert eine [Lua](https://www.lua.org)-Skripting-Engine, mit der sich die Modellbahnwelt erweitern und automatisieren lässt.
+Diese Referenz beschreibt alle in Traintastic verfügbaren Skriptfunktionen: eingebaute Globals, Bibliotheken, Objekte und Erweiterungen.
 
-## How to use this reference
+## Verwendung dieser Referenz
 
-This reference is divided into sections:
+Diese Referenz ist in folgende Bereiche unterteilt:
 
-- **Globals** – predefined variables and functions available everywhere.
-- **Libraries** – extended functionality, such as math, string, and logging.
-- **Persistent variables** – data that is stored across world save/load.
-- **Enums, Sets, Objects** – Traintastic-specific types to interact with the world.
-- **Examples** – practical usage samples that combine the above.
+- **Globals** – vordefinierte Variablen und Funktionen, die überall verfügbar sind.
+- **Bibliotheken** – erweiterte Funktionen wie Mathematik, Zeichenketten und Logging.
+- **Persistente Variablen** – Daten, die über Speichern/Laden der Welt hinweg erhalten bleiben.
+- **Enums, Sets, Objekte** – Traintastic-spezifische Typen zur Interaktion mit der Welt.
+- **Beispiele** – praktische Anwendungsfälle, die die oben genannten Elemente kombinieren.
 
 !!! tip
-    If you are already familiar with Lua, you can skip the language basics and go straight to the [Globals](globals.md).
-    If you are new to Lua, read the [Lua language basics](basics.md) first.
+    Wer bereits mit Lua vertraut ist, kann die Sprachgrundlagen überspringen und direkt zu den [Globals](globals.md) gehen.
+    Für Einsteiger empfiehlt sich zuerst die [Lua-Sprachgrundlagen](basics.md).
 
-## Core Lua vs. Traintastic extensions
+## Reines Lua vs. Traintastic-Erweiterungen
 
-Most of Lua’s standard features are available: numbers, strings, tables, control flow, functions, etc.
-Traintastic adds its own extensions to let you control the simulation:
+Die meisten Standardfunktionen von Lua sind verfügbar: Zahlen, Strings, Tabellen, Kontrollstrukturen, Funktionen usw.
+Traintastic erweitert Lua um zusätzliche Funktionen zur Steuerung der Simulation:
 
-- **The `world` global** – the entry point to interact with your world.
-- **Enums and sets** – special types to represent model railway concepts.
-- **Objects** – live references to trains, vehicles, sensors, switches, and more.
+- **Die `world`-Variable** – Einstiegspunkt zur Interaktion mit der Welt.
+- **Enums und Sets** – spezielle Typen zur Abbildung modellbahnspezifischer Konzepte.
+- **Objekte** – Live-Referenzen auf Züge, Fahrzeuge, Sensoren, Weichen und mehr.
 
-Together, these extensions make it possible to build powerful automations, ranging from simple macros to complex traffic control logic.
+Zusammen ermöglichen diese Erweiterungen leistungsfähige Automatisierungen – von einfachen Makros bis hin zu komplexer Zugsteuerung.
 
-## Getting started
+## Erste Schritte
 
-To try out scripting:
+Zum Ausprobieren von Skripten:
 
-1. Open the **Lua scripts list** via *Objects → Lua scripts* in the main menu.
-2. Create a new script and open it in the script editor.
-3. Press **Run all** in the Lua script list to execute it.
+1. Die Liste der **Lua-Skripte** über *Objekte → Lua-Skripte* im Hauptmenü öffnen.
+2. Ein neues Skript erstellen und im Editor öffnen.
+3. In der Skriptliste **Alle ausführen** drücken, um das Skript auszuführen.
 
-## Next steps
+## Nächste Schritte
 
-- Learn [Lua language basics](basics.md) if you’re new to Lua.
-- Explore the [Globals](globals.md) page to see what is available.
-- Check out the [Examples](examples.md) for ready-to-use snippets.
+- Die [Lua-Sprachgrundlagen](basics.md) lesen, falls Lua noch unbekannt ist.
+- Die Seite [Globals](globals.md) erkunden, um verfügbare Funktionen zu sehen.
+- Die [Beispiele](examples.md) für fertige Code-Snippets ansehen.

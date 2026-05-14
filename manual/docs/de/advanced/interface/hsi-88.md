@@ -1,4 +1,3 @@
-```markdown id="hsi88_de"
 # HSI-88 Schnittstellenkonfiguration
 
 Diese Seite beschreibt die Konfiguration eines HSI-88 Rückmeldemoduls in Traintastic.
@@ -26,4 +25,3 @@ Der HSI-88 kann nur über eine direkte serielle Verbindung oder über einen USB-
 !!! tip "Hilfe bei Problemen"
     Bei Problemen mit der Konfiguration oder unerwartetem Verhalten hilft ein Blick ins [Community-Forum](https://discourse.traintastic.org).  
     Das Teilen von Konfigurationen und Erfahrungen hilft auch anderen und verbessert Traintastic.
-```

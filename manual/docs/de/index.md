@@ -1,7 +1,8 @@
 # Willkommen im Traintastic-Handbuch
 
 **Traintastic** ist eine Software zur Steuerung und Automatisierung von Modelleisenbahnen.  
-Damit lassen sich Lokomotiven, Weichen, Signale und Zubehör direkt vom Computer aus steuern und komplette Anlagen automatisieren.
+
+Damit lassen sich Lokomotiven, Weichen, Signale und Zubehör direkt vom Computer aus steuern, Rückmelder abfragen und komplette Anlagen automatisieren.
 
 Egal, ob du gerade deine erste digitale Modellbahn aufbaust oder eine große automatisierte Anlage betreibst – Traintastic hilft dabei, Züge sicher und reibungslos zu betreiben.
 
@@ -38,8 +39,7 @@ Für den Einstieg in Traintastic:
 - **FAQ und Fehlerbehebung** – häufige Probleme und Lösungen
 
 ## Community und Support
-Das **[Traintastic Community Forum](https://discourse.traintastic.org)** ist die zentrale Anlaufstelle für Support, Diskussionen und den Austausch von Ideen.  
-Dort lassen sich Fragen stellen, Erfahrungen teilen und von anderen Nutzern lernen.
+Das **[Traintastic Community Forum](https://discourse.traintastic.org)** ist die zentrale Anlaufstelle für Support, Diskussionen und den Austausch von Ideen. Dort lassen sich Fragen stellen, Erfahrungen teilen und von anderen Nutzern lernen.
 
 Weitere Ressourcen:
 

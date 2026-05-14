@@ -1,0 +1,29 @@
+```markdown id="z21_de"
+# Z21 Schnittstellenkonfiguration
+
+Diese Seite beschreibt die Konfiguration einer Z21-Zentrale in Traintastic.
+
+!!! tip
+    Die Z21 kann über den **Einrichtungsassistenten** hinzugefügt werden, der Schritt für Schritt durch die Konfiguration führt.  
+    Siehe [Schnellstart: Zentrale verbinden](../../quickstart/command-station.md) für Details.
+
+## Unterstützte Verbindungsarten
+
+Z21-Zentralen können ausschließlich über das Netzwerk mit Traintastic verbunden werden.  
+Alle Varianten — **z21 start**, **z21 white** und **Z21 black** — verwenden die gleiche Konfiguration.
+
+## Verbindungseinstellungen
+
+- **Hostname** – IP-Adresse oder Hostname der Z21-Zentrale (z. B. `192.168.0.111`)
+- **Port** – UDP-Portnummer. Standard ist **21105** und sollte normalerweise nicht geändert werden
+
+## Z21 Einstellungen
+
+### Debugging
+
+- **Debug-Log RX/TX** – Protokolliert den gesamten Z21-Datenverkehr (Hex + Beschreibung)
+
+!!! tip "Hilfe bei Problemen"
+    Bei Problemen mit der Konfiguration oder unerwartetem Verhalten hilft ein Blick ins [Community-Forum](https://discourse.traintastic.org).  
+    Das Teilen von Konfigurationen und Erfahrungen hilft auch anderen und verbessert Traintastic.
+```

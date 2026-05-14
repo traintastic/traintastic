@@ -1,4 +1,3 @@
-```markdown id="ecos_de"
 # ECoS Schnittstellenkonfiguration
 
 Diese Seite beschreibt die Konfiguration einer ESU ECoS-Zentrale in Traintastic.
@@ -24,4 +23,3 @@ ECoS-Zentralen können ausschließlich über das Netzwerk mit Traintastic verbun
 !!! tip "Hilfe bei Problemen"
     Bei Problemen mit der Konfiguration oder unerwartetem Verhalten hilft ein Blick ins [Community-Forum](https://discourse.traintastic.org).  
     Das Teilen von Konfigurationen und Erfahrungen hilft auch anderen und verbessert Traintastic.
-```
