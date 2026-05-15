@@ -158,6 +158,9 @@ class Kernel : public ::KernelBase
 
     void send(const Message& message);
 
+    template<class T>
+    void handleLocoInfoReply(const T& locoInfo);
+
   public:
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;

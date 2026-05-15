@@ -387,67 +387,7 @@ void Kernel::receive(const Message& message)
         if((locoInstr.identification & LocomotiveInfo::identificationMask) == 0)
         {
           const auto& locoInfo = static_cast<const LocomotiveInfo&>(message);
-
-          const uint16_t replyAddress = popAddressQuerySendNext(Utils::PendingQuery::LocoInfoAndF0F12);
-          if(!replyAddress)
-            break; // We did not ask for locomotive info, ignore it
-
-          // After receiving basic loco info, query higher functions
-          auto loco = std::find_if(m_locomotives.begin(), m_locomotives.end(),
-            [replyAddress](const Locomotive &item) -> bool
-            {
-              return item.address == replyAddress;
-            });
-
-          if(loco == m_locomotives.end())
-            break;
-
-          if((loco->flags & Locomotive::Flags::HasF13F28) == Locomotive::Flags::HasF13F28)
-            postQuery({replyAddress, Utils::PendingQuery::FuncInfoF13F28});
-          else if((loco->flags & Locomotive::Flags::HasF29F68) == Locomotive::Flags::HasF29F68)
-            postQuery({replyAddress, Utils::PendingQuery::FuncInfoF29F68});
-
-          // Enable/disable polling for this locomotive
-          // When disabling, complete last poll cycle
-          if(locoInfo.isBusy())
-            loco->flags |= Locomotive::Flags::OwnedByXBus;
-          else
-            loco->flags &= ~Locomotive::Flags::OwnedByXBus;
-
-          EventLoop::call(
-            [this, replyAddress, locoInfoCopy=locoInfo]()
-            {
-              try
-              {
-                if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(replyAddress), replyAddress))
-                {
-                  const float throttle = Decoder::speedStepToThrottle(locoInfoCopy.speedStep(), locoInfoCopy.speedSteps());
-
-                  m_isUpdatingDecoderFromKernel = true;
-                  decoder->emergencyStop = locoInfoCopy.isEmergencyStop();
-
-                  m_isUpdatingDecoderFromKernel = true;
-                  decoder->direction = locoInfoCopy.direction();
-
-                  m_isUpdatingDecoderFromKernel = true;
-                  decoder->throttle = throttle;
-
-                  //Reset flag guard at end
-                  m_isUpdatingDecoderFromKernel = false;
-
-                  //Function get always updated because we do not store a copy in cache
-                  //so there is no way to tell in advance if they changed
-                  for(int i = 0; i <= 12; i++)
-                  {
-                    decoder->setFunctionValue(i, locoInfoCopy.getFunction(i));
-                  }
-                }
-              }
-              catch(...)
-              {
-
-              }
-            });
+          handleLocoInfoReply(locoInfo);
           break;
         }
 
@@ -491,61 +431,7 @@ void Kernel::receive(const Message& message)
         const auto& locoInfo = static_cast<const RocoMultiMAUS::LocomotiveCumulativeInfo&>(message);
         if((locoInfo.identification & RocoMultiMAUS::LocomotiveCumulativeInfo::identificationMask) == 0)
         {
-          const uint16_t replyAddress = popAddressQuerySendNext(Utils::PendingQuery::ROCOCumulativeLocoInfo);
-          if(!replyAddress)
-            break; // We did not ask for locomotive info, ignore it
-
-          // After receiving basic loco info, query higher functions
-          auto loco = std::find_if(m_locomotives.begin(), m_locomotives.end(),
-            [replyAddress](const Locomotive &item) -> bool
-            {
-              return item.address == replyAddress;
-            });
-
-          if(loco == m_locomotives.end())
-            break;
-
-          // Enable/disable polling for this locomotive
-          // When disabling, complete last poll cycle
-          if(locoInfo.isBusy())
-            loco->flags |= Locomotive::Flags::OwnedByXBus;
-          else
-            loco->flags &= ~Locomotive::Flags::OwnedByXBus;
-
-          EventLoop::call(
-            [this, replyAddress, locoInfoCopy=locoInfo]()
-            {
-              try
-              {
-                if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(replyAddress), replyAddress))
-                {
-                  const float throttle = Decoder::speedStepToThrottle(locoInfoCopy.speedStep(), locoInfoCopy.speedSteps());
-
-                  m_isUpdatingDecoderFromKernel = true;
-                  decoder->emergencyStop = locoInfoCopy.isEmergencyStop();
-
-                  m_isUpdatingDecoderFromKernel = true;
-                  decoder->direction = locoInfoCopy.direction();
-
-                  m_isUpdatingDecoderFromKernel = true;
-                  decoder->throttle = throttle;
-
-                  //Reset flag guard at end
-                  m_isUpdatingDecoderFromKernel = false;
-
-                  //Function get always updated because we do not store a copy in cache
-                  //so there is no way to tell in advance if they changed
-                  for(int i = 0; i <= 20; i++)
-                  {
-                    decoder->setFunctionValue(i, locoInfoCopy.getFunction(i));
-                  }
-                }
-              }
-              catch(...)
-              {
-
-              }
-            });
+          handleLocoInfoReply(locoInfo);
           break;
         }
 
@@ -981,6 +867,80 @@ void Kernel::setCentralVersion(uint8_t version, uint8_t commandStationId)
         m_onHardwareInfoChanged(HardwareType(commandStationId),
           Utils::xbusVersionMajor(version),
           Utils::xbusVersionMinor(version));
+    });
+}
+
+template<class T>
+void Kernel::handleLocoInfoReply(const T &locoInfo)
+{
+  constexpr auto replyType = []() -> auto {
+    if constexpr(std::is_same_v<T, LocomotiveInfo>)
+      return Utils::PendingQuery::LocoInfoAndF0F12;
+    else if constexpr(std::is_same_v<T, RocoMultiMAUS::LocomotiveCumulativeInfo>)
+      return Utils::PendingQuery::ROCOCumulativeLocoInfo;
+    else
+      static_assert(false, "Wrong message type");
+  }();
+
+  const uint16_t replyAddress = popAddressQuerySendNext(replyType);
+  if(!replyAddress)
+    return; // We did not ask for locomotive info, ignore it
+
+  // After receiving basic loco info, query higher functions
+  auto loco = std::find_if(m_locomotives.begin(), m_locomotives.end(),
+    [replyAddress](const Locomotive &item) -> bool
+    {
+      return item.address == replyAddress;
+    });
+
+  if(loco == m_locomotives.end())
+    return;
+
+  if((loco->flags & Locomotive::Flags::HasF13F28) == Locomotive::Flags::HasF13F28)
+    postQuery({replyAddress, Utils::PendingQuery::FuncInfoF13F28});
+  else if((loco->flags & Locomotive::Flags::HasF29F68) == Locomotive::Flags::HasF29F68)
+    postQuery({replyAddress, Utils::PendingQuery::FuncInfoF29F68});
+
+  // Enable/disable polling for this locomotive
+  // When disabling, complete last poll cycle
+  if(locoInfo.isBusy())
+    loco->flags |= Locomotive::Flags::OwnedByXBus;
+  else
+    loco->flags &= ~Locomotive::Flags::OwnedByXBus;
+
+  EventLoop::call(
+    [this, replyAddress, locoInfoCopy=locoInfo]()
+    {
+      try
+      {
+        if(auto decoder = m_decoderController->getDecoder(DCC::getProtocol(replyAddress), replyAddress))
+        {
+          const float throttle = Decoder::speedStepToThrottle(locoInfoCopy.speedStep(), locoInfoCopy.speedSteps());
+
+          m_isUpdatingDecoderFromKernel = true;
+          decoder->emergencyStop = locoInfoCopy.isEmergencyStop();
+
+          m_isUpdatingDecoderFromKernel = true;
+          decoder->direction = locoInfoCopy.direction();
+
+          m_isUpdatingDecoderFromKernel = true;
+          decoder->throttle = throttle;
+
+          //Reset flag guard at end
+          m_isUpdatingDecoderFromKernel = false;
+
+          //Function get always updated because we do not store a copy in cache
+          //so there is no way to tell in advance if they changed
+          for(int i = 0; i <= T::functionIndexMax; i++)
+          {
+            decoder->setFunctionValue(i, locoInfoCopy.getFunction(i));
+          }
+        }
+      }
+      catch(...)
+      {
+
+      }
     });
 }
 
