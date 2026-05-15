@@ -154,10 +154,10 @@ void Kernel::pollDecoders()
 void Kernel::setCentralVersion(uint8_t version, uint8_t commandStationId)
 {
   assert(isKernelThread());
-  m_centralVersion = CentralVersion(version);
+  m_centralVersion = XBusVersion(version);
   EventLoop::call([this, version, commandStationId]()
   {
-    m_centralVersionEventLoop = CentralVersion(version);
+    m_centralVersionEventLoop = XBusVersion(version);
 
     if(m_onHardwareInfoChanged)
       m_onHardwareInfoChanged(HardwareType(commandStationId),

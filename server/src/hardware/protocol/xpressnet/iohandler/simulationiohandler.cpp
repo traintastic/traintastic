@@ -122,6 +122,7 @@ bool SimulationIOHandler::send(const Message& message)
 
           Locomotive& loco = m_locomotives[funcInstruction.address()];
           loco.info.setBusy(false);
+
           if(group <= 3)
           {
             uint8_t i = FunctionInstructionGroup::getMinFunctionIndex(group);
@@ -144,20 +145,8 @@ bool SimulationIOHandler::send(const Message& message)
             for(; i <= maxFuncIndex; i++)
               loco.func29.setFunction(i, funcInstruction.getFunction(i));
             loco.func29.updateChecksum();
-
-            if(loco.func29.getFunction(68))
-            {
-              // Simulate external change when setting function 68
-              m_kernel.ioContext().post(
-                [this, address=funcInstruction.address()]()
-                {
-                  Locomotive& loco2 = m_locomotives[address];
-                  loco2.info.setBusy(true);
-                  loco2.info.updateChecksum();
-                  m_kernel.receive(LocomotiveBusy(address));
-                });
-            }
           }
+
           loco.info.updateChecksum();
           break;
         }

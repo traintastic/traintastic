@@ -48,6 +48,28 @@ constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::N
 constexpr auto inputListColumns = InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Address;
 
+namespace {
+
+inline XpressNet::Kernel::Locomotive::Flags getDecoderFlags(const Decoder &decoder)
+{
+  const uint8_t bothFuncFlags = (XpressNet::Kernel::Locomotive::Flags::HasF13F28 | XpressNet::Kernel::Locomotive::Flags::HasF29F68);
+  uint8_t flags = XpressNet::Kernel::Locomotive::Flags::None;
+  for(const auto& f : *decoder.functions)
+  {
+    if(f->number >= 29)
+      flags |= XpressNet::Kernel::Locomotive::Flags::HasF29F68;
+    else if(f->number >= 13)
+      flags |= XpressNet::Kernel::Locomotive::Flags::HasF13F28;
+
+    if((flags & bothFuncFlags) == bothFuncFlags)
+      break;
+  }
+
+  return XpressNet::Kernel::Locomotive::Flags(flags);
+}
+
+}
+
 CREATE_IMPL(XpressNetInterface)
 
 XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
@@ -221,20 +243,7 @@ void XpressNetInterface::decoderFunctionsChanged(const Decoder &decoder)
   if(!m_kernel)
     return;
 
-  const uint8_t bothFuncFlags = (XpressNet::Kernel::Locomotive::Flags::HasF13F28 | XpressNet::Kernel::Locomotive::Flags::HasF29F68);
-  uint8_t flags = XpressNet::Kernel::Locomotive::Flags::None;
-  for(const auto& f : *decoder.functions)
-  {
-    if(f->number >= 29)
-      flags |= XpressNet::Kernel::Locomotive::Flags::HasF29F68;
-    else if(f->number >= 13)
-      flags |= XpressNet::Kernel::Locomotive::Flags::HasF13F28;
-
-    if((flags & bothFuncFlags) == bothFuncFlags)
-      break;
-  }
-
-  m_kernel->updateDecoder(decoder.address, 0, flags);
+  m_kernel->updateDecoder(decoder.address, 0, getDecoderFlags(decoder));
 }
 
 void XpressNetInterface::decoderAddressChanged(const Decoder &decoder, uint16_t oldAddress, uint16_t newAddress)
@@ -242,20 +251,7 @@ void XpressNetInterface::decoderAddressChanged(const Decoder &decoder, uint16_t 
   if(!m_kernel)
     return;
 
-  const uint8_t bothFuncFlags = (XpressNet::Kernel::Locomotive::Flags::HasF13F28 | XpressNet::Kernel::Locomotive::Flags::HasF29F68);
-  uint8_t flags = XpressNet::Kernel::Locomotive::Flags::None;
-  for(const auto& f : *decoder.functions)
-  {
-    if(f->number >= 29)
-      flags |= XpressNet::Kernel::Locomotive::Flags::HasF29F68;
-    else if(f->number >= 13)
-      flags |= XpressNet::Kernel::Locomotive::Flags::HasF13F28;
-
-    if((flags & bothFuncFlags) == bothFuncFlags)
-      break;
-  }
-
-  m_kernel->updateDecoder(oldAddress, newAddress, flags);
+  m_kernel->updateDecoder(oldAddress, newAddress, getDecoderFlags(decoder));
 }
 
 std::span<const InputChannel> XpressNetInterface::inputChannels() const
@@ -555,24 +551,12 @@ void XpressNetInterface::updateKernelDecoderList()
     return;
 
   std::vector<XpressNet::Kernel::Locomotive> locoVec;
-  const uint8_t bothFuncFlags = (XpressNet::Kernel::Locomotive::Flags::HasF13F28 | XpressNet::Kernel::Locomotive::Flags::HasF29F68);
 
   for(const auto& decoder : *decoders.value().get())
   {
     XpressNet::Kernel::Locomotive loco;
     loco.address = decoder->address;
-
-    for(const auto& f : *decoder->functions)
-    {
-      if(f->number >= 29)
-        loco.flags |= XpressNet::Kernel::Locomotive::Flags::HasF29F68;
-      else if(f->number >= 13)
-        loco.flags |= XpressNet::Kernel::Locomotive::Flags::HasF13F28;
-
-      if((loco.flags & bothFuncFlags) == bothFuncFlags)
-        break;
-    }
-
+    loco.flags = getDecoderFlags(decoder);
     locoVec.push_back(loco);
   }
 

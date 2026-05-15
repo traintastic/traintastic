@@ -59,10 +59,10 @@ class Kernel : public ::KernelBase
 
       enum Flags : uint8_t
       {
-        None = 0x0,
-        OwnedByXBus = 0x1,
-        HasF13F28 = 0x2,
-        HasF29F68 = 0x4
+        None        = 0,
+        OwnedByXBus = 1 << 0,
+        HasF13F28   = 1 << 1,
+        HasF29F68   = 1 << 2
       };
 
       uint8_t flags = Flags::OwnedByXBus;
@@ -116,7 +116,7 @@ class Kernel : public ::KernelBase
 
     Config m_config;
 
-    enum CentralVersion : uint8_t
+    enum XBusVersion : uint8_t
     {
         XNet_2_3 = 0x23,
         XNet_3_0 = 0x30,
@@ -125,8 +125,8 @@ class Kernel : public ::KernelBase
         XNet_4_0 = 0x40
     };
 
-    CentralVersion m_centralVersion = CentralVersion::XNet_3_0;
-    CentralVersion m_centralVersionEventLoop = CentralVersion::XNet_3_0;
+    XBusVersion m_centralVersion = XBusVersion::XNet_3_0;
+    XBusVersion m_centralVersionEventLoop = XBusVersion::XNet_3_0;
 
     std::vector<Utils::PendingQuery> m_pendingQueries;
     boost::asio::steady_timer m_pendingQueryTimeout;
