@@ -216,7 +216,7 @@ void ScreenShotDialog::start()
         w->resize(400, 300);
         saveWidgetImage(w, QStringLiteral("interface/interface-list-empty.png"));
         auto* list = static_cast<InterfaceListWidget*>(w->widget());
-        list->m_createMenu->actions()[3]->trigger();
+        list->m_createMenu->actions()[4]->trigger(); // LocoNet
         return true;
       }
       return false;
@@ -299,7 +299,7 @@ void ScreenShotDialog::start()
       if(auto* w = getSubWindow(QStringLiteral("train_1")))
       {
         w->move(400, 10);
-        w->resize(400, 300);
+        w->resize(400, 400);
         saveWidgetImage(w, QStringLiteral("getting-started/train-general.png"));
         static_cast<QTabWidget*>(w->widget()->layout()->itemAt(0)->widget())->setCurrentIndex(1);
         saveWidgetImage(w, QStringLiteral("getting-started/train-vehicles.png"));
