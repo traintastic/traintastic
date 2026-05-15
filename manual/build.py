@@ -5,6 +5,7 @@ import os
 import codecs
 import operator
 import shutil
+import json
 import mkdocs.config
 import mkdocs.commands
 import mkdocs.commands.build
@@ -45,6 +46,8 @@ class TraintasticHelp:
         lua_dir = os.path.join(self.base_dir, 'docs', self.language, 'appendix', 'lua')
         #shutil.rmtree(lua_dir, ignore_errors=True)
         self._luadoc.build(lua_dir)
+
+        self._terms = self._load_terms(self.language)
 
         self._write_mkdocs_yml()
 
@@ -108,7 +111,7 @@ class TraintasticHelp:
         ]
 
         config = {
-            'site_name': 'Traintastic manual',
+            'site_name': self._terms['title'],
             'docs_dir': os.path.join('../../docs', self.language),
             'extra_css': ['assets/extra.css'],
             'site_dir': os.path.join(self.output_dir, self.language),
@@ -163,36 +166,36 @@ class TraintasticHelp:
                     'lang': self.language
                 }
             },
-            'nav': [
-                {'Welcome': 'index.md'},
-                {'Getting started': [
-                    {'Installation': [
-                        { 'Windows': 'installation/windows.md' },
-                        { 'Linux': 'installation/linux.md' }
+            'nav': self._translate_toc([
+                'index.md',
+                {'getting_started': [
+                    {'installation': [
+                        {'Windows': 'installation/windows.md'},
+                        {'Linux': 'installation/linux.md'}
                     ]},
-                    {'Quick start': [
-                        {'Introduction': 'quickstart/index.md'},
-                        {'Create your first world': 'quickstart/world.md'},
-                        {'Connect to your command station': 'quickstart/command-station.md'},
-                        {'Add and control a train': 'quickstart/trains.md'},
-                        {'Create a schematic layout': [
-                            {'Introduction': 'quickstart/layout/index.md'},
-                            {'Drawing basics': 'quickstart/layout/drawing-basics.md'},
-                            {'Turnout control': 'quickstart/layout/turnouts.md'},
-                            {'Blocks and sensors': 'quickstart/layout/blocks-sensors.md'},
-                            {'Signals': 'quickstart/layout/signals.md'}
+                    {'quickstart': [
+                        'quickstart/index.md',
+                        'quickstart/world.md',
+                        'quickstart/command-station.md',
+                        'quickstart/trains.md',
+                        {'quickstart/layout': [
+                            'quickstart/layout/index.md',
+                            'quickstart/layout/drawing-basics.md',
+                            'quickstart/layout/turnouts.md',
+                            'quickstart/layout/blocks-sensors.md',
+                            'quickstart/layout/signals.md'
                         ]}
                     ]}
                 ]},
-                {'User guide': [
-                    {'Board': [
-                        {'Tile reference': 'user-guide/board/tile-reference.md'}
+                {'user-guide': [
+                    {'board': [
+                        'user-guide/board/tile-reference.md'
                     ]},
-                    {'Zones': 'user-guide/zones.md'}
+                    'user-guide/zones.md'
                 ]},
-                {'Advanced topics': [
-                    {'Interface configuration': [
-                        {'Introduction': 'advanced/interface/index.md'},
+                {'advanced': [
+                    {'advanced/interface': [
+                        'advanced/interface/index.md',
                         {'DCC-EX': 'advanced/interface/dcc-ex.md'},
                         {'ECoS': 'advanced/interface/ecos.md'},
                         {'HSI-88': 'advanced/interface/hsi-88.md'},
@@ -204,38 +207,60 @@ class TraintasticHelp:
                         {'XpressNet': 'advanced/interface/xpressnet.md'},
                         {'Z21': 'advanced/interface/z21.md'}
                     ]},
-                    {'Scripting basics': 'advanced/scripting-basics.md'}
+                    'advanced/scripting-basics.md'
                 ]},
-                {'Troubleshooting': [
-                    {'Interface connection errors': 'troubleshooting/interface-connection-errors.md'}
+                {'troubleshooting': [
+                    'troubleshooting/interface-connection-errors.md'
                 ]},
-                {'Appendix': [
-                    {'Supported hardware': [
-                        {'Overview': 'appendix/supported-hardware/index.md'},
-                        {'Command Stations': 'appendix/supported-hardware/command-stations/index.md'},
-                        {'Boosters': [
-                            {'Overview': 'appendix/supported-hardware/boosters/index.md'},
+                {'appendix': [
+                    {'appendix/supported-hardware': [
+                        'appendix/supported-hardware/index.md',
+                        'appendix/supported-hardware/command-stations/index.md',
+                        {'appendix/supported-hardware/boosters': [
+                            'appendix/supported-hardware/boosters/index.md',
                             {'Digikeijs DR5033': 'appendix/supported-hardware/boosters/digikeijs-dr5033.md'},
                             {'Uhlenblock Power 4/7/22/40/70': 'appendix/supported-hardware/boosters/uhlenbrock-power-4-7-22-40-70.md'}
                         ]},
-                        {'Product index': 'appendix/supported-hardware/product-index.md'}
+                        'appendix/supported-hardware/product-index.md'
                     ]},
-                    {'CBUS/VLCB reference': 'appendix/cbus-vlcb.md'},
-                    {'LocoNet reference': 'appendix/loconet.md'},
-                    {'XpressNet reference': 'appendix/xpressnet.md'},
+                    'appendix/cbus-vlcb.md',
+                    'appendix/loconet.md',
+                    'appendix/xpressnet.md',
                     {'Lua scripting reference': lua_ref},
-                    {'Traintastic DIY protocol': 'appendix/traintastic-diy-protocol.md'},
-                    {'Command line options': 'appendix/command-line-options.md'}
+                    'appendix/traintastic-diy-protocol.md',
+                    'appendix/command-line-options.md'
                 ]},
-                {'Uncategorized/WIP': [
-                    {'Decoder function': 'wip/decoder-function.md'},
-                    {'Input monitor': 'wip/input-monitor.md'},
-                    {'Log messages': 'wip/log-messages.md'},
-                    {'Trains': 'wip/trains.md'}
+                {'wip': [
+                    'wip/decoder-function.md',
+                    'wip/input-monitor.md',
+                    'wip/log-messages.md',
+                    'wip/trains.md'
                 ]}
-            ]
+            ])
         }
         TraintasticHelp._write_file(os.path.join(self.base_dir, 'config', self.language, 'mkdocs.yml'), yaml.dump(config))
+
+    def _load_terms(self, language: str) -> dict:
+        terms = {}
+        for item in json.loads(LuaDoc._read_file(os.path.join(self.base_dir, 'terms', language + '.json'))):
+            if item['definition'] is not None and item['definition'] != '':
+                terms[item['term']] = item['definition']
+        return terms
+
+
+    def _translate_toc(self, toc) -> dict:
+        if isinstance(toc, list):
+            return [self._translate_toc(item) for item in toc]
+        elif isinstance(toc, dict) and len(toc) == 1 and isinstance(list(toc.values())[0], list):
+            k = 'nav:' + list(toc.keys())[0]
+            k = self._terms[k] if k in self._terms else list(toc.keys())[0]
+            return {k: self._translate_toc(list(toc.values())[0])}
+        elif isinstance(toc, str):
+            k = 'nav:' + toc
+            if k in self._terms:
+                return {self._terms[k]: toc}
+
+        return toc
 
     def _write_file(filename: str, contents: str) -> None:
         os.makedirs(os.path.dirname(filename), mode=0o755, exist_ok=True)
@@ -252,7 +277,11 @@ if __name__ == '__main__':
 
     args = parser.parse_args(sys.argv[1:])
 
-    help = TraintasticHelp(os.path.abspath(os.path.dirname(__file__)))
-    help.version = args.version
+    for language in ['en', 'de']:
+        help = TraintasticHelp(os.path.abspath(os.path.dirname(__file__)))
+        help.language = language
+        help.version = args.version
+        if not help.build():
+            sys.exit(1)
 
-    sys.exit(0 if help.build() else 1)
+    sys.exit(0)

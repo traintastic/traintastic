@@ -1,0 +1,174 @@
+[
+  {
+    "term": "nav:advanced",
+    "definition": "Advanced topics"
+  },
+  {
+    "term": "nav:advanced/interface",
+    "definition": "Interface configuration"
+  },
+  {
+    "term": "nav:advanced/interface/index.md",
+    "definition": "Introduction"
+  },
+  {
+    "term": "nav:advanced/scripting-basics.md",
+    "definition": "Scripting basics"
+  },
+  {
+    "term": "nav:appendix",
+    "definition": "Appendix"
+  },
+  {
+    "term": "nav:appendix/cbus-vlcb.md",
+    "definition": "CBUS/VLCB reference"
+  },
+  {
+    "term": "nav:appendix/command-line-options.md",
+    "definition": "Command line options"
+  },
+  {
+    "term": "nav:appendix/loconet.md",
+    "definition": "LocoNet reference"
+  },
+  {
+    "term": "nav:appendix/lua.md",
+    "definition": "Lua scripting reference"
+  },
+  {
+    "term": "nav:appendix/supported-hardware",
+    "definition": "Supported hardware"
+  },
+  {
+    "term": "nav:appendix/supported-hardware/boosters/index.md",
+    "definition": "Overview"
+  },
+  {
+    "term": "nav:appendix/supported-hardware/command-stations/index.md",
+    "definition": "Command Stations"
+  },
+  {
+    "term": "nav:appendix/supported-hardware/index.md",
+    "definition": "Overview"
+  },
+  {
+    "term": "nav:appendix/supported-hardware/product-index.md",
+    "definition": "Product index"
+  },
+  {
+    "term": "nav:appendix/traintastic-diy-protocol.md",
+    "definition": "Traintastic DIY protocol"
+  },
+  {
+    "term": "nav:appendix/xpressnet.md",
+    "definition": "XpressNet reference"
+  },
+  {
+    "term": "nav:board",
+    "definition": "Board"
+  },
+  {
+    "term": "nav:boosters",
+    "definition": "Boosters"
+  },
+  {
+    "term": "nav:getting_started",
+    "definition": "Getting started"
+  },
+  {
+    "term": "nav:index.md",
+    "definition": "Welcome"
+  },
+  {
+    "term": "nav:installation",
+    "definition": "Installation"
+  },
+  {
+    "term": "nav:quickstart",
+    "definition": "Quick start"
+  },
+  {
+    "term": "nav:quickstart/command-station.md",
+    "definition": "Connect to your command station"
+  },
+  {
+    "term": "nav:quickstart/index.md",
+    "definition": "Introduction"
+  },
+  {
+    "term": "nav:quickstart/layout",
+    "definition": "Create a schematic layout"
+  },
+  {
+    "term": "nav:quickstart/layout/blocks-sensors.md",
+    "definition": "Blocks and sensors"
+  },
+  {
+    "term": "nav:quickstart/layout/drawing-basics.md",
+    "definition": "Drawing basics"
+  },
+  {
+    "term": "nav:quickstart/layout/index.md",
+    "definition": "Introduction"
+  },
+  {
+    "term": "nav:quickstart/layout/signals.md",
+    "definition": "Signals"
+  },
+  {
+    "term": "nav:quickstart/layout/turnouts.md",
+    "definition": "Turnout control"
+  },
+  {
+    "term": "nav:quickstart/trains.md",
+    "definition": "Add and control a train"
+  },
+  {
+    "term": "nav:quickstart/world.md",
+    "definition": "Create your first world"
+  },
+  {
+    "term": "nav:troubleshooting",
+    "definition": "Troubleshooting"
+  },
+  {
+    "term": "nav:troubleshooting/interface-connection-errors.md",
+    "definition": "Interface connection errors"
+  },
+  {
+    "term": "nav:user-guide",
+    "definition": "User guide"
+  },
+  {
+    "term": "nav:user-guide/board/tile-reference.md",
+    "definition": "Tile reference"
+  },
+  {
+    "term": "nav:user-guide/zones.md",
+    "definition": "Zones"
+  },
+  {
+    "term": "nav:wip",
+    "definition": "Uncategorized/WIP"
+  },
+  {
+    "term": "nav:wip/decoder-function.md",
+    "definition": "Decoder function"
+  },
+  {
+    "term": "nav:wip/input-monitor.md",
+    "definition": "Input monitor"
+  },
+  {
+    "term": "nav:wip/log-messages.md",
+    "definition": "Log messages"
+  },
+  {
+    "term": "nav:wip/trains.md",
+    "definition": "Trains"
+  },
+  {
+    "term": "title",
+    "definition": "Traintastic manual"
+  }
+]
