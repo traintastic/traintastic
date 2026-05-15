@@ -53,11 +53,10 @@ int XpressNetInterface::__index(lua_State* L)
 
 int XpressNetInterface::send(lua_State* L)
 {
-  const int argc = checkArguments(L, 1, 2);
+  checkArguments(L, 1);
   auto interface = check<::XpressNetInterface>(L, lua_upvalueindex(1));
   auto message = checkVector<uint8_t>(L, 1);
-  bool autoChecksum = (argc >= 2) ? check<bool>(L, 2) : false;
-  Lua::push(L, interface->send(std::move(message), autoChecksum));
+  Lua::push(L, interface->send(std::move(message)));
   return 1;
 }
 

@@ -105,9 +105,8 @@ class XpressNetInterface final
 
     //! \brief Send XpressNet message
     //! \param[in] message XpressNet message bytes.
-    //! \param[in] autoChecksum Automatic calculation on XOR checksum in last message byte.
     //! \return \c true if send, \c false otherwise.
-    bool send(std::vector<uint8_t> message, bool autoChecksum = false);
+    bool send(std::vector<uint8_t> message);
 };
 
 #endif

@@ -294,11 +294,11 @@ bool XpressNetInterface::setOutputValue(OutputChannel channel, const OutputLocat
       m_kernel->setOutput(static_cast<uint16_t>(address), std::get<OutputPairValue>(value));
 }
 
-bool XpressNetInterface::send(std::vector<uint8_t> message, bool autoChecksum)
+bool XpressNetInterface::send(std::vector<uint8_t> message)
 {
   if(m_kernel)
   {
-    return m_kernel->send(std::move(message), autoChecksum);
+    return m_kernel->send(std::move(message));
   }
   return false;
 }
@@ -556,7 +556,7 @@ void XpressNetInterface::updateKernelDecoderList()
   {
     XpressNet::Kernel::Locomotive loco;
     loco.address = decoder->address;
-    loco.flags = getDecoderFlags(decoder);
+    loco.flags = getDecoderFlags(*decoder);
     locoVec.push_back(loco);
   }
 

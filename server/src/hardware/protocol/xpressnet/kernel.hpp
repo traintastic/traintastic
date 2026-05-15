@@ -331,7 +331,7 @@ class Kernel : public ::KernelBase
     void setDecoderList(const std::vector<Locomotive> &locoVec);
     void updateDecoder(uint16_t address, uint16_t newAddress = 0, uint8_t decoderFunctions = 0);
 
-    bool send(std::vector<uint8_t> message, bool autoChecksum = false);
+    bool send(std::vector<uint8_t> message);
 };
 
 }

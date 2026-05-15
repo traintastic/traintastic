@@ -932,7 +932,7 @@ void Kernel::send(const Message& message)
   {} // log message and go to error state
 }
 
-bool Kernel::send(std::vector<uint8_t> message, bool autoChecksum)
+bool Kernel::send(std::vector<uint8_t> message)
 {
   assert(isEventLoopThread());
 
@@ -946,10 +946,7 @@ bool Kernel::send(std::vector<uint8_t> message, bool autoChecksum)
   if(message.size() != msg->size())
     return false;
 
-  if(autoChecksum)
-  {
-    msg->updateChecksum();
-  }
+  msg->updateChecksum();
 
   boost::asio::post(m_ioContext,
     [this, msg_=std::move(message)]()
