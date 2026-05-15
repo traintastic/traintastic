@@ -34,138 +34,6 @@
 
 namespace XpressNet {
 
-void Kernel::postQuery(const Utils::PendingQuery &query)
-{
-  assert(query.address >= shortAddressMin && query.address <= longAddressMax);
-
-  if(query.type == Utils::PendingQuery::FuncInfoF29F68 && m_centralVersion < XNet_4_0)
-    return;
-
-  if(query.type == Utils::PendingQuery::FuncInfoF13F28 && m_centralVersion < XNet_3_6)
-    return;
-
-  if(query.type == Utils::PendingQuery::ROCOCumulativeLocoInfo
-      && (m_centralVersion < XNet_3_0 || !m_config.useRocoF13F20Command))
-    return;
-
-  for(const Utils::PendingQuery& other : std::as_const(m_pendingQueries))
-  {
-    if(other.address == query.address && other.type == query.type)
-      return; // Already pending
-  }
-
-  const bool wasEmpty = m_pendingQueries.empty();
-  m_pendingQueries.push_back(query);
-
-  if(wasEmpty)
-    sendCurrentQuery();
-}
-
-void Kernel::sendCurrentQuery()
-{
-  if(m_pendingQueries.empty())
-    return;
-
-  switch (m_pendingQueries.at(0).type)
-  {
-  case Utils::PendingQuery::LocoInfoAndF0F12:
-  {
-    send(QueryLocomotiveV3(m_pendingQueries.at(0).address));
-    break;
-  }
-  case Utils::PendingQuery::FuncInfoF13F28:
-  {
-    send(QueryLocomotiveFunctions(m_pendingQueries.at(0).address, 4));
-    break;
-  }
-  case Utils::PendingQuery::FuncInfoF29F68:
-  {
-    send(QueryLocomotiveFunctions(m_pendingQueries.at(0).address, 6));
-    break;
-  }
-  case Utils::PendingQuery::ROCOCumulativeLocoInfo:
-  {
-    send(RocoMultiMAUS::QueryLocomotiveCumulative(m_pendingQueries.at(0).address));
-    break;
-  }
-  default:
-    break;
-  }
-
-  boost::system::error_code ec;
-  m_pendingQueryTimeout.cancel(ec);
-  m_pendingQueryTimeout.expires_after(boost::asio::chrono::milliseconds(800));
-  m_pendingQueryTimeout.async_wait(std::bind(&Kernel::onPendingQueryTimeout, this, std::placeholders::_1));
-}
-
-void Kernel::onPendingQueryTimeout(const boost::system::error_code& ec)
-{
-  if(ec == boost::asio::error::operation_aborted)
-    return;
-
-  if(m_pendingQueries.empty())
-    return;
-
-  // Remove first query which did not get reply
-  m_pendingQueries.erase(m_pendingQueries.begin());
-
-  // Go on to next query
-  sendCurrentQuery();
-}
-
-uint16_t Kernel::popAddressQuerySendNext(Utils::PendingQuery::QueryType type)
-{
-  if(m_pendingQueries.empty() || m_pendingQueries.at(0).type != type)
-    return 0;
-
-  const uint16_t address = m_pendingQueries.at(0).address;
-
-  // Remove first query which completed succesfully
-  m_pendingQueries.erase(m_pendingQueries.begin());
-
-  // Go on to next query
-  sendCurrentQuery();
-  return address;
-}
-
-void Kernel::pollDecoders()
-{
-  m_pollTimer.expires_after(boost::asio::chrono::milliseconds(1000));
-  m_pollTimer.async_wait(
-    [this](const boost::system::error_code& ec)
-    {
-      if(!ec)
-        pollDecoders();
-    });
-
-  for(const Locomotive& loco : m_locomotives)
-  {
-    if(loco.address == 0)
-      continue; // Skip invalid addresses
-
-    if((loco.flags & Locomotive::Flags::OwnedByXBus) == Locomotive::Flags::OwnedByXBus)
-      postQuery({loco.address,
-                 m_config.useRocoF13F20Command ?
-                     Utils::PendingQuery::ROCOCumulativeLocoInfo :
-                     Utils::PendingQuery::LocoInfoAndF0F12});
-  }
-}
-
-void Kernel::setCentralVersion(uint8_t version, uint8_t commandStationId)
-{
-  assert(isKernelThread());
-  m_centralVersion = XBusVersion(version);
-  EventLoop::call([this, version, commandStationId]()
-  {
-    m_centralVersionEventLoop = XBusVersion(version);
-
-    if(m_onHardwareInfoChanged)
-      m_onHardwareInfoChanged(HardwareType(commandStationId),
-                              Utils::xbusVersionMajor(version),
-                              Utils::xbusVersionMinor(version));
-  });
-}
-
 Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
   , m_simulation{simulation}
@@ -180,7 +48,9 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
 
 void Kernel::setConfig(const Config& config)
 {
-  boost::asio::post(m_ioContext, 
+  assert(isEventLoopThread());
+
+  boost::asio::post(m_ioContext,
     [this, newConfig=config]()
     {
       m_config = newConfig;
@@ -189,6 +59,8 @@ void Kernel::setConfig(const Config& config)
 
 void Kernel::start()
 {
+  assert(isEventLoopThread());
+
   assert(m_ioHandler);
   assert(!m_started);
 
@@ -231,7 +103,9 @@ void Kernel::start()
 
 void Kernel::stop()
 {
-  boost::asio::post(m_ioContext, 
+  assert(isEventLoopThread());
+
+  boost::asio::post(m_ioContext,
     [this]()
     {
       boost::system::error_code ec;
@@ -263,6 +137,8 @@ void Kernel::started()
 
 void Kernel::receive(const Message& message)
 {
+  assert(isKernelThread());
+
   if(m_config.debugLogRXTX)
   {
     Utils::PendingQuery optAddress;
@@ -383,7 +259,7 @@ void Kernel::receive(const Message& message)
       }
       else if(message.header == REPLY_VERSION_2_3)
       {
-        const auto& reply = static_cast<const CentralVersionReplyOLD&>(message);
+        const auto& reply = static_cast<const CentralVersionReplyV1&>(message);
         if(reply.db1 == idCentralVersion)
         {
           setCentralVersion(reply.versionHex, HardwareType::HWT_UNKNOWN);
@@ -725,6 +601,8 @@ void Kernel::stopAllLocomotives()
 
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
+  assert(isEventLoopThread());
+
   if(m_isUpdatingDecoderFromKernel)
   {
     // This change was caused by Xpressnet message so there is not point
@@ -813,7 +691,7 @@ bool Kernel::setOutput(uint16_t address, OutputPairValue value)
       if(m_centralVersion >= XNet_3_8)
       {
         send(
-          AccessoryDecoderOperationRequest(
+          AccessoryDecoderOperationRequestV3(
             m_config.useRocoAccessoryAddressing ? address + 4 : address,
             value == OutputPairValue::Second,
             true));
@@ -821,7 +699,7 @@ bool Kernel::setOutput(uint16_t address, OutputPairValue value)
       else if(address <= 1024)
       {
         send(
-          AccessoryDecoderOperationRequestOLD(
+          AccessoryDecoderOperationRequestV1(
             m_config.useRocoAccessoryAddressing ? address + 4 : address,
             value == OutputPairValue::Second,
             true));
@@ -833,6 +711,8 @@ bool Kernel::setOutput(uint16_t address, OutputPairValue value)
 
 void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
 {
+  assert(isEventLoopThread());
+
   if(m_simulation)
     boost::asio::post(m_ioContext, 
       [this, address, action]()
@@ -883,6 +763,8 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
 
 void Kernel::setDecoderList(const std::vector<Locomotive> &locoVec)
 {
+  assert(isEventLoopThread());
+
   m_ioContext.post(
       [this, vec=locoVec]()
       {
@@ -892,6 +774,8 @@ void Kernel::setDecoderList(const std::vector<Locomotive> &locoVec)
 
 void Kernel::updateDecoder(uint16_t address, uint16_t newAddress, uint8_t decoderFunctions)
 {
+  assert(isEventLoopThread());
+
   m_ioContext.post(
       [this, address, newAddress, decoderFunctions]()
       {
@@ -919,6 +803,8 @@ void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
 
 void Kernel::send(const Message& message)
 {
+  assert(isKernelThread());
+
   if(m_ioHandler->send(message))
   {
     if(m_config.debugLogRXTX)
@@ -955,6 +841,147 @@ bool Kernel::send(std::vector<uint8_t> message)
     });
 
   return true;
+}
+
+void Kernel::postQuery(const Utils::PendingQuery &query)
+{
+  assert(isKernelThread());
+  assert(query.address >= shortAddressMin && query.address <= longAddressMax);
+
+  if(query.type == Utils::PendingQuery::FuncInfoF29F68 && m_centralVersion < XNet_4_0)
+    return;
+
+  if(query.type == Utils::PendingQuery::FuncInfoF13F28 && m_centralVersion < XNet_3_6)
+    return;
+
+  if(query.type == Utils::PendingQuery::ROCOCumulativeLocoInfo
+      && (m_centralVersion < XNet_3_0 || !m_config.useRocoF13F20Command))
+    return;
+
+  for(const Utils::PendingQuery& other : std::as_const(m_pendingQueries))
+  {
+    if(other.address == query.address && other.type == query.type)
+      return; // Already pending
+  }
+
+  const bool wasEmpty = m_pendingQueries.empty();
+  m_pendingQueries.push_back(query);
+
+  if(wasEmpty)
+    sendCurrentQuery();
+}
+
+void Kernel::sendCurrentQuery()
+{
+  assert(isKernelThread());
+
+  if(m_pendingQueries.empty())
+    return;
+
+  switch (m_pendingQueries.at(0).type)
+  {
+  case Utils::PendingQuery::LocoInfoAndF0F12:
+  {
+    send(QueryLocomotiveV3(m_pendingQueries.at(0).address));
+    break;
+  }
+  case Utils::PendingQuery::FuncInfoF13F28:
+  {
+    send(QueryLocomotiveFunctions(m_pendingQueries.at(0).address, 4));
+    break;
+  }
+  case Utils::PendingQuery::FuncInfoF29F68:
+  {
+    send(QueryLocomotiveFunctions(m_pendingQueries.at(0).address, 6));
+    break;
+  }
+  case Utils::PendingQuery::ROCOCumulativeLocoInfo:
+  {
+    send(RocoMultiMAUS::QueryLocomotiveCumulative(m_pendingQueries.at(0).address));
+    break;
+  }
+  default:
+    break;
+  }
+
+  boost::system::error_code ec;
+  m_pendingQueryTimeout.cancel(ec);
+  m_pendingQueryTimeout.expires_after(boost::asio::chrono::milliseconds(800));
+  m_pendingQueryTimeout.async_wait(std::bind(&Kernel::onPendingQueryTimeout, this, std::placeholders::_1));
+}
+
+void Kernel::onPendingQueryTimeout(const boost::system::error_code& ec)
+{
+  assert(isKernelThread());
+
+  if(ec == boost::asio::error::operation_aborted)
+    return;
+
+  if(m_pendingQueries.empty())
+    return;
+
+  // Remove first query which did not get reply
+  m_pendingQueries.erase(m_pendingQueries.begin());
+
+  // Go on to next query
+  sendCurrentQuery();
+}
+
+uint16_t Kernel::popAddressQuerySendNext(Utils::PendingQuery::QueryType type)
+{
+  assert(isKernelThread());
+
+  if(m_pendingQueries.empty() || m_pendingQueries.at(0).type != type)
+    return 0;
+
+  const uint16_t address = m_pendingQueries.at(0).address;
+
+  // Remove first query which completed succesfully
+  m_pendingQueries.erase(m_pendingQueries.begin());
+
+  // Go on to next query
+  sendCurrentQuery();
+  return address;
+}
+
+void Kernel::pollDecoders()
+{
+  assert(isKernelThread());
+
+  m_pollTimer.expires_after(boost::asio::chrono::milliseconds(1000));
+  m_pollTimer.async_wait(
+    [this](const boost::system::error_code& ec)
+    {
+      if(!ec)
+        pollDecoders();
+    });
+
+  for(const Locomotive& loco : m_locomotives)
+  {
+    if(loco.address == 0)
+      continue; // Skip invalid addresses
+
+    if((loco.flags & Locomotive::Flags::OwnedByXBus) == Locomotive::Flags::OwnedByXBus)
+      postQuery({loco.address,
+        m_config.useRocoF13F20Command ?
+          Utils::PendingQuery::ROCOCumulativeLocoInfo :
+          Utils::PendingQuery::LocoInfoAndF0F12});
+  }
+}
+
+void Kernel::setCentralVersion(uint8_t version, uint8_t commandStationId)
+{
+  assert(isKernelThread());
+  m_centralVersion = XBusVersion(version);
+  EventLoop::call([this, version, commandStationId]()
+    {
+      m_centralVersionEventLoop = XBusVersion(version);
+
+      if(m_onHardwareInfoChanged)
+        m_onHardwareInfoChanged(HardwareType(commandStationId),
+          Utils::xbusVersionMajor(version),
+          Utils::xbusVersionMinor(version));
+    });
 }
 
 }

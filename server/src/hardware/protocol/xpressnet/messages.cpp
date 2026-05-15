@@ -73,18 +73,18 @@ std::string toString(const Message& message, bool raw, const Utils::PendingQuery
         raw = true;
       break;
     }
-    case SET_ACCESSORY_OLD:
+    case SET_ACCESSORY_V1:
     {
-      const auto& req = static_cast<const AccessoryDecoderOperationRequestOLD&>(message);
+      const auto& req = static_cast<const AccessoryDecoderOperationRequestV1&>(message);
       s = "AccessoryDecoderOperationRequestOLD";
       s.append(" address=").append(std::to_string(req.address()));
       s.append(" port=").append(req.port() ? "2" : "1");
       s.append(req.activate() ? " activate" : " deactivate");
       break;
     }
-    case SET_ACCESSORY:
+    case SET_ACCESSORY_V3_8:
     {
-      const auto& req = static_cast<const AccessoryDecoderOperationRequest&>(message);
+      const auto& req = static_cast<const AccessoryDecoderOperationRequestV3&>(message);
       s = "AccessoryDecoderOperationRequest";
       s.append(" address=").append(std::to_string(req.address()));
       s.append(" port=").append(req.port() ? "2" : "1");
@@ -115,7 +115,7 @@ std::string toString(const Message& message, bool raw, const Utils::PendingQuery
     }
     case REPLY_VERSION_2_3:
     {
-      const auto& reply = static_cast<const CentralVersionReplyOLD&>(message);
+      const auto& reply = static_cast<const CentralVersionReplyV1&>(message);
       if(reply.db1 == idCentralVersion)
       {
         s = "CS_VERSION_OLD";

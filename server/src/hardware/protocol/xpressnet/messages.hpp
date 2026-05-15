@@ -73,10 +73,10 @@ constexpr uint8_t idSetFuncGroup4_Roco = 0xF3;
 enum Header : uint8_t
 {
   STOP_REQUEST = 0x21,
-  ACCESSORY_REPLY_OLD = 0x42,
-  ACCESSORY_REPLY = 0x43,
-  SET_ACCESSORY_OLD = 0x52,
-  SET_ACCESSORY = 0x53,
+  ACCESSORY_REPLY_V1 = 0x42,
+  ACCESSORY_REPLY_V3_8 = 0x43,
+  SET_ACCESSORY_V1 = 0x52,
+  SET_ACCESSORY_V3_8 = 0x53,
   BC_HEADER = 0x61,
   REPLY_VERSION_2_3 = 0x62,
   REPLY_VERSION_3_0 = 0x63,
@@ -178,20 +178,20 @@ struct EmergencyStop : Message
 static_assert(sizeof(EmergencyStop) == 3);
 
 // 2.7.1 Software version reply (OLD! up to Central version 2.3)
-struct CentralVersionReplyOLD : Message
+struct CentralVersionReplyV1 : Message
 {
   uint8_t db1 = idCentralVersion;
   uint8_t versionHex = 0x00;
   uint8_t checksum = 0;
 
-  CentralVersionReplyOLD(uint8_t versionHex_)
+  CentralVersionReplyV1(uint8_t versionHex_)
   {
     header = REPLY_VERSION_2_3;
     versionHex = versionHex_;
     updateChecksum();
   }
 } ATTRIBUTE_PACKED;
-static_assert(sizeof(CentralVersionReplyOLD) == 4);
+static_assert(sizeof(CentralVersionReplyV1) == 4);
 
 // 2.7.2 Software version reply (from Central version 3.0)
 struct CentralVersionReplyV3 : Message
@@ -1342,7 +1342,7 @@ struct QueryCentralVersion : Message
     header = STOP_REQUEST;
   }
 } ATTRIBUTE_PACKED;
-static_assert(sizeof(CentralVersionReplyOLD) == 4);
+static_assert(sizeof(CentralVersionReplyV1) == 4);
 
 // 3.40.3 Query Locomotive state (from Central version 3.0)
 struct QueryLocomotiveV3 : LocomotiveInstruction
@@ -1380,7 +1380,7 @@ struct QueryLocomotiveFunctions : LocomotiveInstruction
 static_assert(sizeof(QueryLocomotiveFunctions) == 5);
 
 // 3.38 Set accessory state (OLD! up to Central version 3.6)
-struct AccessoryDecoderOperationRequestOLD : Message
+struct AccessoryDecoderOperationRequestV1 : Message
 {
   static constexpr uint8_t db2Port = 0x01;
   static constexpr uint8_t db2Activate = 0x08;
@@ -1389,8 +1389,8 @@ struct AccessoryDecoderOperationRequestOLD : Message
   uint8_t db2 = 0x80;
   uint8_t checksum;
 
-  AccessoryDecoderOperationRequestOLD(uint16_t address_, bool port_, bool activate_)
-    : Message(SET_ACCESSORY_OLD)
+  AccessoryDecoderOperationRequestV1(uint16_t address_, bool port_, bool activate_)
+    : Message(SET_ACCESSORY_V1)
   {
     assert(address_ >= 1 && address_ <= 1024);
     address_--;
@@ -1422,10 +1422,10 @@ struct AccessoryDecoderOperationRequestOLD : Message
     return db2 & db2Activate;
   }
 } ATTRIBUTE_PACKED;
-static_assert(sizeof(AccessoryDecoderOperationRequestOLD) == 4);
+static_assert(sizeof(AccessoryDecoderOperationRequestV1) == 4);
 
 // 3.39 Set accessory state (from Central version 3.8)
-struct AccessoryDecoderOperationRequest : Message
+struct AccessoryDecoderOperationRequestV3 : Message
 {
   static constexpr uint8_t db3Port = 0x01;
   static constexpr uint8_t db3Activate = 0x08;
@@ -1435,8 +1435,8 @@ struct AccessoryDecoderOperationRequest : Message
   uint8_t db3 = 0x80;
   uint8_t checksum;
 
-  AccessoryDecoderOperationRequest(uint16_t address_, bool port_, bool activate_)
-    : Message(SET_ACCESSORY)
+  AccessoryDecoderOperationRequestV3(uint16_t address_, bool port_, bool activate_)
+    : Message(SET_ACCESSORY_V3_8)
   {
     assert(address_ >= 1 && address_ <= 2048);
     address_--;
@@ -1469,7 +1469,7 @@ struct AccessoryDecoderOperationRequest : Message
     return db3 & db3Activate;
   }
 } ATTRIBUTE_PACKED;
-static_assert(sizeof(AccessoryDecoderOperationRequest) == 5);
+static_assert(sizeof(AccessoryDecoderOperationRequestV3) == 5);
 
 namespace RocoMultiMAUS
 {
