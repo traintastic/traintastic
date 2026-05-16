@@ -31,10 +31,12 @@
 #include "clientconnection.hpp"
 #include "httpconnection.hpp"
 #include "webthrottleconnection.hpp"
+#include "../compat/stdformat.hpp"
 #include "../core/eventloop.hpp"
 #include "../log/log.hpp"
 #include "../log/logmessageexception.hpp"
 #include "../utils/endswith.hpp"
+#include "../utils/inrange.hpp"
 #include "../utils/setthreadname.hpp"
 #include "../utils/startswith.hpp"
 #include "../utils/stripprefix.hpp"
@@ -112,6 +114,18 @@ std::string_view getContentType(std::string_view filename)
     return contentTypeApplicationGzip;
   }
   return {};
+}
+
+http::message_generator temporaryRedirect(const http::request<http::string_body>& request, std::string_view location)
+{
+    http::response<http::string_body> response{http::status::temporary_redirect, request.version()};
+    response.set(http::field::server, serverHeader);
+    response.set(http::field::location, location);
+    response.set(http::field::content_type, contentTypeTextPlain);
+    response.keep_alive(request.keep_alive());
+    response.body() = "307 Temporary Redirect";
+    response.prepare_payload();
+    return response;
 }
 
 http::message_generator notFound(const http::request<http::string_body>& request)
@@ -314,7 +328,7 @@ Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
 
   Log::log(id, LogMessage::N1007_LISTENING_AT_X_X, m_acceptor.local_endpoint().address().to_string(), m_acceptor.local_endpoint().port());
 
-  boost::asio::post(m_ioContext, 
+  boost::asio::post(m_ioContext,
     [this, discoverable]()
     {
       if(discoverable)
@@ -345,7 +359,7 @@ Server::~Server()
       connection->disconnect();
     }
 
-    boost::asio::post(m_ioContext, 
+    boost::asio::post(m_ioContext,
       [this]()
       {
         boost::system::error_code ec;
@@ -507,6 +521,15 @@ http::message_generator Server::handleHTTPRequest(http::request<http::string_bod
   }
   if(startsWith(target, "/manual"))
   {
+    if(target.size() == 10 && target[7] == '/' && inRange(target[8], 'a', 'z') && inRange(target[9], 'a', 'z'))
+    {
+      auto language = std::string_view(target).substr(8, 2);
+      if(std::filesystem::exists(m_manualPath / language / "index.html"))
+      {
+        return temporaryRedirect(request, std::format("/manual/{}/index.html", language));
+      }
+      return temporaryRedirect(request, "/manual/en/index.html");
+    }
     return serveFileFromFileSystem(
       request,
       stripPrefix(target, "/manual"),
