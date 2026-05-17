@@ -2256,6 +2256,10 @@
         "definition": "Swap outputs"
     },
     {
+        "term": "output_map:test",
+        "definition": "Test"
+    },
+    {
         "term": "output_map:use",
         "definition": "Use"
     },
