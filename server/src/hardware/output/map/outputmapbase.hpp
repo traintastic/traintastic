@@ -53,7 +53,7 @@ class OutputMapBase : public OutputMap
       }
     }
 
-    void worldEvent(WorldState state, WorldEvent event)
+    void worldEvent(WorldState state, WorldEvent event) override
     {
       OutputMap::worldEvent(state, event);
       Attributes::setEnabled(test, !contains(state, WorldState::Run));
