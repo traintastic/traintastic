@@ -62,7 +62,7 @@
 
 #include "../clock/clock.hpp"
 
-#include "../hardware/interface/cbusinterface.hpp"
+#include "../hardware/interface/cbus/cbusinterface.hpp"
 #include "../hardware/interface/dccexinterface.hpp"
 #include "../hardware/interface/ecosinterface.hpp"
 #include "../hardware/interface/hsi88.hpp"

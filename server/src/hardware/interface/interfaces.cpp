@@ -24,7 +24,7 @@
 #include "../../world/world.hpp"
 #include "../../utils/makearray.hpp"
 
-#include "cbusinterface.hpp"
+#include "cbus/cbusinterface.hpp"
 #include "dccexinterface.hpp"
 #include "ecosinterface.hpp"
 #include "hsi88.hpp"

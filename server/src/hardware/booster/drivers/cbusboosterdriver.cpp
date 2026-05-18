@@ -20,7 +20,7 @@
  */
 
 #include "cbusboosterdriver.hpp"
-#include "../../interface/cbusinterface.hpp"
+#include "../../interface/cbus/cbusinterface.hpp"
 #include "../../protocol/cbus/cbusconst.hpp"
 #include "../../protocol/cbus/messages/cbusaccessorymessages.hpp"
 #include "../../../core/attributes.hpp"

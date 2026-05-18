@@ -19,14 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_CBUSINTERFACE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_CBUSINTERFACE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_CBUS_CBUSINTERFACE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_CBUS_CBUSINTERFACE_HPP
 
-#include "interface.hpp"
-#include "../decoder/decodercontroller.hpp"
-#include "../input/inputcontroller.hpp"
-#include "../output/outputcontroller.hpp"
-#include "../../core/serialdeviceproperty.hpp"
+#include "../interface.hpp"
+#include "../../decoder/decodercontroller.hpp"
+#include "../../input/inputcontroller.hpp"
+#include "../../output/outputcontroller.hpp"
+#include "../../../core/serialdeviceproperty.hpp"
 #include <traintastic/enum/cbusinterfacetype.hpp>
 
 class CBUSSettings;
