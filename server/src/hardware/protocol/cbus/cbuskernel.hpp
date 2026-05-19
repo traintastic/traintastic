@@ -64,10 +64,10 @@ public:
    * @return The kernel instance
    */
   template<class IOHandlerType, class... Args>
-  static std::unique_ptr<Kernel> create(std::string logId_, const Config& config, uint8_t canId, Args... args)
+  static std::unique_ptr<Kernel> create(std::string logId_, const Config& config, Args... args)
   {
     static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-    std::unique_ptr<Kernel> kernel{new Kernel(std::move(logId_), config, canId, isSimulation<IOHandlerType>())};
+    std::unique_ptr<Kernel> kernel{new Kernel(std::move(logId_), config, isSimulation<IOHandlerType>())};
     kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
     return kernel;
   }
@@ -155,7 +155,6 @@ private:
 
   std::unique_ptr<IOHandler> m_ioHandler;
   std::shared_ptr<IOHub> m_hub;
-  const uint8_t m_canId;
   const bool m_simulation;
   State m_state = State::Initial;
   boost::asio::steady_timer m_initializationTimer;
@@ -177,7 +176,7 @@ private:
   std::queue<std::pair<std::chrono::steady_clock::time_point, DCC::SetSimpleAccessory>> m_dccAccessoryQueue;
   boost::asio::steady_timer m_dccAccessoryTimer;
 
-  Kernel(std::string logId_, const Config& config, uint8_t canId, bool simulation);
+  Kernel(std::string logId_, const Config& config, bool simulation);
 
   Kernel(const Kernel&) = delete;
   Kernel& operator =(const Kernel&) = delete;

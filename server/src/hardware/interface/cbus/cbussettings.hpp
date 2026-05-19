@@ -33,6 +33,7 @@ class CBUSSettings final : public SubObject
 public:
   Property<uint8_t> engineKeepAlive;
   Property<uint16_t> dccAccessorySwitchTime;
+  Property<uint8_t> canId;
   Property<uint16_t> shortEventNodeNumber;
   Property<bool> hubEnabled;
   Property<bool> hubLocalhostOnly;

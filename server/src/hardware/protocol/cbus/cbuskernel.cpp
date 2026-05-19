@@ -68,9 +68,8 @@ constexpr CBUS::SetEngineSessionMode::SpeedMode toSpeedMode(uint8_t speedSteps)
 
 namespace CBUS {
 
-Kernel::Kernel(std::string logId_, const Config& config, uint8_t canId, bool simulation)
+Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
-  , m_canId{canId}
   , m_simulation{simulation}
   , m_initializationTimer{ioContext()}
   , m_config{config}
@@ -811,7 +810,7 @@ void Kernel::send(const Message& message)
       });
   }
 
-  const auto canMessage = toCANMessage(message, m_canId);
+  const auto canMessage = toCANMessage(message, m_config.canId);
 
   if(auto ec = m_ioHandler->send(canMessage); ec)
   {

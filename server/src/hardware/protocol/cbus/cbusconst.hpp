@@ -23,20 +23,40 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_CBUS_CBUSCONST_HPP
 
 #include <cstdint>
+#include <utility>
 
 namespace CBUS {
 
 constexpr uint16_t defaultTCPPort = 5550;
 
-constexpr uint8_t canIdMin = 1;
-constexpr uint8_t canIdMax = 127;
-
 constexpr uint8_t engineFunctionMax = 28;
 
 struct CanId
 {
-  static constexpr uint8_t CANUSB = 0x7C;
-  static constexpr uint8_t CANEther = 0x7D;
+  // see: https://github.com/SvenRosvall/VLCB-defs/blob/main/vlcbdefs.csv
+
+  static constexpr uint8_t CANCMD      = 0x72; // (114) Fixed CANID for CANCMD or CANCSB
+  static constexpr uint8_t TRAINTASTIC = 0x7A; // (122) !!! Not yet assigned, pending. !!!
+  static constexpr uint8_t MMC         = 0x7B; // (123) Default CANID used by MMC.
+  static constexpr uint8_t CANUSB      = 0x7C; // (124) Fixed CANID for CANUSB, although in current firmware it may just use the CANID from the sending software
+  static constexpr uint8_t FCU         = 0x7D; // (125) Default CANID used by FCU. Can be changed in settings. Note some interface modules may substitute their own CANID.
+  static constexpr uint8_t JMRI        = 0x7E; // (126) Default CANID used by JMRI. Can be changed in connection preferences. Note some interface modules may substitute their own CANID.
+  static constexpr uint8_t CANEther    = 0x7F; // (127) Default fixed CANID for CANEther (can be changed by modifying NV2). Note CANEther inserts its own CANID on all packets transmitted on CAN
+
+  static constexpr uint8_t min()
+  {
+    return 1;
+  }
+
+  static constexpr uint8_t max()
+  {
+    return 127;
+  }
+
+  static constexpr std::pair<uint8_t, uint8_t> range()
+  {
+    return {min(), max()};
+  }
 };
 
 struct NodeNumber

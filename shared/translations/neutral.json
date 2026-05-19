@@ -12,6 +12,10 @@
         "definition": "CANEther"
     },
     {
+        "term": "cbus_settings:can_id",
+        "definition": "CAN ID"
+    },
+    {
         "term": "class_id:interface.cbus",
         "definition": "CBUS/VLCB"
     },
@@ -230,10 +234,6 @@
     {
         "term": "input_channel:ecos_detector",
         "definition": "ECoS Detector"
-    },
-    {
-        "term": "interface.cbus:can_id",
-        "definition": "CAN ID"
     },
     {
         "term": "interface.cbus:cbus",
