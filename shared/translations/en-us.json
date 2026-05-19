@@ -2120,6 +2120,10 @@
         "definition": "Signal aspect externally changed while locked in a path"
     },
     {
+        "term": "message:W3005",
+        "definition": "XBus %1 only supports 1024 accessories. You switched output %2"
+    },
+    {
         "term": "message:W9001",
         "definition": "Execution took %1 us"
     },

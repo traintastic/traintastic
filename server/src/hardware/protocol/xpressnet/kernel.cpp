@@ -590,7 +590,6 @@ bool Kernel::setOutput(uint16_t address, OutputPairValue value)
             value == OutputPairValue::Second,
             true));
       }
-
     });
   return true;
 }

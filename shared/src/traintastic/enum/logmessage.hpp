@@ -177,6 +177,7 @@ enum class LogMessage : uint32_t
   W3002_NX_BUTTON_NOT_CONNECTED_TO_ANY_BLOCK = LogMessageOffset::warning + 3002,
   W3003_LOCKED_TURNOUT_CHANGED = LogMessageOffset::warning + 3003,
   W3004_LOCKED_SIGNAL_CHANGED = LogMessageOffset::warning + 3004,
+  W3005_XBUS_X_ACCESSORY_X_NOT_IN_1024 = LogMessageOffset::warning + 3005,
   W9001_EXECUTION_TOOK_X_US = LogMessageOffset::warning + 9001,
   W9999_X = LogMessageOffset::warning + 9999,
 

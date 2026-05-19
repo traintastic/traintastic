@@ -288,10 +288,16 @@ bool XpressNetInterface::setOutputValue(OutputChannel channel, const OutputLocat
 {
   assert(isOutputChannel(channel));
   const auto address = std::get<OutputAddress>(location).address;
-  return
-      m_kernel &&
-      inRange(address, outputAddressMinMax(channel)) &&
-      m_kernel->setOutput(static_cast<uint16_t>(address), std::get<OutputPairValue>(value));
+  if(!m_kernel || !inRange(address, outputAddressMinMax(channel)))
+    return false;
+
+  if(m_kernel->getXBusVersion() < XpressNet::Kernel::XNet_3_8 && address > 1024)
+  {
+    // XBus only supports up to 1024 before V3.8
+    Log::log(*this, LogMessage::W3005_XBUS_X_ACCESSORY_X_NOT_IN_1024, xbusVersion.value(), address);
+    return false;
+  }
+  return m_kernel->setOutput(static_cast<uint16_t>(address), std::get<OutputPairValue>(value));
 }
 
 bool XpressNetInterface::send(std::vector<uint8_t> message)

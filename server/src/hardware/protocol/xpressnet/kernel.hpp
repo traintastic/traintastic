@@ -68,6 +68,15 @@ class Kernel : public ::KernelBase
       uint8_t flags = Flags::OwnedByXBus;
     };
 
+    enum XBusVersion : uint8_t
+    {
+        XNet_2_3 = 0x23,
+        XNet_3_0 = 0x30,
+        XNet_3_6 = 0x36,
+        XNet_3_8 = 0x38,
+        XNet_4_0 = 0x40
+    };
+
   private:
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
@@ -115,15 +124,6 @@ class Kernel : public ::KernelBase
     //std::array<OutputPairValue, accessoryOutputAddressMax - accessoryOutputAddressMin + 1> m_outputValues;
 
     Config m_config;
-
-    enum XBusVersion : uint8_t
-    {
-        XNet_2_3 = 0x23,
-        XNet_3_0 = 0x30,
-        XNet_3_6 = 0x36,
-        XNet_3_8 = 0x38,
-        XNet_4_0 = 0x40
-    };
 
     XBusVersion m_centralVersion = XBusVersion::XNet_3_0;
     XBusVersion m_centralVersionEventLoop = XBusVersion::XNet_3_0;
@@ -264,6 +264,17 @@ class Kernel : public ::KernelBase
     {
       assert(!m_started);
       m_outputController = outputController;
+    }
+
+    /**
+     * @brief getXBusVersion
+     * @return XBus version as reported by Command Station
+     *
+     * @note Must be called from EventLoop thread
+     */
+    inline XBusVersion getXBusVersion() const
+    {
+      return m_centralVersionEventLoop;
     }
 
     /**

@@ -1980,6 +1980,10 @@
         "definition": "Aspetto del segnale modificato dall'esterno mentre era bloccato in un itinerario"
     },
     {
+        "term": "message:W3005",
+        "definition": "XBus %1 supporta solamente 1024 accessori. Hai impostato l'output %2"
+    },
+    {
         "term": "message:W9001",
         "definition": "Durata esecuzione %1 us"
     },
