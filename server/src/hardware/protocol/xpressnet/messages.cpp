@@ -177,7 +177,7 @@ std::string toString(const Message& message, bool raw, const Utils::PendingQuery
       s.append(".");
       s.append(std::to_string(Utils::xbusVersionMinor(reply.versionHex)));
       s.append(" id=");
-      s.append(std::to_string(reply.commandStationId()));
+      s.append(std::to_string(uint8_t(reply.commandStationId())));
     }
     else
       raw = true;

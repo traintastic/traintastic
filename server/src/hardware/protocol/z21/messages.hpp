@@ -238,11 +238,6 @@ constexpr std::string_view toString(HardwareType value)
   return {};
 }
 
-enum class CommandStationId : uint8_t
-{
-  Z21 = 0x12,
-};
-
 #define Z21_CENTRALSTATE_EMERGENCYSTOP 0x01 //!< The emergency stop is switched on
 #define Z21_CENTRALSTATE_TRACKVOLTAGEOFF 0x02 //!< The track voltage is switched off
 #define Z21_CENTRALSTATE_SHORTCIRCUIT 0x04 //!< Short circuit
@@ -1069,7 +1064,7 @@ struct LanXGetVersionReply : LanX
 {
   uint8_t db0 = 0x21;
   uint8_t xBusVersionBCD;
-  CommandStationId commandStationId;
+  XpressNet::HardwareType commandStationId;
   uint8_t checksum;
 
   LanXGetVersionReply()
@@ -1077,7 +1072,7 @@ struct LanXGetVersionReply : LanX
   {
   }
 
-  LanXGetVersionReply(uint8_t _xBusVersion, CommandStationId _commandStationId)
+  LanXGetVersionReply(uint8_t _xBusVersion, XpressNet::HardwareType _commandStationId)
     : LanXGetVersionReply()
   {
     setXBusVersion(_xBusVersion);

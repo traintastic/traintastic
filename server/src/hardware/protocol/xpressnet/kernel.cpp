@@ -854,7 +854,7 @@ void Kernel::pollDecoders()
   }
 }
 
-void Kernel::setCentralVersion(uint8_t version, uint8_t commandStationId)
+void Kernel::setCentralVersion(uint8_t version, HardwareType commandStationId)
 {
   assert(isKernelThread());
   m_centralVersion = XBusVersion(version);
@@ -863,7 +863,7 @@ void Kernel::setCentralVersion(uint8_t version, uint8_t commandStationId)
       m_centralVersionEventLoop = XBusVersion(version);
 
       if(m_onHardwareInfoChanged)
-        m_onHardwareInfoChanged(HardwareType(commandStationId),
+        m_onHardwareInfoChanged(commandStationId,
           Utils::xbusVersionMajor(version),
           Utils::xbusVersionMinor(version));
     });

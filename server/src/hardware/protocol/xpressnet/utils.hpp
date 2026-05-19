@@ -30,6 +30,16 @@
 
 namespace XpressNet {
 
+enum class HardwareType : uint8_t
+{
+  HWT_LZ100 = 0x00,
+  HWT_LZ200 = 0x01,
+  HWT_DPC = 0x02,
+  HWT_multiMAUS = 0x10,
+  HWT_Z21 = 0x12,
+  HWT_UNKNOWN = 0xFF
+};
+
 // XpressNet message is in common with LAN_X messages of Z21 protocol
 struct Message;
 

@@ -43,7 +43,7 @@ class OutputController;
 namespace XpressNet {
 
 struct Message;
-enum HardwareType : uint8_t;
+enum class HardwareType : uint8_t;
 
 class Kernel : public ::KernelBase
 {
@@ -140,7 +140,7 @@ class Kernel : public ::KernelBase
     void onPendingQueryTimeout(const boost::system::error_code &ec);
     uint16_t popAddressQuerySendNext(Utils::PendingQuery::QueryType type);
     void pollDecoders();
-    void setCentralVersion(uint8_t version, uint8_t commandStationId);
+    void setCentralVersion(uint8_t version, HardwareType commandStationId);
 
     Kernel(std::string logId_, const Config& config, bool simulation);
 

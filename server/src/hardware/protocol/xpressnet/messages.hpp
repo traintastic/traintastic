@@ -89,15 +89,6 @@ enum Header : uint8_t
   LOCO_INFO_CUMULATIVE = 0xE7
 };
 
-enum HardwareType : uint8_t
-{
-  HWT_LZ100 = 0x00,
-  HWT_LZ200 = 0x01,
-  HWT_DPC = 0x02,
-  HWT_multiMAUS = 0x10,
-  HWT_UNKNOWN = 0xFF
-};
-
 enum class CentralStatusFlags : uint8_t
 {
   EStop = 0x01,
@@ -113,19 +104,22 @@ constexpr std::string_view toString(HardwareType value)
 {
   switch(value)
   {
-    case HWT_LZ100:
+    case XpressNet::HardwareType::HWT_LZ100:
       return "Lenz LZ100";
 
-    case HWT_LZ200:
+    case XpressNet::HardwareType::HWT_LZ200:
       return "Lenz LZ200";
 
-    case HWT_DPC:
+    case XpressNet::HardwareType::HWT_DPC:
       return "Lenz DPC (Compact und Commander)";
 
-    case HWT_multiMAUS:
+    case XpressNet::HardwareType::HWT_multiMAUS:
       return "ROCO multiMAUS";
 
-    case HWT_UNKNOWN:
+    case XpressNet::HardwareType::HWT_Z21:
+      return "Z21"; // TODO: check if only Roco or also others like DR5000
+
+    case XpressNet::HardwareType::HWT_UNKNOWN:
     default:
       break;
   }
