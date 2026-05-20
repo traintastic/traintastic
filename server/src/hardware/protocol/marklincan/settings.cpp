@@ -38,6 +38,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   , debugConfigStream{this, "debug_config_stream", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   Attributes::addMinMax<uint32_t>(defaultSwitchTime, 0, 163'000);
+  Attributes::addHelp(defaultSwitchTime, "marklincan_settings:default_switch_time/help");
   //Attributes::addStep(defaultSwitchTime, 10);
   m_interfaceItems.add(defaultSwitchTime);
 
