@@ -59,9 +59,9 @@ TEST_CASE("Zone: Assign/remove train to/from muted, no smoke and speed limited z
   std::weak_ptr<Train> trainWeak = world->trains->create();
   REQUIRE_FALSE(trainWeak.expired());
   REQUIRE(world->trains->length == 1);
-  REQUIRE(trainWeak.lock()->vehicles->length == 0);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 0);
   trainWeak.lock()->vehicles->add(locomotiveWeak.lock());
-  REQUIRE(trainWeak.lock()->vehicles->length == 1);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 1);
 
   REQUIRE(world->boards->length == 0);
   std::weak_ptr<Board> boardWeak = world->boards->create();
@@ -158,9 +158,9 @@ TEST_CASE("Zone: Assign/remove events", "[zone]")
   std::weak_ptr<Train> trainWeak = world->trains->create();
   REQUIRE_FALSE(trainWeak.expired());
   REQUIRE(world->trains->length == 1);
-  REQUIRE(trainWeak.lock()->vehicles->length == 0);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 0);
   trainWeak.lock()->vehicles->add(locomotiveWeak.lock());
-  REQUIRE(trainWeak.lock()->vehicles->length == 1);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 1);
 
   REQUIRE(world->boards->length == 0);
   std::weak_ptr<Board> boardWeak = world->boards->create();
@@ -346,9 +346,9 @@ TEST_CASE("Zone: Toggle mute/noSmoke/speedLimit with train in zone", "[zone]")
   std::weak_ptr<Train> trainWeak = world->trains->create();
   REQUIRE_FALSE(trainWeak.expired());
   REQUIRE(world->trains->length == 1);
-  REQUIRE(trainWeak.lock()->vehicles->length == 0);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 0);
   trainWeak.lock()->vehicles->add(locomotiveWeak.lock());
-  REQUIRE(trainWeak.lock()->vehicles->length == 1);
+  REQUIRE(trainWeak.lock()->vehicles->size() == 1);
 
   REQUIRE(world->boards->length == 0);
   std::weak_ptr<Board> boardWeak = world->boards->create();

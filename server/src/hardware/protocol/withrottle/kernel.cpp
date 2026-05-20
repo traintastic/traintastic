@@ -35,6 +35,8 @@
 #include "../../../log/logmessageexception.hpp"
 #include "../../../train/train.hpp"
 #include "../../../train/trainvehiclelist.hpp"
+#include "../../../train/trainvehiclelistitem.hpp"
+#include "../../../vehicle/rail/railvehicle.hpp"
 #include "../../../utils/fromchars.hpp"
 #include "../../../utils/setthreadname.hpp"
 #include "../../../utils/startswith.hpp"
@@ -333,11 +335,11 @@ void Kernel::receiveFrom(std::string_view message, IOHandler::ClientId clientId)
 
                 postSendTo(throttleCommand(multiThrottleId, '+', address.address, address.isLong), clientId);
 
-                for(const auto& vehicle : *throttle->train->vehicles)
+                for(const auto& item : *throttle->train->vehicles)
                 {
-                  if(vehicle->decoder && vehicle->decoder->address == address.address)
+                  if(item->vehicle->decoder && item->vehicle->decoder->address == address.address)
                   {
-                    const auto& functions = vehicle->decoder->functions;
+                    const auto& functions = item->vehicle->decoder->functions;
 
                     std::unordered_map<uint32_t, std::string_view> functionNames;
                     for(const auto& f : *functions)
@@ -536,11 +538,11 @@ const std::shared_ptr<Decoder>& Kernel::getDecoder(IOHandler::ClientId clientId,
 
   if(multiThrottle && multiThrottle->throttle->acquired())
   {
-    for(const auto& vehicle : *multiThrottle->throttle->train->vehicles)
+    for(const auto& item : *multiThrottle->throttle->train->vehicles)
     {
-      if(vehicle->decoder && vehicle->decoder->address == multiThrottle->address)
+      if(item->vehicle->decoder && item->vehicle->decoder->address == multiThrottle->address)
       {
-        return vehicle->decoder.value();
+        return item->vehicle->decoder.value();
       }
     }
   }
