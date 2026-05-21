@@ -154,6 +154,11 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
       changed();
     }
 
+    void parentIdChanged()
+    {
+      changed();
+    }
+
     void load(std::vector<std::shared_ptr<T>> values)
     {
       m_values = std::move(values);
