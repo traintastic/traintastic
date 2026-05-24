@@ -72,6 +72,11 @@ constexpr std::string_view toString(SetEngineSessionMode::SpeedMode mode) noexce
   return {};
 }
 
+constexpr std::string_view toOnOff(bool on)
+{
+  return on ? "on" : "off";
+}
+
 }
 
 std::string toString(const Message& message)
@@ -215,8 +220,49 @@ std::string toString(const Message& message)
 
     // 60-7F - 3 data byte packets:
     case DFUN:
-      break;
+    {
+      const auto& m = static_cast<const SetEngineFunctions&>(message);
+      switch(m.range)
+      {
+        using enum SetEngineFunctions::Range;
 
+        case F0F4:
+          for(auto fn : m.numbers())
+          {
+            s.append(std::format(" f{}={}", fn, toOnOff(static_cast<const SetEngineFunctionsF0F4&>(m).f(fn))));
+          }
+          break;
+
+        case F5F8:
+          for(auto fn : m.numbers())
+          {
+            s.append(std::format(" f{}={}", fn, toOnOff(static_cast<const SetEngineFunctionsF5F8&>(m).f(fn))));
+          }
+          break;
+
+        case F9F12:
+          for(auto fn : m.numbers())
+          {
+            s.append(std::format(" f{}={}", fn, toOnOff(static_cast<const SetEngineFunctionsF9F12&>(m).f(fn))));
+          }
+          break;
+
+        case F13F20:
+          for(auto fn : m.numbers())
+          {
+            s.append(std::format(" f{}={}", fn, toOnOff(static_cast<const SetEngineFunctionsF13F20&>(m).f(fn))));
+          }
+          break;
+
+        case F21F28:
+          for(auto fn : m.numbers())
+          {
+            s.append(std::format(" f{}={}", fn, toOnOff(static_cast<const SetEngineFunctionsF21F28&>(m).f(fn))));
+          }
+          break;
+      }
+      break;
+    }
     case GLOC:
     {
       const auto& m = static_cast<const GetEngineSession&>(message);
@@ -441,9 +487,9 @@ std::string toString(const Message& message)
       s.append(std::format(" speed={} direction={} f0={} f1={} f2={} f3={} f4={} f5={} f6={} f7={} f8={} f9={} f10={} f11={} f12={}",
         m.speed(),
         m.directionForward() ? "fwd" : "rev",
-        m.f0(), m.f1(), m.f2(), m.f3(), m.f4(),
-        m.f5(), m.f6(), m.f7(), m.f8(),
-        m.f9(), m.f10(), m.f11(), m.f12()));
+        toOnOff(m.f0()), toOnOff(m.f1()), toOnOff(m.f2()), toOnOff(m.f3()), toOnOff(m.f4()),
+        toOnOff(m.f5()), toOnOff(m.f6()), toOnOff(m.f7()), toOnOff(m.f8()),
+        toOnOff(m.f9()), toOnOff(m.f10()), toOnOff(m.f11()), toOnOff(m.f12())));
       break;
     }
     case NAME:
