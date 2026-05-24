@@ -562,6 +562,12 @@ jobs:
         name: traintastic-manual
         path: ${{github.workspace}}/manual/output
 
+    - name: Download latest VC14 redist
+      shell: powershell
+      working-directory: ${{github.workspace}}/package/innosetup
+      run: |
+        Invoke-Webrequest -Uri "https://aka.ms/vc14/vc_redist.x64.exe" -OutFile "vc_redist.x64.exe"
+
     - name: Build installer
       shell: cmd
       run: |
