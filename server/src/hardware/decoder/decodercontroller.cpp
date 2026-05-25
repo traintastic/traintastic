@@ -128,6 +128,16 @@ const std::shared_ptr<Decoder>& DecoderController::getDecoder(DecoderProtocol pr
   return Decoder::null;
 }
 
+void DecoderController::decoderFunctionsChanged(const Decoder &/*decoder*/)
+{
+
+}
+
+void DecoderController::decoderAddressChanged(const Decoder &/*decoder*/, uint16_t /*oldAddress*/, uint16_t /*newAddress*/)
+{
+
+}
+
 void DecoderController::addToWorld()
 {
   auto& object = interface();

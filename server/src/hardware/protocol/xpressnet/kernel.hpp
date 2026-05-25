@@ -30,6 +30,7 @@
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/outputpairvalue.hpp>
 #include "config.hpp"
+#include "utils.hpp"
 #include "iohandler/iohandler.hpp"
 
 class Decoder;
@@ -42,6 +43,7 @@ class OutputController;
 namespace XpressNet {
 
 struct Message;
+enum class HardwareType : uint8_t;
 
 class Kernel : public ::KernelBase
 {
@@ -49,11 +51,37 @@ class Kernel : public ::KernelBase
     static constexpr uint16_t inputAddressMin = 1;
     static constexpr uint16_t inputAddressMax = 2048;
     static constexpr uint16_t accessoryOutputAddressMin = 1;
-    static constexpr uint16_t accessoryOutputAddressMax = 1024;
+    static constexpr uint16_t accessoryOutputAddressMax = 2048; // TODO: depends on XBus version (1024 up to 3.6)
+
+    struct Locomotive
+    {
+      uint16_t address = 0;
+
+      enum Flags : uint8_t
+      {
+        None        = 0,
+        OwnedByXBus = 1 << 0,
+        HasF13F28   = 1 << 1,
+        HasF29F68   = 1 << 2
+      };
+
+      uint8_t flags = Flags::OwnedByXBus;
+    };
+
+    enum XBusVersion : uint8_t
+    {
+        XNet_2_3 = 0x23,
+        XNet_3_0 = 0x30,
+        XNet_3_6 = 0x36,
+        XNet_3_8 = 0x38,
+        XNet_4_0 = 0x40
+    };
 
   private:
     std::unique_ptr<IOHandler> m_ioHandler;
     const bool m_simulation;
+
+    std::function<void(HardwareType, uint8_t, uint8_t)> m_onHardwareInfoChanged;
 
     /*!
      * \brief m_trackPowerOn caches command station track power state.
@@ -97,6 +125,23 @@ class Kernel : public ::KernelBase
 
     Config m_config;
 
+    XBusVersion m_centralVersion = XBusVersion::XNet_3_0;
+    XBusVersion m_centralVersionEventLoop = XBusVersion::XNet_3_0;
+
+    std::vector<Utils::PendingQuery> m_pendingQueries;
+    boost::asio::steady_timer m_pendingQueryTimeout;
+    boost::asio::steady_timer m_pollTimer;
+    bool m_isUpdatingDecoderFromKernel = false;
+
+    std::vector<Locomotive> m_locomotives;
+
+    void postQuery(const Utils::PendingQuery& query);
+    void sendCurrentQuery();
+    void onPendingQueryTimeout(const boost::system::error_code &ec);
+    uint16_t popAddressQuerySendNext(Utils::PendingQuery::QueryType type);
+    void pollDecoders();
+    void setCentralVersion(uint8_t version, HardwareType commandStationId);
+
     Kernel(std::string logId_, const Config& config, bool simulation);
 
     void setIOHandler(std::unique_ptr<IOHandler> handler);
@@ -112,6 +157,9 @@ class Kernel : public ::KernelBase
     }
 
     void send(const Message& message);
+
+    template<class T>
+    void handleLocoInfoReply(const T& locoInfo);
 
   public:
     Kernel(const Kernel&) = delete;
@@ -165,6 +213,17 @@ class Kernel : public ::KernelBase
      * @param[in] callback ...
      * @note This function may not be called when the kernel is running.
      */
+    inline void setOnHardwareInfoChanged(std::function<void(HardwareType, uint8_t, uint8_t)> callback)
+    {
+      assert(!m_started);
+      m_onHardwareInfoChanged = std::move(callback);
+    }
+
+    /**
+     * @brief ...
+     * @param[in] callback ...
+     * @note This function may not be called when the kernel is running.
+     */
     inline void setOnTrackPowerChanged(std::function<void(bool, bool)> callback)
     {
       assert(!m_started);
@@ -205,6 +264,17 @@ class Kernel : public ::KernelBase
     {
       assert(!m_started);
       m_outputController = outputController;
+    }
+
+    /**
+     * @brief getXBusVersion
+     * @return XBus version as reported by Command Station
+     *
+     * @note Must be called from EventLoop thread
+     */
+    inline XBusVersion getXBusVersion() const
+    {
+      return m_centralVersionEventLoop;
     }
 
     /**
@@ -271,6 +341,11 @@ class Kernel : public ::KernelBase
      * \param[in] action Simulation action to perform
      */
     void simulateInputChange(uint16_t address, SimulateInputAction action);
+
+    void setDecoderList(const std::vector<Locomotive> &locoVec);
+    void updateDecoder(uint16_t address, uint16_t newAddress = 0, uint8_t decoderFunctions = 0);
+
+    bool send(std::vector<uint8_t> message);
 };
 
 }
