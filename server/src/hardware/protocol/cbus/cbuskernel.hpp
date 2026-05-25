@@ -111,6 +111,7 @@ public:
   void trackOn();
   void requestEmergencyStop();
 
+  void queryEngine(uint8_t session);
   void setEngineSpeedDirection(uint16_t address, bool longAddress, uint8_t speedStep, uint8_t speedSteps, bool eStop, bool directionForward);
   void setEngineFunction(uint16_t address, bool longAddress, uint8_t number, bool value);
 

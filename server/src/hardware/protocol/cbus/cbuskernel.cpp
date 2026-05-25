@@ -436,36 +436,49 @@ void Kernel::receive(const CAN::Message& canMessage)
           }
         });
 
+      Engine* engine = nullptr;
       if(auto it = m_engines.find(key); it != m_engines.end())
       {
-        auto& engine = it->second;
-        engine.session = ploc.session;
-        engine.owner = owner;
+        engine = &it->second;
+      }
+      else if(owner == Owner::CBUS) // existing session we didn't know about
+      {
+        engine = &m_engines[makeAddressKey(ploc.address(), ploc.isLongAddress())];
+      }
+      else if(owner == Owner::Traintastic) // we're no longer in need of control (rare but possible)
+      {
+        send(ReleaseEngine(ploc.session));
+      }
 
-        if(engine.owner == Owner::Traintastic)
+      if(engine)
+      {
+        engine->session = ploc.session;
+        engine->owner = owner;
+
+        if(engine->owner == Owner::Traintastic)
         {
-          sendSetEngineSessionMode(ploc.session, engine.speedSteps);
-          sendSetEngineSpeedDirection(ploc.session, engine.speed, engine.directionForward);
+          sendSetEngineSessionMode(ploc.session, engine->speedSteps);
+          sendSetEngineSpeedDirection(ploc.session, engine->speed, engine->directionForward);
 
-          for(const auto& [number, value] : engine.functions)
+          for(const auto& [number, value] : engine->functions)
           {
             sendSetEngineFunction(ploc.session, number, value);
           }
 
-          engine.lastCommand = std::chrono::steady_clock::now();
+          engine->lastCommand = std::chrono::steady_clock::now();
 
           if(!m_engineKeepAliveTimerActive)
           {
             restartEngineKeepAliveTimer();
           }
         }
-        else if(engine.owner == Owner::CBUS)
+        else if(engine->owner == Owner::CBUS)
         {
-          engine.speed = ploc.speed();
-          engine.directionForward = ploc.directionForward();
+          engine->speed = ploc.speed();
+          engine->directionForward = ploc.directionForward();
 
           EventLoop::call(
-            [this, session=*engine.session, speed=engine.speed, directionForward=engine.directionForward]()
+            [this, session=*engine->session, speed=engine->speed, directionForward=engine->directionForward]()
             {
               if(onEngineSpeedDirectionChanged) [[likely]]
               {
@@ -475,9 +488,9 @@ void Kernel::receive(const CAN::Message& canMessage)
 
           for(uint8_t fn : ploc.numbers())
           {
-            engine.functions[fn] = ploc.f(fn);
+            engine->functions[fn] = ploc.f(fn);
             EventLoop::call(
-              [this, session=*engine.session, number=fn, value=engine.functions[fn]]()
+              [this, session=*engine->session, number=fn, value=engine->functions[fn]]()
               {
                 if(onEngineFunctionChanged) [[likely]]
                 {
@@ -486,10 +499,6 @@ void Kernel::receive(const CAN::Message& canMessage)
               });
           }
         }
-      }
-      else if(owner == Owner::Traintastic) // we're no longer in need of control (rare but possible)
-      {
-        send(ReleaseEngine(ploc.session));
       }
 
       if(gloc != m_engineGLOCs.end())
@@ -596,6 +605,17 @@ void Kernel::requestEmergencyStop()
     [this]()
     {
       send(RequestEmergencyStop());
+    });
+}
+
+void Kernel::queryEngine(uint8_t session)
+{
+  assert(isEventLoopThread());
+
+  boost::asio::post(m_ioContext,
+    [this, session]()
+    {
+      send(QueryEngine(session));
     });
 }
 

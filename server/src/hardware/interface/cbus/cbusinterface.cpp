@@ -558,6 +558,10 @@ bool CBUSInterface::setOnline(bool& value, bool simulation)
             it->direction = forward ? Direction::Forward : Direction::Reverse;
             cbusSessionList->rowChanged(static_cast<uint32_t>(std::distance(cbusSessionList->begin(), it)));
           }
+          else
+          {
+            m_kernel->queryEngine(session);
+          }
         };
       m_kernel->onEngineFunctionChanged =
         [this](uint8_t session, uint8_t number, bool on)
@@ -567,6 +571,10 @@ bool CBUSInterface::setOnline(bool& value, bool simulation)
             assert(number < it->functions.size());
             it->functions[number] = toTriState(on);
             cbusSessionList->rowChanged(static_cast<uint32_t>(std::distance(cbusSessionList->begin(), it)));
+          }
+          else
+          {
+            m_kernel->queryEngine(session);
           }
         };
       m_kernel->onEngineSessionReleased =
@@ -655,6 +663,7 @@ bool CBUSInterface::setOnline(bool& value, bool simulation)
     EventLoop::deleteLater(m_simulator.release());
 
     cbusNodeList->clear();
+    cbusSessionList->clear();
 
     if(status->state != InterfaceState::Error)
     {
