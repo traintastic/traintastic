@@ -1,6 +1,7 @@
 {
-  "name": {},
   "color": {},
+  "text": {},
+  "text_color": {},
   "on_pressed": {
     "parameters": [
       {

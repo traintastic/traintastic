@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/keyboard/pairoutputkeyboard.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +29,7 @@ PairOutputKeyboard::PairOutputKeyboard(OutputController& controller, OutputChann
   , setOutputValue(*this, "set_output_value",
       [this](uint32_t address, OutputPairValue value)
       {
-        return m_controller.setOutputValue(channel, address, value);
+        return m_controller.setOutputValue(channel, OutputAddress(address), value);
       })
   , outputValueChanged(*this, "output_value_changed", EventFlags::Public)
 {

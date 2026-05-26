@@ -37,8 +37,11 @@ PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
+  speedMax.setValueInternal(100.0);
+
   Attributes::addDisplayName(power, DisplayName::Vehicle::Rail::power);
   Attributes::addEnabled(power, editable);
+  Attributes::addObjectEditor(power, false); // FIXME: remove once used
   m_interfaceItems.add(power);
 }
 

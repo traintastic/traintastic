@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,12 +25,15 @@
 
 #include "../kernelbase.hpp"
 #include <unordered_map>
+#include <boost/asio/post.hpp>
 #include <boost/signals2/connection.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
 
 class Clock;
+class Decoder;
+class Throttle;
 class HardwareThrottle;
 class ThrottleController;
 
@@ -75,7 +78,7 @@ class Kernel : public ::KernelBase
 
     void postSendTo(std::string message, IOHandler::ClientId clientId)
     {
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, msg=std::move(message), clientId]()
         {
           sendTo(msg, clientId);
@@ -84,7 +87,7 @@ class Kernel : public ::KernelBase
 
     void postSendToAll(std::string message)
     {
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, msg=std::move(message)]()
         {
           sendToAll(msg);
@@ -96,10 +99,11 @@ class Kernel : public ::KernelBase
 
     MultiThrottle* getMultiThrottle(IOHandler::ClientId clientId, char multiThrottleId);
     const std::shared_ptr<HardwareThrottle>& getThottle(IOHandler::ClientId clientId, char multiThrottleId = invalidMultiThrottleId);
+    const std::shared_ptr<Decoder>& getDecoder(IOHandler::ClientId clientId, char multiThrottleId);
 
     void multiThrottleAction(IOHandler::ClientId clientId, char multiThrottleId, const Address& address, ThrottleCommand throttleCommand, std::string_view message);
 
-    void throttleReleased(IOHandler::ClientId clientId, char multiThrottleId);
+    void throttleReleased(IOHandler::ClientId clientId, char multiThrottleId, const std::shared_ptr<Throttle>& throttle);
 
   public:
     static constexpr char invalidMultiThrottleId = '\0';

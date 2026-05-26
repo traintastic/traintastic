@@ -40,8 +40,3 @@ SerialDeviceProperty::SerialDeviceProperty(Object* object, std::string_view name
       static_cast<VectorRefAttribute<std::string>&>(*it->second).internalChanged();
     });
 }
-
-SerialDeviceProperty::~SerialDeviceProperty()
-{
-  m_serialPortListChanged.disconnect();
-}

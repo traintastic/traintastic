@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/loconetinterface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +37,7 @@
 #include "../protocol/loconet/iohandler/lbserveriohandler.hpp"
 #include "../protocol/loconet/iohandler/z21iohandler.hpp"
 #include "../../core/attributes.hpp"
+#include "../../core/controllerlist.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
@@ -49,7 +49,7 @@
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface | IdentificationListColumn::Address;
 
@@ -120,24 +120,34 @@ LocoNetInterface::LocoNetInterface(World& world, std::string_view _id)
   typeChanged();
 }
 
-bool LocoNetInterface::send(tcb::span<uint8_t> packet)
+LocoNetInterface::~LocoNetInterface() = default;
+
+bool LocoNetInterface::send(std::span<uint8_t> packet)
 {
   if(m_kernel)
     return m_kernel->send(packet);
   return false;
 }
 
-bool LocoNetInterface::immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat)
+bool LocoNetInterface::immPacket(std::span<uint8_t> dccPacket, uint8_t repeat)
 {
   if(m_kernel)
     return m_kernel->immPacket(dccPacket, repeat);
   return false;
 }
 
-tcb::span<const DecoderProtocol> LocoNetInterface::decoderProtocols() const
+void LocoNetInterface::readLNCV(uint16_t moduleId, uint16_t address, uint16_t lncv, std::function<void(uint16_t, std::error_code)> callback)
+{
+  if(m_kernel)
+  {
+    m_kernel->readLNCV(moduleId, address, lncv, std::move(callback));
+  }
+}
+
+std::span<const DecoderProtocol> LocoNetInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
-  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
 std::pair<uint16_t, uint16_t> LocoNetInterface::decoderAddressMinMax(DecoderProtocol protocol) const
@@ -155,18 +165,26 @@ void LocoNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-std::pair<uint32_t, uint32_t> LocoNetInterface::inputAddressMinMax(uint32_t /*channel*/) const
+std::span<const InputChannel> LocoNetInterface::inputChannels() const
+{
+  static const auto values = makeArray(InputChannel::Input);
+  return values;
+}
+
+std::pair<uint32_t, uint32_t> LocoNetInterface::inputAddressMinMax(InputChannel /*channel*/) const
 {
   return {LocoNet::Kernel::inputAddressMin, LocoNet::Kernel::inputAddressMax};
 }
 
-void LocoNetInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void LocoNetInterface::inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action)
 {
+  assert(std::holds_alternative<InputAddress>(location));
+  const auto address = std::get<InputAddress>(location).address;
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);
 }
 
-tcb::span<const OutputChannel> LocoNetInterface::outputChannels() const
+std::span<const OutputChannel> LocoNetInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::DCCext);
   return values;
@@ -181,8 +199,9 @@ std::pair<uint32_t, uint32_t> LocoNetInterface::outputAddressMinMax(OutputChanne
   return OutputController::outputAddressMinMax(channel);
 }
 
-bool LocoNetInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+bool LocoNetInterface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
+  const auto address = std::get<OutputAddress>(location).address;
   return
       m_kernel &&
       inRange(address, outputAddressMinMax(channel)) &&
@@ -315,13 +334,8 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
         [this]()
         {
           setState(InterfaceState::Online);
-
-          m_kernel->setPowerOn(contains(m_world.state.value(), WorldState::PowerOn));
-
-          if(contains(m_world.state.value(), WorldState::Run))
-            m_kernel->resume();
-          else
-            m_kernel->emergencyStop();
+          const auto worldState = m_world.state.value();
+          m_kernel->setState(contains(worldState, WorldState::PowerOn), contains(worldState, WorldState::Run));
         });
       m_kernel->setOnError(
         [this]()
@@ -329,19 +343,25 @@ bool LocoNetInterface::setOnline(bool& value, bool simulation)
           setState(InterfaceState::Error);
           online = false; // communication no longer possible
         });
-      m_kernel->setOnGlobalPowerChanged(
-        [this](bool powerOn)
+      m_kernel->setOnStateChanged(
+        [this](bool powerOn, bool run)
         {
-          if(powerOn && !contains(m_world.state.value(), WorldState::PowerOn))
+          if(run && !contains(m_world.state.value(), WorldState::Run))
+          {
+            m_world.run();
+          }
+          else if(powerOn && !contains(m_world.state.value(), WorldState::PowerOn))
+          {
             m_world.powerOn();
+          }
           else if(!powerOn && contains(m_world.state.value(), WorldState::PowerOn))
+          {
             m_world.powerOff();
-        });
-      m_kernel->setOnIdle(
-        [this]()
-        {
-          if(contains(m_world.state.value(), WorldState::Run))
+          }
+          else if(!run && contains(m_world.state.value(), WorldState::Run))
+          {
             m_world.stop();
+          }
         });
       m_kernel->setClock(m_world.clock.value());
       m_kernel->setDecoderController(this);
@@ -406,6 +426,7 @@ void LocoNetInterface::addToWorld()
   OutputController::addToWorld(outputListColumns);
   IdentificationController::addToWorld(identificationListColumns);
   LNCVProgrammingController::addToWorld();
+  m_world.loconetInterfaces->add(Object::shared_ptr<LocoNetInterface>());
 }
 
 void LocoNetInterface::loaded()
@@ -417,6 +438,7 @@ void LocoNetInterface::loaded()
 
 void LocoNetInterface::destroying()
 {
+  m_world.loconetInterfaces->remove(Object::shared_ptr<LocoNetInterface>());
   LNCVProgrammingController::destroying();
   IdentificationController::destroying();
   OutputController::destroying();
@@ -434,22 +456,10 @@ void LocoNetInterface::worldEvent(WorldState state, WorldEvent event)
     switch(event)
     {
       case WorldEvent::PowerOff:
-        m_kernel->setPowerOn(false);
-        break;
-
       case WorldEvent::PowerOn:
-        m_kernel->setPowerOn(true);
-        if(contains(state, WorldState::Run))
-          m_kernel->resume();
-        break;
-
       case WorldEvent::Stop:
-        m_kernel->emergencyStop();
-        break;
-
       case WorldEvent::Run:
-        if(contains(state, WorldState::PowerOn))
-          m_kernel->resume();
+        m_kernel->setState(contains(state, WorldState::PowerOn), contains(state, WorldState::Run));
         break;
 
       default:

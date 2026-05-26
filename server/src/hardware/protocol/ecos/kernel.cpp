@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/ecos/kernel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,7 +85,7 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
 
 void Kernel::setConfig(const Config& config)
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this, newConfig=config]()
     {
       m_config = newConfig;
@@ -144,11 +143,11 @@ void Kernel::start()
     [this]()
     {
       setThreadName("ecos");
-      auto work = std::make_shared<boost::asio::io_context::work>(m_ioContext);
+      boost::asio::executor_work_guard<decltype(m_ioContext.get_executor())> work{m_ioContext.get_executor()};
       m_ioContext.run();
     });
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this]()
     {
       try
@@ -174,7 +173,7 @@ void Kernel::start()
 
 void Kernel::stop(Simulation* simulation)
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this]()
     {
       m_ioHandler->stop();
@@ -339,19 +338,19 @@ SwitchManager& Kernel::switchManager()
 
 void Kernel::emergencyStop()
 {
-  m_ioContext.post([this]() { ecos().stop(); });
+  boost::asio::post(m_ioContext, [this]() { ecos().stop(); });
 }
 
 void Kernel::go()
 {
-  m_ioContext.post([this]() { ecos().go(); });
+  boost::asio::post(m_ioContext, [this]() { ecos().go(); });
 }
 
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   if(has(changes, DecoderChangeFlags::Direction))
   {
-    m_ioContext.post(
+    boost::asio::post(m_ioContext,
       [this,
         protocol=decoder.protocol.value(),
         address=decoder.address.value(),
@@ -364,7 +363,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
   else if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle))
   {
-    m_ioContext.post(
+    boost::asio::post(m_ioContext,
       [this,
         protocol=decoder.protocol.value(),
         address=decoder.address.value(),
@@ -383,7 +382,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
   else if(has(changes, DecoderChangeFlags::FunctionValue) && functionNumber <= std::numeric_limits<uint8_t>::max())
   {
-    m_ioContext.post(
+    boost::asio::post(m_ioContext,
       [this,
         protocol=decoder.protocol.value(),
         address=decoder.address.value(),
@@ -397,7 +396,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   }
 }
 
-bool Kernel::setOutput(OutputChannel channel, uint32_t id, OutputValue value)
+bool Kernel::setOutput(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
   assert(isEventLoopThread());
 
@@ -407,8 +406,8 @@ bool Kernel::setOutput(OutputChannel channel, uint32_t id, OutputValue value)
     case OutputChannel::AccessoryMotorola:
     {
       const auto switchProtocol = (channel == OutputChannel::AccessoryDCC) ? SwitchProtocol::DCC : SwitchProtocol::Motorola;
-      m_ioContext.post(
-        [this, switchProtocol, address=id, port=(std::get<OutputPairValue>(value) == OutputPairValue::Second)]()
+      boost::asio::post(m_ioContext,
+        [this, switchProtocol, address=std::get<OutputAddress>(location).address, port=(std::get<OutputPairValue>(value) == OutputPairValue::Second)]()
         {
           switchManager().setSwitch(switchProtocol, address, port);
         });
@@ -416,10 +415,10 @@ bool Kernel::setOutput(OutputChannel channel, uint32_t id, OutputValue value)
     }
     case OutputChannel::ECoSObject:
     {
-      m_ioContext.post(
-        [this, id, state=std::get<uint8_t>(value)]()
+      boost::asio::post(m_ioContext,
+        [this, object=std::get<OutputECoSObject>(location).object, state=std::get<uint8_t>(value)]()
         {
-          if(auto it = m_objects.find(id); it != m_objects.end())
+          if(auto it = m_objects.find(object); it != m_objects.end())
           {
             if(auto* sw = dynamic_cast<Switch*>(it->second.get()))
             {
@@ -437,17 +436,17 @@ bool Kernel::setOutput(OutputChannel channel, uint32_t id, OutputValue value)
   return false;
 }
 
-void Kernel::simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void Kernel::simulateInputChange(InputChannel channel, uint32_t address, SimulateInputAction action)
 {
   if(!m_simulation)
     return;
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this, channel, address, action]()
     {
       switch(channel)
       {
-        case InputChannel::s88:
+        case InputChannel::S88:
         {
           uint16_t id = ObjectId::s88;
           uint32_t port = address - 1;
@@ -501,8 +500,12 @@ void Kernel::simulateInputChange(uint32_t channel, uint32_t address, SimulateInp
           }
           break;
         }
-        case InputChannel::ecosDetector:
+        case InputChannel::ECoSDetector:
           //! \todo Implement ECoS detector simulation
+          break;
+
+        default: [[unlikely]]
+          assert(false);
           break;
       }
     });
@@ -521,7 +524,7 @@ void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address, Ou
       EventLoop::call(
         [this, address, value]()
         {
-          m_outputController->updateOutputValue(OutputChannel::AccessoryDCC, address, value);
+          m_outputController->updateOutputValue(OutputChannel::AccessoryDCC, OutputAddress(address), value);
         });
       break;
 
@@ -529,7 +532,7 @@ void Kernel::switchManagerSwitched(SwitchProtocol protocol, uint16_t address, Ou
       EventLoop::call(
         [this, address, value]()
         {
-          m_outputController->updateOutputValue(OutputChannel::AccessoryMotorola, address, value);
+          m_outputController->updateOutputValue(OutputChannel::AccessoryMotorola, OutputAddress(address), value);
         });
       break;
 
@@ -549,7 +552,7 @@ void Kernel::switchStateChanged(uint16_t objectId, uint8_t state)
   EventLoop::call(
     [this, objectId, state]()
     {
-      m_outputController->updateOutputValue(OutputChannel::ECoSObject, objectId, state);
+      m_outputController->updateOutputValue(OutputChannel::ECoSObject, OutputECoSObject(objectId), state);
     });
 }
 
@@ -583,7 +586,7 @@ void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value
     EventLoop::call(
       [this, address=offset + port, value]()
       {
-        m_inputController->updateInputValue(InputChannel::s88, address, value);
+        m_inputController->updateInputValue(InputChannel::S88, InputAddress(address), value);
       });
   }
   else // ECoS Detector
@@ -594,7 +597,7 @@ void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value
     EventLoop::call(
       [this, address, value]()
       {
-        m_inputController->updateInputValue(InputChannel::ecosDetector, address, value);
+        m_inputController->updateInputValue(InputChannel::ECoSDetector, InputAddress(address), value);
       });
   }
 }

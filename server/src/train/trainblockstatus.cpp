@@ -51,10 +51,10 @@ std::shared_ptr<TrainBlockStatus> TrainBlockStatus::create(BlockRailTile& block_
 
 TrainBlockStatus::TrainBlockStatus(std::string id)
   : StateObject(std::move(id))
-  , block{this, "block", nullptr, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
-  , train{this, "train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  , block{this, "block", nullptr, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
+  , train{this, "train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , identification{this, "identification", "", PropertyFlags::ReadOnly | PropertyFlags::StoreState}
-  , direction{this, "direction", BlockTrainDirection::TowardsA, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
+  , direction{this, "direction", BlockTrainDirection::TowardsA, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
 {
   m_interfaceItems.add(block);
 

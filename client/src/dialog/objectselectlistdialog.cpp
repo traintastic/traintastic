@@ -33,6 +33,7 @@
 #include "../widget/tablewidget.hpp"
 #include "../widget/alertwidget.hpp"
 #include <traintastic/locale/locale.hpp>
+#include <unordered_set>
 
 ObjectSelectListDialog::ObjectSelectListDialog(Method& method, bool multiSelect, QWidget* parent) :
   ObjectSelectListDialog(static_cast<InterfaceItem&>(method), multiSelect, parent)
@@ -147,9 +148,16 @@ void ObjectSelectListDialog::acceptRows(const QModelIndexList& indexes)
 {
   if(auto* m = dynamic_cast<Method*>(&m_item))
   {
+    // Call method only once for each row, not for every index in row
+    std::unordered_set<int> rowsDone;
+
     for(const auto& index : indexes)
     {
+      if(rowsDone.find(index.row()) != rowsDone.end())
+        continue;
+
       callMethod(*m, nullptr, m_tableWidget->getRowObjectId(index.row()));
+      rowsDone.insert(index.row());
     }
   }
 

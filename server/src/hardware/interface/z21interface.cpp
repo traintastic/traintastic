@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/z21interface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,7 +42,7 @@
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 CREATE_IMPL(Z21Interface)
@@ -90,10 +89,12 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(firmwareVersion, notes);
 }
 
-tcb::span<const DecoderProtocol> Z21Interface::decoderProtocols() const
+Z21Interface::~Z21Interface() = default;
+
+std::span<const DecoderProtocol> Z21Interface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 3> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong, DecoderProtocol::Motorola};
-  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
 std::pair<uint16_t, uint16_t> Z21Interface::decoderAddressMinMax(DecoderProtocol protocol) const
@@ -111,40 +112,39 @@ void Z21Interface::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-const std::vector<uint32_t> *Z21Interface::inputChannels() const
+std::span<const InputChannel> Z21Interface::inputChannels() const
 {
-  return &Z21::ClientKernel::inputChannels;
+  static const auto values = makeArray(InputChannel::RBus, InputChannel::LocoNet);
+  return values;
 }
 
-const std::vector<std::string_view> *Z21Interface::inputChannelNames() const
-{
-  return &Z21::ClientKernel::inputChannelNames;
-}
-
-std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(uint32_t channel) const
+std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(InputChannel channel) const
 {
   using namespace Z21;
 
   switch(channel)
   {
-    case ClientKernel::InputChannel::rbus:
+    case InputChannel::RBus:
       return {ClientKernel::rbusAddressMin, ClientKernel::rbusAddressMax};
 
-    case ClientKernel::InputChannel::loconet:
+    case InputChannel::LocoNet:
       return {ClientKernel::loconetAddressMin, ClientKernel::loconetAddressMax};
-  }
 
-  assert(false);
-  return {0, 0};
+    default: [[unlikely]]
+      assert(false);
+      return {0, 0};
+  }
 }
 
-void Z21Interface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void Z21Interface::inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action)
 {
+  assert(std::holds_alternative<InputAddress>(location));
+  const auto address = std::get<InputAddress>(location).address;
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(channel, address, action);
 }
 
-tcb::span<const OutputChannel> Z21Interface::outputChannels() const
+std::span<const OutputChannel> Z21Interface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::DCCext);
   return values;
@@ -159,8 +159,9 @@ std::pair<uint32_t, uint32_t> Z21Interface::outputAddressMinMax(OutputChannel ch
   return OutputController::outputAddressMinMax(channel);
 }
 
-bool Z21Interface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+bool Z21Interface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
+  const auto address = std::get<OutputAddress>(location).address;
   return
       m_kernel &&
       inRange(address, outputAddressMinMax(channel)) &&
@@ -215,35 +216,35 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
         {
           if(powerOn)
           {
-              /* NOTE:
-               * Setting stop and powerOn together is not an atomic operation,
-               * so it would trigger 2 state changes with in the middle state.
-               * Fortunately this does not happen because at least one of the state is already set.
-               * Because if we are in Run state we go to PowerOn,
-               * and if we are on PowerOff then we go to PowerOn.
-               */
+            /* NOTE:
+             * Setting stop and powerOn together is not an atomic operation,
+             * so it would trigger 2 state changes with in the middle state.
+             * Fortunately this does not happen because at least one of the state is already set.
+             * Because if we are in Run state we go to PowerOn,
+             * and if we are on PowerOff then we go to PowerOn.
+             */
 
-              // First of all, stop if we have to, otherwhise we might inappropiately run trains
-              if(isStopped && contains(m_world.state.value(), WorldState::Run))
-              {
-                m_world.stop();
-              }
-              else if(!contains(m_world.state.value(), WorldState::Run) && !isStopped)
-              {
-                m_world.run(); // Run trains yay!
-              }
+            // First of all, stop if we have to, otherwhise we might inappropiately run trains
+            if(isStopped && contains(m_world.state.value(), WorldState::Run))
+            {
+              m_world.stop();
+            }
+            else if(!contains(m_world.state.value(), WorldState::Run) && !isStopped)
+            {
+              m_world.run(); // Run trains yay!
+            }
 
-              // EmergencyStop in Z21 also means power is still on
-              if(!contains(m_world.state.value(), WorldState::PowerOn) && isStopped)
-              {
-                m_world.powerOn(); // Just power on but keep stopped
-              }
+            // EmergencyStop in Z21 also means power is still on
+            if(!contains(m_world.state.value(), WorldState::PowerOn) && isStopped)
+            {
+              m_world.powerOn(); // Just power on but keep stopped
+            }
           }
           else
           {
-              // Power off regardless of stop state
-              if(contains(m_world.state.value(), WorldState::PowerOn))
-                  m_world.powerOff();
+            // Power off regardless of stop state
+            if(contains(m_world.state.value(), WorldState::PowerOn))
+              m_world.powerOff();
           }
         });
 

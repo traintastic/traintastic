@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020,2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,11 +29,13 @@ class QWidget;
 class InterfaceItem;
 class AbstractProperty;
 class Property;
+class ObjectProperty;
 
 QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent = nullptr);
 QWidget* createWidget(const ObjectPtr& object, QWidget* parent = nullptr);
 QWidget* createWidget(InterfaceItem& item, QWidget* parent = nullptr);
 QWidget* createWidget(AbstractProperty& property, QWidget* parent = nullptr);
 QWidget* createWidget(Property& property, QWidget* parent = nullptr);
+QWidget* createWidget(ObjectProperty& property, QWidget* parent = nullptr);
 
 #endif

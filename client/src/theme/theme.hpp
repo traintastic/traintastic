@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -55,6 +55,8 @@ class Theme
     inline static QIcon getIcon(const QString& id) { return QIcon(getIconFile(id)); }
     static QIcon getIcon(const QString& idOff, const QString& idOn);
     static QIcon getIconForClassId(const QString& classId);
+
+    static void setWindowIcon(QWidget& widget, const QString& classId);
 };
 
 #endif

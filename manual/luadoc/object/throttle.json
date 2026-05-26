@@ -1,0 +1,21 @@
+{
+  "name": {},
+  "train": {},
+  "on_acquire": {
+    "parameters": [
+      {
+        "name": "throttle"
+      },
+      {
+        "name": "train"
+      }
+    ]
+  },
+  "on_release": {
+    "parameters": [
+      {
+        "name": "throttle"
+      }
+    ]
+  }
+}

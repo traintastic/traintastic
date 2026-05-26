@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,7 +42,7 @@ class ObjectList : public AbstractObjectList
 
   protected:
     Items m_items;
-    std::unordered_map<Object*, boost::signals2::connection> m_propertyChanged;
+    std::unordered_map<Object*, boost::signals2::scoped_connection> m_propertyChanged;
     std::vector<ObjectListTableModel<T>*> m_models;
 
     void deleteMethodHandler(const std::shared_ptr<T>& object)
@@ -121,16 +121,12 @@ class ObjectList : public AbstractObjectList
       static_assert(std::is_base_of_v<Object, T>);
     }
 
-    ~ObjectList()
-    {
-      for(auto& it : m_propertyChanged)
-        it.second.disconnect();
-    }
-
     inline const_iterator begin() const noexcept { return m_items.begin(); }
     inline const_iterator end() const noexcept { return m_items.end(); }
     inline const std::shared_ptr<T>& front() const noexcept { return m_items.front(); }
     inline std::shared_ptr<T>& front() noexcept { return m_items.front(); }
+    inline const std::shared_ptr<T>& back() const noexcept { return m_items.back(); }
+    inline std::shared_ptr<T>& back() noexcept { return m_items.back(); }
     inline bool empty() const noexcept { return m_items.empty(); }
 
     ObjectPtr getObject(uint32_t index) final
@@ -163,13 +159,13 @@ class ObjectList : public AbstractObjectList
       auto it = std::find(m_items.begin(), m_items.end(), object);
       if(it != m_items.end())
       {
+        const uint32_t row = std::distance(m_items.begin(), it);
         m_propertyChanged[object.get()].disconnect();
         m_propertyChanged.erase(object.get());
         m_items.erase(it);
         objectRemoved(object);
         rowCountChanged();
-
-        uint32_t row = std::distance(m_items.begin(), it);
+        
         for(auto& model : m_models)
         {
           model->rowRemovedHack(row);

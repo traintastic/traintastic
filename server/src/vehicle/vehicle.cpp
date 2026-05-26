@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +27,7 @@
 
 Vehicle::Vehicle(World& world, std::string_view _id) :
   IdObject(world, _id),
-  name{this, "name", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
+  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   notes{this, "notes", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   const bool editable = contains(m_world.state.value(), WorldState::Edit);

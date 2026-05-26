@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,6 +41,9 @@ enum class AttributeName : uint16_t
   AliasKeys = 11,
   AliasValues = 12,
   Unit = 14,
+  Step = 15,
+  Help = 16,
+  Custom = 17, //!< Boolean: allow/disallow custom values, unset means auto detect.
 };
 
 #endif

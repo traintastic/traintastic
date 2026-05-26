@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2024 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@
 #include <array>
 #include "settingsbase.hpp"
 #include "setting.hpp"
-#include <traintastic/enum/enum.hpp>
+#include "../board/boardareagrid.hpp"
 
 class BoardSettings : public SettingsBase
 {
@@ -42,6 +42,8 @@ class BoardSettings : public SettingsBase
       : SettingsBase("board")
       , showIntroductionWizard{*this, "show_introduction_wizard", true}
       , colorScheme{*this, "color_scheme", ColorScheme::Dark}
+      , gridOperateMode{*this, "grid_operate_mode", BoardAreaGrid::None}
+      , gridEditMode{*this, "grid_edit_mode", BoardAreaGrid::Line}
       , turnoutDrawState{*this, "turnout_draw_state", true}
       , showBlockSensorStates{*this, "show_block_sensor_states", true}
     {
@@ -56,6 +58,8 @@ class BoardSettings : public SettingsBase
 
     Setting<bool> showIntroductionWizard;
     Setting<ColorScheme> colorScheme;
+    Setting<BoardAreaGrid> gridOperateMode;
+    Setting<BoardAreaGrid> gridEditMode;
     Setting<bool> turnoutDrawState;
     Setting<bool> showBlockSensorStates;
 };
@@ -70,6 +74,12 @@ template<>
 struct SettingEnum<BoardSettings::ColorScheme>
 {
   static constexpr std::array<BoardSettings::ColorScheme, 2> values = {BoardSettings::ColorScheme::Dark, BoardSettings::ColorScheme::Light};
+};
+
+template<>
+struct SettingEnum<BoardAreaGrid>
+{
+  static constexpr std::array<BoardAreaGrid, 3> values = {BoardAreaGrid::None, BoardAreaGrid::Dot, BoardAreaGrid::Line};
 };
 
 #endif

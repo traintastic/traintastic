@@ -3,6 +3,7 @@ include(../shared/traintastic.cmake)
 project(traintastic-server VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintastic server")
 include(GNUInstallDirs)
 include(CTest)
+include(CheckCXXSourceCompiles)
 include(../shared/translations/traintastic-lang.cmake)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -23,7 +24,7 @@ endif()
 
 add_executable(traintastic-server src/main.cpp src/options.hpp)
 add_dependencies(traintastic-server traintastic-lang)
-set_target_properties(traintastic-server PROPERTIES CXX_STANDARD 17)
+set_target_properties(traintastic-server PROPERTIES CXX_STANDARD 20)
 target_include_directories(traintastic-server PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
   ../shared/src)
@@ -34,14 +35,19 @@ target_include_directories(traintastic-server SYSTEM PRIVATE
 if(BUILD_TESTING)
   add_subdirectory(thirdparty/catch2)
   set_target_properties(Catch2 PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     CXX_CLANG_TIDY ""
   )
-  add_executable(traintastic-server-test test/main.cpp)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(Catch2 PRIVATE -Wno-restrict) # workaround GCC bug
+  endif()
+  add_executable(traintastic-server-test
+    test/zone.cpp
+  )
   add_dependencies(traintastic-server-test traintastic-lang)
   target_compile_definitions(traintastic-server-test PRIVATE -DTRAINTASTIC_TEST)
   set_target_properties(traintastic-server-test PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     CXX_CLANG_TIDY ""
   )
   target_include_directories(traintastic-server-test PRIVATE
@@ -62,6 +68,7 @@ file(GLOB SOURCES
   "src/board/map/*.cpp"
   "src/board/nx/*.hpp"
   "src/board/nx/*.cpp"
+  "src/board/pathfinder/*.cpp"
   "src/board/tile/*.hpp"
   "src/board/tile/*.cpp"
   "src/board/tile/hidden/*.cpp"
@@ -78,6 +85,9 @@ file(GLOB SOURCES
   "src/core/*.hpp"
   "src/core/*.cpp"
   "src/enum/*.hpp"
+  "src/hardware/booster/*.cpp"
+  "src/hardware/booster/drivers/*.cpp"
+  "src/hardware/booster/list/*.cpp"
   "src/hardware/decoder/*.hpp"
   "src/hardware/decoder/*.cpp"
   "src/hardware/decoder/list/*.hpp"
@@ -88,6 +98,7 @@ file(GLOB SOURCES
   "src/hardware/identification/list/*.cpp"
   "src/hardware/input/*.hpp"
   "src/hardware/input/*.cpp"
+  "src/hardware/input/feedback/*.cpp"
   "src/hardware/input/list/*.hpp"
   "src/hardware/input/list/*.cpp"
   "src/hardware/input/map/*.hpp"
@@ -96,6 +107,7 @@ file(GLOB SOURCES
   "src/hardware/input/monitor/*.cpp"
   "src/hardware/interface/*.hpp"
   "src/hardware/interface/*.cpp"
+  "src/hardware/interface/cbus/*.cpp"
   "src/hardware/interface/marklincan/*.hpp"
   "src/hardware/interface/marklincan/*.cpp"
   "src/hardware/output/*.hpp"
@@ -110,6 +122,13 @@ file(GLOB SOURCES
   "src/hardware/programming/lncv/*.cpp"
   "src/hardware/protocol/*.hpp"
   "src/hardware/protocol/*.cpp"
+  "src/hardware/protocol/can/iohandler/*.cpp"
+  "src/hardware/protocol/can/iohub/*.cpp"
+  "src/hardware/protocol/cbus/*.cpp"
+  "src/hardware/protocol/cbus/iohandler/*.cpp"
+  "src/hardware/protocol/cbus/iohub/*.cpp"
+  "src/hardware/protocol/cbus/simulator/*.cpp"
+  "src/hardware/protocol/cbus/simulator/module/*.cpp"
   "src/hardware/protocol/dccex/*.hpp"
   "src/hardware/protocol/dccex/*.cpp"
   "src/hardware/protocol/dccex/iohandler/*.hpp"
@@ -128,6 +147,7 @@ file(GLOB SOURCES
   "src/hardware/protocol/loconet/message/uhlenbrock/*.cpp"
   "src/hardware/protocol/loconet/iohandler/*.hpp"
   "src/hardware/protocol/loconet/iohandler/*.cpp"
+  "src/hardware/protocol/loconet/lncv/*.cpp"
   "src/hardware/protocol/marklincan/*.hpp"
   "src/hardware/protocol/marklincan/*.cpp"
   "src/hardware/protocol/marklincan/iohandler/*.hpp"
@@ -154,10 +174,6 @@ file(GLOB SOURCES
   "src/hardware/protocol/z21/*.cpp"
   "src/hardware/protocol/z21/iohandler/*.hpp"
   "src/hardware/protocol/z21/iohandler/*.cpp"
-  "src/hardware/throttle/*.hpp"
-  "src/hardware/throttle/*.cpp"
-  "src/hardware/throttle/list/*.hpp"
-  "src/hardware/throttle/list/*.cpp"
   "src/log/*.hpp"
   "src/log/*.cpp"
   "src/lua/*.hpp"
@@ -172,6 +188,10 @@ file(GLOB SOURCES
   "src/pcap/*.cpp"
   "src/status/*.hpp"
   "src/status/*.cpp"
+  "src/throttle/*.hpp"
+  "src/throttle/*.cpp"
+  "src/throttle/list/*.hpp"
+  "src/throttle/list/*.cpp"
   "src/train/*.hpp"
   "src/train/*.cpp"
   "src/traintastic/*.hpp"
@@ -184,7 +204,10 @@ file(GLOB SOURCES
   "src/utils/*.cpp"
   "src/world/*.hpp"
   "src/world/*.cpp"
+  "src/zone/*.hpp"
+  "src/zone/*.cpp"
   "../shared/src/traintastic/locale/locale.cpp"
+  "../shared/src/traintastic/os/systeminfo.cpp"
   "../shared/src/traintastic/utils/standardpaths.cpp")
 
 file(GLOB TEST_SOURCES
@@ -211,15 +234,23 @@ endif()
 
 include(cmake/add-resource.cmake)
 
+add_resource(resource-www
+  FILES
+    www/css/normalize.css
+    www/css/throttle.css
+    www/js/throttle.js
+    www/throttle.html
+)
+
 add_resource(resource-shared
   BASE_DIR ../
   FILES
     shared/gfx/appicon.ico
 )
 
-add_dependencies(traintastic-server resource-shared)
+add_dependencies(traintastic-server resource-www resource-shared)
 if(BUILD_TESTING)
-  add_dependencies(traintastic-server-test resource-shared)
+  add_dependencies(traintastic-server-test resource-www resource-shared)
 endif()
 
 ### OPTIONS ###
@@ -259,7 +290,11 @@ if(LINUX)
   endif()
 else()
   # socket CAN is only available on linux:
-  file(GLOB SOCKET_CAN_SOURCES "src/hardware/protocol/marklincan/iohandler/socketcaniohandler.*")
+  file(GLOB SOCKET_CAN_SOURCES
+    "src/hardware/protocol/can/iohandler/socketcaniohandler.*"
+    "src/hardware/protocol/cbus/iohandler/cbussocketcaniohandler.*"
+    "src/hardware/protocol/marklincan/iohandler/socketcaniohandler.*"
+  )
   list(REMOVE_ITEM SOURCES ${SOCKET_CAN_SOURCES})
 endif()
 
@@ -278,6 +313,23 @@ if(WIN32)
 endif()
 
 ### COMPILER ###
+
+# test C++20 timezone support
+set(CMAKE_REQUIRED_FLAGS "-std=c++20")
+check_cxx_source_compiles([[
+#include <chrono>
+int main()
+{
+  auto tz = std::chrono::current_zone();
+  (void)tz;
+  return 0;
+}
+]] HAS_CXX20_TIMEZONES)
+unset(CMAKE_REQUIRED_FLAGS)
+if(HAS_CXX20_TIMEZONES)
+  target_compile_definitions(traintastic-server PRIVATE HAS_CXX20_TIMEZONES)
+  target_compile_definitions(traintastic-server-test PRIVATE HAS_CXX20_TIMEZONES)
+endif()
 
 if(MSVC)
 
@@ -301,6 +353,33 @@ else()
   endif()
 endif()
 
+if(LINUX)
+  set(CMAKE_REQUIRED_FLAGS "-std=c++20")
+  check_cxx_source_compiles([[
+    #include <format>
+    int main()
+    {
+      auto s = std::format("{}", 1);
+      (void)s;
+      return 0;
+    }
+  ]] HAS_STD_FORMAT)
+  unset(CMAKE_REQUIRED_FLAGS)
+
+  if(NOT HAS_STD_FORMAT)
+    set(USE_FMT ON)
+  endif()
+
+  if(USE_FMT)
+    message(STATUS "std::format not available, using fmt::fmt instead")
+    find_package(fmt REQUIRED)
+    target_link_libraries(traintastic-server PRIVATE fmt::fmt)
+    target_compile_definitions(traintastic-server PRIVATE USE_FMT)
+    target_link_libraries(traintastic-server-test PRIVATE fmt::fmt)
+    target_compile_definitions(traintastic-server-test PRIVATE USE_FMT)
+  endif()
+endif()
+
 ### LIBRARIES ###
 
 if(WIN32 AND NOT MSVC)
@@ -313,7 +392,7 @@ if(WIN32 AND NOT MSVC)
 endif()
 
 # boost
-find_package(Boost 1.81 REQUIRED COMPONENTS program_options)
+find_package(Boost 1.81 REQUIRED COMPONENTS program_options url)
 target_include_directories(traintastic-server SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
 target_link_libraries(traintastic-server PRIVATE ${Boost_LIBRARIES})
 if(BUILD_TESTING)

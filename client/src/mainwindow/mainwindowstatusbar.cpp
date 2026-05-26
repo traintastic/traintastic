@@ -133,7 +133,10 @@ void MainWindowStatusBar::updateStatuses()
     m_mainWindow.connection()->cancelRequest(m_statusesRequest);
 
     if(statuses->empty())
+    {
+      clearStatuses();
       return;
+    }
 
     m_statusesRequest = statuses->getObjects(0, statuses->size() - 1,
       [this](const std::vector<ObjectPtr>& objects, std::optional<const Error> error)

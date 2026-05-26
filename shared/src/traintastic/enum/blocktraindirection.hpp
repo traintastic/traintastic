@@ -1,9 +1,8 @@
 /**
- * shared/src/traintastic/enum/blocktraindirection.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,6 +53,11 @@ constexpr BlockTrainDirection operator !(BlockTrainDirection value)
     return BlockTrainDirection::Unknown;
 
   return (value == BlockTrainDirection::TowardsA) ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA;
+}
+
+constexpr bool isKnown(BlockTrainDirection value)
+{
+  return (value == BlockTrainDirection::TowardsA) || (value == BlockTrainDirection::TowardsB);
 }
 
 #endif

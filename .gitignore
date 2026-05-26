@@ -30,12 +30,13 @@
 *.exe
 *.out
 *.app
+package/Apps/*
 
 *.pro.user*
 *.pro*.user*
 *.hpp~*
 *.cpp~*
-
+*.backup
 .directory
 .build*
 build*
@@ -48,3 +49,5 @@ CMakeLists.txt.*
 .DS_Store
 shared/translations/*.lang
 CMakeSettings.json
+.venv
+!package/appimage/build_traintastic_app.sh

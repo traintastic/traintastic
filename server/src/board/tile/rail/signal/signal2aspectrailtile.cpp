@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -71,7 +71,7 @@ Signal2AspectRailTile::Signal2AspectRailTile(World& world, std::string_view _id)
   SignalRailTile(world, _id, TileId::RailSignal2Aspect)
 {
   // Skip Unknown aspect
-  tcb::span<const SignalAspect, 2> setAspectValues = tcb::make_span(aspectValues).subspan<1>();
+  std::span<const SignalAspect, 2> setAspectValues = std::span(aspectValues).subspan<1>();
 
   outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::Proceed}, getDefaultActionValue));
 

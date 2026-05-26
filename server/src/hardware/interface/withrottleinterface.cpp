@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2024 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@
  */
 
 #include "withrottleinterface.hpp"
-#include "../throttle/list/throttlelistcolumn.hpp"
+#include "../../throttle/list/throttlelistcolumn.hpp"
 #include "../protocol/withrottle/kernel.hpp"
 #include "../protocol/withrottle/settings.hpp"
 #include "../protocol/withrottle/iohandler/tcpiohandler.hpp"
@@ -34,7 +34,7 @@
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 
-static constexpr auto throttleListColumns = ThrottleListColumn::Id | ThrottleListColumn::Name;
+static constexpr auto throttleListColumns = ThrottleListColumn::Name;
 
 CREATE_IMPL(WiThrottleInterface)
 

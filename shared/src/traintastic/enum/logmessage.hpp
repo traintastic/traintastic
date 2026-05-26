@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -73,6 +73,18 @@ enum class LogMessage : uint32_t
   D2010_SLOT_X_IS_FREE = LogMessageOffset::debug + 2010,
   D2011_WRITE_SXX_X_X_X = LogMessageOffset::debug + 2011,
   D2012_CHANGED_SXX_X_X_X = LogMessageOffset::debug + 2012,
+  D3001_ACQUIRING_TRAIN_X_FAILED_X = LogMessageOffset::debug + 3001,
+  D3010_TRAIN_X_ASSIGNED_TO_BLOCK_X = LogMessageOffset::debug + 3010,
+  D3011_TRAIN_X_RESERVED_BLOCK_X = LogMessageOffset::debug + 3011,
+  D3012_TRAIN_X_ENTERED_BLOCK_X = LogMessageOffset::debug + 3012,
+  D3013_TRAIN_X_LEFT_BLOCK_X = LogMessageOffset::debug + 3013,
+  D3014_TRAIN_X_REMOVED_FROM_BLOCK_X = LogMessageOffset::debug + 3014,
+  D3020_TRAIN_X_ASSIGNED_TO_ZONE_X = LogMessageOffset::debug + 3020,
+  D3021_TRAIN_X_ENTERING_ZONE_X = LogMessageOffset::debug + 3021,
+  D3022_TRAIN_X_ENTERED_ZONE_X = LogMessageOffset::debug + 3022,
+  D3023_TRAIN_X_LEAVING_ZONE_X = LogMessageOffset::debug + 3023,
+  D3024_TRAIN_X_LEFT_ZONE_X = LogMessageOffset::debug + 3024,
+  D3025_TRAIN_X_REMOVED_FROM_ZONE_X = LogMessageOffset::debug + 3025,
   D9999_X = LogMessageOffset::debug + 9999,
 
   // Info:
@@ -85,11 +97,16 @@ enum class LogMessage : uint32_t
   I1007_X = LogMessageOffset::info + 1007, //!< nlohmann::json version
   I1008_X = LogMessageOffset::info + 1008, //!< LibArchive version
   I1009_ZLIB_X = LogMessageOffset::info + 1009, //!< zlib version
+  I1010_AUTO_SAVED_WORLD_X = LogMessageOffset::info + 1010,
   I2001_UNKNOWN_LOCO_ADDRESS_X = LogMessageOffset::info + 2001,
   I2002_HARDWARE_TYPE_X = LogMessageOffset::info + 2002,
   I2003_FIRMWARE_VERSION_X = LogMessageOffset::info + 2003,
   I2004_HSI_88_X = LogMessageOffset::info + 2004,
   I2005_X = LogMessageOffset::info + 2005,
+  I2006_BOOSTER_X_SOFTWARE_VERSION_X = LogMessageOffset::info + 2006,
+  I2007_NEW_HUB_CONNECTION_X_X = LogMessageOffset::info + 2007,
+  I3001_THROTTLE_X_ACQUIRED_TRAIN_X = LogMessageOffset::info + 3001,
+  I3002_THROTTLE_X_RELEASED_TRAIN_X = LogMessageOffset::info + 3002,
   I9001_STOPPED_SCRIPT = LogMessageOffset::info + 9001,
   I9002_X = LogMessageOffset::info + 9002, //!< Lua version
   I9003_CLEARED_PERSISTENT_VARIABLES = LogMessageOffset::info + 9003,
@@ -131,10 +148,13 @@ enum class LogMessage : uint32_t
   N2005_STARTING_PCAP_LOG_PIPE_X = LogMessageOffset::notice + 2005,
   N2006_LISTEN_ONLY_MODE_ACTIVATED = LogMessageOffset::notice + 2006,
   N2007_LISTEN_ONLY_MODE_DEACTIVATED = LogMessageOffset::notice + 2007,
+  N2008_HUB_LISTENING_AT_X_X = LogMessageOffset::notice + 2008,
   N3001_ASSIGNED_TRAIN_X_TO_BLOCK_X = LogMessageOffset::notice + 3001,
   N3002_REMOVED_TRAIN_X_FROM_BLOCK_X = LogMessageOffset::notice + 3002,
   N3003_TURNOUT_RESET_TO_RESERVED_POSITION = LogMessageOffset::notice + 3003,
   N3004_SIGNAL_RESET_TO_RESERVED_ASPECT = LogMessageOffset::notice + 3004,
+  N3005_THROTTLE_X_STOLE_TRAIN_X_FROM_THROTTLE_X = LogMessageOffset::notice + 3005,
+  N3006_THROTTLE_X_RELEASED_TRAIN_X_WITHOUT_STOPPING_IT = LogMessageOffset::notice + 3006,
   N9001_STARTING_SCRIPT = LogMessageOffset::notice + 9001,
   N9999_X = LogMessageOffset::notice + 9999,
 
@@ -142,6 +162,7 @@ enum class LogMessage : uint32_t
   W1001_DISCOVERY_DISABLED_ONLY_ALLOWED_ON_PORT_X = LogMessageOffset::warning + 1001,
   W1002_SETTING_X_DOESNT_EXIST = LogMessageOffset::warning + 1002,
   W1003_READING_WORLD_X_FAILED_LIBARCHIVE_ERROR_X_X = LogMessageOffset::warning + 1003,
+  W1004_SETTING_FILE_EMPTY_OR_CORRUPT_USING_DEFAULTS = LogMessageOffset::warning + 1004,
   W2001_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES = LogMessageOffset::warning + 2001,
   W2002_COMMAND_STATION_DOESNT_SUPPORT_FUNCTIONS_ABOVE_FX = LogMessageOffset::warning + 2002,
   W2003_RECEIVED_MALFORMED_DATA_DROPPED_X_BYTES_X = LogMessageOffset::warning + 2003,
@@ -152,6 +173,9 @@ enum class LogMessage : uint32_t
   W2018_TIMEOUT_NO_ECHO_WITHIN_X_MS = LogMessageOffset::warning + 2018,
   W2019_Z21_BROADCAST_FLAG_MISMATCH = LogMessageOffset::warning + 2019,
   W2020_DCCEXT_RCN213_IS_NOT_SUPPORTED = LogMessageOffset::warning + 2020,
+  // RESERVED: W2025_READING_BOOSTER_X_SOFTWARE_VERSION_FAILED_X = LogMessageOffset::warning + 2025,
+  W2026_READING_BOOSTER_X_TEMPERATURE_FAILED_X = LogMessageOffset::warning + 2026,
+  W2027_READING_BOOSTER_X_LOAD_FAILED_X = LogMessageOffset::warning + 2027,
   W3001_NX_BUTTON_CONNECTED_TO_TWO_BLOCKS = LogMessageOffset::warning + 3001,
   W3002_NX_BUTTON_NOT_CONNECTED_TO_ANY_BLOCK = LogMessageOffset::warning + 3002,
   W3003_LOCKED_TURNOUT_CHANGED = LogMessageOffset::warning + 3003,
@@ -192,6 +216,12 @@ enum class LogMessage : uint32_t
   E2022_SOCKET_CREATE_FAILED_X = LogMessageOffset::error + 2022,
   E2023_SOCKET_IOCTL_FAILED_X = LogMessageOffset::error + 2023,
   E2024_UNKNOWN_LOCOMOTIVE_MFX_UID_X = LogMessageOffset::error + 2024,
+  E2025_READING_BOOSTER_X_SOFTWARE_VERSION_FAILED_X = LogMessageOffset::error + 2025,
+  E2026_READING_BOOSTER_X_TEMPERATURE_FAILED_X = LogMessageOffset::error + 2026,
+  E2027_READING_BOOSTER_X_LOAD_FAILED_X = LogMessageOffset::error + 2027,
+  E2028_SOCKET_SETSOCKOPT_FAILED_X = LogMessageOffset::error + 2028,
+  E2029_TCP_ACCEPT_ERROR_X = LogMessageOffset::error + 2029,
+  E2030_TCP_SOCKET_LISTEN_FAILED_X = LogMessageOffset::error + 2030,
   E3001_CANT_DELETE_RAIL_VEHICLE_WHEN_IN_ACTIVE_TRAIN = LogMessageOffset::error + 3001,
   E3002_CANT_DELETE_ACTIVE_TRAIN = LogMessageOffset::error + 3002,
   E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED = LogMessageOffset::error + 3003,
@@ -202,6 +232,7 @@ enum class LogMessage : uint32_t
   E3008_WORLD_STOPPED_ON_SIGNAL_X_CHANGED = LogMessageOffset::error + 3008,
   E3009_WORLD_POWER_OFF_ON_TURNOUT_X_CHANGED = LogMessageOffset::error + 3009,
   E3010_WORLD_POWER_OFF_ON_SIGNAL_X_CHANGED = LogMessageOffset::error + 3010,
+  E3011_FEEDBACK_CONFLICT_MULTIPLE_OPTIONS_ARE_VALID = LogMessageOffset::error + 3011,
   E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER = LogMessageOffset::error + 9001,
   E9999_X = LogMessageOffset::error + 9999,
 
@@ -225,6 +256,7 @@ enum class LogMessage : uint32_t
   C1017_INVALID_INDICES = LogMessageOffset::critical + 1017,
   C1018_EXCEPTION_X = LogMessageOffset::critical + 1018,
   C1019_OBJECT_NOT_A_TABLE = LogMessageOffset::critical + 1019,
+  C1020_LOADING_SETTINGS_FAILED_X = LogMessageOffset::critical + 1020,
   C2001_ADDRESS_ALREADY_USED_AT_X = LogMessageOffset::critical + 2001,
   C2004_CANT_GET_FREE_SLOT = LogMessageOffset::critical + 2004,
   C2005_SOCKETCAN_IS_ONLY_AVAILABLE_ON_LINUX = LogMessageOffset::critical + 2005,

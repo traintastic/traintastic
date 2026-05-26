@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/dccexinterface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,7 +44,7 @@
 #include "../../world/world.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 CREATE_IMPL(DCCEXInterface)
@@ -127,10 +126,12 @@ DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
   updateVisible();
 }
 
-tcb::span<const DecoderProtocol> DCCEXInterface::decoderProtocols() const
+DCCEXInterface::~DCCEXInterface() = default;
+
+std::span<const DecoderProtocol> DCCEXInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 2> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong};
-  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
 std::pair<uint16_t, uint16_t> DCCEXInterface::decoderAddressMinMax(DecoderProtocol protocol) const
@@ -140,7 +141,7 @@ std::pair<uint16_t, uint16_t> DCCEXInterface::decoderAddressMinMax(DecoderProtoc
   return DecoderController::decoderAddressMinMax(protocol);
 }
 
-tcb::span<const uint8_t> DCCEXInterface::decoderSpeedSteps(DecoderProtocol protocol) const
+std::span<const uint8_t> DCCEXInterface::decoderSpeedSteps(DecoderProtocol protocol) const
 {
   (void)protocol; // silence unused warning for release build
   assert(protocol == DecoderProtocol::DCCShort || protocol == DecoderProtocol::DCCLong);
@@ -158,18 +159,26 @@ void DCCEXInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags c
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-std::pair<uint32_t, uint32_t> DCCEXInterface::inputAddressMinMax(uint32_t /*channel*/) const
+std::span<const InputChannel> DCCEXInterface::inputChannels() const
+{
+  static const auto values = makeArray(InputChannel::Input);
+  return values;
+}
+
+std::pair<uint32_t, uint32_t> DCCEXInterface::inputAddressMinMax(InputChannel /*channel*/) const
 {
   return {DCCEX::Kernel::idMin, DCCEX::Kernel::idMax};
 }
 
-void DCCEXInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void DCCEXInterface::inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action)
 {
+  assert(std::holds_alternative<InputAddress>(location));
+  const auto address = std::get<InputAddress>(location).address;
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);
 }
 
-tcb::span<const OutputChannel> DCCEXInterface::outputChannels() const
+std::span<const OutputChannel> DCCEXInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Accessory, OutputChannel::Turnout, OutputChannel::Output, OutputChannel::DCCext);
   return values;
@@ -193,8 +202,9 @@ std::pair<uint32_t, uint32_t> DCCEXInterface::outputAddressMinMax(OutputChannel 
   }
 }
 
-bool DCCEXInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+bool DCCEXInterface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
+  const auto address = std::get<OutputAddress>(location).address;
   return
     m_kernel &&
     inRange(address, outputAddressMinMax(channel)) &&

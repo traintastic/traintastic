@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/list/outputlistcolumn.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022,2024 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,12 +28,14 @@ enum class OutputListColumn
 {
   Interface = 1 << 0,
   Channel = 1 << 1,
+  Node = 1 << 3,
   Address = 1 << 2,
 };
 
-constexpr std::array<OutputListColumn, 3> outputListColumnValues = {
+constexpr std::array<OutputListColumn, 4> outputListColumnValues = {
   OutputListColumn::Interface,
   OutputListColumn::Channel,
+  OutputListColumn::Node,
   OutputListColumn::Address,
 };
 

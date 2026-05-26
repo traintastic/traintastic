@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Throttle | Traintastic</title>
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/throttle.css">
+</head>
+
+<body onload="tm.init()">
+  <header>
+    <div id="open_settings" class="right">&#8942;</div>
+    <h1>Traintastic</h1>
+  </header>
+  <div id="body">
+    <div id="settings">
+      <div>
+        <label for="throttle_name">Name:</label>
+        <input type="text" id="throttle_name">
+      </div>
+      <div class="flex-row">
+        <label class="flex-resize">Stop train on release</label>
+        <input class="toggle_switch" type="checkbox" id="stop_train_on_release" checked="checked"><label class="toggle_switch" for="stop_train_on_release"></label>
+      </div>
+      <div class="flex-row">
+        <label class="flex-resize">Immediate speed control</label>
+        <input class="toggle_switch" type="checkbox" id="immediate_speed_control" checked="checked"><label class="toggle_switch" for="immediate_speed_control"></label>
+      </div>
+      <div class="text-center">
+        <button id="close_settings">Close</button>
+      </div>
+    </div>
+    <div id="not-connected" class="status">
+      <span>Not connected, trying to connect...</span>
+    </div>
+    <div id="no-world" class="status hide">
+      <span>No world loaded.</span>
+    </div>
+    <div id="throttles" class="flex-row hide"></div>
+  </div>
+  <script src="/js/throttle.js"></script>
+</body>
+
+</html>

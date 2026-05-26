@@ -23,9 +23,8 @@ def check_license(text, filepath, fix=False):
         if fix:
             is_test = (os.path.sep + 'test' + os.path.sep) in filepath
             text = '''/**
- * ''' + filepath + '''
- *
- * This file is part of the traintastic ''' + ('test suite' if is_test else 'source code') + '''.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) ''' + str(datetime.datetime.now().year) + ''' Reinder Feenstra
  *

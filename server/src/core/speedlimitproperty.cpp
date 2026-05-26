@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +27,7 @@
 constexpr std::array<double, 1> aliasKeys = {{SpeedLimitProperty::noLimitValue}};
 inline static const std::array<std::string, 1> aliasValues{{"$speed_limit_property:no_limit$"}};
 
-static tcb::span<const double> getValues(SpeedUnit unit)
+static std::span<const double> getValues(SpeedUnit unit)
 {
   switch(unit)
   {
@@ -97,7 +97,7 @@ void SpeedLimitProperty::addAttributes()
   auto values = getValues(unit());
   ::Attributes::addMin(*this, values.front());
   ::Attributes::addValues(*this, values);
-  ::Attributes::addAliases(*this, tcb::span<const double>(aliasKeys), tcb::span<const std::string>(aliasValues));
+  ::Attributes::addAliases(*this, std::span<const double>(aliasKeys), std::span<const std::string>(aliasValues));
   m_attributeUnit = m_unit;
 }
 

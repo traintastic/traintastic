@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,44 +28,36 @@
 #include <boost/asio.hpp>
 #include <boost/beast/core/tcp_stream.hpp>
 #include <boost/beast/websocket/stream.hpp>
+#include "websocketconnection.hpp"
 #include "../core/objectptr.hpp"
 #include <traintastic/network/message.hpp>
 
-class Server;
 class Session;
 
-class ClientConnection : public std::enable_shared_from_this<ClientConnection>
+class ClientConnection : public WebSocketConnection
 {
   friend class Session;
 
   protected:
     using ObjectHandle = uint32_t;
 
-    Server& m_server;
-    std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> m_ws;
     boost::beast::flat_buffer m_readBuffer;
     std::mutex m_writeQueueMutex;
     std::queue<std::unique_ptr<Message>> m_writeQueue;
     bool m_authenticated;
     std::shared_ptr<Session> m_session;
 
-    void doRead();
-    void doWrite();
+    void doRead() final;
+    void doWrite() final;
 
     void processMessage(const std::shared_ptr<Message> message);
     void sendMessage(std::unique_ptr<Message> message);
 
-    void connectionLost();
-
   public:
-    const std::string id;
-
-    ClientConnection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws, std::string id_);
+    ClientConnection(Server& server, std::shared_ptr<boost::beast::websocket::stream<boost::beast::tcp_stream>> ws);
     virtual ~ClientConnection();
 
-    void start();
-
-    void disconnect();
+    void disconnect() final;
 };
 
 #endif

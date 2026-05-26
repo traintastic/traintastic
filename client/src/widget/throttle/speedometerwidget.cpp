@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021,2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "speedometerwidget.hpp"
 #include <cmath>
 #include <QPainter>
+#include "throttlestyle.hpp"
 
 SpeedoMeterWidget::SpeedoMeterWidget(QWidget* parent)
   : QWidget(parent)
@@ -168,15 +169,15 @@ void SpeedoMeterWidget::paintEvent(QPaintEvent*)
     const auto eStop = QStringLiteral("ESTOP");
     font.setPixelSize(size / 12);
     painter.setFont(font);
-    QRect r = painter.fontMetrics().boundingRect(eStop);
+    QRect r = painter.fontMetrics().boundingRect(eStop).adjusted(-2, 0, 2, 0);
     r.moveTo(borderRect.left() + (borderRect.width() - r.width()) / 2, borderRect.top() + (borderRect.height() / 2 - r.height()) / 2);
     const int margin = font.pixelSize() / 6;
     r.adjust(-margin, -margin, margin, margin);
     painter.setPen(Qt::NoPen);
-    painter.setBrush(Qt::red);
+    painter.setBrush(ThrottleStyle::buttonEStopColor);
     const qreal radius = r.height() / 4.;
     painter.drawRoundedRect(r, radius, radius);
-    painter.setPen(Qt::white);
+    painter.setPen(ThrottleStyle::buttonTextColor);
     painter.drawText(r, Qt::AlignCenter, eStop);
   }
 }

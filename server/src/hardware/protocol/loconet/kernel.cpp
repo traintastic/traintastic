@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/loconet/loconet.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,10 +21,12 @@
 
 #include "kernel.hpp"
 #include "iohandler/iohandler.hpp"
+#include "lncv/lncvutils.hpp"
 #include "messages.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"
 #include "../../decoder/decodercontroller.hpp"
+#include "../../decoder/list/decoderlist.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
 #include "../../identification/identificationcontroller.hpp"
@@ -35,6 +36,7 @@
 #include "../../../pcap/pcapfile.hpp"
 #include "../../../pcap/pcappipe.hpp"
 #include "../../../core/eventloop.hpp"
+#include "../../../core/objectproperty.tpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
 #include "../../../clock/clock.hpp"
@@ -48,16 +50,16 @@ static constexpr uint8_t multiplierFreeze = 0;
 
 static void updateDecoderSpeed(const std::shared_ptr<Decoder>& decoder, uint8_t speed)
 {
-  decoder->emergencyStop.setValueInternal(speed == SPEED_ESTOP);
+  decoder->emergencyStop.setValueInternal(speed == speedEStop);
 
-  if(speed == SPEED_STOP || speed == SPEED_ESTOP)
+  if(speed == speedStop || speed == speedEStop)
     decoder->throttle.setValueInternal(Decoder::throttleStop);
   else
   {
     speed--; // decrement one for ESTOP: 2..127 -> 1..126
-    const auto currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), SPEED_MAX - 1);
+    const auto currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), speedMax - 1);
     if(currentStep != speed) // only update trottle if it is a different step
-      decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed, SPEED_MAX - 1));
+      decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed, speedMax - 1));
   }
 }
 
@@ -101,7 +103,7 @@ void Kernel::setConfig(const Config& config)
       break;
   }
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, newConfig=config]()
     {
       if(newConfig.pcap != m_config.pcap)
@@ -159,18 +161,11 @@ void Kernel::setConfig(const Config& config)
     });
 }
 
-void Kernel::setOnGlobalPowerChanged(std::function<void(bool)> callback)
+void Kernel::setOnStateChanged(std::function<void(bool, bool)> callback)
 {
   assert(isEventLoopThread());
   assert(!m_started);
-  m_onGlobalPowerChanged = std::move(callback);
-}
-
-void Kernel::setOnIdle(std::function<void()> callback)
-{
-  assert(isEventLoopThread());
-  assert(!m_started);
-  m_onIdle = std::move(callback);
+  m_onStateChanged = std::move(callback);
 }
 
 void Kernel::setClock(std::shared_ptr<Clock> clock)
@@ -232,14 +227,14 @@ void Kernel::start()
     [this]()
     {
       setThreadName("loconet");
-      auto work = std::make_shared<boost::asio::io_context::work>(m_ioContext);
+      boost::asio::executor_work_guard<decltype(m_ioContext.get_executor())> work{m_ioContext.get_executor()};
       m_ioContext.run();
     });
 
   if(m_config.fastClock == LocoNetFastClock::Master)
     enableClockEvents();
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       if(m_config.pcap)
@@ -272,7 +267,7 @@ void Kernel::stop()
 
   disableClockEvents();
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       m_waitingForEchoTimer.cancel();
@@ -318,8 +313,9 @@ void Kernel::receive(const Message& message)
   if(m_config.debugLogRXTX)
     EventLoop::call([this, msg=toString(message)](){ Log::log(logId, LogMessage::D2002_RX_X, msg); });
 
+  const bool isEcho = (message == lastSentMessage());
   bool isResponse = false;
-  if(m_waitingForEcho && message == lastSentMessage())
+  if(m_waitingForEcho && isEcho)
   {
     m_waitingForEcho = false;
     m_waitingForEchoTimer.cancel();
@@ -337,41 +333,49 @@ void Kernel::receive(const Message& message)
   switch(message.opCode)
   {
     case OPC_GPON:
-      if(m_globalPower != TriState::True)
+      if(!isEcho) // sent by another LocoNet device, not by Traintastic
       {
         m_globalPower = TriState::True;
-        if(m_onGlobalPowerChanged)
+        m_emergencyStop = TriState::False;
+        if(m_onStateChanged) [[likely]]
+        {
           EventLoop::call(
             [this]()
             {
-              m_onGlobalPowerChanged(true);
+              m_onStateChanged(true, true);
             });
+        }
+        EventLoop::call(std::bind_front(&Kernel::resume, this));
       }
       break;
 
     case OPC_GPOFF:
-      if(m_globalPower != TriState::False)
+      if(!isEcho) // sent by another LocoNet device, not by Traintastic
       {
         m_globalPower = TriState::False;
-        if(m_onGlobalPowerChanged)
+        if(m_onStateChanged) [[likely]]
+        {
           EventLoop::call(
             [this]()
             {
-              m_onGlobalPowerChanged(false);
+              m_onStateChanged(false, false);
             });
+        }
       }
       break;
 
     case OPC_IDLE:
-      if(m_emergencyStop != TriState::True)
+      if(!isEcho) // sent by another LocoNet device, not by Traintastic
       {
         m_emergencyStop = TriState::True;
-        if(m_onIdle)
+        if(m_onStateChanged) [[likely]]
+        {
           EventLoop::call(
             [this]()
             {
-              m_onIdle();
+              m_onStateChanged(m_globalPower == TriState::True, false);
             });
+        }
       }
       break;
 
@@ -484,7 +488,7 @@ void Kernel::receive(const Message& message)
             EventLoop::call(
               [this, address=1 + inputRep.fullAddress(), value]()
               {
-                m_inputController->updateInputValue(InputController::defaultInputChannel, address, value);
+                m_inputController->updateInputValue(InputChannel::Input, InputAddress(address), value);
               });
           }
         }
@@ -505,7 +509,7 @@ void Kernel::receive(const Message& message)
             EventLoop::call(
               [this, address=switchRequest.address(), value]()
               {
-                m_outputController->updateOutputValue(OutputChannel::Accessory, address, value);
+                m_outputController->updateOutputValue(OutputChannel::Accessory, OutputAddress(address), value);
               });
           }
         }
@@ -625,21 +629,49 @@ void Kernel::receive(const Message& message)
             });
         }
       }
-      else if(m_lncvActive && m_onLNCVReadResponse &&
-          longAck.respondingOpCode() == OPC_IMM_PACKET && longAck.ack1 == 0x7F &&
-          Uhlenbrock::LNCVWrite::check(lastSentMessage()))
+      else if(longAck.respondingOpCode() == OPC_IMM_PACKET)
       {
-        const auto& lncvWrite = static_cast<const Uhlenbrock::LNCVWrite&>(lastSentMessage());
-        if(lncvWrite.lncv() == 0)
+        if(m_waitingForLNCVReadResponse)
         {
-          m_lncvModuleAddress = lncvWrite.value();
-        }
-
-        EventLoop::call(
-          [this, lncvWrite]()
+          if(!m_lncvReads.empty() &&
+              m_lncvReads.front().moduleId == m_pendingLNCVRead.moduleId &&
+              m_lncvReads.front().address == m_pendingLNCVRead.address &&
+              m_lncvReads.front().lncv == m_pendingLNCVRead.lncv)
           {
-            m_onLNCVReadResponse(true, lncvWrite.lncv(), lncvWrite.value());
-          });
+            m_pendingLNCVRead.reset();
+            auto ec = LNCV::parseLongAck(longAck.ack1);
+            if(!ec)
+            {
+              // 0x7F indicates a successful LONG_ACK, but for a read operation
+              // we expect a proper read response message instead. Receiving
+              // only a LONG_ACK is unexpected, so we treat it as
+              // unexpected response until proven otherwise.
+              ec = LNCV::Error::unexpectedResponse();
+            }
+            EventLoop::call(
+              [callback=std::move(m_lncvReads.front().callback), ec]()
+              {
+                callback(0, ec);
+              });
+            m_lncvReads.pop();
+          }
+        }
+        else if(m_lncvActive && m_onLNCVReadResponse &&
+            longAck.ack1 == 0x7F &&
+            Uhlenbrock::LNCVWrite::check(lastSentMessage()))
+        {
+          const auto& lncvWrite = static_cast<const Uhlenbrock::LNCVWrite&>(lastSentMessage());
+          if(lncvWrite.lncv() == 0)
+          {
+            m_lncvModuleAddress = lncvWrite.value();
+          }
+
+          EventLoop::call(
+            [this, lncvWrite]()
+            {
+              m_onLNCVReadResponse(true, lncvWrite.lncv(), lncvWrite.value());
+            });
+        }
       }
       break;
     }
@@ -806,20 +838,38 @@ void Kernel::receive(const Message& message)
         {
           [[maybe_unused]] const auto& readSpecialOptionReply = static_cast<const Uhlenbrock::ReadSpecialOptionReply&>(message);
         }
-        else if(m_onLNCVReadResponse && Uhlenbrock::LNCVReadResponse::check(message))
+        else if(Uhlenbrock::LNCVReadResponse::check(message))
         {
           const auto& lncvReadResponse = static_cast<const Uhlenbrock::LNCVReadResponse&>(message);
-          if(lncvReadResponse.lncv() == 0)
+
+          if(!m_lncvReads.empty() &&
+              m_lncvReads.front().moduleId == lncvReadResponse.moduleId() &&
+              m_lncvReads.front().address == m_pendingLNCVRead.address &&
+              m_lncvReads.front().lncv == lncvReadResponse.lncv())
           {
-            m_lncvActive = true;
-            m_lncvModuleAddress = lncvReadResponse.value();
+            EventLoop::call(
+              [callback=m_lncvReads.front().callback, value=lncvReadResponse.value()]()
+              {
+                callback(value, {});
+              });
+            m_lncvReads.pop();
+          }
+          else if(m_onLNCVReadResponse)
+          {
+            if(lncvReadResponse.lncv() == 0)
+            {
+              m_lncvActive = true;
+              m_lncvModuleAddress = lncvReadResponse.value();
+            }
+
+            EventLoop::call(
+              [this, lncvReadResponse]()
+              {
+                m_onLNCVReadResponse(true, lncvReadResponse.lncv(), lncvReadResponse.value());
+              });
           }
 
-          EventLoop::call(
-            [this, lncvReadResponse]()
-            {
-              m_onLNCVReadResponse(true, lncvReadResponse.lncv(), lncvReadResponse.value());
-            });
+          m_pendingLNCVRead.reset();
         }
       }
       break;
@@ -891,56 +941,91 @@ void Kernel::receive(const Message& message)
   }
 }
 
-void Kernel::setPowerOn(bool value)
+void Kernel::setState(bool powerOn, bool run)
 {
   assert(isEventLoopThread());
-  if(value)
-  {
-    m_ioContext.post(
-      [this]()
-      {
-        if(m_globalPower != TriState::True)
-          send(GlobalPowerOn(), HighPriority);
-      });
-  }
-  else
-  {
-    m_ioContext.post(
-      [this]()
-      {
-        if(m_globalPower != TriState::False)
-          send(GlobalPowerOff(), HighPriority);
-      });
-  }
-}
-
-void Kernel::emergencyStop()
-{
-  assert(isEventLoopThread());
-  m_ioContext.post(
-    [this]()
+  boost::asio::post(m_ioContext, 
+    [this, powerOn, run]()
     {
-      if(m_emergencyStop != TriState::True)
-        send(Idle(), HighPriority);
+      if(!powerOn) // disable power
+      {
+        if(m_emergencyStop != TriState::True)
+        {
+          send(Idle(), HighPriority); // estop trains
+        }
+        if(m_globalPower != TriState::False)
+        {
+          send(GlobalPowerOff(), HighPriority);
+        }
+      }
+      else
+      {
+        if(m_globalPower != TriState::True) // enable power
+        {
+          send(GlobalPowerOn(), HighPriority);
+        }
+        if(run && m_emergencyStop != TriState::False)
+        {
+          m_emergencyStop = TriState::False;
+          EventLoop::call(std::bind_front(&Kernel::resume, this));
+        }
+        else if(!run && m_emergencyStop != TriState::True)
+        {
+          send(Idle(), HighPriority); // estop trains
+        }
+      }
     });
 }
 
 void Kernel::resume()
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
-    [this]()
-    {
-      if(m_emergencyStop != TriState::False)
-      {
-        m_emergencyStop = TriState::False;
 
-        // TODO: restore speeds
-      }
-    });
+  auto& list = *m_decoderController->decoders.value();
+  for(const auto& decoder : list)
+  {
+    decoderChanged(*decoder, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Direction | DecoderChangeFlags::Throttle | DecoderChangeFlags::SpeedSteps, 0);
+
+    if(decoder->hasFunction(5) ||
+        decoder->hasFunction(6) ||
+        decoder->hasFunction(7) ||
+        decoder->hasFunction(8))
+    {
+      decoderChanged(*decoder, DecoderChangeFlags::FunctionValue, 5); // trigger F5-F8 update
+    }
+    if(decoder->hasFunction(9) ||
+        decoder->hasFunction(10) ||
+        decoder->hasFunction(11) ||
+        decoder->hasFunction(12))
+    {
+      decoderChanged(*decoder, DecoderChangeFlags::FunctionValue, 9); // trigger F9-F12 update
+    }
+    if(decoder->hasFunction(13) ||
+        decoder->hasFunction(14) ||
+        decoder->hasFunction(15) ||
+        decoder->hasFunction(16) ||
+        decoder->hasFunction(17) ||
+        decoder->hasFunction(18) ||
+        decoder->hasFunction(19) ||
+        decoder->hasFunction(20))
+    {
+      decoderChanged(*decoder, DecoderChangeFlags::FunctionValue, 13); // trigger F13-F20 update
+    }
+    if(decoder->hasFunction(21) ||
+        decoder->hasFunction(22) ||
+        decoder->hasFunction(23) ||
+        decoder->hasFunction(24) ||
+        decoder->hasFunction(25) ||
+        decoder->hasFunction(26) ||
+        decoder->hasFunction(27) ||
+        decoder->hasFunction(28))
+    {
+      decoderChanged(*decoder, DecoderChangeFlags::FunctionValue, 21); // trigger F21-F28 update
+    }
+  }
 }
 
-bool Kernel::send(tcb::span<uint8_t> packet)
+bool Kernel::send(std::span<uint8_t> packet)
 {
   assert(isEventLoopThread());
 
@@ -953,7 +1038,7 @@ bool Kernel::send(tcb::span<uint8_t> packet)
   if(!isValid(*reinterpret_cast<Message*>(data.data())))
     return false;
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, message=std::move(data)]()
     {
       send(*reinterpret_cast<const Message*>(message.data()));
@@ -962,7 +1047,7 @@ bool Kernel::send(tcb::span<uint8_t> packet)
   return true;
 }
 
-bool Kernel::immPacket(tcb::span<const uint8_t> dccPacket, uint8_t repeat)
+bool Kernel::immPacket(std::span<const uint8_t> dccPacket, uint8_t repeat)
 {
   assert(isEventLoopThread());
 
@@ -973,17 +1058,29 @@ bool Kernel::immPacket(tcb::span<const uint8_t> dccPacket, uint8_t repeat)
   return true;
 }
 
+void Kernel::readLNCV(uint16_t moduleId, uint16_t address, uint16_t lncv, std::function<void(uint16_t, std::error_code)> callback)
+{
+  assert(isEventLoopThread());
+
+  boost::asio::post(m_ioContext, 
+    [this, moduleId, address, lncv, callback]()
+    {
+      m_lncvReads.emplace(LNCVRead{moduleId, address, lncv, std::move(callback)});
+      send(Uhlenbrock::LNCVRead(moduleId, address, lncv), LocoNet::Kernel::LowPriority);
+    });
+}
+
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
 {
   assert(isEventLoopThread());
 
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle))
   {
-    const auto speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, SPEED_MAX - 1);
-    if(m_emergencyStop == TriState::False || decoder.emergencyStop || speedStep == SPEED_STOP)
+    const auto speedStep = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, speedMax - 1);
+    if(m_emergencyStop == TriState::False || decoder.emergencyStop || speedStep == speedStop)
     {
       // only send speed updates if bus estop isn't active, except for speed STOP and ESTOP
-      LocoSpd message{static_cast<uint8_t>(decoder.emergencyStop ? SPEED_ESTOP : (speedStep > 0 ? 1 + speedStep : SPEED_STOP))};
+      LocoSpd message{static_cast<uint8_t>(decoder.emergencyStop ? speedEStop : (speedStep > 0 ? 1 + speedStep : speedStop))};
       postSend(decoder.address, message);
     }
   }
@@ -1167,7 +1264,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue valu
       if(!inRange(address, accessoryOutputAddressMin, accessoryOutputAddressMax))
         return false;
 
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, address, dir=std::get<OutputPairValue>(value) == OutputPairValue::Second]()
         {
           send(SwitchRequest(address, dir, true));
@@ -1192,7 +1289,7 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
   assert(isEventLoopThread());
   assert(inRange(address, inputAddressMin, inputAddressMax));
   if(m_simulation)
-    m_ioContext.post(
+    boost::asio::post(m_ioContext, 
       [this, fullAddress=address - 1, action]()
       {
         switch(action)
@@ -1217,7 +1314,7 @@ void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
 void Kernel::lncvStart(uint16_t moduleId, uint16_t moduleAddress)
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, moduleId, moduleAddress]()
     {
       if(m_lncvActive)
@@ -1233,7 +1330,7 @@ void Kernel::lncvStart(uint16_t moduleId, uint16_t moduleAddress)
 void Kernel::lncvRead(uint16_t lncv)
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, lncv]()
     {
       if(m_lncvActive)
@@ -1244,7 +1341,7 @@ void Kernel::lncvRead(uint16_t lncv)
 void Kernel::lncvWrite(uint16_t lncv, uint16_t value)
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, lncv, value]()
     {
       if(m_lncvActive)
@@ -1255,7 +1352,7 @@ void Kernel::lncvWrite(uint16_t lncv, uint16_t value)
 void Kernel::lncvStop()
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       if(!m_lncvActive)
@@ -1356,7 +1453,7 @@ void Kernel::send(uint16_t address, Message& message, uint8_t& slot)
     slot = addressToSlot->second;
 
     if(message.opCode == OPC_LOCO_SPD &&
-        static_cast<LocoSpd&>(message).speed >= SPEED_MIN &&
+        static_cast<LocoSpd&>(message).speed >= speedMin &&
         static_cast<LocoSpd&>(message).speed == m_slots[slot].speed)
       return; // same speed, don't send it (always send ESTOP and STOP)
 
@@ -1400,9 +1497,18 @@ void Kernel::sendNextMessage()
         m_waitingForEchoTimer.async_wait(std::bind(&Kernel::waitingForEchoTimerExpired, this, std::placeholders::_1));
 
         m_waitingForResponse = hasResponse(message);
+        m_waitingForLNCVReadResponse = m_waitingForResponse && Uhlenbrock::LNCVRead::check(message);
         if(m_waitingForResponse)
         {
-          m_waitingForResponseTimer.expires_after(boost::asio::chrono::milliseconds(m_config.responseTimeout));
+          if(m_waitingForLNCVReadResponse)
+          {
+            const auto& lncvRead = static_cast<const Uhlenbrock::LNCVRead&>(message);
+            m_pendingLNCVRead.moduleId = lncvRead.moduleId();
+            m_pendingLNCVRead.address = lncvRead.address();
+            m_pendingLNCVRead.lncv = lncvRead.lncv();
+          }
+          const auto timeout = m_waitingForLNCVReadResponse ? Config::lncvReadResponseTimeout : m_config.responseTimeout;
+          m_waitingForResponseTimer.expires_after(boost::asio::chrono::milliseconds(timeout));
           m_waitingForResponseTimer.async_wait(std::bind(&Kernel::waitingForResponseTimerExpired, this, std::placeholders::_1));
         }
       }
@@ -1434,7 +1540,28 @@ void Kernel::waitingForResponseTimerExpired(const boost::system::error_code& ec)
   if(ec)
     return;
 
-  if(m_lncvActive && Uhlenbrock::LNCVStart::check(lastSentMessage()))
+  if(m_waitingForLNCVReadResponse)
+  {
+    if(!m_lncvReads.empty() &&
+        m_lncvReads.front().moduleId == m_pendingLNCVRead.moduleId &&
+        m_lncvReads.front().address == m_pendingLNCVRead.address &&
+        m_lncvReads.front().lncv == m_pendingLNCVRead.lncv)
+    {
+      m_pendingLNCVRead.reset();
+      EventLoop::call(
+        [callback=std::move(m_lncvReads.front().callback)]()
+        {
+          callback(0, LNCV::Error::noResponse());
+        });
+      m_lncvReads.pop();
+    }
+
+    assert(Uhlenbrock::LNCVRead::check(lastSentMessage()));
+    m_sendQueue[m_sentMessagePriority].pop();
+    m_waitingForResponse = false;
+    sendNextMessage();
+  }
+  else if(m_lncvActive && Uhlenbrock::LNCVStart::check(lastSentMessage()))
   {
     EventLoop::call(
       [this, lncvStart=static_cast<const Uhlenbrock::LNCVStart&>(lastSentMessage())]()
@@ -1445,6 +1572,9 @@ void Kernel::waitingForResponseTimerExpired(const boost::system::error_code& ec)
           m_onLNCVReadResponse(false, lncvStart.address(), 0);
       });
 
+    assert(Uhlenbrock::LNCVStart::check(lastSentMessage()));
+    m_sendQueue[m_sentMessagePriority].pop();
+    m_waitingForResponse = false;
     sendNextMessage();
   }
   else
@@ -1493,7 +1623,7 @@ void Kernel::enableClockEvents()
       m_fastClock.store(FastClock{event == Clock::ClockEvent::Freeze ? multiplierFreeze : multiplier, time.hour(), time.minute()});
       if(event == Clock::ClockEvent::Freeze || event == Clock::ClockEvent::Resume)
       {
-        m_ioContext.post(
+        boost::asio::post(m_ioContext, 
           [this]()
           {
             setFastClockMaster(true);

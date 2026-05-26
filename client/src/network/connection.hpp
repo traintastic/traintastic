@@ -1,9 +1,8 @@
 /**
- * client/src/network/client.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +27,7 @@
 #include <unordered_map>
 #include <optional>
 #include <QAbstractSocket>
+#include <QHostAddress>
 #include <QMap>
 #include <QUuid>
 #include <traintastic/network/message.hpp>
@@ -121,6 +121,9 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
     SocketError error() const;
     QString errorString() const;
 
+    QHostAddress peerAddress() const;
+    quint16 peerPort() const;
+
     void connectToHost(const QUrl& url, const QString& username, const QString& password);
     void disconnectFromHost();
 
@@ -135,9 +138,12 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
 
     void serverLog(ServerLogTableModel& model, bool enable);
 
+    [[nodiscard]] int createObject(const QString& classId, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
+
     [[nodiscard]] int getObject(const QString& id, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
     [[nodiscard]] int getObject(const ObjectProperty& property, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
     [[nodiscard]] int getObject(const ObjectVectorProperty& property, uint32_t index, std::function<void(const ObjectPtr&, std::optional<const Error>)> callback);
+    [[nodiscard]] int getObjects(const Object& objectList, uint32_t startIndex, uint32_t endIndex, std::function<void(const std::vector<ObjectPtr>&, std::optional<const Error>)> callback);
     [[nodiscard]] int getObjects(const ObjectVectorProperty& property, uint32_t startIndex, uint32_t endIndex, std::function<void(const std::vector<ObjectPtr>&, std::optional<const Error>)> callback);
     void releaseObject(Object* object);
 
@@ -152,9 +158,11 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
 
     [[nodiscard]] int getTableModel(const ObjectPtr& object, std::function<void(const TableModelPtr&, std::optional<const Error>)> callback);
     void releaseTableModel(TableModel* tableModel);
-    void setTableModelRegion(TableModel* tableModel, int columnMin, int columnMax, int rowMin, int rowMax);
+    void setTableModelRegion(TableModel* tableModel, uint32_t columnMin, uint32_t columnMax, uint32_t rowMin, uint32_t rowMax);
 
     [[nodiscard]] int getTileData(Board& object);
+
+    int getServerDiagnosticReport(std::function<void(const QString&, const QString&, const QByteArray&)> callback);
 
   signals:
     void stateChanged();

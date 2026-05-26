@@ -21,6 +21,7 @@
  */
 
 #include <catch2/catch_template_test_macros.hpp>
+#include "../src/core/eventloop.hpp"
 #include "../src/world/world.hpp"
 #include "../src/core/method.tpp"
 #include "../src/core/objectproperty.tpp"
@@ -54,6 +55,8 @@
 
 TEST_CASE("Board: Add non existing tile", "[board][board-add]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();
@@ -94,6 +97,8 @@ TEMPLATE_TEST_CASE("Board: Add tile", "[board][board-add]"
   , TunnelRailTile
   )
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();

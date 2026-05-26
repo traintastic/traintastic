@@ -1,9 +1,8 @@
 /**
- * server/src/traintastic/traintastic.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +28,9 @@
 #include <zlib.h>
 #include <version.hpp>
 #include <traintastic/copyright.hpp>
+#include <traintastic/os/systeminfo.hpp>
 #include <traintastic/utils/str.hpp>
+#include "../compat/stdformat.hpp"
 #include "../core/eventloop.hpp"
 #include "../network/server.hpp"
 #include "../core/attributes.hpp"
@@ -69,7 +70,8 @@ std::shared_ptr<Traintastic> Traintastic::instance;
 Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_restart{false},
   m_dataDir{std::filesystem::absolute(dataDir)},
-  m_signalSet(EventLoop::ioContext),
+  m_signalSet(EventLoop::ioContext()),
+  m_autoSaveTimer(EventLoop::ioContext()),
   about{this, "about", std::string(versionCopyrightAndLicense), PropertyFlags::ReadOnly},
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   version{this, "version", TRAINTASTIC_VERSION_FULL, PropertyFlags::ReadOnly},
@@ -94,6 +96,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       Log::log(*this, LogMessage::N1002_CREATED_NEW_WORLD);
       world->edit = true;
       settings->lastWorld = "";
+      restartAutoSaveTimer();
     }},
   loadWorld{*this, "load_world",
     [this](const std::string& _uuid)
@@ -124,6 +127,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
 #endif
       settings->lastWorld = "";
       Log::log(*this, LogMessage::N1028_CLOSED_WORLD);
+      m_autoSaveTimer.cancel();
     }},
   restart{*this, "restart",
     [this]()
@@ -167,6 +171,28 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_interfaceItems.add(shutdown);
 }
 
+std::string Traintastic::getInfo()
+{
+  std::string info("### Traintastic Server ###\nVersion: " TRAINTASTIC_VERSION_FULL "\n\n");
+  info.append(getSystemInfo());
+  info.append(
+    std::format(
+      "\n"
+      "### Libraries ###\n"
+      "boost: {}.{}.{}\n"
+      "nlohmann::json: {}.{}.{}\n"
+      "libarchive: {}\n"
+      "zlib: {}\n"
+      "lua: {}\n",
+      BOOST_VERSION / 100000, BOOST_VERSION / 100 % 100, BOOST_VERSION % 100,
+      NLOHMANN_JSON_VERSION_MAJOR, NLOHMANN_JSON_VERSION_MINOR, NLOHMANN_JSON_VERSION_PATCH,
+      archive_version_details(),
+      zlibVersion(),
+      Lua::getVersion()
+    ));
+  return info;
+}
+
 void Traintastic::importWorld(const std::vector<std::byte>& worldData)
 {
   try
@@ -198,7 +224,6 @@ Traintastic::RunStatus Traintastic::run(const std::string& worldUUID, bool simul
   Log::log(*this, LogMessage::I1007_X, std::string_view{"nlohmann::json " STR(NLOHMANN_JSON_VERSION_MAJOR) "." STR(NLOHMANN_JSON_VERSION_MINOR) "." STR(NLOHMANN_JSON_VERSION_PATCH)});
   Log::log(*this, LogMessage::I1008_X, std::string_view{archive_version_details()});
   Log::log(*this, LogMessage::I1009_ZLIB_X, std::string_view{zlibVersion()});
-  //! \todo Add tcb::span version when available, see https://github.com/tcbrindle/span/issues/33
   Log::log(*this, LogMessage::I9002_X, Lua::getVersion());
 
   settings = std::make_shared<Settings>(m_dataDir);
@@ -261,13 +286,18 @@ Traintastic::RunStatus Traintastic::run(const std::string& worldUUID, bool simul
 
 void Traintastic::exit()
 {
+  m_signalSet.cancel();
+  m_autoSaveTimer.cancel();
+
   if(m_restart)
     Log::log(*this, LogMessage::N1003_RESTARTING);
   else
     Log::log(*this, LogMessage::N1004_SHUTTING_DOWN);
 
   if(settings->autoSaveWorldOnExit && world)
-    world->save();
+  {
+    world->autoSave();
+  }
 
   EventLoop::stop();
 }
@@ -311,6 +341,7 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
       }
     }
 
+    restartAutoSaveTimer();
   }
   catch(const LogMessageException& e)
   {
@@ -319,6 +350,25 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
   catch(const std::exception& e)
   {
     Log::log(*this, LogMessage::C1001_LOADING_WORLD_FAILED_X, e.what());
+  }
+}
+
+void Traintastic::restartAutoSaveTimer()
+{
+  m_autoSaveTimer.cancel();
+
+  if(settings->autoSaveInterval != Settings::autoSaveIntervalOff && world)
+  {
+    m_autoSaveTimer.expires_after(std::chrono::minutes(settings->autoSaveInterval));
+    m_autoSaveTimer.async_wait(
+      [this](std::error_code ec)
+      {
+        if(!ec && world)
+        {
+          world->autoSave();
+          restartAutoSaveTimer();
+        }
+      });
   }
 }
 

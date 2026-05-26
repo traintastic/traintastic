@@ -27,6 +27,8 @@
 
 class ThrottleObjectListWidget : public ObjectListWidget
 {
+  friend class ScreenShotDialog;
+
   private:
     QAction* m_actionThrottle;
 

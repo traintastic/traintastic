@@ -319,7 +319,7 @@ bool SimulationIOHandler::send(std::string_view message)
 bool SimulationIOHandler::reply(std::string_view message)
 {
   // post the reply, so it has some delay
-  m_kernel.ioContext().post(
+  boost::asio::post(m_kernel.ioContext(), 
     [this, data=std::string(message)]()
     {
       m_kernel.receive(data);

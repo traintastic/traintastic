@@ -1,9 +1,8 @@
 /**
- * server/src/board/tile/rail/turnout/turnoutsinglesliprailtile.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2022,2024 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,10 +36,10 @@ namespace PositionValues
   };
 }
 
-static constexpr tcb::span<const TurnoutPosition> positionValuesSingleMotor = tcb::make_span(PositionValues::singleMotor);
-static constexpr tcb::span<const TurnoutPosition> positionValuesDualMotor = tcb::make_span(PositionValues::dualMotor);
-static constexpr tcb::span<const TurnoutPosition> setPositionValuesSingleMotor = tcb::make_span(PositionValues::singleMotor).subspan<1>();
-static constexpr tcb::span<const TurnoutPosition> setPositionValuesDualMotor = tcb::make_span(PositionValues::dualMotor).subspan<1>();
+static constexpr std::span<const TurnoutPosition> positionValuesSingleMotor = std::span(PositionValues::singleMotor);
+static constexpr std::span<const TurnoutPosition> positionValuesDualMotor = std::span(PositionValues::dualMotor);
+static constexpr std::span<const TurnoutPosition> setPositionValuesSingleMotor = std::span(PositionValues::singleMotor).subspan<1>();
+static constexpr std::span<const TurnoutPosition> setPositionValuesDualMotor = std::span(PositionValues::dualMotor).subspan<1>();
 
 TurnoutSingleSlipRailTile::TurnoutSingleSlipRailTile(World& world, std::string_view _id)
   : TurnoutSlipRailTile(world, _id, TileId::RailTurnoutSingleSlip)
@@ -50,6 +49,15 @@ TurnoutSingleSlipRailTile::TurnoutSingleSlipRailTile(World& world, std::string_v
                                                                     TurnoutPosition::Crossed, TurnoutPosition::Diverged,
                                                                     TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB},
                                                                   getDefaultActionValue));
+
+  feedbackMap.setValueInternal(
+    std::make_shared<TurnoutFeedbackMap>(
+      *this,
+      feedbackMap.name(),
+      std::initializer_list<TurnoutPosition>{
+        TurnoutPosition::Crossed, TurnoutPosition::Diverged,
+        TurnoutPosition::DoubleSlipStraightA, TurnoutPosition::DoubleSlipStraightB},
+      onFeedbackMatch()));
 
   Attributes::addValues(position, positionValuesSingleMotor);
   m_interfaceItems.add(position);

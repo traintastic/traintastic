@@ -21,6 +21,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include "../../src/core/eventloop.hpp"
 #include "../../src/core/objectproperty.tpp"
 #include "../../src/core/method.tpp"
 #include "../../src/world/world.hpp"
@@ -34,6 +35,8 @@
 
 TEST_CASE("Activate empty train", "[train]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -50,6 +53,8 @@ TEST_CASE("Activate empty train", "[train]")
 
 TEST_CASE("Delete active train", "[train]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -82,6 +87,8 @@ TEST_CASE("Delete active train", "[train]")
 
 TEST_CASE("Delete inactive train", "[train]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -113,6 +120,8 @@ TEST_CASE("Delete inactive train", "[train]")
 
 TEST_CASE("Delete rail vehicle in active train", "[train]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -147,6 +156,8 @@ TEST_CASE("Delete rail vehicle in active train", "[train]")
 
 TEST_CASE("Delete rail vehicle in inactive train", "[train]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());

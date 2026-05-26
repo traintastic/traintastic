@@ -1,9 +1,8 @@
 /**
- * client/src/board/boardareawidget.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,10 +26,13 @@
 #include <QtMath>
 #include <QApplication>
 #include <QToolTip>
+#include <QDrag>
 #include <traintastic/locale/locale.hpp>
 #include "boardwidget.hpp"
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
+#include "blockhighlight.hpp"
+#include "../mainwindow.hpp"
 #include "../network/board.hpp"
 #include "../network/callmethod.hpp"
 #include "../network/object.tpp"
@@ -74,8 +76,9 @@ BoardAreaWidget::BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent) 
   m_boardTop{m_board->getProperty("top")},
   m_boardRight{m_board->getProperty("right")},
   m_boardBottom{m_board->getProperty("bottom")},
-  m_grid{Grid::Dot},
+  m_grid{BoardAreaGrid::None},
   m_zoomLevel{0},
+  m_blockHighlight{MainWindow::instance->blockHighlight()},
   m_mouseLeftButtonPressed{false},
   m_mouseRightButtonPressed{false},
   m_mouseMoveAction{MouseMoveAction::None},
@@ -98,6 +101,12 @@ BoardAreaWidget::BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent) 
     connect(m_boardBottom, &AbstractProperty::valueChanged, this, &BoardAreaWidget::updateMinimumSize);
 
   connect(&BoardSettings::instance(), &SettingsBase::changed, this, &BoardAreaWidget::settingsChanged);
+
+  connect(&m_blockHighlight, &BlockHighlight::colorsChanged, this,
+    [this](const QString& /*blockId*/, const QVector<Color>& /*colors*/)
+    {
+      update();
+    });
 
   for(const auto& [l, object] : m_board->tileObjects())
     tileObjectAdded(l.x, l.y, object);
@@ -166,6 +175,8 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
 
     case TileId::PushButton:
       tryConnect("color");
+      tryConnect("text");
+      tryConnect("text_color");
       break;
 
     case TileId::RailNXButton:
@@ -179,6 +190,9 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
     case TileId::Switch:
       tryConnect("color_off");
       tryConnect("color_on");
+      tryConnect("text");
+      tryConnect("text_color_off");
+      tryConnect("text_color_on");
       tryConnect("value");
       break;
 
@@ -204,34 +218,6 @@ void BoardAreaWidget::tileObjectAdded(int16_t x, int16_t y, const ObjectPtr& obj
       tryConnect("text");
       tryConnect("text_align");
       tryConnect("text_color");
-      break;
-  }
-}
-
-void BoardAreaWidget::setGrid(Grid value)
-{
-  if(m_grid != value)
-  {
-    m_grid = value;
-    update();
-    emit gridChanged(m_grid);
-  }
-}
-
-void BoardAreaWidget::nextGrid()
-{
-  switch(grid())
-  {
-    case Grid::None:
-      setGrid(Grid::Dot);
-      break;
-
-    case Grid::Dot:
-      setGrid(Grid::Line);
-      break;
-
-    case Grid::Line:
-      setGrid(Grid::None);
       break;
   }
 }
@@ -381,6 +367,47 @@ TileLocation BoardAreaWidget::pointToTileLocation(const QPoint& p)
   return TileLocation{static_cast<int16_t>(p.x() / pxPerTile + boardLeft()), static_cast<int16_t>(p.y() / pxPerTile + boardTop())};
 }
 
+QRect BoardAreaWidget::tileRect(int x, int y, int width, int height) const
+{
+  const int pxPerTile = getTileSize() - 1;
+  return QRect(
+    (x - boardLeft()) * pxPerTile,
+    (y - boardTop()) * pxPerTile,
+    width * pxPerTile,
+    height * pxPerTile);
+}
+
+QRect BoardAreaWidget::tileRect(const Object& tile) const
+{
+  return tileRect(
+    tile.getPropertyValueInt("x", 0),
+    tile.getPropertyValueInt("y", 0),
+    tile.getPropertyValueInt("width", 1),
+    tile.getPropertyValueInt("heigth", 1));
+}
+
+BlockTrainDirection BoardAreaWidget::getBlockTrainDirection(const Object& tile, const QPoint& point) const
+{
+  const auto blockRect = tileRect(tile);
+  if(blockRect.contains(point))
+  {
+    const auto r = tile.getPropertyValueEnum<TileRotate>("rotate", TileRotate::Deg0);
+    if(r == TileRotate::Deg0)
+    {
+      return (point.y() - blockRect.y()) >= (blockRect.height() / 2)
+        ? BlockTrainDirection::TowardsA
+        : BlockTrainDirection::TowardsB;
+    }
+    if(r == TileRotate::Deg90)
+    {
+      return (point.x() - blockRect.x()) >= (blockRect.width() / 2)
+        ? BlockTrainDirection::TowardsB
+        : BlockTrainDirection::TowardsA;
+    }
+  }
+  return BlockTrainDirection::Unknown;
+}
+
 QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
 {
   const auto tileId = m_board->getTileId(l);
@@ -461,7 +488,7 @@ QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
   {
     if(auto switch_ = m_board->getTileObject(l))
     {
-      QString text = "<b>" + switch_->getPropertyValueString("name") + "</b>";
+      QString text = "<b>" + switch_->getPropertyValueString("text") + "</b>";
       if(auto* value = switch_->getProperty("value")) /*[[likely]]*/
       {
         if(value->hasAttribute(AttributeName::AliasKeys)) /*[[likely]]*/
@@ -481,8 +508,7 @@ QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
       return text;
     }
   }
-  else if(tileId == TileId::PushButton ||
-          tileId == TileId::RailNXButton)
+  else if(tileId == TileId::RailNXButton)
   {
     if(auto tile = m_board->getTileObject(l))
     {
@@ -523,9 +549,7 @@ void BoardAreaWidget::leaveEvent(QEvent* event)
 
 void BoardAreaWidget::keyPressEvent(QKeyEvent* event)
 {
-  if(event->key() == Qt::Key_G && event->modifiers() == Qt::ControlModifier)
-    nextGrid();
-  else if(event->matches(QKeySequence::ZoomIn))
+  if(event->matches(QKeySequence::ZoomIn))
     zoomIn();
   else if(event->matches(QKeySequence::ZoomOut))
     zoomOut();
@@ -538,6 +562,7 @@ void BoardAreaWidget::mousePressEvent(QMouseEvent* event)
   if(event->button() == Qt::LeftButton)
   {
     m_mouseLeftButtonPressed = true;
+    m_dragStartPosition = event->pos();
     m_mouseLeftButtonPressedTileLocation = pointToTileLocation(event->pos());
   }
   else if(event->button() == Qt::RightButton)
@@ -549,13 +574,23 @@ void BoardAreaWidget::mousePressEvent(QMouseEvent* event)
 
 void BoardAreaWidget::mouseReleaseEvent(QMouseEvent* event)
 {
+  qDebug() << "mouseReleaseEvent";
+
   if(m_mouseLeftButtonPressed && event->button() == Qt::LeftButton)
   {
     m_mouseLeftButtonPressed = false;
-    TileLocation tl = pointToTileLocation(event->pos());
-
-    if(m_mouseLeftButtonPressedTileLocation == tl) // click
-      emit tileClicked(tl.x, tl.y);
+    if(!m_dragStarted)
+    {
+      TileLocation tl = pointToTileLocation(event->pos());
+      if(m_mouseLeftButtonPressedTileLocation == tl) // click
+      {
+        emit tileClicked(tl.x, tl.y);
+      }
+    }
+    else
+    {
+      m_dragStarted = false;
+    }
   }
   else if(m_mouseRightButtonPressed && event->button() == Qt::RightButton)
   {
@@ -567,6 +602,26 @@ void BoardAreaWidget::mouseReleaseEvent(QMouseEvent* event)
 
 void BoardAreaWidget::mouseMoveEvent(QMouseEvent* event)
 {
+  if(m_dragStarted)
+  {
+    return;
+  }
+
+  if(!m_dragStarted && (event->buttons() & Qt::LeftButton) && (event->pos() - m_dragStartPosition).manhattanLength() >= QApplication::startDragDistance())
+  {
+    const TileLocation l = pointToTileLocation(m_dragStartPosition);
+    if(auto tile = m_board->getTileObject(l); tile && m_board->getTileId(l) == TileId::RailBlock)
+    {
+      if(const auto direction = getBlockTrainDirection(*tile, m_dragStartPosition); direction != BlockTrainDirection::Unknown) [[likely]]
+      {
+        m_dragStarted = true;
+        auto* drag = new QDrag(this);
+        drag->setMimeData(new BlockReservePathMimeData(tile->getPropertyValueString("id"), direction));
+        drag->exec(Qt::LinkAction);
+      }
+    }
+  }
+
   if(hasMouseTracking())
   {
     const TileLocation tl = pointToTileLocation(event->pos());
@@ -626,7 +681,6 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
   const QColor backgroundColor50{0x10, 0x10, 0x10, 0x80};
   const QColor backgroundColorError50{0xff, 0x00, 0x00, 0x80};
-  const QColor gridColor{0x40, 0x40, 0x40};
   const QColor gridColorHighlight{Qt::white};
   const QColor gridColorError{Qt::red};
   const int tileSize = getTileSize();
@@ -641,19 +695,19 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
   // draw grid:
   switch(m_grid)
   {
-    case Grid::None:
+    case BoardAreaGrid::None:
       break;
 
-    case Grid::Line:
-      painter.setPen(gridColor);
+    case BoardAreaGrid::Line:
+      painter.setPen(m_colorScheme->grid);
       for(int y = viewport.top(); y <= viewport.bottom(); y += gridSize)
         painter.drawLine(viewport.left(), y, viewport.right(), y);
       for(int x = viewport.left(); x <= viewport.right(); x += gridSize)
         painter.drawLine(x, viewport.top(), x, viewport.bottom());
       break;
 
-    case Grid::Dot:
-      painter.setPen(gridColor);
+    case BoardAreaGrid::Dot:
+      painter.setPen(m_colorScheme->grid);
       for(int y = viewport.top(); y <= viewport.bottom(); y += gridSize)
         for(int x = viewport.left(); x <= viewport.right(); x += gridSize)
           painter.drawPoint(x, y);
@@ -731,15 +785,48 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
           break;
 
         case TileId::RailBlock:
-          tilePainter.drawBlock(id, r, a, state & 0x01, state & 0x02, m_board->getTileObject(it.first));
+        {
+          auto block = m_board->getTileObject(it.first);
+          tilePainter.drawBlock(id, r, a, state & 0x01, state & 0x02, block);
+          if(auto itColors = m_blockHighlight.blockColors().find(block->getPropertyValueString("id"));
+              itColors != m_blockHighlight.blockColors().end() && !itColors->isEmpty())
+          {
+            for(int i = 0; i < itColors->size(); ++i)
+            {
+              QColor color = toQColor((*itColors)[i]);
+              painter.setPen({});
+              color.setAlphaF(m_colorScheme->blockHighlightAlpha);
+              painter.setBrush(color);
+              if(a == TileRotate::Deg0)
+              {
+                const auto h = r.height() / itColors->size();
+                painter.drawRect(r.left(), r.top() + i * h, r.width(), h);
+              }
+              else
+              {
+                const auto w = r.width() / itColors->size();
+                painter.drawRect(r.left() + i * w, r.top(), w, r.height());
+              }
+            }
+          }
           break;
-
+        }
         case TileId::RailDirectionControl:
           tilePainter.drawDirectionControl(id, r, a, isReserved, getDirectionControlState(it.first));
           break;
 
         case TileId::PushButton:
-          tilePainter.drawPushButton(r, getColor(it.first));
+          if(auto button = m_board->getTileObject(it.first)) [[likely]]
+          {
+            tilePainter.drawPushButton(r,
+              button->getPropertyValueEnum<Color>("color", Color::Yellow),
+              button->getPropertyValueEnum<Color>("text_color", Color::Black),
+              button->getPropertyValueString("text"));
+          }
+          else
+          {
+            tilePainter.drawPushButton(r);
+          }
           break;
 
         case TileId::RailDecoupler:
@@ -769,10 +856,20 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
         case TileId::Switch:
           if(auto sw = m_board->getTileObject(it.first)) /*[[likely]]*/
           {
-            tilePainter.drawSwitch(r,
-              sw->getPropertyValueBool("value", false),
-              sw->getPropertyValueEnum<Color>("color_on", Color::Yellow),
-              sw->getPropertyValueEnum<Color>("color_off", Color::Gray));
+            if(sw->getPropertyValueBool("value", false)) // on
+            {
+              tilePainter.drawSwitch(r,
+                sw->getPropertyValueEnum<Color>("color_on", Color::Yellow),
+                sw->getPropertyValueEnum<Color>("text_color_on", Color::Black),
+                sw->getPropertyValueString("text"));
+            }
+            else // off
+            {
+              tilePainter.drawSwitch(r,
+                sw->getPropertyValueEnum<Color>("color_off", Color::Gray),
+                sw->getPropertyValueEnum<Color>("text_color_off", Color::White),
+                sw->getPropertyValueString("text"));
+            }
           }
           else
           {
@@ -843,7 +940,8 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
 void BoardAreaWidget::dragEnterEvent(QDragEnterEvent *event)
 {
-  if(event->mimeData()->hasFormat(AssignTrainMimeData::mimeType))
+  if(event->mimeData()->hasFormat(BlockReservePathMimeData::mimeType) ||
+      event->mimeData()->hasFormat(AssignTrainMimeData::mimeType))
   {
     m_dragMoveTileLocation = TileLocation::invalid;
     event->acceptProposedAction();
@@ -861,6 +959,12 @@ void BoardAreaWidget::dragMoveEvent(QDragMoveEvent* event)
   if(m_dragMoveTileLocation != l)
   {
     m_dragMoveTileLocation = l;
+    if(event->mimeData()->hasFormat(BlockReservePathMimeData::mimeType) &&
+        m_board->getTileId(l) == TileId::RailBlock)
+    {
+      // FIXME: block drag start block
+      return event->accept();
+    }
     if(event->mimeData()->hasFormat(AssignTrainMimeData::mimeType) &&
         m_board->getTileId(l) == TileId::RailBlock)
     {
@@ -873,14 +977,46 @@ void BoardAreaWidget::dragMoveEvent(QDragMoveEvent* event)
 void BoardAreaWidget::dropEvent(QDropEvent* event)
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-  const TileLocation l = pointToTileLocation(event->pos());
+  const auto pos = event->pos();
 #else
-  const TileLocation l = pointToTileLocation(event->position().toPoint());
+  const auto pos = event->position().toPoint();
 #endif
+  const TileLocation l = pointToTileLocation(pos);
 
-  switch(m_board->getTileId(l))
+  if(m_board->getTileId(l) == TileId::RailBlock)
   {
-    case TileId::RailBlock:
+    if(event->mimeData()->hasFormat(BlockReservePathMimeData::mimeType))
+    {
+      m_mouseLeftButtonPressed = false;
+      m_dragStarted = false;
+
+      if(auto* blockReservePath = dynamic_cast<const BlockReservePathMimeData*>(event->mimeData()))
+      {
+        if(auto tile = m_board->getTileObject(l); tile && m_board->getTileId(l) == TileId::RailBlock) [[likely]]
+        {
+          if(const auto toDirection = getBlockTrainDirection(*tile, pos); toDirection != BlockTrainDirection::Unknown) [[likely]]
+          {
+            const auto [fromBlock, fromDirection] = blockReservePath->values();
+            const auto toBlock = tile->getPropertyValueString("id");
+
+            qDebug() << fromBlock << static_cast<int>(fromDirection) << toBlock << static_cast<int>(toDirection);
+
+            (void)callMethodR<bool>(
+              *m_board->connection(),
+              "world.train_path_finder.reserve",
+              [](const bool& /*success*/, std::optional<const Error> /*err*/)
+              {
+              },
+              fromBlock,
+              fromDirection,
+              toBlock,
+              toDirection);
+          }
+        }
+      }
+    }
+    else if(event->mimeData()->hasFormat(AssignTrainMimeData::mimeType))
+    {
       if(auto* assignTrain = dynamic_cast<const AssignTrainMimeData*>(event->mimeData()))
       {
         if(auto tile = std::dynamic_pointer_cast<BlockRailTile>(m_board->getTileObject(l)))
@@ -892,10 +1028,7 @@ void BoardAreaWidget::dropEvent(QDropEvent* event)
           }
         }
       }
-      break;
-
-    default:
-      break;
+    }
   }
   event->ignore();
 }
@@ -905,6 +1038,8 @@ void BoardAreaWidget::settingsChanged()
   const auto& s = BoardSettings::instance();
 
   m_colorScheme = getBoardColorScheme(s.colorScheme.value());
+
+  updateGrid();
 
   update();
 }
@@ -917,4 +1052,17 @@ void BoardAreaWidget::updateMinimumSize()
 
   setMinimumSize(width, height);
   update();
+}
+
+void BoardAreaWidget::updateGrid()
+{
+  const bool editMode = m_board->connection()->world()->getPropertyValueBool(QStringLiteral("edit"), false);
+  const auto& s = BoardSettings::instance();
+  const auto grid = editMode ? s.gridEditMode.value() : s.gridOperateMode.value();
+
+  if(m_grid != grid)
+  {
+    m_grid = grid;
+    update();
+  }
 }

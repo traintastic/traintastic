@@ -1,0 +1,3590 @@
+[
+    {
+        "term": "auto_yes_no:auto",
+        "definition": "Autodetektere"
+    },
+    {
+        "term": "auto_yes_no:no",
+        "definition": "Nej"
+    },
+    {
+        "term": "auto_yes_no:yes",
+        "definition": "Ja"
+    },
+    {
+        "term": "block_state:free",
+        "definition": "Ledig"
+    },
+    {
+        "term": "block_state:occupied",
+        "definition": "Optaget"
+    },
+    {
+        "term": "block_state:reserved",
+        "definition": "Reserveret"
+    },
+    {
+        "term": "block_state:unknown",
+        "definition": "Ukendt"
+    },
+    {
+        "term": "board:delete_tile",
+        "definition": "Slet felt"
+    },
+    {
+        "term": "board:move_tile",
+        "definition": "Flyt felt"
+    },
+    {
+        "term": "board:resize_tile",
+        "definition": "\u00c6ndre st\u00f8rrelse p\u00e5 felt"
+    },
+    {
+        "term": "board:resize_to_contents",
+        "definition": "Just\u00e9r til indhold"
+    },
+    {
+        "term": "board_area_grid:dot",
+        "definition": "Prik"
+    },
+    {
+        "term": "board_area_grid:line",
+        "definition": "Linie"
+    },
+    {
+        "term": "board_area_grid:none",
+        "definition": "Ingen"
+    },
+    {
+        "term": "board_settings.color_scheme:dark",
+        "definition": "M\u00f8rk"
+    },
+    {
+        "term": "board_settings.color_scheme:light",
+        "definition": "Lys"
+    },
+    {
+        "term": "board_tile.misc.label:background_color",
+        "definition": "Baggrundsfarve"
+    },
+    {
+        "term": "board_tile.misc.label:text",
+        "definition": "Tekst"
+    },
+    {
+        "term": "board_tile.misc.label:text_align",
+        "definition": "Tekstjustering"
+    },
+    {
+        "term": "board_tile.misc.label:text_color",
+        "definition": "Tekstfarve"
+    },
+    {
+        "term": "board_tile.misc.push_button:color",
+        "definition": "Farve"
+    },
+    {
+        "term": "board_tile.misc.push_button:text",
+        "definition": "Tekst"
+    },
+    {
+        "term": "board_tile.misc.push_button:text_color",
+        "definition": "Tekstfarve"
+    },
+    {
+        "term": "board_tile.misc.switch:color_off",
+        "definition": "Farve n\u00e5r der er slukket"
+    },
+    {
+        "term": "board_tile.misc.switch:color_on",
+        "definition": "Farve n\u00e5r der er t\u00e6ndt"
+    },
+    {
+        "term": "board_tile.misc.switch:text",
+        "definition": "Tekst"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_off",
+        "definition": "Tekstfarve n\u00e5r der er slukket"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_on",
+        "definition": "Tekstfarve n\u00e5r der er t\u00e6ndt"
+    },
+    {
+        "term": "board_tile.misc.switch:value",
+        "definition": "V\u00e6rdi"
+    },
+    {
+        "term": "board_tile.rail.block:assign_train",
+        "definition": "Tildel tog"
+    },
+    {
+        "term": "board_tile.rail.block:flip_train",
+        "definition": "Vend tog"
+    },
+    {
+        "term": "board_tile.rail.block:input_map",
+        "definition": "Sensorer"
+    },
+    {
+        "term": "board_tile.rail.block:remove_train",
+        "definition": "Fjern tog"
+    },
+    {
+        "term": "board_tile.rail.block:state",
+        "definition": "Tilstand"
+    },
+    {
+        "term": "board_tile.rail.block:zones",
+        "definition": "Zoner"
+    },
+    {
+        "term": "board_tile.rail.direction_control:state",
+        "definition": "Tilstand"
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_a_to_b",
+        "definition": "Brug: A \u2192 B"
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_b_to_a",
+        "definition": "Brug: A \u2190 B"
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_both",
+        "definition": "Brug: A \u21c4 B"
+    },
+    {
+        "term": "board_tile.rail.direction_control:use_none",
+        "definition": "Brug: A \ud83d\udec7 B"
+    },
+    {
+        "term": "board_tile.rail.link:link",
+        "definition": "Forbindelse"
+    },
+    {
+        "term": "board_tile.rail.nx_button:block",
+        "definition": "Afsnit"
+    },
+    {
+        "term": "board_tile.rail.sensor:invert",
+        "definition": "Spejlvend"
+    },
+    {
+        "term": "board_tile.rail.sensor:state",
+        "definition": "Tilstand"
+    },
+    {
+        "term": "board_tile.rail.sensor:type",
+        "definition": "Type"
+    },
+    {
+        "term": "board_tile.rail.signal:require_reservation",
+        "definition": "Kr\u00e6v reservering"
+    },
+    {
+        "term": "board_tile.rail.signal_3_aspect:require_reservation",
+        "definition": "Kr\u00e6v reservering"
+    },
+    {
+        "term": "board_tile.rail.turnout_slip:dual_motor",
+        "definition": "Dobbelt-motor/spole"
+    },
+    {
+        "term": "board_tile.turnout:position",
+        "definition": "Position"
+    },
+    {
+        "term": "board_tile:feedback_map",
+        "definition": "Tilbagemelding"
+    },
+    {
+        "term": "board_tile:output_map",
+        "definition": "Udgange"
+    },
+    {
+        "term": "booster:current",
+        "definition": "Str\u00f8mstyrke"
+    },
+    {
+        "term": "booster:input_voltage",
+        "definition": "Indgangssp\u00e6nding"
+    },
+    {
+        "term": "booster:load",
+        "definition": "Belastning"
+    },
+    {
+        "term": "booster:temperature",
+        "definition": "Temperatur"
+    },
+    {
+        "term": "booster:type",
+        "definition": "Type"
+    },
+    {
+        "term": "booster:voltage",
+        "definition": "Sp\u00e6nding"
+    },
+    {
+        "term": "booster_driver:poll_interval",
+        "definition": "Afstemningsfrekvens"
+    },
+    {
+        "term": "category:block",
+        "definition": "Afsnit"
+    },
+    {
+        "term": "category:cargo",
+        "definition": "Godslast"
+    },
+    {
+        "term": "category:colors",
+        "definition": "Farver"
+    },
+    {
+        "term": "category:colors_and_alignment",
+        "definition": "Farver && Justering"
+    },
+    {
+        "term": "category:debug",
+        "definition": "Fejlfinding"
+    },
+    {
+        "term": "category:developer",
+        "definition": "Udvikler"
+    },
+    {
+        "term": "category:features",
+        "definition": "Funktioner"
+    },
+    {
+        "term": "category:general",
+        "definition": "Generelt"
+    },
+    {
+        "term": "category:info",
+        "definition": "Info"
+    },
+    {
+        "term": "category:input",
+        "definition": "Indgange"
+    },
+    {
+        "term": "category:log",
+        "definition": "Logbog"
+    },
+    {
+        "term": "category:network",
+        "definition": "Netv\u00e6rk"
+    },
+    {
+        "term": "category:options",
+        "definition": "Indstillinger"
+    },
+    {
+        "term": "category:status",
+        "definition": "Tilstand"
+    },
+    {
+        "term": "category:trains",
+        "definition": "Tog"
+    },
+    {
+        "term": "cbus_interface_type:socket_can",
+        "definition": "SocketCAN (Kun Linux)"
+    },
+    {
+        "term": "cbus_node_list:manufacturer",
+        "definition": "Fabrikant"
+    },
+    {
+        "term": "cbus_node_list:mode",
+        "definition": "Tilstand"
+    },
+    {
+        "term": "cbus_node_list:module",
+        "definition": "Modul"
+    },
+    {
+        "term": "cbus_node_list:node_number",
+        "definition": "Enhedsnummer"
+    },
+    {
+        "term": "cbus_node_list:type",
+        "definition": "Type"
+    },
+    {
+        "term": "cbus_node_list:version",
+        "definition": "Version"
+    },
+    {
+        "term": "cbus_session_list:controlled_by",
+        "definition": "Styret af"
+    },
+    {
+        "term": "cbus_session_list:direction",
+        "definition": "Retning"
+    },
+    {
+        "term": "cbus_session_list:long",
+        "definition": "Lang"
+    },
+    {
+        "term": "cbus_session_list:session",
+        "definition": "Session"
+    },
+    {
+        "term": "cbus_session_list:speed",
+        "definition": "Hastighed"
+    },
+    {
+        "term": "cbus_settings:dcc_accessory_switch_time",
+        "definition": "DCC-tilbeh\u00f8r skiftetid"
+    },
+    {
+        "term": "cbus_settings:engine_keep_alive",
+        "definition": "Engine keep alive"
+    },
+    {
+        "term": "cbus_settings:hub_enabled",
+        "definition": "Hub t\u00e6ndt"
+    },
+    {
+        "term": "cbus_settings:hub_localhost_only",
+        "definition": "Hub p\u00e5 kun localhost"
+    },
+    {
+        "term": "cbus_settings:hub_port",
+        "definition": "Hubport"
+    },
+    {
+        "term": "cbus_settings:short_event_node_number",
+        "definition": "Enhedsnummer for korte h\u00e6ndelser"
+    },
+    {
+        "term": "class_id:board_tile.misc.label",
+        "definition": "M\u00e6rkat"
+    },
+    {
+        "term": "class_id:board_tile.misc.push_button",
+        "definition": "Trykknap"
+    },
+    {
+        "term": "class_id:board_tile.misc.switch",
+        "definition": "Omskifter"
+    },
+    {
+        "term": "class_id:board_tile.rail.block",
+        "definition": "Afsnit"
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_45_left",
+        "definition": "Bro 45\u00b0 (venstre)"
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_45_right",
+        "definition": "Bro 45\u00b0 (h\u00f8jre)"
+    },
+    {
+        "term": "class_id:board_tile.rail.bridge_90",
+        "definition": "Bro 90\u00b0"
+    },
+    {
+        "term": "class_id:board_tile.rail.buffer_stop",
+        "definition": "Sporstopper"
+    },
+    {
+        "term": "class_id:board_tile.rail.cross_45",
+        "definition": "Kryds 45\u00b0"
+    },
+    {
+        "term": "class_id:board_tile.rail.cross_90",
+        "definition": "Kryds 90\u00b0"
+    },
+    {
+        "term": "class_id:board_tile.rail.curve_45",
+        "definition": "Buet skinne 45\u00b0"
+    },
+    {
+        "term": "class_id:board_tile.rail.curve_90",
+        "definition": "Buet skinne 90\u00b0"
+    },
+    {
+        "term": "class_id:board_tile.rail.decoupler",
+        "definition": "Afkobler"
+    },
+    {
+        "term": "class_id:board_tile.rail.direction_control",
+        "definition": "Retningsstyring"
+    },
+    {
+        "term": "class_id:board_tile.rail.link",
+        "definition": "Forbindelse"
+    },
+    {
+        "term": "class_id:board_tile.rail.nx_button",
+        "definition": "NX-knap"
+    },
+    {
+        "term": "class_id:board_tile.rail.one_way",
+        "definition": "Ensrettet"
+    },
+    {
+        "term": "class_id:board_tile.rail.sensor",
+        "definition": "Sensor"
+    },
+    {
+        "term": "class_id:board_tile.rail.signal_2_aspect",
+        "definition": "Signal (2 stillinger)"
+    },
+    {
+        "term": "class_id:board_tile.rail.signal_3_aspect",
+        "definition": "Signal (3 stillinger)"
+    },
+    {
+        "term": "class_id:board_tile.rail.straight",
+        "definition": "Lige skinne"
+    },
+    {
+        "term": "class_id:board_tile.rail.tunnel",
+        "definition": "Tunnel"
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_3way",
+        "definition": "Trevejssporskifte"
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_doubleslip",
+        "definition": "Engl\u00e6nder"
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_left_45",
+        "definition": "Sporskifte venstre 45\u00b0"
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_left_90",
+        "definition": "Sporskifte venstre 90\u00b0"
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_left_curved",
+        "definition": "Sporskifte venstre buet"
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_right_45",
+        "definition": "Sporskifte h\u00f8jre 45\u00b0"
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_right_90",
+        "definition": "Sporskifte h\u00f8jre 90\u00b0"
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_right_curved",
+        "definition": "Sporskifte h\u00f8jre buet"
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_singleslip",
+        "definition": "Kryds"
+    },
+    {
+        "term": "class_id:board_tile.rail.turnout_wye",
+        "definition": "Y-sporskifte"
+    },
+    {
+        "term": "class_id:vehicle.rail.freight_wagon",
+        "definition": "Godsvogn"
+    },
+    {
+        "term": "class_id:vehicle.rail.locomotive",
+        "definition": "Lokomotiv"
+    },
+    {
+        "term": "class_id:vehicle.rail.multiple_unit",
+        "definition": "Togs\u00e6t"
+    },
+    {
+        "term": "class_id:vehicle.rail.tank_wagon",
+        "definition": "Tankvogn"
+    },
+    {
+        "term": "clock:day",
+        "definition": "Dag"
+    },
+    {
+        "term": "clock:debug_log",
+        "definition": "Fejlfindingslog"
+    },
+    {
+        "term": "clock:freeze",
+        "definition": "Frys"
+    },
+    {
+        "term": "clock:hour",
+        "definition": "Time"
+    },
+    {
+        "term": "clock:minute",
+        "definition": "Minut"
+    },
+    {
+        "term": "clock:month",
+        "definition": "M\u00e5ned"
+    },
+    {
+        "term": "clock:multiplier",
+        "definition": "Multiplikator"
+    },
+    {
+        "term": "clock:year",
+        "definition": "\u00c5r"
+    },
+    {
+        "term": "color:aqua",
+        "definition": "Turkis"
+    },
+    {
+        "term": "color:black",
+        "definition": "Sort"
+    },
+    {
+        "term": "color:blue",
+        "definition": "Bl\u00e5"
+    },
+    {
+        "term": "color:fuchsia",
+        "definition": "Pink"
+    },
+    {
+        "term": "color:gray",
+        "definition": "Gr\u00e5"
+    },
+    {
+        "term": "color:green",
+        "definition": "Gr\u00f8n"
+    },
+    {
+        "term": "color:lime",
+        "definition": "Lysgr\u00f8n"
+    },
+    {
+        "term": "color:maroon",
+        "definition": "Kastaniebrun"
+    },
+    {
+        "term": "color:navy",
+        "definition": "M\u00f8rkbl\u00e5"
+    },
+    {
+        "term": "color:none",
+        "definition": "Ingen"
+    },
+    {
+        "term": "color:olive",
+        "definition": "Olivengr\u00f8n"
+    },
+    {
+        "term": "color:purple",
+        "definition": "Lilla"
+    },
+    {
+        "term": "color:red",
+        "definition": "R\u00f8d"
+    },
+    {
+        "term": "color:silver",
+        "definition": "S\u00f8lv"
+    },
+    {
+        "term": "color:teal",
+        "definition": "Bl\u00e5gr\u00f8n"
+    },
+    {
+        "term": "color:white",
+        "definition": "Hvid"
+    },
+    {
+        "term": "color:yellow",
+        "definition": "Gul"
+    },
+    {
+        "term": "dccex_channel:dcc_accessory",
+        "definition": "DCC-tilbeh\u00f8r"
+    },
+    {
+        "term": "dccex_channel:output",
+        "definition": "Udgang"
+    },
+    {
+        "term": "dccex_channel:turnout",
+        "definition": "Sporskifte"
+    },
+    {
+        "term": "dccex_interface_type:network_tcp",
+        "definition": "Netv\u00e6rk (TCP)"
+    },
+    {
+        "term": "dccex_interface_type:serial",
+        "definition": "Seriel"
+    },
+    {
+        "term": "dccex_settings:startup_delay",
+        "definition": "Opstartsforsinkelse"
+    },
+    {
+        "term": "decoder:functions",
+        "definition": "Funktioner"
+    },
+    {
+        "term": "decoder:long_address",
+        "definition": "DCC lang adresse"
+    },
+    {
+        "term": "decoder:protocol",
+        "definition": "Protokol"
+    },
+    {
+        "term": "decoder_function:function",
+        "definition": "Funktion"
+    },
+    {
+        "term": "decoder_function:number",
+        "definition": "Nummer"
+    },
+    {
+        "term": "decoder_function:type",
+        "definition": "Type"
+    },
+    {
+        "term": "decoder_function_function:generic",
+        "definition": "Generisk"
+    },
+    {
+        "term": "decoder_function_function:light",
+        "definition": "Lys"
+    },
+    {
+        "term": "decoder_function_function:mute",
+        "definition": "Lydl\u00f8s"
+    },
+    {
+        "term": "decoder_function_function:smoke",
+        "definition": "R\u00f8g"
+    },
+    {
+        "term": "decoder_function_function:sound",
+        "definition": "Lyd"
+    },
+    {
+        "term": "decoder_function_type:always_off",
+        "definition": "Altid slukket"
+    },
+    {
+        "term": "decoder_function_type:always_on",
+        "definition": "Altid t\u00e6ndt"
+    },
+    {
+        "term": "decoder_function_type:hold",
+        "definition": "Tryk og hold"
+    },
+    {
+        "term": "decoder_function_type:momentary",
+        "definition": "Moment"
+    },
+    {
+        "term": "decoder_function_type:on_off",
+        "definition": "T\u00e6ndt/Slukket"
+    },
+    {
+        "term": "decoder_protocol:auto",
+        "definition": "Auto"
+    },
+    {
+        "term": "decoder_protocol:custom",
+        "definition": "Tilpasset"
+    },
+    {
+        "term": "decoder_protocol:dcc_long",
+        "definition": "DCC (Lang adresse)"
+    },
+    {
+        "term": "decoder_protocol:dcc_short",
+        "definition": "DCC (Kort adresse)"
+    },
+    {
+        "term": "decoder_protocol:motorola",
+        "definition": "Motorola"
+    },
+    {
+        "term": "decoder_protocol:selectrix",
+        "definition": "Selectrix"
+    },
+    {
+        "term": "decoupler_state:activated",
+        "definition": "Aktiveret"
+    },
+    {
+        "term": "decoupler_state:deactivated",
+        "definition": "Deaktiveret"
+    },
+    {
+        "term": "default_name:block",
+        "definition": "Blok"
+    },
+    {
+        "term": "default_name:board",
+        "definition": "Sporplan"
+    },
+    {
+        "term": "default_name:decoupler",
+        "definition": "Afkobler"
+    },
+    {
+        "term": "default_name:direction",
+        "definition": "Retning"
+    },
+    {
+        "term": "default_name:link",
+        "definition": "Forbindelse"
+    },
+    {
+        "term": "default_name:nx_button",
+        "definition": "NX-knap"
+    },
+    {
+        "term": "default_name:push_button",
+        "definition": "Trykknap"
+    },
+    {
+        "term": "default_name:script",
+        "definition": "Script"
+    },
+    {
+        "term": "default_name:sensor",
+        "definition": "Sensor"
+    },
+    {
+        "term": "default_name:signal",
+        "definition": "Signal"
+    },
+    {
+        "term": "default_name:switch",
+        "definition": "Omskifter"
+    },
+    {
+        "term": "default_name:train",
+        "definition": "Tog"
+    },
+    {
+        "term": "default_name:turnout",
+        "definition": "Sporskifte"
+    },
+    {
+        "term": "default_name:vehicle",
+        "definition": "Fart\u00f8j"
+    },
+    {
+        "term": "default_name:zone",
+        "definition": "Zone"
+    },
+    {
+        "term": "direction:forward",
+        "definition": "Fremad"
+    },
+    {
+        "term": "direction:reverse",
+        "definition": "Bagud"
+    },
+    {
+        "term": "ecos_channel:ecos_detector",
+        "definition": "ECoS Detector"
+    },
+    {
+        "term": "ext_output_change_action:do_nothing",
+        "definition": "G\u00f8r ingenting"
+    },
+    {
+        "term": "ext_output_change_action:estop_train",
+        "definition": "N\u00f8dstop af tog i afsnit"
+    },
+    {
+        "term": "ext_output_change_action:estop_world",
+        "definition": "N\u00f8dstop"
+    },
+    {
+        "term": "ext_output_change_action:poweroff_world",
+        "definition": "Sluk"
+    },
+    {
+        "term": "feedback_map.turnout:key",
+        "definition": "Position"
+    },
+    {
+        "term": "function:off",
+        "definition": "Sluk"
+    },
+    {
+        "term": "function:on",
+        "definition": "T\u00e6nd"
+    },
+    {
+        "term": "hardware:address",
+        "definition": "Adresse"
+    },
+    {
+        "term": "hardware:addresses",
+        "definition": "Adresser"
+    },
+    {
+        "term": "hardware:boosters",
+        "definition": "Boostere"
+    },
+    {
+        "term": "hardware:channel",
+        "definition": "Kanal"
+    },
+    {
+        "term": "hardware:command_station",
+        "definition": "Central"
+    },
+    {
+        "term": "hardware:debug_log_input",
+        "definition": "Log indgangs\u00e6ndringer"
+    },
+    {
+        "term": "hardware:debug_log_output",
+        "definition": "Log udgangs\u00e6ndringer"
+    },
+    {
+        "term": "hardware:debug_log_rx_tx",
+        "definition": "Log al kommunikation"
+    },
+    {
+        "term": "hardware:decoders",
+        "definition": "Dekodere"
+    },
+    {
+        "term": "hardware:event",
+        "definition": "H\u00e6ndelse"
+    },
+    {
+        "term": "hardware:events",
+        "definition": "H\u00e6ndelser"
+    },
+    {
+        "term": "hardware:identifications",
+        "definition": "Identifikationer"
+    },
+    {
+        "term": "hardware:input_monitor",
+        "definition": "Indgangsoverv\u00e5gning"
+    },
+    {
+        "term": "hardware:inputs",
+        "definition": "Indgange"
+    },
+    {
+        "term": "hardware:interface",
+        "definition": "Snitflade"
+    },
+    {
+        "term": "hardware:node",
+        "definition": "Enhed"
+    },
+    {
+        "term": "hardware:output_keyboard",
+        "definition": "Udgangstastatur"
+    },
+    {
+        "term": "hardware:outputs",
+        "definition": "Udgange"
+    },
+    {
+        "term": "hardware:speed_steps",
+        "definition": "Hastighedstrin"
+    },
+    {
+        "term": "hardware:throttles",
+        "definition": "K\u00f8rekontroller"
+    },
+    {
+        "term": "identification:opc_multi_sense_direction",
+        "definition": "OPC_MULTI_SENSE Retning"
+    },
+    {
+        "term": "input:off_delay",
+        "definition": "Stop forsinkelse"
+    },
+    {
+        "term": "input:on_delay",
+        "definition": "Start forsinkelse"
+    },
+    {
+        "term": "input_channel:long_event",
+        "definition": "Lang h\u00e6ndelse"
+    },
+    {
+        "term": "input_channel:s88_left",
+        "definition": "S88 venstre"
+    },
+    {
+        "term": "input_channel:s88_middle",
+        "definition": "S88 midte"
+    },
+    {
+        "term": "input_channel:s88_right",
+        "definition": "S88 h\u00f8jre"
+    },
+    {
+        "term": "input_channel:short_event",
+        "definition": "Kort h\u00e6ndelse"
+    },
+    {
+        "term": "input_condition:dont_care",
+        "definition": "Ligegyldigt"
+    },
+    {
+        "term": "input_condition:off",
+        "definition": "Slukket"
+    },
+    {
+        "term": "input_condition:on",
+        "definition": "T\u00e6ndt"
+    },
+    {
+        "term": "input_list:bus",
+        "definition": "Bus"
+    },
+    {
+        "term": "input_map_item.block:identification",
+        "definition": "Identifikation"
+    },
+    {
+        "term": "input_map_item.block:input",
+        "definition": "Indgang"
+    },
+    {
+        "term": "input_map_item.block:invert",
+        "definition": "Spejlvende"
+    },
+    {
+        "term": "input_map_item.block:type",
+        "definition": "Type"
+    },
+    {
+        "term": "interface.cbus:cbus_node_list",
+        "definition": "Enheder"
+    },
+    {
+        "term": "interface.cbus:cbus_session_list",
+        "definition": "Sessioner"
+    },
+    {
+        "term": "interface.ecos:ecos_detector",
+        "definition": "ECoS Detector"
+    },
+    {
+        "term": "interface.hsi88:modules_left",
+        "definition": "Venstre moduler"
+    },
+    {
+        "term": "interface.hsi88:modules_middle",
+        "definition": "Midter moduler"
+    },
+    {
+        "term": "interface.hsi88:modules_right",
+        "definition": "H\u00f8jre moduler"
+    },
+    {
+        "term": "interface.loconet:interface",
+        "definition": "Snitflade"
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_locomotive_list",
+        "definition": "M\u00e4rklin CAN: Lokomotivliste"
+    },
+    {
+        "term": "interface.marklin_can:marklin_can_node_list",
+        "definition": "M\u00e4rklin CAN: Enhedsliste"
+    },
+    {
+        "term": "interface.xpressnet:interface",
+        "definition": "Snitflade"
+    },
+    {
+        "term": "interface.xpressnet:s88_module_count",
+        "definition": "S88 modulantal"
+    },
+    {
+        "term": "interface.xpressnet:s88_start_address",
+        "definition": "S88 startadresse"
+    },
+    {
+        "term": "interface.z21:firmware_version",
+        "definition": "Firmwareversion"
+    },
+    {
+        "term": "interface.z21:hardware_type",
+        "definition": "Hardwaretype"
+    },
+    {
+        "term": "interface.z21:serial_number",
+        "definition": "Serienummer"
+    },
+    {
+        "term": "interface:online",
+        "definition": "Snitflade tilg\u00e6ngelig"
+    },
+    {
+        "term": "interface:status",
+        "definition": "Status"
+    },
+    {
+        "term": "interface:type",
+        "definition": "Type"
+    },
+    {
+        "term": "interface_list:create",
+        "definition": "Lav ny snitflade."
+    },
+    {
+        "term": "interface_list:list_is_empty",
+        "definition": "Snitfladelisten er tom.\nKlik p\u00e5 plus-knappen for at lave en ny snitflade."
+    },
+    {
+        "term": "interface_state:error",
+        "definition": "Fejl"
+    },
+    {
+        "term": "interface_state:initializing",
+        "definition": "Initialiserer"
+    },
+    {
+        "term": "interface_state:offline",
+        "definition": "Slukket"
+    },
+    {
+        "term": "interface_state:online",
+        "definition": "T\u00e6ndt"
+    },
+    {
+        "term": "ip:hostname",
+        "definition": "V\u00e6rtsnavn"
+    },
+    {
+        "term": "ip:port",
+        "definition": "Port"
+    },
+    {
+        "term": "language:da-dk",
+        "definition": "Dansk"
+    },
+    {
+        "term": "language:de-de",
+        "definition": "Tysk"
+    },
+    {
+        "term": "language:en-us",
+        "definition": "Engelsk (USA)"
+    },
+    {
+        "term": "language:es-es",
+        "definition": "Spansk"
+    },
+    {
+        "term": "language:fr-fr",
+        "definition": "Fransk"
+    },
+    {
+        "term": "language:fy-nl",
+        "definition": "Frisisk"
+    },
+    {
+        "term": "language:it-it",
+        "definition": "Italiensk"
+    },
+    {
+        "term": "language:nl-nl",
+        "definition": "Hollandsk"
+    },
+    {
+        "term": "language:pl-pl",
+        "definition": "Polsk"
+    },
+    {
+        "term": "language:sv-se",
+        "definition": "Svensk"
+    },
+    {
+        "term": "list.train_vehicle:move",
+        "definition": "Flytning"
+    },
+    {
+        "term": "list.train_vehicle:reverse",
+        "definition": "Bakke"
+    },
+    {
+        "term": "list.zone:highlight_zone",
+        "definition": "Fremh\u00e6v zone"
+    },
+    {
+        "term": "list:add",
+        "definition": "Tilf\u00f8j"
+    },
+    {
+        "term": "list:create",
+        "definition": "Ny liste"
+    },
+    {
+        "term": "list:delete",
+        "definition": "Slet liste"
+    },
+    {
+        "term": "list:edit",
+        "definition": "Ret liste"
+    },
+    {
+        "term": "list:move_down",
+        "definition": "Flyt ned"
+    },
+    {
+        "term": "list:move_up",
+        "definition": "Flyt op"
+    },
+    {
+        "term": "list:remove",
+        "definition": "Fjern"
+    },
+    {
+        "term": "list:setup_using_wizard",
+        "definition": "Ops\u00e6tningsassistent"
+    },
+    {
+        "term": "lncv_programmer:description",
+        "definition": "Beskrivelse"
+    },
+    {
+        "term": "lncv_programmer:lncv_programmer",
+        "definition": "LNCV programmering"
+    },
+    {
+        "term": "lncv_programmer:module",
+        "definition": "Modul"
+    },
+    {
+        "term": "lncv_programmer:other_module",
+        "definition": "Andet modul"
+    },
+    {
+        "term": "lncv_programmer:read",
+        "definition": "L\u00e6s"
+    },
+    {
+        "term": "lncv_programmer:reading_lncv_x",
+        "definition": "L\u00e6ser LNCV %1"
+    },
+    {
+        "term": "lncv_programmer:reading_lncv_x_failed",
+        "definition": "L\u00e6sning af LNCV %1 fejlede"
+    },
+    {
+        "term": "lncv_programmer:sending_start",
+        "definition": "Starter"
+    },
+    {
+        "term": "lncv_programmer:start",
+        "definition": "Start"
+    },
+    {
+        "term": "lncv_programmer:stop",
+        "definition": "Stop"
+    },
+    {
+        "term": "lncv_programmer:use_broadcast_address",
+        "definition": "Brug broadcastadresse"
+    },
+    {
+        "term": "lncv_programmer:value",
+        "definition": "V\u00e6rdi"
+    },
+    {
+        "term": "lncv_programmer:waiting_for_module_to_respond",
+        "definition": "Venter p\u00e5 at modulet svarer"
+    },
+    {
+        "term": "lncv_programmer:write",
+        "definition": "Skriv"
+    },
+    {
+        "term": "lncv_programmer:writing_lncv_x",
+        "definition": "Skriver LNCV %1"
+    },
+    {
+        "term": "loconet_command_station:custom",
+        "definition": "Tilpasset"
+    },
+    {
+        "term": "loconet_f9_f28:imm_packet",
+        "definition": "Direkte (OPC_IMM_PACKET)"
+    },
+    {
+        "term": "loconet_f9_f28:uhlenbrock_extended",
+        "definition": "Uhlenbrock udvidet (OPC_A3, OPC_D4)"
+    },
+    {
+        "term": "loconet_fastclock:master",
+        "definition": "Master (Traintastic styrer uret)"
+    },
+    {
+        "term": "loconet_fastclock:off",
+        "definition": "Slukket"
+    },
+    {
+        "term": "loconet_interface_type:serial",
+        "definition": "Seriel"
+    },
+    {
+        "term": "loconet_interface_type:tcp_binary",
+        "definition": "TCP bin\u00e6r"
+    },
+    {
+        "term": "loconet_serial_interface:custom",
+        "definition": "Tilpasset"
+    },
+    {
+        "term": "loconet_settings:command_station",
+        "definition": "Central"
+    },
+    {
+        "term": "loconet_settings:echo_timeout",
+        "definition": "Echo Svartid udl\u00f8bet"
+    },
+    {
+        "term": "loconet_settings:fast_clock",
+        "definition": "Modeltid"
+    },
+    {
+        "term": "loconet_settings:fast_clock_sync_enabled",
+        "definition": "Synk af modeltid startet"
+    },
+    {
+        "term": "loconet_settings:fast_clock_sync_interval",
+        "definition": "Synkinterval for modeltid"
+    },
+    {
+        "term": "loconet_settings:listen_only",
+        "definition": "Lyt kun"
+    },
+    {
+        "term": "loconet_settings:locomotive_slots",
+        "definition": "Lomotivpladser"
+    },
+    {
+        "term": "loconet_settings:pcap_output",
+        "definition": "PCAP udgang"
+    },
+    {
+        "term": "loconet_settings:response_timeout",
+        "definition": "Svartid udl\u00f8bet"
+    },
+    {
+        "term": "lua.script:clear_persistent_variables",
+        "definition": "Ryd blivende variabler"
+    },
+    {
+        "term": "lua.script:disabled",
+        "definition": "Slukket"
+    },
+    {
+        "term": "lua.script:start",
+        "definition": "Start"
+    },
+    {
+        "term": "lua.script:stop",
+        "definition": "Stop"
+    },
+    {
+        "term": "lua.script_list:start_all",
+        "definition": "Start alle"
+    },
+    {
+        "term": "lua.script_list:stop_all",
+        "definition": "Stop alle"
+    },
+    {
+        "term": "lua_script:state",
+        "definition": "Tilstand"
+    },
+    {
+        "term": "lua_script_state:disabled",
+        "definition": "Slukket"
+    },
+    {
+        "term": "lua_script_state:error",
+        "definition": "Fejl"
+    },
+    {
+        "term": "lua_script_state:running",
+        "definition": "K\u00f8rende"
+    },
+    {
+        "term": "lua_script_state:stopped",
+        "definition": "Stoppet"
+    },
+    {
+        "term": "luadoc:index:nav",
+        "definition": "Index"
+    },
+    {
+        "term": "luadoc:index:title",
+        "definition": "Traintastic Lua scripting"
+    },
+    {
+        "term": "marklin_can_interface_type:network_tcp",
+        "definition": "Netv\u00e6rk (TCP)"
+    },
+    {
+        "term": "marklin_can_interface_type:network_udp",
+        "definition": "Netv\u00e6rk (UDP)"
+    },
+    {
+        "term": "marklin_can_interface_type:socket_can",
+        "definition": "SocketCAN (Kun Linux)"
+    },
+    {
+        "term": "marklin_can_locomotive_list:import_or_sync",
+        "definition": "Import/Synkroniser"
+    },
+    {
+        "term": "marklin_can_locomotive_list:import_or_sync_all",
+        "definition": "Import/Synkronisere alt"
+    },
+    {
+        "term": "marklin_can_locomotive_list:reload",
+        "definition": "Genindl\u00e6s"
+    },
+    {
+        "term": "marklincan_settings:debug_config_stream",
+        "definition": "Debug: Config stream"
+    },
+    {
+        "term": "marklincan_settings:debug_status_data_config",
+        "definition": "Debug: Status data config"
+    },
+    {
+        "term": "marklincan_settings:default_switch_time",
+        "definition": "Skiftetid"
+    },
+    {
+        "term": "marklincan_settings:node_serial_number",
+        "definition": "Enhedsserienummer"
+    },
+    {
+        "term": "marklincan_settings:node_uid",
+        "definition": "Enheds UID"
+    },
+    {
+        "term": "message:C1001",
+        "definition": "Indl\u00e6sning af anl\u00e6gget fejlede (%1)"
+    },
+    {
+        "term": "message:C1002",
+        "definition": "Oprettelse af forbindelse fejlede (%1)"
+    },
+    {
+        "term": "message:C1003",
+        "definition": "Ikke muligt at skrive til indstillingsfilen (%1)"
+    },
+    {
+        "term": "message:C1004",
+        "definition": "Fejl i indl\u00e6sning af anl\u00e6g  (%1) (%2)"
+    },
+    {
+        "term": "message:C1005",
+        "definition": "Kunne ikke gemme anl\u00e6gget (%1)"
+    },
+    {
+        "term": "message:C1006",
+        "definition": "Sikkerhedskopiering af anl\u00e6gget fejlede (%1)"
+    },
+    {
+        "term": "message:C1007",
+        "definition": "Oprettelse af bibliotek til sikkerhedskopi af anl\u00e6gget fejlede (%1)"
+    },
+    {
+        "term": "message:C1008",
+        "definition": "Oprettelse af bibliotek til sikkerhedskopi fejlede (%1)"
+    },
+    {
+        "term": "message:C1009",
+        "definition": "Backup af indstillinger fejlede (%1)"
+    },
+    {
+        "term": "message:C1010",
+        "definition": "Eksport af anl\u00e6gget fejlede (%1)"
+    },
+    {
+        "term": "message:C1011",
+        "definition": "Import af anl\u00e6gget fejlede (%1)"
+    },
+    {
+        "term": "message:C1012",
+        "definition": "Ukendt klasse '%1', kan ikke genskabe objekt '%2'"
+    },
+    {
+        "term": "message:C1013",
+        "definition": "Kan ikke indl\u00e6se anl\u00e6g gemt med nyere versioner, det kr\u00e6ver minimum: %1"
+    },
+    {
+        "term": "message:C1014",
+        "definition": "Ugyldig kommando"
+    },
+    {
+        "term": "message:C1015",
+        "definition": "Ukendt objekt"
+    },
+    {
+        "term": "message:C1016",
+        "definition": "Ukendt egenskab"
+    },
+    {
+        "term": "message:C1017",
+        "definition": "Ugyldige index"
+    },
+    {
+        "term": "message:C1018",
+        "definition": "Undtagelse: %1"
+    },
+    {
+        "term": "message:C1019",
+        "definition": "Objekt er ikke en tabel"
+    },
+    {
+        "term": "message:C1020",
+        "definition": "Indl\u00e6sning af indstillinger fejlede: %1"
+    },
+    {
+        "term": "message:C2001",
+        "definition": "Adresse er allerede i brug ved #%1"
+    },
+    {
+        "term": "message:C2004",
+        "definition": "Ingen ledige pladser"
+    },
+    {
+        "term": "message:C2005",
+        "definition": "SocketCAN er kun tilg\u00e6ngeligt p\u00e5 Linux"
+    },
+    {
+        "term": "message:D1001",
+        "definition": "Genoptag %1 (Multiplikator: %2)"
+    },
+    {
+        "term": "message:D1002",
+        "definition": "Tick %1 (fejl: %2us)"
+    },
+    {
+        "term": "message:D1003",
+        "definition": "Frys %1"
+    },
+    {
+        "term": "message:D2001",
+        "definition": "TX: %1"
+    },
+    {
+        "term": "message:D2002",
+        "definition": "RX: %1"
+    },
+    {
+        "term": "message:D2003",
+        "definition": "Ukendt xHeader 0x%1"
+    },
+    {
+        "term": "message:D2004",
+        "definition": "%1 TX: %2"
+    },
+    {
+        "term": "message:D2005",
+        "definition": "%1 RX: %2"
+    },
+    {
+        "term": "message:D2006",
+        "definition": "Ukendt besked: %1"
+    },
+    {
+        "term": "message:D2007",
+        "definition": "Indgang  %1 = %2"
+    },
+    {
+        "term": "message:D2008",
+        "definition": "Udgang %1 = %1"
+    },
+    {
+        "term": "message:D2009",
+        "definition": "Plads %1 = %2"
+    },
+    {
+        "term": "message:D2010",
+        "definition": "Plads %1 = Ledig"
+    },
+    {
+        "term": "message:D3001",
+        "definition": "Erhvervelse af tog %1 fejlede: %2"
+    },
+    {
+        "term": "message:D3010",
+        "definition": "Tog '%1' tilknyttet til afsnit '%2'"
+    },
+    {
+        "term": "message:D3011",
+        "definition": "Tog '%1' reserverede afsnit '%2'"
+    },
+    {
+        "term": "message:D3012",
+        "definition": "Tog '%1' ankom i afsnit '%2'"
+    },
+    {
+        "term": "message:D3013",
+        "definition": "Tog '%1' forlod afsnit '%2'"
+    },
+    {
+        "term": "message:D3014",
+        "definition": "Tog '%1' fjernet fra afsnit '%2'"
+    },
+    {
+        "term": "message:D3020",
+        "definition": "Tog '%1' tildelt til zone '%2'"
+    },
+    {
+        "term": "message:D3021",
+        "definition": "Tog '%1' ankommer i zone '%2'"
+    },
+    {
+        "term": "message:D3022",
+        "definition": "Tog '%1' ankom i zone '%2'"
+    },
+    {
+        "term": "message:D3023",
+        "definition": "Tog '%1' forlader zone '%2'"
+    },
+    {
+        "term": "message:D3024",
+        "definition": "Tog '%1' forlod zone '%2'"
+    },
+    {
+        "term": "message:D3025",
+        "definition": "Tog '%1' fjernet fra zone '%2'"
+    },
+    {
+        "term": "message:E1001",
+        "definition": "Ugyldigt anl\u00e6gs-UUID: %1"
+    },
+    {
+        "term": "message:E1002",
+        "definition": "Anl\u00e6gget %1 eksisterer ikke"
+    },
+    {
+        "term": "message:E1003",
+        "definition": "UDP modtagelsesfejl (%1)"
+    },
+    {
+        "term": "message:E1004",
+        "definition": "TCP Acceptfejl (%1)"
+    },
+    {
+        "term": "message:E1005",
+        "definition": "Socket nedlukning fejlede (%1)"
+    },
+    {
+        "term": "message:E1006",
+        "definition": "Socket skrivefejl (%1)"
+    },
+    {
+        "term": "message:E1007",
+        "definition": "Socket l\u00e6sefejl (%1)"
+    },
+    {
+        "term": "message:E1008",
+        "definition": "Socket acceptor cancel fejlede (%1)"
+    },
+    {
+        "term": "message:E2001",
+        "definition": "Seriel skrivning fejlede (%1)"
+    },
+    {
+        "term": "message:E2002",
+        "definition": "Seriel l\u00e6sning fejlede (%1)"
+    },
+    {
+        "term": "message:E2003",
+        "definition": ""
+    },
+    {
+        "term": "message:E2004",
+        "definition": "Socket \u00e5bning fejlede (%1)"
+    },
+    {
+        "term": "message:E2005",
+        "definition": "Socket-forbindelse fejlede (%1)"
+    },
+    {
+        "term": "message:E2006",
+        "definition": "Socket bindingsfejl (%1)"
+    },
+    {
+        "term": "message:E2007",
+        "definition": "Socket skrivefejl (%1)"
+    },
+    {
+        "term": "message:E2008",
+        "definition": "Socket l\u00e6sefejl (%1)"
+    },
+    {
+        "term": "message:E2009",
+        "definition": "Socket modtagelsesfejl (%1)"
+    },
+    {
+        "term": "message:E2010",
+        "definition": "\u00c5bning af serielport fejlede (%1)"
+    },
+    {
+        "term": "message:E2011",
+        "definition": "Socket afsendingsfejl (%1)"
+    },
+    {
+        "term": "message:E2012",
+        "definition": "Funktionsnummer allerede i brug"
+    },
+    {
+        "term": "message:E2013",
+        "definition": "Serielport baudratefejl (%1)"
+    },
+    {
+        "term": "message:E2014",
+        "definition": "Serielport databitsfejl (%1)"
+    },
+    {
+        "term": "message:E2015",
+        "definition": "Serielport stopbitsfejl (%1)"
+    },
+    {
+        "term": "message:E2016",
+        "definition": "Serielport paritetsfejl (%1)"
+    },
+    {
+        "term": "message:E2017",
+        "definition": "Serielport flow control-fejl (%1)"
+    },
+    {
+        "term": "message:E2018",
+        "definition": "Timeout, intet ekko indenfor %1ms"
+    },
+    {
+        "term": "message:E2019",
+        "definition": "Timeout, intet svar indenfor %1ms"
+    },
+    {
+        "term": "message:E2020",
+        "definition": "Totalt antal moduler m\u00e5 ikke overskride %1"
+    },
+    {
+        "term": "message:E2021",
+        "definition": "Start af PCAP-log fejlede: %1"
+    },
+    {
+        "term": "message:E2022",
+        "definition": "Socket oprettelsesfejl (%1)"
+    },
+    {
+        "term": "message:E2023",
+        "definition": "Socket ioctl-fejl (%1)"
+    },
+    {
+        "term": "message:E2024",
+        "definition": "Ukendt lokomotiv MFX UID: %1"
+    },
+    {
+        "term": "message:E2025",
+        "definition": "Fejl i afl\u00e6sning af booster '%1's softwareversion: %2"
+    },
+    {
+        "term": "message:E2026",
+        "definition": "Fejl i afl\u00e6sning af booster '%1's temperatur: %2"
+    },
+    {
+        "term": "message:E2027",
+        "definition": "Fejl i afl\u00e6sning af booster %1's belastning: %2"
+    },
+    {
+        "term": "message:E2028",
+        "definition": "Socket setsockopt-fejl (%1)"
+    },
+    {
+        "term": "message:E2029",
+        "definition": "Fejl i TCP accept (%1)"
+    },
+    {
+        "term": "message:E2030",
+        "definition": "TCP socket lyttefejl (%1)"
+    },
+    {
+        "term": "message:E3001",
+        "definition": "Kan ikke slette skinnefart\u00f8j n\u00e5r det er del af et aktivt tog"
+    },
+    {
+        "term": "message:E3002",
+        "definition": "Kan ikke slette aktivt tog"
+    },
+    {
+        "term": "message:E3003",
+        "definition": "Toget blev stoppet fordi sporskifte %1 position blev \u00e6ndret udefra"
+    },
+    {
+        "term": "message:E3004",
+        "definition": "Toget blev stoppet fordi signal %1 position blev \u00e6ndret udefra"
+    },
+    {
+        "term": "message:E3005",
+        "definition": "Kan ikke fjerne toget, det skal stoppes f\u00f8rst."
+    },
+    {
+        "term": "message:E3006",
+        "definition": "Kan ikke fjerne toget, det kan kun fjernes fra f\u00f8rste eller sidste afsnit."
+    },
+    {
+        "term": "message:E3007",
+        "definition": "N\u00f8dstop p\u00e5 anl\u00e6get blev aktiveret fordi sporskifte %1 position blev \u00e6ndret udefra"
+    },
+    {
+        "term": "message:E3008",
+        "definition": "N\u00f8dstop blev aktiveret fordi signal %1s stilling blev \u00e6ndret udefra"
+    },
+    {
+        "term": "message:E3009",
+        "definition": "N\u00f8dstop blev aktiveret fordi sporskiftet %1s stilling blev \u00e6ndret udefra"
+    },
+    {
+        "term": "message:E3010",
+        "definition": "N\u00f8dstop blev aktiveret fordi signal %1s stilling blev \u00e6ndret udefra"
+    },
+    {
+        "term": "message:E3011",
+        "definition": "Tilbagemeldingskonflikt: Flere valide muligheder"
+    },
+    {
+        "term": "message:E9001",
+        "definition": "%1 (Under k\u00f8rsel af %2 h\u00e6ndelsen)"
+    },
+    {
+        "term": "message:F1001",
+        "definition": "TCP socket \u00e5bningsfejl (%1)"
+    },
+    {
+        "term": "message:F1002",
+        "definition": "TCP socket adressegenbrug fejlede (%1)"
+    },
+    {
+        "term": "message:F1003",
+        "definition": "TCP socket bindingsfejl (%1)"
+    },
+    {
+        "term": "message:F1004",
+        "definition": "TCP socket lyttefejl (%1)"
+    },
+    {
+        "term": "message:F1005",
+        "definition": "UDP socket \u00e5bningsfejl (%1)"
+    },
+    {
+        "term": "message:F1006",
+        "definition": "UDP socket adressegenbrug fejlede (%1)"
+    },
+    {
+        "term": "message:F1007",
+        "definition": "UDP socket bindingsfejl (%1)"
+    },
+    {
+        "term": "message:F1008",
+        "definition": "H\u00e6ndelsescyklus br\u00f8d sammen (%1)"
+    },
+    {
+        "term": "message:F9001",
+        "definition": "Lua-tilstand fejlede"
+    },
+    {
+        "term": "message:F9002",
+        "definition": "Scriptk\u00f8rsel fejlede (%1)"
+    },
+    {
+        "term": "message:F9003",
+        "definition": "Funktionskald fejlede (%1)"
+    },
+    {
+        "term": "message:I1002",
+        "definition": "Indstillingsfil ikke fundet, anvender standardv\u00e6rdier"
+    },
+    {
+        "term": "message:I1003",
+        "definition": "Ny forbindelse"
+    },
+    {
+        "term": "message:I1004",
+        "definition": "Forbindelse tabt"
+    },
+    {
+        "term": "message:I1005",
+        "definition": "Opbygger anl\u00e6ggets indeks"
+    },
+    {
+        "term": "message:I2001",
+        "definition": "Ukendt lokomotivadresse: %1"
+    },
+    {
+        "term": "message:I2002",
+        "definition": "Hardwaretype: %1"
+    },
+    {
+        "term": "message:I2003",
+        "definition": "Firmwareversion: %1"
+    },
+    {
+        "term": "message:I2006",
+        "definition": "Booster '%1' softwareversion: %2"
+    },
+    {
+        "term": "message:I2007",
+        "definition": "Ny hub forbindelse (%1:%2)"
+    },
+    {
+        "term": "message:I3001",
+        "definition": "H\u00e5ndkontrol %1 overtog tog %2"
+    },
+    {
+        "term": "message:I3002",
+        "definition": "H\u00e5ndkontrol %1 frigav tog %2"
+    },
+    {
+        "term": "message:I9001",
+        "definition": "Script stoppet"
+    },
+    {
+        "term": "message:I9003",
+        "definition": "Blivende variabler ryddet"
+    },
+    {
+        "term": "message:N1001",
+        "definition": "Signal modtaget: %1"
+    },
+    {
+        "term": "message:N1002",
+        "definition": "Nyt anl\u00e6g oprettet"
+    },
+    {
+        "term": "message:N1003",
+        "definition": "Genstarter"
+    },
+    {
+        "term": "message:N1004",
+        "definition": "Lukker ned"
+    },
+    {
+        "term": "message:N1005",
+        "definition": "Synlig"
+    },
+    {
+        "term": "message:N1006",
+        "definition": "Usynlig"
+    },
+    {
+        "term": "message:N1007",
+        "definition": "Lytter p\u00e5 %1:%2"
+    },
+    {
+        "term": "message:N1008",
+        "definition": "Indstillinger indl\u00e6st"
+    },
+    {
+        "term": "message:N1009",
+        "definition": "Indstillinger gemt"
+    },
+    {
+        "term": "message:N1010",
+        "definition": "Redigeringstilstand: T\u00e6ndt"
+    },
+    {
+        "term": "message:N1011",
+        "definition": "Redigeringstilstand: Slukket"
+    },
+    {
+        "term": "message:N1012",
+        "definition": "Kommunikation: T\u00e6ndt"
+    },
+    {
+        "term": "message:N1013",
+        "definition": "Kommunikation: Slukket"
+    },
+    {
+        "term": "message:N1014",
+        "definition": "Str\u00f8m: T\u00e6ndt"
+    },
+    {
+        "term": "message:N1015",
+        "definition": "Str\u00f8m: Slukket"
+    },
+    {
+        "term": "message:N1016",
+        "definition": "K\u00f8rende"
+    },
+    {
+        "term": "message:N1017",
+        "definition": "Stoppet"
+    },
+    {
+        "term": "message:N1018",
+        "definition": "Lydl\u00f8s: T\u00e6ndt"
+    },
+    {
+        "term": "message:N1019",
+        "definition": "Lydl\u00f8s: Slukket"
+    },
+    {
+        "term": "message:N1020",
+        "definition": "R\u00f8g: T\u00e6ndt"
+    },
+    {
+        "term": "message:N1021",
+        "definition": "R\u00f8g: Slukket"
+    },
+    {
+        "term": "message:N1022",
+        "definition": "Anl\u00e6g gemt: %1"
+    },
+    {
+        "term": "message:N1023",
+        "definition": "Simulering: Deaktiveret"
+    },
+    {
+        "term": "message:N1024",
+        "definition": "Simulering: Aktiveret"
+    },
+    {
+        "term": "message:N1025",
+        "definition": "Anl\u00e6g eksporteret"
+    },
+    {
+        "term": "message:N1026",
+        "definition": "Anl\u00e6g importeret"
+    },
+    {
+        "term": "message:N1027",
+        "definition": "Anl\u00e6g indl\u00e6st: %1"
+    },
+    {
+        "term": "message:N1028",
+        "definition": "Anl\u00e6g lukket"
+    },
+    {
+        "term": "message:N2001",
+        "definition": "Simulering ikke underst\u00f8ttet"
+    },
+    {
+        "term": "message:N2002",
+        "definition": "Intet svar fra LNCV modul %1 med adresse %2"
+    },
+    {
+        "term": "message:N2003",
+        "definition": "Synk af modeltid stoppet"
+    },
+    {
+        "term": "message:N2004",
+        "definition": "Starter PCAP fillog: %1"
+    },
+    {
+        "term": "message:N2005",
+        "definition": "Starter PCAP log: %1"
+    },
+    {
+        "term": "message:N2006",
+        "definition": "Lyttetilstand: Aktiveret"
+    },
+    {
+        "term": "message:N2007",
+        "definition": "Lyttetilstand: Deaktiveret"
+    },
+    {
+        "term": "message:N2008",
+        "definition": "Hub lytter p\u00e5 %1:%2"
+    },
+    {
+        "term": "message:N3001",
+        "definition": "Tildelt tog %1 til afsnit %2"
+    },
+    {
+        "term": "message:N3002",
+        "definition": "Fjernet tog %1 fra afsnit %2"
+    },
+    {
+        "term": "message:N3003",
+        "definition": "Sporskifte blev nulstillet til forudbestemt valg"
+    },
+    {
+        "term": "message:N3004",
+        "definition": "Signalbillede blev nulstillet til forudbestemt valg"
+    },
+    {
+        "term": "message:N3005",
+        "definition": "H\u00e5ndkontrol %1 stjal tog %2"
+    },
+    {
+        "term": "message:N3006",
+        "definition": "H\u00e5ndkontrol %1 frigav tog %2 uden at stoppe det"
+    },
+    {
+        "term": "message:N9001",
+        "definition": "Starter script"
+    },
+    {
+        "term": "message:W1001",
+        "definition": "Synlighed deaktiveret, kun tilladt p\u00e5 port %1"
+    },
+    {
+        "term": "message:W1002",
+        "definition": "Indstilling %1 eksisterer ikke"
+    },
+    {
+        "term": "message:W1003",
+        "definition": "Indl\u00e6sning af anl\u00e6g %1 fejlede (libarchive-fejl %2: %3)"
+    },
+    {
+        "term": "message:W1004",
+        "definition": "Indstillingsfil tom eller \u00f8delagt, anvender standardv\u00e6rdierne"
+    },
+    {
+        "term": "message:W2001",
+        "definition": ""
+    },
+    {
+        "term": "message:W2002",
+        "definition": "Centralen underst\u00f8tter ikke funktioner over F%1"
+    },
+    {
+        "term": "message:W2003",
+        "definition": ""
+    },
+    {
+        "term": "message:W2004",
+        "definition": "Indgangsadresse %1 er ugyldig"
+    },
+    {
+        "term": "message:W2005",
+        "definition": "Udgangsadresse %1 er ugyldig"
+    },
+    {
+        "term": "message:W2006",
+        "definition": "Centralen underst\u00f8tter ikke lokomotivplads %1"
+    },
+    {
+        "term": "message:W2007",
+        "definition": "Centralen underst\u00f8tter ikke modeltid"
+    },
+    {
+        "term": "message:W2018",
+        "definition": "Timeout, intet echo indenfor %1ms"
+    },
+    {
+        "term": "message:W2019",
+        "definition": "Z21 broadcast flag stemmer ikke overens med de \u00f8nskede"
+    },
+    {
+        "term": "message:W2020",
+        "definition": "DCCext (RCN-213) er ikke underst\u00f8ttet"
+    },
+    {
+        "term": "message:W2026",
+        "definition": "Fejl i afl\u00e6sning af booster '%1's temperatur: %2"
+    },
+    {
+        "term": "message:W2027",
+        "definition": "Fejl i afl\u00e6sning af booster %1's belastning: %2"
+    },
+    {
+        "term": "message:W3001",
+        "definition": "NX-knap forbundet til to afsnit"
+    },
+    {
+        "term": "message:W3002",
+        "definition": "NX-knap ikke forbundet til et afsnit"
+    },
+    {
+        "term": "message:W3003",
+        "definition": ""
+    },
+    {
+        "term": "message:W3004",
+        "definition": ""
+    },
+    {
+        "term": "message:W9001",
+        "definition": "K\u00f8rslen tog %1 us"
+    },
+    {
+        "term": "object:id",
+        "definition": "Id"
+    },
+    {
+        "term": "object:name",
+        "definition": "Navn"
+    },
+    {
+        "term": "object:notes",
+        "definition": "Noter"
+    },
+    {
+        "term": "opc_multi_sense_direction:in_sensor_address",
+        "definition": "I sensoradresse"
+    },
+    {
+        "term": "opc_multi_sense_direction:in_transponder_address",
+        "definition": "I transponderadresse (Bl\u00fccher GBM16XN)"
+    },
+    {
+        "term": "opc_multi_sense_direction:none",
+        "definition": "Ingen"
+    },
+    {
+        "term": "output.ecos_object:state",
+        "definition": "Tilstand"
+    },
+    {
+        "term": "output_action:none",
+        "definition": "Ingen"
+    },
+    {
+        "term": "output_action:off",
+        "definition": "Slukket"
+    },
+    {
+        "term": "output_action:on",
+        "definition": "T\u00e6ndt"
+    },
+    {
+        "term": "output_action:pulse",
+        "definition": "Puls"
+    },
+    {
+        "term": "output_channel:accessory",
+        "definition": "Tilbeh\u00f8r"
+    },
+    {
+        "term": "output_channel:accessory_dcc",
+        "definition": "Tilbeh\u00f8r (DCC)"
+    },
+    {
+        "term": "output_channel:accessory_motorola",
+        "definition": "Tilbeh\u00f8r (Motorola)"
+    },
+    {
+        "term": "output_channel:ecos_object",
+        "definition": "ECoS objekt"
+    },
+    {
+        "term": "output_channel:long_event",
+        "definition": "Lang h\u00e6ndelse"
+    },
+    {
+        "term": "output_channel:output",
+        "definition": "Udgang"
+    },
+    {
+        "term": "output_channel:short_event",
+        "definition": "Kort h\u00e6ndelse"
+    },
+    {
+        "term": "output_channel:turnout",
+        "definition": "Sporskifte"
+    },
+    {
+        "term": "output_list:bus",
+        "definition": "Bus"
+    },
+    {
+        "term": "output_map.decoupler:key",
+        "definition": "Tilstand"
+    },
+    {
+        "term": "output_map.signal:key",
+        "definition": "Stilling"
+    },
+    {
+        "term": "output_map.switch:key",
+        "definition": "V\u00e6rdi"
+    },
+    {
+        "term": "output_map.turnout:key",
+        "definition": "Position"
+    },
+    {
+        "term": "output_map:add_address",
+        "definition": "Tilf\u00f8j adresse"
+    },
+    {
+        "term": "output_map:add_event",
+        "definition": "Tilf\u00f8j h\u00e6ndelse"
+    },
+    {
+        "term": "output_map:address_x",
+        "definition": "Adresse %1"
+    },
+    {
+        "term": "output_map:ecos_object",
+        "definition": "ECoS Objekt"
+    },
+    {
+        "term": "output_map:remove_address",
+        "definition": "Fjern adresse"
+    },
+    {
+        "term": "output_map:remove_event",
+        "definition": "Fjern h\u00e6ndelse"
+    },
+    {
+        "term": "output_map:swap_outputs",
+        "definition": "Byt udgange"
+    },
+    {
+        "term": "output_map:use",
+        "definition": "Brug"
+    },
+    {
+        "term": "output_map_item.switch.key:off",
+        "definition": "Slukket"
+    },
+    {
+        "term": "output_map_item.switch.key:on",
+        "definition": "T\u00e6ndt"
+    },
+    {
+        "term": "pair_output_action:first",
+        "definition": "F\u00f8rste (R\u00f8d)"
+    },
+    {
+        "term": "pair_output_action:none",
+        "definition": "Ingen"
+    },
+    {
+        "term": "pair_output_action:second",
+        "definition": "Anden (Gr\u00f8n)"
+    },
+    {
+        "term": "pcap_output:file",
+        "definition": "Fil"
+    },
+    {
+        "term": "pcap_output:pipe",
+        "definition": "Pipe"
+    },
+    {
+        "term": "protocol.loconet:command_station",
+        "definition": "Central"
+    },
+    {
+        "term": "qtapp.about:traintastic_server",
+        "definition": "Om Traintasticserver"
+    },
+    {
+        "term": "qtapp.connect_dialog:authenticating",
+        "definition": "Autentificerer"
+    },
+    {
+        "term": "qtapp.connect_dialog:connect",
+        "definition": "Forbind"
+    },
+    {
+        "term": "qtapp.connect_dialog:connect_to_server",
+        "definition": "Forbind til server"
+    },
+    {
+        "term": "qtapp.connect_dialog:connected",
+        "definition": "Forbundet"
+    },
+    {
+        "term": "qtapp.connect_dialog:connecting",
+        "definition": "Forbinder"
+    },
+    {
+        "term": "qtapp.connect_dialog:creating_session",
+        "definition": "Opretter session"
+    },
+    {
+        "term": "qtapp.connect_dialog:fetching_world",
+        "definition": "Henter anl\u00e6g"
+    },
+    {
+        "term": "qtapp.connect_dialog:password",
+        "definition": "Kodeord"
+    },
+    {
+        "term": "qtapp.connect_dialog:server",
+        "definition": "Server"
+    },
+    {
+        "term": "qtapp.connect_dialog:username",
+        "definition": "Brugernavn"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:create_report",
+        "definition": "Dan rapport"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:explanation",
+        "definition": "Dette genererer en rapport til at hj\u00e6lpe med fejlfinding i Traintastic.\n\nRapporten indeholder:\n\u2022 Grundl\u00e6ggende klient og server-information (App-version og operativsystem)\n\u2022 Et sk\u00e6rmbillede af klientvinduet\n\u2022 Serverloggen\n\u2022 En eksport af dit anl\u00e6g\n\nAlle data vil blive gemt i en zipfil p\u00e5 din computer. Du har mulighed for at genneml\u00e6se indholdet f\u00f8r du deler det med andre (F. eks. p\u00e5 Traintastic-forummet.)\n\nData bliver ikke sendt automatisk."
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:save_diagnostic_report",
+        "definition": "Gem fejlfindingsrapport"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:window_title",
+        "definition": "Opret fejlfindingsrapport"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:zip_file",
+        "definition": "Zipfil"
+    },
+    {
+        "term": "qtapp.dialog:cancel",
+        "definition": "Afbryd"
+    },
+    {
+        "term": "qtapp.error:cant_read_from_file_x",
+        "definition": "Kan ikke indl\u00e6se filen: %1"
+    },
+    {
+        "term": "qtapp.error:cant_write_to_file_x",
+        "definition": "Kan ikke skrive til filen: %1"
+    },
+    {
+        "term": "qtapp.error:server_error_x",
+        "definition": "Serverfejl %1"
+    },
+    {
+        "term": "qtapp.mainmenu:about",
+        "definition": "Om"
+    },
+    {
+        "term": "qtapp.mainmenu:about_server",
+        "definition": "Om server"
+    },
+    {
+        "term": "qtapp.mainmenu:close_world",
+        "definition": "Luk anl\u00e6gget"
+    },
+    {
+        "term": "qtapp.mainmenu:community_forum",
+        "definition": "F\u00e6llesskabsforum"
+    },
+    {
+        "term": "qtapp.mainmenu:connect_to_server",
+        "definition": "Forbind til server"
+    },
+    {
+        "term": "qtapp.mainmenu:connection",
+        "definition": "Forbindelse"
+    },
+    {
+        "term": "qtapp.mainmenu:diagnostic_report",
+        "definition": "Fejlfindingsrapport"
+    },
+    {
+        "term": "qtapp.mainmenu:disconnect_from_server",
+        "definition": "Afbryd forbindelsen til serveren"
+    },
+    {
+        "term": "qtapp.mainmenu:export_world",
+        "definition": "Eksport\u00e9r anl\u00e6g"
+    },
+    {
+        "term": "qtapp.mainmenu:file",
+        "definition": "Fil"
+    },
+    {
+        "term": "qtapp.mainmenu:fullscreen",
+        "definition": "Fuldsk\u00e6rm"
+    },
+    {
+        "term": "qtapp.mainmenu:hardware",
+        "definition": "Hardware"
+    },
+    {
+        "term": "qtapp.mainmenu:help",
+        "definition": "Hj\u00e6lp"
+    },
+    {
+        "term": "qtapp.mainmenu:import_world",
+        "definition": "Import\u00e9r anl\u00e6g"
+    },
+    {
+        "term": "qtapp.mainmenu:load_world",
+        "definition": "Indl\u00e6s anl\u00e6g"
+    },
+    {
+        "term": "qtapp.mainmenu:new_world",
+        "definition": "Nyt anl\u00e6g"
+    },
+    {
+        "term": "qtapp.mainmenu:objects",
+        "definition": "Objekter"
+    },
+    {
+        "term": "qtapp.mainmenu:power",
+        "definition": "Str\u00f8m"
+    },
+    {
+        "term": "qtapp.mainmenu:programming",
+        "definition": "Programmering"
+    },
+    {
+        "term": "qtapp.mainmenu:quit",
+        "definition": "Afslut"
+    },
+    {
+        "term": "qtapp.mainmenu:restart_server",
+        "definition": "Genstart server"
+    },
+    {
+        "term": "qtapp.mainmenu:restart_server_question",
+        "definition": "Er du sikker p\u00e5 at du vil genstarte serveren?"
+    },
+    {
+        "term": "qtapp.mainmenu:save_world",
+        "definition": "Gem anl\u00e6g"
+    },
+    {
+        "term": "qtapp.mainmenu:server",
+        "definition": "Server"
+    },
+    {
+        "term": "qtapp.mainmenu:server_log",
+        "definition": "Serverlog"
+    },
+    {
+        "term": "qtapp.mainmenu:server_settings",
+        "definition": "Serverindstillinger"
+    },
+    {
+        "term": "qtapp.mainmenu:settings",
+        "definition": "Indstillinger"
+    },
+    {
+        "term": "qtapp.mainmenu:shutdown_server",
+        "definition": "Luk server ned"
+    },
+    {
+        "term": "qtapp.mainmenu:shutdown_server_question",
+        "definition": "Er du sikker p\u00e5 at du vil lukke serveren ned?"
+    },
+    {
+        "term": "qtapp.mainmenu:toolbar",
+        "definition": "V\u00e6rkt\u00f8jslinie"
+    },
+    {
+        "term": "qtapp.mainmenu:tools",
+        "definition": "V\u00e6rkt\u00f8jer"
+    },
+    {
+        "term": "qtapp.mainmenu:view",
+        "definition": "Vis"
+    },
+    {
+        "term": "qtapp.mainmenu:wizards",
+        "definition": "Assistenter"
+    },
+    {
+        "term": "qtapp.mainmenu:world",
+        "definition": "Anl\u00e6g"
+    },
+    {
+        "term": "qtapp.mainmenu:world_properties",
+        "definition": "Anl\u00e6ggets egenskaber"
+    },
+    {
+        "term": "qtapp.message_box:no",
+        "definition": "Nej"
+    },
+    {
+        "term": "qtapp.message_box:yes",
+        "definition": "Ja"
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:cancel",
+        "definition": "Afbryd"
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:ok",
+        "definition": "Ok"
+    },
+    {
+        "term": "qtapp.object_select_list_dialog:select_object",
+        "definition": "V\u00e6lg objekt"
+    },
+    {
+        "term": "qtapp.settings.board:color_scheme",
+        "definition": "Farveskema"
+    },
+    {
+        "term": "qtapp.settings.board:grid_edit_mode",
+        "definition": "Gitter (Redigeringstilstand)"
+    },
+    {
+        "term": "qtapp.settings.board:grid_operate_mode",
+        "definition": "Gitter (K\u00f8retilstand)"
+    },
+    {
+        "term": "qtapp.settings.board:show_block_sensor_states",
+        "definition": "Vis afsnitssensortilstande"
+    },
+    {
+        "term": "qtapp.settings.board:turnout_draw_state",
+        "definition": "Tegn sporskiftetilstand"
+    },
+    {
+        "term": "qtapp.settings.developer:dont_load_fallback_language",
+        "definition": "anvend ikke standardsproget"
+    },
+    {
+        "term": "qtapp.settings.developer:log_missing_strings",
+        "definition": "Log manglende overs\u00e6ttelser"
+    },
+    {
+        "term": "qtapp.settings.developer:log_missing_strings_dir",
+        "definition": "Bibliotek til logning af manglende overs\u00e6ttelser"
+    },
+    {
+        "term": "qtapp.settings.general:connect_automatically_to_discovered_server",
+        "definition": "Forbind automatisk til synlig server"
+    },
+    {
+        "term": "qtapp.settings.general:language",
+        "definition": "Sprog"
+    },
+    {
+        "term": "qtapp.settings.general:language_changed_restart_required",
+        "definition": "Traintasticklienten skal genstartes for at sprog\u00e6ndringen tr\u00e6der i kraft."
+    },
+    {
+        "term": "qtapp.settings.statusbar:show_clock",
+        "definition": "Vis uret"
+    },
+    {
+        "term": "qtapp.settings.statusbar:show_statuses",
+        "definition": "Vis Tilstande"
+    },
+    {
+        "term": "qtapp.settings:board",
+        "definition": "Sporplan"
+    },
+    {
+        "term": "qtapp.settings:developer",
+        "definition": "Udvikler"
+    },
+    {
+        "term": "qtapp.settings:general",
+        "definition": "Generelt"
+    },
+    {
+        "term": "qtapp.settings:restart_required",
+        "definition": "Kr\u00e6ver genstart"
+    },
+    {
+        "term": "qtapp.settings:statusbar",
+        "definition": "Tilstandslinie"
+    },
+    {
+        "term": "qtapp.world_list_dialog:cancel",
+        "definition": "Afbryd"
+    },
+    {
+        "term": "qtapp.world_list_dialog:load",
+        "definition": "Indl\u00e6s"
+    },
+    {
+        "term": "qtapp.world_list_dialog:search",
+        "definition": "S\u00f8g"
+    },
+    {
+        "term": "qtapp.world_list_dialog:world_list",
+        "definition": "Anl\u00e6gsliste"
+    },
+    {
+        "term": "qtapp:board_properties",
+        "definition": "Sporplansegenskaber"
+    },
+    {
+        "term": "qtapp:export_world_failed",
+        "definition": "Eksport af anl\u00e6gget fejlede"
+    },
+    {
+        "term": "qtapp:grid",
+        "definition": "Gitter"
+    },
+    {
+        "term": "qtapp:import_world_failed",
+        "definition": "Import af anl\u00e6gget fejlede"
+    },
+    {
+        "term": "qtapp:next",
+        "definition": "N\u00e6ste"
+    },
+    {
+        "term": "qtapp:previous",
+        "definition": "Forige"
+    },
+    {
+        "term": "qtapp:toggle_mute",
+        "definition": "Skift lydl\u00f8stilstand"
+    },
+    {
+        "term": "qtapp:toggle_offline_online",
+        "definition": "Skift forbindelsestilstand"
+    },
+    {
+        "term": "qtapp:toggle_power",
+        "definition": "Skift str\u00f8mtilstand"
+    },
+    {
+        "term": "qtapp:toggle_smoke",
+        "definition": "Skiftr\u00f8gtilstand"
+    },
+    {
+        "term": "qtapp:traintastic_world",
+        "definition": "Traintastic anl\u00e6g"
+    },
+    {
+        "term": "qtapp:zoom_in",
+        "definition": "Zoom ind"
+    },
+    {
+        "term": "qtapp:zoom_out",
+        "definition": "Zoom ud"
+    },
+    {
+        "term": "rail_vehicle_list:type",
+        "definition": "Type"
+    },
+    {
+        "term": "sensor_state:free",
+        "definition": "Ledig"
+    },
+    {
+        "term": "sensor_state:occupied",
+        "definition": "Optaget"
+    },
+    {
+        "term": "sensor_state:unknown",
+        "definition": "Ukendt"
+    },
+    {
+        "term": "sensor_type:occupancy_detector",
+        "definition": "Besatmelder"
+    },
+    {
+        "term": "sensor_type:reed_switch",
+        "definition": "Reedkontakt"
+    },
+    {
+        "term": "serial:baudrate",
+        "definition": "Baudrate"
+    },
+    {
+        "term": "serial:device",
+        "definition": "Enhed"
+    },
+    {
+        "term": "serial:flow_control",
+        "definition": "Flow control"
+    },
+    {
+        "term": "serial:port",
+        "definition": "Port"
+    },
+    {
+        "term": "serial_flow_control:hardware",
+        "definition": "Hardware"
+    },
+    {
+        "term": "serial_flow_control:none",
+        "definition": "Ingen"
+    },
+    {
+        "term": "server_log:code",
+        "definition": "Kode"
+    },
+    {
+        "term": "server_log:message",
+        "definition": "Besked"
+    },
+    {
+        "term": "server_log:object",
+        "definition": "Objekt"
+    },
+    {
+        "term": "server_log:time",
+        "definition": "Tid"
+    },
+    {
+        "term": "settings:allow_client_server_restart",
+        "definition": "Tillad genstart af klient og server"
+    },
+    {
+        "term": "settings:allow_client_server_shutdown",
+        "definition": "Tillad nedlukning af klient og server"
+    },
+    {
+        "term": "settings:auto_save_world_on_exit",
+        "definition": "Autogem ved afslutning"
+    },
+    {
+        "term": "settings:discoverable",
+        "definition": "Synlig"
+    },
+    {
+        "term": "settings:enable_file_logger",
+        "definition": "Aktiver fillog"
+    },
+    {
+        "term": "settings:load_last_world_on_startup",
+        "definition": "Indl\u00e6s sidste anl\u00e6g ved opstart"
+    },
+    {
+        "term": "settings:localhost_only",
+        "definition": "Kun localhost"
+    },
+    {
+        "term": "settings:memory_logger_size",
+        "definition": "Loghukommelse"
+    },
+    {
+        "term": "settings:port",
+        "definition": "Port"
+    },
+    {
+        "term": "settings:save_world_uncompressed",
+        "definition": "Gem anl\u00e6gget ukomprimeret"
+    },
+    {
+        "term": "settings:select_folder",
+        "definition": "V\u00e6lg bibliotek"
+    },
+    {
+        "term": "signal_aspect:proceed",
+        "definition": "Forts\u00e6t"
+    },
+    {
+        "term": "signal_aspect:proceed_reduced_speed",
+        "definition": "Fortsat, nedsat hastighed"
+    },
+    {
+        "term": "signal_aspect:stop",
+        "definition": "Stop"
+    },
+    {
+        "term": "single_output_action:none",
+        "definition": "Ingen"
+    },
+    {
+        "term": "single_output_action:off",
+        "definition": "Slukket"
+    },
+    {
+        "term": "single_output_action:on",
+        "definition": "T\u00e6ndt"
+    },
+    {
+        "term": "single_output_action:pulse",
+        "definition": "Puls"
+    },
+    {
+        "term": "speed_limit_property:no_limit",
+        "definition": "Ingen begr\u00e6nsning"
+    },
+    {
+        "term": "stacked_object_list:back",
+        "definition": "Tilbage"
+    },
+    {
+        "term": "stacked_object_list:click_to_edit_ctrl_click_to_open_in_a_new_window",
+        "definition": "Klik for at redigere.\nCtrl+klik for at \u00e5bne i et nyt vindue."
+    },
+    {
+        "term": "stacked_object_list:list_is_empty",
+        "definition": "Listen er tom."
+    },
+    {
+        "term": "status.lua:x_in_error",
+        "definition": "%1 fejlede"
+    },
+    {
+        "term": "status.lua:x_running",
+        "definition": "%1 k\u00f8rer"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:article_number",
+        "definition": "Artikelnummer"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_id",
+        "definition": "Enheds Id"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:device_name",
+        "definition": "Enhedsnavn"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:serial_number",
+        "definition": "Serienummer"
+    },
+    {
+        "term": "table_model.marklin_can_node_list:software_version",
+        "definition": "Softwareversion"
+    },
+    {
+        "term": "text_align:bottom_center",
+        "definition": "Nederst i midten"
+    },
+    {
+        "term": "text_align:bottom_left",
+        "definition": "Nederst til venstre"
+    },
+    {
+        "term": "text_align:bottom_right",
+        "definition": "Nederst til h\u00f8jre"
+    },
+    {
+        "term": "text_align:center",
+        "definition": "I midten"
+    },
+    {
+        "term": "text_align:center_left",
+        "definition": "I midten til venstre"
+    },
+    {
+        "term": "text_align:center_right",
+        "definition": "I midten til h\u00f8jre"
+    },
+    {
+        "term": "text_align:top_center",
+        "definition": "\u00d8verst i midten"
+    },
+    {
+        "term": "text_align:top_left",
+        "definition": "\u00d8verst til venstre"
+    },
+    {
+        "term": "text_align:top_right",
+        "definition": "\u00d8verst til h\u00f8jre"
+    },
+    {
+        "term": "throttle.acquire",
+        "definition": "Anskaffe"
+    },
+    {
+        "term": "throttle.controlled_by_x",
+        "definition": "Styret af %1"
+    },
+    {
+        "term": "throttle.estop",
+        "definition": "N\u00f8dstop"
+    },
+    {
+        "term": "throttle.in_control",
+        "definition": "Du har styringen"
+    },
+    {
+        "term": "throttle.not_controlled",
+        "definition": "Ikke styret"
+    },
+    {
+        "term": "throttle.release",
+        "definition": "Frigiv"
+    },
+    {
+        "term": "throttle.steal",
+        "definition": "Stj\u00e6l"
+    },
+    {
+        "term": "throttle.stop",
+        "definition": "Stop"
+    },
+    {
+        "term": "throttle_object_list:throttle",
+        "definition": "H\u00e5ndkontrol"
+    },
+    {
+        "term": "train:acceleration_rate",
+        "definition": "Accelerationstrin"
+    },
+    {
+        "term": "train:active",
+        "definition": "Aktiv"
+    },
+    {
+        "term": "train:block",
+        "definition": "Afsnit"
+    },
+    {
+        "term": "train:braking_rate",
+        "definition": "Bremsetrin"
+    },
+    {
+        "term": "train:length",
+        "definition": "L\u00e6ngde"
+    },
+    {
+        "term": "train:mode",
+        "definition": "Tilstand"
+    },
+    {
+        "term": "train:override_length",
+        "definition": "Overstyr l\u00e6ngde"
+    },
+    {
+        "term": "train:override_weight",
+        "definition": "Overstyr v\u00e6gt"
+    },
+    {
+        "term": "train:speed_max",
+        "definition": "Maksimal hastighed"
+    },
+    {
+        "term": "train:vehicles",
+        "definition": "Fart\u00f8jer"
+    },
+    {
+        "term": "train:weight",
+        "definition": "V\u00e6gt"
+    },
+    {
+        "term": "train_mode:automatic",
+        "definition": "Automatisk"
+    },
+    {
+        "term": "train_mode:manual_protected",
+        "definition": "Manuel (Beskyttet)"
+    },
+    {
+        "term": "train_mode:manual_unprotected",
+        "definition": "Manuel (Ubeskyttet)"
+    },
+    {
+        "term": "traintastic_diy_interface_type:network_tcp",
+        "definition": "Netv\u00e6rk (TCP)"
+    },
+    {
+        "term": "traintastic_diy_interface_type:serial",
+        "definition": "Seriel"
+    },
+    {
+        "term": "traintastic_diy_settings:debug_log_heartbeat",
+        "definition": "Log af heartbeat-kommunikation"
+    },
+    {
+        "term": "traintastic_diy_settings:heartbeat_timeout",
+        "definition": "Heartbeat timeout"
+    },
+    {
+        "term": "traintastic_diy_settings:startup_delay",
+        "definition": "Opstartsforsinkelse"
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:caption",
+        "definition": "Sprog \u00e6ndret"
+    },
+    {
+        "term": "tray_icon.language_changed_message_box:text",
+        "definition": "Traintasticserveren skal genstartes for at sprog\u00e6ndringen tr\u00e6der i kraft. Genstart nu?"
+    },
+    {
+        "term": "tray_icon.menu:advanced",
+        "definition": "Advanceret"
+    },
+    {
+        "term": "tray_icon.menu:allow_client_to_restart_server",
+        "definition": "Tillad at klienten kan genstarte serveren"
+    },
+    {
+        "term": "tray_icon.menu:allow_client_to_shutdown_server",
+        "definition": "Tillad at klienten kan lukke serveren ned"
+    },
+    {
+        "term": "tray_icon.menu:language",
+        "definition": "Sprog"
+    },
+    {
+        "term": "tray_icon.menu:open_data_directory",
+        "definition": "\u00c5bn databibliotek"
+    },
+    {
+        "term": "tray_icon.menu:restart",
+        "definition": "Genstart"
+    },
+    {
+        "term": "tray_icon.menu:settings",
+        "definition": "Indstillinger"
+    },
+    {
+        "term": "tray_icon.menu:show_hide_console",
+        "definition": "Vis/Skjul konsol"
+    },
+    {
+        "term": "tray_icon.menu:shutdown",
+        "definition": "Luk ned"
+    },
+    {
+        "term": "tray_icon.menu:start_automatically_at_logon",
+        "definition": "Start automatisk ved login"
+    },
+    {
+        "term": "tray_icon.notify:message_restarting",
+        "definition": "Traintastic server er genstartet"
+    },
+    {
+        "term": "tray_icon.notify:message_running",
+        "definition": "Traintasticserveren k\u00f8rer i baggrunden"
+    },
+    {
+        "term": "turnout_position:crossed",
+        "definition": "Krydset"
+    },
+    {
+        "term": "turnout_position:diverged",
+        "definition": "Afvigende"
+    },
+    {
+        "term": "turnout_position:double_slip_straight_a",
+        "definition": "Lige A"
+    },
+    {
+        "term": "turnout_position:double_slip_straight_b",
+        "definition": "Lige B"
+    },
+    {
+        "term": "turnout_position:left",
+        "definition": "Venstre"
+    },
+    {
+        "term": "turnout_position:right",
+        "definition": "H\u00f8jre"
+    },
+    {
+        "term": "turnout_position:straight",
+        "definition": "Lige"
+    },
+    {
+        "term": "vehicle.rail.freight_wagon:cargo_weight",
+        "definition": "Godsv\u00e6gt"
+    },
+    {
+        "term": "vehicle.rail.tank_wagon:cargo_volume",
+        "definition": "Godsvolumen"
+    },
+    {
+        "term": "vehicle.rail:cargo_capacity",
+        "definition": "Godskapacitet"
+    },
+    {
+        "term": "vehicle.rail:cargo_loaded",
+        "definition": "Gods l\u00e6sset"
+    },
+    {
+        "term": "vehicle.rail:decoder",
+        "definition": "Dekoder"
+    },
+    {
+        "term": "vehicle.rail:length",
+        "definition": "L\u00e6ngde"
+    },
+    {
+        "term": "vehicle.rail:power",
+        "definition": "Str\u00f8m"
+    },
+    {
+        "term": "vehicle.rail:speed_max",
+        "definition": "Maximal hastighed"
+    },
+    {
+        "term": "vehicle.rail:total_weight",
+        "definition": "Total v\u00e6gt"
+    },
+    {
+        "term": "vehicle.rail:train",
+        "definition": "Tog"
+    },
+    {
+        "term": "vehicle.rail:weight",
+        "definition": "V\u00e6gt"
+    },
+    {
+        "term": "weight_unit:ton",
+        "definition": "Tons"
+    },
+    {
+        "term": "wizard.add_interface.command_station:text",
+        "definition": "V\u00e6lg venligst din central"
+    },
+    {
+        "term": "wizard.add_interface.command_station:title",
+        "definition": "Central"
+    },
+    {
+        "term": "wizard.add_interface.connection:can_interface",
+        "definition": "Yderligere CAN bus snitflade"
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_serial_port",
+        "definition": "%command_station% serielport"
+    },
+    {
+        "term": "wizard.add_interface.connection:command_station_usb_port",
+        "definition": "%command_station% USB-port"
+    },
+    {
+        "term": "wizard.add_interface.connection:loconet_interface",
+        "definition": "Yderligere LocoNet snitflade"
+    },
+    {
+        "term": "wizard.add_interface.connection:network",
+        "definition": "Netv\u00e6rk"
+    },
+    {
+        "term": "wizard.add_interface.connection:not_yet_supported",
+        "definition": "Endnu ikke underst\u00f8ttet"
+    },
+    {
+        "term": "wizard.add_interface.connection:text",
+        "definition": "Hvordan er din %command_station% forbundet?"
+    },
+    {
+        "term": "wizard.add_interface.connection:title",
+        "definition": "Forbindelse"
+    },
+    {
+        "term": "wizard.add_interface.connection:xpressnet_interface",
+        "definition": "Yderligere XpressNet snitflade"
+    },
+    {
+        "term": "wizard.add_interface.finalization:text",
+        "definition": "Dit %command_station% system er nu klar, du kan starte det ved at v\u00e6lge Forbind i v\u00e6rkt\u00f8jslinien.\n\nHvis du \u00f8nsker at foretage yderligere \u00e6ndringer, s\u00e5 kan du finde systemet i menuen ved at v\u00e6lge: Objekt \u2192 Hardware \u2192 Snitflader."
+    },
+    {
+        "term": "wizard.add_interface.finalization:title",
+        "definition": "Klar"
+    },
+    {
+        "term": "wizard.add_interface.hostname:text",
+        "definition": "Indtast IP-adressen p\u00e5 den %command_station% du \u00f8nsker at forbinde til:"
+    },
+    {
+        "term": "wizard.add_interface.hostname:title",
+        "definition": "IP-adresse"
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:text",
+        "definition": "Indtast ip-adresse og portnummer p\u00e5 den %command_station% du \u00f8nsker at forbinde til:"
+    },
+    {
+        "term": "wizard.add_interface.hostname_port:title",
+        "definition": "IP-adresse og port"
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:text",
+        "definition": "V\u00e6lg venligst den LocoNet snitflade som er forbundet til %command_station%:"
+    },
+    {
+        "term": "wizard.add_interface.interface_loconet:title",
+        "definition": "LocoNet-snitflade"
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:text",
+        "definition": "V\u00e6lg venligst den XpressNet snitflade der er forbundet til %command_station%:"
+    },
+    {
+        "term": "wizard.add_interface.interface_xpressnet:title",
+        "definition": "XpressNet snitflade"
+    },
+    {
+        "term": "wizard.add_interface.name:text",
+        "definition": "Indtast forbindelsens navn:"
+    },
+    {
+        "term": "wizard.add_interface.name:title",
+        "definition": "Navn"
+    },
+    {
+        "term": "wizard.add_interface.protocol:text",
+        "definition": "V\u00e6lg venligst forbindelsens kommunikationsprotokol:"
+    },
+    {
+        "term": "wizard.add_interface.protocol:title",
+        "definition": "Protokol"
+    },
+    {
+        "term": "wizard.add_interface.protocol_dr5000_usb:bottom_text",
+        "definition": "Din %command_station% underst\u00f8tter to forskellige kommunikationsprotokoller. Traintastic underst\u00f8tter begge, men LocoNet giver flere muligheder."
+    },
+    {
+        "term": "wizard.add_interface.serial_port:text",
+        "definition": "V\u00e6lg den serielport din %command_station% er forbundet til:"
+    },
+    {
+        "term": "wizard.add_interface.serial_port:title",
+        "definition": "Serielport"
+    },
+    {
+        "term": "wizard.add_interface.serial_port_interface:text",
+        "definition": "V\u00e6lg den serielport din %interface% er forbundet til:"
+    },
+    {
+        "term": "wizard.add_interface.welcome:text",
+        "definition": "Denne assistent vil guide dig igennem snitflade-ops\u00e6tningen.\n\nHvis du k\u00f8rer Traintastic-server og klient p\u00e5 hver sin maskine s\u00e5 s\u00f8rg for at din central er forbundet til den PC hvor serveren k\u00f8rer."
+    },
+    {
+        "term": "wizard.add_interface.welcome:title",
+        "definition": "Tilf\u00f8j snitflade"
+    },
+    {
+        "term": "wizard.add_interface:recommended",
+        "definition": "Anbefalet"
+    },
+    {
+        "term": "wizard.button:back",
+        "definition": "Tilbage"
+    },
+    {
+        "term": "wizard.button:cancel",
+        "definition": "Fortryd"
+    },
+    {
+        "term": "wizard.button:finish",
+        "definition": "Afslut"
+    },
+    {
+        "term": "wizard.button:next",
+        "definition": "N\u00e6ste"
+    },
+    {
+        "term": "wizard.introduction.edit_mode:text",
+        "definition": "Traintastic opererer med to tilstande:\n\u2022 Redigeringstilstand\n\u2022 K\u00f8retilstand\n\nI k\u00f8retilstand er det kun muligt at k\u00f8re med anl\u00e6gget for at forhindre \u00e6ndringer ved et uheld, s\u00e5 f. eks. at \u00e6ndre en sporskifteadresse eller p\u00e5 anden vis modificere anl\u00e6gget, s\u00e5 skal det i redigeringstilstand.\n\nSkift mellem to tilstande kan g\u00f8res med blyantikonet p\u00e5 hovedv\u00e6rkt\u00f8jslinien eller via menuen: Anl\u00e6g \u2192 Redig\u00e9r anl\u00e6gget."
+    },
+    {
+        "term": "wizard.introduction.edit_mode:title",
+        "definition": "Redigeringstilstand"
+    },
+    {
+        "term": "wizard.introduction.forum:text",
+        "definition": "Hvis du har sp\u00f8rgsm\u00e5l eller forslag, s\u00e5 kom venligst ind p\u00e5 <a href=\"https://forum.traintastic.org\">Traintastic forummet</a>."
+    },
+    {
+        "term": "wizard.introduction.forum:title",
+        "definition": "Traintastic forummet"
+    },
+    {
+        "term": "wizard.introduction.welcome:text",
+        "definition": "Denne assistent vil forklare de grundl\u00e6ggende ting om Traintastic og de n\u00e6ste sider vil hj\u00e6lpe dig med at komme i gang. \u00d8nsker du at se denne assistent igen, kan du finde den i hovedmenuen under: Hj\u00e6lp \u2192 Assistenter \u2192 Traintastic-introduktion."
+    },
+    {
+        "term": "wizard.introduction.welcome:title",
+        "definition": "Velkommen!"
+    },
+    {
+        "term": "wizard.introduction.world:text",
+        "definition": "Anl\u00e6gget indeholder alt hvad der er del af modeljernbanen, s\u00e5 som centralen, togene, signaler og sporskifter. Man kan oprette flere anl\u00e6g, men kun et kan v\u00e6re i brug af gangen.\n\nAnl\u00e6ggene bliver gemt p\u00e5 den computer som afvikler Traintastic-serveren. N\u00e5r man gemmer et anl\u00e6g, bliver der automatisk oprettet en sikkerhedskopi. Via menupunktet Filer \u2192 Eksport\u00e9r anl\u00e6g er det muligt at f\u00e5 en kopi som yderligere sikkerhed eller til at overf\u00f8re til en anden Traintastic-server."
+    },
+    {
+        "term": "wizard.introduction.world:title",
+        "definition": "Anl\u00e6gget"
+    },
+    {
+        "term": "wizard.introduction:title",
+        "definition": "Traintastic introduktion"
+    },
+    {
+        "term": "wizard.new_board.adding:text",
+        "definition": "Det er muligt at tilf\u00f8je elementer til sporplanen gennem de forskellige menuer. Anvend venstre musetast til at placere elementerne og h\u00f8jre musetast til at rotere dem.\n\nDu kan erstatte elementer med venstre musetast ved at holde Ctrl nede samtidig og ellers skal du slette det nuv\u00e6rende f\u00f8rst."
+    },
+    {
+        "term": "wizard.new_board.adding:title",
+        "definition": "Tilf\u00f8jelse af elementer"
+    },
+    {
+        "term": "wizard.new_board.editing:text",
+        "definition": "Sporplanen kan kun \u00e6ndres n\u00e5r anl\u00e6gget er i redigeringstilstand og st\u00e5r stille. V\u00e6rkst\u00f8jlinien med mulighederne dukker automatisk op n\u00e5r redigeringstilstand er mulig."
+    },
+    {
+        "term": "wizard.new_board.editing:title",
+        "definition": "Redigering"
+    },
+    {
+        "term": "wizard.new_board.finalization:text",
+        "definition": "Lad os bygge en sporplan!"
+    },
+    {
+        "term": "wizard.new_board.finalization:title",
+        "definition": "Gennemf\u00f8rt"
+    },
+    {
+        "term": "wizard.new_board.introduction.long:text",
+        "definition": "Denne assistent vil forklare de grundl\u00e6ggende ting om sporplanen."
+    },
+    {
+        "term": "wizard.new_board.introduction.short:text",
+        "definition": "Denne assistent vil hj\u00e6lpe med at s\u00e6tte grundl\u00e6ggende ting ved sporplanen."
+    },
+    {
+        "term": "wizard.new_board.introduction:title",
+        "definition": "Ny sporplan"
+    },
+    {
+        "term": "wizard.new_board.name:text",
+        "definition": "Giv din sporplan et navn f. eks. Traintastic, Station Kanon eller skyggebaneg\u00e5rd:"
+    },
+    {
+        "term": "wizard.new_board.name:title",
+        "definition": "Sporplansnavn"
+    },
+    {
+        "term": "wizard.new_board:title",
+        "definition": "Ny sporplan"
+    },
+    {
+        "term": "wizard.new_world.finalization:text",
+        "definition": "Anl\u00e6ggets grundl\u00e6ggende ting er nu fastlagt, men du kan altid \u00e6ndre dem i menuen: Anl\u00e6g -> Egenskaber."
+    },
+    {
+        "term": "wizard.new_world.finalization:title",
+        "definition": "Anl\u00e6g klar"
+    },
+    {
+        "term": "wizard.new_world.introduction:text",
+        "definition": "Denne assistent hj\u00e6lper dig med anl\u00e6ggets grundl\u00e6ggende egenskaber."
+    },
+    {
+        "term": "wizard.new_world.introduction:title",
+        "definition": "Nyt anl\u00e6g"
+    },
+    {
+        "term": "wizard.new_world.name:text",
+        "definition": "Giv anl\u00e6gget et navn, det vil v\u00e6re synligt n\u00e5r anl\u00e6gget indl\u00e6ses."
+    },
+    {
+        "term": "wizard.new_world.name:title",
+        "definition": "Anl\u00e6gsnavn"
+    },
+    {
+        "term": "wizard.new_world.scale:text",
+        "definition": "V\u00e6lg den skala Traintastic skal bruge til at beregne afstande og hastigheder p\u00e5 anl\u00e6gget."
+    },
+    {
+        "term": "wizard.new_world.scale:title",
+        "definition": "Anl\u00e6gsskala"
+    },
+    {
+        "term": "wizard.new_world:title",
+        "definition": "Konfigur\u00e9r nyt anl\u00e6g"
+    },
+    {
+        "term": "wizard.page.list:search",
+        "definition": "S\u00f8g"
+    },
+    {
+        "term": "world:boards",
+        "definition": "Sporplaner"
+    },
+    {
+        "term": "world:clock",
+        "definition": "Ur"
+    },
+    {
+        "term": "world:correct_output_pos_when_locked",
+        "definition": ""
+    },
+    {
+        "term": "world:debug_block_events",
+        "definition": "Afsnitsh\u00e6ndelser"
+    },
+    {
+        "term": "world:debug_train_events",
+        "definition": "Togh\u00e6ndelser"
+    },
+    {
+        "term": "world:debug_zone_events",
+        "definition": "Zoneh\u00e6ndelser"
+    },
+    {
+        "term": "world:decoders",
+        "definition": "Dekodere"
+    },
+    {
+        "term": "world:edit",
+        "definition": "Rediger anl\u00e6g"
+    },
+    {
+        "term": "world:ext_output_change_action",
+        "definition": ""
+    },
+    {
+        "term": "world:feature_scripting",
+        "definition": "Scripting"
+    },
+    {
+        "term": "world:inputs",
+        "definition": "Indgange"
+    },
+    {
+        "term": "world:interfaces",
+        "definition": "Snitflader"
+    },
+    {
+        "term": "world:lua_scripts",
+        "definition": "Lua scripts"
+    },
+    {
+        "term": "world:mute",
+        "definition": "Lydl\u00f8s"
+    },
+    {
+        "term": "world:no_smoke",
+        "definition": "Ingen r\u00f8g"
+    },
+    {
+        "term": "world:offline",
+        "definition": "Afbryd"
+    },
+    {
+        "term": "world:online",
+        "definition": "Forbind"
+    },
+    {
+        "term": "world:online_when_loaded",
+        "definition": "T\u00e6nd efter indl\u00e6sning"
+    },
+    {
+        "term": "world:outputs",
+        "definition": "Udgange"
+    },
+    {
+        "term": "world:path_release_delay",
+        "definition": ""
+    },
+    {
+        "term": "world:power_off",
+        "definition": "Sluk str\u00f8mmen"
+    },
+    {
+        "term": "world:power_on",
+        "definition": "T\u00e6nd str\u00f8mmen"
+    },
+    {
+        "term": "world:power_on_when_loaded",
+        "definition": "T\u00e6nd str\u00f8mmen efter indl\u00e6sning"
+    },
+    {
+        "term": "world:rail_vehicles",
+        "definition": "Skinefart\u00f8jer"
+    },
+    {
+        "term": "world:run",
+        "definition": "K\u00f8r"
+    },
+    {
+        "term": "world:run_when_loaded",
+        "definition": "K\u00f8r efter indl\u00e6sning"
+    },
+    {
+        "term": "world:scale",
+        "definition": "Skala"
+    },
+    {
+        "term": "world:scale_ratio",
+        "definition": "Skalaforhold"
+    },
+    {
+        "term": "world:simulation",
+        "definition": "Simulering"
+    },
+    {
+        "term": "world:stop",
+        "definition": "Stop"
+    },
+    {
+        "term": "world:trains",
+        "definition": "Tog"
+    },
+    {
+        "term": "world:uuid",
+        "definition": "UUID"
+    },
+    {
+        "term": "world:zones",
+        "definition": "Zoner"
+    },
+    {
+        "term": "world_scale:custom",
+        "definition": "Tilpasset"
+    },
+    {
+        "term": "xpressnet_command_station:custom",
+        "definition": "Tilpasset"
+    },
+    {
+        "term": "xpressnet_interface_type:network",
+        "definition": "Netv\u00e6rk"
+    },
+    {
+        "term": "xpressnet_interface_type:serial",
+        "definition": "Seriel"
+    },
+    {
+        "term": "xpressnet_serial_interface_type:custom",
+        "definition": "Tilpasset"
+    },
+    {
+        "term": "xpressnet_settings:use_emergency_stop_locomotive_command",
+        "definition": "Anvend kort n\u00f8dstopskommando til lokomotiver"
+    },
+    {
+        "term": "xpressnet_settings:use_roco_f13_f20_command",
+        "definition": "Anvend Roco F13-F20 kommando"
+    },
+    {
+        "term": "z21_channel:rbus",
+        "definition": "R-Bus"
+    },
+    {
+        "term": "z21_settings.server:allow_emergency_stop",
+        "definition": "Tillad n\u00f8dstop"
+    },
+    {
+        "term": "z21_settings.server:allow_track_power_off",
+        "definition": "Tillad slukning af anl\u00e6gget"
+    },
+    {
+        "term": "z21_settings.server:allow_track_power_on_release_emergency_stop",
+        "definition": "Tillad t\u00e6nding/frigivelse af n\u00f8dstop"
+    },
+    {
+        "term": "zone:blocks",
+        "definition": "Afsnit"
+    },
+    {
+        "term": "zone:mute",
+        "definition": "Lydl\u00f8s"
+    },
+    {
+        "term": "zone:no_smoke",
+        "definition": "Ingen r\u00f8g"
+    },
+    {
+        "term": "zone:speed_limit",
+        "definition": "Hastighedsbegr\u00e6nsning"
+    }
+]

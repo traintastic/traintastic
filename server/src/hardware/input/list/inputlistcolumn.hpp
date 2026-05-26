@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/input/list/inputlistcolumn.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,18 +26,16 @@
 
 enum class InputListColumn
 {
-  Id = 1 << 0,
-  Name = 1 << 1,
-  Interface = 1 << 2,
-  Channel = 1 << 3,
-  Address = 1 << 4,
+  Interface = 1 << 0,
+  Channel = 1 << 1,
+  Node = 1 << 2,
+  Address = 1 << 3,
 };
 
-constexpr std::array<InputListColumn, 5> inputListColumnValues = {
-  InputListColumn::Id,
-  InputListColumn::Name,
+constexpr std::array<InputListColumn, 4> inputListColumnValues = {
   InputListColumn::Interface,
   InputListColumn::Channel,
+  InputListColumn::Node,
   InputListColumn::Address,
 };
 

@@ -1,9 +1,8 @@
 /**
- * server/src/lua/classid.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,9 +24,12 @@
 #include "test.hpp"
 #include "checkarguments.hpp"
 #include "sandbox.hpp"
+#include "script.hpp"
+#include "to.hpp"
 
 #include "../board/board.hpp"
 #include "../board/boardlist.hpp"
+#include "../board/pathfinder/trainpathfinder.hpp"
 
 #include "../board/tile/misc/labeltile.hpp"
 #include "../board/tile/misc/pushbuttontile.hpp"
@@ -60,6 +62,7 @@
 
 #include "../clock/clock.hpp"
 
+#include "../hardware/interface/cbus/cbusinterface.hpp"
 #include "../hardware/interface/dccexinterface.hpp"
 #include "../hardware/interface/ecosinterface.hpp"
 #include "../hardware/interface/hsi88.hpp"
@@ -94,14 +97,20 @@
 #include "../hardware/identification/identification.hpp"
 #include "../hardware/identification/list/identificationlist.hpp"
 
+#include "../throttle/scriptthrottle.hpp"
+
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../vehicle/rail/locomotive.hpp"
 #include "../vehicle/rail/freightwagon.hpp"
 
 #include "../train/train.hpp"
+#include "../train/trainblockstatus.hpp"
 #include "../train/trainlist.hpp"
+#include "../train/trainzonestatus.hpp"
 
 #include "../world/world.hpp"
+
+#include "../zone/zone.hpp"
 
 namespace Lua {
 
@@ -149,8 +158,12 @@ void Class::registerValues(lua_State* L)
   lua_pushcfunction(L, getClass);
   lua_setfield(L, -2, "get");
 
+  lua_pushcfunction(L, create_throttle);
+  lua_setfield(L, -2, "create_throttle");
+
   registerValue<Board>(L, "BOARD");
   registerValue<BoardList>(L, "BOARD_LIST");
+  registerValue<TrainPathFinder>(L, "TRAIN_PATH_FINDER");
 
   registerValue<LabelTile>(L, "LABEL_TILE");
   registerValue<PushButtonTile>(L, "PUSH_BUTTON_TILE");
@@ -184,6 +197,7 @@ void Class::registerValues(lua_State* L)
   registerValue<Clock>(L, "CLOCK");
 
   // hardware - interface:
+  registerValue<CBUSInterface>(L, "CBUS_INTERFACE");
   registerValue<DCCEXInterface>(L, "DCCEX_INTERFACE");
   registerValue<ECoSInterface>(L, "ECOS_INTERFACE");
   registerValue<HSI88Interface>(L, "HSI88_INTERFACE");
@@ -213,14 +227,20 @@ void Class::registerValues(lua_State* L)
   registerValue<Identification>(L, "IDENTIFICATION");
   registerValue<IdentificationList>(L, "IDENTIFICATION_LIST");
 
+  registerValue<ScriptThrottle>(L, "SCRIPT_THROTTLE");
+
   registerValue<RailVehicleList>(L, "RAIL_VEHICLE_LIST");
   registerValue<Locomotive>(L, "LOCOMOTIVE");
   registerValue<FreightWagon>(L, "FREIGHT_WAGON");
 
   registerValue<Train>(L, "TRAIN");
+  registerValue<TrainBlockStatus>(L, "TRAIN_BLOCK_STATUS");
   registerValue<TrainList>(L, "TRAIN_LIST");
+  registerValue<TrainZoneStatus>(L, "TRAIN_ZONE_STATUS");
 
   registerValue<World>(L, "WORLD");
+
+  registerValue<Zone>(L, "ZONE");
 }
 
 void Class::push(lua_State* L, std::string_view classId)
@@ -271,6 +291,20 @@ int Class::getClass(lua_State* L)
     push(L, object);
   else
     lua_pushnil(L);
+  return 1;
+}
+
+int Class::create_throttle(lua_State* L)
+{
+  const int n = checkArguments(L, 0, 1);
+  auto& stateData = Sandbox::getStateData(L);
+  auto throttle = ScriptThrottle::create(stateData.script().world());
+  if(n >= 1)
+  {
+    throttle->name = to<std::string>(L, 1);
+  }
+  stateData.addThrottle(throttle);
+  Object::push(L, throttle);
   return 1;
 }
 

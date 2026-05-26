@@ -21,6 +21,7 @@
  */
 
 #include "simulationiohandler.hpp"
+#include <boost/asio/post.hpp>
 #include "../kernel.hpp"
 #include "../message/statusdataconfig.hpp"
 #include "../../../../utils/random.hpp"
@@ -290,7 +291,7 @@ bool SimulationIOHandler::send(const Message& message)
 void SimulationIOHandler::reply(const Message& message)
 {
   // post the reply, so it has some delay
-  m_kernel.ioContext().post(
+  boost::asio::post(m_kernel.ioContext(), 
     [this, message]()
     {
       m_kernel.receive(message);

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +32,7 @@ struct BoardColorScheme
 
   const QColor background;
   const QColor foreground;
+  const QColor grid;
   const QColor track;
   const QColor trackDisabled;
   const QColor trackReserved;
@@ -49,6 +50,7 @@ struct BoardColorScheme
   const QColor turnoutState;
   const QColor decouplerDeactivated;
   const QColor decouplerActivated;
+  const qreal blockHighlightAlpha;
 };
 
 #endif

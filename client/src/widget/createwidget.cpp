@@ -1,9 +1,8 @@
 /**
- * client/src/widget/createwidget.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,34 +22,42 @@
 #include "createwidget.hpp"
 #include "list/marklincanlocomotivelistwidget.hpp"
 #include "objectlist/boardlistwidget.hpp"
+#include "objectlist/interfacelistwidget.hpp"
 #include "objectlist/throttleobjectlistwidget.hpp"
 #include "objectlist/trainlistwidget.hpp"
+#include "objectlist/zoneblocklistwidget.hpp"
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
 #include "object/itemseditwidget.hpp"
+#include "tile/tilewidget.hpp"
 #include "inputmonitorwidget.hpp"
 #include "outputkeyboardwidget.hpp"
-#include "outputmapwidget.hpp"
+#include "iomapwidget.hpp"
+#include "propertycheckbox.hpp"
 #include "propertycombobox.hpp"
 #include "propertydoublespinbox.hpp"
 #include "propertyspinbox.hpp"
 #include "propertylineedit.hpp"
 #include "propertypairoutputaction.hpp"
+#include "propertyvaluelabel.hpp"
+#include "objectpropertycombobox.hpp"
+#include "objectnamelabel.hpp"
 #include "../board/boardwidget.hpp"
 #include "../network/object.hpp"
 #include "../network/inputmonitor.hpp"
 #include "../network/outputkeyboard.hpp"
 #include "../network/board.hpp"
 #include "../network/property.hpp"
+#include "../network/objectproperty.hpp"
 
 QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
 {
   const QString& classId = object->classId();
 
-  if(classId == "command_station_list")
-    return new ObjectListWidget(object, parent); // todo remove
-  else if(classId == "decoder_list")
-    return new ThrottleObjectListWidget(object, parent); // todo remove
+  if(classId == "list.interface")
+  {
+    return new InterfaceListWidget(object, parent);
+  }
   else if(classId == "controller_list")
     return new ObjectListWidget(object, parent); // todo remove
   else if(classId == "rail_vehicle_list")
@@ -67,15 +74,21 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
   {
     return new TrainListWidget(object, parent);
   }
+  if(classId == "list.zone_block")
+  {
+    return new ZoneBlockListWidget(object, parent);
+  }
   else if(object->classId().startsWith("list."))
     return new ObjectListWidget(object, parent);
   else if(classId == "lua.script")
     return new LuaScriptEditWidget(object, parent);
-  else if(classId.startsWith("output_map."))
-    return new OutputMapWidget(object, parent);
+  else if(classId.startsWith("output_map.") || classId.startsWith("feedback_map."))
+  {
+    return new IOMapWidget(object, parent);
+  }
   else if(classId == "input_map.block" || classId == "decoder_functions")
     return new ItemsEditWidget(object, parent);
-  else if(classId == "marklin_can_node_list")
+  else if(classId == "marklin_can_node_list" || classId == "cbus_node_list" || classId == "cbus_session_list")
     return new ListWidget(object, parent);
   else if(classId == "marklin_can_locomotive_list")
     return new MarklinCANLocomotiveListWidget(object, parent);
@@ -91,6 +104,14 @@ QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
     return new InputMonitorWidget(inputMonitor, parent);
   else if(auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(object))
     return new OutputKeyboardWidget(outputKeyboard, parent);
+  else if(object->classId().startsWith("board_tile."))
+  {
+    return new TileWidget(object, parent);
+  }
+  else if(object->classId() == "booster")
+  {
+    return new TileWidget(object, parent);
+  }
   else
     return new ObjectEditWidget(object, parent);
 }
@@ -111,16 +132,25 @@ QWidget* createWidget(AbstractProperty& baseProperty, QWidget* parent)
   {
     return createWidget(*property, parent);
   }
+  else if(auto* objectProperty = dynamic_cast<ObjectProperty*>(&baseProperty))
+  {
+    return createWidget(*objectProperty, parent);
+  }
   assert(false);
   return nullptr;
 }
 
 QWidget* createWidget(Property& property, QWidget* parent)
 {
+  if(!property.isWritable()) // read only
+  {
+    return new PropertyValueLabel(property, parent);
+  }
+
   switch(property.type())
   {
     case ValueType::Boolean:
-      break; // TODO
+      return new PropertyCheckBox(property, parent);
 
     case ValueType::Enum:
       if(property.enumName() == "pair_output_action")
@@ -159,3 +189,11 @@ QWidget* createWidget(Property& property, QWidget* parent)
   return nullptr;
 }
 
+QWidget* createWidget(ObjectProperty& property, QWidget* parent)
+{
+  if(property.isWritable())
+  {
+    return new ObjectPropertyComboBox(property, parent);
+  }
+  return new ObjectNameLabel(property, parent);
+}

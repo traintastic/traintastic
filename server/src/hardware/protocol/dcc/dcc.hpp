@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/dcc/dcc.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +23,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCC_DCC_HPP
 
 #include <cstdint>
+#include <span>
 #include <traintastic/enum/decoderprotocol.hpp>
 #include "../../../utils/inrange.hpp"
 
@@ -43,6 +43,20 @@ constexpr bool isLongAddress(uint16_t address)
 constexpr DecoderProtocol getProtocol(uint16_t address)
 {
   return isLongAddress(address) ? DecoderProtocol::DCCLong : DecoderProtocol::DCCShort;
+}
+
+constexpr uint8_t calcChecksum(std::span<const uint8_t> message)
+{
+  if(message.empty()) [[unlikely]]
+  {
+    return 0;
+  }
+  uint8_t checksum = message[0];
+  for(size_t i = 1; i < message.size(); i++)
+  {
+    checksum ^= message[i];
+  }
+  return checksum;
 }
 
 namespace Accessory {

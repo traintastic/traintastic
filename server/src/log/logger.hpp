@@ -1,9 +1,8 @@
 /**
- * server/src/log/logger.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,17 +40,17 @@
 
 class Logger
 {
-  protected:
+  public:
     static std::string_view toString(LogMessage message);
     static std::string toString(LogMessage message, const std::vector<std::string>& args);
 
-    Logger() = default;
-
-  public:
     virtual ~Logger() = default;
 
     virtual void log(const std::chrono::system_clock::time_point& time, std::string_view objectId, LogMessage message) = 0;
     virtual void log(const std::chrono::system_clock::time_point& time, std::string_view objectId, LogMessage message, const std::vector<std::string>& args) = 0;
+
+  protected:
+    Logger() = default;
 };
 
 #endif

@@ -56,8 +56,14 @@ ConnectDialog::ConnectDialog(QWidget* parent, const QString& url) :
   m_password->setEchoMode(QLineEdit::Password);
 
   m_connectAutomatically->setChecked(GeneralSettings::instance().connectAutomaticallyToDiscoveredServer.value());
+
+  #if QT_VERSION < QT_VERSION_CHECK(6, 7, 0)
   connect(m_connectAutomatically, &QCheckBox::stateChanged, this,
     [](int state)
+  #else
+  connect(m_connectAutomatically, &QCheckBox::checkStateChanged, this,
+    [](Qt::CheckState state)
+  #endif
     {
       GeneralSettings::instance().connectAutomaticallyToDiscoveredServer.setValue(state == Qt::Checked);
     });
@@ -144,6 +150,13 @@ void ConnectDialog::socketReadyRead()
     quint16 port;
 
     m_udpSocket->readDatagram(static_cast<char*>(*message), message.size(), &host, &port);
+
+    // Convert mapped IPv4 to IPv4:
+    bool ok = false;
+    if(const auto ipv4 = host.toIPv4Address(&ok); ok)
+    {
+      host.setAddress(ipv4);
+    }
 
     if(message.command() == Message::Command::Discover && message.isResponse() && !message.isError())
     {

@@ -1,9 +1,8 @@
 /**
- * client/src/widget/tablewidget.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,6 +53,21 @@ QString TableWidget::getRowObjectId(int row) const
   return m_model ? m_model->getRowObjectId(row) : "";
 }
 
+QStringList TableWidget::getObjectIds() const
+{
+  assert(m_fetchAll);
+  QStringList ids;
+  if(m_model)
+  {
+    ids.reserve(m_model->rowCount());
+    for(int row = 0; row < m_model->rowCount(); ++row)
+    {
+      ids.append(m_model->getRowObjectId(row));
+    }
+  }
+  return ids;
+}
+
 void TableWidget::setTableModel(const TableModelPtr& model)
 {
   Q_ASSERT(!m_model);
@@ -88,41 +102,80 @@ void TableWidget::setTableModel(const TableModelPtr& model)
   updateRegion();
 }
 
+void TableWidget::setFetchAll(bool value)
+{
+  if(m_fetchAll != value)
+  {
+    m_fetchAll = value;
+    if(m_model)
+    {
+      updateRegion();
+    }
+  }
+}
+
 void TableWidget::updateRegion()
 {
+  assert(m_model);
+
   const int columnCount = m_model->columnCount();
   const int rowCount = m_model->rowCount();
 
   if(columnCount == 0 || rowCount == 0)
     return;
 
+  if(m_fetchAll)
+  {
+    m_model->setRegion(0, columnCount - 1, 0, rowCount - 1);
+    return;
+  }
+
   const QRect r = viewport()->rect();
   const QModelIndex topLeft = indexAt(r.topLeft());
 
   int rowMin = qMax(topLeft.row(), 0);
   int rowMax = indexAt(r.bottomLeft()).row();
-  if(rowMax == -1)
+
+  if(rowCount == 0)
+  {
+    // Invalid region to represent empty model
+    rowMin = 1;
+    rowMax = 0;
+  }
+  else if(rowMax == -1)
     rowMax = rowCount - 1;
   else
     rowMax = qMin(rowMax + 1, rowCount - 1);
 
   int columnMin = qMax(topLeft.column(), 0);
   int columnMax = indexAt(r.topRight()).column();
+
+  if(columnCount == 0)
+  {
+    // Invalid region to represent empty model
+    columnMin = 1;
+    columnMax = 0;
+  }
   if(columnMax == -1)
     columnMax = columnCount - 1;
   else
     columnMax = qMin(columnMax + 1, columnCount - 1);
 
-  m_model->setRegion(columnMin, columnMax, rowMin, rowMax);
+  m_model->setRegion(uint32_t(columnMin), uint32_t(columnMax),
+                     uint32_t(rowMin), uint32_t(rowMax));
 }
 
 void TableWidget::mouseMoveEvent(QMouseEvent* event)
 {
   QTableView::mouseMoveEvent(event);
 
-  if(event->button() == Qt::LeftButton)
+  if(!m_dragStarted && (event->buttons() & Qt::LeftButton) && (event->pos() - m_dragStartPosition).manhattanLength() >= QApplication::startDragDistance())
   {
-    m_dragStartPosition = event->pos();
+    if(const int row = indexAt(m_dragStartPosition).row(); row >= 0)
+    {
+      m_dragStarted = true;
+      emit rowDragged(row);
+    }
   }
 }
 
@@ -130,8 +183,18 @@ void TableWidget::mousePressEvent(QMouseEvent* event)
 {
   QTableView::mousePressEvent(event);
 
-  if((event->buttons() & Qt::LeftButton) && (event->pos() - m_dragStartPosition).manhattanLength() >= QApplication::startDragDistance())
+  if(event->button() == Qt::LeftButton)
   {
-    emit rowDragged(indexAt(m_dragStartPosition).row());
+    m_dragStartPosition = event->pos();
+  }
+}
+
+void TableWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+  QTableView::mouseReleaseEvent(event);
+
+  if(event->button() == Qt::LeftButton)
+  {
+    m_dragStarted = false;
   }
 }

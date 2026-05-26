@@ -11,6 +11,9 @@
 #define ServerExeName "traintastic-server.exe"
 #define ClientExeName "traintastic-client.exe"
 
+#define VC14RedistBinary "vc_redist.x64.exe"
+#define VC14RedistVersion GetFileVersion(VC14RedistBinary)
+
 #define CompanySubKey "SOFTWARE\traintastic.org"
 #define AppSubKey CompanySubKey + "\Traintastic"
 
@@ -34,8 +37,8 @@ OutputDir=output
 OutputBaseFilename=traintastic-setup-v{#VersionFull}
 SolidCompression=yes
 WizardStyle=modern
-ArchitecturesInstallIn64BitMode=x64
-ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64compatible
+ArchitecturesAllowed=x64compatible
 MinVersion=10.0
 
 [Languages]
@@ -43,8 +46,10 @@ Name: en; MessagesFile: "compiler:Default.isl,en-us.isl"
 Name: nl; MessagesFile: "compiler:Languages\Dutch.isl,nl-nl.isl"
 Name: de; MessagesFile: "compiler:Languages\German.isl,de-de.isl"
 Name: it; MessagesFile: "compiler:Languages\Italian.isl,it-it.isl"
-Name: sv; MessagesFile: "Languages\Swedish.isl,sv-se.isl"
+Name: sv; MessagesFile: "compiler:Languages\Swedish.isl,sv-se.isl"
 Name: fr; MessagesFile: "compiler:Languages\French.isl,fr-fr.isl"
+Name: pl; MessagesFile: "compiler:Languages\Polish.isl,pl-pl.isl"
+Name: da; MessagesFile: "compiler:Languages\Danish.isl,da-dk.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -65,16 +70,15 @@ Source: "..\..\client\build\Release\styles\*.dll"; DestDir: "{app}\client\styles
 ; Shared
 Source: "..\..\shared\translations\*.lang"; DestDir: "{commonappdata}\traintastic\translations"; Flags: ignoreversion;
 ; Manual
-Source: "..\..\manual\build\*"; DestDir: "{commonappdata}\traintastic\manual"; Flags: ignoreversion recursesubdirs
-Source: "..\..\manual\build.luadoc\*"; DestDir: "{commonappdata}\traintastic\manual-lua"; Flags: ignoreversion recursesubdirs
+Source: "..\..\manual\output\*"; DestDir: "{commonappdata}\traintastic\manual"; Flags: ignoreversion recursesubdirs
 ; LNCV XML
 Source: "..\..\shared\data\lncv\xml\*.xml"; DestDir: "{commonappdata}\traintastic\lncv"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\shared\data\lncv\xml\lncvmodule.xsd"; DestDir: "{commonappdata}\traintastic\lncv"; Flags: ignoreversion; Check: InstallClient
-; VC++ redistributable runtime. Extracted by VC2019RedistNeedsInstall(), if needed.
-Source: "..\..\client\build\Release\vc_redist.x64.exe"; DestDir: {tmp}; Flags: dontcopy
+; VC++ redistributable runtime. Extracted by VC14RedistNeedsInstall(), if needed.
+Source: "{#VC14RedistBinary}"; DestDir: {tmp}; Flags: dontcopy
 
 [Run]
-Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "Installing VC++ redistributables..."; Parameters: "/quiet /norestart"; Check: VC2019RedistNeedsInstall; Flags: waituntilterminated
+Filename: "{tmp}\{#VC14RedistBinary}"; StatusMsg: "Installing VC++ redistributables..."; Parameters: "/quiet /norestart"; Check: VC14RedistNeedsInstall; Flags: waituntilterminated
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (TCP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=TCP localport=5740 action=allow"; StatusMsg: "{cm:add_firewall_rule_traintastic_client} (TCP)"; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (UDP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=5740 action=allow"; StatusMsg: "{cm:add_firewall_rule_traintastic_client} (UDP)"; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (WLANmaus/Z21)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=21105 action=allow"; StatusMsg: "{cm:add_firewall_rule_wlanmaus_z21}"; Flags: runhidden; Check: InstallServer; Tasks: firewall_wlanmaus
@@ -116,6 +120,7 @@ const
   ComponentsValueName = 'Components';
 var
   ComponentsPage : TWizardPage;
+  ComponentsCLI : string;
   ClientAndServerRadioButton : TRadioButton;
   ClientOnlyRadioButton : TRadioButton;
 
@@ -131,12 +136,12 @@ end;
 
 procedure RegWriteTraintasticComponents(Value: String);
 begin
-  RegWriteStringValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Value);
+  RegWriteStringValue(HKEY_LOCAL_MACHINE, ExpandConstant('{#AppSubKey}'), ComponentsValueName, Value);
 end;
 
 function RegReadTraintasticComponents: String;
 begin
-  if not RegQueryStringValue(HKEY_LOCAL_MACHINE, '{#AppSubKey}', ComponentsValueName, Result) then
+  if not RegQueryStringValue(HKEY_LOCAL_MACHINE, ExpandConstant('{#AppSubKey}'), ComponentsValueName, Result) then
     Result := '';
 end;
 
@@ -167,12 +172,39 @@ begin
   Result := True;
 end;
 
+function InitializeSetup: Boolean;
+var
+  I: Integer;
+  Param: string;
+begin
+  Result := True;
+
+  for I := 1 to ParamCount do begin
+    Param := ParamStr(I);
+    if CompareText(Copy(Param, 1, 12), '/Components=') = 0 then begin
+      ComponentsCLI := Copy(Param, 13, MaxInt);
+      if (ComponentsCLI <> 'ClientAndServer') and (ComponentsCLI <> 'ClientOnly') then begin
+        Log('Invalid /Components value: ' + ComponentsCLI)
+        Result := False;
+      end;
+    end;
+  end;
+end;
+
 procedure InitializeWizard;
 var
   Lbl: TLabel;
   Components: String;
 begin
-  Components := RegReadTraintasticComponents;
+  if ComponentsCLI <> '' then
+    Components := ComponentsCLI // override from CLI
+  else
+    Components := RegReadTraintasticComponents;
+
+  if (Components = '') and WizardSilent then begin
+    Log('Silent install without known Components value, defaulting to: ClientAndServer');
+    Components := 'ClientAndServer';
+  end;
 
   ComponentsPage := CreateCustomPage(wpSelectComponents, SetupMessage(msgWizardSelectComponents), SetupMessage(msgSelectComponentsDesc));
 
@@ -218,6 +250,8 @@ begin
     'it': Result := 'it-it';
     'sv': Result := 'sv-se';
     'fr': Result := 'fr-fr';
+    'pl': Result := 'pl-pl';
+    'da': Result := 'da-dk';
   else
     Result := 'en-us';
   end;
@@ -236,24 +270,22 @@ begin
   end
 end;
 
-function VC2019RedistNeedsInstall: Boolean;
+function VC14RedistNeedsInstall: Boolean;
 var
-  Version: String;
+  Value: String;
+  InstalledVersion, PackedVersion: Int64;
 begin
-  if RegQueryStringValue(HKEY_LOCAL_MACHINE,
-       'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Version', Version) then
-  begin
-    // Is the installed version at least 14.24 ?
-    Log('VC Redist Version check : found ' + Version);
-    Result := (CompareStr(Version, 'v14.24.28127.04')<0);
-  end
-  else
-  begin
-    // Not even an old version installed
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Version', Value) then begin
+    Log('VC14 Redist Version check: found ' + Value);      
+    Result :=
+      not StrToVersion(Copy(Value, 2, MaxInt), InstalledVersion) or
+      not StrToVersion(ExpandConstant('{#VC14RedistVersion}'), PackedVersion) or
+      (ComparePackedVersion(InstalledVersion, PackedVersion) < 0);
+  end else begin
+    Log('VC14 Redist Version check: not found');
     Result := True;
   end;
-  if (Result) then
-  begin
-    ExtractTemporaryFile('vc_redist.x64.exe');
+  if Result then begin
+    ExtractTemporaryFile(ExpandConstant('{#VC14RedistBinary}'));
   end;
 end;

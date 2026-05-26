@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/ecosinterface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,7 +44,7 @@
 #include "../../world/worldsaver.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Channel | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
 
 CREATE_IMPL(ECoSInterface)
@@ -74,10 +73,12 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(outputs, notes);
 }
 
-tcb::span<const DecoderProtocol> ECoSInterface::decoderProtocols() const
+ECoSInterface::~ECoSInterface() = default;
+
+std::span<const DecoderProtocol> ECoSInterface::decoderProtocols() const
 {
   static constexpr std::array<DecoderProtocol, 4> protocols{DecoderProtocol::DCCShort, DecoderProtocol::DCCLong, DecoderProtocol::Motorola, DecoderProtocol::Selectrix};
-  return tcb::span<const DecoderProtocol>{protocols.data(), protocols.size()};
+  return std::span<const DecoderProtocol>{protocols.data(), protocols.size()};
 }
 
 void ECoSInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
@@ -86,46 +87,45 @@ void ECoSInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags ch
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
-const std::vector<uint32_t> *ECoSInterface::inputChannels() const
+std::span<const InputChannel> ECoSInterface::inputChannels() const
 {
-  return &ECoS::Kernel::inputChannels;
+  static const auto values = makeArray(InputChannel::S88, InputChannel::ECoSDetector);
+  return values;
 }
 
-const std::vector<std::string_view> *ECoSInterface::inputChannelNames() const
-{
-  return &ECoS::Kernel::inputChannelNames;
-}
-
-std::pair<uint32_t, uint32_t> ECoSInterface::inputAddressMinMax(uint32_t channel) const
+std::pair<uint32_t, uint32_t> ECoSInterface::inputAddressMinMax(InputChannel channel) const
 {
   using namespace ECoS;
 
   switch(channel)
   {
-    case Kernel::InputChannel::s88:
+    case InputChannel::S88:
       return {Kernel::s88AddressMin, Kernel::s88AddressMax};
 
-    case Kernel::InputChannel::ecosDetector:
+    case InputChannel::ECoSDetector:
       return {Kernel::ecosDetectorAddressMin, Kernel::ecosDetectorAddressMax};
-  }
 
-  assert(false);
-  return {0, 0};
+    default: [[unlikely]]
+      assert(false);
+      return {0, 0};
+  }
 }
 
-void ECoSInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void ECoSInterface::inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action)
 {
+  assert(std::holds_alternative<InputAddress>(location));
+  const auto address = std::get<InputAddress>(location).address;
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(channel, address, action);
 }
 
-tcb::span<const OutputChannel> ECoSInterface::outputChannels() const
+std::span<const OutputChannel> ECoSInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::AccessoryDCC, OutputChannel::AccessoryMotorola, OutputChannel::ECoSObject);
   return values;
 }
 
-std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> ECoSInterface::getOutputECoSObjects(OutputChannel channel) const
+std::pair<std::span<const uint16_t>, std::span<const std::string>> ECoSInterface::getOutputECoSObjects(OutputChannel channel) const
 {
   if(channel == OutputChannel::ECoSObject) /*[[likely]]*/
   {
@@ -134,21 +134,21 @@ std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> ECoSInterface
   return OutputController::getOutputECoSObjects(channel);
 }
 
-bool ECoSInterface::isOutputId(OutputChannel channel, uint32_t outputId) const
+bool ECoSInterface::isOutputLocation(OutputChannel channel, const OutputLocation& location) const
 {
   if(channel == OutputChannel::ECoSObject)
   {
-    return inRange<uint32_t>(outputId, ECoS::ObjectId::switchMin, ECoS::ObjectId::switchMax);
+    return inRange<uint16_t>(std::get<OutputECoSObject>(location).object, ECoS::ObjectId::switchMin, ECoS::ObjectId::switchMax);
   }
-  return OutputController::isOutputId(channel, outputId);
+  return OutputController::isOutputLocation(channel, location);
 }
 
-bool ECoSInterface::setOutputValue(OutputChannel channel, uint32_t outputId, OutputValue value)
+bool ECoSInterface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
   return
     m_kernel &&
-    isOutputId(channel, outputId) &&
-    m_kernel->setOutput(channel, outputId, value);
+    isOutputLocation(channel, location) &&
+    m_kernel->setOutput(channel, location, value);
 }
 
 bool ECoSInterface::setOnline(bool& value, bool simulation)

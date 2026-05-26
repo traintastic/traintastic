@@ -21,6 +21,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include "../src/core/eventloop.hpp"
 #include "../src/world/world.hpp"
 #include "../src/core/method.tpp"
 #include "../src/core/objectproperty.tpp"
@@ -31,6 +32,8 @@
 
 TEST_CASE("Board: Move non existing tile", "[board][board-move]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();
@@ -50,6 +53,8 @@ TEST_CASE("Board: Move non existing tile", "[board][board-move]")
 
 TEST_CASE("Board: Move 1x1 tile to empty location", "[board][board-move]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();
@@ -83,6 +88,8 @@ TEST_CASE("Board: Move 1x1 tile to empty location", "[board][board-move]")
 
 TEST_CASE("Board: Move 1x1 tile to occupied location", "[board][board-move]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();
@@ -125,6 +132,8 @@ TEST_CASE("Board: Move 1x1 tile to occupied location", "[board][board-move]")
 
 TEST_CASE("Board: Move 1x1 tile to invalid location", "[board][board-move]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();
@@ -176,6 +185,8 @@ TEST_CASE("Board: Move 1x1 tile to invalid location", "[board][board-move]")
 
 TEST_CASE("Board: Move 5x1 tile to occupied location", "[board][board-move]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();
@@ -246,6 +257,8 @@ TEST_CASE("Board: Move 5x1 tile to occupied location", "[board][board-move]")
 
 TEST_CASE("Board: Move 5x1 tile replace itself partly", "[board][board-move]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();
@@ -285,6 +298,8 @@ TEST_CASE("Board: Move 5x1 tile replace itself partly", "[board][board-move]")
 
 TEST_CASE("Board: Move and rotate 5x1 tile replace itself partly", "[board][board-move]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   auto board = world->boards->create();

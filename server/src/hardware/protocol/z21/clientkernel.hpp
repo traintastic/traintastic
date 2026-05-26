@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/z21/clientkernel.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,10 +26,12 @@
 #include <optional>
 
 #include "kernel.hpp"
+#include <boost/asio/post.hpp>
 #include <boost/asio/steady_timer.hpp>
+#include <traintastic/enum/inputchannel.hpp>
 #include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/tristate.hpp>
-#include "../../output/outputvalue.hpp"
+#include "../../output/outputtypes.hpp"
 
 enum class SimulateInputAction;
 class InputController;
@@ -47,22 +48,6 @@ class ClientKernel final : public Kernel
     static constexpr uint16_t rbusAddressMax = 1000; //!< \todo what is the maximum
     static constexpr uint16_t loconetAddressMin = 1;
     static constexpr uint16_t loconetAddressMax = 4096;
-
-    struct InputChannel
-    {
-      static constexpr uint32_t rbus = 1;
-      static constexpr uint32_t loconet = 2;
-    };
-
-    inline static const std::vector<uint32_t> inputChannels = {
-      InputChannel::rbus,
-      InputChannel::loconet,
-    };
-
-    inline static const std::vector<std::string_view> inputChannelNames = {
-      "$z21_channel:rbus$",
-      "$hardware:loconet$",
-    };
 
   private:
     const bool m_simulation;
@@ -178,7 +163,7 @@ class ClientKernel final : public Kernel
     template<class T>
     void postSend(const T& message, bool wantReply = true, uint8_t customRetryCount = 0)
     {
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, message, wantReply, customRetryCount]()
         {
           send(message, wantReply, customRetryCount);
@@ -323,7 +308,7 @@ public:
      */
     bool setOutput(OutputChannel channel, uint16_t address, OutputValue value);
 
-    void simulateInputChange(uint32_t channel, uint32_t address, SimulateInputAction action);
+    void simulateInputChange(InputChannel channel, uint32_t address, SimulateInputAction action);
 };
 
 }

@@ -1,9 +1,8 @@
 /**
- * server/src/board/tile/rail/turnout/turnout3wayrailtile.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2022,2024 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,9 +62,16 @@ Turnout3WayRailTile::Turnout3WayRailTile(World& world, std::string_view _id)
   : TurnoutRailTile(world, _id, TileId::RailTurnout3Way, 4)
 {
   // Skip Unknown position
-  tcb::span<const TurnoutPosition, 3> setPositionValues = tcb::make_span(positionValues).subspan<1>();
+  std::span<const TurnoutPosition, 3> setPositionValues = std::span(positionValues).subspan<1>();
 
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right}, getDefaultActionValue));
+
+  feedbackMap.setValueInternal(
+    std::make_shared<TurnoutFeedbackMap>(
+      *this,
+      feedbackMap.name(),
+      std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right},
+      onFeedbackMatch()));
 
   Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);

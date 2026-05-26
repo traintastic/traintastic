@@ -1,3 +1,0 @@
-# Interfaces {#hardware-interfaces}
-
-TODO

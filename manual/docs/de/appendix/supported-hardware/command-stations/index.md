@@ -1,0 +1,71 @@
+# Unterstützte Zentraleinheiten
+
+Diese Seite listet Zentraleinheiten und Digitalsysteme, die mit Traintastic getestet wurden.
+Die Verwendung des Einrichtungsassistenten wird **empfohlen**, wann immer möglich.
+Falls keine Unterstützung durch den Assistenten vorhanden ist, kann die Einrichtung auch manuell erfolgen, indem der passende Schnittstellentyp erstellt und konfiguriert wird.
+
+Details zur manuellen Konfiguration von Schnittstellen siehe Abschnitt [Schnittstellenkonfiguration](../../../advanced/interface/index.md).
+
+!!! tip "Nicht in der Liste?"
+    Das eigene System kann trotzdem funktionieren, auch wenn es hier nicht aufgeführt ist.
+    Im [Community-Forum](https://discourse.traintastic.org) kann geprüft werden, ob andere es bereits getestet haben, oder eigene Erfahrungen können geteilt werden, um die Liste zu erweitern.
+
+## Unterstützte Zentraleinheiten
+
+| Hersteller / System       | Schnittstellentyp(en)        | Hinweise                        |
+|---------------------------|------------------------------|---------------------------------|
+| CBUS/VLCB                 | USB, Netzwerk               | Netzwerk nicht getestet.
+| DCC-EX                    | USB, Netzwerk               | -                               |
+| Digikeijs DR5000         | USB, Netzwerk               | -                               |
+| ESU ECoS                 | Netzwerk                    | -                               |
+| ESU ECoS 2              | Netzwerk                    | -                               |
+| LDT HSI-88              | Seriell                     | Kein Assistent verfügbar.       |
+| Märklin CS2             | Netzwerk                    | -                               |
+| Roco MultiMAUS          | XpressNet                  | Erfordert XpressNet-Interface.  |
+| Uhlenbrock Intellibox   | LocoNet, Seriell nicht unterstützt | Erfordert LocoNet-Interface. |
+| Uhlenbrock IB-COM       | USB                         | -                               |
+
+!!! note
+    Alle hier aufgeführten Systeme wurden entweder mit dem Einrichtungsassistenten oder durch manuelle Konfiguration verifiziert.
+    Bei Problemen mit einem gelisteten System bitte im [Community-Forum](https://discourse.traintastic.org) melden, damit Dokumentation und Assistent verbessert werden können.
+
+## Nicht getestete Zentraleinheiten
+
+Diese Systeme sollten mit Traintastic funktionieren, wurden jedoch noch nicht verifiziert.
+
+| Hersteller / System              | Schnittstellentyp(en)        | Assistent | Hinweise                              |
+|---------------------------------|------------------------------|------------|---------------------------------------|
+| Digitrax LocoNet               | Seriell, USB, Netzwerk      | Nein       | LocoNet-Schnittstelle manuell einrichten. |
+| Lenz XpressNet                 | Seriell, USB, Netzwerk      | Nein       | XpressNet-Schnittstelle manuell einrichten. |
+| Märklin CS3                   | Netzwerk                    | Ja         | -                                     |
+| Märklin CS3 plus              | Netzwerk                    | Ja         | -                                     |
+| Uhlenbrock Intellibox Basic   | USB                         | Ja         | -                                     |
+| Uhlenbrock Intellibox IR      | LocoNet, Seriell nicht unterstützt | Ja     | LocoNet-Interface erforderlich.       |
+| Uhlenbrock Intellibox II      | USB                         | Ja         | -                                     |
+| Uhlenbrock Intellibox 2neo    | USB                         | Ja         | -                                     |
+| YaMoRC YD7001                 | USB, Netzwerk               | Nein       | Ähnlich zur Digikeijs DR5000.         |
+| YaMoRC YD7010                 | USB, Netzwerk               | Nein       | Ähnlich zur Digikeijs DR5000.         |
+| z21 start                     | Netzwerk                    | Ja         | -                                     |
+| z21 white                     | Netzwerk                    | Ja         | -                                     |
+| Z21 black                     | Netzwerk                    | Ja         | -                                     |
+
+!!! tip "Erfahrungen teilen!"
+    Wer eines dieser Systeme erfolgreich mit Traintastic nutzt:
+    Erfahrungen bitte im [Community-Forum](https://discourse.traintastic.org) teilen.
+    Feedback hilft dabei, die Kompatibilität zu bestätigen und die Liste zu verbessern.
+
+## Nicht unterstützte Zentraleinheiten
+
+Diese Systeme werden aktuell **nicht unterstützt**.
+Einige verfügen nicht über ausreichende technische Dokumentation für eine Implementierung.
+Bei anderen wurde die Unterstützung aufgrund fehlender Hardware nicht umgesetzt.
+
+| Hersteller / System | Schnittstellentyp(en) | Hinweise            |
+|---------------------|----------------------|---------------------|
+| BiDiB              | USB, Netzwerk        | -                   |
+| Selectix           | Seriell              | In Entwicklung      |
+| VPEB Dinamo        | Seriell, USB         | Gleissteuerungssystem |
+
+!!! tip "Mitwirkung willkommen!"
+    Unterstützung kann durch Tests, Rückmeldungen oder rechtmäßig erhaltene technische Dokumentation verbessert werden.
+    Beiträge sind im [Community-Forum](https://discourse.traintastic.org) willkommen.

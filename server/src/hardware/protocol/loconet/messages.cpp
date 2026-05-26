@@ -432,7 +432,42 @@ std::string toString(const Message& message)
     case OPC_WR_SL_DATA:
     {
       const auto& slotData = static_cast<const SlotDataBase&>(message);
-      if(slotData.slot == SLOT_FAST_CLOCK)
+      if(slotData.slot >= SLOT_LOCO_MIN && slotData.slot <= SLOT_LOCO_MAX)
+      {
+        const auto& locoSlot = static_cast<const SlotReadData&>(message);
+        s.append(" slot=").append(std::to_string(locoSlot.slot));
+        if(locoSlot.isFree())
+        {
+          s.append(" free");
+        }
+        else
+        {
+          if(locoSlot.isActive())
+          {
+            s.append(" active");
+          }
+          if(locoSlot.isBusy())
+          {
+            s.append(" busy");
+          }
+          s.append(" address=").append(std::to_string(locoSlot.address()));
+          if(locoSlot.isEmergencyStop())
+          {
+            s.append(" speed=estop");
+          }
+          else
+          {
+            s.append(" speed=").append(std::to_string(locoSlot.speed()));
+          }
+          s.append(" dir=").append(locoSlot.direction() == Direction::Forward ? "fwd" : "rev");
+          for(uint8_t fn = 0; fn <= 8; ++fn)
+          {
+            s.append(" f").append(std::to_string(fn)).append(locoSlot.f(fn) ? "=on" : "=off");
+          }
+          s.append(" id=").append(std::to_string(locoSlot.id()));
+        }
+      }
+      else if(slotData.slot == SLOT_FAST_CLOCK)
       {
         const auto& fastClock = static_cast<const FastClockSlotData&>(message);
         s.append(" slot=fastclock");

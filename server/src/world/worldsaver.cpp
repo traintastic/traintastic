@@ -1,9 +1,8 @@
 /**
- * server/src/world/worldsaver.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,12 +25,14 @@
 #include <version.hpp>
 #include "world.hpp"
 #include "../core/stateobject.hpp"
+#include "../core/objectproperty.tpp"
+#include "../status/simulationstatus.hpp"
 #include "../utils/sha1.hpp"
 #include "ctwwriter.hpp"
 
 using nlohmann::json;
 
-WorldSaver::WorldSaver(const World& world)
+WorldSaver::WorldSaver(const World& world, Options options)
 {
   m_states = json::object();
   m_data = json::object();
@@ -43,9 +44,25 @@ WorldSaver::WorldSaver(const World& world)
     if(!worldState.empty())
       m_states[world.getObjectId()] = worldState;
     m_data.erase("class_id");
+    // ugly fixup: remove simulation status object
+    if(auto it = m_data.find(world.statuses.name()); it != m_data.end() && it->is_array()) [[likely]]
+    {
+      const auto removeId = world.simulationStatus->getObjectId();
+      for(size_t i = 0; i < it->size(); i++)
+      {
+        if(it->operator[](i) == removeId)
+        {
+          it->erase(i);
+          break;
+        }
+      }
+    }
   }
 
   m_data["uuid"] = m_state["uuid"] = world.uuid.value();
+
+  m_data["is_auto_save"] = options.isAutoSave;
+  m_data["is_export"] = options.isExport;
 
   // traintastic version info:
   {
@@ -96,8 +113,8 @@ WorldSaver::WorldSaver(const World& world)
   }
 }
 
-WorldSaver::WorldSaver(const World& world, const std::filesystem::path& path)
-  : WorldSaver(world)
+WorldSaver::WorldSaver(const World& world, const std::filesystem::path& path, Options options)
+  : WorldSaver(world, options)
 {
   if(path.extension() == World::dotCTW)
   {
@@ -113,8 +130,8 @@ WorldSaver::WorldSaver(const World& world, const std::filesystem::path& path)
   }
 }
 
-WorldSaver::WorldSaver(const World& world, std::vector<std::byte>& memory)
-  : WorldSaver(world)
+WorldSaver::WorldSaver(const World& world, std::vector<std::byte>& memory, Options options)
+  : WorldSaver(world, options)
 {
   CTWWriter ctw(memory);
   writeCTW(ctw);

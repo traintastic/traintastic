@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/marklincan/kernel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2023-2024 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -80,7 +79,7 @@ void Kernel::setConfig(const Config& config)
 {
   assert(isEventLoopThread());
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, newConfig=config]()
     {
       if(m_config.defaultSwitchTime != newConfig.defaultSwitchTime)
@@ -140,11 +139,11 @@ void Kernel::start()
     [this]()
     {
       setThreadName("marklin_can");
-      auto work = std::make_shared<boost::asio::io_context::work>(m_ioContext);
+      boost::asio::executor_work_guard<decltype(m_ioContext.get_executor())> work{m_ioContext.get_executor()};
       m_ioContext.run();
     });
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       try
@@ -171,7 +170,7 @@ void Kernel::stop()
 {
   assert(isEventLoopThread());
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       m_ioHandler->stop();
@@ -387,7 +386,7 @@ void Kernel::receive(const Message& message)
         EventLoop::call(
           [this, channel, address, value]()
           {
-            m_outputController->updateOutputValue(channel, address, value);
+            m_outputController->updateOutputValue(channel, OutputAddress(address), value);
           });
       }
       break;
@@ -414,7 +413,7 @@ void Kernel::receive(const Message& message)
               EventLoop::call(
                 [this, address=feedbackState.contactId(), value]()
                 {
-                  m_inputController->updateInputValue(InputController::defaultInputChannel, address, value);
+                  m_inputController->updateInputValue(InputChannel::Input, InputAddress(address), value);
                 });
             }
           }
@@ -547,7 +546,7 @@ void Kernel::receive(const Message& message)
 void Kernel::systemStop()
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       send(SystemStop());
@@ -557,7 +556,7 @@ void Kernel::systemStop()
 void Kernel::systemGo()
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       send(SystemGo());
@@ -567,7 +566,7 @@ void Kernel::systemGo()
 void Kernel::systemHalt()
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
         send(SystemHalt());
@@ -577,7 +576,7 @@ void Kernel::systemHalt()
 void Kernel::getLocomotiveList()
 {
   assert(isEventLoopThread());
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       send(ConfigData(m_config.nodeUID, ConfigDataName::loks));
@@ -611,8 +610,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
       }
       break;
 
-    case DecoderProtocol::None:
-    case DecoderProtocol::Selectrix:
+    default: [[unlikely]]
       assert(false);
       break;
   }
@@ -656,7 +654,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputPairValue 
   assert(isEventLoopThread());
   assert(value == OutputPairValue::First || value == OutputPairValue::Second);
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, channel, address, value]()
     {
       uint32_t uid = 0;
@@ -712,7 +710,7 @@ void Kernel::send(const Message& message)
 
 void Kernel::postSend(const Message& message)
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, message]()
     {
       send(message);

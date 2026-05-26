@@ -29,6 +29,7 @@
 class Train;
 class BlockRailTile;
 class TrainBlockStatus;
+class Zone;
 
 class TrainTracking final
 {
@@ -37,11 +38,24 @@ private:
   TrainTracking(const TrainTracking&) = delete;
   TrainTracking& operator=(const TrainTracking&) = delete;
 
+  static void checkZoneAssigned(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block);
+  static void checkZoneEntering(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block);
+  static void checkZoneEntered(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block);
+  static void checkZoneLeaving(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block);
+  static void checkZoneLeft(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block);
+  static void checkZoneRemoved(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block);
+
+  static bool removeTrainIfNotInZone(const std::shared_ptr<Train>& train, const std::shared_ptr<Zone>& zone);
+
+  static void trainEnteredOrLeftZone(Train& train, Zone& zone);
+
 public:
+  static void assigned(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block);
   static void reserve(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction);
   static void enter(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection direction); // enter unreserved block
-  static void enter(const std::shared_ptr<TrainBlockStatus>& status); // enter reserved block
-  static void left(std::shared_ptr<TrainBlockStatus> status);
+  static void enter(const std::shared_ptr<TrainBlockStatus>& blockStatus); // enter reserved block
+  static void left(std::shared_ptr<TrainBlockStatus> blockStatus);
+  static void removed(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block);
 };
 
 #endif

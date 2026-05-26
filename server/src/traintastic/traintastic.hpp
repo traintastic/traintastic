@@ -1,9 +1,8 @@
 /**
- * server/src/traintastic/traintastic.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,6 +53,7 @@ class Traintastic final : public Object
     std::shared_ptr<Server> m_server;
 
     boost::asio::signal_set m_signalSet;
+    boost::asio::steady_timer m_autoSaveTimer;
 
     bool start();
     void stop();
@@ -84,6 +84,8 @@ class Traintastic final : public Object
     Traintastic(const std::filesystem::path& dataDir);
     ~Traintastic() final = default;
 
+    static std::string getInfo();
+
     std::string getObjectId() const final { return std::string(id); }
 
     const std::filesystem::path& dataDir() const { return m_dataDir; }
@@ -95,6 +97,8 @@ class Traintastic final : public Object
     std::filesystem::path debugDir() const { return dataDir() / "debug"; }
 
     void importWorld(const std::vector<std::byte>& worldData);
+
+    void restartAutoSaveTimer();
 
     RunStatus run(const std::string& worldUUID = {}, bool simulate = false, bool online = false, bool power = false, bool run = false);
     void exit();

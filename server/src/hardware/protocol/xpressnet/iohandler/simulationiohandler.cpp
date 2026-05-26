@@ -67,7 +67,7 @@ void SimulationIOHandler::reply(const Message& message)
 {
   // post the reply, so it has some delay
   //! \todo better delay simulation? at least xpressnet message transfer time?
-  m_kernel.ioContext().post(
+  boost::asio::post(m_kernel.ioContext(), 
     [this, data=copy(message)]()
     {
       m_kernel.receive(*reinterpret_cast<const Message*>(data.get()));

@@ -1,5 +1,25 @@
 [
     {
+        "term": "cbus_node_list:can_id",
+        "definition": "CAN ID"
+    },
+    {
+        "term": "cbus_interface_type:canusb",
+        "definition": "CANUSB"
+    },
+    {
+        "term": "cbus_interface_type:canether",
+        "definition": "CANEther"
+    },
+    {
+        "term": "cbus_settings:can_id",
+        "definition": "CAN ID"
+    },
+    {
+        "term": "class_id:interface.cbus",
+        "definition": "CBUS/VLCB"
+    },
+    {
         "term": "class_id:interface.dccex",
         "definition": "DCC-EX"
     },
@@ -52,6 +72,122 @@
         "definition": "A \ud83d\udec7 B"
     },
     {
+        "term": "function:f0",
+        "definition": "F0"
+    },
+    {
+        "term": "function:f1",
+        "definition": "F1"
+    },
+    {
+        "term": "function:f2",
+        "definition": "F2"
+    },
+    {
+        "term": "function:f3",
+        "definition": "F3"
+    },
+    {
+        "term": "function:f4",
+        "definition": "F4"
+    },
+    {
+        "term": "function:f5",
+        "definition": "F5"
+    },
+    {
+        "term": "function:f6",
+        "definition": "F6"
+    },
+    {
+        "term": "function:f7",
+        "definition": "F7"
+    },
+    {
+        "term": "function:f8",
+        "definition": "F8"
+    },
+    {
+        "term": "function:f9",
+        "definition": "F9"
+    },
+    {
+        "term": "function:f10",
+        "definition": "F10"
+    },
+    {
+        "term": "function:f11",
+        "definition": "F11"
+    },
+    {
+        "term": "function:f12",
+        "definition": "F12"
+    },
+    {
+        "term": "function:f13",
+        "definition": "F13"
+    },
+    {
+        "term": "function:f14",
+        "definition": "F14"
+    },
+    {
+        "term": "function:f15",
+        "definition": "F15"
+    },
+    {
+        "term": "function:f16",
+        "definition": "F16"
+    },
+    {
+        "term": "function:f17",
+        "definition": "F17"
+    },
+    {
+        "term": "function:f18",
+        "definition": "F18"
+    },
+    {
+        "term": "function:f19",
+        "definition": "F19"
+    },
+    {
+        "term": "function:f20",
+        "definition": "F20"
+    },
+    {
+        "term": "function:f21",
+        "definition": "F21"
+    },
+    {
+        "term": "function:f22",
+        "definition": "F22"
+    },
+    {
+        "term": "function:f23",
+        "definition": "F23"
+    },
+    {
+        "term": "function:f24",
+        "definition": "F24"
+    },
+    {
+        "term": "function:f25",
+        "definition": "F25"
+    },
+    {
+        "term": "function:f26",
+        "definition": "F26"
+    },
+    {
+        "term": "function:f27",
+        "definition": "F27"
+    },
+    {
+        "term": "function:f28",
+        "definition": "F28"
+    },
+    {
         "term": "hardware:dcc",
         "definition": "DCC"
     },
@@ -84,6 +220,26 @@
         "definition": "Z21"
     },
     {
+        "term": "input_channel:loconet",
+        "definition": "LocoNet"
+    },
+    {
+        "term": "input_channel:rbus",
+        "definition": "RBus"
+    },
+    {
+        "term": "input_channel:s88",
+        "definition": "S88"
+    },
+    {
+        "term": "input_channel:ecos_detector",
+        "definition": "ECoS Detector"
+    },
+    {
+        "term": "interface.cbus:cbus",
+        "definition": "CBUS/VLCB"
+    },
+    {
         "term": "interface.dccplusplus:dcc_plus_plus",
         "definition": "DCC++(EX)"
     },
@@ -98,6 +254,10 @@
     {
         "term": "interface.withrottle:withrottle",
         "definition": "WiThrottle"
+    },
+    {
+        "term": "length_unit:cm",
+        "definition": "cm"
     },
     {
         "term": "length_unit:ft",

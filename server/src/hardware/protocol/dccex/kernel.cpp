@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/dccex/kernel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,7 +51,7 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
 
 void Kernel::setConfig(const Config& config)
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, newConfig=config]()
     {
       if(newConfig.speedSteps != m_config.speedSteps)
@@ -76,11 +75,11 @@ void Kernel::start()
     [this]()
     {
       setThreadName("dcc-ex");
-      auto work = std::make_shared<boost::asio::io_context::work>(m_ioContext);
+      boost::asio::executor_work_guard<decltype(m_ioContext.get_executor())> work{m_ioContext.get_executor()};
       m_ioContext.run();
     });
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       try
@@ -106,7 +105,7 @@ void Kernel::start()
 
 void Kernel::stop()
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       m_startupDelayTimer.cancel();
@@ -162,7 +161,7 @@ void Kernel::receive(std::string_view message)
             EventLoop::call(
               [this, id, value]()
               {
-                m_outputController->updateOutputValue(OutputChannel::Turnout, id, value);
+                m_outputController->updateOutputValue(OutputChannel::Turnout, OutputAddress(id), value);
               });
           }
         }
@@ -215,7 +214,7 @@ void Kernel::receive(std::string_view message)
               EventLoop::call(
                 [this, id, value]()
                 {
-                  m_inputController->updateInputValue(InputController::defaultInputChannel, id, toTriState(value));
+                  m_inputController->updateInputValue(InputChannel::Input, InputAddress(id), toTriState(value));
                 });
             }
           }
@@ -240,7 +239,7 @@ void Kernel::receive(std::string_view message)
             EventLoop::call(
               [this, id, value]()
               {
-                m_outputController->updateOutputValue(OutputChannel::Output, id, value);
+                m_outputController->updateOutputValue(OutputChannel::Output, OutputAddress(id), value);
               });
           }
         }
@@ -252,7 +251,7 @@ void Kernel::receive(std::string_view message)
 
 void Kernel::powerOn()
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       if(m_powerOn != TriState::True)
@@ -264,7 +263,7 @@ void Kernel::powerOn()
 
 void Kernel::powerOff()
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       if(m_powerOn != TriState::False)
@@ -276,7 +275,7 @@ void Kernel::powerOff()
 
 void Kernel::emergencyStop()
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       if(m_emergencyStop != TriState::True)
@@ -289,7 +288,7 @@ void Kernel::emergencyStop()
 
 void Kernel::clearEmergencyStop()
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       m_emergencyStop = TriState::False;
@@ -301,7 +300,7 @@ void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, 
   if(has(changes, DecoderChangeFlags::EmergencyStop | DecoderChangeFlags::Throttle | DecoderChangeFlags::Direction))
   {
     const uint8_t speed = Decoder::throttleToSpeedStep<uint8_t>(decoder.throttle, 126);
-    m_ioContext.post(
+    boost::asio::post(m_ioContext, 
       [this, address=decoder.address.value(), emergencyStop=decoder.emergencyStop.value(), speed, direction=decoder.direction.value()]()
       {
         send(Messages::setLocoSpeedAndDirection(address, speed, emergencyStop | (m_emergencyStop != TriState::False), direction));
@@ -320,7 +319,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue valu
     case OutputChannel::Accessory:
       assert(inRange<uint32_t>(address, DCC::Accessory::addressMin, DCC::Accessory::addressMax));
       assert(std::get<OutputPairValue>(value) != OutputPairValue::Undefined);
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, address, value]()
         {
           send(Messages::setAccessory(address, std::get<OutputPairValue>(value) == OutputPairValue::Second));
@@ -329,7 +328,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue valu
           EventLoop::call(
             [this, address, value]()
             {
-              m_outputController->updateOutputValue(OutputChannel::Accessory, address, value);
+              m_outputController->updateOutputValue(OutputChannel::Accessory, OutputAddress(address), value);
             });
         });
       return true;
@@ -338,7 +337,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue valu
       assert(inRange(address, DCC::Accessory::addressMin, DCC::Accessory::addressMax));
       if(inRange<int16_t>(std::get<int16_t>(value), std::numeric_limits<uint8_t>::min(), std::numeric_limits<uint8_t>::max())) /*[[likely]]*/
       {
-        m_ioContext.post(
+        boost::asio::post(m_ioContext, 
           [this, address, data=static_cast<uint8_t>(std::get<int16_t>(value))]()
           {
             send(Messages::dccPacket(DCC::SetAdvancedAccessoryValue(address, data)));
@@ -350,7 +349,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue valu
     case OutputChannel::Turnout:
       assert(inRange<uint32_t>(address, idMin, idMax));
       assert(std::get<TriState>(value) != TriState::Undefined);
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, address, value]()
         {
           send(Messages::setTurnout(address, std::get<TriState>(value) == TriState::True));
@@ -360,7 +359,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue valu
     case OutputChannel::Output:
       assert(inRange<uint32_t>(address, idMin, idMax));
       assert(std::get<TriState>(value) != TriState::Undefined);
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, address, value]()
         {
           send(Messages::setOutput(address, std::get<TriState>(value) == TriState::True));
@@ -378,7 +377,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputValue valu
 void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
 {
   if(m_simulation)
-    m_ioContext.post(
+    boost::asio::post(m_ioContext, 
       [this, address, action]()
       {
         bool value;

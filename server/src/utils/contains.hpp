@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022,2024 Reinder Feenstra
+ * Copyright (C) 2022,2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 
 #include <array>
 #include <vector>
-#include <tcb/span.hpp>
+#include <span>
 
 template<class T, std::size_t N>
 inline bool contains(const std::array<T, N>& array, T value)
@@ -40,7 +40,7 @@ inline bool contains(const std::vector<T>& vector, T value)
 }
 
 template<class T>
-inline bool contains(tcb::span<const T> span, T value)
+inline bool contains(std::span<const T> span, T value)
 {
   return std::find(span.begin(), span.end(), value) != span.end();
 }

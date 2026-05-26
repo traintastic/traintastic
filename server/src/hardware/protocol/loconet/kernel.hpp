@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/loconet/kernel.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,15 +26,17 @@
 #include <array>
 #include <unordered_map>
 #include <filesystem>
+#include <queue>
+#include <boost/asio/post.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/connection.hpp>
-#include <tcb/span.hpp>
+#include <span>
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/outputchannel.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
-#include "../../output/outputvalue.hpp"
+#include "../../output/outputtypes.hpp"
 
 class Clock;
 class Decoder;
@@ -149,13 +150,25 @@ class Kernel : public ::KernelBase
     bool m_waitingForEcho;
     boost::asio::steady_timer m_waitingForEchoTimer;
     bool m_waitingForResponse;
+    bool m_waitingForLNCVReadResponse = false;
+    struct
+    {
+      uint16_t moduleId = 0;
+      uint16_t address = 0;
+      uint16_t lncv = 0;
+
+      void reset()
+      {
+        moduleId = 0;
+        address = 0;
+        lncv = 0;
+      }
+    } m_pendingLNCVRead;
     boost::asio::steady_timer m_waitingForResponseTimer;
 
     TriState m_globalPower;
-    std::function<void(bool)> m_onGlobalPowerChanged;
-
     TriState m_emergencyStop;
-    std::function<void()> m_onIdle;
+    std::function<void(bool, bool)> m_onStateChanged;
 
     std::shared_ptr<Clock> m_clock;
     boost::signals2::connection m_clockChangeConnection;
@@ -168,6 +181,14 @@ class Kernel : public ::KernelBase
     uint16_t m_lncvModuleId = 0;
     uint16_t m_lncvModuleAddress = 0;
     OnLNCVReadResponse m_onLNCVReadResponse;
+    struct LNCVRead
+    {
+      uint16_t moduleId;
+      uint16_t address;
+      uint16_t lncv;
+      std::function<void(uint16_t, std::error_code)> callback;
+    };
+    std::queue<LNCVRead> m_lncvReads;
 
     DecoderController* m_decoderController;
     std::unordered_map<uint16_t, uint8_t> m_addressToSlot;
@@ -202,12 +223,14 @@ class Kernel : public ::KernelBase
       return m_sendQueue[m_sentMessagePriority].front();
     }
 
+    void resume();
+
     void send(const Message& message, Priority priority = NormalPriority);
     template<class T>
     void postSend(const T& message)
     {
       assert(sizeof(message) == message.size());
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, message]()
         {
           send(message);
@@ -217,7 +240,7 @@ class Kernel : public ::KernelBase
     void postSend(const T& message, Priority priority)
     {
       assert(sizeof(message) == message.size());
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, message, priority]()
         {
           send(message, priority);
@@ -232,7 +255,7 @@ class Kernel : public ::KernelBase
     template<class T>
     void postSend(uint16_t address, const T& message)
     {
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, address, message]()
         {
           T msg(message);
@@ -316,15 +339,7 @@ class Kernel : public ::KernelBase
      * @param[in] callback ...
      * @note This function may not be called when the kernel is running.
      */
-    void setOnGlobalPowerChanged(std::function<void(bool)> callback);
-
-    /**
-     * @brief ...
-     *
-     * @param[in] callback ...
-     * @note This function may not be called when the kernel is running.
-     */
-    void setOnIdle(std::function<void()> callback);
+    void setOnStateChanged(std::function<void(bool, bool)> callback);
 
     /**
      * @brief Set clock for LocoNet fast clock
@@ -395,40 +410,26 @@ class Kernel : public ::KernelBase
      */
     void receive(const Message& message);
 
-    /**
-     *
-     *
-     */
-    void setPowerOn(bool value);
-
-    /**
-     *
-     *
-     */
-    void emergencyStop();
-
-
-    /**
-     *
-     */
-    void resume();
+    void setState(bool powerOn, bool run);
 
     //! \brief Send LocoNet packet
     //! \param[in] packet LocoNet packet bytes, exluding checksum.
     //! \return \c true if send, \c false otherwise.
-    bool send(tcb::span<uint8_t> packet);
+    bool send(std::span<uint8_t> packet);
 
     //! \brief Send immediate DCC packet
     //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 5.
     //! \param[in] repeat DCC packet repeat count 0..7
     //! \return \c true if send to command station, \c false otherwise.
-    bool immPacket(tcb::span<const uint8_t> dccPacket, uint8_t repeat);
+    bool immPacket(std::span<const uint8_t> dccPacket, uint8_t repeat);
 
     template<class T, std::enable_if_t<std::is_trivially_copyable_v<T> && sizeof(T) <= 5, bool> = true>
     bool immPacket(const T& dccPacket, uint8_t repeat)
     {
-      return immPacket(tcb::span<const uint8_t>(reinterpret_cast<const uint8_t*>(&dccPacket), sizeof(T)), repeat);
+      return immPacket(std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(&dccPacket), sizeof(T)), repeat);
     }
+
+    void readLNCV(uint16_t moduleId, uint16_t address, uint16_t lncv, std::function<void(uint16_t, std::error_code)> callback);
 
     /**
      *

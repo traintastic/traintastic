@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/ecosinterface.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,22 +73,22 @@ class ECoSInterface final
     ObjectProperty<ECoS::Settings> ecos;
 
     ECoSInterface(World& world, std::string_view _id);
+    ~ECoSInterface() final;
 
     // DecoderController:
-    tcb::span<const DecoderProtocol> decoderProtocols() const final;
+    std::span<const DecoderProtocol> decoderProtocols() const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    const std::vector<uint32_t>* inputChannels() const final;
-    const std::vector<std::string_view>* inputChannelNames() const final;
-    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
-    void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
+    std::span<const InputChannel> inputChannels() const final;
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
+    void inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action) final;
 
     // OutputController:
-    tcb::span<const OutputChannel> outputChannels() const final;
-    std::pair<tcb::span<const uint16_t>, tcb::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const final;
-    bool isOutputId(OutputChannel channel, uint32_t id) const final;
-    [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t outputId, OutputValue value) final;
+    std::span<const OutputChannel> outputChannels() const final;
+    std::pair<std::span<const uint16_t>, std::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const final;
+    bool isOutputLocation(OutputChannel channel, const OutputLocation& location) const final;
+    [[nodiscard]] bool setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value) final;
 };
 
 #endif

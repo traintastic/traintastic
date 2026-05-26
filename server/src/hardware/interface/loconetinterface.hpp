@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/loconetinterface.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +32,7 @@
 #include "../../core/objectproperty.hpp"
 #include "../../enum/loconetinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
-#include <tcb/span.hpp>
+#include <span>
 
 namespace LocoNet {
 class Kernel;
@@ -79,31 +78,35 @@ class LocoNetInterface final
     ObjectProperty<LocoNet::Settings> loconet;
 
     LocoNetInterface(World& world, std::string_view _id);
+    ~LocoNetInterface() final;
 
     //! \brief Send LocoNet packet
     //! \param[in] packet LocoNet packet bytes, exluding checksum.
     //! \return \c true if send, \c false otherwise.
-    bool send(tcb::span<uint8_t> packet);
+    bool send(std::span<uint8_t> packet);
 
     //! \brief Send immediate DCC packet
     //! \param[in] dccPacket DCC packet byte, exluding checksum. Length is limited to 5.
     //! \param[in] repeat DCC packet repeat count 0..7
     //! \return \c true if send to command station, \c false otherwise.
-    bool immPacket(tcb::span<uint8_t> dccPacket, uint8_t repeat);
+    bool immPacket(std::span<uint8_t> dccPacket, uint8_t repeat);
+
+    void readLNCV(uint16_t moduleId, uint16_t address, uint16_t lncv, std::function<void(uint16_t, std::error_code)> callback);
 
     // DecoderController:
-    tcb::span<const DecoderProtocol> decoderProtocols() const final;
+    std::span<const DecoderProtocol> decoderProtocols() const final;
     std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t /*channel*/) const final;
-    void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
+    std::span<const InputChannel> inputChannels() const final;
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
+    void inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action) final;
 
     // OutputController:
-    tcb::span<const OutputChannel> outputChannels() const final;
+    std::span<const OutputChannel> outputChannels() const final;
     std::pair<uint32_t, uint32_t> outputAddressMinMax(OutputChannel /*channel*/) const final;
-    [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t address, OutputValue value) final;
+    [[nodiscard]] bool setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value) final;
 
     // IdentificationController:
     std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t /*channel*/) const final;

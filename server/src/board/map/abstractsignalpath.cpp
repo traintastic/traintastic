@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2024 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,14 +64,6 @@ AbstractSignalPath::AbstractSignalPath(SignalRailTile& signal, size_t blocksAhea
   }
 }
 
-AbstractSignalPath::~AbstractSignalPath()
-{
-  for(auto& connection : m_connections)
-  {
-    connection.disconnect();
-  }
-}
-
 void AbstractSignalPath::evaluate()
 {
   const bool stop = !signal().hasReservedPath() && requireReservation();
@@ -114,7 +106,7 @@ std::tuple<const AbstractSignalPath::BlockItem*, const AbstractSignalPath::Signa
   return {nullptr, nullptr};
 }
 
-void AbstractSignalPath::getBlockStates(tcb::span<BlockState> blockStates) const
+void AbstractSignalPath::getBlockStates(std::span<BlockState> blockStates) const
 {
   size_t i = 0;
   const Item* item = m_root.get();

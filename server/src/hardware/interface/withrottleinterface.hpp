@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_WITHROTTLEINTERFACE_HPP
 
 #include "interface.hpp"
-#include "../throttle/throttlecontroller.hpp"
+#include "../../throttle/throttlecontroller.hpp"
 #include "../../core/objectproperty.hpp"
 
 namespace WiThrottle {

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,12 +40,13 @@ class SwitchTile : public Tile
   protected:
     void destroying() override;
     void addToWorld() final;
-    void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
 
   public:
-    Property<std::string> name;
     Property<Color> colorOn;
     Property<Color> colorOff;
+    Property<std::string> text;
+    Property<Color> textColorOn;
+    Property<Color> textColorOff;
     Property<bool> value;
     ObjectProperty<SwitchOutputMap> outputMap;
     Method<void()> toggle;

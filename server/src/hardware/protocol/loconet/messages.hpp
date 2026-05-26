@@ -20,12 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-/**
- * Portions Copyright (C) Digitrax Inc.
- *
- * LocoNet is a registered trademark of DigiTrax, Inc.
- */
-
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_MESSAGES_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_LOCONET_MESSAGES_HPP
 
@@ -62,10 +56,10 @@ constexpr uint8_t SLOT_LOCO_MAX = 119;
 constexpr uint8_t SLOT_PROGRAMMING_TRACK = 124;
 constexpr uint8_t SLOT_UNKNOWN = 255; //!< placeholder to indicate invalid slot
 
-constexpr uint8_t SPEED_STOP = 0;
-constexpr uint8_t SPEED_ESTOP = 1;
-constexpr uint8_t SPEED_MIN = 2;
-constexpr uint8_t SPEED_MAX = 127;
+constexpr uint8_t speedStop = 0;
+constexpr uint8_t speedEStop = 1;
+constexpr uint8_t speedMin = 2;
+constexpr uint8_t speedMax = 127;
 
 constexpr uint8_t SL_CONUP = 0x40;
 constexpr uint8_t SL_BUSY = 0x20;
@@ -1268,6 +1262,18 @@ struct SlotReadData : SlotReadDataBase
       snd |= SL_F8;
     else
       snd &= ~SL_F8;
+  }
+
+  uint16_t id() const
+  {
+    return (static_cast<uint16_t>(id2) << 7) | id1;
+  }
+
+  void setId(uint16_t value)
+  {
+    assert(value <= 0x3FFF);
+    id2 = (value >> 7) & 0x7F;
+    id1 = value & 0x7F;
   }
 };
 static_assert(sizeof(SlotReadData) == 14);

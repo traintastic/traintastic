@@ -26,7 +26,7 @@
 #include "../../core/object.hpp"
 #include "../../core/property.hpp"
 #include "../../enum/decoderfunctiontype.hpp"
-#include "../../enum/decoderfunctionfunction.hpp"
+#include <traintastic/enum/decoderfunctionfunction.hpp>
 
 class Decoder;
 

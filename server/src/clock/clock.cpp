@@ -1,9 +1,8 @@
 /**
- * server/src/clock/clock.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2020,2022 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +27,7 @@
 
 Clock::Clock(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
-  , m_timer{EventLoop::ioContext}
+  , m_timer{EventLoop::ioContext()}
   , time{this, "time", 0, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , hour{this, "hour", 0, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , minute{this, "minute", 0, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}

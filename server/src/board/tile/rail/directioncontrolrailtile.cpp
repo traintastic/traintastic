@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2023 Reinder Feenstra
+ * Copyright (C) 2022-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 #include "../../../core/method.tpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/sensor.hpp"
+#include "../../../utils/category.hpp"
 #include "../../../utils/displayname.hpp"
 
 CREATE_IMPL(DirectionControlRailTile)
@@ -102,15 +103,19 @@ DirectionControlRailTile::DirectionControlRailTile(World& world, std::string_vie
   Attributes::addDisplayName(name, DisplayName::Object::name);
   m_interfaceItems.add(name);
 
+  Attributes::addCategory(useNone, Category::options);
   Attributes::addEnabled(useNone, false);
   m_interfaceItems.add(useNone);
 
+  Attributes::addCategory(useAtoB, Category::options);
   Attributes::addEnabled(useAtoB, false);
   m_interfaceItems.add(useAtoB);
 
+  Attributes::addCategory(useBtoA, Category::options);
   Attributes::addEnabled(useBtoA, false);
   m_interfaceItems.add(useBtoA);
 
+  Attributes::addCategory(useBoth, Category::options);
   Attributes::addEnabled(useBoth, false);
   m_interfaceItems.add(useBoth);
 

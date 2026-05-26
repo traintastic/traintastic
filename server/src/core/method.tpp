@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023,2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -115,7 +115,7 @@ R Method<R(A...)>::operator()(A... args)
 }
 
 template<class R, class... A>
-tcb::span<const TypeInfo> Method<R(A...)>::argumentTypeInfo() const
+std::span<const TypeInfo> Method<R(A...)>::argumentTypeInfo() const
 {
   return {typeInfoArray<A...>};
 }

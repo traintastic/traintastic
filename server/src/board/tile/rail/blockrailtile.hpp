@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #include <array>
 #include <traintastic/enum/blocktraindirection.hpp>
 #include "../../map/node.hpp"
+#include "../../../core/lengthproperty.hpp"
 #include "../../../core/method.hpp"
 #include "../../../core/objectproperty.hpp"
 #include "../../../core/vectorproperty.hpp"
@@ -38,6 +39,7 @@ class Train;
 class TrainBlockStatus;
 class BlockInputMapItem;
 class BlockPath;
+class BlockZoneList;
 
 class BlockRailTile : public RailTile
 {
@@ -60,12 +62,15 @@ class BlockRailTile : public RailTile
     void updatePaths();
     void updateHeightWidthMax();
 
+    void fireTrainAssigned(const std::shared_ptr<Train>& train);
     void fireTrainReserved(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection);
     void fireTrainEntered(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection);
     void fireTrainLeft(const std::shared_ptr<Train>& train, BlockTrainDirection trainDirection);
+    void fireTrainRemoved(const std::shared_ptr<Train>& train);
 
   protected:
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
+    void addToWorld() final;
     void loaded() final;
     void destroying() final;
     void setRotate(TileRotate value) final;
@@ -79,10 +84,12 @@ class BlockRailTile : public RailTile
     boost::signals2::signal<void (const BlockRailTile&, BlockState)> stateChanged;
 
     Property<std::string> name;
+    LengthProperty length;
     ObjectProperty<BlockInputMap> inputMap;
     Property<BlockState> state;
     VectorProperty<SensorState> sensorStates;
     ObjectVectorProperty<TrainBlockStatus> trains;
+    ObjectProperty<BlockZoneList> zones;
     Method<void(std::shared_ptr<Train>)> assignTrain;
     Method<void(std::shared_ptr<Train>)> removeTrain;
     Method<void()> flipTrain;

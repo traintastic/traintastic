@@ -40,4 +40,20 @@ TRAINTASTIC_ENUM(SpeedUnit, "speed_unit", 3,
   {SpeedUnit::MilePerHour, "mph"},
 });
 
+constexpr std::string_view toDisplayUnit(SpeedUnit value)
+{
+  switch(value)
+  {
+    case SpeedUnit::MeterPerSecond:
+      return "m/s";
+
+    case SpeedUnit::KiloMeterPerHour:
+      return "km/h";
+
+    case SpeedUnit::MilePerHour:
+      return "mph";
+  }
+  return {};
+}
+
 #endif

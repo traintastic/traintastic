@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2020,2023 Reinder Feenstra
+ * Copyright (C) 2019-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,6 +74,14 @@ void Locale::enableMissingLogging()
 }
 
 #ifdef QT_CORE_LIB
+bool Locale::exists(const QString& id) const
+{
+  QByteArray b = id.toLatin1();
+  return
+    m_strings.contains({b.data(), static_cast<std::string_view::size_type>(b.length())}) ||
+    (m_fallback && m_fallback->exists(id));
+}
+
 QString Locale::translate(const QString& id) const
 {
   QByteArray b = id.toLatin1();

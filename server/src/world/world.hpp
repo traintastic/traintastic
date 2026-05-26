@@ -1,9 +1,8 @@
 /**
- * server/src/world/world.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +22,7 @@
 #ifndef TRAINTASTIC_SERVER_WORLD_WORLD_HPP
 #define TRAINTASTIC_SERVER_WORLD_WORLD_HPP
 
+#include "worldfeatures.hpp"
 #include "../core/object.hpp"
 #include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
@@ -44,15 +44,22 @@ class InputController;
 class OutputController;
 class IdentificationController;
 class LNCVProgrammingController;
+class CBUSInterface;
+class LocoNetInterface;
 class InterfaceList;
 class DecoderList;
 class InputList;
 class OutputList;
 class IdentificationList;
+class BoosterList;
 class BoardList;
+class ZoneList;
+class BlockRailTileList;
 class LinkRailTileList;
 class NXManager;
+class TrainPathFinder;
 class Clock;
+class ThrottleList;
 class TrainList;
 class RailVehicleList;
 class SimulationStatus;
@@ -75,7 +82,12 @@ class World : public Object
   private:
     struct Private {};
 
+    WorldFeatures m_features;
+
+    void backupAndSave(bool isAutoSave);
+
     void updateEnabled();
+    void updateFeatures();
     void updateScaleRatio();
 
   protected:
@@ -85,7 +97,10 @@ class World : public Object
 
     void loaded() final;
     void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
+    void worldFeaturesChanged(const WorldFeatures features, WorldFeature changed) final;
+
     void event(WorldEvent value);
+    void setFeature(WorldFeature feature, bool value);
 
   public:
     CLASS_ID("world")
@@ -109,25 +124,38 @@ class World : public Object
     Property<ExternalOutputChangeAction> extOutputChangeAction;
     Property<uint16_t> pathReleaseDelay;
 
+    Property<bool> featureScripting;
+
+    Property<bool> debugBlockEvents;
+    Property<bool> debugTrainEvents;
+    Property<bool> debugZoneEvents;
+
     ObjectProperty<ControllerList<DecoderController>> decoderControllers;
     ObjectProperty<ControllerList<InputController>> inputControllers;
     ObjectProperty<ControllerList<OutputController>> outputControllers;
     ObjectProperty<ControllerList<IdentificationController>> identificationControllers;
     ObjectProperty<ControllerList<LNCVProgrammingController>> lncvProgrammingControllers;
+    ObjectProperty<ControllerList<CBUSInterface>> cbusInterfaces;
+    ObjectProperty<ControllerList<LocoNetInterface>> loconetInterfaces;
 
     ObjectProperty<InterfaceList> interfaces;
     ObjectProperty<DecoderList> decoders;
     ObjectProperty<InputList> inputs;
     ObjectProperty<OutputList> outputs;
     ObjectProperty<IdentificationList> identifications;
+    ObjectProperty<BoosterList> boosters;
     ObjectProperty<BoardList> boards;
+    ObjectProperty<ZoneList> zones;
     ObjectProperty<Clock> clock;
+    ObjectProperty<ThrottleList> throttles;
     ObjectProperty<TrainList> trains;
     ObjectProperty<RailVehicleList> railVehicles;
     ObjectProperty<Lua::ScriptList> luaScripts;
 
+    ObjectProperty<BlockRailTileList> blockRailTiles;
     ObjectProperty<LinkRailTileList> linkRailTiles;
     ObjectProperty<NXManager> nxManager;
+    ObjectProperty<TrainPathFinder> trainPathFinder;
 
     ObjectVectorProperty<Status> statuses;
     Property<uint32_t> hardwareThrottles; //<! number of connected hardware throttles
@@ -156,6 +184,28 @@ class World : public Object
     World(Private);
     ~World() override;
 
+    inline bool feature(WorldFeature feature) const
+    {
+      return m_features[feature];
+    }
+
+    const WorldFeatures features() const
+    {
+      return m_features;
+    }
+
+    void enableFeature(WorldFeature feature)
+    {
+      assert(isAutomaticFeature(feature));
+      setFeature(feature, true);
+    }
+
+    void disableFeature(WorldFeature feature)
+    {
+      assert(isAutomaticFeature(feature));
+      setFeature(feature, false);
+    }
+
     std::string getObjectId() const final { return std::string(classId); }
 
     std::string getUniqueId(std::string_view prefix) const;
@@ -163,6 +213,7 @@ class World : public Object
     ObjectPtr getObjectById(const std::string& _id) const;
     ObjectPtr getObjectByPath(std::string_view path) const;
 
+    void autoSave();
     void export_(std::vector<std::byte>& data);
 };
 

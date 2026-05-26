@@ -4,7 +4,7 @@ project(traintastic-client VERSION ${TRAINTASTIC_VERSION} DESCRIPTION "Traintast
 include(GNUInstallDirs)
 include(../shared/translations/traintastic-lang.cmake)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
@@ -71,6 +71,7 @@ file(GLOB SOURCES
   "src/utils/*.cpp"
   "src/widget/*.hpp"
   "src/widget/*.cpp"
+  "src/widget/decoder/*.cpp"
   "src/widget/list/*.hpp"
   "src/widget/list/*.cpp"
   "src/widget/object/*.hpp"
@@ -81,11 +82,13 @@ file(GLOB SOURCES
   "src/widget/status/*.cpp"
   "src/widget/throttle/*.hpp"
   "src/widget/throttle/*.cpp"
+  "src/widget/tile/*.cpp"
   "src/wizard/*.hpp"
   "src/wizard/*.cpp"
   "src/wizard/page/*.hpp"
   "src/wizard/page/*.cpp"
   "../shared/src/traintastic/locale/locale.cpp"
+  "../shared/src/traintastic/os/systeminfo.cpp"
   "../shared/src/traintastic/utils/standardpaths.cpp"
   "thirdparty/QtWaitingSpinner/*.hpp"
   "thirdparty/QtWaitingSpinner/*.cpp")
@@ -104,6 +107,19 @@ target_link_libraries(traintastic-client PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt$
 if(QT_VERSION_MAJOR GREATER 5)
   target_link_libraries(traintastic-client PRIVATE Qt${QT_VERSION_MAJOR}::SvgWidgets)
 endif()
+
+### VCPKG
+if(DEFINED ENV{VCPKG_ROOT})
+  message(STATUS "Using VCPKG (VCPKG_ROOT=$ENV{VCPKG_ROOT})")
+  if(WIN32)
+    set(VCPKG_TARGET_TRIPLET "x64-windows-static-md")
+  endif()
+  include($ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+endif()
+
+# libarchive
+find_package(LibArchive REQUIRED)
+target_link_libraries(traintastic-client PRIVATE LibArchive::LibArchive)
 
 ### PLATFORM ###
 
@@ -155,5 +171,19 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Reinder Feenstra")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://traintastic.org")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "traintastic-data (>= ${CPACK_PACKAGE_VERSION})")
+
+if(LINUX)
+  # add qt6-svg-plugins dependency if package exists:
+  execute_process(
+    COMMAND dpkg-query -W -f=$\{Version\} qt6-svg-plugins
+    OUTPUT_VARIABLE QT6_SVG_PLUGINS_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+  )
+  if(QT6_SVG_PLUGINS_VERSION)
+    message(STATUS "qt6-svg-plugins package version: ${QT6_SVG_PLUGINS_VERSION}")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "qt6-svg-plugins (>= ${QT6_SVG_PLUGINS_VERSION}), ${CPACK_DEBIAN_PACKAGE_DEPENDS}")
+  endif()
+endif()
 
 include(CPack)

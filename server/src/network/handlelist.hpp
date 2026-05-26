@@ -47,6 +47,16 @@ class HandleList
     {
     }
 
+    auto begin() const
+    {
+      return m_handleToItem.begin();
+    }
+
+    auto end() const
+    {
+      return m_handleToItem.end();
+    }
+
     Titem getItem(Handle handle) const
     {
       auto it = m_handleToItem.find(handle);

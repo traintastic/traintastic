@@ -43,7 +43,7 @@ bool TrainListTableModel::isListedProperty(std::string_view name)
     name == "name" ||
     name == "active" ||
     name == "blocks" ||
-    name == "lob" ||
+    name == "length" ||
     name == "weight";
 }
 
@@ -55,7 +55,7 @@ TrainListTableModel::TrainListTableModel(TrainList& list) :
     DisplayName::Object::name,
     "train:active",
     "train:block",
-    "train:lob",
+    "train:length",
     "train:weight"
     });
 }
@@ -81,7 +81,7 @@ std::string TrainListTableModel::getText(uint32_t column, uint32_t row) const
         return !train.blocks.empty() ? train.blocks[0]->block->name.value() : std::string{};
 
       case columnLength:
-        return toString(train.lob);
+        return toString(train.length);
 
       case columnWeight:
         return toString(train.weight);
@@ -105,7 +105,7 @@ void TrainListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
     changed(row, columnActive);
   else if(property.name() == "blocks")
     changed(row, columnBlock);
-  else if(property.name() == "lob")
+  else if(property.name() == "length")
     changed(row, columnLength);
   else if(property.name() == "weight")
     changed(row, columnWeight);

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2021,2023-2024 Reinder Feenstra
+ * Copyright (C) 2019-2021,2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,15 +45,19 @@ class TableModel final : public QAbstractTableModel
     int m_rowCount;
     struct Region
     {
-      int rowMin = 0;
-      int rowMax = -1;
-      int columnMin = 0;
-      int columnMax = -1;
+      // Default to invalid region
+      uint32_t rowMin = 1;
+      uint32_t rowMax = 0;
+      uint32_t columnMin = 1;
+      uint32_t columnMax = 0;
     } m_region;
+    bool m_regionAll = false;
     QMap<ColumnRow, QString> m_texts;
 
     void setColumnHeaders(const QVector<QString>& values);
     void setRowCount(int value);
+
+    void updateRegionAll();
 
   public:
     explicit TableModel(std::shared_ptr<Connection> connection, Handle handle, const QString& classId, QObject* parent = nullptr);
@@ -71,7 +75,8 @@ class TableModel final : public QAbstractTableModel
     QString getRowObjectId(int row) const;
     QString getValue(int column, int row) const;
 
-    void setRegion(int columnMin, int columnMax, int rowMin, int rowMax);
+    void setRegionAll(bool enable);
+    void setRegion(uint32_t columnMin, uint32_t columnMax, uint32_t rowMin, uint32_t rowMax);
 };
 
 #endif

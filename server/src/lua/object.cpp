@@ -1,9 +1,8 @@
 /**
- * server/src/lua/object.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +23,9 @@
 #include "object/object.hpp"
 #include "object/objectlist.hpp"
 #include "object/interface.hpp"
+#include "object/cbusinterface.hpp"
 #include "object/loconetinterface.hpp"
+#include "object/scriptthrottle.hpp"
 
 namespace Lua::Object {
 
@@ -35,7 +36,9 @@ void registerTypes(lua_State* L)
   Object::registerType(L);
   ObjectList::registerType(L);
   Interface::registerType(L);
+  CBUSInterface::registerType(L);
   LocoNetInterface::registerType(L);
+  ScriptThrottle::registerType(L);
 
   // weak table for object userdata:
   lua_newtable(L);
@@ -63,10 +66,18 @@ void push(lua_State* L, const ObjectPtr& value)
       lua_pop(L, 1); // remove nil
       new(lua_newuserdata(L, sizeof(ObjectPtrWeak))) ObjectPtrWeak(value);
 
-      if(dynamic_cast<::LocoNetInterface*>(value.get()))
+      if(dynamic_cast<::CBUSInterface*>(value.get()))
+      {
+        luaL_setmetatable(L, CBUSInterface::metaTableName);
+      }
+      else if(dynamic_cast<::LocoNetInterface*>(value.get()))
         luaL_setmetatable(L, LocoNetInterface::metaTableName);
       else if(dynamic_cast<AbstractObjectList*>(value.get()))
         luaL_setmetatable(L, ObjectList::metaTableName);
+      else if(dynamic_cast<::ScriptThrottle*>(value.get()))
+      {
+        luaL_setmetatable(L, ScriptThrottle::metaTableName);
+      }
       else
         luaL_setmetatable(L, Object::metaTableName);
 

@@ -30,7 +30,7 @@
 class InterfaceList final : public ObjectList<Interface>
 {
   private:
-    std::unordered_map<Object*, boost::signals2::connection> m_statusPropertyChanged;
+    std::unordered_map<Object*, boost::signals2::scoped_connection> m_statusPropertyChanged;
 
     void statusPropertyChanged(BaseProperty& property);
 
@@ -48,7 +48,7 @@ class InterfaceList final : public ObjectList<Interface>
     Method<void(const std::shared_ptr<Interface>&)> delete_;
 
     InterfaceList(Object& _parent, std::string_view parentPropertyName);
-    ~InterfaceList() final;
+    ~InterfaceList() final = default;
 
     TableModelPtr getModel() final;
 };

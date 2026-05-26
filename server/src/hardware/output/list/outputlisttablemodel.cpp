@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/list/outputlisttablemodel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2022,2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +31,7 @@ bool OutputListTableModel::isListedProperty(std::string_view name)
   return
     name == "interface" ||
     name == "channel" ||
+    name == "node" ||
     name == "address";
 }
 
@@ -44,6 +44,9 @@ static std::string_view displayName(OutputListColumn column)
 
     case OutputListColumn::Channel:
       return DisplayName::Hardware::channel;
+
+    case OutputListColumn::Node:
+      return DisplayName::Hardware::node;
 
     case OutputListColumn::Address:
       return DisplayName::Hardware::address;
@@ -95,6 +98,13 @@ std::string OutputListTableModel::getText(uint32_t column, uint32_t row) const
         }
         break;
 
+      case OutputListColumn::Node:
+        if(const auto* addressOutput = dynamic_cast<const AddressOutput*>(&output); addressOutput && hasNode(addressOutput->channel))
+        {
+          return std::to_string(addressOutput->node.value());
+        }
+        return {};
+
       case OutputListColumn::Address:
         if(const auto* addressOutput = dynamic_cast<const AddressOutput*>(&output))
         {
@@ -116,6 +126,8 @@ void OutputListTableModel::propertyChanged(BaseProperty& property, uint32_t row)
     changed(row, OutputListColumn::Interface);
   else if(name == "channel")
     changed(row, OutputListColumn::Channel);
+  else if(name == "node")
+    changed(row, OutputListColumn::Node);
   else if(name == "address")
     changed(row, OutputListColumn::Address);
 }

@@ -1,9 +1,8 @@
 /**
- * shared/src/traintastic/enum/outputchannel.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024-2025 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,12 +35,14 @@ enum class OutputChannel : uint16_t
   DCCext = 5, //!< DCCext, see RCN-213
   Turnout = 6, //!< DCC-EX turnout
   ECoSObject = 7, //!< ECoS switch object
-  AccessorySX0 = 8,
-  AccessorySX1 = 9,
-  AccessorySX2 = 10,
+  LongEvent = 9,
+  ShortEvent = 10,
+  AccessorySX0 = 11,
+  AccessorySX1 = 12,
+  AccessorySX2 = 13,
 };
 
-TRAINTASTIC_ENUM(OutputChannel, "output_channel", 10,
+TRAINTASTIC_ENUM(OutputChannel, "output_channel", 12,
 {
   {OutputChannel::Output, "output"},
   {OutputChannel::Accessory, "accessory"},
@@ -50,12 +51,14 @@ TRAINTASTIC_ENUM(OutputChannel, "output_channel", 10,
   {OutputChannel::DCCext, "dcc_ext"},
   {OutputChannel::Turnout, "turnout"},
   {OutputChannel::ECoSObject, "ecos_object"},
+  {OutputChannel::LongEvent, "long_event"},
+  {OutputChannel::ShortEvent, "short_event"},
   {OutputChannel::AccessorySX0, "accessory_sx0"},
   {OutputChannel::AccessorySX1, "accessory_sx1"},
   {OutputChannel::AccessorySX2, "accessory_sx2"},
 });
 
-inline constexpr std::array<OutputChannel, 10> outputChannelValues{{
+inline constexpr std::array<OutputChannel, 12> outputChannelValues{{
   OutputChannel::Output,
   OutputChannel::Accessory,
   OutputChannel::AccessoryDCC,
@@ -63,6 +66,8 @@ inline constexpr std::array<OutputChannel, 10> outputChannelValues{{
   OutputChannel::DCCext,
   OutputChannel::Turnout,
   OutputChannel::ECoSObject,
+  OutputChannel::LongEvent,
+  OutputChannel::ShortEvent,
   OutputChannel::AccessorySX0,
   OutputChannel::AccessorySX1,
   OutputChannel::AccessorySX2,
@@ -78,5 +83,20 @@ constexpr bool isAccessory(OutputChannel value)
     (value == OutputChannel::AccessorySX1) ||
     (value == OutputChannel::AccessorySX2);
 }
+
+constexpr bool hasNode(OutputChannel value)
+{
+  return (value == OutputChannel::LongEvent);
+}
+
+template<>
+struct std::hash<OutputChannel>
+{
+  size_t operator()(OutputChannel const& value) const noexcept
+  {
+    using UT = std::underlying_type_t<OutputChannel>;
+    return std::hash<UT>{}(static_cast<UT>(value));
+  }
+};
 
 #endif

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +44,7 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
 
 void Kernel::setConfig(const Config& config)
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, newConfig=config]()
     {
       m_config = newConfig;
@@ -65,11 +65,11 @@ void Kernel::start()
     [this]()
     {
       setThreadName("xpressnet");
-      auto work = std::make_shared<boost::asio::io_context::work>(m_ioContext);
+      boost::asio::executor_work_guard<decltype(m_ioContext.get_executor())> work{m_ioContext.get_executor()};
       m_ioContext.run();
     });
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       try
@@ -95,13 +95,13 @@ void Kernel::start()
 
 void Kernel::stop()
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       m_ioHandler->stop();
-    });
 
-  m_ioContext.stop();
+      m_ioContext.stop();
+    });
 
   m_thread.join();
 
@@ -166,7 +166,7 @@ void Kernel::receive(const Message& message)
                   EventLoop::call(
                     [this, address=1 + fullAddress, value]()
                     {
-                      m_inputController->updateInputValue(InputController::defaultInputChannel, address, value);
+                      m_inputController->updateInputValue(InputChannel::Input, InputAddress(address), value);
                     });
                 }
               }
@@ -181,84 +181,99 @@ void Kernel::receive(const Message& message)
       break;
     }
     case 0x60:
-      if(message == NormalOperationResumed())
+    {
+      if(message == TrackPowerOff())
       {
-        if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
-        {
-          m_trackPowerOn = TriState::True;
-          m_emergencyStop = TriState::False;
-
-          if(m_onNormalOperationResumed)
-            EventLoop::call(
-              [this]()
-              {
-                m_onNormalOperationResumed();
-              });
-        }
+        EventLoop::call(
+          [this]()
+          {
+            if(m_trackPowerOn != TriState::False)
+            {
+              m_trackPowerOn = TriState::False;
+              m_emergencyStop = TriState::False;
+              if(m_onTrackPowerChanged)
+                m_onTrackPowerChanged(false, false);
+            }
+          });
       }
-      else if(message == TrackPowerOff())
+      else if(message == NormalOperationResumed())
       {
-        if(m_trackPowerOn != TriState::False)
-        {
-          m_trackPowerOn = TriState::False;
-
-          if(m_onTrackPowerOff)
-            EventLoop::call(
-              [this]()
-              {
-                m_onTrackPowerOff();
-              });
+        EventLoop::call(
+          [this]()
+          {
+            if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
+            {
+              m_trackPowerOn = TriState::True;
+              m_emergencyStop = TriState::False;
+              if(m_onTrackPowerChanged)
+                m_onTrackPowerChanged(true, false);
+            }
+          });
         }
-      }
       break;
-
+    }
     case 0x80:
+    {
       if(message == EmergencyStop())
       {
-        if(m_emergencyStop != TriState::True)
-        {
-          m_emergencyStop = TriState::True;
+        EventLoop::call(
+          [this]()
+          {
+            if(m_emergencyStop != TriState::True)
+            {
+              m_emergencyStop = TriState::True;
+              m_trackPowerOn = TriState::True;
 
-          if(m_onEmergencyStop)
-            EventLoop::call(
-              [this]()
-              {
-                m_onEmergencyStop();
-              });
-        }
+              if(m_onTrackPowerChanged)
+                m_onTrackPowerChanged(true, true);
+            }
+          });
       }
       break;
+    }
   }
 }
 
 void Kernel::resumeOperations()
 {
-  m_ioContext.post(
-    [this]()
-    {
-      if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
+  assert(isEventLoopThread());
+
+  if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
+  {
+    boost::asio::post(m_ioContext, 
+      [this]()
+      {
         send(ResumeOperationsRequest());
-    });
+      });
+  }
 }
 
 void Kernel::stopOperations()
 {
-  m_ioContext.post(
-    [this]()
-    {
-      if(m_trackPowerOn != TriState::False)
+  assert(isEventLoopThread());
+
+  if(m_trackPowerOn != TriState::False || m_emergencyStop != TriState::False)
+  {
+    boost::asio::post(m_ioContext, 
+      [this]()
+      {
         send(StopOperationsRequest());
-    });
+      });
+  }
 }
 
 void Kernel::stopAllLocomotives()
 {
-  m_ioContext.post(
-    [this]()
-    {
-      if(m_emergencyStop != TriState::True)
+  assert(isEventLoopThread());
+
+  if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::True)
+  {
+    boost::asio::post(m_ioContext, 
+      [this]()
+      {
         send(StopAllLocomotivesRequest());
-    });
+      });
+  }
 }
 
 void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
@@ -388,8 +403,8 @@ bool Kernel::setOutput(uint16_t address, OutputPairValue value)
 {
   assert(isEventLoopThread());
   assert(address >= accessoryOutputAddressMin && address <= accessoryOutputAddressMax);
-  assert(value == OutputPairValue::First || value == OutputPairValue::First);
-  m_ioContext.post(
+  assert(value == OutputPairValue::First || value == OutputPairValue::Second);
+  boost::asio::post(m_ioContext, 
     [this, address, value]()
     {
       send(
@@ -404,7 +419,7 @@ bool Kernel::setOutput(uint16_t address, OutputPairValue value)
 void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
 {
   if(m_simulation)
-    m_ioContext.post(
+    boost::asio::post(m_ioContext, 
       [this, address, action]()
       {
         if((action == SimulateInputAction::SetFalse && m_inputValues[address - 1] == TriState::False) ||

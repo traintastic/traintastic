@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,10 @@
 #include "../../../core/attributes.hpp"
 #include "../../../core/method.tpp"
 #include "../../../core/objectproperty.tpp"
+#include "../../../vehicle/rail/railvehiclelist.hpp"
+#include "../../../vehicle/rail/railvehicle.hpp"
+#include "../../../vehicle/rail/locomotive.hpp"
+#include "../../../train/train.hpp"
 #include "../../../world/getworld.hpp"
 #include "../../../world/world.hpp"
 
@@ -145,7 +149,7 @@ void MarklinCANLocomotiveList::import(const MarklinCAN::LocomotiveList::Locomoti
     auto it = std::find_if(decoders.begin(), decoders.end(),
       [&locomotive](const auto& item)
       {
-        return item->name.value() == locomotive.name;
+        return item->vehicle && item->vehicle->name.value() == locomotive.name;
       });
 
     if(it != decoders.end())
@@ -167,11 +171,15 @@ void MarklinCANLocomotiveList::import(const MarklinCAN::LocomotiveList::Locomoti
 
   if(!decoder) // not found, create a new one
   {
-    decoder = decoders.create();
+    auto vehicle = interface().world().railVehicles->create(Locomotive::classId);
+    decoder = vehicle->decoder.value();
   }
 
   // update it:
-  decoder->name = locomotive.name;
+  if(decoder->vehicle)
+  {
+    decoder->vehicle->name = locomotive.name;
+  }
   decoder->protocol = locomotive.protocol;
   if(decoder->protocol == DecoderProtocol::MFX)
   {

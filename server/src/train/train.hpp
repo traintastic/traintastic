@@ -1,9 +1,8 @@
 /**
- * server/src/train/train.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,8 +37,11 @@
 
 class TrainVehicleList;
 class TrainBlockStatus;
+class TrainZoneStatus;
 class BlockRailTile;
 class PoweredRailVehicle;
+class Zone;
+class Throttle;
 
 class Train : public IdObject
 {
@@ -58,6 +60,7 @@ class Train : public IdObject
 
     boost::asio::steady_timer m_speedTimer;
     SpeedState m_speedState = SpeedState::Idle;
+    std::shared_ptr<Throttle> m_throttle;
 
     void setSpeed(double kmph);
     void updateSpeed();
@@ -74,6 +77,13 @@ class Train : public IdObject
     void fireBlockEntered(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
     void fireBlockLeft(const std::shared_ptr<BlockRailTile>& block, BlockTrainDirection trainDirection);
 
+    void fireZoneAssigned(const std::shared_ptr<Zone>& zone);
+    void fireZoneEntering(const std::shared_ptr<Zone>& zone);
+    void fireZoneEntered(const std::shared_ptr<Zone>& zone);
+    void fireZoneLeaving(const std::shared_ptr<Zone>& zone);
+    void fireZoneLeft(const std::shared_ptr<Zone>& zone);
+    void fireZoneRemoved(const std::shared_ptr<Zone>& zone);
+
   protected:
     void addToWorld() override;
     void destroying() override;
@@ -85,34 +95,58 @@ class Train : public IdObject
     CREATE_DEF(Train)
 
     Property<std::string> name;
-    LengthProperty lob;
+    LengthProperty length;
     Property<bool> overrideLength;
     Property<Direction> direction;
     Property<bool> isStopped;
     SpeedProperty speed;
     SpeedProperty speedMax;
+    SpeedProperty speedLimit;
     SpeedProperty throttleSpeed;
     Method<void()> stop;
     Property<bool> emergencyStop;
     WeightProperty weight;
     Property<bool> overrideWeight;
+    Property<double> accelerationRate;
+    Property<double> brakingRate;
     ObjectProperty<TrainVehicleList> vehicles;
     Property<bool> powered;
     Property<bool> active;
     Property<TrainMode> mode;
+    Property<bool> mute;
+    Property<bool> noSmoke;
+    Property<bool> hasThrottle;
+    Property<std::string> throttleName;
 
     //! \brief List of block status the train is in
     //! Index 0 is the block where the head of the train is.
     //! If the train changes direction this list will be reversed.
     ObjectVectorProperty<TrainBlockStatus> blocks;
+    ObjectVectorProperty<TrainZoneStatus> zones;
     Property<std::string> notes;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onBlockAssigned;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockReserved;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockEntered;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection> onBlockLeft;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&> onBlockRemoved;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneAssigned;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneEntering;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneEntered;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneLeaving;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneLeft;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneRemoved;
 
     Train(World& world, std::string_view _id);
+
+    void updateMute();
+    void updateNoSmoke();
+    void updateSpeedLimit();
+
+    std::error_code acquire(Throttle& throttle, bool steal = false);
+    std::error_code release(Throttle& throttle);
+    std::error_code setSpeed(Throttle& throttle, double value);
+    std::error_code setTargetSpeed(Throttle& throttle, double value);
+    std::error_code setDirection(Throttle& throttle, Direction value);
 
     void fireBlockAssigned(const std::shared_ptr<BlockRailTile>& block);
     void fireBlockRemoved(const std::shared_ptr<BlockRailTile>& block);

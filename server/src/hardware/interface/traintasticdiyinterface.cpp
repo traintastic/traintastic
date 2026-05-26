@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/traintasticdiyinterface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022-2024 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,7 +38,7 @@
 #include "../../utils/makearray.hpp"
 #include "../../world/world.hpp"
 
-constexpr auto inputListColumns = InputListColumn::Id | InputListColumn::Name | InputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Address;
 
 CREATE_IMPL(TraintasticDIYInterface)
@@ -102,18 +101,28 @@ TraintasticDIYInterface::TraintasticDIYInterface(World& world, std::string_view 
   updateVisible();
 }
 
-std::pair<uint32_t, uint32_t> TraintasticDIYInterface::inputAddressMinMax(uint32_t /*channel*/) const
+TraintasticDIYInterface::~TraintasticDIYInterface() = default;
+
+std::span<const InputChannel> TraintasticDIYInterface::inputChannels() const
+{
+  static const auto values = makeArray(InputChannel::Input);
+  return values;
+}
+
+std::pair<uint32_t, uint32_t> TraintasticDIYInterface::inputAddressMinMax(InputChannel /*channel*/) const
 {
   return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax};
 }
 
-void TraintasticDIYInterface::inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action)
+void TraintasticDIYInterface::inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action)
 {
+  assert(std::holds_alternative<InputAddress>(location));
+  const auto address = std::get<InputAddress>(location).address;
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);
 }
 
-tcb::span<const OutputChannel> TraintasticDIYInterface::outputChannels() const
+std::span<const OutputChannel> TraintasticDIYInterface::outputChannels() const
 {
   static const auto values = makeArray(OutputChannel::Output);
   return values;
@@ -124,10 +133,11 @@ std::pair<uint32_t, uint32_t> TraintasticDIYInterface::outputAddressMinMax(Outpu
   return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax};
 }
 
-bool TraintasticDIYInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+bool TraintasticDIYInterface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
   assert(isOutputChannel(channel));
   assert(std::get<TriState>(value) == TriState::True || std::get<TriState>(value) == TriState::False);
+  const auto address = std::get<OutputAddress>(location).address;
   return
       m_kernel &&
       inRange(address, outputAddressMinMax(channel)) &&

@@ -1,9 +1,8 @@
 /**
- * server/src/utils/displayname.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +28,7 @@ namespace DisplayName
 {
   namespace BoardTile
   {
+    constexpr std::string_view feedbackMap = "board_tile:feedback_map";
     constexpr std::string_view outputMap = "board_tile:output_map";
     namespace Turnout
     {
@@ -51,6 +51,8 @@ namespace DisplayName
     constexpr std::string_view debugLogOutput = "hardware:debug_log_output";
     constexpr std::string_view debugLogRXTX = "hardware:debug_log_rx_tx";
     constexpr std::string_view decoders = "hardware:decoders";
+    constexpr std::string_view event = "hardware:event";
+    constexpr std::string_view events = "hardware:events";
     constexpr std::string_view ecos = "hardware:ecos";
     constexpr std::string_view identificationMonitor = "hardware:identification_monitor";
     constexpr std::string_view identifications = "hardware:identifications";
@@ -59,6 +61,7 @@ namespace DisplayName
     constexpr std::string_view interface = "hardware:interface";
     constexpr std::string_view loconet = "hardware:loconet";
     constexpr std::string_view marklinCAN = "hardware:marklin_can";
+    constexpr std::string_view node = "hardware:node";
     constexpr std::string_view outputKeyboard = "hardware:output_keyboard";
     constexpr std::string_view outputs = "hardware:outputs";
     constexpr std::string_view selectrix = "hardware:selectrix";
@@ -93,6 +96,13 @@ namespace DisplayName
     constexpr std::string_view name = "object:name";
     constexpr std::string_view notes = "object:notes";
   }
+  namespace OutputMap
+  {
+    constexpr std::string_view addAddress = "output_map:add_address";
+    constexpr std::string_view addEvent = "output_map:add_event";
+    constexpr std::string_view removeAddress = "output_map:remove_address";
+    constexpr std::string_view removeEvent = "output_map:remove_event";
+  }
   namespace Serial
   {
     constexpr std::string_view device = "serial:device";
@@ -105,7 +115,7 @@ namespace DisplayName
     {
       constexpr std::string_view cargoCapacity = "vehicle.rail:cargo_capacity";
       constexpr std::string_view cargoLoaded = "vehicle.rail:cargo_loaded";
-      constexpr std::string_view lob = "vehicle.rail:lob";
+      constexpr std::string_view length = "vehicle.rail:length";
       constexpr std::string_view power = "vehicle.rail:power";
       constexpr std::string_view speedMax = "vehicle.rail:speed_max";
       constexpr std::string_view decoder = "vehicle.rail:decoder";

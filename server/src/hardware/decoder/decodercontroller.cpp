@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/decoder/decodercontroller.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2023,2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,6 +58,7 @@ std::pair<uint16_t, uint16_t> DecoderController::decoderAddressMinMax(DecoderPro
       return {0, 103};
 
     case DecoderProtocol::MFX: // no address -> MFX UID is used
+    case DecoderProtocol::Analog:
     case DecoderProtocol::None:
       return noAddressMinMax;
   }
@@ -99,7 +99,7 @@ bool DecoderController::changeDecoderProtocolAddress(Decoder& decoder, DecoderPr
   return isDecoderAddressAvailable(newProtocol, newAddress);
 }
 
-tcb::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol protocol) const
+std::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol protocol) const
 {
   static constexpr std::array<uint8_t, 3> dccSpeedSteps{{14, 28, 128}};
   static constexpr std::array<uint8_t, 3> motorolaSpeedSteps{{14, 27, 28}};
@@ -123,6 +123,9 @@ tcb::span<const uint8_t> DecoderController::decoderSpeedSteps(DecoderProtocol pr
 
     case DecoderProtocol::None:
       return {};
+
+    case DecoderProtocol::Analog:
+      break; // must be handle by interface
   }
   assert(false);
   return {};

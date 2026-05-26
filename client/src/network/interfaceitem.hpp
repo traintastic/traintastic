@@ -47,6 +47,7 @@ class InterfaceItem : public QObject
     Object& object();
     const QString& name() const { return m_name; }
     QString displayName() const;
+    QString helpText() const;
 
     bool hasAttribute(AttributeName name) const;
     QVariant getAttribute(AttributeName name, const QVariant& default_) const;

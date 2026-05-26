@@ -2,6 +2,19 @@
   "name": {},
   "online": {},
   "status": {},
+  "input_channels": {},
+  "get_input": {
+    "parameters": [
+      {
+        "name": "channel",
+        "optional": true
+      },
+      {
+        "name": "address"
+      }
+    ],
+    "return_values": 1
+  },
   "output_channels": {},
   "get_output": {
     "parameters": [

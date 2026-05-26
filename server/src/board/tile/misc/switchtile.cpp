@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 #include "../../../core/method.tpp"
 #include "../../../core/attributes.hpp"
 #include "../../../hardware/output/map/switchoutputmap.hpp"
+#include "../../../utils/category.hpp"
 #include "../../../utils/displayname.hpp"
 
 CREATE_IMPL(SwitchTile)
@@ -35,9 +36,11 @@ static const std::array<std::string, 2> valueAliasValues{{"$output_map_item.swit
 
 SwitchTile::SwitchTile(World& world, std::string_view _id)
   : Tile(world, _id, TileId::Switch)
-  , name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
-  , colorOn{this, "color_on", Color::Yellow, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
-  , colorOff{this, "color_off", Color::Gray, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
+  , colorOn{this, "color_on", Color::Yellow, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadWrite}
+  , colorOff{this, "color_off", Color::Gray, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadWrite}
+  , text{this, "text", "", PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadWrite}
+  , textColorOn{this, "text_color_on", Color::Black, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadWrite}
+  , textColorOff{this, "text_color_off", Color::White, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadWrite}
   , value{this, "value", false, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::ScriptReadOnly}
   , outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript}
   , toggle{*this, "toggle", MethodFlags::ScriptCallable,
@@ -59,22 +62,29 @@ SwitchTile::SwitchTile(World& world, std::string_view _id)
 {
   outputMap.setValueInternal(std::make_shared<SwitchOutputMap>(*this, outputMap.name()));
 
-  const bool editable = contains(m_world.state.value(), WorldState::Edit);
+  Attributes::setMax<uint8_t>(height, 16);
+  Attributes::setMax<uint8_t>(width, 16);
 
-  Attributes::addDisplayName(name, DisplayName::Object::name);
-  Attributes::addEnabled(name, editable);
-  m_interfaceItems.add(name);
+  m_interfaceItems.add(text);
 
-  Attributes::addEnabled(colorOn, editable);
+  Attributes::addCategory(colorOn, Category::colors);
   Attributes::addValues(colorOn, colorValuesWithoutNone);
   m_interfaceItems.add(colorOn);
 
-  Attributes::addEnabled(colorOff, editable);
+  Attributes::addCategory(colorOff, Category::colors);
   Attributes::addValues(colorOff, colorValuesWithoutNone);
   m_interfaceItems.add(colorOff);
 
+  Attributes::addCategory(textColorOn, Category::colors);
+  Attributes::addValues(textColorOn, colorValuesWithoutNone);
+  m_interfaceItems.add(textColorOn);
+
+  Attributes::addCategory(textColorOff, Category::colors);
+  Attributes::addValues(textColorOff, colorValuesWithoutNone);
+  m_interfaceItems.add(textColorOff);
+
   Attributes::addObjectEditor(value, false);
-  Attributes::addAliases(value, tcb::span<const bool>(valueAliasKeys), tcb::span<const std::string>(valueAliasValues));
+  Attributes::addAliases(value, std::span<const bool>(valueAliasKeys), std::span<const std::string>(valueAliasValues));
   m_interfaceItems.add(value);
 
   Attributes::addDisplayName(outputMap, DisplayName::BoardTile::outputMap);
@@ -99,15 +109,4 @@ void SwitchTile::addToWorld()
 {
   outputMap->parentObject.setValueInternal(shared_from_this());
   Tile::addToWorld();
-}
-
-void SwitchTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
-{
-  Tile::worldEvent(worldState, worldEvent);
-
-  const bool editable = contains(worldState, WorldState::Edit);
-
-  Attributes::setEnabled(name, editable);
-  Attributes::setEnabled(colorOn, editable);
-  Attributes::setEnabled(colorOff, editable);
 }
