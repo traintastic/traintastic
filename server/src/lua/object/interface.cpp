@@ -164,6 +164,9 @@ int Interface::get_output(lua_State* L)
     case DCCext:
     case Turnout:
     case ShortEvent:
+    case AccessorySX0:
+    case AccessorySX1:
+    case AccessorySX2:
       checkArguments(L, 2);
       location = OutputAddress(check<uint32_t>(L, 2));
       break;

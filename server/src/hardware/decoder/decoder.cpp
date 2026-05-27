@@ -463,7 +463,7 @@ bool Decoder::checkProtocol()
   return interface && checkProtocol(interface->decoderProtocols());
 }
 
-bool Decoder::checkProtocol(tcb::span<const DecoderProtocol> protocols)
+bool Decoder::checkProtocol(std::span<const DecoderProtocol> protocols)
 {
   if(!protocols.empty() && !contains(protocols, protocol.value()))
   {

@@ -788,6 +788,9 @@ void OutputMap::updateAddressDisplayName()
     case DCCext:
     case Turnout:
     case ECoSObject:
+    case AccessorySX0:
+    case AccessorySX1:
+    case AccessorySX2:
       Attributes::setDisplayName(addresses, addresses.size() == 1 ? DisplayName::Hardware::address : DisplayName::Hardware::addresses);
       Attributes::setDisplayName(addAddress, DisplayName::OutputMap::addAddress);
       Attributes::setDisplayName(removeAddress, DisplayName::OutputMap::removeAddress);

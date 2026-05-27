@@ -28,11 +28,6 @@
 
 namespace Selectrix {
 
-constexpr Bus toBus(uint32_t channel)
-{
-  return static_cast<Bus>(channel - 1);
-}
-
 constexpr uint32_t toChannel(Bus bus)
 {
   return 1 + static_cast<uint8_t>(bus);
@@ -54,25 +49,6 @@ constexpr uint32_t toFlatAddress(uint8_t busAddress, uint8_t port)
 }
 
 namespace Accessory {
-
-constexpr Bus toBus(OutputChannel channel)
-{
-  switch(channel)
-  {
-    case OutputChannel::AccessorySX0:
-      return Bus::SX0;
-
-    case OutputChannel::AccessorySX1:
-      return Bus::SX1;
-
-    case OutputChannel::AccessorySX2:
-      return Bus::SX2;
-
-    default:
-      break;
-  }
-  return static_cast<Bus>(-1);
-}
 
 constexpr OutputChannel toChannel(Bus bus)
 {

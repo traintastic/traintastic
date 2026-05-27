@@ -234,12 +234,13 @@ void Kernel::busChanged(Bus bus, uint8_t address, uint8_t value)
             {
               if(m_inputController) /*[[likely]]*/
               {
-                const uint32_t channel = 1 + static_cast<uint8_t>(bus);
+                using UT = std::underlying_type_t<InputChannel>;
+                const auto channel = static_cast<InputChannel>(static_cast<UT>(InputChannel::SX0) + static_cast<UT>(bus));
                 const uint32_t baseAddress = 1 + static_cast<uint32_t>(address) * 8;
 
                 for(uint_least8_t i = 0; i < 8; ++i)
                 {
-                  m_inputController->updateInputValue(channel, baseAddress + i, toTriState(value & (1 << i)));
+                  m_inputController->updateInputValue(channel, InputAddress(baseAddress + i), toTriState(value & (1 << i)));
                 }
               }
             });
@@ -256,7 +257,7 @@ void Kernel::busChanged(Bus bus, uint8_t address, uint8_t value)
 
                 for(uint_least8_t i = 0; i < 4; ++i)
                 {
-                  m_outputController->updateOutputValue(channel, baseAddress + i, static_cast<OutputPairValue>((value >> (i * 2)) & 0x3));
+                  m_outputController->updateOutputValue(channel, OutputAddress(baseAddress + i), static_cast<OutputPairValue>((value >> (i * 2)) & 0x3));
                 }
               }
             });

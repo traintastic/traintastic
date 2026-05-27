@@ -29,7 +29,6 @@
 #include "../output/outputcontroller.hpp"
 #include "../../core/serialdeviceproperty.hpp"
 #include "../../core/objectproperty.hpp"
-#include <tcb/span.hpp>
 
 namespace Selectrix {
   class Kernel;
@@ -69,26 +68,6 @@ class SelectrixInterface final
       uint8_t mask;
     };
 
-    struct InputChannel
-    {
-      // zero is reserved for the defaultChannel
-      static constexpr uint32_t sx0 = 1;
-      static constexpr uint32_t sx1 = 2;
-      static constexpr uint32_t sx2 = 3;
-    };
-
-    inline static const std::vector<uint32_t> channels = {
-      InputChannel::sx0,
-      InputChannel::sx1,
-      InputChannel::sx2,
-    };
-
-    inline static const std::vector<std::string_view> channelNames = {
-      "SX0",
-      "SX1",
-      "SX2",
-    };
-
     std::unique_ptr<Selectrix::Kernel> m_kernel;
     boost::signals2::connection m_selectrixPropertyChanged;
     std::map<BusAddress, BusAddressUsage> m_usedBusAddresses;
@@ -96,8 +75,8 @@ class SelectrixInterface final
     void useLocomotiveAddress(uint32_t address);
     void unuseLocomotiveAddress(uint32_t address);
 
-    void useFeedbackAddress(uint32_t channel, uint32_t address);
-    void unuseFeedbackAddress(uint32_t channel, uint32_t address);
+    void useFeedbackAddress(InputChannel channel, uint32_t address);
+    void unuseFeedbackAddress(InputChannel channel, uint32_t address);
 
     void useAccessoryAddress(OutputChannel channel, uint32_t flatAddress);
     void unuseAccessoryAddress(OutputChannel channel, uint32_t flatAddress);
@@ -133,23 +112,21 @@ class SelectrixInterface final
     SelectrixInterface(World& world, std::string_view _id);
 
     // DecoderController:
-    tcb::span<const DecoderProtocol> decoderProtocols() const final;
+    std::span<const DecoderProtocol> decoderProtocols() const final;
     [[nodiscard]] bool isDecoderAddressAvailable(DecoderProtocol protocol, uint16_t address) const final;
     [[nodiscard]] bool changeDecoderProtocolAddress(Decoder& decoder, DecoderProtocol newProtocol, uint16_t newAddress) final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
-    const std::vector<uint32_t>* inputChannels() const final { return &channels; }
-    const std::vector<std::string_view>* inputChannelNames() const final { return &channelNames; }
-    std::pair<uint32_t, uint32_t> inputAddressMinMax(uint32_t channel) const final;
-    [[nodiscard]] bool isInputAddressAvailable(uint32_t channel, uint32_t address) const final;
-    [[nodiscard]] bool changeInputChannelAddress(Input& input, uint32_t newChannel, uint32_t newAddress) final;
-    void inputSimulateChange(uint32_t channel, uint32_t address, SimulateInputAction action) final;
+    std::span<const InputChannel> inputChannels() const final;
+    std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
+    [[nodiscard]] bool isInputAvailable(InputChannel channel, const InputLocation& location) const final;
+    void inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action) final;
 
     // OutputController:
-    tcb::span<const OutputChannel> outputChannels() const final;
-    [[nodiscard]] bool isOutputAvailable(OutputChannel channel, uint32_t outputId) const final;
-    [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t outputId, OutputValue value) final;
+    std::span<const OutputChannel> outputChannels() const final;
+    [[nodiscard]] bool isOutputAvailable(OutputChannel channel, const OutputLocation& location) const final;
+    [[nodiscard]] bool setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value) final;
 };
 
 #endif
