@@ -287,9 +287,11 @@ Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
   if(ec)
     throw LogMessageException(LogMessage::F1001_OPENING_TCP_SOCKET_FAILED_X, ec);
 
+#if 0
   m_acceptor.set_option(boost::asio::socket_base::reuse_address(true), ec);
   if(ec)
     throw LogMessageException(LogMessage::F1002_TCP_SOCKET_ADDRESS_REUSE_FAILED_X, ec);
+#endif
 
   m_acceptor.bind(endpoint, ec);
   if(ec)
