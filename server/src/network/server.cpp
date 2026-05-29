@@ -279,6 +279,9 @@ Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
   , m_manualPath{getManualPath()}
 {
   assert(isEventLoopThread());
+  bool socketStable = false;
+  int retries = 0;
+  const int maxRetries = 100;
 
   boost::system::error_code ec;
   boost::asio::ip::tcp::endpoint endpoint(localhostOnly ? boost::asio::ip::address_v4::loopback() : boost::asio::ip::address_v4::any(), port);
@@ -329,6 +332,23 @@ Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
     Log::log(id, LogMessage::N1006_DISCOVERY_DISABLED);
 
   Log::log(id, LogMessage::N1007_LISTENING_AT_X_X, m_acceptor.local_endpoint().address().to_string(), m_acceptor.local_endpoint().port());
+
+  while(!socketStable && retries < maxRetries)
+  {
+    boost::system::error_code checkEc;
+    m_acceptor.local_endpoint(checkEc);
+    if(!checkEc) {
+     socketStable = true;
+    } else {
+     retries++;
+     Log::log(id,LogMessage::D1004_WAITUNG_FOR_SOCKET_X, retries);
+     std::this_thread::sleep_for(std::chrono::milliseconds(200));
+   }
+  }
+  if(!socketStable)
+  {
+    throw LogMessageException(LogMessage::F1004_TCP_SOCKET_LISTEN_FAILED_X);
+  }
 
   boost::asio::post(m_ioContext,
     [this, discoverable]()

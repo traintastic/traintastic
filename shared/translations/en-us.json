@@ -1904,6 +1904,10 @@
         "definition": "Listening at %1:%2"
     },
     {
+        "term": "message:D1004",
+        "definition": "Waiting for socket"
+    },
+    {
         "term": "message:N1008",
         "definition": "Loaded settings"
     },

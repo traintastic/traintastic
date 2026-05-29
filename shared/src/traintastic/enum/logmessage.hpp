@@ -61,6 +61,7 @@ enum class LogMessage : uint32_t
   D1001_RESUME_X_MULTIPLIER_X = LogMessageOffset::debug + 1001,
   D1002_TICK_X_ERROR_X_US = LogMessageOffset::debug + 1002,
   D1003_FREEZE_X = LogMessageOffset::debug + 1003,
+  D1004_WAITUNG_FOR_SOCKET_X = LogMessageOffset::debug + 1004,
   D2001_TX_X = LogMessageOffset::debug + 2001,
   D2002_RX_X = LogMessageOffset::debug + 2002,
   D2003_UNKNOWN_XHEADER_0XX = LogMessageOffset::debug + 2003,
