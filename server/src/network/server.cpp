@@ -327,7 +327,7 @@ Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
     Log::log(id, LogMessage::N1006_DISCOVERY_DISABLED);
 
   Log::log(id, LogMessage::N1007_LISTENING_AT_X_X, m_acceptor.local_endpoint().address().to_string(), m_acceptor.local_endpoint().port());
-
+/*
   boost::asio::post(m_ioContext,
     [this, discoverable]()
     {
@@ -336,15 +336,23 @@ Server::Server(bool localhostOnly, uint16_t port, bool discoverable)
 
       doAccept();
     });
-
+*/
   m_thread = std::thread(
-    [this]()
+    [this, discoverable]()
     {
 #ifndef NDEBUG
       m_threadId = std::this_thread::get_id();
 #endif
       setThreadName("server");
+
+      if(discoverable)
+        doReceive();
+
+      doAccept();
+
       m_ioContext.run();
+
+      Log::log(std::string_view{"server"}, static_cast<LogMessage>(0), std::string_view{"ioContext run ended"});
     });
 }
 
@@ -415,7 +423,7 @@ void Server::doReceive()
         }
         doReceive();
       }
-      else if(ec != boost::asio::error::operation_aborted)
+      else //if(ec != boost::asio::error::operation_aborted)
       {
         Log::log(id, LogMessage::E1003_UDP_RECEIVE_ERROR_X, ec.message());
       }
@@ -451,7 +459,7 @@ void Server::doAccept()
 
         doAccept();
       }
-      else if(ec != boost::asio::error::operation_aborted)
+      else //if(ec != boost::asio::error::operation_aborted)
       {
         Log::log(id, LogMessage::E1004_TCP_ACCEPT_ERROR_X, ec.message());
       }
