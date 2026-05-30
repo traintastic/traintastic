@@ -24,7 +24,7 @@
 
 #include "../../../core/subobject.hpp"
 #include "../../../core/property.hpp"
-#include "../../protocol/selectrix/config.hpp"
+#include "../../protocol/selectrix/selectrixconfig.hpp"
 
 class SelectrixSettings final : public SubObject
 {

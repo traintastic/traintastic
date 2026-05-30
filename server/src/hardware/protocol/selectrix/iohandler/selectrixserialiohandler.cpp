@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/selectrix/iohandler/serialiohandler.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2023,2025 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,11 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "serialiohandler.hpp"
+#include "selectrixserialiohandler.hpp"
 #include <boost/asio/read.hpp>
 #include <boost/asio/write.hpp>
-#include "../const.hpp"
-#include "../kernel.hpp"
+#include "../selectrixconst.hpp"
+#include "../selectrixkernel.hpp"
 #include "../../../../utils/serialport.hpp"
 #include "../../../../core/eventloop.hpp"
 #include "../../../../log/log.hpp"

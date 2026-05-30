@@ -30,7 +30,7 @@
 #include "keyboard/pairoutputkeyboard.hpp"
 #include "../protocol/dcc/dcc.hpp"
 #include "../protocol/motorola/motorola.hpp"
-#include "../protocol/selectrix/const.hpp"
+#include "../protocol/selectrix/selectrixconst.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/controllerlist.hpp"
 #include "../../core/objectproperty.tpp"
