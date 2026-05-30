@@ -57,7 +57,7 @@ void Kernel::setConfig(const Config& config)
 {
   assert(isEventLoopThread());
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this, newConfig=config]()
     {
       m_config = newConfig;
@@ -109,7 +109,7 @@ void Kernel::start()
       m_ioContext.run();
     });
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this]()
     {
       try
@@ -150,7 +150,7 @@ void Kernel::stop()
 {
   assert(isEventLoopThread());
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this]()
     {
       for(auto addressType : addressTypes)
@@ -273,7 +273,7 @@ void Kernel::setTrackPower(bool enable)
 {
   assert(isEventLoopThread());
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this, enable]()
     {
       if(m_trackPower != toTriState(enable))
@@ -326,7 +326,7 @@ void Kernel::simulateInputChange(Bus bus, uint16_t address, SimulateInputAction 
 
   if(m_simulation)
   {
-    m_ioContext.post(
+    boost::asio::post(m_ioContext,
       [this, bus, address, action]()
       {
         const auto it = m_addresses.find({bus, toBusAddress(address)});
@@ -342,7 +342,7 @@ bool Kernel::setOutput(Bus bus, uint32_t flatAddress, OutputPairValue value)
 {
   assert(isEventLoopThread());
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this, bus, flatAddress, value]()
     {
       const uint8_t address = Accessory::toBusAddress(flatAddress);
@@ -363,7 +363,7 @@ void Kernel::addAddress(Bus bus, uint8_t address, AddressType type)
 {
   assert(isEventLoopThread());
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this, bus, address, type]()
     {
       m_addresses.emplace(BusAddress{bus, address}, BusAddressValue{type, 0x00, false});
@@ -374,7 +374,7 @@ void Kernel::removeAddress(Bus bus, uint8_t address)
 {
   assert(isEventLoopThread());
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this, bus, address]()
     {
       m_addresses.erase({bus, address});

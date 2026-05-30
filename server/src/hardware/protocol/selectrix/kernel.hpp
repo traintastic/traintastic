@@ -26,6 +26,7 @@
 #include "../kernelbase.hpp"
 #include <map>
 #include <boost/asio/steady_timer.hpp>
+#include <boost/asio/post.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/outputpairvalue.hpp>
 #include "addresstype.hpp"
@@ -79,7 +80,7 @@ class Kernel : public ::KernelBase
 
     inline void postWrite(Bus bus, uint8_t address, uint8_t value)
     {
-      m_ioContext.post(
+      boost::asio::post(m_ioContext,
         [this, bus, address, value]()
         {
           write(bus, address, value);
