@@ -110,6 +110,7 @@ file(GLOB SOURCES
   "src/hardware/interface/cbus/*.cpp"
   "src/hardware/interface/marklincan/*.hpp"
   "src/hardware/interface/marklincan/*.cpp"
+  "src/hardware/interface/selectrix/*.cpp"
   "src/hardware/output/*.hpp"
   "src/hardware/output/*.cpp"
   "src/hardware/output/keyboard/*.hpp"

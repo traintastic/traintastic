@@ -30,7 +30,7 @@
 #include "hsi88.hpp"
 #include "loconetinterface.hpp"
 #include "marklincaninterface.hpp"
-#include "selectrixinterface.hpp"
+#include "selectrix/selectrixinterface.hpp"
 #include "traintasticdiyinterface.hpp"
 #include "withrottleinterface.hpp"
 #include "wlanmausinterface.hpp"

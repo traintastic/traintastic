@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/selectrixinterface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2023,2025 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,26 +20,26 @@
  */
 
 #include "selectrixinterface.hpp"
-#include "../decoder/list/decoderlist.hpp"
-#include "../decoder/list/decoderlisttablemodel.hpp"
-#include "../input/input.hpp"
-#include "../input/list/inputlist.hpp"
-#include "../output/list/outputlist.hpp"
-#include "../protocol/selectrix/kernel.hpp"
-#include "../protocol/selectrix/settings.hpp"
-#include "../protocol/selectrix/addresstype.hpp"
-#include "../protocol/selectrix/utils.hpp"
-#include "../protocol/selectrix/iohandler/serialiohandler.hpp"
-#include "../protocol/selectrix/iohandler/simulationiohandler.hpp"
-#include "../../core/attributes.hpp"
-#include "../../core/method.tpp"
-#include "../../core/objectproperty.tpp"
-#include "../../log/log.hpp"
-#include "../../log/logmessageexception.hpp"
-#include "../../utils/displayname.hpp"
-#include "../../utils/inrange.hpp"
-#include "../../utils/makearray.hpp"
-#include "../../world/world.hpp"
+#include "../../decoder/list/decoderlist.hpp"
+#include "../../decoder/list/decoderlisttablemodel.hpp"
+#include "../../input/input.hpp"
+#include "../../input/list/inputlist.hpp"
+#include "../../output/list/outputlist.hpp"
+#include "../../protocol/selectrix/kernel.hpp"
+#include "../../protocol/selectrix/settings.hpp"
+#include "../../protocol/selectrix/addresstype.hpp"
+#include "../../protocol/selectrix/utils.hpp"
+#include "../../protocol/selectrix/iohandler/serialiohandler.hpp"
+#include "../../protocol/selectrix/iohandler/simulationiohandler.hpp"
+#include "../../../core/attributes.hpp"
+#include "../../../core/method.tpp"
+#include "../../../core/objectproperty.tpp"
+#include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
+#include "../../../utils/displayname.hpp"
+#include "../../../utils/inrange.hpp"
+#include "../../../utils/makearray.hpp"
+#include "../../../world/world.hpp"
 
 namespace
 {
