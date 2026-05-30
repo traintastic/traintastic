@@ -29,9 +29,10 @@
 #include "../../../core/serialdeviceproperty.hpp"
 #include "../../../core/objectproperty.hpp"
 
+class SelectrixSettings;
+
 namespace Selectrix {
   class Kernel;
-  class Settings;
   enum class Bus : uint8_t;
   enum class AddressType : uint8_t;
 }
@@ -106,7 +107,7 @@ class SelectrixInterface final
   public:
     SerialDeviceProperty device;
     Property<uint32_t> baudrate;
-    ObjectProperty<Selectrix::Settings> selectrix;
+    ObjectProperty<SelectrixSettings> selectrix;
 
     SelectrixInterface(World& world, std::string_view _id);
 

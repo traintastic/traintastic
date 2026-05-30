@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/selectrix/settings.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2023,2025 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "settings.hpp"
+#include "selectrixsettings.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 #include "../../../world/getworld.hpp"
@@ -31,9 +30,7 @@ constexpr auto pollIntervalRange = std::make_pair<uint16_t, uint16_t>(100, 1000)
 
 }
 
-namespace Selectrix {
-
-Settings::Settings(Object& _parent, std::string_view parentPropertyName)
+SelectrixSettings::SelectrixSettings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , useRautenhausCommandFormat{this, "use_rautenhaus_command_format", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
       [this](bool /*value*/)
@@ -76,38 +73,34 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   updateEnabled(contains(getWorld(this).state, WorldState::Edit), false);
 }
 
-Config Settings::config() const
+Selectrix::Config SelectrixSettings::config() const
 {
-  Config config;
-
-  // useRautenhausCommandFormat is not in config as it is read only once when kernel starts
-  config.trackPowerPollInterval = std::chrono::milliseconds(trackPowerPollInterval.value());
-  config.locomotivePollInterval = std::chrono::milliseconds(locomotivePollInterval.value());
-  config.feedbackPollInterval = std::chrono::milliseconds(feedbackPollInterval.value());
-  config.accessoryPollInterval = std::chrono::milliseconds(accessoryPollInterval.value());
-  config.debugLogRXTX = debugLogRXTX;
-
-  return config;
+  return Selectrix::Config{
+    // useRautenhausCommandFormat is not in config as it is read only once when kernel starts
+    .trackPowerPollInterval = std::chrono::milliseconds(trackPowerPollInterval.value()),
+    .locomotivePollInterval = std::chrono::milliseconds(locomotivePollInterval.value()),
+    .feedbackPollInterval = std::chrono::milliseconds(feedbackPollInterval.value()),
+    .accessoryPollInterval = std::chrono::milliseconds(accessoryPollInterval.value()),
+    .debugLogRXTX = debugLogRXTX,
+  };
 }
 
-void Settings::updateEnabled(bool worldEdit, bool interfaceOnline)
+void SelectrixSettings::updateEnabled(bool worldEdit, bool interfaceOnline)
 {
   const bool editable = worldEdit && !interfaceOnline;
 
   Attributes::setEnabled(useRautenhausCommandFormat, editable);
 }
 
-void Settings::updateVisible()
+void SelectrixSettings::updateVisible()
 {
   Attributes::setVisible(trackPowerPollInterval, !useRautenhausCommandFormat);
   Attributes::setVisible(locomotivePollInterval, !useRautenhausCommandFormat);
   Attributes::setVisible(feedbackPollInterval, !useRautenhausCommandFormat);
 }
 
-void Settings::loaded()
+void SelectrixSettings::loaded()
 {
   SubObject::loaded();
   updateVisible();
-}
-
 }

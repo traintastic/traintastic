@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/selectrix/settings.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2023,2025 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,16 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_SETTINGS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_SETTINGS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_SELECTRIX_SELECTRIXSETTINGS_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_SELECTRIX_SELECTRIXSETTINGS_HPP
 
 #include "../../../core/subobject.hpp"
 #include "../../../core/property.hpp"
-#include "config.hpp"
+#include "../../protocol/selectrix/config.hpp"
 
-namespace Selectrix {
-
-class Settings final : public SubObject
+class SelectrixSettings final : public SubObject
 {
   CLASS_ID("selectrix_settings")
 
@@ -47,13 +44,11 @@ class Settings final : public SubObject
     Property<uint16_t> accessoryPollInterval;
     Property<bool> debugLogRXTX;
 
-    Settings(Object& _parent, std::string_view parentPropertyName);
+    SelectrixSettings(Object& _parent, std::string_view parentPropertyName);
 
-    Config config() const;
+    Selectrix::Config config() const;
 
     void updateEnabled(bool worldEdit, bool interfaceOnline);
 };
-
-}
 
 #endif

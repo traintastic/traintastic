@@ -20,13 +20,13 @@
  */
 
 #include "selectrixinterface.hpp"
+#include "selectrixsettings.hpp"
 #include "../../decoder/list/decoderlist.hpp"
 #include "../../decoder/list/decoderlisttablemodel.hpp"
 #include "../../input/input.hpp"
 #include "../../input/list/inputlist.hpp"
 #include "../../output/list/outputlist.hpp"
 #include "../../protocol/selectrix/kernel.hpp"
-#include "../../protocol/selectrix/settings.hpp"
 #include "../../protocol/selectrix/addresstype.hpp"
 #include "../../protocol/selectrix/utils.hpp"
 #include "../../protocol/selectrix/iohandler/serialiohandler.hpp"
@@ -91,7 +91,7 @@ SelectrixInterface::SelectrixInterface(World& world, std::string_view _id)
   , selectrix{this, "selectrix", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "Selectrix";
-  selectrix.setValueInternal(std::make_shared<Selectrix::Settings>(*this, selectrix.name()));
+  selectrix.setValueInternal(std::make_shared<SelectrixSettings>(*this, selectrix.name()));
 
   Attributes::addEnabled(device, !online);
   m_interfaceItems.insertBefore(device, notes);
