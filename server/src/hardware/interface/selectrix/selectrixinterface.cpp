@@ -60,10 +60,22 @@ constexpr Selectrix::Bus toBus(InputChannel channel)
   return static_cast<Selectrix::Bus>(static_cast<T>(channel) - static_cast<T>(InputChannel::SX0));
 }
 
+constexpr InputChannel toInputChannel(Selectrix::Bus bus)
+{
+  using UT = std::underlying_type_t<OutputChannel>;
+  return static_cast<InputChannel>(static_cast<UT>(InputChannel::SX0) + static_cast<UT>(bus));
+}
+
 constexpr Selectrix::Bus toBus(OutputChannel channel)
 {
   using T = std::underlying_type_t<OutputChannel>;
   return static_cast<Selectrix::Bus>(static_cast<T>(channel) - static_cast<T>(OutputChannel::AccessorySX0));
+}
+
+constexpr OutputChannel toOutputChannel(Selectrix::Bus bus)
+{
+  using UT = std::underlying_type_t<OutputChannel>;
+  return static_cast<OutputChannel>(static_cast<UT>(OutputChannel::AccessorySX0) + static_cast<UT>(bus));
 }
 
 }
@@ -138,10 +150,17 @@ bool SelectrixInterface::changeDecoderProtocolAddress(Decoder& decoder, DecoderP
   return false;
 }
 
-void SelectrixInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
+void SelectrixInterface::decoderChanged(const Decoder& decoder, DecoderChangeFlags /*changes*/, uint32_t /*functionNumber*/)
 {
   if(m_kernel)
-    m_kernel->decoderChanged(decoder, changes, functionNumber);
+  {
+    m_kernel->setLocomotive(
+      static_cast<uint8_t>(decoder.address),
+      decoder.emergencyStop ? Selectrix::Locomotive::speedStepStop : Decoder::throttleToSpeedStep(decoder.throttle, Selectrix::Locomotive::speedStepMax),
+      decoder.direction == Direction::Reverse,
+      decoder.getFunctionValue(0),
+      decoder.getFunctionValue(1));
+  }
 }
 
 std::span<const InputChannel> SelectrixInterface::inputChannels() const
@@ -258,17 +277,41 @@ bool SelectrixInterface::setOnline(bool& value, bool simulation)
           setState(InterfaceState::Error);
           online = false; // communication no longer possible
         });
-      m_kernel->setOnTrackPowerChanged(
+      m_kernel->onTrackPowerChanged =
         [this](bool powerOn)
         {
           if(powerOn && !contains(m_world.state.value(), WorldState::PowerOn))
             m_world.powerOn();
           else if(!powerOn && contains(m_world.state.value(), WorldState::PowerOn))
             m_world.powerOff();
-        });
-      m_kernel->setDecoderController(this);
-      m_kernel->setInputController(this);
-      m_kernel->setOutputController(this);
+        };
+      m_kernel->onLocomotiveChanged =
+        [this](uint8_t address, uint8_t speed, bool directionReverse, bool f0, bool f1)
+        {
+          if(auto decoder = getDecoder(DecoderProtocol::Selectrix, address))
+          {
+            decoder->direction.setValueInternal(directionReverse ? Direction::Reverse : Direction::Forward);
+
+            const auto currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), Selectrix::Locomotive::speedStepMax);
+            if(currentStep != speed) // only update trottle if it is a different step
+            {
+              decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed, Selectrix::Locomotive::speedStepMax));
+            }
+
+            decoder->setFunctionValue(0, f0);
+            decoder->setFunctionValue(1, f1);
+          }
+        };
+      m_kernel->onInputChanged =
+        [this](Selectrix::Bus bus, uint16_t address, bool val)
+        {
+          updateInputValue(toInputChannel(bus), InputAddress(address), toTriState(val));
+        };
+      m_kernel->onOutputChanged =
+        [this](Selectrix::Bus bus, uint16_t address, OutputPairValue val)
+        {
+          updateOutputValue(toOutputChannel(bus), OutputAddress(address), val);
+        };
 
       m_kernel->start();
 

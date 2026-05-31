@@ -33,12 +33,7 @@
 #include "selectrixconfig.hpp"
 #include "iohandler/selectrixiohandler.hpp"
 
-class Decoder;
-enum class DecoderChangeFlags;
-class DecoderController;
 enum class SimulateInputAction;
-class InputController;
-class OutputController;
 
 namespace Selectrix {
 
@@ -62,12 +57,6 @@ class Kernel : public ::KernelBase
     std::array<std::chrono::time_point<std::chrono::steady_clock>, addressTypes.size()> m_nextPoll;
     std::map<BusAddress, BusAddressValue> m_addresses;
 
-    DecoderController* m_decoderController = nullptr;
-
-    InputController* m_inputController = nullptr;
-
-    OutputController* m_outputController = nullptr;
-
     Config m_config;
 
     Kernel(std::string logId_, const Config& config, bool simulation);
@@ -90,9 +79,19 @@ class Kernel : public ::KernelBase
     void poll(const boost::system::error_code& ec, AddressType addressType);
 
   public:
+    using OnTrackPowerChanged = std::function<void(bool)>;
+    using OnLocomotiveChanged = std::function<void(uint8_t, uint8_t, bool, bool, bool)>;
+    using OnInputChanged = std::function<void(Bus, uint16_t, bool)>;
+    using OnOutputChanged = std::function<void(Bus, uint16_t, OutputPairValue)>;
+
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
     ~Kernel();
+
+    OnTrackPowerChanged onTrackPowerChanged;
+    OnLocomotiveChanged onLocomotiveChanged;
+    OnInputChanged onInputChanged;
+    OnOutputChanged onOutputChanged;
 
   #ifndef NDEBUG
     bool isKernelThread() const
@@ -125,38 +124,6 @@ class Kernel : public ::KernelBase
     void setConfig(const Config& config);
 
     /**
-     * \brief ...
-     *
-     * \param[in] callback ...
-     * \note This function may not be called when the kernel is running.
-     */
-    void setOnTrackPowerChanged(std::function<void(bool)> callback);
-
-    /**
-     * \brief Set the decoder controller
-     *
-     * \param[in] decoderController The decoder controller
-     * \note This function may not be called when the kernel is running.
-     */
-    void setDecoderController(DecoderController* decoderController);
-
-    /**
-     * \brief Set the input controller
-     *
-     * \param[in] inputController The input controller
-     * \note This function may not be called when the kernel is running.
-     */
-    void setInputController(InputController* inputController);
-
-    /**
-     * \brief Set the output controller
-     *
-     * \param[in] outputController The input controller
-     * \note This function may not be called when the kernel is running.
-     */
-    void setOutputController(OutputController* outputController);
-
-    /**
      * \brief Start the kernel and IO handler
      */
     void start();
@@ -185,7 +152,7 @@ class Kernel : public ::KernelBase
      *
      *
      */
-    void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber);
+    void setLocomotive(uint8_t address, uint8_t speed, bool directionReverse, bool f0, bool f1);
 
     /**
      * \brief Simulate input change

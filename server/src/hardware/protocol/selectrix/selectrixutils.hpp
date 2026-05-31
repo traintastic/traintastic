@@ -23,14 +23,8 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_SELECTRIX_SELECTRIXUTILS_HPP
 
 #include "selectrixbus.hpp"
-#include <traintastic/enum/outputchannel.hpp>
 
 namespace Selectrix {
-
-constexpr uint32_t toChannel(Bus bus)
-{
-  return 1 + static_cast<uint8_t>(bus);
-}
 
 constexpr uint8_t toBusAddress(uint32_t flatAddress)
 {
@@ -48,25 +42,6 @@ constexpr uint32_t toFlatAddress(uint8_t busAddress, uint8_t port)
 }
 
 namespace Accessory {
-
-constexpr OutputChannel toChannel(Bus bus)
-{
-  switch(bus)
-  {
-    case Bus::SX0:
-      return OutputChannel::AccessorySX0;
-
-    case Bus::SX1:
-      return OutputChannel::AccessorySX1;
-
-    case Bus::SX2:
-      return OutputChannel::AccessorySX2;
-
-    default:
-      break;
-  }
-  return static_cast<OutputChannel>(-1);
-}
 
 constexpr uint8_t toBusAddress(uint32_t flatAddress)
 {

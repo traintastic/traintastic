@@ -23,10 +23,6 @@
 #include "selectrixconst.hpp"
 #include "selectrixutils.hpp"
 #include "iohandler/selectrixsimulationiohandler.hpp"
-#include "../../decoder/decoderchangeflags.hpp"
-#include "../../decoder/decoder.hpp"
-#include "../../input/inputcontroller.hpp"
-#include "../../output/outputcontroller.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
@@ -61,34 +57,6 @@ void Kernel::setConfig(const Config& config)
     {
       m_config = newConfig;
     });
-}
-
-void Kernel::setOnTrackPowerChanged(std::function<void(bool)> callback)
-{
-  assert(isEventLoopThread());
-  assert(!m_started);
-  m_onTrackPowerChanged = std::move(callback);
-}
-
-void Kernel::setDecoderController(DecoderController* decoderController)
-{
-  assert(isEventLoopThread());
-  assert(!m_started);
-  m_decoderController = decoderController;
-}
-
-void Kernel::setInputController(InputController* inputController)
-{
-  assert(isEventLoopThread());
-  assert(!m_started);
-  m_inputController = inputController;
-}
-
-void Kernel::setOutputController(OutputController* outputController)
-{
-  assert(isEventLoopThread());
-  assert(!m_started);
-  m_outputController = outputController;
 }
 
 void Kernel::start()
@@ -207,22 +175,15 @@ void Kernel::busChanged(Bus bus, uint8_t address, uint8_t value)
           EventLoop::call(
             [this, address, value]()
             {
-              if(m_decoderController) /*[[likelyy]]*/
+              if(onLocomotiveChanged) [[likely]]
               {
-                if(auto decoder = m_decoderController->getDecoder(DecoderProtocol::Selectrix, address))
-                {
-                  decoder->direction.setValueInternal((value & Locomotive::directionMask) == Locomotive::directionReverse ? Direction::Reverse : Direction::Forward);
-
-                  const uint8_t speed = value & Locomotive::speedMask;
-                  const auto currentStep = Decoder::throttleToSpeedStep<uint8_t>(decoder->throttle.value(), Locomotive::speedStepMax);
-                  if(currentStep != speed) // only update trottle if it is a different step
-                  {
-                    decoder->throttle.setValueInternal(Decoder::speedStepToThrottle<uint8_t>(speed, Locomotive::speedStepMax));
-                  }
-
-                  decoder->setFunctionValue(0, (value & Locomotive::f0));
-                  decoder->setFunctionValue(1, (value & Locomotive::f1));
-                }
+                onLocomotiveChanged(
+                  address,
+                  value & Locomotive::speedMask,
+                  (value & Locomotive::directionMask) == Locomotive::directionReverse,
+                  (value & Locomotive::f0),
+                  (value & Locomotive::f1)
+                );
               }
             });
           break;
@@ -231,15 +192,12 @@ void Kernel::busChanged(Bus bus, uint8_t address, uint8_t value)
           EventLoop::call(
             [this, bus, address, value]()
             {
-              if(m_inputController) /*[[likely]]*/
+              if(onInputChanged) [[likely]]
               {
-                using UT = std::underlying_type_t<InputChannel>;
-                const auto channel = static_cast<InputChannel>(static_cast<UT>(InputChannel::SX0) + static_cast<UT>(bus));
-                const uint32_t baseAddress = 1 + static_cast<uint32_t>(address) * 8;
-
+                const uint16_t baseAddress = 1 + static_cast<uint16_t>(address) * 8;
                 for(uint_least8_t i = 0; i < 8; ++i)
                 {
-                  m_inputController->updateInputValue(channel, InputAddress(baseAddress + i), toTriState(value & (1 << i)));
+                  onInputChanged(bus, baseAddress + i, (value & (1 << i)));
                 }
               }
             });
@@ -249,14 +207,12 @@ void Kernel::busChanged(Bus bus, uint8_t address, uint8_t value)
           EventLoop::call(
             [this, bus, address, value]()
             {
-              if(m_outputController) /*[[likely]]*/
+              if(onOutputChanged) [[likely]]
               {
-                const auto channel = Accessory::toChannel(bus);
-                const uint32_t baseAddress = 1 + static_cast<uint32_t>(address) * 4;
-
+                const uint16_t baseAddress = 1 + static_cast<uint16_t>(address) * 4;
                 for(uint_least8_t i = 0; i < 4; ++i)
                 {
-                  m_outputController->updateOutputValue(channel, OutputAddress(baseAddress + i), static_cast<OutputPairValue>((value >> (i * 2)) & 0x3));
+                  onOutputChanged(bus, baseAddress + i, static_cast<OutputPairValue>((value >> (i * 2)) & 0x3));
                 }
               }
             });
@@ -283,40 +239,39 @@ void Kernel::setTrackPower(bool enable)
     });
 }
 
-void Kernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber)
+void Kernel::setLocomotive(uint8_t address, uint8_t speed, bool directionReverse, bool f0, bool f1)
 {
   assert(isEventLoopThread());
 
-  if(has(changes, DecoderChangeFlags::FunctionValue) && functionNumber > 1)
+  if(address > Address::locomotiveMax) [[unlikely]]
   {
-    return; // Selectrix only supports two functions.
+    assert(false);
+    return; // invalid locomotive address
   }
 
-  if(decoder.address > Address::locomotiveMax) /*[[unlikely]]*/
+  if(const auto it = m_addresses.find({Bus::SX0, address});
+      it == m_addresses.end() ||
+      it->second.type != AddressType::Locomotive)
   {
-    return;
+    assert(false);
+    return; // not a locomotive address
   }
 
-  uint8_t value = 0x00;
-
-  if(!decoder.emergencyStop)
-  {
-    value |= Decoder::throttleToSpeedStep(decoder.throttle, Locomotive::speedStepMax);
-  }
-  if(decoder.direction == Direction::Reverse)
+  uint8_t value = speed & Locomotive::speedMask;
+  if(directionReverse)
   {
     value |= Locomotive::directionReverse;
   }
-  if(decoder.getFunctionValue(0))
+  if(f0)
   {
     value |= Locomotive::f0;
   }
-  if(decoder.getFunctionValue(1))
+  if(f1)
   {
     value |= Locomotive::f1;
   }
 
-  postWrite(Bus::SX0, static_cast<uint8_t>(decoder.address.value()), value);
+  postWrite(Bus::SX0, address, value);
 }
 
 void Kernel::simulateInputChange(Bus bus, uint16_t address, SimulateInputAction action)

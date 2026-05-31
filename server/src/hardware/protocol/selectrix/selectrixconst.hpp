@@ -55,6 +55,7 @@ namespace TrackPower
 
 namespace Locomotive
 {
+  constexpr uint8_t speedStepStop = 0;
   constexpr uint8_t speedStepMax = 31;
   constexpr uint8_t speedMask = 0x1F;
   constexpr uint8_t directionMask = 0x20;
