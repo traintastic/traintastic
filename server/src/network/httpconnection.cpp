@@ -25,10 +25,13 @@
 #include <boost/beast/http/read.hpp>
 #include <boost/beast/websocket/rfc6455.hpp>
 
+#include "../log/log.hpp"
+
 HTTPConnection::HTTPConnection(std::shared_ptr<Server> server, boost::asio::ip::tcp::socket&& socket)
   : m_server{std::move(server)}
   , m_stream(std::move(socket))
 {
+  Log::log(std::string_view{"HTTPConnection"}, static_cast<LogMessage>(0), std::string_view{"new connection"});
 }
 
 void HTTPConnection::start()
@@ -47,6 +50,7 @@ void HTTPConnection::doRead()
     {
       if(readError)
       {
+        Log::log(std::string_view{"HTTPConnection readError"}, static_cast<LogMessage>(0), readError.message());
         if(readError == boost::beast::http::error::end_of_stream)
         {
           return doClose();
@@ -72,6 +76,7 @@ void HTTPConnection::doRead()
         {
           if(writeError)
           {
+            Log::log(std::string_view{"HTTPConnection writeError"}, static_cast<LogMessage>(0), writeError.message());
             return;
           }
 

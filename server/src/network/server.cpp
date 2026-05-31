@@ -453,6 +453,8 @@ void Server::doAccept()
   m_acceptor.async_accept(
     [this](boost::system::error_code ec, boost::asio::ip::tcp::socket socket)
     {
+      Log::log(std::string_view{"server"}, static_cast<LogMessage>(0), std::string_view{"new connection"});
+
       if(!ec)
       {
         std::make_shared<HTTPConnection>(shared_from_this(), std::move(socket))->start();

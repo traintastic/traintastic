@@ -32,6 +32,7 @@ ClientConnection::ClientConnection(Server& server, std::shared_ptr<boost::beast:
 {
   assert(isServerThread());
   m_ws->binary(true);
+  Log::log(std::string_view{"ClientConnection"}, static_cast<LogMessage>(0), std::string_view{"new connection"});
 }
 
 ClientConnection::~ClientConnection()
@@ -76,7 +77,7 @@ void ClientConnection::doRead()
       {
         EventLoop::call(std::bind(&ClientConnection::connectionLost, this));
       }
-      else if(ec != boost::asio::error::operation_aborted)
+      else //if(ec != boost::asio::error::operation_aborted)
       {
         Log::log(id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
         EventLoop::call(std::bind(&ClientConnection::disconnect, this));
@@ -100,7 +101,7 @@ void ClientConnection::doWrite()
         if(!m_writeQueue.empty())
           doWrite();
       }
-      else if(ec != boost::asio::error::operation_aborted)
+      else //if(ec != boost::asio::error::operation_aborted)
       {
         Log::log(id, LogMessage::E1006_SOCKET_WRITE_FAILED_X, ec);
         EventLoop::call(std::bind(&ClientConnection::disconnect, this));
