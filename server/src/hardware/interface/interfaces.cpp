@@ -26,7 +26,7 @@
 
 #include "cbusinterface.hpp"
 #include "dccexinterface.hpp"
-#include "dinamointerface.hpp"
+#include "dinamo/dinamointerface.hpp"
 #include "ecosinterface.hpp"
 #include "hsi88.hpp"
 #include "loconetinterface.hpp"

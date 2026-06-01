@@ -19,16 +19,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DINAMOINTERFACE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DINAMOINTERFACE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DINAMO_DINAMOINTERFACE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DINAMO_DINAMOINTERFACE_HPP
 
-#include "interface.hpp"
-#include "../decoder/decodercontroller.hpp"
-#include "../input/inputcontroller.hpp"
-#include "../output/outputcontroller.hpp"
-#include "../trackdriver/trackdrivercontroller.hpp"
-#include "../../core/serialdeviceproperty.hpp"
-#include "../../core/objectproperty.hpp"
+#include "../interface.hpp"
+#include "../../decoder/decodercontroller.hpp"
+#include "../../input/inputcontroller.hpp"
+#include "../../output/outputcontroller.hpp"
+#include "../../trackdriver/trackdrivercontroller.hpp"
+#include "../../../core/serialdeviceproperty.hpp"
+#include "../../../core/objectproperty.hpp"
 
 enum class Direction : uint8_t;
 class DinamoSettings;
