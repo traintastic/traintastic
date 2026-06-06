@@ -26,7 +26,7 @@
 
 #include "cbus/cbusinterface.hpp"
 #include "dccexinterface.hpp"
-#include "ecosinterface.hpp"
+#include "ecos/ecosinterface.hpp"
 #include "hsi88.hpp"
 #include "loconetinterface.hpp"
 #include "marklincaninterface.hpp"

@@ -602,6 +602,21 @@ void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value
   }
 }
 
+void Kernel::feedbackRailComEvent(Feedback& object, uint8_t port, uint16_t locoAddress, Direction direction)
+{
+  const uint16_t portsPerObject = 16;
+  const uint16_t address = 1 + port + portsPerObject * (object.id() - ObjectId::ecosDetector);
+
+  EventLoop::call(
+    [this, address, locoAddress, direction]()
+    {
+      if(onRailComEvent) [[likely]]
+      {
+        onRailComEvent(address, locoAddress, direction);
+      }
+    });
+}
+
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)
 {
   assert(handler);
