@@ -24,7 +24,7 @@
 #define TRAINTASTIC_SERVER_TEST_HARDWARE_INTERFACES_HPP
 
 #include "../src/hardware/interface/dccexinterface.hpp"
-#include "../src/hardware/interface/ecosinterface.hpp"
+#include "../src/hardware/interface/ecos/ecosinterface.hpp"
 #include "../src/hardware/interface/hsi88.hpp"
 #include "../src/hardware/interface/loconetinterface.hpp"
 #include "../src/hardware/interface/marklincaninterface.hpp"

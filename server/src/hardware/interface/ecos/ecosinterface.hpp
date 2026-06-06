@@ -19,16 +19,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOSINTERFACE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOSINTERFACE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSINTERFACE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSINTERFACE_HPP
 
-#include "interface.hpp"
+#include "../interface.hpp"
 #include <filesystem>
-#include "../protocol/ecos/simulation.hpp"
-#include "../decoder/decodercontroller.hpp"
-#include "../input/inputcontroller.hpp"
-#include "../output/outputcontroller.hpp"
-#include "../../core/objectproperty.hpp"
+#include "../../protocol/ecos/simulation.hpp"
+#include "../../decoder/decodercontroller.hpp"
+#include "../../input/inputcontroller.hpp"
+#include "../../output/outputcontroller.hpp"
+#include "../../../core/objectproperty.hpp"
 
 namespace ECoS {
 class Kernel;
