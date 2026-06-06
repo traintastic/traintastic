@@ -28,6 +28,7 @@
 #include "../../decoder/decodercontroller.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
+#include "../../identification/identificationcontroller.hpp"
 #include "../../../core/objectproperty.hpp"
 
 class ECoSSettings;
@@ -44,6 +45,7 @@ class ECoSInterface final
   , public DecoderController
   , public InputController
   , public OutputController
+  , public IdentificationController
 {
   CLASS_ID("interface.ecos")
   DEFAULT_ID("ecos")
@@ -90,6 +92,9 @@ class ECoSInterface final
     std::pair<std::span<const uint16_t>, std::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const final;
     bool isOutputLocation(OutputChannel channel, const OutputLocation& location) const final;
     [[nodiscard]] bool setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value) final;
+
+    // IdentificationController:
+    std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t /*channel*/) const final;
 };
 
 #endif

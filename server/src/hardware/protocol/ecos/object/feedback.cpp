@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/ecos/object/feedback.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -67,6 +66,34 @@ void Feedback::update(std::string_view option, std::string_view value)
         }
       }
     }
+  }
+  else if(option == Option::railcom)
+  {
+    // format: [<port>,<address>,<direction>]
+    uint8_t port;
+    auto r = fromChars(value, port);
+    if(r.ec != std::errc() || *r.ptr != ',')
+    {
+      return;
+    }
+    value.remove_prefix(1 + r.ptr - value.data());
+
+    uint16_t locoAddress;
+    r = fromChars(value, locoAddress);
+    if(r.ec != std::errc() || *r.ptr != ',')
+    {
+      return;
+    }
+    value.remove_prefix(1 + r.ptr - value.data());
+
+    uint8_t direction;
+    r = fromChars(value, direction);
+    if(r.ec != std::errc())
+    {
+      return;
+    }
+
+    m_kernel.feedbackRailComEvent(*this, port, locoAddress, (direction == 0) ? Direction::Forward : Direction::Reverse);
   }
 }
 

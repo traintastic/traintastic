@@ -27,6 +27,7 @@
 #include <boost/asio/post.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/decoderprotocol.hpp>
+#include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/inputchannel.hpp>
 #include <traintastic/enum/outputchannel.hpp>
 #include "config.hpp"
@@ -112,7 +113,7 @@ class Kernel : public ::KernelBase
   public:// REMOVE!! just for testing
     void postSend(const std::string& message)
     {
-      boost::asio::post(m_ioContext, 
+      boost::asio::post(m_ioContext,
         [this, message]()
         {
           send(message);
@@ -122,6 +123,10 @@ class Kernel : public ::KernelBase
     void send(std::string_view message);
 
   public:
+    using OnRailComEvent = std::function<void(uint16_t, uint16_t, Direction)>;
+
+    OnRailComEvent onRailComEvent;
+
     Kernel(const Kernel&) = delete;
     Kernel& operator =(const Kernel&) = delete;
 
@@ -263,6 +268,7 @@ class Kernel : public ::KernelBase
     void switchStateChanged(uint16_t objectId, uint8_t state);
 
     void feedbackStateChanged(Feedback& object, uint8_t port, TriState value);
+    void feedbackRailComEvent(Feedback& object, uint8_t port, uint16_t locoAddress, Direction direction);
 };
 
 }

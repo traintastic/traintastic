@@ -25,6 +25,8 @@
 #include "../../decoder/list/decoderlisttablemodel.hpp"
 #include "../../input/list/inputlist.hpp"
 #include "../../output/list/outputlist.hpp"
+#include "../../identification/list/identificationlist.hpp"
+#include "../../identification/identification.hpp"
 #include "../../protocol/ecos/kernel.hpp"
 #include "../../protocol/ecos/messages.hpp"
 #include "../../protocol/ecos/iohandler/tcpiohandler.hpp"
@@ -46,6 +48,7 @@
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
+constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface | IdentificationListColumn::Address;
 
 CREATE_IMPL(ECoSInterface)
 
@@ -54,6 +57,7 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
   , OutputController(static_cast<IdObject&>(*this))
+  , IdentificationController(static_cast<IdObject&>(*this))
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , ecos{this, "ecos", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
@@ -71,6 +75,8 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(inputs, notes);
 
   m_interfaceItems.insertBefore(outputs, notes);
+
+  m_interfaceItems.insertBefore(identifications, notes);
 }
 
 ECoSInterface::~ECoSInterface() = default;
@@ -149,6 +155,11 @@ bool ECoSInterface::setOutputValue(OutputChannel channel, const OutputLocation& 
     m_kernel &&
     isOutputLocation(channel, location) &&
     m_kernel->setOutput(channel, location, value);
+}
+
+std::pair<uint32_t, uint32_t> ECoSInterface::identificationAddressMinMax(uint32_t /*channel*/) const
+{
+  return {ECoS::Kernel::ecosDetectorAddressMin, ECoS::Kernel::ecosDetectorAddressMax};
 }
 
 bool ECoSInterface::setOnline(bool& value, bool simulation)
@@ -231,6 +242,18 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
       m_kernel->setDecoderController(this);
       m_kernel->setInputController(this);
       m_kernel->setOutputController(this);
+      m_kernel->onRailComEvent =
+        [this](uint16_t address, uint16_t locoAddress, Direction direction)
+        {
+          assert(isEventLoopThread());
+          identificationEvent(
+            0,
+            address,
+            (locoAddress == 0) ? IdentificationEventType::Absent : IdentificationEventType::Present,
+            locoAddress,
+            direction,
+            0);
+        };
       m_kernel->start();
 
       m_ecosPropertyChanged = ecos->propertyChanged.connect(
@@ -272,10 +295,12 @@ void ECoSInterface::addToWorld()
   DecoderController::addToWorld();
   InputController::addToWorld(inputListColumns);
   OutputController::addToWorld(outputListColumns);
+  IdentificationController::addToWorld(identificationListColumns);
 }
 
 void ECoSInterface::destroying()
 {
+  IdentificationController::destroying();
   OutputController::destroying();
   InputController::destroying();
   DecoderController::destroying();
