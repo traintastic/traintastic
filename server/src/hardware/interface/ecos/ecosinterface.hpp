@@ -30,9 +30,10 @@
 #include "../../output/outputcontroller.hpp"
 #include "../../../core/objectproperty.hpp"
 
+class ECoSSettings;
+
 namespace ECoS {
 class Kernel;
-class Settings;
 }
 
 /**
@@ -70,7 +71,7 @@ class ECoSInterface final
 
   public:
     Property<std::string> hostname;
-    ObjectProperty<ECoS::Settings> ecos;
+    ObjectProperty<ECoSSettings> ecos;
 
     ECoSInterface(World& world, std::string_view _id);
     ~ECoSInterface() final;

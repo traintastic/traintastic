@@ -20,12 +20,12 @@
  */
 
 #include "ecosinterface.hpp"
+#include "ecossettings.hpp"
 #include "../../decoder/list/decoderlist.hpp"
 #include "../../decoder/list/decoderlisttablemodel.hpp"
 #include "../../input/list/inputlist.hpp"
 #include "../../output/list/outputlist.hpp"
 #include "../../protocol/ecos/kernel.hpp"
-#include "../../protocol/ecos/settings.hpp"
 #include "../../protocol/ecos/messages.hpp"
 #include "../../protocol/ecos/iohandler/tcpiohandler.hpp"
 #include "../../protocol/ecos/iohandler/simulationiohandler.hpp"
@@ -58,7 +58,7 @@ ECoSInterface::ECoSInterface(World& world, std::string_view _id)
   , ecos{this, "ecos", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "ECoS";
-  ecos.setValueInternal(std::make_shared<ECoS::Settings>(*this, ecos.name()));
+  ecos.setValueInternal(std::make_shared<ECoSSettings>(*this, ecos.name()));
 
   Attributes::addDisplayName(hostname, DisplayName::IP::hostname);
   Attributes::addEnabled(hostname, !online);
