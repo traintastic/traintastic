@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/ecos/messages.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022,2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,7 +56,8 @@ struct ObjectId
   static constexpr uint16_t controlDesk = 31;
   // unknown object: 40
   static constexpr uint16_t s88 = 100;
-  static constexpr uint16_t ecosDetector = 200;
+  static constexpr uint16_t ecosDetectorMin = 200;
+  static constexpr uint16_t ecosDetectorMax = 299;
 
   static constexpr uint16_t switchMin = 20000;
   static constexpr uint16_t switchMax = 29999; // unsure, guessed it, turntable starts at 30000
@@ -235,7 +235,12 @@ bool parseOptionValue(std::string_view text, std::string_view& option, std::stri
 
 constexpr bool isS88FeedbackId(uint16_t id)
 {
-  return id >= ObjectId::s88 && id < ObjectId::ecosDetector;
+  return id >= ObjectId::s88 && id < ObjectId::ecosDetectorMin;
+}
+
+constexpr bool isECoSDetectorId(uint16_t id)
+{
+  return (id >= ObjectId::ecosDetectorMin) && (id <= ObjectId::ecosDetectorMax);
 }
 
 }
