@@ -243,6 +243,19 @@ void Kernel::stop(Simulation* simulation)
         it = m_objects.find(++id);
       }
     }
+
+    // ECoS Detector:
+    for(const auto& it : m_objects)
+    {
+      if(const auto* feedback = dynamic_cast<const Feedback*>(it.second.get()); feedback && isECoSDetectorId(feedback->id()))
+      {
+        simulation->ecosDetector.emplace_back(
+          Simulation::ECoSDetector{
+            {feedback->id()},
+            feedback->ports(),
+            feedback->hasRailCom()});
+      }
+    }
   }
 
   m_objects.clear();
@@ -592,7 +605,7 @@ void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value
   else // ECoS Detector
   {
     const uint16_t portsPerObject = 16;
-    const uint16_t address = 1 + port + portsPerObject * (object.id() - ObjectId::ecosDetector);
+    const uint16_t address = 1 + port + portsPerObject * (object.id() - ObjectId::ecosDetectorMin);
 
     EventLoop::call(
       [this, address, value]()
@@ -605,7 +618,7 @@ void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value
 void Kernel::feedbackRailComEvent(Feedback& object, uint8_t port, uint16_t locoAddress, Direction direction)
 {
   const uint16_t portsPerObject = 16;
-  const uint16_t address = 1 + port + portsPerObject * (object.id() - ObjectId::ecosDetector);
+  const uint16_t address = 1 + port + portsPerObject * (object.id() - ObjectId::ecosDetectorMin);
 
   EventLoop::call(
     [this, address, locoAddress, direction]()

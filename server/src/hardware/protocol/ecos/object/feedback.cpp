@@ -35,6 +35,10 @@ Feedback::Feedback(Kernel& kernel, uint16_t id)
 {
   requestView();
   send(get(m_id, {Option::state}));
+  if(isECoSDetectorId(id))
+  {
+    send(get(m_id, {Option::railcom}));
+  }
 }
 
 Feedback::Feedback(Kernel& kernel, const Line& data)
@@ -69,6 +73,8 @@ void Feedback::update(std::string_view option, std::string_view value)
   }
   else if(option == Option::railcom)
   {
+    m_hasRailCom = true;
+
     // format: [<port>,<address>,<direction>]
     uint8_t port;
     auto r = fromChars(value, port);

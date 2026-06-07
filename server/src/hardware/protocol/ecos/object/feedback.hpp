@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/ecos/object/feedback.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,6 +35,7 @@ class Feedback final : public Object
 {
   private:
     std::vector<TriState> m_state;
+    bool m_hasRailCom = false;
 
   protected:
     void update(std::string_view option, std::string_view value) final;
@@ -53,6 +53,11 @@ class Feedback final : public Object
     }
 
     uint8_t ports() const { return static_cast<uint8_t>(m_state.size()); }
+
+    bool hasRailCom() const
+    {
+      return m_hasRailCom;
+    }
 };
 
 }

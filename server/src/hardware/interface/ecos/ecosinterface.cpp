@@ -384,6 +384,20 @@ void ECoSInterface::load(WorldLoader& loader, const nlohmann::json& data)
             break;
         }
       }
+
+      if(json ecosDetector = simulation.value("ecos_detector", json::array()); !ecosDetector.empty())
+      {
+        for(const json& object : ecosDetector)
+        {
+          const uint16_t objectId = object.value("id", 0U);
+          const uint8_t ports = object.value("ports", 0U);
+          const bool railcom = object.value("railcom", false);
+          if(objectId != 0 && ports != 0)
+          {
+            m_simulation.s88.emplace_back(Simulation::ECoSDetector{{objectId}, ports, railcom});
+          }
+        }
+      }
     }
   }
 }
@@ -449,6 +463,16 @@ void ECoSInterface::save(WorldSaver& saver, nlohmann::json& data, nlohmann::json
     for(const auto& s88 : m_simulation.s88)
       objects.emplace_back(json::object({{"id", s88.id}, {"ports", s88.ports}}));
     simulation["s88"] = objects;
+  }
+
+  if(!m_simulation.ecosDetector.empty())
+  {
+    json objects = json::array();
+    for(const auto& ecosDetector : m_simulation.ecosDetector)
+    {
+      objects.emplace_back(json::object({{"id", ecosDetector.id}, {"ports", ecosDetector.ports}, {"railcom", ecosDetector.railcom}}));
+    }
+    simulation["ecos_detector"] = objects;
   }
 
   if(!simulation.empty())
