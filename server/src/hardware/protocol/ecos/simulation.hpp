@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/ecos/simulation.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022,2024 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,10 +85,17 @@ struct Simulation
     uint8_t ports;
   };
 
+  struct ECoSDetector : Object
+  {
+    uint8_t ports;
+    bool railcom;
+  };
+
   ECoS ecos;
   std::vector<Locomotive> locomotives;
   std::vector<Switch> switches;
   std::vector<S88> s88;
+  std::vector<ECoSDetector> ecosDetector;
 
   void clear()
   {
@@ -97,6 +103,7 @@ struct Simulation
     locomotives.clear();
     switches.clear();
     s88.clear();
+    ecosDetector.clear();
   }
 };
 

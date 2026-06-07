@@ -73,6 +73,8 @@ void Feedback::update(std::string_view option, std::string_view value)
   }
   else if(option == Option::railcom)
   {
+    m_hasRailCom = true;
+
     // format: [<port>,<address>,<direction>]
     uint8_t port;
     auto r = fromChars(value, port);
