@@ -20,28 +20,28 @@
  */
 
 #include "marklincaninterface.hpp"
-#include "../decoder/list/decoderlist.hpp" // ????
-#include "../decoder/list/decoderlisttablemodel.hpp"
-#include "../input/input.hpp"
-#include "../input/list/inputlist.hpp"
-#include "../output/list/outputlist.hpp"
-#include "../protocol/marklincan/iohandler/simulationiohandler.hpp"
-#include "../protocol/marklincan/iohandler/tcpiohandler.hpp"
-#include "../protocol/marklincan/iohandler/udpiohandler.hpp"
+#include "../../decoder/list/decoderlist.hpp" // ????
+#include "../../decoder/list/decoderlisttablemodel.hpp"
+#include "../../input/input.hpp"
+#include "../../input/list/inputlist.hpp"
+#include "../../output/list/outputlist.hpp"
+#include "../../protocol/marklincan/iohandler/simulationiohandler.hpp"
+#include "../../protocol/marklincan/iohandler/tcpiohandler.hpp"
+#include "../../protocol/marklincan/iohandler/udpiohandler.hpp"
 #ifdef __linux__
-  #include "../protocol/marklincan/iohandler/socketcaniohandler.hpp"
+  #include "../../protocol/marklincan/iohandler/socketcaniohandler.hpp"
 #endif
-#include "../protocol/marklincan/iohandler/serialiohandler.hpp"
-#include "../protocol/marklincan/kernel.hpp"
-#include "../protocol/marklincan/settings.hpp"
-#include "../../core/attributes.hpp"
-#include "../../core/eventloop.hpp"
-#include "../../core/objectproperty.tpp"
-#include "../../log/log.hpp"
-#include "../../log/logmessageexception.hpp"
-#include "../../utils/displayname.hpp"
-#include "../../utils/inrange.hpp"
-#include "../../utils/makearray.hpp"
+#include "../../protocol/marklincan/iohandler/serialiohandler.hpp"
+#include "../../protocol/marklincan/kernel.hpp"
+#include "../../protocol/marklincan/settings.hpp"
+#include "../../../core/attributes.hpp"
+#include "../../../core/eventloop.hpp"
+#include "../../../core/objectproperty.tpp"
+#include "../../../log/log.hpp"
+#include "../../../log/logmessageexception.hpp"
+#include "../../../utils/displayname.hpp"
+#include "../../../utils/inrange.hpp"
+#include "../../../utils/makearray.hpp"
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Address;

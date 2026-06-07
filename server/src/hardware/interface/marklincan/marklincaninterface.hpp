@@ -19,20 +19,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCANINTERFACE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCANINTERFACE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCAN_MARKLINCANINTERFACE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCAN_MARKLINCANINTERFACE_HPP
 
-#include "interface.hpp"
-#include "marklincan/marklincannodelist.hpp"
-#include "marklincan/marklincanlocomotivelist.hpp"
+#include "../interface.hpp"
+#include "marklincannodelist.hpp"
+#include "marklincanlocomotivelist.hpp"
 #include <traintastic/enum/marklincaninterfacetype.hpp>
-#include "../decoder/decodercontroller.hpp"
-#include "../input/inputcontroller.hpp"
-#include "../output/outputcontroller.hpp"
-#include "../protocol/marklincan/kernel.hpp"
-#include "../protocol/marklincan/settings.hpp"
-#include "../../core/serialdeviceproperty.hpp"
-#include "../../enum/serialflowcontrol.hpp"
+#include "../../decoder/decodercontroller.hpp"
+#include "../../input/inputcontroller.hpp"
+#include "../../output/outputcontroller.hpp"
+#include "../../protocol/marklincan/kernel.hpp"
+#include "../../protocol/marklincan/settings.hpp"
+#include "../../../core/serialdeviceproperty.hpp"
+#include "../../../enum/serialflowcontrol.hpp"
 
 /**
  * @brief Märklin CAN hardware interface
