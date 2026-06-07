@@ -25,12 +25,12 @@
 #include "../interface.hpp"
 #include "marklincannodelist.hpp"
 #include "marklincanlocomotivelist.hpp"
+#include "marklincansettings.hpp"
 #include <traintastic/enum/marklincaninterfacetype.hpp>
 #include "../../decoder/decodercontroller.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
 #include "../../protocol/marklincan/kernel.hpp"
-#include "../../protocol/marklincan/settings.hpp"
 #include "../../../core/serialdeviceproperty.hpp"
 #include "../../../enum/serialflowcontrol.hpp"
 
@@ -70,7 +70,7 @@ class MarklinCANInterface final
     SerialDeviceProperty device;
     Property<uint32_t> baudrate;
     Property<SerialFlowControl> flowControl;
-    ObjectProperty<MarklinCAN::Settings> marklinCAN;
+    ObjectProperty<MarklinCANSettings> marklinCAN;
     ObjectProperty<MarklinCANNodeList> marklinCANNodeList;
     ObjectProperty<MarklinCANLocomotiveList> marklinCANLocomotiveList;
 

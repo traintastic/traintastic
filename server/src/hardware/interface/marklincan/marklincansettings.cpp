@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/marklincan/settings.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2023 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,18 +19,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "settings.hpp"
-#include "uid.hpp"
+#include "marklincansettings.hpp"
+#include "../../protocol/marklincan/uid.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 #include "../../../utils/random.hpp"
 
-namespace MarklinCAN {
-
-Settings::Settings(Object& _parent, std::string_view parentPropertyName)
+MarklinCANSettings::MarklinCANSettings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , defaultSwitchTime{this, "default_switch_time", 0, PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , nodeUID{this, "node_uid", Random::value(UID::Range::manufacturer), PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , nodeUID{this, "node_uid", Random::value(MarklinCAN::UID::Range::manufacturer), PropertyFlags::ReadWrite | PropertyFlags::Store}
   , nodeSerialNumber{this, "node_serial_number", Random::value(nodeSerialNumberRandomMin, nodeSerialNumberRandomMax), PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugStatusDataConfig{this, "debug_status_data_config", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -41,7 +38,7 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   //Attributes::addStep(defaultSwitchTime, 10);
   m_interfaceItems.add(defaultSwitchTime);
 
-  Attributes::addMinMax(nodeUID, UID::Range::manufacturer);
+  Attributes::addMinMax(nodeUID, MarklinCAN::UID::Range::manufacturer);
   m_interfaceItems.add(nodeUID);
 
   m_interfaceItems.add(nodeSerialNumber);
@@ -54,18 +51,14 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   m_interfaceItems.add(debugConfigStream);
 }
 
-Config Settings::config() const
+MarklinCAN::Config MarklinCANSettings::config() const
 {
-  Config config;
-
-  config.defaultSwitchTime = defaultSwitchTime;
-  config.nodeUID = nodeUID;
-  config.nodeSerialNumber = nodeSerialNumber;
-  config.debugLogRXTX = debugLogRXTX;
-  config.debugStatusDataConfig = debugStatusDataConfig;
-  config.debugConfigStream = debugConfigStream;
-
-  return config;
-}
-
+  return MarklinCAN::Config{
+    .defaultSwitchTime = defaultSwitchTime,
+    .nodeUID = nodeUID,
+    .nodeSerialNumber = nodeSerialNumber,
+    .debugLogRXTX = debugLogRXTX,
+    .debugStatusDataConfig = debugStatusDataConfig,
+    .debugConfigStream = debugConfigStream,
+  };
 }

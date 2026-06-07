@@ -33,7 +33,6 @@
 #endif
 #include "../../protocol/marklincan/iohandler/serialiohandler.hpp"
 #include "../../protocol/marklincan/kernel.hpp"
-#include "../../protocol/marklincan/settings.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../core/objectproperty.tpp"
@@ -67,7 +66,7 @@ MarklinCANInterface::MarklinCANInterface(World& world, std::string_view _id)
   , marklinCANLocomotiveList{this, "marklin_can_locomotive_list", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}
 {
   name = "M\u00E4rklin CAN";
-  marklinCAN.setValueInternal(std::make_shared<MarklinCAN::Settings>(*this, marklinCAN.name()));
+  marklinCAN.setValueInternal(std::make_shared<MarklinCANSettings>(*this, marklinCAN.name()));
   marklinCANNodeList.setValueInternal(std::make_shared<MarklinCANNodeList>(*this, marklinCANNodeList.name()));
   marklinCANLocomotiveList.setValueInternal(std::make_shared<MarklinCANLocomotiveList>(*this, marklinCANLocomotiveList.name()));
 
