@@ -24,7 +24,7 @@
 
 #include "../../../core/subobject.hpp"
 #include "../../../core/property.hpp"
-#include "../../protocol/dccex/config.hpp"
+#include "../../protocol/dccex/dccexconfig.hpp"
 
 class DCCEXSettings : public SubObject
 {

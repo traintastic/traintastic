@@ -1,10 +1,9 @@
 /**
- * server/src/hardware/protocol/dccex/iohandler/tcpiohandler.hpp
+ * server/src/hardware/protocol/dccex/config.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2022-2024 Reinder Feenstra
- * Copyright (C) 2024 Cyril Pawelko
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,32 +20,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_IOHANDLER_TCPIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_IOHANDLER_TCPIOHANDLER_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_DCCEXCONFIG_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_DCCEXCONFIG_HPP
 
-#include "hardwareiohandler.hpp"
-#include <boost/asio/ip/tcp.hpp>
+#include <cstdint>
 
 namespace DCCEX {
 
-class TCPIOHandler final : public HardwareIOHandler
+struct Config
 {
-  private:
-    const std::string m_hostname;
-    const uint16_t m_port;
-    boost::asio::ip::tcp::socket m_socket;
-    boost::asio::ip::tcp::endpoint m_endpoint;
-    bool m_connected = false;
+  static constexpr uint32_t functionNumberMax = 56;
 
-    void read();
-    void write() final;
-
-  public:
-    TCPIOHandler(Kernel& kernel, std::string hostname, uint16_t port);
-    ~TCPIOHandler() final;
-
-    void start() final;
-    void stop() final;
+  uint8_t speedSteps;
+  uint16_t startupDelay;
+  bool debugLogRXTX;
 };
 
 }

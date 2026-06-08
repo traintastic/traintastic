@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_KERNEL_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_KERNEL_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_DCCEXKERNEL_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_DCCEXKERNEL_HPP
 
 #include "../kernelbase.hpp"
 #include <array>
@@ -28,8 +28,8 @@
 #include <boost/asio/post.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/outputchannel.hpp>
-#include "config.hpp"
-#include "iohandler/iohandler.hpp"
+#include "dccexconfig.hpp"
+#include "iohandler/dccexiohandler.hpp"
 #include "../../output/outputtypes.hpp"
 
 class Decoder;
@@ -73,7 +73,7 @@ class Kernel : public ::KernelBase
 
     void postSend(const std::string& message)
     {
-      boost::asio::post(m_ioContext, 
+      boost::asio::post(m_ioContext,
         [this, message]()
         {
           send(message);

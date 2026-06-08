@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/dccex/iohandler/hardwareiohandler.hpp
+ * server/src/hardware/protocol/dccex/iohandler/simulationiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2022,2024 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,33 +20,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_IOHANDLER_HARDWAREIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_IOHANDLER_HARDWAREIOHANDLER_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_IOHANDLER_DCCEXSIMULATIONIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_IOHANDLER_DCCEXSIMULATIONIOHANDLER_HPP
 
+#include "dccexiohandler.hpp"
 #include <array>
-#include "iohandler.hpp"
+#include <cstddef>
 
 namespace DCCEX {
 
-class Kernel;
-
-class HardwareIOHandler : public IOHandler
+class SimulationIOHandler final : public IOHandler
 {
-  protected:
-    std::array<char, 1024> m_readBuffer;
-    size_t m_readBufferOffset;
-    std::array<char, 1024> m_writeBuffer;
-    size_t m_writeBufferOffset;
-
-    HardwareIOHandler(Kernel& kernel);
-
-    void processRead(size_t bytesTransferred);
-    virtual void write() = 0;
+  private:
+    void reply(std::string_view message);
 
   public:
+    SimulationIOHandler(Kernel& kernel);
+
+    void start() final;
+    void stop() final {}
+
     bool send(std::string_view message) final;
 };
+
+template<>
+constexpr bool isSimulation<SimulationIOHandler>()
+{
+  return true;
+}
 
 }
 
 #endif
+

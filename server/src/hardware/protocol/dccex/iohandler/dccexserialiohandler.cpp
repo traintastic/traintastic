@@ -20,9 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "serialiohandler.hpp"
-#include "../kernel.hpp"
-#include "../messages.hpp"
+#include "dccexserialiohandler.hpp"
+#include "../dccexkernel.hpp"
+#include "../dccexmessages.hpp"
 #include "../../../../core/eventloop.hpp"
 #include "../../../../log/log.hpp"
 #include "../../../../utils/serialport.hpp"

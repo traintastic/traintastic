@@ -1,9 +1,9 @@
 /**
- * server/src/hardware/protocol/dccex/config.hpp
+ * server/src/hardware/protocol/dccex/iohandler/hardwareiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2022 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,20 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_CONFIG_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_CONFIG_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_IOHANDLER_DCCEXHARDWAREIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_IOHANDLER_DCCEXHARDWAREIOHANDLER_HPP
 
-#include <cstdint>
+#include <array>
+#include "dccexiohandler.hpp"
 
 namespace DCCEX {
 
-struct Config
-{
-  static constexpr uint32_t functionNumberMax = 56;
+class Kernel;
 
-  uint8_t speedSteps;
-  uint16_t startupDelay;
-  bool debugLogRXTX;
+class HardwareIOHandler : public IOHandler
+{
+  protected:
+    std::array<char, 1024> m_readBuffer;
+    size_t m_readBufferOffset;
+    std::array<char, 1024> m_writeBuffer;
+    size_t m_writeBufferOffset;
+
+    HardwareIOHandler(Kernel& kernel);
+
+    void processRead(size_t bytesTransferred);
+    virtual void write() = 0;
+
+  public:
+    bool send(std::string_view message) final;
 };
 
 }

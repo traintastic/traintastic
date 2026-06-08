@@ -20,9 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "simulationiohandler.hpp"
-#include "../kernel.hpp"
-#include "../messages.hpp"
+#include "dccexsimulationiohandler.hpp"
+#include "../dccexkernel.hpp"
+#include "../dccexmessages.hpp"
 #include "../../../../utils/endswith.hpp"
 #include "../../../../utils/fromchars.hpp"
 
