@@ -108,6 +108,7 @@ file(GLOB SOURCES
   "src/hardware/interface/*.hpp"
   "src/hardware/interface/*.cpp"
   "src/hardware/interface/cbus/*.cpp"
+  "src/hardware/interface/dccex/*.cpp"
   "src/hardware/interface/ecos/*.cpp"
   "src/hardware/interface/marklincan/*.cpp"
   "src/hardware/output/*.hpp"

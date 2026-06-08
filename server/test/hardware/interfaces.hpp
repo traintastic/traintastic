@@ -22,7 +22,7 @@
 #ifndef TRAINTASTIC_SERVER_TEST_HARDWARE_INTERFACES_HPP
 #define TRAINTASTIC_SERVER_TEST_HARDWARE_INTERFACES_HPP
 
-#include "../src/hardware/interface/dccexinterface.hpp"
+#include "../src/hardware/interface/dccex/dccexinterface.hpp"
 #include "../src/hardware/interface/ecos/ecosinterface.hpp"
 #include "../src/hardware/interface/hsi88.hpp"
 #include "../src/hardware/interface/loconetinterface.hpp"

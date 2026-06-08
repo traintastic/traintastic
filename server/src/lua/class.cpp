@@ -63,7 +63,7 @@
 #include "../clock/clock.hpp"
 
 #include "../hardware/interface/cbus/cbusinterface.hpp"
-#include "../hardware/interface/dccexinterface.hpp"
+#include "../hardware/interface/dccex/dccexinterface.hpp"
 #include "../hardware/interface/ecos/ecosinterface.hpp"
 #include "../hardware/interface/hsi88.hpp"
 #include "../hardware/interface/loconetinterface.hpp"
