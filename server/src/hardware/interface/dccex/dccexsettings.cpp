@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/dccex/settings.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,13 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "settings.hpp"
+#include "dccexsettings.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 
-namespace DCCEX {
-
-Settings::Settings(Object& _parent, std::string_view parentPropertyName)
+DCCEXSettings::DCCEXSettings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , speedSteps{this, "speed_steps", 128, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , startupDelay{this, "startup_delay", startupDelayDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -44,13 +41,11 @@ Settings::Settings(Object& _parent, std::string_view parentPropertyName)
   m_interfaceItems.add(debugLogRXTX);
 }
 
-Config Settings::config() const
+DCCEX::Config DCCEXSettings::config() const
 {
-  Config config;
-  config.speedSteps = speedSteps;
-  config.startupDelay = startupDelay;
-  config.debugLogRXTX = debugLogRXTX;
-  return config;
-}
-
+  return DCCEX::Config{
+    .speedSteps = speedSteps,
+    .startupDelay = startupDelay,
+    .debugLogRXTX = debugLogRXTX,
+  };
 }

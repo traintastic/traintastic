@@ -31,9 +31,10 @@
 #include "../../../enum/serialflowcontrol.hpp"
 #include <traintastic/enum/dccexinterfacetype.hpp>
 
+class DCCEXSettings;
+
 namespace DCCEX {
 class Kernel;
-class Settings;
 }
 
 /**
@@ -74,7 +75,7 @@ class DCCEXInterface final
     Property<uint32_t> baudrate;
     Property<std::string> hostname;
     Property<uint16_t> port;
-    ObjectProperty<DCCEX::Settings> dccex;
+    ObjectProperty<DCCEXSettings> dccex;
 
     DCCEXInterface(World& world, std::string_view _id);
     ~DCCEXInterface() final;

@@ -20,13 +20,13 @@
  */
 
 #include "dccexinterface.hpp"
+#include "dccexsettings.hpp"
 #include "../../decoder/list/decoderlist.hpp"
 #include "../../decoder/list/decoderlisttablemodel.hpp"
 #include "../../input/list/inputlist.hpp"
 #include "../../output/list/outputlist.hpp"
 #include "../../protocol/dcc/dcc.hpp"
 #include "../../protocol/dccex/kernel.hpp"
-#include "../../protocol/dccex/settings.hpp"
 #include "../../protocol/dccex/messages.hpp"
 #include "../../protocol/dccex/iohandler/serialiohandler.hpp"
 #include "../../protocol/dccex/iohandler/tcpiohandler.hpp"
@@ -66,7 +66,7 @@ DCCEXInterface::DCCEXInterface(World& world, std::string_view _id)
   , dccex{this, "dccex", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
   name = "DCC-EX";
-  dccex.setValueInternal(std::make_shared<DCCEX::Settings>(*this, dccex.name()));
+  dccex.setValueInternal(std::make_shared<DCCEXSettings>(*this, dccex.name()));
 
   Attributes::addDisplayName(type, DisplayName::Interface::type);
   Attributes::addEnabled(type, !online);
@@ -145,7 +145,7 @@ std::span<const uint8_t> DCCEXInterface::decoderSpeedSteps(DecoderProtocol proto
 {
   (void)protocol; // silence unused warning for release build
   assert(protocol == DecoderProtocol::DCCShort || protocol == DecoderProtocol::DCCLong);
-  const auto& speedStepValues = DCCEX::Settings::speedStepValues;
+  const auto& speedStepValues = DCCEXSettings::speedStepValues;
   // find value in array so we can create a span, using a span of a variable won't work due to the compare with prevous value in the attribute setter
   if(const auto it = std::find(speedStepValues.begin(), speedStepValues.end(), dccex->speedSteps); it != speedStepValues.end()) /*[[likely]]/*/ // NOLINT(readability-qualified-auto) windows requires const auto
     return {&(*it), 1};

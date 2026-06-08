@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/dccex/settings.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,16 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_SETTINGS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_SETTINGS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DCCEX_DCCEXSETTINGS_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DCCEX_DCCEXSETTINGS_HPP
 
 #include "../../../core/subobject.hpp"
 #include "../../../core/property.hpp"
-#include "config.hpp"
+#include "../../protocol/dccex/config.hpp"
 
-namespace DCCEX {
-
-class Settings : public SubObject
+class DCCEXSettings : public SubObject
 {
   CLASS_ID("dccex_settings")
 
@@ -45,11 +42,9 @@ class Settings : public SubObject
     Property<uint16_t> startupDelay;
     Property<bool> debugLogRXTX;
 
-    Settings(Object& _parent, std::string_view parentPropertyName);
+    DCCEXSettings(Object& _parent, std::string_view parentPropertyName);
 
-    Config config() const;
+    DCCEX::Config config() const;
 };
-
-}
 
 #endif
