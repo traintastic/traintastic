@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/ecos/object/locomotivemanager.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,21 +19,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "locomotivemanager.hpp"
+#include "ecosfeedbackmanager.hpp"
 #include <cassert>
-#include "locomotive.hpp"
-#include "../messages.hpp"
+#include "ecosfeedback.hpp"
+#include "../ecosmessages.hpp"
 
 namespace ECoS {
 
-LocomotiveManager::LocomotiveManager(Kernel& kernel)
-  : Object(kernel, ObjectId::locomotiveManager)
+FeedbackManager::FeedbackManager(Kernel& kernel)
+  : Object(kernel, ObjectId::feedbackManager)
 {
   requestView();
-  send(queryObjects(m_id, Locomotive::options));
+  send(queryObjects(m_id, Feedback::options));
 }
 
-bool LocomotiveManager::receiveReply(const Reply& reply)
+bool FeedbackManager::receiveReply(const Reply& reply)
 {
   assert(reply.objectId == m_id);
 
@@ -44,7 +43,7 @@ bool LocomotiveManager::receiveReply(const Reply& reply)
     {
       Line data;
       if(parseLine(line, data) && !objectExists(data.objectId))
-        addObject(std::make_unique<Locomotive>(m_kernel, data));
+        addObject(std::make_unique<Feedback>(m_kernel, data));
     }
     return true;
   }
@@ -52,7 +51,7 @@ bool LocomotiveManager::receiveReply(const Reply& reply)
   return Object::receiveReply(reply);
 }
 
-bool LocomotiveManager::receiveEvent(const Event& event)
+bool FeedbackManager::receiveEvent(const Event& event)
 {
   assert(event.objectId == m_id);
 

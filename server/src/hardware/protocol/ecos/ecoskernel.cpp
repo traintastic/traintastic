@@ -19,18 +19,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "kernel.hpp"
+#include "ecoskernel.hpp"
 #include <algorithm>
 #include <typeinfo>
-#include "messages.hpp"
-#include "simulation.hpp"
+#include "ecosmessages.hpp"
+#include "ecossimulation.hpp"
 #include "object/ecos.hpp"
-#include "object/locomotivemanager.hpp"
-#include "object/locomotive.hpp"
-#include "object/switchmanager.hpp"
-#include "object/switch.hpp"
-#include "object/feedbackmanager.hpp"
-#include "object/feedback.hpp"
+#include "object/ecoslocomotivemanager.hpp"
+#include "object/ecoslocomotive.hpp"
+#include "object/ecosswitchmanager.hpp"
+#include "object/ecosswitch.hpp"
+#include "object/ecosfeedbackmanager.hpp"
+#include "object/ecosfeedback.hpp"
 #include "../../protocol/dcc/dcc.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../decoder/decoderchangeflags.hpp"

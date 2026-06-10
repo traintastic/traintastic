@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/ecos/object/object.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022,2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,10 +19,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "object.hpp"
+#include "ecosobject.hpp"
 #include <cassert>
-#include "../messages.hpp"
-#include "../kernel.hpp"
+#include "../ecosmessages.hpp"
+#include "../ecoskernel.hpp"
 
 namespace ECoS {
 

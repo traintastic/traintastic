@@ -24,7 +24,7 @@
 
 #include "../../../core/subobject.hpp"
 #include "../../../core/property.hpp"
-#include "../../protocol/ecos/config.hpp"
+#include "../../protocol/ecos/ecosconfig.hpp"
 
 class ECoSSettings final : public SubObject
 {

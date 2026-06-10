@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/ecos/iohandler/simulationiohandler.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022,2024 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,9 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "simulationiohandler.hpp"
-#include "../kernel.hpp"
-#include "../messages.hpp"
+#include "ecossimulationiohandler.hpp"
+#include "../ecoskernel.hpp"
+#include "../ecosmessages.hpp"
 #include "../../../../utils/rtrim.hpp"
 
 namespace ECoS {
@@ -319,7 +318,7 @@ bool SimulationIOHandler::send(std::string_view message)
 bool SimulationIOHandler::reply(std::string_view message)
 {
   // post the reply, so it has some delay
-  boost::asio::post(m_kernel.ioContext(), 
+  boost::asio::post(m_kernel.ioContext(),
     [this, data=std::string(message)]()
     {
       m_kernel.receive(data);

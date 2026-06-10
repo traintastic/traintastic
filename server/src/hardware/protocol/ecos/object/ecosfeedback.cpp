@@ -19,10 +19,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "feedback.hpp"
+#include "ecosfeedback.hpp"
 #include <cassert>
-#include "../kernel.hpp"
-#include "../messages.hpp"
+#include "../ecoskernel.hpp"
+#include "../ecosmessages.hpp"
 #include "../../../../utils/fromchars.hpp"
 #include "../../../../utils/startswith.hpp"
 

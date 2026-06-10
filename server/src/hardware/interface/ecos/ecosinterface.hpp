@@ -24,7 +24,7 @@
 
 #include "../interface.hpp"
 #include <filesystem>
-#include "../../protocol/ecos/simulation.hpp"
+#include "../../protocol/ecos/ecossimulation.hpp"
 #include "../../decoder/decodercontroller.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"

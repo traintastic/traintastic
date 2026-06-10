@@ -19,46 +19,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_FEEDBACK_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_FEEDBACK_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_IOHANDLER_ECOSIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_IOHANDLER_ECOSIOHANDLER_HPP
 
-#include "object.hpp"
-#include "../messages.hpp"
-#include "../../../../enum/tristate.hpp"
+#include <cstddef>
+#include <string_view>
+#include <array>
 
 namespace ECoS {
 
 class Kernel;
-struct Line;
 
-class Feedback final : public Object
+class IOHandler
 {
-  private:
-    std::vector<TriState> m_state;
-    bool m_hasRailCom = false;
-
   protected:
-    void update(std::string_view option, std::string_view value) final;
+    Kernel& m_kernel;
+
+    IOHandler(Kernel& kernel)
+      : m_kernel{kernel}
+    {
+    }
 
   public:
-    static const std::initializer_list<std::string_view> options;
+    IOHandler(const IOHandler&) = delete;
+    IOHandler& operator =(const IOHandler&) = delete;
 
-    Feedback(Kernel& kernel, uint16_t id);
-    Feedback(Kernel& kernel, const Line& data);
+    virtual ~IOHandler() = default;
 
-    inline TriState operator [](uint8_t port) const
-    {
-      assert(port < ports());
-      return m_state[port];
-    }
+    virtual void start() = 0;
+    virtual void stop() = 0;
 
-    uint8_t ports() const { return static_cast<uint8_t>(m_state.size()); }
-
-    bool hasRailCom() const
-    {
-      return m_hasRailCom;
-    }
+    virtual bool send(std::string_view message) = 0;
 };
+
+template<class T>
+constexpr bool isSimulation()
+{
+  return false;
+}
 
 }
 

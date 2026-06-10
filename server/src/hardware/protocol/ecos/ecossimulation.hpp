@@ -19,13 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_SIMULATION_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_SIMULATION_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_ECOSSIMULATION_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_ECOSSIMULATION_HPP
 
 #include <vector>
 #include <string>
 #include <cstdint>
-#include "object/locomotiveprotocol.hpp"
+#include "object/ecoslocomotiveprotocol.hpp"
 
 namespace ECoS {
 

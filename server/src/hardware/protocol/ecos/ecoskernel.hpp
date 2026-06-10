@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_KERNEL_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_KERNEL_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_ECOSKERNEL_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_ECOSKERNEL_HPP
 
 #include "../kernelbase.hpp"
 #include <unordered_map>
@@ -30,10 +30,10 @@
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/inputchannel.hpp>
 #include <traintastic/enum/outputchannel.hpp>
-#include "config.hpp"
-#include "iohandler/iohandler.hpp"
-#include "object/object.hpp"
-#include "object/switchprotocol.hpp"
+#include "ecosconfig.hpp"
+#include "iohandler/ecosiohandler.hpp"
+#include "object/ecosobject.hpp"
+#include "object/ecosswitchprotocol.hpp"
 #include "../../output/outputtypes.hpp"
 
 class Decoder;

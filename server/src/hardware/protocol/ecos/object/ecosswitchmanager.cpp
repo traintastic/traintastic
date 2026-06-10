@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/ecos/object/switchmanager.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022,2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,11 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "switchmanager.hpp"
+#include "ecosswitchmanager.hpp"
 #include <cassert>
-#include "switch.hpp"
-#include "../kernel.hpp"
-#include "../messages.hpp"
+#include "ecosswitch.hpp"
+#include "../ecoskernel.hpp"
+#include "../ecosmessages.hpp"
 #include "../../../../utils/fromchars.hpp"
 #include "../../../../utils/startswith.hpp"
 #include "../../../../utils/endswith.hpp"
