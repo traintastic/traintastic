@@ -243,13 +243,13 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
       m_kernel->setInputController(this);
       m_kernel->setOutputController(this);
       m_kernel->onRailComEvent =
-        [this](uint16_t address, uint16_t locoAddress, Direction direction)
+        [this](uint16_t address, uint16_t locoAddress, bool present, Direction direction)
         {
           assert(isEventLoopThread());
           identificationEvent(
             0,
             address,
-            (locoAddress == 0) ? IdentificationEventType::Absent : IdentificationEventType::Present,
+            present ? IdentificationEventType::Present : IdentificationEventType::Absent,
             locoAddress,
             direction,
             0);

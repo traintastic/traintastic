@@ -35,7 +35,7 @@ Feedback::Feedback(Kernel& kernel, uint16_t id)
 {
   requestView();
   send(get(m_id, {Option::state}));
-  if(isECoSDetectorId(id))
+  if(isECoSDetectorId(m_id))
   {
     send(get(m_id, {Option::railcom}));
   }
@@ -49,7 +49,13 @@ Feedback::Feedback(Kernel& kernel, const Line& data)
   {
     size_t n;
     if(fromChars(ports->second, n).ec == std::errc())
+    {
       m_state.resize(n, TriState::Undefined);
+      if(isECoSDetectorId(m_id))
+      {
+        m_railcom.resize(n, 0);
+      }
+    }
   }
 }
 
@@ -99,7 +105,25 @@ void Feedback::update(std::string_view option, std::string_view value)
       return;
     }
 
-    m_kernel.feedbackRailComEvent(*this, port, locoAddress, (direction == 0) ? Direction::Forward : Direction::Reverse);
+    if(port < m_railcom.size()) [[likely]]
+    {
+      const bool present = (locoAddress != 0);
+
+      if(present)
+      {
+        m_railcom[port] = locoAddress;
+      }
+      else // absent
+      {
+        locoAddress = m_railcom[port];
+        m_railcom[port] = 0;
+      }
+
+      if(locoAddress != 0)
+      {
+        m_kernel.feedbackRailComEvent(*this, port, locoAddress, present, (direction == 0) ? Direction::Forward : Direction::Reverse);
+      }
+    }
   }
 }
 

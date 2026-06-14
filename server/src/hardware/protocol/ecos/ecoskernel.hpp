@@ -123,7 +123,7 @@ class Kernel : public ::KernelBase
     void send(std::string_view message);
 
   public:
-    using OnRailComEvent = std::function<void(uint16_t, uint16_t, Direction)>;
+    using OnRailComEvent = std::function<void(uint16_t, uint16_t, bool, Direction)>;
 
     OnRailComEvent onRailComEvent;
 
@@ -268,7 +268,7 @@ class Kernel : public ::KernelBase
     void switchStateChanged(uint16_t objectId, uint8_t state);
 
     void feedbackStateChanged(Feedback& object, uint8_t port, TriState value);
-    void feedbackRailComEvent(Feedback& object, uint8_t port, uint16_t locoAddress, Direction direction);
+    void feedbackRailComEvent(Feedback& object, uint8_t port, uint16_t locoAddress, bool present, Direction direction);
 };
 
 }

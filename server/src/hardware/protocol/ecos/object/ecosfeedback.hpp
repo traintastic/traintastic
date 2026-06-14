@@ -35,6 +35,7 @@ class Feedback final : public Object
 {
   private:
     std::vector<TriState> m_state;
+    std::vector<uint16_t> m_railcom;
     bool m_hasRailCom = false;
 
   protected:

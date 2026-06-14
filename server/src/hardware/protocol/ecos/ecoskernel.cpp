@@ -615,17 +615,17 @@ void Kernel::feedbackStateChanged(Feedback& object, uint8_t port, TriState value
   }
 }
 
-void Kernel::feedbackRailComEvent(Feedback& object, uint8_t port, uint16_t locoAddress, Direction direction)
+void Kernel::feedbackRailComEvent(Feedback& object, uint8_t port, uint16_t locoAddress, bool present, Direction direction)
 {
   const uint16_t portsPerObject = 16;
   const uint16_t address = 1 + port + portsPerObject * (object.id() - ObjectId::ecosDetectorMin);
 
   EventLoop::call(
-    [this, address, locoAddress, direction]()
+    [this, address, locoAddress, present, direction]()
     {
       if(onRailComEvent) [[likely]]
       {
-        onRailComEvent(address, locoAddress, direction);
+        onRailComEvent(address, locoAddress, present, direction);
       }
     });
 }
