@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/identification/identification.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,6 +85,7 @@ Identification::Identification(World& world, std::string_view _id)
           return interface->changeIdentificationChannelAddress(*this, channel, newValue);
         return true;
       }}
+  , invertDirection{this, "invert_direction", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , opcMultiSenseDirection{this, "opc_multi_sense_direction", OPCMultiSenseDirection::None, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , consumers{*this, "consumers", {}, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , onEvent{*this, "on_event", EventFlags::Scriptable}
@@ -113,6 +113,9 @@ Identification::Identification(World& world, std::string_view _id)
   Attributes::addVisible(address, false);
   Attributes::addMinMax(address, addressMinDefault, addressMaxDefault);
   m_interfaceItems.add(address);
+
+  Attributes::addEnabled(invertDirection, editable);
+  m_interfaceItems.add(invertDirection);
 
   Attributes::addEnabled(opcMultiSenseDirection, editable);
   Attributes::addVisible(opcMultiSenseDirection, false);
@@ -161,15 +164,17 @@ void Identification::worldEvent(WorldState state, WorldEvent event)
 
   const bool editable = contains(state, WorldState::Edit);
 
-  Attributes::setEnabled(name, editable);
-  Attributes::setEnabled(interface, editable);
-  Attributes::setEnabled(channel, editable);
-  Attributes::setEnabled(address, editable);
-  Attributes::setEnabled(opcMultiSenseDirection, editable);
+  Attributes::setEnabled(
+    {name, interface, channel, address, invertDirection, opcMultiSenseDirection},
+    editable);
 }
 
 void Identification::fireEvent(IdentificationEventType type, uint16_t identifier, Direction direction, uint8_t category)
 {
+  if(invertDirection)
+  {
+    direction = ~direction;
+  }
   Object::fireEvent(onEvent, type, identifier, direction, category);
 }
 
