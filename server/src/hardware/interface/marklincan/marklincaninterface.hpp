@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2021-2026 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,82 +19,75 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSINTERFACE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSINTERFACE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCAN_MARKLINCANINTERFACE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCAN_MARKLINCANINTERFACE_HPP
 
 #include "../interface.hpp"
-#include <filesystem>
-#include "../../protocol/ecos/ecossimulation.hpp"
+#include "marklincannodelist.hpp"
+#include "marklincanlocomotivelist.hpp"
+#include "marklincansettings.hpp"
+#include <traintastic/enum/marklincaninterfacetype.hpp>
 #include "../../decoder/decodercontroller.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
-#include "../../identification/identificationcontroller.hpp"
-#include "../../../core/objectproperty.hpp"
-
-class ECoSSettings;
-
-namespace ECoS {
-class Kernel;
-}
+#include "../../protocol/marklincan/kernel.hpp"
+#include "../../../core/serialdeviceproperty.hpp"
+#include "../../../enum/serialflowcontrol.hpp"
 
 /**
- * @brief ECoS hardware interface
+ * @brief Märklin CAN hardware interface
  */
-class ECoSInterface final
+class MarklinCANInterface final
   : public Interface
   , public DecoderController
   , public InputController
   , public OutputController
-  , public IdentificationController
 {
-  CLASS_ID("interface.ecos")
-  DEFAULT_ID("ecos")
-  CREATE_DEF(ECoSInterface)
+  CLASS_ID("interface.marklin_can")
+  CREATE(MarklinCANInterface)
+  DEFAULT_ID("marklin_can")
+
+  friend class MarklinCANLocomotiveList;
 
   private:
-    std::unique_ptr<ECoS::Kernel> m_kernel;
-    boost::signals2::connection m_ecosPropertyChanged;
-    ECoS::Simulation m_simulation;
-    std::vector<uint16_t> m_outputECoSObjectIds;
-    std::vector<std::string> m_outputECoSObjectNames;
+    std::unique_ptr<MarklinCAN::Kernel> m_kernel;
+    boost::signals2::connection m_marklinCANPropertyChanged;
 
     void addToWorld() final;
+    void loaded() final;
     void destroying() final;
-    void load(WorldLoader& loader, const nlohmann::json& data) final;
-    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const final;
     void worldEvent(WorldState state, WorldEvent event) final;
 
     void typeChanged();
-
-    std::filesystem::path simulationDataFilename() const;
 
   protected:
     bool setOnline(bool& value, bool simulation) final;
 
   public:
+    Property<MarklinCANInterfaceType> type;
     Property<std::string> hostname;
-    ObjectProperty<ECoSSettings> ecos;
+    Property<std::string> interface;
+    SerialDeviceProperty device;
+    Property<uint32_t> baudrate;
+    Property<SerialFlowControl> flowControl;
+    ObjectProperty<MarklinCANSettings> marklinCAN;
+    ObjectProperty<MarklinCANNodeList> marklinCANNodeList;
+    ObjectProperty<MarklinCANLocomotiveList> marklinCANLocomotiveList;
 
-    ECoSInterface(World& world, std::string_view _id);
-    ~ECoSInterface() final;
+    MarklinCANInterface(World& world, std::string_view _id);
 
     // DecoderController:
     std::span<const DecoderProtocol> decoderProtocols() const final;
+    std::span<const uint8_t> decoderSpeedSteps(DecoderProtocol protocol) const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
     std::span<const InputChannel> inputChannels() const final;
     std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
-    void inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action) final;
 
     // OutputController:
     std::span<const OutputChannel> outputChannels() const final;
-    std::pair<std::span<const uint16_t>, std::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const final;
-    bool isOutputLocation(OutputChannel channel, const OutputLocation& location) const final;
     [[nodiscard]] bool setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value) final;
-
-    // IdentificationController:
-    std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t /*channel*/) const final;
 };
 
 #endif

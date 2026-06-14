@@ -19,23 +19,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_ECOSLOCOMOTIVEMANAGER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_ECOSLOCOMOTIVEMANAGER_HPP
 
-#include "../../../core/subobject.hpp"
-#include "../../../core/property.hpp"
-#include "../../protocol/ecos/ecosconfig.hpp"
+#include "ecosobject.hpp"
 
-class ECoSSettings final : public SubObject
+namespace ECoS {
+
+class Kernel;
+
+class LocomotiveManager final : public Object
 {
   public:
-    CLASS_ID("ecos_settings")
+    LocomotiveManager(Kernel& kernel);
 
-    Property<bool> debugLogRXTX;
-
-    ECoSSettings(Object& _parent, std::string_view parentPropertyName);
-
-    ECoS::Config config() const;
+    bool receiveReply(const Reply& reply) final;
+    bool receiveEvent(const Event& event) final;
 };
+
+}
 
 #endif

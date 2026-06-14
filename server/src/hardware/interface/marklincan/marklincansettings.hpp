@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2021-2026 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,23 +19,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCAN_MARKLINCANSETTINGS_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_MARKLINCAN_MARKLINCANSETTINGS_HPP
 
 #include "../../../core/subobject.hpp"
 #include "../../../core/property.hpp"
-#include "../../protocol/ecos/ecosconfig.hpp"
+#include "../../protocol/marklincan/config.hpp"
 
-class ECoSSettings final : public SubObject
+class MarklinCANSettings final : public SubObject
 {
+  private:
+    static constexpr uint32_t nodeSerialNumberRandomMin = 1000;
+    static constexpr uint32_t nodeSerialNumberRandomMax = 9999;
+
   public:
-    CLASS_ID("ecos_settings")
+    CLASS_ID("marklincan_settings")
 
+    Property<uint32_t> defaultSwitchTime;
+    Property<uint32_t> nodeUID;
+    Property<uint32_t> nodeSerialNumber;
     Property<bool> debugLogRXTX;
+    Property<bool> debugStatusDataConfig;
+    Property<bool> debugConfigStream;
 
-    ECoSSettings(Object& _parent, std::string_view parentPropertyName);
+    MarklinCANSettings(Object& _parent, std::string_view parentPropertyName);
 
-    ECoS::Config config() const;
+    MarklinCAN::Config config() const;
 };
 
 #endif

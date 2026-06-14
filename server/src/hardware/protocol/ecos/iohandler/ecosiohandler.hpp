@@ -19,23 +19,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_IOHANDLER_ECOSIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_IOHANDLER_ECOSIOHANDLER_HPP
 
-#include "../../../core/subobject.hpp"
-#include "../../../core/property.hpp"
-#include "../../protocol/ecos/ecosconfig.hpp"
+#include <cstddef>
+#include <string_view>
+#include <array>
 
-class ECoSSettings final : public SubObject
+namespace ECoS {
+
+class Kernel;
+
+class IOHandler
 {
+  protected:
+    Kernel& m_kernel;
+
+    IOHandler(Kernel& kernel)
+      : m_kernel{kernel}
+    {
+    }
+
   public:
-    CLASS_ID("ecos_settings")
+    IOHandler(const IOHandler&) = delete;
+    IOHandler& operator =(const IOHandler&) = delete;
 
-    Property<bool> debugLogRXTX;
+    virtual ~IOHandler() = default;
 
-    ECoSSettings(Object& _parent, std::string_view parentPropertyName);
+    virtual void start() = 0;
+    virtual void stop() = 0;
 
-    ECoS::Config config() const;
+    virtual bool send(std::string_view message) = 0;
 };
+
+template<class T>
+constexpr bool isSimulation()
+{
+  return false;
+}
+
+}
 
 #endif

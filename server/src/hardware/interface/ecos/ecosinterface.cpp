@@ -27,11 +27,11 @@
 #include "../../output/list/outputlist.hpp"
 #include "../../identification/list/identificationlist.hpp"
 #include "../../identification/identification.hpp"
-#include "../../protocol/ecos/kernel.hpp"
-#include "../../protocol/ecos/messages.hpp"
-#include "../../protocol/ecos/iohandler/tcpiohandler.hpp"
-#include "../../protocol/ecos/iohandler/simulationiohandler.hpp"
-#include "../../protocol/ecos/object/switch.hpp"
+#include "../../protocol/ecos/ecoskernel.hpp"
+#include "../../protocol/ecos/ecosmessages.hpp"
+#include "../../protocol/ecos/iohandler/ecostcpiohandler.hpp"
+#include "../../protocol/ecos/iohandler/ecossimulationiohandler.hpp"
+#include "../../protocol/ecos/object/ecosswitch.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../core/method.tpp"
@@ -243,13 +243,13 @@ bool ECoSInterface::setOnline(bool& value, bool simulation)
       m_kernel->setInputController(this);
       m_kernel->setOutputController(this);
       m_kernel->onRailComEvent =
-        [this](uint16_t address, uint16_t locoAddress, Direction direction)
+        [this](uint16_t address, uint16_t locoAddress, bool present, Direction direction)
         {
           assert(isEventLoopThread());
           identificationEvent(
             0,
             address,
-            (locoAddress == 0) ? IdentificationEventType::Absent : IdentificationEventType::Present,
+            present ? IdentificationEventType::Present : IdentificationEventType::Absent,
             locoAddress,
             direction,
             0);

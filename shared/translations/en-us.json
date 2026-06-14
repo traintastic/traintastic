@@ -908,6 +908,10 @@
         "definition": "Throttles"
     },
     {
+        "term": "identification:invert_direction",
+        "definition": "Invert direction"
+    },
+    {
         "term": "identification:opc_multi_sense_direction",
         "definition": "OPC_MULTI_SENSE direction"
     },

@@ -19,23 +19,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
+#include "ecosfeedbackmanager.hpp"
+#include <cassert>
+#include "ecosfeedback.hpp"
+#include "../ecosmessages.hpp"
 
-#include "../../../core/subobject.hpp"
-#include "../../../core/property.hpp"
-#include "../../protocol/ecos/ecosconfig.hpp"
+namespace ECoS {
 
-class ECoSSettings final : public SubObject
+FeedbackManager::FeedbackManager(Kernel& kernel)
+  : Object(kernel, ObjectId::feedbackManager)
 {
-  public:
-    CLASS_ID("ecos_settings")
+  requestView();
+  send(queryObjects(m_id, Feedback::options));
+}
 
-    Property<bool> debugLogRXTX;
+bool FeedbackManager::receiveReply(const Reply& reply)
+{
+  assert(reply.objectId == m_id);
 
-    ECoSSettings(Object& _parent, std::string_view parentPropertyName);
+  if(reply.command == Command::queryObjects)
+  {
+    for(std::string_view line : reply.lines)
+    {
+      Line data;
+      if(parseLine(line, data) && !objectExists(data.objectId))
+        addObject(std::make_unique<Feedback>(m_kernel, data));
+    }
+    return true;
+  }
 
-    ECoS::Config config() const;
-};
+  return Object::receiveReply(reply);
+}
 
-#endif
+bool FeedbackManager::receiveEvent(const Event& event)
+{
+  assert(event.objectId == m_id);
+
+  return Object::receiveEvent(event);
+}
+
+}

@@ -19,23 +19,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DCCEX_DCCEXSETTINGS_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DCCEX_DCCEXSETTINGS_HPP
 
 #include "../../../core/subobject.hpp"
 #include "../../../core/property.hpp"
-#include "../../protocol/ecos/ecosconfig.hpp"
+#include "../../protocol/dccex/dccexconfig.hpp"
 
-class ECoSSettings final : public SubObject
+class DCCEXSettings : public SubObject
 {
-  public:
-    CLASS_ID("ecos_settings")
+  CLASS_ID("dccex_settings")
 
+  private:
+    static constexpr uint16_t startupDelayMin = 0;
+    static constexpr uint16_t startupDelayDefault = 2'500;
+    static constexpr uint16_t startupDelayMax = 60'000;
+
+  public:
+    static constexpr std::array<uint8_t, 2> speedStepValues{28, 128};
+
+    Property<uint8_t> speedSteps;
+    Property<uint16_t> startupDelay;
     Property<bool> debugLogRXTX;
 
-    ECoSSettings(Object& _parent, std::string_view parentPropertyName);
+    DCCEXSettings(Object& _parent, std::string_view parentPropertyName);
 
-    ECoS::Config config() const;
+    DCCEX::Config config() const;
 };
 
 #endif

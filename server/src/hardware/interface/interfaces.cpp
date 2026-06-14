@@ -25,11 +25,11 @@
 #include "../../utils/makearray.hpp"
 
 #include "cbus/cbusinterface.hpp"
-#include "dccexinterface.hpp"
+#include "dccex/dccexinterface.hpp"
 #include "ecos/ecosinterface.hpp"
 #include "hsi88.hpp"
 #include "loconetinterface.hpp"
-#include "marklincaninterface.hpp"
+#include "marklincan/marklincaninterface.hpp"
 #include "traintasticdiyinterface.hpp"
 #include "withrottleinterface.hpp"
 #include "wlanmausinterface.hpp"

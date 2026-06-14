@@ -19,23 +19,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_ECOSCONFIG_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_ECOSCONFIG_HPP
 
-#include "../../../core/subobject.hpp"
-#include "../../../core/property.hpp"
-#include "../../protocol/ecos/ecosconfig.hpp"
+namespace ECoS {
 
-class ECoSSettings final : public SubObject
+struct Config
 {
-  public:
-    CLASS_ID("ecos_settings")
-
-    Property<bool> debugLogRXTX;
-
-    ECoSSettings(Object& _parent, std::string_view parentPropertyName);
-
-    ECoS::Config config() const;
+  bool debugLogRXTX;
 };
+
+}
 
 #endif

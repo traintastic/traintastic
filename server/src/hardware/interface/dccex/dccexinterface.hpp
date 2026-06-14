@@ -19,67 +19,71 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSINTERFACE_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSINTERFACE_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DCCEX_DCCEXINTERFACE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_DCCEX_DCCEXINTERFACE_HPP
 
 #include "../interface.hpp"
-#include <filesystem>
-#include "../../protocol/ecos/ecossimulation.hpp"
 #include "../../decoder/decodercontroller.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
-#include "../../identification/identificationcontroller.hpp"
+#include "../../../core/serialdeviceproperty.hpp"
 #include "../../../core/objectproperty.hpp"
+#include "../../../enum/serialflowcontrol.hpp"
+#include <traintastic/enum/dccexinterfacetype.hpp>
 
-class ECoSSettings;
+class DCCEXSettings;
 
-namespace ECoS {
+namespace DCCEX {
 class Kernel;
 }
 
 /**
- * @brief ECoS hardware interface
+ * @brief DCC-EX hardware interface
  */
-class ECoSInterface final
+class DCCEXInterface final
   : public Interface
   , public DecoderController
   , public InputController
   , public OutputController
-  , public IdentificationController
 {
-  CLASS_ID("interface.ecos")
-  DEFAULT_ID("ecos")
-  CREATE_DEF(ECoSInterface)
+  CLASS_ID("interface.dccex")
+  DEFAULT_ID("dccex")
+  CREATE_DEF(DCCEXInterface)
 
   private:
-    std::unique_ptr<ECoS::Kernel> m_kernel;
-    boost::signals2::connection m_ecosPropertyChanged;
-    ECoS::Simulation m_simulation;
-    std::vector<uint16_t> m_outputECoSObjectIds;
-    std::vector<std::string> m_outputECoSObjectNames;
+    std::unique_ptr<DCCEX::Kernel> m_kernel;
+    boost::signals2::connection m_dccexPropertyChanged;
 
     void addToWorld() final;
+    void loaded() final;
     void destroying() final;
-    void load(WorldLoader& loader, const nlohmann::json& data) final;
-    void save(WorldSaver& saver, nlohmann::json& data, nlohmann::json& state) const final;
     void worldEvent(WorldState state, WorldEvent event) final;
 
-    void typeChanged();
+    void check() const;
+    static void checkDecoder(const Decoder& decoder);
 
-    std::filesystem::path simulationDataFilename() const;
+    void updateEnabled();
+
+    void updateVisible();
 
   protected:
     bool setOnline(bool& value, bool simulation) final;
 
   public:
+    Property<DCCEXInterfaceType> type;
+    SerialDeviceProperty device;
+    Property<uint32_t> baudrate;
     Property<std::string> hostname;
-    ObjectProperty<ECoSSettings> ecos;
+    Property<uint16_t> port;
+    ObjectProperty<DCCEXSettings> dccex;
 
-    ECoSInterface(World& world, std::string_view _id);
-    ~ECoSInterface() final;
+    DCCEXInterface(World& world, std::string_view _id);
+    ~DCCEXInterface() final;
 
     // DecoderController:
     std::span<const DecoderProtocol> decoderProtocols() const final;
+    std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const final;
+    std::span<const uint8_t> decoderSpeedSteps(DecoderProtocol protocol) const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
 
     // InputController:
@@ -89,12 +93,8 @@ class ECoSInterface final
 
     // OutputController:
     std::span<const OutputChannel> outputChannels() const final;
-    std::pair<std::span<const uint16_t>, std::span<const std::string>> getOutputECoSObjects(OutputChannel channel) const final;
-    bool isOutputLocation(OutputChannel channel, const OutputLocation& location) const final;
+    std::pair<uint32_t, uint32_t> outputAddressMinMax(OutputChannel channel) const final;
     [[nodiscard]] bool setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value) final;
-
-    // IdentificationController:
-    std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t /*channel*/) const final;
 };
 
 #endif

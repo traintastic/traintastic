@@ -19,23 +19,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_ECOSSWITCHMANAGER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_ECOSSWITCHMANAGER_HPP
 
-#include "../../../core/subobject.hpp"
-#include "../../../core/property.hpp"
-#include "../../protocol/ecos/ecosconfig.hpp"
+#include "ecosobject.hpp"
+#include "ecosswitchprotocol.hpp"
 
-class ECoSSettings final : public SubObject
+namespace ECoS {
+
+class Kernel;
+
+class SwitchManager final : public Object
 {
+  protected:
+    void update(std::string_view option, std::string_view value) final;
+
   public:
-    CLASS_ID("ecos_settings")
+    SwitchManager(Kernel& kernel);
 
-    Property<bool> debugLogRXTX;
+    void setSwitch(SwitchProtocol protocol, uint16_t address, bool port);
 
-    ECoSSettings(Object& _parent, std::string_view parentPropertyName);
-
-    ECoS::Config config() const;
+    bool receiveReply(const Reply& reply) final;
+    bool receiveEvent(const Event& event) final;
 };
+
+}
 
 #endif

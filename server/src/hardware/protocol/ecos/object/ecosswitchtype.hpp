@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2021-2026 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,23 +19,49 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_ECOSSWITCHTYPE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_ECOSSWITCHTYPE_HPP
 
-#include "../../../core/subobject.hpp"
-#include "../../../core/property.hpp"
-#include "../../protocol/ecos/ecosconfig.hpp"
+#include <string_view>
 
-class ECoSSettings final : public SubObject
+enum class SwitchType
 {
-  public:
-    CLASS_ID("ecos_settings")
-
-    Property<bool> debugLogRXTX;
-
-    ECoSSettings(Object& _parent, std::string_view parentPropertyName);
-
-    ECoS::Config config() const;
+  Unknown = 0,
+  Accessory,
+  Turntable,
 };
+
+constexpr bool fromString(std::string_view text, SwitchType& type)
+{
+  if(text == "ACCESSORY")
+  {
+    type = SwitchType::Accessory;
+  }
+  else if(text == "TURNTABLE")
+  {
+    type = SwitchType::Turntable;
+  }
+  else
+  {
+    return false;
+  }
+  return true;
+}
+
+constexpr std::string_view toString(SwitchType value)
+{
+  switch(value)
+  {
+    case SwitchType::Accessory:
+      return "ACCESSORY";
+
+    case SwitchType::Turntable:
+      return "TURNTABLE";
+
+    case SwitchType::Unknown:
+      break;
+  }
+  return {};
+}
 
 #endif

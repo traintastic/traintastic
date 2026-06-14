@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2021-2026 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,23 +19,48 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_ECOSSWITCHPROTOCOL_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_ECOSSWITCHPROTOCOL_HPP
 
-#include "../../../core/subobject.hpp"
-#include "../../../core/property.hpp"
-#include "../../protocol/ecos/ecosconfig.hpp"
+#include <string_view>
 
-class ECoSSettings final : public SubObject
+namespace ECoS
 {
-  public:
-    CLASS_ID("ecos_settings")
 
-    Property<bool> debugLogRXTX;
-
-    ECoSSettings(Object& _parent, std::string_view parentPropertyName);
-
-    ECoS::Config config() const;
+enum class SwitchProtocol
+{
+  Unknown = 0,
+  DCC = 1,
+  Motorola = 2,
 };
+
+constexpr std::string_view toString(SwitchProtocol value)
+{
+  switch(value)
+  {
+    case SwitchProtocol::DCC:
+      return "DCC";
+
+    case SwitchProtocol::Motorola:
+      return "MM";
+
+    case SwitchProtocol::Unknown:
+      break;
+  }
+  return {};
+}
+
+constexpr bool fromString(std::string_view text, SwitchProtocol& protocol)
+{
+  if(text == "MM")
+    protocol = SwitchProtocol::Motorola;
+  else if(text == "DCC")
+    protocol = SwitchProtocol::DCC;
+  else
+    return false;
+  return true;
+}
+
+}
 
 #endif

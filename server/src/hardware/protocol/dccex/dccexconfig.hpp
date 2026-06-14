@@ -1,8 +1,9 @@
 /**
- * This file is part of Traintastic,
- * see <https://github.com/traintastic/traintastic>.
+ * server/src/hardware/protocol/dccex/config.hpp
  *
- * Copyright (C) 2021-2026 Reinder Feenstra
+ * This file is part of the traintastic source code.
+ *
+ * Copyright (C) 2021 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,23 +20,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_ECOS_ECOSSETTINGS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_DCCEXCONFIG_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_DCCEX_DCCEXCONFIG_HPP
 
-#include "../../../core/subobject.hpp"
-#include "../../../core/property.hpp"
-#include "../../protocol/ecos/ecosconfig.hpp"
+#include <cstdint>
 
-class ECoSSettings final : public SubObject
+namespace DCCEX {
+
+struct Config
 {
-  public:
-    CLASS_ID("ecos_settings")
+  static constexpr uint32_t functionNumberMax = 56;
 
-    Property<bool> debugLogRXTX;
-
-    ECoSSettings(Object& _parent, std::string_view parentPropertyName);
-
-    ECoS::Config config() const;
+  uint8_t speedSteps;
+  uint16_t startupDelay;
+  bool debugLogRXTX;
 };
+
+}
 
 #endif

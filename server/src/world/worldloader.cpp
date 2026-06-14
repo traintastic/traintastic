@@ -36,7 +36,7 @@
 #include "../board/board.hpp"
 #include "../board/tile/tiles.hpp"
 #include "../hardware/interface/interfaces.hpp"
-#include "../hardware/interface/dccexinterface.hpp" //! \todo Remove in v0.4
+#include "../hardware/interface/dccex/dccexinterface.hpp" //! \todo Remove in v0.4
 #include "../hardware/decoder/decoder.hpp"
 #include "../hardware/decoder/decoderfunction.hpp"
 #include "../hardware/identification/identification.hpp"
