@@ -71,6 +71,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   m_restart{false},
   m_dataDir{std::filesystem::absolute(dataDir)},
   m_signalSet(EventLoop::ioContext()),
+  m_autoSaveTimer(EventLoop::ioContext()),
   about{this, "about", std::string(versionCopyrightAndLicense), PropertyFlags::ReadOnly},
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   version{this, "version", TRAINTASTIC_VERSION_FULL, PropertyFlags::ReadOnly},
@@ -95,6 +96,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
       Log::log(*this, LogMessage::N1002_CREATED_NEW_WORLD);
       world->edit = true;
       settings->lastWorld = "";
+      restartAutoSaveTimer();
     }},
   loadWorld{*this, "load_world",
     [this](const std::string& _uuid)
@@ -125,6 +127,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
 #endif
       settings->lastWorld = "";
       Log::log(*this, LogMessage::N1028_CLOSED_WORLD);
+      m_autoSaveTimer.cancel();
     }},
   restart{*this, "restart",
     [this]()
@@ -284,6 +287,7 @@ Traintastic::RunStatus Traintastic::run(const std::string& worldUUID, bool simul
 void Traintastic::exit()
 {
   m_signalSet.cancel();
+  m_autoSaveTimer.cancel();
 
   if(m_restart)
     Log::log(*this, LogMessage::N1003_RESTARTING);
@@ -291,7 +295,9 @@ void Traintastic::exit()
     Log::log(*this, LogMessage::N1004_SHUTTING_DOWN);
 
   if(settings->autoSaveWorldOnExit && world)
-    world->save();
+  {
+    world->autoSave();
+  }
 
   EventLoop::stop();
 }
@@ -335,6 +341,7 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
       }
     }
 
+    restartAutoSaveTimer();
   }
   catch(const LogMessageException& e)
   {
@@ -343,6 +350,25 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
   catch(const std::exception& e)
   {
     Log::log(*this, LogMessage::C1001_LOADING_WORLD_FAILED_X, e.what());
+  }
+}
+
+void Traintastic::restartAutoSaveTimer()
+{
+  m_autoSaveTimer.cancel();
+
+  if(settings->autoSaveInterval != Settings::autoSaveIntervalOff && world)
+  {
+    m_autoSaveTimer.expires_after(std::chrono::minutes(settings->autoSaveInterval));
+    m_autoSaveTimer.async_wait(
+      [this](std::error_code ec)
+      {
+        if(!ec && world)
+        {
+          world->autoSave();
+          restartAutoSaveTimer();
+        }
+      });
   }
 }
 

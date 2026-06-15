@@ -25,6 +25,9 @@
 #include "outputmap.hpp"
 #include <initializer_list>
 #include "../../../core/event.hpp"
+#include "../../../core/method.hpp"
+#include "../../../core/attributes.hpp"
+#include "../../../world/getworld.hpp"
 
 template<class Key, class Value>
 class OutputMapBase : public OutputMap
@@ -50,17 +53,32 @@ class OutputMapBase : public OutputMap
       }
     }
 
+    void worldEvent(WorldState state, WorldEvent event) override
+    {
+      OutputMap::worldEvent(state, event);
+      Attributes::setEnabled(test, !contains(state, WorldState::Run));
+    }
+
     std::optional<OutputActionValue> getDefaultOutputActionValue(const OutputMapItem& item, OutputChannel outputChannel, OutputType outputType, size_t outputIndex) override
     {
       return m_defaultOutputActionGetter(static_cast<const Value&>(item).key.value(), outputChannel, outputType, outputIndex);
     }
 
   public:
+    Method<void(Key)> test;
     Event<Key> onOutputStateMatchFound;
 
     OutputMapBase(Object& _parent, std::string_view parentPropertyName, std::initializer_list<Key> keys, DefaultOutputActionGetter defaultOutputActionGetter) :
       OutputMap(_parent, parentPropertyName)
       , m_defaultOutputActionGetter{defaultOutputActionGetter}
+      , test{*this, "test", MethodFlags::NoScript,
+          [this](Key key)
+          {
+            if(auto item = operator[](key))
+            {
+              item->execute();
+            }
+          }}
       , onOutputStateMatchFound{*this, "on_match_found", EventFlags::Scriptable}
     {
       assert(m_defaultOutputActionGetter);
@@ -68,6 +86,9 @@ class OutputMapBase : public OutputMap
       {
         items.appendInternal(std::make_shared<Value>(*this, k));
       }
+
+      Attributes::addEnabled(test, !contains(getWorld(_parent).state, WorldState::Run));
+      m_interfaceItems.add(test);
     }
 
     const std::shared_ptr<Value> operator [](Key key) const

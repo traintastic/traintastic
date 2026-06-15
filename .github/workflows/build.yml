@@ -11,7 +11,7 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_msvc"
-          os: windows-latest
+          os: windows-2022
           generator: "Visual Studio 17 2022"
           arch: "-A x64"
           target: traintastic-client
@@ -196,7 +196,7 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_clang"
-          os: windows-latest
+          os: windows-2022
           generator: "Visual Studio 17 2022"
           arch: "-A x64"
           toolset: "-T ClangCL"
@@ -561,6 +561,12 @@ jobs:
       with:
         name: traintastic-manual
         path: ${{github.workspace}}/manual/output
+
+    - name: Download latest VC14 redist
+      shell: powershell
+      working-directory: ${{github.workspace}}/package/innosetup
+      run: |
+        Invoke-Webrequest -Uri "https://aka.ms/vc14/vc_redist.x64.exe" -OutFile "vc_redist.x64.exe"
 
     - name: Build installer
       shell: cmd

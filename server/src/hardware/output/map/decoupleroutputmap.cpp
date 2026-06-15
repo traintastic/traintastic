@@ -20,6 +20,8 @@
  */
 
 #include "decoupleroutputmap.hpp"
+#include "outputmapoutputaction.hpp"
+#include "../../../core/method.tpp"
 
 static std::optional<OutputActionValue> getDefaultActionValue(DecouplerState decouplerState, OutputChannel /*outputChannel*/, OutputType outputType, size_t outputIndex)
 {

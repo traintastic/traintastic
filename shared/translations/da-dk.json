@@ -196,6 +196,10 @@
         "definition": "Position"
     },
     {
+        "term": "board_tile:feedback_map",
+        "definition": "Tilbagemelding"
+    },
+    {
         "term": "board_tile:output_map",
         "definition": "Udgange"
     },
@@ -314,6 +318,10 @@
     {
         "term": "cbus_node_list:version",
         "definition": "Version"
+    },
+    {
+        "term": "cbus_session_list:controlled_by",
+        "definition": "Styret af"
     },
     {
         "term": "cbus_session_list:direction",
@@ -808,6 +816,10 @@
         "definition": "Sluk"
     },
     {
+        "term": "feedback_map.turnout:key",
+        "definition": "Position"
+    },
+    {
         "term": "function:off",
         "definition": "Sluk"
     },
@@ -926,6 +938,18 @@
     {
         "term": "input_channel:short_event",
         "definition": "Kort h\u00e6ndelse"
+    },
+    {
+        "term": "input_condition:dont_care",
+        "definition": "Ligegyldigt"
+    },
+    {
+        "term": "input_condition:off",
+        "definition": "Slukket"
+    },
+    {
+        "term": "input_condition:on",
+        "definition": "T\u00e6ndt"
     },
     {
         "term": "input_list:bus",
@@ -1237,15 +1261,15 @@
     },
     {
         "term": "loconet_settings:fast_clock",
-        "definition": ""
+        "definition": "Modeltid"
     },
     {
         "term": "loconet_settings:fast_clock_sync_enabled",
-        "definition": ""
+        "definition": "Synk af modeltid startet"
     },
     {
         "term": "loconet_settings:fast_clock_sync_interval",
-        "definition": ""
+        "definition": "Synkinterval for modeltid"
     },
     {
         "term": "loconet_settings:listen_only",
@@ -1744,6 +1768,10 @@
         "definition": "N\u00f8dstop blev aktiveret fordi signal %1s stilling blev \u00e6ndret udefra"
     },
     {
+        "term": "message:E3011",
+        "definition": "Tilbagemeldingskonflikt: Flere valide muligheder"
+    },
+    {
         "term": "message:E9001",
         "definition": "%1 (Under k\u00f8rsel af %2 h\u00e6ndelsen)"
     },
@@ -1965,7 +1993,7 @@
     },
     {
         "term": "message:N2003",
-        "definition": ""
+        "definition": "Synk af modeltid stoppet"
     },
     {
         "term": "message:N2004",
@@ -2025,7 +2053,7 @@
     },
     {
         "term": "message:W1003",
-        "definition": ""
+        "definition": "Indl\u00e6sning af anl\u00e6g %1 fejlede (libarchive-fejl %2: %3)"
     },
     {
         "term": "message:W1004",
@@ -2057,7 +2085,7 @@
     },
     {
         "term": "message:W2007",
-        "definition": ""
+        "definition": "Centralen underst\u00f8tter ikke modeltid"
     },
     {
         "term": "message:W2018",
@@ -2253,7 +2281,7 @@
     },
     {
         "term": "pcap_output:pipe",
-        "definition": ""
+        "definition": "Pipe"
     },
     {
         "term": "protocol.loconet:command_station",
@@ -2304,6 +2332,30 @@
         "definition": "Brugernavn"
     },
     {
+        "term": "qtapp.diagnostic_report_dialog:create_report",
+        "definition": "Dan rapport"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:explanation",
+        "definition": "Dette genererer en rapport til at hj\u00e6lpe med fejlfinding i Traintastic.\n\nRapporten indeholder:\n\u2022 Grundl\u00e6ggende klient og server-information (App-version og operativsystem)\n\u2022 Et sk\u00e6rmbillede af klientvinduet\n\u2022 Serverloggen\n\u2022 En eksport af dit anl\u00e6g\n\nAlle data vil blive gemt i en zipfil p\u00e5 din computer. Du har mulighed for at genneml\u00e6se indholdet f\u00f8r du deler det med andre (F. eks. p\u00e5 Traintastic-forummet.)\n\nData bliver ikke sendt automatisk."
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:save_diagnostic_report",
+        "definition": "Gem fejlfindingsrapport"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:window_title",
+        "definition": "Opret fejlfindingsrapport"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:zip_file",
+        "definition": "Zipfil"
+    },
+    {
+        "term": "qtapp.dialog:cancel",
+        "definition": "Afbryd"
+    },
+    {
         "term": "qtapp.error:cant_read_from_file_x",
         "definition": "Kan ikke indl\u00e6se filen: %1"
     },
@@ -2338,6 +2390,10 @@
     {
         "term": "qtapp.mainmenu:connection",
         "definition": "Forbindelse"
+    },
+    {
+        "term": "qtapp.mainmenu:diagnostic_report",
+        "definition": "Fejlfindingsrapport"
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
@@ -3241,7 +3297,7 @@
     },
     {
         "term": "wizard.introduction.world:text",
-        "definition": ""
+        "definition": "Anl\u00e6gget indeholder alt hvad der er del af modeljernbanen, s\u00e5 som centralen, togene, signaler og sporskifter. Man kan oprette flere anl\u00e6g, men kun et kan v\u00e6re i brug af gangen.\n\nAnl\u00e6ggene bliver gemt p\u00e5 den computer som afvikler Traintastic-serveren. N\u00e5r man gemmer et anl\u00e6g, bliver der automatisk oprettet en sikkerhedskopi. Via menupunktet Filer \u2192 Eksport\u00e9r anl\u00e6g er det muligt at f\u00e5 en kopi som yderligere sikkerhed eller til at overf\u00f8re til en anden Traintastic-server."
     },
     {
         "term": "wizard.introduction.world:title",
@@ -3253,7 +3309,7 @@
     },
     {
         "term": "wizard.new_board.adding:text",
-        "definition": ""
+        "definition": "Det er muligt at tilf\u00f8je elementer til sporplanen gennem de forskellige menuer. Anvend venstre musetast til at placere elementerne og h\u00f8jre musetast til at rotere dem.\n\nDu kan erstatte elementer med venstre musetast ved at holde Ctrl nede samtidig og ellers skal du slette det nuv\u00e6rende f\u00f8rst."
     },
     {
         "term": "wizard.new_board.adding:title",
@@ -3493,7 +3549,7 @@
     },
     {
         "term": "xpressnet_settings:use_emergency_stop_locomotive_command",
-        "definition": ""
+        "definition": "Anvend kort n\u00f8dstopskommando til lokomotiver"
     },
     {
         "term": "xpressnet_settings:use_roco_f13_f20_command",

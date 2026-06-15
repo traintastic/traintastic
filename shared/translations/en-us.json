@@ -920,6 +920,10 @@
         "definition": "Throttles"
     },
     {
+        "term": "identification:invert_direction",
+        "definition": "Invert direction"
+    },
+    {
         "term": "identification:opc_multi_sense_direction",
         "definition": "OPC_MULTI_SENSE direction"
     },
@@ -1869,6 +1873,10 @@
         "definition": "Building world index"
     },
     {
+        "term": "message:I1010",
+        "definition": "Auto saved world: %1"
+    },
+    {
         "term": "message:I2001",
         "definition": "Unknown loco address: %1"
     },
@@ -2295,6 +2303,10 @@
     {
         "term": "output_map:swap_outputs",
         "definition": "Swap outputs"
+    },
+    {
+        "term": "output_map:test",
+        "definition": "Test"
     },
     {
         "term": "output_map:use",
@@ -2789,6 +2801,10 @@
         "definition": "Auto save world on exit"
     },
     {
+        "term": "settings:auto_save_interval",
+        "definition": "Auto save interval"
+    },
+    {
         "term": "settings:discoverable",
         "definition": "Discoverable"
     },
@@ -2807,6 +2823,10 @@
     {
         "term": "settings:memory_logger_size",
         "definition": "Memory logger size"
+    },
+    {
+        "term": "settings:off",
+        "definition": "Off"
     },
     {
         "term": "settings:port",

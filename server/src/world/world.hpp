@@ -85,6 +85,8 @@ class World : public Object
 
     WorldFeatures m_features;
 
+    void backupAndSave(bool isAutoSave);
+
     void updateEnabled();
     void updateFeatures();
     void updateScaleRatio();
@@ -213,6 +215,7 @@ class World : public Object
     ObjectPtr getObjectById(const std::string& _id) const;
     ObjectPtr getObjectByPath(std::string_view path) const;
 
+    void autoSave();
     void export_(std::vector<std::byte>& data);
 };
 

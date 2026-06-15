@@ -44,8 +44,7 @@ std::size_t toAscii(const CAN::Message& canMessage, std::span<char> buffer)
 
   if(canMessage.extended)
   {
-    // UNTESTED: just a guess, not meantioned in the "CBUS Developer’s Guide Rev 6c"
-    const auto eid = canMessage.id << 3;
+    const auto eid = ((canMessage.id << 3) & 0xFFE00000) | (canMessage.id & 0x0003FFFF); // map to SIDH, SIDL, EIDH and EIDL registers
     *(p++) = 'X';
     *(p++) = hexChars[(eid >> 28) & 0xF];
     *(p++) = hexChars[(eid >> 24) & 0xF];
@@ -142,7 +141,7 @@ std::size_t fromAscii(std::string_view buffer, CAN::Message& canMessage, std::si
         dropped += frame.size();
         continue; // error reading, ignore frame
       }
-      canMessage.id = (eid >> 3);
+      canMessage.id = ((eid & 0xFFE00000) >> 3) | (eid & 0x0003FFFF); // unmap from SIDH, SIDL, EIDH and EIDL registers
       canMessage.extended = true;
       canMessage.rtr = (frame[10] == 'R');
       if(!canMessage.rtr)

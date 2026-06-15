@@ -66,13 +66,14 @@ IOMapWidget::IOMapWidget(ObjectPtr object, QWidget* parent)
   : QWidget(parent)
   , m_object{std::move(object)}
   , m_hasUseColumn{hasUseColumn(m_object->classId())}
-  , m_columnCountNonOutput{m_hasUseColumn ? 2 : 1}
   , m_addresses{m_object->getVectorProperty("addresses")}
   , m_ecosObject{dynamic_cast<Property*>(m_object->getProperty("ecos_object"))}
   , m_items{m_object->getObjectVectorProperty("items")}
+  , m_test{m_object->getMethod("test")}
   , m_table{new QTableWidget(this)}
   , m_getParentRequestId{Connection::invalidRequestId}
   , m_getItemsRequestId{Connection::invalidRequestId}
+  , m_columnCountNonOutput{1 + (m_hasUseColumn ? 1 : 0) + (m_test ? 1 : 0)}
 {
   QVBoxLayout* l = new QVBoxLayout();
 
@@ -116,6 +117,10 @@ IOMapWidget::IOMapWidget(ObjectPtr object, QWidget* parent)
   if(m_hasUseColumn)
   {
     labels.append(Locale::tr("output_map:use"));
+  }
+  if(m_test)
+  {
+    labels.append(Locale::tr("output_map:test"));
   }
   m_table->setHorizontalHeaderLabels(labels);
   m_table->verticalHeader()->setVisible(false);
@@ -163,6 +168,28 @@ IOMapWidget::IOMapWidget(ObjectPtr object, QWidget* parent)
 
     connect(&BoardSettings::instance(), &BoardSettings::changed, this, &IOMapWidget::updateKeyIcons);
   }
+
+  if(m_test)
+  {
+    connect(m_test, &Method::attributeChanged, this,
+      [this](AttributeName name, const QVariant& value)
+      {
+        switch(name)
+        {
+          case AttributeName::Enabled:
+          {
+            const bool b = value.toBool();
+            for(auto* button : m_testButtons)
+            {
+              button->setEnabled(b);
+            }
+            break;
+          }
+          default:
+            break;
+        }
+      });
+  }
 }
 
 IOMapWidget::~IOMapWidget()
@@ -175,6 +202,28 @@ IOMapWidget::~IOMapWidget()
   {
     m_object->connection()->cancelRequest(m_getItemsRequestId);
   }
+}
+
+void IOMapWidget::testClicked(size_t index)
+{
+  assert(m_test);
+  if(auto* key = m_itemObjects[index]->getProperty("key")) [[likely]]
+  {
+    switch(key->type())
+    {
+      case ValueType::Boolean:
+        callMethod(*m_test, nullptr, key->toBool());
+        return;
+
+      case ValueType::Enum:
+        callMethod(*m_test, nullptr, key->toInt64());
+        return;
+
+      default: [[unlikely]]
+        break;
+    }
+  }
+  assert(false); // we should the button and key property
 }
 
 void IOMapWidget::updateItems(const std::vector<ObjectPtr>& items)
@@ -230,6 +279,17 @@ void IOMapWidget::updateItems(const std::vector<ObjectPtr>& items)
         w->setLayout(l);
         m_table->setCellWidget(static_cast<int>(i), columnUse, w);
       }
+    }
+
+    if(m_test)
+    {
+      const int columnTest = columnKey + (m_hasUseColumn ? 1 : 0) + 1;
+
+      auto* pb = new QPushButton(Locale::tr("output_map:test"), m_table);
+      pb->setEnabled(m_test->getAttributeBool(AttributeName::Enabled, true));
+      connect(pb, &QPushButton::clicked, std::bind(&IOMapWidget::testClicked, this, m_testButtons.size()));
+      m_table->setCellWidget(static_cast<int>(i), columnTest, pb);
+      m_testButtons.emplace_back(pb);
     }
 
     if(auto* p = items[i]->getProperty("visible"))

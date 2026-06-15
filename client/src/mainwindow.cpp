@@ -52,6 +52,7 @@
 #include "network/error.hpp"
 #include "network/callmethod.hpp"
 #include "programming/lncv/lncvprogrammer.hpp"
+#include "settings/generalsettings.hpp"
 #include "subwindow/objectsubwindow.hpp"
 #include "subwindow/boardsubwindow.hpp"
 #include "subwindow/throttlesubwindow.hpp"
@@ -519,22 +520,28 @@ MainWindow::MainWindow(QWidget* parent) :
     menu->addAction(Theme::getIcon("help"), Locale::tr("qtapp.mainmenu:help"),
       [this]()
       {
+        const auto language = GeneralSettings::instance().language.value().left(2);
+
         if(m_connection)
         {
           QUrl url;
           url.setScheme("http");
           url.setHost(m_connection->peerAddress().toString());
           url.setPort(m_connection->peerPort());
-          url.setPath("/manual/en/index.html");
+          url.setPath(QString("/manual/%1").arg(language));
           QDesktopServices::openUrl(url);
         }
-        else if(const auto manual = QString::fromStdString((getManualPath() / "en" / "index.html").string()); QFile::exists(manual))
+        else if(const auto manual = QString::fromStdString((getManualPath() / language.toStdString() / "index.html").string()); QFile::exists(manual))
         {
           QDesktopServices::openUrl(QUrl::fromLocalFile(manual));
         }
+        else if(const auto manualEn = QString::fromStdString((getManualPath() / "en" / "index.html").string()); QFile::exists(manualEn))
+        {
+          QDesktopServices::openUrl(QUrl::fromLocalFile(manualEn));
+        }
         else
         {
-          QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL));
+          QDesktopServices::openUrl(QString("https://traintastic.org/manual?version=" TRAINTASTIC_VERSION_FULL "&language=%1").arg(language));
         }
       })->setShortcut(QKeySequence::HelpContents);
     menu->addAction(Locale::tr("qtapp.mainmenu:community_forum"),

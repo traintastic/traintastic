@@ -29,6 +29,7 @@ CBUSSettings::CBUSSettings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , engineKeepAlive{this, "engine_keep_alive", engineKeepAliveDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , dccAccessorySwitchTime{this, "dcc_accessory_switch_time", dccAccessorySwitchTimeDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , canId{this, "can_id", CBUS::CanId::TRAINTASTIC, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , shortEventNodeNumber{this, "short_event_node_number", 0, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , hubEnabled{this, "hub_enabled", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , hubLocalhostOnly{this, "hub_localhost_only", true, PropertyFlags::ReadWrite | PropertyFlags::Store}
@@ -43,6 +44,9 @@ CBUSSettings::CBUSSettings(Object& _parent, std::string_view parentPropertyName)
   Attributes::addStep(dccAccessorySwitchTime, dccAccessorySwitchTimeStep);
   Attributes::addUnit(dccAccessorySwitchTime, Unit::milliSeconds);
   m_interfaceItems.add(dccAccessorySwitchTime);
+
+  Attributes::addMinMax(canId, CBUS::CanId::range());
+  m_interfaceItems.add(canId);
 
   m_interfaceItems.add(shortEventNodeNumber);
 
@@ -62,6 +66,7 @@ CBUS::Config CBUSSettings::config() const
   return CBUS::Config{
     .engineKeepAlive = std::chrono::seconds(engineKeepAlive),
     .dccAccessorySwitchTime = std::chrono::milliseconds(dccAccessorySwitchTime),
+    .canId = canId,
     .shortEventNodeNumber = shortEventNodeNumber,
     .hubEnabled = hubEnabled,
     .hubLocalhostOnly = hubLocalhostOnly,
