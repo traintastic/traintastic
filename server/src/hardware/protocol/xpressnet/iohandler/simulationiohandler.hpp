@@ -24,6 +24,8 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_IOHANDLER_SIMULATIONIOHANDLER_HPP
 
 #include "iohandler.hpp"
+#include "../messages.hpp"
+#include <unordered_map>
 #include <array>
 #include <cstddef>
 
@@ -32,8 +34,30 @@ namespace XpressNet {
 class SimulationIOHandler final : public IOHandler
 {
   private:
+    struct Locomotive
+    {
+      LocomotiveInfo info;
+      FunctionInfoF13F28 func13;
+      FunctionInfoF29F68 func29;
+
+      Locomotive()
+      {
+        info.setSpeedSteps(126);
+        info.setEmergencyStop();
+        info.setDirection(Direction::Forward);
+        info.setBusy(true);
+        info.updateChecksum();
+        func13.updateChecksum();
+        func29.updateChecksum();
+      }
+    };
+
+    std::unordered_map<uint16_t, Locomotive> m_locomotives;
+
     void reply(const Message& message);
     void reply(const Message& message, size_t count);
+
+    void speedAndDirectionInstruction(const SpeedAndDirectionInstruction& message);
 
   public:
     SimulationIOHandler(Kernel& kernel);

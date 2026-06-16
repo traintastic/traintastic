@@ -52,7 +52,7 @@ bool SimulationIOHandler::send(const Message& message)
         {
           if(message == LanXGetVersion())
           {
-            reply(LanXGetVersionReply(xBusVersion, CommandStationId::Z21));
+            reply(LanXGetVersionReply(xBusVersion, XpressNet::HardwareType::HWT_Z21));
           }
           else if(message == LanXGetStatus())
           {

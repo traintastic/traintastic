@@ -40,7 +40,7 @@ struct ClientConfig : Config
 
 struct ServerConfig : Config
 {
-  static constexpr CommandStationId commandStationId = CommandStationId::Z21;
+  static constexpr XpressNet::HardwareType commandStationId = XpressNet::HardwareType::HWT_Z21;
   static constexpr uint8_t firmwareVersionMajor = 1;
   static constexpr uint8_t firmwareVersionMinor = 30;
   static constexpr HardwareType hardwareType = HWT_Z21_START;

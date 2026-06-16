@@ -31,6 +31,7 @@
 #include "../../enum/xpressnetinterfacetype.hpp"
 #include "../../enum/xpressnetserialinterfacetype.hpp"
 #include "../../enum/serialflowcontrol.hpp"
+#include <boost/signals2/connection.hpp>
 
 namespace XpressNet {
 class Kernel;
@@ -61,6 +62,9 @@ class XpressNetInterface final
 
     void updateVisible();
 
+    void updateKernelDecoderList();
+    boost::signals2::scoped_connection decoderAddedRemovedConn;
+
   protected:
     bool setOnline(bool& value, bool simulation) final;
 
@@ -75,6 +79,8 @@ class XpressNetInterface final
     Property<uint8_t> s88StartAddress;
     Property<uint8_t> s88ModuleCount;
     ObjectProperty<XpressNet::Settings> xpressnet;
+    Property<std::string> xbusVersion;
+    Property<std::string> commandStationType;
 
     XpressNetInterface(World& world, std::string_view _id);
     ~XpressNetInterface() final;
@@ -84,6 +90,8 @@ class XpressNetInterface final
     std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const final;
     std::span<const uint8_t> decoderSpeedSteps(DecoderProtocol protocol) const final;
     void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) final;
+    void decoderFunctionsChanged(const Decoder& decoder) final;
+    void decoderAddressChanged(const Decoder& decoder, uint16_t oldAddress, uint16_t newAddress) final;
 
     // InputController:
     std::span<const InputChannel> inputChannels() const final;
@@ -94,6 +102,11 @@ class XpressNetInterface final
     std::span<const OutputChannel> outputChannels() const final;
     std::pair<uint32_t, uint32_t> outputAddressMinMax(OutputChannel /*channel*/) const final;
     [[nodiscard]] bool setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value) final;
+
+    //! \brief Send XpressNet message
+    //! \param[in] message XpressNet message bytes.
+    //! \return \c true if send, \c false otherwise.
+    bool send(std::vector<uint8_t> message);
 };
 
 #endif
