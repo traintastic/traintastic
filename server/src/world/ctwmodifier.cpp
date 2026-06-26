@@ -44,7 +44,7 @@ bool CTWModifier::updateFile(const std::filesystem::path& filename, const std::s
 
 bool CTWModifier::updateFile(const std::filesystem::path& filename, std::span<const std::byte> bytes)
 {
-  if(auto it = m_files.find(filename); it != m_files.end())
+  if(auto it = m_files.find(filename.string()); it != m_files.end())
   {
     it->second.resize(bytes.size());
     std::memcpy(it->second.data(), bytes.data(), it->second.size());
