@@ -1,9 +1,8 @@
 /**
- * client/src/dialog/worldlistdialog.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2020,2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -51,6 +50,10 @@ class WorldListDialog final : public QDialog
     ~WorldListDialog() final;
 
     QString uuid() const { return m_uuid; }
+
+private:
+  QString getWorldUUID(int row) const;
+  QString getWorldName(int row) const;
 };
 
 #endif

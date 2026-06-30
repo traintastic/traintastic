@@ -77,6 +77,7 @@ struct Option
   static constexpr std::string_view duration = "duration";
   static constexpr std::string_view force = "force";
   static constexpr std::string_view func = "func";
+  static constexpr std::string_view funcset = "funcset";
   static constexpr std::string_view go = "go";
   static constexpr std::string_view hardwareversion = "hardwareversion";
   static constexpr std::string_view mode = "mode";

@@ -2616,6 +2616,26 @@
         "definition": "Cancel"
     },
     {
+        "term": "qtapp.world_list_dialog:duplicate_world",
+        "definition": "Duplicate world"
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicate_world_confirmation",
+        "definition": "Are you sure you want to duplicate the world <b>%1</b>?"
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicated_world_name_postfix",
+        "definition": "Copy"
+    },
+    {
+        "term": "qtapp.world_list_dialog:delete_world",
+        "definition": "Delete world"
+    },
+    {
+        "term": "qtapp.world_list_dialog:delete_world_confirmation",
+        "definition": "Are you sure you want to delete the <b>%1</b> world? This action cannot be undone."
+    },
+    {
         "term": "qtapp.world_list_dialog:load",
         "definition": "Load"
     },

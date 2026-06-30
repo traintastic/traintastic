@@ -32,7 +32,7 @@ Locomotive::Locomotive(Kernel& kernel, uint16_t id)
   : Object(kernel, id)
 {
   requestView();
-  send(get(m_id, {Option::dir, Option::speedStep}));
+  send(get(m_id, {Option::dir, Option::speedStep, Option::funcset}));
 }
 
 Locomotive::Locomotive(Kernel& kernel, const Line& data)
@@ -43,10 +43,6 @@ Locomotive::Locomotive(Kernel& kernel, const Line& data)
     fromChars(addr->second, m_address);
   if(auto protocol = values.find(Option::protocol); protocol != values.end())
     fromString(protocol->second, m_protocol);
-
-  if(m_protocol != LocomotiveProtocol::Unknown)
-    for(uint8_t i = 0; i < getFunctionCount(); i++)
-      send(get(m_id, Option::func, i));
 }
 
 bool Locomotive::receiveReply(const Reply& reply)
@@ -126,6 +122,14 @@ void Locomotive::update(std::string_view option, std::string_view value)
     if(auto r = fromChars(value, fn); r.ec == std::errc() && r.ptr < value.data() + value.size() - 1 && *r.ptr == ',')
     {
       m_functions[fn].value = *(r.ptr + 1) == '1';
+    }
+  }
+  else if(option == Option::funcset)
+  {
+    const uint8_t count = static_cast<uint8_t>(std::min(m_functions.size(), value.size()));
+    for(uint8_t fn = 0; fn < count; ++fn)
+    {
+      m_functions[fn].value = (value[fn] == '1');
     }
   }
 }
