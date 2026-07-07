@@ -3140,6 +3140,10 @@
         "definition": "Decoder"
     },
     {
+        "term": "vehicle.rail:invert_direction",
+        "definition": "Invert direction"
+    },
+    {
         "term": "vehicle.rail:length",
         "definition": "Length"
     },

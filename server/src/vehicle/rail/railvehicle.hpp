@@ -30,6 +30,7 @@
 #include "../../core/speedproperty.hpp"
 #include "../../core/weightproperty.hpp"
 #include "../../core/method.hpp"
+#include <traintastic/enum/direction.hpp>
 
 class Decoder;
 class Train;
@@ -38,6 +39,7 @@ class RailVehicle : public Vehicle
 {
   protected:
     RailVehicle(World& world, std::string_view _id);
+    ~RailVehicle();
 
     void addToWorld() override;
     void destroying() override;
@@ -46,6 +48,13 @@ class RailVehicle : public Vehicle
 
     virtual double calcTotalWeight(WeightUnit unit) const;
     void updateTotalWeight();
+
+    void setDecoder(const std::shared_ptr<Decoder> &newDecoder);
+
+    friend class Train;
+    friend class TrainVehicleListItem;
+    Direction lastTrainSetDirection = Direction::Unknown;
+    boost::signals2::connection decoderConnection;
 
   public:
     ObjectProperty<Decoder> decoder;
@@ -66,6 +75,8 @@ class RailVehicle : public Vehicle
 
     void updateMute();
     void updateNoSmoke();
+
+    void setEmergencyStop(bool value);
 };
 
 #endif

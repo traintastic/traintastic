@@ -27,9 +27,7 @@
 #include "../../utils/displayname.hpp"
 #include "../../world/world.hpp"
 #include "../../hardware/decoder/decoder.hpp"
-#include "../../hardware/decoder/decoderchangeflags.hpp"
 #include "../../train/train.hpp"
-
 
 PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   : RailVehicle(world, id_)
@@ -43,18 +41,6 @@ PoweredRailVehicle::PoweredRailVehicle(World& world, std::string_view id_)
   Attributes::addEnabled(power, editable);
   Attributes::addObjectEditor(power, false); // FIXME: remove once used
   m_interfaceItems.add(power);
-}
-
-void PoweredRailVehicle::setDirection(Direction value)
-{
-  if(decoder)
-    decoder->direction = value;
-}
-
-void PoweredRailVehicle::setEmergencyStop(bool value)
-{
-  if(decoder)
-    decoder->emergencyStop = value;
 }
 
 void PoweredRailVehicle::setSpeed(double kmph)
