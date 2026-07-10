@@ -59,9 +59,11 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   // position is added by sub class
 
   Attributes::addDisplayName(outputMap, DisplayName::BoardTile::outputMap);
+  Attributes::addVisible(outputMap, true);
   m_interfaceItems.add(outputMap);
 
   Attributes::addDisplayName(feedbackMap, DisplayName::BoardTile::feedbackMap);
+  Attributes::addVisible(feedbackMap, true);
   m_interfaceItems.add(feedbackMap);
 
   Attributes::addObjectEditor(setPosition, false);
@@ -140,7 +142,7 @@ void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(name, editable);
 }
 
-bool TurnoutRailTile::isValidPosition(TurnoutPosition value)
+bool TurnoutRailTile::isValidPosition(TurnoutPosition value) const
 {
   const auto* values = setPosition.tryGetValuesAttribute(AttributeName::Values);
   assert(values);
@@ -157,8 +159,7 @@ bool TurnoutRailTile::doSetPosition(TurnoutPosition value, bool skipAction)
     (*outputMap)[value]->execute();
   if(!hasFeedback())
   {
-    position.setValueInternal(value);
-    positionChanged(*this, value);
+    updatePosition(Source::Direct, value);
   }
   return true;
 }
@@ -188,8 +189,7 @@ void TurnoutRailTile::updatePosition(Source source, TurnoutPosition pos)
     return; // No change
   }
 
-  position.setValueInternal(pos);
-  positionChanged(*this, pos);
+  newPosition(pos);
 
   TurnoutPosition reservedPosition = getReservedPosition();
   if(reservedPosition == TurnoutPosition::Unknown || reservedPosition == position.value())
@@ -270,4 +270,11 @@ void TurnoutRailTile::updatePosition(Source source, TurnoutPosition pos)
       break;
     }
   }
+}
+
+void TurnoutRailTile::newPosition(TurnoutPosition value)
+{
+  assert(position != value);
+  position.setValueInternal(value);
+  positionChanged(*this, value);
 }

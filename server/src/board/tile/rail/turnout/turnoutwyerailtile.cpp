@@ -36,7 +36,7 @@ static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition tu
 }
 
 TurnoutWyeRailTile::TurnoutWyeRailTile(World& world, std::string_view _id)
-  : TurnoutRailTile(world, _id, TileId::RailTurnoutWye, 3)
+  : TurnoutLinkableRailTile(world, _id, TileId::RailTurnoutWye)
 {
   // Skip Unknown position
   std::span<const TurnoutPosition, 2> setPositionValues = std::span(positionValues).subspan<1>();

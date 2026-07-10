@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025-2026 Reinder Feenstra
+ * Copyright (C) 2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,35 +19,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "readfile.hpp"
-#include <fstream>
+#include "turnoutlinkablerailtilelist.hpp"
+#include "turnoutlinkablerailtilelisttablemodel.hpp"
 
-std::optional<std::string> readFile(const std::filesystem::path& filename)
+TurnoutLinkableRailTileList::TurnoutLinkableRailTileList(Object& _parent, std::string_view parentPropertyName)
+  : ObjectList<TurnoutLinkableRailTile>(_parent, parentPropertyName)
 {
-  std::ifstream file(filename, std::ios::in | std::ios::binary | std::ios::ate);
-  if(!file.is_open())
-  {
-    return std::nullopt;
-  }
-  const size_t size = file.tellg();
-  std::string contents;
-  contents.resize(size);
-  file.seekg(std::ios::beg);
-  file.read(contents.data(), size);
-  return contents;
 }
 
-std::optional<nlohmann::json> readFileJSON(const std::filesystem::path& filename)
+TableModelPtr TurnoutLinkableRailTileList::getModel()
 {
-  if(auto contents = readFile(filename))
-  {
-    try
-    {
-      return nlohmann::json::parse(*contents);
-    }
-    catch(...)
-    {
-    }
-  }
-  return std::nullopt;
+  return std::make_shared<TurnoutLinkableRailTileListTableModel>(*this);
+}
+
+bool TurnoutLinkableRailTileList::isListedProperty(std::string_view name)
+{
+  return TurnoutLinkableRailTileListTableModel::isListedProperty(name);
 }
