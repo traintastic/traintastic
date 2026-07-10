@@ -1,9 +1,8 @@
 /**
- * server/src/core/tablemodel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -75,6 +74,7 @@ void TableModel::rowRemovedHack(uint32_t row)
   if(update.rowMin <= row && update.rowMax >= row)
   {
     update.rowMin = row;
+    update.rowMax = std::min(update.rowMax, m_rowCount > 0 ? m_rowCount - 1 : 0);
     updateRegion(shared_ptr<TableModel>(), update);
   }
 }
