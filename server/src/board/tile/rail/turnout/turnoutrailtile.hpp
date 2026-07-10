@@ -38,12 +38,6 @@ class TurnoutRailTile : public RailTile
   DEFAULT_ID("turnout")
 
   private:
-    enum class Source
-    {
-      OutputStateMatch,
-      FeedbackMatch,
-    };
-
     Node m_node;
     std::weak_ptr<BlockPath> m_reservedPath;
 
@@ -53,13 +47,21 @@ class TurnoutRailTile : public RailTile
     static constexpr std::chrono::steady_clock::duration RETRY_DURATION = std::chrono::minutes(1);
 
   protected:
+    enum class Source
+    {
+      Direct,
+      OutputStateMatch,
+      FeedbackMatch,
+      Link,
+    };
+
     TurnoutRailTile(World& world, std::string_view _id, TileId tileId_, size_t connectors);
 
     void destroying() override;
     void addToWorld() override;
     void worldEvent(WorldState state, WorldEvent event) override;
 
-    bool isValidPosition(TurnoutPosition value);
+    bool isValidPosition(TurnoutPosition value) const;
     virtual bool doSetPosition(TurnoutPosition value, bool skipAction = false);
 
     bool hasFeedback() const;
@@ -67,6 +69,7 @@ class TurnoutRailTile : public RailTile
     void connectOutputMap();
 
     void updatePosition(Source source, TurnoutPosition value);
+    virtual void newPosition(TurnoutPosition value);
 
     inline auto onFeedbackMatch()
     {

@@ -188,6 +188,18 @@
         "definition": "Require reservation"
     },
     {
+        "term": "board_tile.rail.turnout:linked",
+        "definition": "Linked"
+    },
+    {
+        "term": "board_tile.rail.turnout:link_turnout",
+        "definition": "Link to turnout"
+    },
+    {
+        "term": "board_tile.rail.turnout:link_invert",
+        "definition": "Invert link"
+    },
+    {
         "term": "board_tile.rail.turnout_slip:dual_motor",
         "definition": "Dual motor/coil"
     },

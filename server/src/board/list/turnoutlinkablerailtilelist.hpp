@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2020-2026 Reinder Feenstra
+ * Copyright (C) 2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,15 +19,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTRIGHTRAILTILE_HPP
-#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTRIGHTRAILTILE_HPP
+#ifndef TRAINTASTIC_SERVER_BOARD_LIST_TURNOUTLINKABLERAILTILELIST_HPP
+#define TRAINTASTIC_SERVER_BOARD_LIST_TURNOUTLINKABLERAILTILELIST_HPP
 
-#include "turnoutlinkablerailtile.hpp"
+#include "../../core/objectlist.hpp"
+#include "../tile/rail/turnout/turnoutlinkablerailtile.hpp"
 
-class TurnoutRightRailTile : public TurnoutLinkableRailTile
+class TurnoutLinkableRailTileList : public ObjectList<TurnoutLinkableRailTile>
 {
-  protected:
-    TurnoutRightRailTile(World& world, std::string_view _id, TileId tileId_);
+  CLASS_ID("list.turnout_linkable_rail_tile")
+
+public:
+  TurnoutLinkableRailTileList(Object& _parent, std::string_view parentPropertyName);
+
+  TableModelPtr getModel() final;
+
+protected:
+  bool isListedProperty(std::string_view name) final;
 };
 
 #endif

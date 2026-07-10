@@ -56,6 +56,7 @@ class BoardList;
 class ZoneList;
 class BlockRailTileList;
 class LinkRailTileList;
+class TurnoutLinkableRailTileList;
 class NXManager;
 class TrainPathFinder;
 class Clock;
@@ -154,6 +155,7 @@ class World : public Object
 
     ObjectProperty<BlockRailTileList> blockRailTiles;
     ObjectProperty<LinkRailTileList> linkRailTiles;
+    ObjectProperty<TurnoutLinkableRailTileList> turnoutLinkableRailTiles;
     ObjectProperty<NXManager> nxManager;
     ObjectProperty<TrainPathFinder> trainPathFinder;
 

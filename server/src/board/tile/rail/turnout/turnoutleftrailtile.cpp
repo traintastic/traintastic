@@ -63,7 +63,7 @@ static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition tu
 }
 
 TurnoutLeftRailTile::TurnoutLeftRailTile(World& world, std::string_view _id, TileId tileId_)
-  : TurnoutRailTile(world, _id, tileId_, 3)
+  : TurnoutLinkableRailTile(world, _id, tileId_)
 {
   // Skip Unknown position
   std::span<const TurnoutPosition, 2> setPositionValues = std::span(positionValues).subspan<1>();

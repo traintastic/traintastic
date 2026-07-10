@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2020-2026 Reinder Feenstra
+ * Copyright (C) 2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,15 +19,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTRIGHTRAILTILE_HPP
-#define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTRIGHTRAILTILE_HPP
+#ifndef TRAINTASTIC_SERVER_BOARD_LIST_TURNOUTLINKABLERAILTILELISTTABLEMODEL_HPP
+#define TRAINTASTIC_SERVER_BOARD_LIST_TURNOUTLINKABLERAILTILELISTTABLEMODEL_HPP
 
-#include "turnoutlinkablerailtile.hpp"
+#include "../../core/objectlisttablemodel.hpp"
+#include "../tile/rail/turnout/turnoutlinkablerailtile.hpp"
 
-class TurnoutRightRailTile : public TurnoutLinkableRailTile
+class TurnoutLinkableRailTileList;
+
+class TurnoutLinkableRailTileListTableModel : public ObjectListTableModel<TurnoutLinkableRailTile>
 {
-  protected:
-    TurnoutRightRailTile(World& world, std::string_view _id, TileId tileId_);
+  CLASS_ID("table_model.turnoutlinkablerailtile_list")
+
+public:
+  static bool isListedProperty(std::string_view name);
+
+  TurnoutLinkableRailTileListTableModel(TurnoutLinkableRailTileList& list);
+
+  std::string getText(uint32_t column, uint32_t row) const final;
+
+protected:
+  void propertyChanged(BaseProperty& property, uint32_t row) final;
 };
 
 #endif
