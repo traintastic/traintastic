@@ -1211,24 +1211,30 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, bool isReser
       {
         if(auto* trainBlockStatus = dynamic_cast<TrainBlockStatus*>(block->trains()[0].get())) /*[[likely]]*/
         {
+          auto direction = trainBlockStatus->direction();
+          if(rotate == TileRotate::Deg0)
+          {
+            direction = !direction; // invert for proper drawing
+          }
+
           if(const auto& train = trainBlockStatus->train())
           {
-            if(trainBlockStatus->direction() == BlockTrainDirection::TowardsA)
+            if(direction == BlockTrainDirection::TowardsA)
               label += "< ";
 
             label += train->getPropertyValueString("name");
 
-            if(trainBlockStatus->direction() == BlockTrainDirection::TowardsB)
+            if(direction == BlockTrainDirection::TowardsB)
               label +=  " >";
           }
           else if(auto identification = trainBlockStatus->identification(); !identification.isEmpty())
           {
-            if(trainBlockStatus->direction() == BlockTrainDirection::TowardsA)
+            if(direction == BlockTrainDirection::TowardsA)
               label += "< ";
 
             label += identification;
 
-            if(trainBlockStatus->direction() == BlockTrainDirection::TowardsB)
+            if(direction == BlockTrainDirection::TowardsB)
               label +=  " >";
           }
         }

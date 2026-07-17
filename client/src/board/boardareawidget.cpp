@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2020-2025 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -383,7 +383,7 @@ QRect BoardAreaWidget::tileRect(const Object& tile) const
     tile.getPropertyValueInt("x", 0),
     tile.getPropertyValueInt("y", 0),
     tile.getPropertyValueInt("width", 1),
-    tile.getPropertyValueInt("heigth", 1));
+    tile.getPropertyValueInt("height", 1));
 }
 
 BlockTrainDirection BoardAreaWidget::getBlockTrainDirection(const Object& tile, const QPoint& point) const
@@ -994,12 +994,16 @@ void BoardAreaWidget::dropEvent(QDropEvent* event)
       {
         if(auto tile = m_board->getTileObject(l); tile && m_board->getTileId(l) == TileId::RailBlock) [[likely]]
         {
-          if(const auto toDirection = getBlockTrainDirection(*tile, pos); toDirection != BlockTrainDirection::Unknown) [[likely]]
+          if(const auto toDirection = !getBlockTrainDirection(*tile, pos); toDirection != BlockTrainDirection::Unknown) [[likely]]
           {
             const auto [fromBlock, fromDirection] = blockReservePath->values();
             const auto toBlock = tile->getPropertyValueString("id");
 
-            qDebug() << fromBlock << static_cast<int>(fromDirection) << toBlock << static_cast<int>(toDirection);
+            qDebug()
+              << fromBlock
+              << (fromDirection == BlockTrainDirection::TowardsA ? "A" : "B")
+              << toBlock
+              << (toDirection == BlockTrainDirection::TowardsA ? "A" : "B");
 
             (void)callMethodR<bool>(
               *m_board->connection(),

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2025 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -591,8 +591,8 @@ void BlockRailTile::getConnectors(std::vector<Connector>& connectors) const
 {
   if(rotate == TileRotate::Deg0)
   {
-    connectors.emplace_back(location(), Connector::Direction::North, Connector::Type::Rail);
     connectors.emplace_back(location().adjusted(0, height - 1), Connector::Direction::South, Connector::Type::Rail);
+    connectors.emplace_back(location(), Connector::Direction::North, Connector::Type::Rail);
   }
   else if(rotate == TileRotate::Deg90)
   {
