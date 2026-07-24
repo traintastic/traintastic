@@ -22,6 +22,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include "../../../src/core/eventloop.hpp"
 #include "../../../src/core/method.tpp"
+#include "../../../src/core/objectproperty.tpp"
 #include "../../../src/log/log.hpp"
 #include "../../../src/log/memorylogger.hpp"
 #include "../../../src/lua/scriptlist.hpp"
