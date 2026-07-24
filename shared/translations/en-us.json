@@ -1792,6 +1792,10 @@
         "definition": "%1 (During execution of %2 event handler)"
     },
     {
+        "term": "message:E9002",
+        "definition": "%1 (During execution of %2 on_changed handler)"
+    },
+    {
         "term": "message:F1001",
         "definition": "Opening TCP socket failed (%1)"
     },

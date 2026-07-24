@@ -232,6 +232,7 @@ enum class LogMessage : uint32_t
   E3010_WORLD_POWER_OFF_ON_SIGNAL_X_CHANGED = LogMessageOffset::error + 3010,
   E3011_FEEDBACK_CONFLICT_MULTIPLE_OPTIONS_ARE_VALID = LogMessageOffset::error + 3011,
   E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER = LogMessageOffset::error + 9001,
+  E9002_X_DURING_EXECUTION_OF_X_ON_CHANGED_HANDLER = LogMessageOffset::error + 9002,
   E9999_X = LogMessageOffset::error + 9999,
 
   // Critical:

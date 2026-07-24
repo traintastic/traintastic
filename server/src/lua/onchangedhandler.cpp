@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2021-2026 Reinder Feenstra
+ * Copyright (C) 2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,24 +19,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "eventhandler.hpp"
-#include "sandbox.hpp"
+#include "onchangedhandler.hpp"
+#include "object/object.hpp"
 #include "push.hpp"
-#include "to.hpp"
+#include "sandbox.hpp"
 #include "script.hpp"
-#include "../core/abstractevent.hpp"
+#include "to.hpp"
+#include "vectorproperty.hpp"
+#include "../core/abstractproperty.hpp"
+#include "../core/abstractvectorproperty.hpp"
 #include "../core/object.hpp"
 #include "../log/log.hpp"
+#include "../utils/contains.hpp"
 
 namespace Lua {
 
-constexpr char const* eventHandlerGlobal = "event_handlers";
+constexpr char const* onChangedGlobal = "on_changeds";
 
-using EventHandlerData = std::weak_ptr<EventHandler>;
+using OnChangedData = std::weak_ptr<OnChangedHandler>;
 
-EventHandler& EventHandler::check(lua_State* L, int index)
+OnChangedHandler& OnChangedHandler::check(lua_State* L, int index)
 {
-  auto& handler = *static_cast<EventHandlerData*>(luaL_checkudata(L, index, metaTableName));
+  auto& handler = *static_cast<OnChangedData*>(luaL_checkudata(L, index, metaTableName));
   if(!handler.expired())
   {
     return *handler.lock();
@@ -44,9 +48,9 @@ EventHandler& EventHandler::check(lua_State* L, int index)
   errorDeadObject(L);
 }
 
-EventHandler* EventHandler::test(lua_State* L, int index)
+OnChangedHandler* OnChangedHandler::test(lua_State* L, int index)
 {
-  auto* handler = static_cast<EventHandlerData*>(luaL_testudata(L, index, metaTableName));
+  auto* handler = static_cast<OnChangedData*>(luaL_testudata(L, index, metaTableName));
   if(!handler)
   {
     return nullptr;
@@ -58,14 +62,14 @@ EventHandler* EventHandler::test(lua_State* L, int index)
   errorDeadObject(L);
 }
 
-void EventHandler::push(lua_State* L, EventHandler& value)
+void OnChangedHandler::push(lua_State* L, OnChangedHandler& value)
 {
-  lua_getglobal(L, eventHandlerGlobal);
+  lua_getglobal(L, onChangedGlobal);
   lua_rawgetp(L, -1, &value);
   if(lua_isnil(L, -1)) // method not in table
   {
     lua_pop(L, 1); // remove nil
-    new(lua_newuserdata(L, sizeof(EventHandlerData))) EventHandlerData(std::static_pointer_cast<EventHandler>(value.shared_from_this()));
+    new(lua_newuserdata(L, sizeof(OnChangedData))) OnChangedData(value.shared_from_this());
     luaL_setmetatable(L, metaTableName);
     lua_pushvalue(L, -1); // copy userdata on stack
     lua_rawsetp(L, -3, &value); // add method to table
@@ -74,7 +78,7 @@ void EventHandler::push(lua_State* L, EventHandler& value)
   lua_pop(L, 1); // remove table
 }
 
-void EventHandler::registerType(lua_State* L)
+void OnChangedHandler::registerType(lua_State* L)
 {
   luaL_newmetatable(L, metaTableName);
   lua_pushcfunction(L, __gc);
@@ -90,16 +94,16 @@ void EventHandler::registerType(lua_State* L)
   lua_pushliteral(L, "v");
   lua_rawset(L, -3);
   lua_setmetatable(L, -2);
-  lua_setglobal(L, eventHandlerGlobal);
+  lua_setglobal(L, onChangedGlobal);
 }
 
-int EventHandler::__gc(lua_State* L)
+int OnChangedHandler::__gc(lua_State* L)
 {
-  static_cast<EventHandlerData*>(lua_touserdata(L, 1))->~EventHandlerData();
+  static_cast<OnChangedData*>(lua_touserdata(L, 1))->~OnChangedData();
   return 0;
 }
 
-int EventHandler::__index(lua_State* L)
+int OnChangedHandler::__index(lua_State* L)
 {
   auto& handler = check(L, 1);
   const auto key = to<std::string_view>(L, 2);
@@ -125,30 +129,30 @@ int EventHandler::__index(lua_State* L)
   return 0;
 }
 
-int EventHandler::disconnect(lua_State* L)
+int OnChangedHandler::disconnect(lua_State* L)
 {
   check(L, lua_upvalueindex(1)).disconnect();
   return 0;
 }
 
-int EventHandler::pause(lua_State* L)
+int OnChangedHandler::pause(lua_State* L)
 {
   check(L, lua_upvalueindex(1)).m_paused = true;
   return 0;
 }
 
-int EventHandler::resume(lua_State* L)
+int OnChangedHandler::resume(lua_State* L)
 {
   check(L, lua_upvalueindex(1)).m_paused = false;
   return 0;
 }
 
 
-EventHandler::EventHandler(AbstractEvent& evt, lua_State* L, int functionIndex)
-  : AbstractEventHandler(evt)
-  , m_L{L}
+OnChangedHandler::OnChangedHandler(::Object& object, lua_State* L, int functionIndex)
+  : m_L{L}
   , m_function{LUA_NOREF}
   , m_userData{LUA_NOREF}
+  , m_connection{object.propertyChanged.connect(std::bind_front(&OnChangedHandler::propertyChanged, this))}
 {
   luaL_checktype(L, functionIndex, LUA_TFUNCTION);
 
@@ -160,93 +164,81 @@ EventHandler::EventHandler(AbstractEvent& evt, lua_State* L, int functionIndex)
   if(!lua_isnoneornil(L, functionIndex + 1))
   {
     lua_pushvalue(L, functionIndex + 1);
-    m_userData = luaL_ref(m_L, LUA_REGISTRYINDEX);;
+    m_userData = luaL_ref(m_L, LUA_REGISTRYINDEX);
   }
 }
 
-EventHandler::~EventHandler()
+OnChangedHandler::~OnChangedHandler()
 {
   release();
 }
 
-void EventHandler::execute(const Arguments& args)
+void OnChangedHandler::disconnect()
+{
+  m_connection.disconnect();
+  Sandbox::getStateData(m_L).unregisterOnChangedHandler(std::dynamic_pointer_cast<OnChangedHandler>(shared_from_this()));
+  release();
+}
+
+void OnChangedHandler::setFilter(std::vector<std::string> filter)
+{
+  m_filter = std::move(filter);
+}
+
+void OnChangedHandler::propertyChanged(::BaseProperty& baseProperty)
 {
   if(m_paused)
   {
     return;
   }
-
-  const auto argumentTypeInfo = m_event.argumentTypeInfo();
-  assert(args.size() == argumentTypeInfo.size());
-
-  if(args.size() != argumentTypeInfo.size())
+  if(!baseProperty.isScriptReadable())
+  {
     return;
+  }
+  if(!m_filter.empty() && !contains(m_filter, baseProperty.name()))
+  {
+    return;
+  }
+
+  // build stack:
+  // - function
+  // - value
+  // - object
+  // - name
+  // - user_data
 
   lua_rawgeti(m_L, LUA_REGISTRYINDEX, m_function);
 
-  const size_t nargs = args.size();
-  for(size_t i = 0; i < nargs; i++)
+  if(auto* property = dynamic_cast<AbstractProperty*>(&baseProperty))
   {
-    const auto& arg = args[i];
-    switch(argumentTypeInfo[i].type)
-    {
-      case ValueType::Boolean:
-        Lua::push(m_L, std::get<bool>(arg));
-        break;
-
-      case ValueType::Enum:
-        pushEnum(m_L, argumentTypeInfo[i].enumName.data(), std::get<int64_t>(arg));
-        assert(lua_isuserdata(m_L, -1)); // check if enum value is known
-        break;
-
-      case ValueType::Integer:
-        Lua::push(m_L, std::get<int64_t>(arg));
-        break;
-
-      case ValueType::Float:
-        Lua::push(m_L, std::get<double>(arg));
-        break;
-
-      case ValueType::String:
-        Lua::push(m_L, std::get<std::string>(arg));
-        break;
-
-      case ValueType::Object:
-        Lua::push(m_L, std::get<ObjectPtr>(arg));
-        break;
-
-      case ValueType::Set:
-        pushSet(m_L, argumentTypeInfo[i].setName.data(), std::get<int64_t>(arg));
-        break;
-
-      case ValueType::Invalid:
-      default:
-        assert(false);
-        lua_pushnil(m_L);
-        break;
-    }
+    Object::Object::pushPropertyValue(m_L, *property);
+  }
+  else if(auto* vectorProperty = dynamic_cast<AbstractVectorProperty*>(&baseProperty))
+  {
+    VectorProperty::push(m_L, *vectorProperty);
+  }
+  else
+  {
+    assert(false);
+    lua_pop(m_L, 1); // remove function from stack
+    return;
   }
 
+  Lua::Object::push(m_L, baseProperty.object().shared_from_this());
+  Lua::push(m_L, baseProperty.name());
   lua_rawgeti(m_L, LUA_REGISTRYINDEX, m_userData);
 
-  if(Sandbox::pcall(m_L, args.size() + 1, 0, 0) != LUA_OK)
+  if(Sandbox::pcall(m_L, 4, 0, 0) != LUA_OK)
   {
     Log::log(
       Sandbox::getStateData(m_L).script().id,
-      LogMessage::E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER,
+      LogMessage::E9002_X_DURING_EXECUTION_OF_X_ON_CHANGED_HANDLER,
       to<std::string_view>(m_L, -1),
-      m_event.object().getObjectId().append(".").append(m_event.name()));
+      baseProperty.object().getObjectId().append(".").append(baseProperty.name()));
   }
 }
 
-bool EventHandler::disconnect()
-{
-  Sandbox::getStateData(m_L).unregisterEventHandler(std::dynamic_pointer_cast<EventHandler>(shared_from_this()));
-  release();
-  return AbstractEventHandler::disconnect();
-}
-
-void EventHandler::release()
+void OnChangedHandler::release()
 {
   if(m_L)
   {

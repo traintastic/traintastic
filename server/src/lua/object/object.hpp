@@ -1,9 +1,8 @@
 /**
- * server/src/lua/object/object.hpp - Lua object wrapper
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +36,7 @@
   }
 
 class Object;
+class AbstractProperty;
 
 namespace Lua::Object {
 
@@ -47,6 +47,8 @@ private:
   static int __index(lua_State* L);
   static int __newindex(lua_State* L);
 
+  static int on_changed(lua_State* L);
+
 public:
   static constexpr char const* metaTableName = "object";
 
@@ -54,6 +56,8 @@ public:
   static int newindex(lua_State* L, ::Object& object);
 
   static void registerType(lua_State* L);
+
+  static void pushPropertyValue(lua_State* L, AbstractProperty& property);
 };
 
 }
