@@ -410,7 +410,10 @@ void Sandbox::hook(lua_State* L, lua_Debug* /*ar*/)
 
 Sandbox::StateData::~StateData()
 {
-  m_eventHandlers.clear();
+  while(!m_eventHandlers.empty())
+  {
+    m_eventHandlers.front()->disconnect();
+  }
   m_onChangedHandlers.clear();
 
   // Release inputs:
