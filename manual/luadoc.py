@@ -667,6 +667,15 @@ class LuaDoc:
                 md += '### `' + item['lua_name'] + '`' + os.linesep + os.linesep
                 md += self._get_term(term_prefix + item['lua_name'].lower() + ':description') + os.linesep + os.linesep
 
+                for qualifier in ['warning', 'note', 'tip']:
+                    description = item_term_prefix + item['lua_name'].lower() + '.' + qualifier + ':description'
+                    if description in self._terms:
+                        md += '!!! ' + qualifier
+                        title = item_term_prefix + item['lua_name'].lower() + '.' + qualifier + ':title'
+                        if title in self._terms:
+                            md += ' "' + self._get_term(title) + '"'
+                        md += os.linesep + textwrap.indent(self._get_term(description), ' ' * 4) + os.linesep + os.linesep
+
                 md += '**Handler signature**' + os.linesep + os.linesep + '`function ('
                 for p in item['parameters']:
                     md += p['name'] + ', '
