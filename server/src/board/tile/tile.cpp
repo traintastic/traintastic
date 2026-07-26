@@ -89,15 +89,17 @@ Board& Tile::getBoard()
 
 bool Tile::resize(uint8_t w, uint8_t h)
 {
-  assert(w >= 1);
-  assert(h >= 1);
+    assert(w >= 1);
+    assert(h >= 1);
 
-  if(w <= width.getAttribute<uint8_t>(AttributeName::Max) &&
-      h <= height.getAttribute<uint8_t>(AttributeName::Max))
-  {
-    width.setValueInternal(w);
-    height.setValueInternal(h);
-    return true;
-  }
-  return false;
+    if (w >= width.getAttribute<uint8_t>(AttributeName::Min) &&
+        w <= width.getAttribute<uint8_t>(AttributeName::Max) &&
+        h >= height.getAttribute<uint8_t>(AttributeName::Min) &&
+        h <= height.getAttribute<uint8_t>(AttributeName::Max))
+    {
+        width.setValueInternal(w);
+        height.setValueInternal(h);
+        return true;
+    }
+    return false;
 }
