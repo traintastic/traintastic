@@ -66,12 +66,21 @@ void push(lua_State* L, const ObjectPtr& value)
       lua_pop(L, 1); // remove nil
       new(lua_newuserdata(L, sizeof(ObjectPtrWeak))) ObjectPtrWeak(value);
 
-      if(dynamic_cast<::CBUSInterface*>(value.get()))
+      if(dynamic_cast<::Interface*>(value.get()))
       {
-        luaL_setmetatable(L, CBUSInterface::metaTableName);
+        if(dynamic_cast<::CBUSInterface*>(value.get()))
+        {
+          luaL_setmetatable(L, CBUSInterface::metaTableName);
+        }
+        else if(dynamic_cast<::LocoNetInterface*>(value.get()))
+        {
+          luaL_setmetatable(L, LocoNetInterface::metaTableName);
+        }
+        else
+        {
+          luaL_setmetatable(L, Interface::metaTableName);
+        }
       }
-      else if(dynamic_cast<::LocoNetInterface*>(value.get()))
-        luaL_setmetatable(L, LocoNetInterface::metaTableName);
       else if(dynamic_cast<AbstractObjectList*>(value.get()))
         luaL_setmetatable(L, ObjectList::metaTableName);
       else if(dynamic_cast<::ScriptThrottle*>(value.get()))

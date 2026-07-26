@@ -610,8 +610,8 @@ void BlockRailTile::getConnectors(std::vector<Connector>& connectors) const
 {
   if(rotate == TileRotate::Deg0)
   {
-    connectors.emplace_back(location(), Connector::Direction::North, Connector::Type::Rail);
     connectors.emplace_back(location().adjusted(0, height - 1), Connector::Direction::South, Connector::Type::Rail);
+    connectors.emplace_back(location(), Connector::Direction::North, Connector::Type::Rail);
   }
   else if(rotate == TileRotate::Deg90)
   {
