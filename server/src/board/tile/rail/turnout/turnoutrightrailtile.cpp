@@ -80,6 +80,9 @@ TurnoutRightRailTile::TurnoutRightRailTile(World& world, std::string_view _id, T
   Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);
 
+  Attributes::addValues(reservedPosition, positionValues);
+  m_interfaceItems.add(reservedPosition);
+
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);
 

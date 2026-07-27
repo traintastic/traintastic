@@ -76,6 +76,9 @@ Turnout3WayRailTile::Turnout3WayRailTile(World& world, std::string_view _id)
   Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);
 
+  Attributes::addValues(reservedPosition, positionValues);
+  m_interfaceItems.add(reservedPosition);
+
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);
 
