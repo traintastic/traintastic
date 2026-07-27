@@ -390,38 +390,43 @@ void Board::modified()
       {
         if(isIntercardinal(connector.direction)) // check for crossover
         {
+
           auto prevTile = getTile(TileLocation{nextTile->x, nextTile->y} + connector.direction);
-          assert(prevTile);
-          auto otherTile1 = getTile({prevTile->x, nextTile->y});
-          auto otherTile2 = getTile({nextTile->x, prevTile->y});
 
-          if(otherTile1 && otherTile2)
+          if (prevTile)
           {
-            const auto perpendicular =
-              (connector.direction == Connector::Direction::NorthEast) || (connector.direction == Connector::Direction::SouthWest)
-              ? ~rotate90cw(connector.direction) : rotate90cw(connector.direction);
 
-            auto otherConnector1 = otherTile1->getConnector(perpendicular);
-            auto otherConnector2 = otherTile2->getConnector(~perpendicular);
+            auto otherTile1 = getTile({ prevTile->x, nextTile->y });
+            auto otherTile2 = getTile({ nextTile->x, prevTile->y });
 
-            if(otherConnector1 && otherConnector2) // crossover found!
-            {
-              const TileLocation topLeft{std::min<int16_t>(prevTile->x, nextTile->x), std::min<int16_t>(prevTile->y, nextTile->y)};
-              auto it = m_railCrossOver.find(topLeft);
-              if(it == m_railCrossOver.end())
-              {
-                it = m_railCrossOver.emplace(topLeft, std::make_shared<HiddenCrossOverRailTile>(world())).first;
-                it->second->x.setValueInternal(topLeft.x);
-                it->second->y.setValueInternal(topLeft.y);
-              }
-              auto& crossOver = it->second;
-              auto crossOverConnector = crossOver->getConnector(connector.direction);
-              assert(crossOverConnector);
+            if (otherTile1 && otherTile2)
+             {
+                  const auto perpendicular =
+                      (connector.direction == Connector::Direction::NorthEast) || (connector.direction == Connector::Direction::SouthWest)
+                      ? ~rotate90cw(connector.direction) : rotate90cw(connector.direction);
 
-              auto link = std::make_shared<Link>(std::move(tiles));
-              link->connect(*startTile->node(), startConnector, *crossOver->node(), *crossOverConnector);
-              return;
-            }
+                  auto otherConnector1 = otherTile1->getConnector(perpendicular);
+                  auto otherConnector2 = otherTile2->getConnector(~perpendicular);
+
+                  if (otherConnector1 && otherConnector2) // crossover found!
+                  {
+                      const TileLocation topLeft{ std::min<int16_t>(prevTile->x, nextTile->x), std::min<int16_t>(prevTile->y, nextTile->y) };
+                      auto it = m_railCrossOver.find(topLeft);
+                      if (it == m_railCrossOver.end())
+                      {
+                          it = m_railCrossOver.emplace(topLeft, std::make_shared<HiddenCrossOverRailTile>(world())).first;
+                          it->second->x.setValueInternal(topLeft.x);
+                          it->second->y.setValueInternal(topLeft.y);
+                      }
+                      auto& crossOver = it->second;
+                      auto crossOverConnector = crossOver->getConnector(connector.direction);
+                      assert(crossOverConnector);
+
+                      auto link = std::make_shared<Link>(std::move(tiles));
+                      link->connect(*startTile->node(), startConnector, *crossOver->node(), *crossOverConnector);
+                      return;
+                  }
+             }
           }
         }
 
