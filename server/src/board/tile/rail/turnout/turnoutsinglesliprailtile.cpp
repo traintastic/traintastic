@@ -62,6 +62,9 @@ TurnoutSingleSlipRailTile::TurnoutSingleSlipRailTile(World& world, std::string_v
   Attributes::addValues(position, positionValuesSingleMotor);
   m_interfaceItems.add(position);
 
+  Attributes::addValues(reservedPosition, positionValuesSingleMotor);
+  m_interfaceItems.add(reservedPosition);
+
   Attributes::addValues(setPosition, setPositionValuesSingleMotor);
   m_interfaceItems.add(setPosition);
 
@@ -86,11 +89,13 @@ void TurnoutSingleSlipRailTile::dualMotorChanged()
   if(dualMotor)
   {
     Attributes::setValues(position, positionValuesDualMotor);
+    Attributes::setValues(reservedPosition, positionValuesDualMotor);
     Attributes::setValues(setPosition, setPositionValuesDualMotor);
   }
   else
   {
     Attributes::setValues(position, positionValuesSingleMotor);
+    Attributes::setValues(reservedPosition, positionValuesSingleMotor);
     Attributes::setValues(setPosition, setPositionValuesSingleMotor);
   }
 }
