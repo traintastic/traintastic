@@ -439,15 +439,12 @@ void Board::modified()
         tiles.emplace_back(nextTile);
         connectors.clear();
         nextTile->getConnectors(connectors);
-        if(connectors.size() == 2)
+        if(connectors.size() == 2 && (connectors[0] == connector || connectors[1] == connector))
         {
-          assert(connectors[0] == connector || connectors[1] == connector);
           connector = connectors[connectors[0] == connector ? 1 : 0].opposite();
         }
         else
         {
-          assert(connectors.size() == 1);
-          assert(connectors[0] == connector);
           break;
         }
       }

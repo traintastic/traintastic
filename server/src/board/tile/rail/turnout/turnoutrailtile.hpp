@@ -81,6 +81,7 @@ class TurnoutRailTile : public RailTile
 
     Property<std::string> name;
     Property<TurnoutPosition> position;
+    Property<TurnoutPosition> reservedPosition;
     ObjectProperty<TurnoutOutputMap> outputMap;
     ObjectProperty<TurnoutFeedbackMap> feedbackMap;
     Method<bool(TurnoutPosition)> setPosition;
@@ -90,8 +91,6 @@ class TurnoutRailTile : public RailTile
 
     virtual bool reserve(const std::shared_ptr<BlockPath>& blockPath, TurnoutPosition turnoutPosition, bool dryRun = false);
     bool release(bool dryRun = false);
-
-    TurnoutPosition getReservedPosition() const;
 };
 
 #endif

@@ -36,11 +36,11 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   m_node{*this, connectors},
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+  reservedPosition{this, "reserved_position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
   feedbackMap{this, "feedback_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
   setPosition{*this, "set_position", MethodFlags::ScriptCallable, [this](TurnoutPosition value)
     {
-      TurnoutPosition reservedPosition = getReservedPosition();
       if(reservedPosition != TurnoutPosition::Unknown && reservedPosition != value)
         return false; // Turnout is locked by reservation path
       return doSetPosition(value);
@@ -57,6 +57,9 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   Attributes::addDisplayName(position, DisplayName::BoardTile::Turnout::position);
   Attributes::addObjectEditor(position, false);
   // position is added by sub class
+
+  Attributes::addObjectEditor(reservedPosition, false);
+  // reservedPosition is added by sub class
 
   Attributes::addDisplayName(outputMap, DisplayName::BoardTile::outputMap);
   Attributes::addVisible(outputMap, true);
@@ -77,8 +80,7 @@ bool TurnoutRailTile::reserve(const std::shared_ptr<BlockPath> &blockPath, Turno
     return false;
   }
 
-  const TurnoutPosition reservedPos = getReservedPosition();
-  if(reservedPos != TurnoutPosition::Unknown && reservedPos != turnoutPosition)
+  if(reservedPosition != TurnoutPosition::Unknown && reservedPosition != turnoutPosition)
   {
     // TODO: what if 2 path reserve same turnout for same position?
     // Upon release one path it will make turnout free while it's still reserved by second path
@@ -95,7 +97,7 @@ bool TurnoutRailTile::reserve(const std::shared_ptr<BlockPath> &blockPath, Turno
     }
 
     m_reservedPath = blockPath;
-
+    reservedPosition.setValueInternal(turnoutPosition);
     RailTile::setReservedState(static_cast<uint8_t>(turnoutPosition));
   }
   return true;
@@ -108,7 +110,7 @@ bool TurnoutRailTile::release(bool dryRun)
   if(!dryRun)
   {
     m_reservedPath.reset();
-
+    reservedPosition.setValueInternal(TurnoutPosition::Unknown);
     RailTile::release();
   }
   return true;
@@ -126,11 +128,6 @@ void TurnoutRailTile::addToWorld()
   feedbackMap->parentObject.setValueInternal(shared_from_this());
   outputMap->parentObject.setValueInternal(shared_from_this());
   RailTile::addToWorld();
-}
-
-TurnoutPosition TurnoutRailTile::getReservedPosition() const
-{
-  return static_cast<TurnoutPosition>(RailTile::reservedState());
 }
 
 void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
@@ -191,7 +188,6 @@ void TurnoutRailTile::updatePosition(Source source, TurnoutPosition pos)
 
   newPosition(pos);
 
-  TurnoutPosition reservedPosition = getReservedPosition();
   if(reservedPosition == TurnoutPosition::Unknown || reservedPosition == position.value())
     return; // Not locked
 
