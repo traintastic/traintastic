@@ -104,10 +104,12 @@ void TrackDriverController::destroying()
   auto& world = object.world();
   while(!m_trackDrivers.empty())
   {
-    const auto& trackDriver = m_trackDrivers.begin()->second;
+    auto it = m_trackDrivers.begin();
+    const auto& trackDriver = it->second;
     assert(trackDriver->interface.value() == std::dynamic_pointer_cast<TrackDriverController>(object.shared_from_this()));
     trackDriver->interface.setValueInternal(nullptr);
     trackDriver->destroy(); // notify consumers we're dying
+    m_trackDrivers.erase(it);
   }
   world.trackDriverControllers->remove(std::dynamic_pointer_cast<TrackDriverController>(object.shared_from_this()));
   if(world.trackDriverControllers->length == 0)
