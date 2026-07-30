@@ -21,13 +21,19 @@
 
 #include "trackdriver.hpp"
 #include "trackdrivercontroller.hpp"
+#include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
+#include "../../enum/tristate.hpp"
 
 TrackDriver::TrackDriver(std::shared_ptr<TrackDriverController> controller, uint32_t address_)
   : interface{this, "interface", std::move(controller), PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , address{this, "address", address_, PropertyFlags::Constant | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
+  , shortCircuit{this, "short_circuit", TriState::Undefined, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
 {
   m_interfaceItems.add(interface);
 
   m_interfaceItems.add(address);
+
+  Attributes::addValues(shortCircuit, TriStateValues);
+  m_interfaceItems.add(shortCircuit);
 }

@@ -72,6 +72,13 @@ std::tuple<std::span<const uint8_t>, bool, bool> Simulator::process(std::span<co
     // delayed response by subsystem
     queue(InputRequestOrResponse(it->first, it->second));
   }
+  else if(BlockAlarm::check(message))
+  {
+    LockGuard lock{m_mutex};
+    const auto& msg = *reinterpret_cast<const BlockAlarm*>(message.data());
+    // delayed response by subsystem
+    queue(BlockAlarm(msg.block(), false));
+  }
   return response();
 }
 

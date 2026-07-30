@@ -165,6 +165,10 @@ void Kernel::receive(std::span<const uint8_t> message, bool hold, bool fault)
   {
     handleInput(message);
   }
+  else if(BlockAlarm::check(message))
+  {
+    handleBlockAlarm(message);
+  }
 }
 
 void Kernel::setFault()
@@ -193,6 +197,20 @@ void Kernel::resetFault()
       {
         m_txFault = false;
         send(ResetFault());
+      }
+    });
+}
+
+void Kernel::requestBlockAlarmState(std::vector<uint8_t> blockAddresses)
+{
+  assert(isEventLoopThread());
+
+  m_ioContext.post(
+    [this, addresses=std::move(blockAddresses)]()
+    {
+      for(auto address : addresses)
+      {
+        send(BlockAlarm(address));
       }
     });
 }
@@ -547,6 +565,21 @@ void Kernel::handleSystemCommand(std::span<const uint8_t> message)
         });
     }
   }
+}
+
+void Kernel::handleBlockAlarm(std::span<const uint8_t> message)
+{
+  assert(isKernelThread());
+
+  const auto& blockAlarm = *reinterpret_cast<const BlockAlarm*>(message.data());
+  EventLoop::call(
+    [this, block=blockAlarm.block(), shortCircuit=blockAlarm.shortCircuit()]()
+    {
+      if(onBlockAlarm) [[likely]]
+      {
+        onBlockAlarm(block, shortCircuit);
+      }
+    });
 }
 
 void Kernel::handleInput(std::span<const uint8_t> message)

@@ -24,6 +24,7 @@
 
 #include "../../core/nonpersistentobject.hpp"
 #include <set>
+#include <traintastic/enum/tristate.hpp>
 #include "../../core/property.hpp"
 #include "../../core/objectproperty.hpp"
 
@@ -42,6 +43,7 @@ class TrackDriver : public NonPersistentObject
 public:
   ObjectProperty<TrackDriverController> interface;
   Property<uint32_t> address;
+  Property<TriState> shortCircuit;
 
   TrackDriver(std::shared_ptr<TrackDriverController> controller, uint32_t address_);
 

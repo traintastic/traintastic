@@ -43,6 +43,7 @@ public:
   static constexpr uint8_t blockAddressMax = 255;
 
   std::function<void()> onFault;
+  std::function<void(uint8_t, bool)> onBlockAlarm;
   std::function<void(uint16_t, bool)> onInputChanged;
 
   /**
@@ -96,6 +97,7 @@ public:
   void setFault();
   void resetFault();
 
+  void requestBlockAlarmState(std::vector<uint8_t> blockAddresses);
   void requestInputState(std::vector<uint16_t> inputAddresses);
 
   void setOC32Aspect(uint16_t address, uint8_t aspect);
@@ -137,6 +139,7 @@ private:
   void send(std::span<const uint8_t> message);
 
   void handleSystemCommand(std::span<const uint8_t> message);
+  void handleBlockAlarm(std::span<const uint8_t> message);
   void handleInput(std::span<const uint8_t> message);
 };
 

@@ -620,6 +620,15 @@ bool DinamoInterface::setOnline(bool& value, bool simulation)
           {
             m_kernel->resetFault();
           }
+          if(!m_trackDrivers.empty())
+          {
+            std::vector<uint8_t> blockAddresses;
+            for(const auto& item : m_trackDrivers)
+            {
+              blockAddresses.emplace_back(static_cast<uint8_t>(item.first));
+            }
+            m_kernel->requestBlockAlarmState(std::move(blockAddresses));
+          }
           if(!inputs->empty())
           {
             std::vector<uint16_t> inputAddresses;
@@ -646,6 +655,14 @@ bool DinamoInterface::setOnline(bool& value, bool simulation)
         {
           Log::log(*this, LogMessage::E2034_DINAMO_IN_FAULT_STATE);
           m_world.powerOff();
+        };
+      m_kernel->onBlockAlarm =
+        [this](uint8_t block, bool shortCircuit)
+        {
+          if(auto it = m_trackDrivers.find(block); it != m_trackDrivers.end())
+          {
+            it->second->shortCircuit.setValueInternal(toTriState(shortCircuit));
+          }
         };
       m_kernel->onInputChanged =
         [this](uint16_t address, bool inputValue)
