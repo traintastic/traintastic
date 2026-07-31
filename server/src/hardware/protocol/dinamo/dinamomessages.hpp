@@ -967,7 +967,7 @@ static_assert(sizeof(BlockDCCLongFunctionF9F12) == 5);
 struct BlockAlarm : BlockMessage
 {
   static constexpr uint8_t headerId = 0x30;
-  static constexpr uint8_t shortCircuitBit = 0;
+  static constexpr uint8_t shortCircuitBit = 1;
 
   BlockAlarm(uint8_t block_, bool shortCircuit_ = false)
     : BlockMessage(headerId, block_)
