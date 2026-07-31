@@ -20,6 +20,7 @@
  */
 
 #include "blocktrackdriver.hpp"
+#include "../../board/tile/rail/blockrailtile.hpp"
 #include "../../hardware/trackdriver/trackdriver.hpp"
 #include "../../hardware/trackdriver/trackdrivercontroller.hpp"
 #include "../../world/getworld.hpp"
@@ -41,4 +42,18 @@ void BlockTrackDriver::worldEvent(WorldState worldState, WorldEvent worldEvent)
 {
   SubObject::worldEvent(worldState, worldEvent);
   TrackDriverConsumer::worldEvent(worldState, worldEvent);
+}
+
+void BlockTrackDriver::trackDriverChanged()
+{
+  auto& block = static_cast<BlockRailTile&>(parent());
+  block.powered.setValueInternal(!trackDriver() || trackDriver()->shortCircuit == TriState::False);
+  block.shortCircuit.setValueInternal(trackDriver() && trackDriver()->shortCircuit == TriState::True);
+}
+
+void BlockTrackDriver::shortCircuitChanged(bool value)
+{
+  auto& block = static_cast<BlockRailTile&>(parent());
+  block.powered.setValueInternal(!value);
+  block.shortCircuit.setValueInternal(value);
 }

@@ -34,11 +34,17 @@ class BlockTrackDriver final
   CLASS_ID("block_track_driver")
 
 public:
+  using OnPowerUpdate = std::function<void(bool, bool)>;
+
+  OnPowerUpdate onPowerUpdate;
+
   BlockTrackDriver(Object& parent_, std::string_view parentPropertyName);
 
 protected:
   void loaded() final;
   void worldEvent(WorldState worldState, WorldEvent worldEvent) final;
+  void trackDriverChanged() final;
+  void shortCircuitChanged(bool value) final;
 };
 
 #endif

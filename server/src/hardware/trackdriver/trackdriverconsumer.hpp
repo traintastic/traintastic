@@ -56,10 +56,14 @@ protected:
 
   void addInterfaceItems(InterfaceItems& items);
 
+  virtual void trackDriverChanged() {}
+  virtual void shortCircuitChanged(bool /*value*/) {}
+
 private:
   Object& m_object;
   std::shared_ptr<TrackDriver> m_trackDriver;
   boost::signals2::connection m_trackDriverDestroying;
+  boost::signals2::connection m_trackDriverPropertyChanged;
 
   void setTrackDriver(std::shared_ptr<TrackDriver> trackDriver);
   void releaseTrackDriver();

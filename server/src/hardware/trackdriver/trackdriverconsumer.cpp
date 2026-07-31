@@ -149,6 +149,15 @@ void TrackDriverConsumer::setTrackDriver(std::shared_ptr<TrackDriver> value)
         assert(m_trackDriver.get() == &object);
         interface.setValue(nullptr);
       });
+    m_trackDriverPropertyChanged = m_trackDriver->propertyChanged.connect(
+      [this](BaseProperty& property)
+      {
+        if(&property == &m_trackDriver->shortCircuit)
+        {
+          shortCircuitChanged(m_trackDriver->shortCircuit.value() == TriState::True);
+        }
+      });
+    trackDriverChanged();
   }
 }
 
@@ -157,11 +166,13 @@ void TrackDriverConsumer::releaseTrackDriver()
   if(m_trackDriver)
   {
     m_trackDriverDestroying.disconnect();
+    m_trackDriverPropertyChanged.disconnect();
     if(m_trackDriver->interface)
     {
       m_trackDriver->interface->releaseTrackDriver(*m_trackDriver, m_object);
     }
     m_trackDriver.reset();
+    trackDriverChanged();
   }
 }
 
