@@ -89,6 +89,8 @@ class BlockRailTile : public RailTile
     LengthProperty length;
     ObjectProperty<BlockInputMap> inputMap;
     Property<BlockState> state;
+    Property<bool> powered;
+    Property<bool> shortCircuit;
     VectorProperty<SensorState> sensorStates;
     ObjectVectorProperty<TrainBlockStatus> trains;
     ObjectProperty<BlockZoneList> zones;

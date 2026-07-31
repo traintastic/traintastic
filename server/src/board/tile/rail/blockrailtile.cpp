@@ -62,6 +62,8 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   length{*this, "length", 0.0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   inputMap{this, "input_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   state{this, "state", BlockState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+  powered{this, "powered", true, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+  shortCircuit{this, "short_circuit", false, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   sensorStates{*this, "sensor_states", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
   , trains{*this, "trains", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , zones{this, "zones", {}, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
@@ -201,6 +203,12 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   Attributes::addObjectEditor(state, false);
   Attributes::addValues(state, blockStateValues);
   m_interfaceItems.add(state);
+
+  Attributes::addObjectEditor(powered, false);
+  m_interfaceItems.add(powered);
+
+  Attributes::addObjectEditor(shortCircuit, false);
+  m_interfaceItems.add(shortCircuit);
 
   Attributes::addObjectEditor(sensorStates, false);
   Attributes::addValues(sensorStates, sensorStateValues);
