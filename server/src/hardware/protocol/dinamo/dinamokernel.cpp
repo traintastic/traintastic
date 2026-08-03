@@ -425,6 +425,7 @@ void Kernel::setBlockDCCFunctions(uint8_t block, uint16_t address, bool longAddr
 void Kernel::linkBlock(uint8_t destinationBlock, uint8_t sourceBlock, bool invertPolarity)
 {
   assert(isEventLoopThread());
+  assert(destinationBlock != sourceBlock);
 
   m_ioContext.post(
     [this, destinationBlock, sourceBlock, invertPolarity]()

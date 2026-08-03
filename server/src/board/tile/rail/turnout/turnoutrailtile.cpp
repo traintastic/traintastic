@@ -23,6 +23,8 @@
 #include "../../../../core/objectproperty.tpp"
 #include "../../../../core/attributes.hpp"
 #include "../../../../core/method.tpp"
+#include "../../../../hardware/trackdriver/trackdriver.hpp"
+#include "../../../../hardware/trackdriver/trackdrivercontroller.hpp"
 #include "../../../../world/world.hpp"
 #include "../../../../utils/displayname.hpp"
 #include "../../../map/blockpath.hpp"
@@ -30,6 +32,7 @@
 #include "../../../../train/trainblockstatus.hpp"
 #include "../../../../train/train.hpp"
 #include "../../../../log/log.hpp"
+#include "../../../../utils/category.hpp"
 
 TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tileId_, size_t connectors) :
   RailTile(world, _id, tileId_),
@@ -39,6 +42,7 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   reservedPosition{this, "reserved_position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
   feedbackMap{this, "feedback_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
+  trackDriver{this, "track_driver", {}, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
   setPosition{*this, "set_position", MethodFlags::ScriptCallable, [this](TurnoutPosition value)
     {
       if(reservedPosition != TurnoutPosition::Unknown && reservedPosition != value)
@@ -47,6 +51,8 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
     }}
 {
   assert(isRailTurnout(tileId_));
+
+  trackDriver.setValueInternal(std::make_shared<TurnoutTrackDriver>(*this, trackDriver.name()));
 
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -69,11 +75,16 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   Attributes::addVisible(feedbackMap, true);
   m_interfaceItems.add(feedbackMap);
 
+  Attributes::addCategory(trackDriver, Category::trackDriver);
+  Attributes::addDisplayName(trackDriver, DisplayName::Hardware::trackDriver);
+  Attributes::addVisible(trackDriver, world.feature(WorldFeature::TrackDriverSystem));
+  m_interfaceItems.add(trackDriver);
+
   Attributes::addObjectEditor(setPosition, false);
   // setPosition is added by sub class
 }
 
-bool TurnoutRailTile::reserve(const std::shared_ptr<BlockPath> &blockPath, TurnoutPosition turnoutPosition, bool dryRun)
+bool TurnoutRailTile::reserve(const std::shared_ptr<BlockPath> &blockPath, const std::shared_ptr<Train>& train, bool toeSideEntry, TurnoutPosition turnoutPosition, bool dryRun)
 {
   if(!isValidPosition(turnoutPosition))
   {
@@ -96,7 +107,16 @@ bool TurnoutRailTile::reserve(const std::shared_ptr<BlockPath> &blockPath, Turno
       return false;
     }
 
+    if(trackDriver)
+    {
+      if(const auto& td = trackDriver->trackDriver())
+      {
+        td->trainAdded(*this, trackDriver->invertPolarity, *train, toeSideEntry ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA);
+      }
+    }
+
     m_reservedPath = blockPath;
+    m_reservedTrain = train;
     reservedPosition.setValueInternal(turnoutPosition);
     RailTile::setReservedState(static_cast<uint8_t>(turnoutPosition));
   }
@@ -109,7 +129,19 @@ bool TurnoutRailTile::release(bool dryRun)
 
   if(!dryRun)
   {
+    if(trackDriver)
+    {
+      if(const auto& td = trackDriver->trackDriver())
+      {
+        if(auto train = m_reservedTrain.lock()) [[likely]]
+        {
+          td->trainRemoved(*this, *train);
+        }
+      }
+    }
+
     m_reservedPath.reset();
+    m_reservedTrain.reset();
     reservedPosition.setValueInternal(TurnoutPosition::Unknown);
     RailTile::release();
   }
@@ -130,6 +162,12 @@ void TurnoutRailTile::addToWorld()
   RailTile::addToWorld();
 }
 
+void TurnoutRailTile::loaded()
+{
+  RailTile::loaded();
+  Attributes::setVisible(trackDriver, m_world.feature(WorldFeature::TrackDriverSystem));
+}
+
 void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
 {
   RailTile::worldEvent(state, event);
@@ -137,6 +175,16 @@ void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
   const bool editable = contains(state, WorldState::Edit);
 
   Attributes::setEnabled(name, editable);
+}
+
+void TurnoutRailTile::worldFeaturesChanged(const WorldFeatures features, WorldFeature changed)
+{
+  RailTile::worldFeaturesChanged(features, changed);
+
+  if(changed == WorldFeature::TrackDriverSystem)
+  {
+    Attributes::setVisible(trackDriver, features[WorldFeature::TrackDriverSystem]);
+  }
 }
 
 bool TurnoutRailTile::isValidPosition(TurnoutPosition value) const

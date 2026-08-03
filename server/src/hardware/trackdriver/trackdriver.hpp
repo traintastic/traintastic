@@ -32,7 +32,9 @@
   #undef interface // interface is defined in combaseapi.h
 #endif
 
+enum class BlockTrainDirection : uint8_t;
 class TrackDriverController;
+class Train;
 
 class TrackDriver : public NonPersistentObject
 {
@@ -47,8 +49,14 @@ public:
 
   TrackDriver(std::shared_ptr<TrackDriverController> controller, uint32_t address_);
 
+  void trainAdded(Object& source, bool invertPolarity, const Train& train, BlockTrainDirection direction);
+  void trainFlipped(Object& source, const Train& train, BlockTrainDirection direction);
+  void trainRemoved(Object& source, const Train& train);
+
 private:
   std::set<std::shared_ptr<Object>> m_usedBy; //!< Objects that use the track driver.
+  size_t m_useCount = 0;
+  uintptr_t m_useTrain = 0;
 };
 
 #endif

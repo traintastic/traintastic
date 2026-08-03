@@ -30,6 +30,7 @@
 #include <traintastic/enum/turnoutposition.hpp>
 #include "../../../../hardware/input/feedback/turnoutfeedbackmap.hpp"
 #include "../../../../hardware/output/map/turnoutoutputmap.hpp"
+#include "../../../../hardware/trackdriver/turnouttrackdriver.hpp"
 
 class BlockPath;
 
@@ -40,6 +41,7 @@ class TurnoutRailTile : public RailTile
   private:
     Node m_node;
     std::weak_ptr<BlockPath> m_reservedPath;
+    std::weak_ptr<Train> m_reservedTrain;
 
     std::chrono::steady_clock::time_point m_lastRetryStart;
     uint8_t m_retryCount;
@@ -59,7 +61,9 @@ class TurnoutRailTile : public RailTile
 
     void destroying() override;
     void addToWorld() override;
+    void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) override;
+    void worldFeaturesChanged(const WorldFeatures features, WorldFeature changed) override;
 
     bool isValidPosition(TurnoutPosition value) const;
     virtual bool doSetPosition(TurnoutPosition value, bool skipAction = false);
@@ -84,12 +88,13 @@ class TurnoutRailTile : public RailTile
     Property<TurnoutPosition> reservedPosition;
     ObjectProperty<TurnoutOutputMap> outputMap;
     ObjectProperty<TurnoutFeedbackMap> feedbackMap;
+    ObjectProperty<TurnoutTrackDriver> trackDriver;
     Method<bool(TurnoutPosition)> setPosition;
 
     std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
 
-    virtual bool reserve(const std::shared_ptr<BlockPath>& blockPath, TurnoutPosition turnoutPosition, bool dryRun = false);
+    virtual bool reserve(const std::shared_ptr<BlockPath>& blockPath, const std::shared_ptr<Train>& train, bool toeSideEntry, TurnoutPosition turnoutPosition, bool dryRun = false);
     bool release(bool dryRun = false);
 };
 

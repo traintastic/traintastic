@@ -49,7 +49,7 @@ void trackDriverTrainAdded(Train& train, BlockRailTile& block, BlockTrainDirecti
   {
     if(const auto& td = btd->trackDriver())
     {
-      td->interface->trackDriverTrainAdded(td->address, btd->invertPolarity, train, direction);
+      td->trainAdded(block, btd->invertPolarity, train, direction);
     }
   }
 }
@@ -58,7 +58,7 @@ void trackDriverTrainFlipped(Train& train, BlockRailTile& block, BlockTrainDirec
 {
   if(const auto& td = getTrackDriver(block))
   {
-    td->interface->trackDriverTrainFlipped(td->address, train, direction);
+    td->trainFlipped(block, train, direction);
   }
 }
 
@@ -66,7 +66,7 @@ void trackDriverTrainRemoved(Train& train, BlockRailTile& block)
 {
   if(const auto& td = getTrackDriver(block))
   {
-    td->interface->trackDriverTrainRemoved(td->address, train);
+    td->trainRemoved(block, train);
   }
 }
 

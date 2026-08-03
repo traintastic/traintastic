@@ -37,3 +37,32 @@ TrackDriver::TrackDriver(std::shared_ptr<TrackDriverController> controller, uint
   Attributes::addValues(shortCircuit, TriStateValues);
   m_interfaceItems.add(shortCircuit);
 }
+
+void TrackDriver::trainAdded(Object& /*source*/, bool invertPolarity, const Train& train, BlockTrainDirection direction)
+{
+  assert(interface);
+  if(++m_useCount == 1)
+  {
+    assert(m_useTrain == 0);
+    m_useTrain = reinterpret_cast<uintptr_t>(&train);
+    interface->trackDriverTrainAdded(address, invertPolarity, train, direction);
+  }
+}
+
+void TrackDriver::trainFlipped(Object& /*source*/, const Train& train, BlockTrainDirection direction)
+{
+  assert(interface);
+  interface->trackDriverTrainFlipped(address, train, direction);
+}
+
+void TrackDriver::trainRemoved(Object& /*source*/, const Train& train)
+{
+  assert(interface);
+  assert(m_useTrain == reinterpret_cast<uintptr_t>(&train));
+  assert(m_useCount > 0);
+  if(--m_useCount == 0)
+  {
+    m_useTrain = 0;
+    interface->trackDriverTrainRemoved(address, train);
+  }
+}

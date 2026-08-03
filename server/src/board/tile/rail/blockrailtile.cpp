@@ -221,6 +221,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   m_interfaceItems.add(zones);
 
   Attributes::addCategory(trackDriver, Category::trackDriver);
+  Attributes::addDisplayName(trackDriver, DisplayName::Hardware::trackDriver);
   Attributes::addVisible(trackDriver, world.feature(WorldFeature::TrackDriverSystem));
   m_interfaceItems.add(trackDriver);
 

@@ -94,6 +94,7 @@ TrackDriverConsumer::TrackDriverConsumer(Object& object, const World& world)
   Attributes::addMinMax(address, addressRangeFull);
 
   Attributes::addCategory(invertPolarity, Category::trackDriver);
+  Attributes::addDisplayName(invertPolarity, DisplayName::Hardware::invertPolarity);
   Attributes::addEnabled(invertPolarity, editableAndStopped);
   Attributes::addVisible(invertPolarity, false);
 }
