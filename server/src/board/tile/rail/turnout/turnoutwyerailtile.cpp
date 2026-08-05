@@ -26,7 +26,7 @@
 
 static const std::array<TurnoutPosition, 3> positionValues = {TurnoutPosition::Unknown, TurnoutPosition::Left, TurnoutPosition::Right};
 
-static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
+static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputChannel /*outputChannel*/, OutputType outputType, size_t outputIndex)
 {
   // FIXME: implement defaults
   (void)turnoutPosition;

@@ -27,6 +27,7 @@
 #include "../../../world/world.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../hardware/input/input.hpp"
+#include "../../../hardware/trackdriver/blocktrackdriver.hpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
 #include "../../../train/train.hpp"
@@ -61,9 +62,12 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   length{*this, "length", 0.0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   inputMap{this, "input_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   state{this, "state", BlockState::Unknown, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+  powered{this, "powered", true, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+  shortCircuit{this, "short_circuit", false, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   sensorStates{*this, "sensor_states", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState}
   , trains{*this, "trains", {}, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , zones{this, "zones", {}, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
+  , trackDriver{this, "track_driver", {}, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , assignTrain{*this, "assign_train",
       [this](const std::shared_ptr<Train>& newTrain)
       {
@@ -121,7 +125,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
             }
           }
 
-          TrainTracking::assigned(newTrain, self);
+          TrainTracking::assigned(newTrain, self, direction);
         }
       }}
   , removeTrain{*this, "remove_train",
@@ -153,6 +157,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
           if(train.isStopped && train.blocks.size() == 1 && train.blocks[0]->block.operator->() == this)
           {
             trains[0]->direction.setValueInternal(!trains[0]->direction.value());
+            TrainTracking::flipped(trains[0]->train.value(), shared_ptr<BlockRailTile>(), trains[0]->direction);
           }
         }
       }}
@@ -179,6 +184,7 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
 {
   inputMap.setValueInternal(std::make_shared<BlockInputMap>(*this, inputMap.name()));
   zones.setValueInternal(std::make_shared<BlockZoneList>(*this, zones.name()));
+  trackDriver.setValueInternal(std::make_shared<BlockTrackDriver>(*this, trackDriver.name()));
 
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -198,6 +204,12 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
   Attributes::addValues(state, blockStateValues);
   m_interfaceItems.add(state);
 
+  Attributes::addObjectEditor(powered, false);
+  m_interfaceItems.add(powered);
+
+  Attributes::addObjectEditor(shortCircuit, false);
+  m_interfaceItems.add(shortCircuit);
+
   Attributes::addObjectEditor(sensorStates, false);
   Attributes::addValues(sensorStates, sensorStateValues);
   m_interfaceItems.add(sensorStates);
@@ -207,6 +219,11 @@ BlockRailTile::BlockRailTile(World& world, std::string_view _id) :
 
   Attributes::addCategory(zones, Category::zones);
   m_interfaceItems.add(zones);
+
+  Attributes::addCategory(trackDriver, Category::trackDriver);
+  Attributes::addDisplayName(trackDriver, DisplayName::Hardware::trackDriver);
+  Attributes::addVisible(trackDriver, world.feature(WorldFeature::TrackDriverSystem));
+  m_interfaceItems.add(trackDriver);
 
   Attributes::addEnabled(assignTrain, true);
   Attributes::addObjectEditor(assignTrain, false);
@@ -558,6 +575,16 @@ void BlockRailTile::worldEvent(WorldState worldState, WorldEvent worldEvent)
   Attributes::setEnabled(length, editable);
 }
 
+void BlockRailTile::worldFeaturesChanged(const WorldFeatures features, WorldFeature changed)
+{
+  RailTile::worldFeaturesChanged(features, changed);
+
+  if(changed == WorldFeature::TrackDriverSystem)
+  {
+    Attributes::setVisible(trackDriver, features[WorldFeature::TrackDriverSystem]);
+  }
+}
+
 void BlockRailTile::addToWorld()
 {
   RailTile::addToWorld();
@@ -570,6 +597,7 @@ void BlockRailTile::loaded()
   RailTile::loaded();
   updateTrainMethodEnabled();
   updateHeightWidthMax();
+  Attributes::setVisible(trackDriver, m_world.feature(WorldFeature::TrackDriverSystem));
 }
 
 void BlockRailTile::destroying()

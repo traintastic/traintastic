@@ -126,6 +126,7 @@ void World::init(World& world)
   world.outputControllers.setValueInternal(std::make_shared<ControllerList<OutputController>>(world, world.outputControllers.name()));
   world.identificationControllers.setValueInternal(std::make_shared<ControllerList<IdentificationController>>(world, world.identificationControllers.name()));
   world.lncvProgrammingControllers.setValueInternal(std::make_shared<ControllerList<LNCVProgrammingController>>(world, world.lncvProgrammingControllers.name()));
+  world.trackDriverControllers.setValueInternal(std::make_shared<ControllerList<TrackDriverController>>(world, world.trackDriverControllers.name()));
   world.cbusInterfaces.setValueInternal(std::make_shared<ControllerList<CBUSInterface>>(world, world.cbusInterfaces.name()));
   world.loconetInterfaces.setValueInternal(std::make_shared<ControllerList<LocoNetInterface>>(world, world.loconetInterfaces.name()));
 
@@ -190,6 +191,7 @@ World::World(Private /*unused*/) :
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   identificationControllers{this, "identification_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   lncvProgrammingControllers{this, "lncv_programming_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  trackDriverControllers{this, "track_driver_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   cbusInterfaces{this, "cbus_interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   loconetInterfaces{this, "loconet_interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   interfaces{this, "interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -359,6 +361,8 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(identificationControllers);
   Attributes::addObjectEditor(lncvProgrammingControllers, false);
   m_interfaceItems.add(lncvProgrammingControllers);
+  Attributes::addObjectEditor(trackDriverControllers, false);
+  m_interfaceItems.add(trackDriverControllers);
   Attributes::addObjectEditor(cbusInterfaces, false);
   m_interfaceItems.add(cbusInterfaces);
   Attributes::addObjectEditor(loconetInterfaces, false);

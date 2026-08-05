@@ -2772,6 +2772,14 @@
     "definition": "The name assigned to the block, used for the user interface."
   },
   {
+    "term": "object.blockrailtile.powered:description",
+    "definition": "`true` if track power is available in the block; `false` if track power is unavailable or the assigned booster or track driver has not yet reported its status."
+  },
+  {
+    "term": "object.blockrailtile.short_circuit:description",
+    "definition": "`true` if a short circuit affecting the block has been detected; `false` if no short circuit has been detected or the assigned booster or track driver has not yet reported its status."
+  },
+  {
     "term": "object.blockrailtile.state:description",
     "definition": "The current state of the block, a {ref:enum.block_state|block state} value. Indicates whether the block is free, reserved, occupied, or its state is unknown."
   },

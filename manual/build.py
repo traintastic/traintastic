@@ -224,6 +224,7 @@ class TraintasticHelp:
                         'appendix/supported-hardware/product-index.md'
                     ]},
                     'appendix/cbus-vlcb.md',
+                    'appendix/dinamo.md',
                     'appendix/loconet.md',
                     'appendix/xpressnet.md',
                     {'Lua scripting reference': lua_ref},

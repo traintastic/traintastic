@@ -23,7 +23,7 @@
 #include "outputmapoutputaction.hpp"
 #include "../../../core/method.tpp"
 
-static std::optional<OutputActionValue> getDefaultActionValue(bool value, OutputType outputType, size_t outputIndex)
+static std::optional<OutputActionValue> getDefaultActionValue(bool value, OutputChannel /*outputChannel*/, OutputType outputType, size_t outputIndex)
 {
   // FIXME: implement defaults
   (void)value;

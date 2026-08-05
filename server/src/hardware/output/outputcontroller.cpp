@@ -87,6 +87,7 @@ OutputType OutputController::outputType(OutputChannel channel) const
       return OutputType::Pair;
 
     case OutputChannel::DCCext:
+    case OutputChannel::OC32:
       return OutputType::Aspect;
 
     case OutputChannel::ECoSObject:
@@ -116,6 +117,7 @@ std::pair<uint32_t, uint32_t> OutputController::outputAddressMinMax(OutputChanne
     case OutputChannel::Output:
     case OutputChannel::Accessory:
     case OutputChannel::Turnout:
+    case OutputChannel::OC32:
     case OutputChannel::LongEvent:
     case OutputChannel::ShortEvent:
       break;
@@ -148,6 +150,7 @@ bool OutputController::isOutputLocation(OutputChannel channel, const OutputLocat
     case OutputChannel::Output:
     case OutputChannel::Accessory:
     case OutputChannel::Turnout:
+    case OutputChannel::OC32:
     case OutputChannel::LongEvent:
     case OutputChannel::ShortEvent:
       if(hasNode(channel))

@@ -300,6 +300,10 @@
         "definition": "Status"
     },
     {
+        "term": "category:track_driver",
+        "definition": "Track driver"
+    },
+    {
         "term": "category:trains",
         "definition": "Trains"
     },
@@ -900,6 +904,10 @@
         "definition": "Interface"
     },
     {
+        "term": "hardware:invert_polarity",
+        "definition": "Invert polarity"
+    },
+    {
         "term": "hardware:node",
         "definition": "Node"
     },
@@ -918,6 +926,10 @@
     {
         "term": "hardware:throttles",
         "definition": "Throttles"
+    },
+    {
+        "term": "hardware:track_driver",
+        "definition": "Track driver"
     },
     {
         "term": "identification:invert_direction",
@@ -1544,6 +1556,10 @@
         "definition": "Slot %1 = Free"
     },
     {
+        "term": "message:D2011",
+        "definition": "Train '%1' blocks: %2"
+    },
+    {
         "term": "message:D3001",
         "definition": "Acquiring train %1 failed: %2"
     },
@@ -1743,6 +1759,23 @@
         "term": "message:E2030",
         "definition": "TCP socket listen failed (%1)"
     },
+
+    {
+        "term": "message:E2031",
+        "definition": "DINAMO protocol version %1 not supported"
+    },
+    {
+        "term": "message:E2032",
+        "definition": "DINAMO system %1 v%2 not supported"
+    },
+    {
+        "term": "message:E2033",
+        "definition": "Communication lost, no response within %1 ms"
+    },
+    {
+        "term": "message:E2034",
+        "definition": "DINAMO in Fault state"
+    },
     {
         "term": "message:E3001",
         "definition": "Can't delete rail vehicle when in active train"
@@ -1878,6 +1911,14 @@
     {
         "term": "message:I2007",
         "definition": "New hub connection (%1:%2)"
+    },
+    {
+        "term": "message:I2008",
+        "definition": "DINAMO protocol version: %1"
+    },
+    {
+        "term": "message:I2009",
+        "definition": "DINAMO system: %1 v%2"
     },
     {
         "term": "message:I3001",
@@ -2130,6 +2171,10 @@
     {
         "term": "message:W2027",
         "definition": "Reading booster '%1' load failed: %2"
+    },
+    {
+        "term": "message:W2028",
+        "definition": "No response within %1 ms, resending last message"
     },
     {
         "term": "message:W3001",

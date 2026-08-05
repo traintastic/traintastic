@@ -33,7 +33,7 @@ template<class Key, class Value>
 class OutputMapBase : public OutputMap
 {
   public:
-    using DefaultOutputActionGetter = std::optional<OutputActionValue>(*)(Key, OutputType, size_t);
+    using DefaultOutputActionGetter = std::optional<OutputActionValue>(*)(Key, OutputChannel, OutputType, size_t);
 
   protected:
     DefaultOutputActionGetter m_defaultOutputActionGetter;
@@ -59,9 +59,9 @@ class OutputMapBase : public OutputMap
       Attributes::setEnabled(test, !contains(state, WorldState::Run));
     }
 
-    std::optional<OutputActionValue> getDefaultOutputActionValue(const OutputMapItem& item, OutputType outputType, size_t outputIndex) override
+    std::optional<OutputActionValue> getDefaultOutputActionValue(const OutputMapItem& item, OutputChannel outputChannel, OutputType outputType, size_t outputIndex) override
     {
-      return m_defaultOutputActionGetter(static_cast<const Value&>(item).key.value(), outputType, outputIndex);
+      return m_defaultOutputActionGetter(static_cast<const Value&>(item).key.value(), outputChannel, outputType, outputIndex);
     }
 
   public:

@@ -26,7 +26,7 @@
 
 static const std::array<TurnoutPosition, 3> positionValues = {TurnoutPosition::Unknown, TurnoutPosition::Straight, TurnoutPosition::Left};
 
-static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
+static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputChannel outputChannel, OutputType outputType, size_t outputIndex)
 {
   if(outputIndex == 0)
   {
@@ -44,14 +44,33 @@ static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition tu
         break;
 
       case OutputType::Aspect:
-        // YaMoRC YD8116 defaults aspects:
-        if(turnoutPosition == TurnoutPosition::Straight)
+        switch(outputChannel)
         {
-          return static_cast<int16_t>(0);
-        }
-        else if(turnoutPosition == TurnoutPosition::Left)
-        {
-          return static_cast<int16_t>(16);
+          case OutputChannel::DCCext:
+            // YaMoRC YD8116 defaults:
+            if(turnoutPosition == TurnoutPosition::Straight)
+            {
+              return static_cast<int16_t>(0);
+            }
+            else if(turnoutPosition == TurnoutPosition::Left)
+            {
+              return static_cast<int16_t>(16);
+            }
+            break;
+
+          case OutputChannel::OC32:
+            if(turnoutPosition == TurnoutPosition::Straight)
+            {
+              return static_cast<int16_t>(0);
+            }
+            else if(turnoutPosition == TurnoutPosition::Left)
+            {
+              return static_cast<int16_t>(1);
+            }
+            break;
+
+          default: [[unlikely]]
+            break;
         }
         break;
 
