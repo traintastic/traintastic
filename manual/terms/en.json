@@ -28,6 +28,10 @@
     "definition": "Command line options"
   },
   {
+    "term": "nav:appendix/dinamo.md",
+    "definition": "DINAMO reference"
+  },
+  {
     "term": "nav:appendix/loconet.md",
     "definition": "LocoNet reference"
   },

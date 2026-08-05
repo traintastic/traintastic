@@ -21,6 +21,7 @@ It is intended for advanced users who are already familiar with the basics of th
 Traintastic only supports the DINAMO 3.x protocol, the legacy DINAMO 2.x protocol is not supported.
 
 Supported protocol features:
+
 - Reading protocol version
 - Reading interface type and firmware version
 - Mixed analog and DCC train operation
@@ -33,11 +34,11 @@ Supported protocol features:
 
 Traintastic provides two debug options for DINAMO:
 
-- **Protocol message logging**
+- **Protocol message logging** \
   Logs all messages sent to and received from DINAMO.
   Messages are shown in **hexadecimal format**, and for many message types a **human-readable description** of the decoded content is included.
 
-- **Track driver state logging**
+- **Track driver state logging** \
   Logs the internal track driver state.
   For each train, linked blocks and polarity information is logged.
 
