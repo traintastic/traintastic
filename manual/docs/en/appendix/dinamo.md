@@ -43,3 +43,12 @@ Traintastic provides two debug options for DINAMO:
   For each train, linked blocks and polarity information is logged.
 
 These tools are useful for verifying correct communication and diagnosing unexpected behavior.
+
+## Acknowledgements
+
+The development of DINAMO support in Traintastic was made possible with the help of:
+
+- [**VPEB (Leon van Perlo)**](https://vpeb.nl), the creator and manufacturer of the DINAMO system, for providing technical information and best practice guidance.
+- [**Dinamo Besturing**](https://dinamobesturing.nl/en) and [**Domburg Train Support**](https://domburgtrainsupport.nl), for sponsoring DINAMO hardware used for development and testing.
+
+Their support enabled the implementation and validation of DINAMO support with real hardware.
