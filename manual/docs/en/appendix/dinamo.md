@@ -18,14 +18,16 @@ It is intended for advanced users who are already familiar with the basics of th
 
 ## Message support
 
-Traintastic only support the DINAMO 3.x protocol, the legacy DINAMO 2.x protocol is not supoorted.
+Traintastic only supports the DINAMO 3.x protocol, the legacy DINAMO 2.x protocol is not supported.
 
 Supported protocol features:
 - Reading protocol version
-- Readgig interface type and version
-- Control analog and DCC trains
-- Control OC32 module outputs using *SetAspect* commands
-- Monitor input events
+- Reading interface type and firmware version
+- Mixed analog and DCC train operation
+- Automatic TM44 block linking and polarity management
+- Occupancy detection and other input events
+- Block alarms (short circuit)
+- Control OC32 outputs using *SetAspect* commands
 
 ## Debugging and monitoring
 
