@@ -40,12 +40,12 @@ CREATE_IMPL(Board)
 
 Board::Board(World& world, std::string_view _id) :
   IdObject(world, _id),
-  name{ this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly },
-  left{ this, "left", 0, PropertyFlags::ReadOnly | PropertyFlags::Store },
-  top{ this, "top", 0, PropertyFlags::ReadOnly | PropertyFlags::Store },
-  right{ this, "right", 0, PropertyFlags::ReadOnly | PropertyFlags::Store },
-  bottom{ this, "bottom", 0, PropertyFlags::ReadOnly | PropertyFlags::Store },
-  addTile{ *this, "add_tile",
+  name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
+  left{this, "left", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
+  top{this, "top", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
+  right{this, "right", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
+  bottom{this, "bottom", 0, PropertyFlags::ReadOnly | PropertyFlags::Store},
+  addTile{*this, "add_tile",
     [this](int16_t x, int16_t y, TileRotate rotate, std::string_view tileClassId, bool replace)
     {
       const TileLocation l{x, y};
@@ -114,8 +114,8 @@ Board::Board(World& world, std::string_view _id) :
       updateSize();
       m_modified = true;
       return true;
-    } },
-  moveTile{ *this, "move_tile",
+    }},
+  moveTile{*this, "move_tile",
     [this](int16_t xFrom, int16_t yFrom, int16_t xTo, int16_t yTo, TileRotate rotate, const bool replace)
     {
       // check if there is a tile at <From>
@@ -186,8 +186,8 @@ Board::Board(World& world, std::string_view _id) :
       updateSize();
       m_modified = true;
       return true;
-    } },
-  resizeTile{ *this, "resize_tile",
+    }},
+  resizeTile{*this, "resize_tile",
     [this](const int16_t x, const int16_t y, const uint8_t width, const uint8_t height)
     {
       // check for illigal size
@@ -235,8 +235,8 @@ Board::Board(World& world, std::string_view _id) :
       tileDataChanged(*this, tile->location(), tile->data());
       m_modified = true;
       return true;
-    } },
-  deleteTile{ *this, "delete_tile",
+    }},
+  deleteTile{*this, "delete_tile",
     [this](int16_t x, int16_t y)
     {
       auto tile = getTile({x, y});
@@ -248,12 +248,12 @@ Board::Board(World& world, std::string_view _id) :
         m_modified = true;
       }
       return true;
-    } },
-  resizeToContents{ *this, "resize_to_contents",
+    }},
+  resizeToContents{*this, "resize_to_contents",
     [this]()
     {
       updateSize(true);
-    } }
+    }}
 {
   const bool editable = contains(world.state.value(), WorldState::Edit);
   const bool stopped = !contains(world.state.value(), WorldState::Run);
@@ -269,16 +269,16 @@ Board::Board(World& world, std::string_view _id) :
   m_interfaceItems.add(right);
   Attributes::addObjectEditor(bottom, false);
   m_interfaceItems.add(bottom);
-  Attributes::addEnabled(addTile, editable&& stopped);
+  Attributes::addEnabled(addTile, editable && stopped);
   Attributes::addObjectEditor(addTile, false);
   m_interfaceItems.add(addTile);
-  Attributes::addEnabled(moveTile, editable&& stopped);
+  Attributes::addEnabled(moveTile, editable && stopped);
   Attributes::addObjectEditor(moveTile, false);
   m_interfaceItems.add(moveTile);
-  Attributes::addEnabled(resizeTile, editable&& stopped);
+  Attributes::addEnabled(resizeTile, editable && stopped);
   Attributes::addObjectEditor(resizeTile, false);
   m_interfaceItems.add(resizeTile);
-  Attributes::addEnabled(deleteTile, editable&& stopped);
+  Attributes::addEnabled(deleteTile, editable && stopped);
   Attributes::addObjectEditor(deleteTile, false);
   m_interfaceItems.add(deleteTile);
   Attributes::addEnabled(resizeToContents, editable);
@@ -321,7 +321,7 @@ void Board::load(WorldLoader& loader, const nlohmann::json& data)
         const int16_t y2 = tile->location().y + tile->height;
         for(int16_t x = tile->location().x; x < x2; x++)
           for(int16_t y = tile->location().y; y < y2; y++)
-            m_tiles.emplace(TileLocation{ x, y }, tile);
+            m_tiles.emplace(TileLocation{x, y}, tile);
       }
       else
       {
@@ -385,19 +385,17 @@ void Board::modified()
       std::vector<Connector> connectors;
       connectors.reserve(2);
 
-      Connector connector{ startConnector.opposite() };
+      Connector connector{startConnector.opposite()};
       while(auto nextTile = getTile(connector.location))
       {
         if(isIntercardinal(connector.direction)) // check for crossover
         {
-
           auto prevTile = getTile(TileLocation{ nextTile->x, nextTile->y } + connector.direction);
 
           if(prevTile)
           {
-
-            auto otherTile1 = getTile({ prevTile->x, nextTile->y });
-            auto otherTile2 = getTile({ nextTile->x, prevTile->y });
+            auto otherTile1 = getTile({prevTile->x, nextTile->y});
+            auto otherTile2 = getTile({nextTile->x, prevTile->y});
 
             if(otherTile1 && otherTile2)
             {
@@ -507,7 +505,7 @@ void Board::modified()
 
 void Board::removeTile(const int16_t x, const int16_t y)
 {
-  auto tile = getTile({ x, y });
+  auto tile = getTile({x, y});
   if(!tile)
     return;
   const auto l = tile->location();
@@ -515,7 +513,7 @@ void Board::removeTile(const int16_t x, const int16_t y)
   const int16_t y2 = l.y + tile->height;
   for(int16_t xx = l.x; xx < x2; xx++)
     for(int16_t yy = l.y; yy < y2; yy++)
-      m_tiles.erase(TileLocation{ xx, yy });
+      m_tiles.erase(TileLocation{xx, yy});
   tileDataChanged(*this, l, TileData());
 }
 
