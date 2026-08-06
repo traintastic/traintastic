@@ -28,6 +28,8 @@
 #include "../../core/method.hpp"
 #include "decoderfunction.hpp"
 
+class Decoder;
+
 class DecoderFunctions : public SubObject
 {
   protected:
@@ -45,7 +47,7 @@ class DecoderFunctions : public SubObject
 
     using const_iterator = ObjectVectorProperty<DecoderFunction>::const_iterator;
 
-    DecoderFunctions(Object& _parent, std::string_view parentPropertyName);
+    DecoderFunctions(Decoder& _parent, std::string_view parentPropertyName);
 
     inline const_iterator begin() const { return items.begin(); }
     inline const_iterator end() const { return items.end(); }
