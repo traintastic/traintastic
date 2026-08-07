@@ -24,6 +24,7 @@
 #include "railvehiclelist.hpp"
 #include "railvehiclelisttablemodel.hpp"
 #include "../../hardware/decoder/decoder.hpp"
+#include "../../hardware/decoder/decoderchangeflags.hpp"
 #include "../../hardware/decoder/list/decoderlist.hpp"
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
@@ -45,15 +46,14 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
   totalWeight{*this, "total_weight", 0, WeightUnit::Ton, PropertyFlags::ReadOnly | PropertyFlags::NoStore}
   , mute{this, "mute", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , noSmoke{this, "no_smoke", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
-  , activeTrain{this, "active_train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::StoreState}
+  , activeTrain{this, "active_train", nullptr, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::NoStore}
   , trains{*this, "trains", {}, PropertyFlags::ReadOnly | PropertyFlags::ScriptReadOnly | PropertyFlags::NoStore}
   , createDecoder{*this, "create_decoder", MethodFlags::NoScript,
       [this]()
       {
         if(!decoder)
         {
-          decoder.setValueInternal(Decoder::create(m_world));
-          decoder->vehicle.setValueInternal(shared_ptr<RailVehicle>());
+          setDecoder(Decoder::create(m_world));
           if(m_world.decoderControllers->length == 1)
           {
             decoder->interface = std::dynamic_pointer_cast<DecoderController>(m_world.decoderControllers->getObject(0));
@@ -64,10 +64,15 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
   , deleteDecoder{*this, "delete_decoder", MethodFlags::NoScript,
       [this]()
       {
-        if(decoder)
+        auto oldDecoder = decoder.value();
+        std::weak_ptr<Decoder> oldDecoderWeak = oldDecoder;
+        setDecoder(nullptr);
+
+        if(oldDecoder)
         {
-          decoder->destroy();
-          assert(!decoder);
+          oldDecoder->destroy();
+          oldDecoder.reset();
+          assert(oldDecoderWeak.expired());
         }
       }}
 {
@@ -113,6 +118,12 @@ RailVehicle::RailVehicle(World& world, std::string_view _id) :
 
   Attributes::addObjectEditor(deleteDecoder, false);
   m_interfaceItems.add(deleteDecoder);
+}
+
+RailVehicle::~RailVehicle()
+{
+  assert(!decoder);
+  assert(!decoderConnection.connected());
 }
 
 void RailVehicle::setActiveTrain(const std::shared_ptr<Train>& train)
@@ -165,14 +176,23 @@ void RailVehicle::addToWorld()
 void RailVehicle::destroying()
 {
   auto self = shared_ptr<RailVehicle>();
-  if(decoder)
+
+  auto oldDecoder = decoder.value();
+  std::weak_ptr<Decoder> oldDecoderWeak = oldDecoder;
+  setDecoder(nullptr);
+
+  if(oldDecoder)
   {
-    decoder->destroy();
-    assert(!decoder);
+    oldDecoder->destroy();
+    oldDecoder.reset();
+    assert(oldDecoderWeak.expired());
   }
+
   for(const auto& train : trains)
   {
-    train->vehicles->remove(self);
+    auto item = train->vehicles->getItemFromVehicle(self);
+    if(item)
+      train->vehicles->remove(item);
   }
   m_world.railVehicles->removeObject(self);
   IdObject::destroying();
@@ -182,10 +202,7 @@ void RailVehicle::loaded()
 {
   Vehicle::loaded();
 
-  if(decoder)
-  {
-    decoder->vehicle.setValueInternal(shared_ptr<RailVehicle>());
-  }
+  setDecoder(decoder.value());
 
   updateTotalWeight();
 }
@@ -229,4 +246,50 @@ double RailVehicle::calcTotalWeight(WeightUnit unit) const
 void RailVehicle::updateTotalWeight()
 {
   totalWeight.setValueInternal(calcTotalWeight(totalWeight.unit()));
+}
+
+void RailVehicle::setDecoder(const std::shared_ptr<Decoder> &newDecoder)
+{
+  if(decoder)
+  {
+    //Disconnect from previous decoder
+    decoderConnection.disconnect();
+    decoder->vehicle.setValueInternal(nullptr);
+  }
+
+  decoder.setValueInternal(newDecoder);
+  if(!decoder)
+    return;
+
+  decoder->vehicle.setValueInternal(shared_ptr<RailVehicle>());
+
+  //Connect to new decoder
+  decoderConnection = decoder->decoderChanged.connect(
+    [this](Decoder& self, DecoderChangeFlags flags, uint32_t /*functionNumber*/)
+    {
+      if(!activeTrain)
+        return;
+
+      if(has(flags, DecoderChangeFlags::Direction))
+      {
+        if(self.direction == lastTrainSetDirection)
+          return; //Direction change was caused by Train itself, no need propagate back
+
+        if(activeTrain->isStopped)
+          activeTrain->handleDecoderDirection(this->shared_ptr<RailVehicle>(), self.direction);
+        else
+          self.direction = lastTrainSetDirection; // Reject direction changes if train is not stopped
+      }
+
+      if(has(flags, DecoderChangeFlags::EmergencyStop))
+      {
+        activeTrain->emergencyStop.setValue(self.emergencyStop);
+      }
+    });
+}
+
+void RailVehicle::setEmergencyStop(bool value)
+{
+  if(decoder)
+    decoder->emergencyStop = value;
 }

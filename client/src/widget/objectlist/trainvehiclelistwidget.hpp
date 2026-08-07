@@ -1,9 +1,8 @@
 /**
- * client/src/widget/propertydoublespinbox.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,30 +19,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_PROPERTYDOUBLESPINBOX_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_PROPERTYDOUBLESPINBOX_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_TRAINVEHICLELISTWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_OBJECTLIST_TRAINVEHICLELISTWIDGET_HPP
 
-#include <QDoubleSpinBox>
+#include "objectlistwidget.hpp"
 
-class AbstractProperty;
+class Method;
 
-class PropertyDoubleSpinBox : public QDoubleSpinBox
+class TrainVehicleListWidget : public ObjectListWidget
 {
-  protected:
-    AbstractProperty& m_property;
-    int m_requestId;
+public:
+  explicit TrainVehicleListWidget(const ObjectPtr& object, QWidget* parent = nullptr);
 
-    void cancelRequest();
-    void showError(const QString& error);
+protected:
+  void tableDoubleClicked(const QModelIndex& index) override;
 
-    void updateRange();
-
-  protected:
-    void focusOutEvent(QFocusEvent* event) override;
-
-  public:
-    PropertyDoubleSpinBox(AbstractProperty& property, QWidget* parent = nullptr);
-    ~PropertyDoubleSpinBox() override;
+private:
+  Method* m_toggleDirectionInvert = nullptr;
 };
 
 #endif

@@ -30,7 +30,8 @@
 
 PropertySpinBox::PropertySpinBox(Property& property, QWidget* parent) :
   QSpinBox(parent),
-  m_property{property}
+  m_property{property},
+  m_requestId{Connection::invalidRequestId}
 {
   Q_ASSERT(m_property.type() == ValueType::Integer);
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
