@@ -68,9 +68,8 @@ constexpr CBUS::SetEngineSessionMode::SpeedMode toSpeedMode(uint8_t speedSteps)
 
 namespace CBUS {
 
-Kernel::Kernel(std::string logId_, const Config& config, uint8_t canId, bool simulation)
+Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   : KernelBase(std::move(logId_))
-  , m_canId{canId}
   , m_simulation{simulation}
   , m_initializationTimer{ioContext()}
   , m_config{config}
@@ -227,6 +226,18 @@ void Kernel::receive(const CAN::Message& canMessage)
       receiveKLOC(static_cast<const ReleaseEngine&>(message));
       break;
 
+    case OpCode::RLOC:
+    {
+      const auto rloc = static_cast<const RequestEngineSession&>(message);
+      receiveGLOC(rloc.address(), rloc.isLongAddress(), GetEngineSession::Mode::Request);
+      break;
+    }
+    case OpCode::GLOC:
+    {
+      const auto gloc = static_cast<const GetEngineSession&>(message);
+      receiveGLOC(gloc.address(), gloc.isLongAddress(), gloc.mode());
+      break;
+    }
     case OpCode::DSPD:
       receiveDSPD(static_cast<const SetEngineSpeedDirection&>(message));
       break;
@@ -412,45 +423,87 @@ void Kernel::receive(const CAN::Message& canMessage)
     case OpCode::PLOC:
     {
       const auto& ploc = static_cast<const EngineReport&>(message);
+      const auto key = makeAddressKey(ploc.address(), ploc.isLongAddress());
+      auto gloc = m_engineGLOCs.find(key);
+      const auto owner = (gloc != m_engineGLOCs.end()) ? gloc->second : Owner::CBUS;
 
       EventLoop::call(
-        [this, ploc]()
+        [this, ploc, owner]()
         {
           if(onEngineSessionAcquire) [[likely]]
           {
-            onEngineSessionAcquire(ploc.session, ploc.address(), ploc.isLongAddress());
+            onEngineSessionAcquire(ploc.session, owner != Owner::Traintastic, ploc.address(), ploc.isLongAddress());
           }
         });
 
-      const auto key = makeAddressKey(ploc.address(), ploc.isLongAddress());
-      if(m_engineGLOCs.contains(key))
+      Engine* engine = nullptr;
+      if(auto it = m_engines.find(key); it != m_engines.end())
       {
-        m_engineGLOCs.erase(key);
+        engine = &it->second;
+      }
+      else if(owner == Owner::CBUS) // existing session we didn't know about
+      {
+        engine = &m_engines[makeAddressKey(ploc.address(), ploc.isLongAddress())];
+      }
+      else if(owner == Owner::Traintastic) // we're no longer in need of control (rare but possible)
+      {
+        send(ReleaseEngine(ploc.session));
+      }
 
-        if(auto it = m_engines.find(key); it != m_engines.end())
+      if(engine)
+      {
+        engine->session = ploc.session;
+        engine->owner = owner;
+
+        if(engine->owner == Owner::Traintastic)
         {
-          auto& engine = it->second;
-          engine.session = ploc.session;
+          sendSetEngineSessionMode(ploc.session, engine->speedSteps);
+          sendSetEngineSpeedDirection(ploc.session, engine->speed, engine->directionForward);
 
-          sendSetEngineSessionMode(ploc.session, engine.speedSteps);
-          sendSetEngineSpeedDirection(ploc.session, engine.speed, engine.directionForward);
-
-          for(const auto& [number, value] : engine.functions)
+          for(const auto& [number, value] : engine->functions)
           {
             sendSetEngineFunction(ploc.session, number, value);
           }
 
-          engine.lastCommand = std::chrono::steady_clock::now();
+          engine->lastCommand = std::chrono::steady_clock::now();
 
           if(!m_engineKeepAliveTimerActive)
           {
             restartEngineKeepAliveTimer();
           }
         }
-        else // we're no longer in need of control (rare but possible)
+        else if(engine->owner == Owner::CBUS)
         {
-          send(ReleaseEngine(ploc.session));
+          engine->speed = ploc.speed();
+          engine->directionForward = ploc.directionForward();
+
+          EventLoop::call(
+            [this, session=*engine->session, speed=engine->speed, directionForward=engine->directionForward]()
+            {
+              if(onEngineSpeedDirectionChanged) [[likely]]
+              {
+                onEngineSpeedDirectionChanged(session, speed, directionForward);
+              }
+            });
+
+          for(uint8_t fn : ploc.numbers())
+          {
+            engine->functions[fn] = ploc.f(fn);
+            EventLoop::call(
+              [this, session=*engine->session, number=fn, value=engine->functions[fn]]()
+              {
+                if(onEngineFunctionChanged) [[likely]]
+                {
+                  onEngineFunctionChanged(session, number, value);
+                }
+              });
+          }
         }
+      }
+
+      if(gloc != m_engineGLOCs.end())
+      {
+        m_engineGLOCs.erase(gloc);
       }
       break;
     }
@@ -552,6 +605,17 @@ void Kernel::requestEmergencyStop()
     [this]()
     {
       send(RequestEmergencyStop());
+    });
+}
+
+void Kernel::queryEngine(uint8_t session)
+{
+  assert(isEventLoopThread());
+
+  boost::asio::post(m_ioContext,
+    [this, session]()
+    {
+      send(QueryEngine(session));
     });
 }
 
@@ -766,7 +830,7 @@ void Kernel::send(const Message& message)
       });
   }
 
-  const auto canMessage = toCANMessage(message, m_canId);
+  const auto canMessage = toCANMessage(message, m_config.canId);
 
   if(auto ec = m_ioHandler->send(canMessage); ec)
   {
@@ -785,7 +849,7 @@ void Kernel::sendGetEngineSession(uint16_t address, bool longAddress)
   const auto key = makeAddressKey(address, longAddress);
   if(!m_engineGLOCs.contains(key))
   {
-    m_engineGLOCs.emplace(key);
+    m_engineGLOCs.emplace(key, Owner::Traintastic);
     send(GetEngineSession(address, longAddress, GetEngineSession::Mode::Steal));
   }
 }
@@ -827,6 +891,17 @@ void Kernel::sendSetEngineFunction(uint8_t session, uint8_t number, bool value)
         onEngineFunctionChanged(session, number, value);
       }
     });
+}
+
+void Kernel::receiveGLOC(uint16_t address, bool longAddress, GetEngineSession::Mode /*mode*/)
+{
+  assert(isKernelThread());
+  const auto key = makeAddressKey(address, longAddress);
+  if(!m_engineGLOCs.contains(key))
+  {
+    m_engineGLOCs.emplace(key, Owner::CBUS);
+    (void)m_engines[makeAddressKey(address, longAddress)]; // create entry if not exists
+  }
 }
 
 void Kernel::receiveDFNOx(const SetEngineFunction& message)

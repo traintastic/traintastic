@@ -49,6 +49,22 @@ void swap(Property<T>& a, Property<T>& b)
   b = tmp;
 }
 
+std::pair<int16_t, int16_t> getAspectRange(OutputChannel value)
+{
+  switch(value)
+  {
+    case OutputChannel::DCCext:
+      return {0, 255};
+
+    case OutputChannel::OC32:
+      return {0, 127};
+
+    default: [[unlikely]]
+      assert(false);
+      return {0, 0};
+  }
+}
+
 constexpr OutputLocation outputLocation(OutputChannel channel, uint32_t node, uint32_t address) noexcept
 {
   if(hasNode(channel))
@@ -127,6 +143,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
               case OutputChannel::AccessoryMotorola:
               case OutputChannel::DCCext:
               case OutputChannel::Turnout:
+              case OutputChannel::OC32:
               case OutputChannel::LongEvent:
               case OutputChannel::ShortEvent:
               {
@@ -176,6 +193,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
           case OutputChannel::AccessoryMotorola:
           case OutputChannel::DCCext:
           case OutputChannel::Turnout:
+          case OutputChannel::OC32:
           case OutputChannel::LongEvent:
           case OutputChannel::ShortEvent:
             ecosObject.setValueInternal(0);
@@ -426,6 +444,7 @@ void OutputMap::load(WorldLoader& loader, const nlohmann::json& data)
       case OutputChannel::AccessoryMotorola:
       case OutputChannel::DCCext:
       case OutputChannel::Turnout:
+      case OutputChannel::OC32:
       case OutputChannel::LongEvent:
       case OutputChannel::ShortEvent:
         for(uint32_t address : addresses)
@@ -496,6 +515,7 @@ void OutputMap::channelChanged()
       case OutputChannel::AccessoryMotorola:
       case OutputChannel::DCCext:
       case OutputChannel::Turnout:
+      case OutputChannel::OC32:
       case OutputChannel::LongEvent:
       case OutputChannel::ShortEvent:
       {
@@ -540,6 +560,18 @@ void OutputMap::channelChanged()
         }
 
         addressesSizeChanged();
+
+        if(isAspectChannel(channel)) // update aspect value range (depends on channel)
+        {
+          const auto range = getAspectRange(channel);
+          for(const auto& item : items)
+          {
+            for(auto& outputAction : item->outputActions)
+            {
+              Attributes::setMinMax(static_cast<OutputMapAspectOutputAction&>(*outputAction).aspect, range);
+            }
+          }
+        }
         break;
       }
       case OutputChannel::ECoSObject:
@@ -585,7 +617,7 @@ void OutputMap::updateOutputActions(OutputType outputType)
   {
     while(m_outputs.size() > item->outputActions.size())
     {
-      std::shared_ptr<OutputMapOutputAction> outputAction = createOutputAction(outputType, item->outputActions.size(), getDefaultOutputActionValue(*item, outputType, item->outputActions.size()));
+      std::shared_ptr<OutputMapOutputAction> outputAction = createOutputAction(outputType, item->outputActions.size(), getDefaultOutputActionValue(*item, channel, outputType, item->outputActions.size()));
       assert(outputAction);
       item->outputActions.appendInternal(outputAction);
     }
@@ -669,6 +701,7 @@ std::shared_ptr<OutputMapOutputAction> OutputMap::createOutputAction(OutputType 
     case OutputType::Aspect:
     {
       auto aspectOutputAction = std::make_shared<OutputMapAspectOutputAction>(*this, index);
+      Attributes::setMinMax(aspectOutputAction->aspect, getAspectRange(channel));
       if(actionValue)
       {
         aspectOutputAction->aspect.setValueInternal(std::get<int16_t>(*actionValue));
@@ -776,6 +809,7 @@ void OutputMap::updateAddressDisplayName()
     case DCCext:
     case Turnout:
     case ECoSObject:
+    case OC32:
       Attributes::setDisplayName(addresses, addresses.size() == 1 ? DisplayName::Hardware::address : DisplayName::Hardware::addresses);
       Attributes::setDisplayName(addAddress, DisplayName::OutputMap::addAddress);
       Attributes::setDisplayName(removeAddress, DisplayName::OutputMap::removeAddress);

@@ -913,7 +913,11 @@ TEST_CASE("Lua script: pv - save/load", "[lua][lua-script][lua-script-pv]")
 
     {
       ctw = std::filesystem::temp_directory_path() / std::string(world->uuid.value()).append(World::dotCTW);
-      WorldSaver saver(*world, ctw);
+      WorldSaver saver(*world, ctw,
+        WorldSaver::Options{
+          .isAutoSave = false,
+          .isExport = false,
+        });
     }
   }
 

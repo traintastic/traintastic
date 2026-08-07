@@ -1,7 +1,6 @@
 /**
- * server/src/lua/sandbox.cpp - Lua sandbox
- *
- * This file is part of the traintastic source code.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) 2019-2026 Reinder Feenstra
  *
@@ -34,6 +33,7 @@
 #include "to.hpp"
 #include "type.hpp"
 #include "object.hpp"
+#include "onchangedhandler.hpp"
 #include "enums.hpp"
 #include "sets.hpp"
 #include "getversion.hpp"
@@ -189,6 +189,8 @@ SandboxPtr Sandbox::create(Script& script)
   VectorProperty::registerType(L);
   Method::registerType(L);
   Event::registerType(L);
+  EventHandler::registerType(L);
+  OnChangedHandler::registerType(L);
 
   // setup sandbox:
   lua_newtable(L);
@@ -410,10 +412,9 @@ Sandbox::StateData::~StateData()
 {
   while(!m_eventHandlers.empty())
   {
-    auto handler = m_eventHandlers.begin()->second;
-    m_eventHandlers.erase(m_eventHandlers.begin());
-    handler->disconnect();
+    m_eventHandlers.front()->disconnect();
   }
+  m_onChangedHandlers.clear();
 
   // Release inputs:
   for(auto& it : m_inputs)
@@ -450,6 +451,32 @@ Sandbox::StateData::~StateData()
   {
     m_throttles.back()->destroy();
     m_throttles.pop_back();
+  }
+}
+
+void Sandbox::StateData::registerEventHandler(std::shared_ptr<EventHandler> handler)
+{
+  m_eventHandlers.emplace_back(std::move(handler));
+}
+
+void Sandbox::StateData::unregisterEventHandler(const std::shared_ptr<EventHandler>& handler)
+{
+  if(auto it = std::find(m_eventHandlers.begin(), m_eventHandlers.end(), handler); it != m_eventHandlers.end())
+  {
+    m_eventHandlers.erase(it);
+  }
+}
+
+void Sandbox::StateData::registerOnChangedHandler(std::shared_ptr<OnChangedHandler> handler)
+{
+  m_onChangedHandlers.emplace_back(std::move(handler));
+}
+
+void Sandbox::StateData::unregisterOnChangedHandler(const std::shared_ptr<OnChangedHandler>& handler)
+{
+  if(auto it = std::find(m_onChangedHandlers.begin(), m_onChangedHandlers.end(), handler); it != m_onChangedHandlers.end())
+  {
+    m_onChangedHandlers.erase(it);
   }
 }
 

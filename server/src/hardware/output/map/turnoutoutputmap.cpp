@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/map/turnoutoutputmap.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021,2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +20,8 @@
  */
 
 #include "turnoutoutputmap.hpp"
+#include "outputmapoutputaction.hpp"
+#include "../../../core/method.tpp"
 
 TurnoutOutputMap::TurnoutOutputMap(Object& _parent, std::string_view parentPropertyName, std::initializer_list<TurnoutPosition> positions, DefaultOutputActionGetter defaultOutputActionGetter) :
   OutputMapBase(_parent, parentPropertyName, positions, defaultOutputActionGetter)

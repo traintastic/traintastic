@@ -6,6 +6,8 @@
     "since": "0.3"
   },
   "length": {},
+  "powered": {},
+  "short_circuit": {},
   "trains": {},
   "on_train_assigned": {
     "parameters": [

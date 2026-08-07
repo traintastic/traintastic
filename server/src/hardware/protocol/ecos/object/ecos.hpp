@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/ecos/object/ecos.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022,2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +22,7 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_ECOS_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_OBJECT_ECOS_HPP
 
-#include "object.hpp"
+#include "ecosobject.hpp"
 #include <traintastic/enum/tristate.hpp>
 #include "../../../../utils/version.hpp"
 

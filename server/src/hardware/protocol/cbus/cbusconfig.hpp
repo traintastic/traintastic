@@ -33,6 +33,7 @@ struct Config
 
   std::chrono::seconds engineKeepAlive;
   std::chrono::milliseconds dccAccessorySwitchTime;
+  uint8_t canId;
   uint16_t shortEventNodeNumber;
   bool hubEnabled;
   bool hubLocalhostOnly;

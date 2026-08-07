@@ -11,7 +11,7 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_msvc"
-          os: windows-latest
+          os: windows-2022
           generator: "Visual Studio 17 2022"
           arch: "-A x64"
           target: traintastic-client
@@ -196,7 +196,7 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_clang"
-          os: windows-latest
+          os: windows-2022
           generator: "Visual Studio 17 2022"
           arch: "-A x64"
           toolset: "-T ClangCL"
@@ -562,6 +562,12 @@ jobs:
         name: traintastic-manual
         path: ${{github.workspace}}/manual/output
 
+    - name: Download latest VC14 redist
+      shell: powershell
+      working-directory: ${{github.workspace}}/package/innosetup
+      run: |
+        Invoke-Webrequest -Uri "https://aka.ms/vc14/vc_redist.x64.exe" -OutFile "vc_redist.x64.exe"
+
     - name: Build installer
       shell: cmd
       run: |
@@ -581,12 +587,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - name: "package appimages (x86_64)"
+        - name: "ubuntu_24.04"
           os: ubuntu-24.04
           arch: x86_64
           run_apt: true
 
-        - name: "package appimages (arm64)"
+        - name: "raspberrypios_arm64"
           os: [self-hosted, ARM64, RaspberryPi]
           arch: arm64
           run_apt: false
@@ -610,13 +616,13 @@ jobs:
     - name: "Download: traintastic-client"
       uses: actions/download-artifact@v4
       with:
-        name: traintastic-client-ubuntu_24.04
+        name: traintastic-client-${{matrix.config.name}}
         path: ${{github.workspace}}/client/build
 
     - name: "Download: traintastic-server"
       uses: actions/download-artifact@v4
       with:
-        name: traintastic-server-ubuntu_24.04
+        name: traintastic-server-${{matrix.config.name}}
         path: ${{github.workspace}}/server/build
 
     - name: "Download: translations"

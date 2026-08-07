@@ -188,6 +188,18 @@
         "definition": "Require reservation"
     },
     {
+        "term": "board_tile.rail.turnout:linked",
+        "definition": "Linked"
+    },
+    {
+        "term": "board_tile.rail.turnout:link_turnout",
+        "definition": "Link to turnout"
+    },
+    {
+        "term": "board_tile.rail.turnout:link_invert",
+        "definition": "Invert link"
+    },
+    {
         "term": "board_tile.rail.turnout_slip:dual_motor",
         "definition": "Dual motor/coil"
     },
@@ -288,6 +300,10 @@
         "definition": "Status"
     },
     {
+        "term": "category:track_driver",
+        "definition": "Track driver"
+    },
+    {
         "term": "category:trains",
         "definition": "Trains"
     },
@@ -318,6 +334,10 @@
     {
         "term": "cbus_node_list:version",
         "definition": "Version"
+    },
+    {
+        "term": "cbus_session_list:controlled_by",
+        "definition": "Controlled by"
     },
     {
         "term": "cbus_session_list:direction",
@@ -884,6 +904,10 @@
         "definition": "Interface"
     },
     {
+        "term": "hardware:invert_polarity",
+        "definition": "Invert polarity"
+    },
+    {
         "term": "hardware:node",
         "definition": "Node"
     },
@@ -902,6 +926,14 @@
     {
         "term": "hardware:throttles",
         "definition": "Throttles"
+    },
+    {
+        "term": "hardware:track_driver",
+        "definition": "Track driver"
+    },
+    {
+        "term": "identification:invert_direction",
+        "definition": "Invert direction"
     },
     {
         "term": "identification:opc_multi_sense_direction",
@@ -1524,6 +1556,10 @@
         "definition": "Slot %1 = Free"
     },
     {
+        "term": "message:D2011",
+        "definition": "Train '%1' blocks: %2"
+    },
+    {
         "term": "message:D3001",
         "definition": "Acquiring train %1 failed: %2"
     },
@@ -1723,6 +1759,23 @@
         "term": "message:E2030",
         "definition": "TCP socket listen failed (%1)"
     },
+
+    {
+        "term": "message:E2031",
+        "definition": "DINAMO protocol version %1 not supported"
+    },
+    {
+        "term": "message:E2032",
+        "definition": "DINAMO system %1 v%2 not supported"
+    },
+    {
+        "term": "message:E2033",
+        "definition": "Communication lost, no response within %1 ms"
+    },
+    {
+        "term": "message:E2034",
+        "definition": "DINAMO in Fault state"
+    },
     {
         "term": "message:E3001",
         "definition": "Can't delete rail vehicle when in active train"
@@ -1770,6 +1823,10 @@
     {
         "term": "message:E9001",
         "definition": "%1 (During execution of %2 event handler)"
+    },
+    {
+        "term": "message:E9002",
+        "definition": "%1 (During execution of %2 on_changed handler)"
     },
     {
         "term": "message:F1001",
@@ -1832,6 +1889,10 @@
         "definition": "Building world index"
     },
     {
+        "term": "message:I1010",
+        "definition": "Auto saved world: %1"
+    },
+    {
         "term": "message:I2001",
         "definition": "Unknown loco address: %1"
     },
@@ -1850,6 +1911,14 @@
     {
         "term": "message:I2007",
         "definition": "New hub connection (%1:%2)"
+    },
+    {
+        "term": "message:I2008",
+        "definition": "DINAMO protocol version: %1"
+    },
+    {
+        "term": "message:I2009",
+        "definition": "DINAMO system: %1 v%2"
     },
     {
         "term": "message:I3001",
@@ -2104,6 +2173,10 @@
         "definition": "Reading booster '%1' load failed: %2"
     },
     {
+        "term": "message:W2028",
+        "definition": "No response within %1 ms, resending last message"
+    },
+    {
         "term": "message:W3001",
         "definition": "NX button connected to two blocks"
     },
@@ -2250,6 +2323,10 @@
     {
         "term": "output_map:swap_outputs",
         "definition": "Swap outputs"
+    },
+    {
+        "term": "output_map:test",
+        "definition": "Test"
     },
     {
         "term": "output_map:use",
@@ -2604,6 +2681,26 @@
         "definition": "Cancel"
     },
     {
+        "term": "qtapp.world_list_dialog:duplicate_world",
+        "definition": "Duplicate world"
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicate_world_confirmation",
+        "definition": "Are you sure you want to duplicate the world <b>%1</b>?"
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicated_world_name_postfix",
+        "definition": "Copy"
+    },
+    {
+        "term": "qtapp.world_list_dialog:delete_world",
+        "definition": "Delete world"
+    },
+    {
+        "term": "qtapp.world_list_dialog:delete_world_confirmation",
+        "definition": "Are you sure you want to delete the <b>%1</b> world? This action cannot be undone."
+    },
+    {
         "term": "qtapp.world_list_dialog:load",
         "definition": "Load"
     },
@@ -2744,6 +2841,10 @@
         "definition": "Auto save world on exit"
     },
     {
+        "term": "settings:auto_save_interval",
+        "definition": "Auto save interval"
+    },
+    {
         "term": "settings:discoverable",
         "definition": "Discoverable"
     },
@@ -2762,6 +2863,10 @@
     {
         "term": "settings:memory_logger_size",
         "definition": "Memory logger size"
+    },
+    {
+        "term": "settings:off",
+        "definition": "Off"
     },
     {
         "term": "settings:port",

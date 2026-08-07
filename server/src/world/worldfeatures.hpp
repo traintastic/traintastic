@@ -29,6 +29,7 @@ enum class WorldFeature
 {
   Scripting = 0,
   Boosters = 1,
+  TrackDriverSystem = 2,
 };
 
 class WorldFeatures
@@ -92,6 +93,7 @@ constexpr bool isAutomaticFeature(WorldFeature feature)
 
     // features controlled by other objects:
     case WorldFeature::Boosters:
+    case WorldFeature::TrackDriverSystem:
       return true;
   }
   return false;

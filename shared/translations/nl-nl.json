@@ -196,6 +196,10 @@
         "definition": "Positie"
     },
     {
+        "term": "board_tile:feedback_map",
+        "definition": "Terugmelding"
+    },
+    {
         "term": "board_tile:output_map",
         "definition": "Uitgangen"
     },
@@ -252,6 +256,10 @@
         "definition": "Ontwikkelaar"
     },
     {
+        "term": "category:features",
+        "definition": "Features"
+    },
+    {
         "term": "category:general",
         "definition": "Algemeen"
     },
@@ -282,6 +290,78 @@
     {
         "term": "category:trains",
         "definition": "Treinen"
+    },
+    {
+        "term": "cbus_interface_type:socket_can",
+        "definition": "SocketCAN (Alleen Linux)"
+    },
+    {
+        "term": "cbus_node_list:manufacturer",
+        "definition": "Fabrikant"
+    },
+    {
+        "term": "cbus_node_list:mode",
+        "definition": "Mode"
+    },
+    {
+        "term": "cbus_node_list:module",
+        "definition": "Module"
+    },
+    {
+        "term": "cbus_node_list:node_number",
+        "definition": "Node nummer"
+    },
+    {
+        "term": "cbus_node_list:type",
+        "definition": "Type"
+    },
+    {
+        "term": "cbus_node_list:version",
+        "definition": "Versie"
+    },
+    {
+        "term": "cbus_session_list:controlled_by",
+        "definition": "Bestuurd door"
+    },
+    {
+        "term": "cbus_session_list:direction",
+        "definition": "Richting"
+    },
+    {
+        "term": "cbus_session_list:long",
+        "definition": "Lang"
+    },
+    {
+        "term": "cbus_session_list:session",
+        "definition": "Sessie"
+    },
+    {
+        "term": "cbus_session_list:speed",
+        "definition": "Snelheid"
+    },
+    {
+        "term": "cbus_settings:dcc_accessory_switch_time",
+        "definition": "DCC-accessoire schakeltijd"
+    },
+    {
+        "term": "cbus_settings:engine_keep_alive",
+        "definition": "Locomotief keep alive"
+    },
+    {
+        "term": "cbus_settings:hub_enabled",
+        "definition": "Hub actief"
+    },
+    {
+        "term": "cbus_settings:hub_localhost_only",
+        "definition": "Hub allen op localhost"
+    },
+    {
+        "term": "cbus_settings:hub_port",
+        "definition": "Hub poort"
+    },
+    {
+        "term": "cbus_settings:short_event_node_number",
+        "definition": "Node nummer voor korte events"
     },
     {
         "term": "class_id:board_tile.misc.label",
@@ -736,6 +816,18 @@
         "definition": "Wereld uitzetten"
     },
     {
+        "term": "feedback_map.turnout:key",
+        "definition": "Positie"
+    },
+    {
+        "term": "function:off",
+        "definition": "Uit"
+    },
+    {
+        "term": "function:on",
+        "definition": "Aan"
+    },
+    {
         "term": "hardware:address",
         "definition": "Adres"
     },
@@ -772,6 +864,14 @@
         "definition": "Decoders"
     },
     {
+        "term": "hardware:event",
+        "definition": "Event"
+    },
+    {
+        "term": "hardware:events",
+        "definition": "Events"
+    },
+    {
         "term": "hardware:identifications",
         "definition": "Identificatie"
     },
@@ -786,6 +886,10 @@
     {
         "term": "hardware:interface",
         "definition": "Interface"
+    },
+    {
+        "term": "hardware:node",
+        "definition": "Node"
     },
     {
         "term": "hardware:output_keyboard",
@@ -804,18 +908,6 @@
         "definition": "Regelaars"
     },
     {
-        "term": "hsi88:s88_left",
-        "definition": "S88 links"
-    },
-    {
-        "term": "hsi88:s88_middle",
-        "definition": "S88 midden"
-    },
-    {
-        "term": "hsi88:s88_right",
-        "definition": "S88 rechts"
-    },
-    {
         "term": "identification:opc_multi_sense_direction",
         "definition": "OPC_MULTI_SENSE richting"
     },
@@ -826,6 +918,38 @@
     {
         "term": "input:on_delay",
         "definition": "Aan vertraging"
+    },
+    {
+        "term": "input_channel:long_event",
+        "definition": "Lang event"
+    },
+    {
+        "term": "input_channel:s88_left",
+        "definition": "S88 links"
+    },
+    {
+        "term": "input_channel:s88_middle",
+        "definition": "S88 midden"
+    },
+    {
+        "term": "input_channel:s88_right",
+        "definition": "S88 rechts"
+    },
+    {
+        "term": "input_channel:short_event",
+        "definition": "Kort event"
+    },
+    {
+        "term": "input_condition:dont_care",
+        "definition": "Maakt niet uit"
+    },
+    {
+        "term": "input_condition:off",
+        "definition": "Uit"
+    },
+    {
+        "term": "input_condition:on",
+        "definition": "Aan"
     },
     {
         "term": "input_list:bus",
@@ -846,6 +970,14 @@
     {
         "term": "input_map_item.block:type",
         "definition": "Type"
+    },
+    {
+        "term": "interface.cbus:cbus_node_list",
+        "definition": "Nodes"
+    },
+    {
+        "term": "interface.cbus:cbus_session_list",
+        "definition": "Sessies"
     },
     {
         "term": "interface.ecos:ecos_detector",
@@ -942,6 +1074,10 @@
     {
         "term": "ip:port",
         "definition": "Poort"
+    },
+    {
+        "term": "language:da-dk",
+        "definition": "Deens"
     },
     {
         "term": "language:de-de",
@@ -1580,6 +1716,18 @@
         "definition": "Uitlezen van de belasting van booster '%1' mislukt: %2"
     },
     {
+        "term": "message:E2028",
+        "definition": "Socket setsockopt mislukt (%1)"
+    },
+    {
+        "term": "message:E2029",
+        "definition": "TCP-acceptatiefout (%1)"
+    },
+    {
+        "term": "message:E2030",
+        "definition": "TCP-socket luisteren mislukt (%1)"
+    },
+    {
         "term": "message:E3001",
         "definition": "Kan spoorvoertuig niet verwijderen in actieve trein"
     },
@@ -1618,6 +1766,10 @@
     {
         "term": "message:E3010",
         "definition": "De wereld werd noodgedwongen uitgeschakeld gestopt omdat van sein %1 het beeld extern gewijzigd is"
+    },
+    {
+        "term": "message:E3011",
+        "definition": "Terugmeld conflict: meerdere opties zijn geldig"
     },
     {
         "term": "message:E9001",
@@ -1698,6 +1850,10 @@
     {
         "term": "message:I2006",
         "definition": "Softwareversie booster '%1': %2"
+    },
+    {
+        "term": "message:I2007",
+        "definition": "Nieuwe hub connectie (%1:%2)"
     },
     {
         "term": "message:I3001",
@@ -1854,6 +2010,10 @@
     {
         "term": "message:N2007",
         "definition": "Alleen luisteren modus: gedeactiveerd"
+    },
+    {
+        "term": "message:N2008",
+        "definition": "Hub luistert op %1:%2"
     },
     {
         "term": "message:N3001",
@@ -2028,8 +2188,16 @@
         "definition": "ECoS object"
     },
     {
+        "term": "output_channel:long_event",
+        "definition": "Lang event"
+    },
+    {
         "term": "output_channel:output",
         "definition": "Uitgang"
+    },
+    {
+        "term": "output_channel:short_event",
+        "definition": "Kort event"
     },
     {
         "term": "output_channel:turnout",
@@ -2060,6 +2228,10 @@
         "definition": "Adres toevoegen"
     },
     {
+        "term": "output_map:add_event",
+        "definition": "Event toevoegen"
+    },
+    {
         "term": "output_map:address_x",
         "definition": "Adres %1"
     },
@@ -2070,6 +2242,10 @@
     {
         "term": "output_map:remove_address",
         "definition": "Adres verwijderen"
+    },
+    {
+        "term": "output_map:remove_event",
+        "definition": "Event verwijderen"
     },
     {
         "term": "output_map:swap_outputs",
@@ -2156,6 +2332,30 @@
         "definition": "Gebruikersnaam"
     },
     {
+        "term": "qtapp.diagnostic_report_dialog:create_report",
+        "definition": "Maak rapport"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:explanation",
+        "definition": "Hiermee wordt een diagnostisch rapport gegenereerd om problemen met Traintastic op te lossen.\n\nHet rapport bevat:\n\u2022 Basisgegevens van de client en server (app-versie en besturingssysteem)\n\u2022 Een schermafbeelding van het clienttoepassingsvenster\n\u2022 Het serverlogboek\n\u2022 Een export van uw wereld\n\nAlle gegevens worden opgeslagen in een zipbestand op uw computer. U kunt de inhoud bekijken voordat u het met anderen deelt (bijvoorbeeld op het Traintastic-forum).\n\nEr worden geen gegevens automatisch verzonden."
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:save_diagnostic_report",
+        "definition": "Diagnostisch rapport opslaan"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:window_title",
+        "definition": "Maak diagnostisch rapport"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:zip_file",
+        "definition": "Zip bestand"
+    },
+    {
+        "term": "qtapp.dialog:cancel",
+        "definition": "Annuleren"
+    },
+    {
         "term": "qtapp.error:cant_read_from_file_x",
         "definition": "Kan niet lezen van bestand: %1"
     },
@@ -2190,6 +2390,10 @@
     {
         "term": "qtapp.mainmenu:connection",
         "definition": "Verbinding"
+    },
+    {
+        "term": "qtapp.mainmenu:diagnostic_report",
+        "definition": "Diagnostisch rapport"
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
@@ -2708,8 +2912,16 @@
         "definition": "Stelen"
     },
     {
+        "term": "throttle.stop",
+        "definition": "Stop"
+    },
+    {
         "term": "throttle_object_list:throttle",
         "definition": "Regelaar"
+    },
+    {
+        "term": "train:acceleration_rate",
+        "definition": "Versnellingssnelheid"
     },
     {
         "term": "train:active",
@@ -2718,6 +2930,10 @@
     {
         "term": "train:block",
         "definition": "Blok"
+    },
+    {
+        "term": "train:braking_rate",
+        "definition": "Remsnelheid"
     },
     {
         "term": "train:length",
@@ -3214,6 +3430,10 @@
     {
         "term": "world:ext_output_change_action",
         "definition": "Actie voor externe outputwijziging"
+    },
+    {
+        "term": "world:feature_scripting",
+        "definition": "Scripten"
     },
     {
         "term": "world:inputs",

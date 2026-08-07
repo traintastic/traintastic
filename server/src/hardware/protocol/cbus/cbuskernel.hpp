@@ -32,16 +32,13 @@
 #include <traintastic/enum/direction.hpp>
 #include "cbusconfig.hpp"
 #include "iohandler/cbusiohandler.hpp"
+#include "messages/cbusenginemessages.hpp"
 #include "messages/cbusnodeparametermessages.hpp"
 #include "../dcc/messages.hpp"
 
 namespace CBUS {
 
 class IOHub;
-struct SetEngineFunction;
-struct SetEngineFunctions;
-struct SetEngineSpeedDirection;
-struct ReleaseEngine;
 
 class Kernel : public ::KernelBase
 {
@@ -51,7 +48,7 @@ public:
   std::function<void()> onTrackOff;
   std::function<void()> onTrackOn;
   std::function<void()> onEmergencyStop;
-  std::function<void(uint8_t session, uint16_t address, bool isLongAddress)> onEngineSessionAcquire;
+  std::function<void(uint8_t session, bool external, uint16_t address, bool isLongAddress)> onEngineSessionAcquire;
   std::function<void(uint8_t session, uint8_t speed, bool forward)> onEngineSpeedDirectionChanged;
   std::function<void(uint8_t session, uint8_t number, bool on)> onEngineFunctionChanged;
   std::function<void(uint8_t session)> onEngineSessionReleased;
@@ -67,10 +64,10 @@ public:
    * @return The kernel instance
    */
   template<class IOHandlerType, class... Args>
-  static std::unique_ptr<Kernel> create(std::string logId_, const Config& config, uint8_t canId, Args... args)
+  static std::unique_ptr<Kernel> create(std::string logId_, const Config& config, Args... args)
   {
     static_assert(std::is_base_of_v<IOHandler, IOHandlerType>);
-    std::unique_ptr<Kernel> kernel{new Kernel(std::move(logId_), config, canId, isSimulation<IOHandlerType>())};
+    std::unique_ptr<Kernel> kernel{new Kernel(std::move(logId_), config, isSimulation<IOHandlerType>())};
     kernel->setIOHandler(std::make_unique<IOHandlerType>(*kernel, std::forward<Args>(args)...));
     return kernel;
   }
@@ -114,6 +111,7 @@ public:
   void trackOn();
   void requestEmergencyStop();
 
+  void queryEngine(uint8_t session);
   void setEngineSpeedDirection(uint16_t address, bool longAddress, uint8_t speedStep, uint8_t speedSteps, bool eStop, bool directionForward);
   void setEngineFunction(uint16_t address, bool longAddress, uint8_t number, bool value);
 
@@ -139,9 +137,16 @@ private:
     Started // must be last
   };
 
+  enum class Owner
+  {
+    Traintastic = 1,
+    CBUS = 2,
+  };
+
   struct Engine
   {
     std::optional<uint8_t> session;
+    Owner owner;
     uint8_t speed = 0;
     uint8_t speedSteps = 126;
     bool directionForward = true;
@@ -151,7 +156,6 @@ private:
 
   std::unique_ptr<IOHandler> m_ioHandler;
   std::shared_ptr<IOHub> m_hub;
-  const uint8_t m_canId;
   const bool m_simulation;
   State m_state = State::Initial;
   boost::asio::steady_timer m_initializationTimer;
@@ -169,11 +173,11 @@ private:
   bool m_engineKeepAliveTimerActive = false;
   boost::asio::steady_timer m_engineKeepAliveTimer;
   std::map<uint16_t, Engine> m_engines;
-  std::set<uint16_t> m_engineGLOCs;
+  std::map<uint16_t, Owner> m_engineGLOCs;
   std::queue<std::pair<std::chrono::steady_clock::time_point, DCC::SetSimpleAccessory>> m_dccAccessoryQueue;
   boost::asio::steady_timer m_dccAccessoryTimer;
 
-  Kernel(std::string logId_, const Config& config, uint8_t canId, bool simulation);
+  Kernel(std::string logId_, const Config& config, bool simulation);
 
   Kernel(const Kernel&) = delete;
   Kernel& operator =(const Kernel&) = delete;
@@ -187,6 +191,7 @@ private:
   void sendSetEngineFunction(uint8_t session, uint8_t number, bool value);
 
   void receive(const CAN::Message& canMessage);
+  void receiveGLOC(uint16_t address, bool longAddress, GetEngineSession::Mode mode);
   void receiveDFUN(const SetEngineFunctions& message);
   void receiveDFNOx(const SetEngineFunction& message);
   void receiveDSPD(const SetEngineSpeedDirection& message);

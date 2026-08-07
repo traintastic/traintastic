@@ -35,11 +35,12 @@ enum class OutputChannel : uint16_t
   DCCext = 5, //!< DCCext, see RCN-213
   Turnout = 6, //!< DCC-EX turnout
   ECoSObject = 7, //!< ECoS switch object
+  OC32 = 8, //!< VPEB OC32
   LongEvent = 9,
   ShortEvent = 10,
 };
 
-TRAINTASTIC_ENUM(OutputChannel, "output_channel", 9,
+TRAINTASTIC_ENUM(OutputChannel, "output_channel", 10,
 {
   {OutputChannel::Output, "output"},
   {OutputChannel::Accessory, "accessory"},
@@ -48,11 +49,12 @@ TRAINTASTIC_ENUM(OutputChannel, "output_channel", 9,
   {OutputChannel::DCCext, "dcc_ext"},
   {OutputChannel::Turnout, "turnout"},
   {OutputChannel::ECoSObject, "ecos_object"},
+  {OutputChannel::OC32, "oc32"},
   {OutputChannel::LongEvent, "long_event"},
   {OutputChannel::ShortEvent, "short_event"},
 });
 
-inline constexpr std::array<OutputChannel, 9> outputChannelValues{{
+inline constexpr std::array<OutputChannel, 10> outputChannelValues{{
   OutputChannel::Output,
   OutputChannel::Accessory,
   OutputChannel::AccessoryDCC,
@@ -60,6 +62,7 @@ inline constexpr std::array<OutputChannel, 9> outputChannelValues{{
   OutputChannel::DCCext,
   OutputChannel::Turnout,
   OutputChannel::ECoSObject,
+  OutputChannel::OC32,
   OutputChannel::LongEvent,
   OutputChannel::ShortEvent,
 }};
@@ -70,6 +73,13 @@ constexpr bool isAccessory(OutputChannel value)
     (value == OutputChannel::Accessory) ||
     (value == OutputChannel::AccessoryDCC) ||
     (value == OutputChannel::AccessoryMotorola);
+}
+
+constexpr bool isAspectChannel(OutputChannel value)
+{
+  return
+    (value == OutputChannel::DCCext) ||
+    (value == OutputChannel::OC32);
 }
 
 constexpr bool hasNode(OutputChannel value)

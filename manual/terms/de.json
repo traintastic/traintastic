@@ -1,0 +1,174 @@
+[
+  {
+    "term": "nav:advanced",
+    "definition": "Erweiterte Themen"
+  },
+  {
+    "term": "nav:advanced/interface",
+    "definition": "Schnittstellenkonfiguration"
+  },
+  {
+    "term": "nav:advanced/interface/index.md",
+    "definition": "Einführung"
+  },
+  {
+    "term": "nav:advanced/scripting-basics.md",
+    "definition": "Grundlagen des Skriptens"
+  },
+  {
+    "term": "nav:appendix",
+    "definition": "Anhang"
+  },
+  {
+    "term": "nav:appendix/cbus-vlcb.md",
+    "definition": "CBUS/VLCB-Referenz"
+  },
+  {
+    "term": "nav:appendix/command-line-options.md",
+    "definition": "Kommandozeilenoptionen"
+  },
+  {
+    "term": "nav:appendix/loconet.md",
+    "definition": "LocoNet-Referenz"
+  },
+  {
+    "term": "nav:appendix/lua.md",
+    "definition": "Lua-Skriptreferenz"
+  },
+  {
+    "term": "nav:appendix/supported-hardware",
+    "definition": "Unterstützte Hardware"
+  },
+  {
+    "term": "nav:appendix/supported-hardware/boosters/index.md",
+    "definition": "Übersicht"
+  },
+  {
+    "term": "nav:appendix/supported-hardware/command-stations/index.md",
+    "definition": "Digitalzentralen"
+  },
+  {
+    "term": "nav:appendix/supported-hardware/index.md",
+    "definition": "Übersicht"
+  },
+  {
+    "term": "nav:appendix/supported-hardware/product-index.md",
+    "definition": "Produktindex"
+  },
+  {
+    "term": "nav:appendix/traintastic-diy-protocol.md",
+    "definition": "Traintastic-DIY-Protokoll"
+  },
+  {
+    "term": "nav:appendix/xpressnet.md",
+    "definition": "XpressNet-Referenz"
+  },
+  {
+    "term": "nav:board",
+    "definition": "Board"
+  },
+  {
+    "term": "nav:boosters",
+    "definition": "Booster"
+  },
+  {
+    "term": "nav:getting_started",
+    "definition": "Erste Schritte"
+  },
+  {
+    "term": "nav:index.md",
+    "definition": "Willkommen"
+  },
+  {
+    "term": "nav:installation",
+    "definition": "Installation"
+  },
+  {
+    "term": "nav:quickstart",
+    "definition": "Schnellstart"
+  },
+  {
+    "term": "nav:quickstart/command-station.md",
+    "definition": "Mit der Digitalzentrale verbinden"
+  },
+  {
+    "term": "nav:quickstart/index.md",
+    "definition": "Einführung"
+  },
+  {
+    "term": "nav:quickstart/layout",
+    "definition": "Schemazeichnung erstellen"
+  },
+  {
+    "term": "nav:quickstart/layout/blocks-sensors.md",
+    "definition": "Blöcke und Sensoren"
+  },
+  {
+    "term": "nav:quickstart/layout/drawing-basics.md",
+    "definition": "Grundlagen des Zeichnens"
+  },
+  {
+    "term": "nav:quickstart/layout/index.md",
+    "definition": "Einführung"
+  },
+  {
+    "term": "nav:quickstart/layout/signals.md",
+    "definition": "Signale"
+  },
+  {
+    "term": "nav:quickstart/layout/turnouts.md",
+    "definition": "Weichensteuerung"
+  },
+  {
+    "term": "nav:quickstart/trains.md",
+    "definition": "Zug hinzufügen und steuern"
+  },
+  {
+    "term": "nav:quickstart/world.md",
+    "definition": "Erste Anlage erstellen"
+  },
+  {
+    "term": "nav:troubleshooting",
+    "definition": "Fehlerbehebung"
+  },
+  {
+    "term": "nav:troubleshooting/interface-connection-errors.md",
+    "definition": "Schnittstellen-Verbindungsfehler"
+  },
+  {
+    "term": "nav:user-guide",
+    "definition": "Benutzerhandbuch"
+  },
+  {
+    "term": "nav:user-guide/board/tile-reference.md",
+    "definition": "Kachelreferenz"
+  },
+  {
+    "term": "nav:user-guide/zones.md",
+    "definition": "Zonen"
+  },
+  {
+    "term": "nav:wip",
+    "definition": "Unkategorisiert/WIP"
+  },
+  {
+    "term": "nav:wip/decoder-function.md",
+    "definition": "Decoderfunktion"
+  },
+  {
+    "term": "nav:wip/input-monitor.md",
+    "definition": "Eingangsmonitor"
+  },
+  {
+    "term": "nav:wip/log-messages.md",
+    "definition": "Logmeldungen"
+  },
+  {
+    "term": "nav:wip/trains.md",
+    "definition": "Züge"
+  },
+  {
+    "term": "title",
+    "definition": "Traintastic-Handbuch"
+  }
+]

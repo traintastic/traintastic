@@ -62,6 +62,7 @@
 #include "../board/boardlist.hpp"
 #include "../board/list/blockrailtilelist.hpp"
 #include "../board/list/linkrailtilelist.hpp"
+#include "../board/list/turnoutlinkablerailtilelist.hpp"
 #include "../board/nx/nxmanager.hpp"
 #include "../board/pathfinder/trainpathfinder.hpp"
 #include "../board/tile/rail/nxbuttonrailtile.hpp"
@@ -80,8 +81,8 @@
 using nlohmann::json;
 
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Interface | DecoderListColumn::Protocol | DecoderListColumn::Address;
-constexpr auto inputListColumns = InputListColumn::Interface | InputListColumn::Channel | InputListColumn::Address;
-constexpr auto outputListColumns = OutputListColumn::Interface | OutputListColumn::Channel | OutputListColumn::Address;
+constexpr auto inputListColumns = InputListColumn::Interface | InputListColumn::Channel | InputListColumn::Node | InputListColumn::Address;
+constexpr auto outputListColumns = OutputListColumn::Interface | OutputListColumn::Channel | OutputListColumn::Node | OutputListColumn::Address;
 constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface /*| IdentificationListColumn::Channel*/ | IdentificationListColumn::Address;
 constexpr auto throttleListColumns = ThrottleListColumn::Name | ThrottleListColumn::Train | ThrottleListColumn::Interface;
 
@@ -125,6 +126,7 @@ void World::init(World& world)
   world.outputControllers.setValueInternal(std::make_shared<ControllerList<OutputController>>(world, world.outputControllers.name()));
   world.identificationControllers.setValueInternal(std::make_shared<ControllerList<IdentificationController>>(world, world.identificationControllers.name()));
   world.lncvProgrammingControllers.setValueInternal(std::make_shared<ControllerList<LNCVProgrammingController>>(world, world.lncvProgrammingControllers.name()));
+  world.trackDriverControllers.setValueInternal(std::make_shared<ControllerList<TrackDriverController>>(world, world.trackDriverControllers.name()));
   world.cbusInterfaces.setValueInternal(std::make_shared<ControllerList<CBUSInterface>>(world, world.cbusInterfaces.name()));
   world.loconetInterfaces.setValueInternal(std::make_shared<ControllerList<LocoNetInterface>>(world, world.loconetInterfaces.name()));
 
@@ -144,6 +146,7 @@ void World::init(World& world)
 
   world.blockRailTiles.setValueInternal(std::make_shared<BlockRailTileList>(world, world.blockRailTiles.name()));
   world.linkRailTiles.setValueInternal(std::make_shared<LinkRailTileList>(world, world.linkRailTiles.name()));
+  world.turnoutLinkableRailTiles.setValueInternal(std::make_shared<TurnoutLinkableRailTileList>(world, world.turnoutLinkableRailTiles.name()));
   world.nxManager.setValueInternal(std::make_shared<NXManager>(world, world.nxManager.name()));
   world.trainPathFinder.setValueInternal(std::make_shared<TrainPathFinder>(world, world.trainPathFinder.name()));
 
@@ -188,6 +191,7 @@ World::World(Private /*unused*/) :
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   identificationControllers{this, "identification_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   lncvProgrammingControllers{this, "lncv_programming_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  trackDriverControllers{this, "track_driver_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   cbusInterfaces{this, "cbus_interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   loconetInterfaces{this, "loconet_interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   interfaces{this, "interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -205,6 +209,7 @@ World::World(Private /*unused*/) :
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   blockRailTiles{this, "block_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   linkRailTiles{this, "link_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  turnoutLinkableRailTiles{this, "turnout_linkable_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   nxManager{this, "nx_manager", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   trainPathFinder{this, "train_path_finder", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   statuses(*this, "statuses", {}, PropertyFlags::ReadOnly | PropertyFlags::Store),
@@ -284,54 +289,10 @@ World::World(Private /*unused*/) :
   save{*this, "save", MethodFlags::NoScript,
     [this]()
     {
-      try
+      backupAndSave(false);
+      if(Traintastic::instance)
       {
-        // backup world:
-        const std::filesystem::path worldDir = Traintastic::instance->worldDir();
-        const std::filesystem::path worldBackupDir = Traintastic::instance->worldBackupDir();
-
-        if(!std::filesystem::is_directory(worldBackupDir))
-        {
-          std::error_code ec;
-          std::filesystem::create_directories(worldBackupDir, ec);
-          if(ec)
-            Log::log(*this, LogMessage::C1007_CREATING_WORLD_BACKUP_DIRECTORY_FAILED_X, ec);
-        }
-
-        if(std::filesystem::is_directory(worldDir / uuid.value()))
-        {
-          std::error_code ec;
-          std::filesystem::rename(worldDir / uuid.value(), worldBackupDir / uuid.value() += dateTimeStr(), ec);
-          if(ec)
-            Log::log(*this, LogMessage::C1006_CREATING_WORLD_BACKUP_FAILED_X, ec);
-        }
-
-        if(std::filesystem::is_regular_file(worldDir / uuid.value() += dotCTW))
-        {
-          std::error_code ec;
-          std::filesystem::rename(worldDir / uuid.value() += dotCTW, worldBackupDir / uuid.value() += dateTimeStr() += dotCTW, ec);
-          if(ec)
-            Log::log(*this, LogMessage::C1006_CREATING_WORLD_BACKUP_FAILED_X, ec);
-        }
-
-        // save world:
-        std::filesystem::path savePath = worldDir / uuid.value();
-        if(!Traintastic::instance->settings->saveWorldUncompressed)
-          savePath += dotCTW;
-
-        WorldSaver saver(*this, savePath);
-
-        if(Traintastic::instance)
-        {
-          Traintastic::instance->settings->lastWorld = uuid.value();
-          Traintastic::instance->worldList->update(*this, savePath);
-        }
-
-        Log::log(*this, LogMessage::N1022_SAVED_WORLD_X, name.value());
-      }
-      catch(const std::exception& e)
-      {
-        Log::log(*this, LogMessage::C1005_SAVING_WORLD_FAILED_X, e);
+        Traintastic::instance->restartAutoSaveTimer();
       }
     }}
   , getObject_{*this, "get_object", MethodFlags::Internal | MethodFlags::ScriptCallable,
@@ -400,6 +361,8 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(identificationControllers);
   Attributes::addObjectEditor(lncvProgrammingControllers, false);
   m_interfaceItems.add(lncvProgrammingControllers);
+  Attributes::addObjectEditor(trackDriverControllers, false);
+  m_interfaceItems.add(trackDriverControllers);
   Attributes::addObjectEditor(cbusInterfaces, false);
   m_interfaceItems.add(cbusInterfaces);
   Attributes::addObjectEditor(loconetInterfaces, false);
@@ -440,6 +403,10 @@ World::World(Private /*unused*/) :
 
   Attributes::addObjectEditor(linkRailTiles, false);
   m_interfaceItems.add(linkRailTiles);
+
+  Attributes::addObjectEditor(turnoutLinkableRailTiles, false);
+  m_interfaceItems.add(turnoutLinkableRailTiles);
+
   Attributes::addObjectEditor(nxManager, false);
   m_interfaceItems.add(nxManager);
   Attributes::addObjectEditor(trainPathFinder, false);
@@ -568,11 +535,20 @@ ObjectPtr World::getObjectByPath(std::string_view path) const
   return obj;
 }
 
+void World::autoSave()
+{
+  backupAndSave(true);
+}
+
 void World::export_(std::vector<std::byte>& data)
 {
   try
   {
-    WorldSaver saver(*this, data);
+    WorldSaver saver(*this, data,
+      WorldSaver::Options{
+        .isAutoSave = false,
+        .isExport = true,
+      });
     Log::log(*this, LogMessage::N1025_EXPORTED_WORLD_SUCCESSFULLY);
     //return true;
   }
@@ -702,6 +678,63 @@ void World::setFeature(WorldFeature feature, bool value)
     {
       it.second.lock()->worldFeaturesChanged(m_features, feature);
     }
+  }
+}
+
+void World::backupAndSave(bool isAutoSave)
+{
+  try
+  {
+    // backup world:
+    const std::filesystem::path worldDir = Traintastic::instance->worldDir();
+    const std::filesystem::path worldBackupDir = Traintastic::instance->worldBackupDir();
+
+    if(!std::filesystem::is_directory(worldBackupDir))
+    {
+      std::error_code ec;
+      std::filesystem::create_directories(worldBackupDir, ec);
+      if(ec)
+        Log::log(*this, LogMessage::C1007_CREATING_WORLD_BACKUP_DIRECTORY_FAILED_X, ec);
+    }
+
+    if(std::filesystem::is_directory(worldDir / uuid.value()))
+    {
+      std::error_code ec;
+      std::filesystem::rename(worldDir / uuid.value(), worldBackupDir / uuid.value() += dateTimeStr(), ec);
+      if(ec)
+        Log::log(*this, LogMessage::C1006_CREATING_WORLD_BACKUP_FAILED_X, ec);
+    }
+
+    if(std::filesystem::is_regular_file(worldDir / uuid.value() += dotCTW))
+    {
+      std::error_code ec;
+      std::filesystem::rename(worldDir / uuid.value() += dotCTW, worldBackupDir / uuid.value() += dateTimeStr() += dotCTW, ec);
+      if(ec)
+        Log::log(*this, LogMessage::C1006_CREATING_WORLD_BACKUP_FAILED_X, ec);
+    }
+
+    // save world:
+    std::filesystem::path savePath = worldDir / uuid.value();
+    if(!Traintastic::instance->settings->saveWorldUncompressed)
+      savePath += dotCTW;
+
+    WorldSaver saver(*this, savePath,
+      WorldSaver::Options{
+        .isAutoSave = isAutoSave,
+        .isExport = false,
+      });
+
+    if(Traintastic::instance)
+    {
+      Traintastic::instance->settings->lastWorld = uuid.value();
+      Traintastic::instance->worldList->update(*this, savePath);
+    }
+
+    Log::log(*this, isAutoSave ? LogMessage::I1010_AUTO_SAVED_WORLD_X : LogMessage::N1022_SAVED_WORLD_X, name.value());
+  }
+  catch(const std::exception& e)
+  {
+    Log::log(*this, LogMessage::C1005_SAVING_WORLD_FAILED_X, e);
   }
 }
 

@@ -1,7 +1,6 @@
 /**
- * shared/src/enum/logmessage.hpp
- *
- * This file is part of the traintastic source code.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) 2021-2026 Reinder Feenstra
  *
@@ -71,6 +70,7 @@ enum class LogMessage : uint32_t
   D2008_OUTPUT_X_IS_X = LogMessageOffset::debug + 2008,
   D2009_SLOT_X_IS_X = LogMessageOffset::debug + 2009,
   D2010_SLOT_X_IS_FREE = LogMessageOffset::debug + 2010,
+  D2011_TRAIN_X_BLOCKS_X = LogMessageOffset::debug + 2011,
   D3001_ACQUIRING_TRAIN_X_FAILED_X = LogMessageOffset::debug + 3001,
   D3010_TRAIN_X_ASSIGNED_TO_BLOCK_X = LogMessageOffset::debug + 3010,
   D3011_TRAIN_X_RESERVED_BLOCK_X = LogMessageOffset::debug + 3011,
@@ -95,6 +95,7 @@ enum class LogMessage : uint32_t
   I1007_X = LogMessageOffset::info + 1007, //!< nlohmann::json version
   I1008_X = LogMessageOffset::info + 1008, //!< LibArchive version
   I1009_ZLIB_X = LogMessageOffset::info + 1009, //!< zlib version
+  I1010_AUTO_SAVED_WORLD_X = LogMessageOffset::info + 1010,
   I2001_UNKNOWN_LOCO_ADDRESS_X = LogMessageOffset::info + 2001,
   I2002_HARDWARE_TYPE_X = LogMessageOffset::info + 2002,
   I2003_FIRMWARE_VERSION_X = LogMessageOffset::info + 2003,
@@ -102,6 +103,8 @@ enum class LogMessage : uint32_t
   I2005_X = LogMessageOffset::info + 2005,
   I2006_BOOSTER_X_SOFTWARE_VERSION_X = LogMessageOffset::info + 2006,
   I2007_NEW_HUB_CONNECTION_X_X = LogMessageOffset::info + 2007,
+  I2008_DINAMO_PROTOCOL_VERSION_X = LogMessageOffset::info + 2008,
+  I2009_DINAMO_SYSTEM_X_VX = LogMessageOffset::info + 2009,
   I3001_THROTTLE_X_ACQUIRED_TRAIN_X = LogMessageOffset::info + 3001,
   I3002_THROTTLE_X_RELEASED_TRAIN_X = LogMessageOffset::info + 3002,
   I9001_STOPPED_SCRIPT = LogMessageOffset::info + 9001,
@@ -173,6 +176,7 @@ enum class LogMessage : uint32_t
   // RESERVED: W2025_READING_BOOSTER_X_SOFTWARE_VERSION_FAILED_X = LogMessageOffset::warning + 2025,
   W2026_READING_BOOSTER_X_TEMPERATURE_FAILED_X = LogMessageOffset::warning + 2026,
   W2027_READING_BOOSTER_X_LOAD_FAILED_X = LogMessageOffset::warning + 2027,
+  W2028_NO_RESPONSE_WITHIN_X_MS_RESENDING_LAST_MESSAGE= LogMessageOffset::warning + 2028,
   W3001_NX_BUTTON_CONNECTED_TO_TWO_BLOCKS = LogMessageOffset::warning + 3001,
   W3002_NX_BUTTON_NOT_CONNECTED_TO_ANY_BLOCK = LogMessageOffset::warning + 3002,
   W3003_LOCKED_TURNOUT_CHANGED = LogMessageOffset::warning + 3003,
@@ -220,6 +224,10 @@ enum class LogMessage : uint32_t
   E2028_SOCKET_SETSOCKOPT_FAILED_X = LogMessageOffset::error + 2028,
   E2029_TCP_ACCEPT_ERROR_X = LogMessageOffset::error + 2029,
   E2030_TCP_SOCKET_LISTEN_FAILED_X = LogMessageOffset::error + 2030,
+  E2031_DINAMO_PROTOCOL_VERSION_X_NOT_SUPPORTED = LogMessageOffset::error + 2031,
+  E2032_DINAMO_PROTOCOL_X_VX_NOT_SUPPORTED = LogMessageOffset::error + 2032,
+  E2033_COMMUNICATION_LOST_NO_RESPONSE_WITHIN_X_MS = LogMessageOffset::error + 2033,
+  E2034_DINAMO_IN_FAULT_STATE = LogMessageOffset::error + 2034,
   E3001_CANT_DELETE_RAIL_VEHICLE_WHEN_IN_ACTIVE_TRAIN = LogMessageOffset::error + 3001,
   E3002_CANT_DELETE_ACTIVE_TRAIN = LogMessageOffset::error + 3002,
   E3003_TRAIN_STOPPED_ON_TURNOUT_X_CHANGED = LogMessageOffset::error + 3003,
@@ -232,6 +240,7 @@ enum class LogMessage : uint32_t
   E3010_WORLD_POWER_OFF_ON_SIGNAL_X_CHANGED = LogMessageOffset::error + 3010,
   E3011_FEEDBACK_CONFLICT_MULTIPLE_OPTIONS_ARE_VALID = LogMessageOffset::error + 3011,
   E9001_X_DURING_EXECUTION_OF_X_EVENT_HANDLER = LogMessageOffset::error + 9001,
+  E9002_X_DURING_EXECUTION_OF_X_ON_CHANGED_HANDLER = LogMessageOffset::error + 9002,
   E9999_X = LogMessageOffset::error + 9999,
 
   // Critical:

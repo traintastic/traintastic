@@ -163,6 +163,7 @@ int Interface::get_output(lua_State* L)
     case AccessoryMotorola:
     case DCCext:
     case Turnout:
+    case OC32:
     case ShortEvent:
       checkArguments(L, 2);
       location = OutputAddress(check<uint32_t>(L, 2));

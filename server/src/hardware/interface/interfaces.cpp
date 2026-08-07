@@ -24,12 +24,13 @@
 #include "../../world/world.hpp"
 #include "../../utils/makearray.hpp"
 
-#include "cbusinterface.hpp"
-#include "dccexinterface.hpp"
-#include "ecosinterface.hpp"
+#include "cbus/cbusinterface.hpp"
+#include "dccex/dccexinterface.hpp"
+#include "dinamo/dinamointerface.hpp"
+#include "ecos/ecosinterface.hpp"
 #include "hsi88.hpp"
 #include "loconetinterface.hpp"
-#include "marklincaninterface.hpp"
+#include "marklincan/marklincaninterface.hpp"
 #include "traintasticdiyinterface.hpp"
 #include "withrottleinterface.hpp"
 #include "wlanmausinterface.hpp"
@@ -41,6 +42,7 @@ std::span<const std::string_view> Interfaces::classList()
   static constexpr auto classes = makeArray(
     CBUSInterface::classId,
     DCCEXInterface::classId,
+    DinamoInterface::classId,
     ECoSInterface::classId,
     HSI88Interface::classId,
     LocoNetInterface::classId,
@@ -58,6 +60,7 @@ std::shared_ptr<Interface> Interfaces::create(World& world, std::string_view cla
 {
   IF_CLASSID_CREATE(CBUSInterface)
   IF_CLASSID_CREATE(DCCEXInterface)
+  IF_CLASSID_CREATE(DinamoInterface)
   IF_CLASSID_CREATE(ECoSInterface)
   IF_CLASSID_CREATE(HSI88Interface)
   IF_CLASSID_CREATE(LocoNetInterface)

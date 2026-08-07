@@ -32,6 +32,7 @@ namespace Lua {
 class Script : public IdObject
 {
   friend class Sandbox;
+  friend struct ScriptTestAccess;
 
   private:
     mutable std::string m_basename; //!< filename on disk for script

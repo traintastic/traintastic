@@ -1,0 +1,42 @@
+# CBUS/VLCB CAN Schnittstellenkonfiguration
+
+Diese Seite beschreibt die Konfiguration der CBUS/VLCB Schnittstelle
+
+## Unterstützte Verbindungsarten
+
+Der CBUS/VLCB kann auf zwei Arten mit Traintastic verbunden werden:
+
+- **Netzwerk (TCP/IP)** – Verbindung über Ethernet oder WLAN mit dem CANETHER Modul 
+- **USB** – Direkte Kabelverbindung mit dem CANUSB4 Modul
+
+## Verbindungseinstellungen
+
+Je nach Verbindungsart stehen folgende Optionen zur Verfügung:
+
+### Netzwerkverbindungen
+- **Typ** - CANEther
+- **Hostname** – IP-Adresse oder Hostname der Zentrale
+- **Port** – TCP-Portnummer (standardmäßig abhängig vom Zentraltentyp)
+
+### USB Verbindung
+- **Typ** – CANUSB
+- **Gerät** – Pfad zum seriellen Gerät (z. B. `COM3` unter Windows oder `/dev/ttyACM0` unter Linux)
+
+## CBUS/VLCB Einstellungen
+
+Zusätzliche Optionen zur Feinabstimmung:
+
+- **Lok aktiv halten** – Standarddauer (s) für Lok aktiv halten
+- **DCC Zubehör Schaltzeit** - Standardwert 200ms
+- **Node Nummer für kurze Ereignisse** - Standardwert 0
+- **Hub aktiviert** - Netzwerkhub für andere Programme mit Zugriff auf CBUS Device (JMRI, MMC)
+- **Hub nur für localhost** - Hub nur für den Rechner mit Traintastic
+- **Hub Port** - Netzwerk Port Standardwert 5550
+- **Gesamte Kommunikation protokollieren** - Ein- und Ausschalten
+
+Traintastic registriert sich im CBUS/VLCB als eigener Knoten. 
+
+!!! tip "Hilfe bei Problemen"
+    Bei Problemen mit der Konfiguration oder unerwartetem Verhalten hilft ein Blick ins [Community-Forum](https://discourse.traintastic.org).  
+    Das Teilen von Konfigurationen und Erfahrungen hilft auch anderen und verbessert Traintastic.
+

@@ -26,6 +26,7 @@
 #include "../network/objectptr.hpp"
 
 class QTableWidget;
+class QPushButton;
 class Method;
 class MethodAction;
 class MethodIcon;
@@ -44,17 +45,21 @@ class IOMapWidget : public QWidget
     ObjectPtr m_object;
     ObjectPtr m_parentObject;
     const bool m_hasUseColumn;
-    const int m_columnCountNonOutput;
     AbstractVectorProperty* m_addresses;
     Property* m_ecosObject;
     ObjectVectorProperty* m_items;
+    Method* m_test = nullptr;
     QTableWidget* m_table;
     MethodIcon* m_swapOutputs = nullptr;
+    std::vector<QPushButton*> m_testButtons;
     std::vector<ObjectPtr> m_itemObjects;
     std::vector<std::vector<ObjectPtr>> m_actions;
     int m_getParentRequestId;
     int m_getItemsRequestId;
     int m_dummy;
+    const int m_columnCountNonOutput;
+
+    void testClicked(size_t index);
 
     void updateSubItems(ObjectVectorProperty& property, int row);
     void updateItems(const std::vector<ObjectPtr>& items);

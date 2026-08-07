@@ -41,6 +41,7 @@ namespace Category
   constexpr std::string_view network = "category:network";
   constexpr std::string_view options = "category:options";
   constexpr std::string_view status = "category:status";
+  constexpr std::string_view trackDriver = "category:track_driver";
   constexpr std::string_view trains = "category:trains";
   constexpr std::string_view zones = "category:zones";
 }

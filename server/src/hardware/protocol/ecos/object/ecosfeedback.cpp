@@ -1,0 +1,130 @@
+/**
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
+ *
+ * Copyright (C) 2021-2026 Reinder Feenstra
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+#include "ecosfeedback.hpp"
+#include <cassert>
+#include "../ecoskernel.hpp"
+#include "../ecosmessages.hpp"
+#include "../../../../utils/fromchars.hpp"
+#include "../../../../utils/startswith.hpp"
+
+namespace ECoS {
+
+const std::initializer_list<std::string_view> Feedback::options = {Option::ports};
+
+Feedback::Feedback(Kernel& kernel, uint16_t id)
+  : Object(kernel, id)
+{
+  requestView();
+  send(get(m_id, {Option::state}));
+  if(isECoSDetectorId(m_id))
+  {
+    send(get(m_id, {Option::railcom}));
+  }
+}
+
+Feedback::Feedback(Kernel& kernel, const Line& data)
+  : Feedback(kernel, data.objectId)
+{
+  const auto values = data.values;
+  if(auto ports = values.find(Option::ports); ports != values.end())
+  {
+    size_t n;
+    if(fromChars(ports->second, n).ec == std::errc())
+    {
+      m_state.resize(n, TriState::Undefined);
+      if(isECoSDetectorId(m_id))
+      {
+        m_railcom.resize(n, 0);
+      }
+    }
+  }
+}
+
+void Feedback::update(std::string_view option, std::string_view value)
+{
+  if(option == Option::state)
+  {
+    uint32_t n;
+    if(startsWith(value, "0x") && fromChars(value.substr(2), n, 16).ec == std::errc())
+    {
+      for(size_t i = 0; i < m_state.size(); i++)
+      {
+        const auto v = toTriState(n & (1 << i));
+        if(m_state[i] != v)
+        {
+          m_state[i] = v;
+          m_kernel.feedbackStateChanged(*this, i, v);
+        }
+      }
+    }
+  }
+  else if(option == Option::railcom)
+  {
+    m_hasRailCom = true;
+
+    // format: [<port>,<address>,<direction>]
+    uint8_t port;
+    auto r = fromChars(value, port);
+    if(r.ec != std::errc() || *r.ptr != ',')
+    {
+      return;
+    }
+    value.remove_prefix(1 + r.ptr - value.data());
+
+    uint16_t locoAddress;
+    r = fromChars(value, locoAddress);
+    if(r.ec != std::errc() || *r.ptr != ',')
+    {
+      return;
+    }
+    value.remove_prefix(1 + r.ptr - value.data());
+
+    uint8_t direction;
+    r = fromChars(value, direction);
+    if(r.ec != std::errc())
+    {
+      return;
+    }
+
+    if(port < m_railcom.size()) [[likely]]
+    {
+      const bool present = (locoAddress != 0);
+
+      if(present)
+      {
+        m_railcom[port] = locoAddress;
+      }
+      else // absent
+      {
+        locoAddress = m_railcom[port];
+        m_railcom[port] = 0;
+      }
+
+      if(locoAddress != 0)
+      {
+        m_kernel.feedbackRailComEvent(*this, port, locoAddress, present, (direction == 0) ? Direction::Forward : Direction::Reverse);
+      }
+    }
+  }
+}
+
+}

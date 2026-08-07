@@ -23,7 +23,7 @@
 #define TRAINTASTIC_SERVER_LUA_OBJECT_CBUSINTERFACE_HPP
 
 #include <lua.hpp>
-#include "../../hardware/interface/cbusinterface.hpp"
+#include "../../hardware/interface/cbus/cbusinterface.hpp"
 
 namespace Lua::Object {
 

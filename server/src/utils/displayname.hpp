@@ -59,6 +59,7 @@ namespace DisplayName
     constexpr std::string_view inputMonitor = "hardware:input_monitor";
     constexpr std::string_view inputs = "hardware:inputs";
     constexpr std::string_view interface = "hardware:interface";
+    constexpr std::string_view invertPolarity = "hardware:invert_polarity";
     constexpr std::string_view loconet = "hardware:loconet";
     constexpr std::string_view marklinCAN = "hardware:marklin_can";
     constexpr std::string_view node = "hardware:node";
@@ -66,6 +67,7 @@ namespace DisplayName
     constexpr std::string_view outputs = "hardware:outputs";
     constexpr std::string_view speedSteps = "hardware:speed_steps";
     constexpr std::string_view throttles = "hardware:throttles";
+    constexpr std::string_view trackDriver = "hardware:track_driver";
     constexpr std::string_view xpressnet = "hardware:xpressnet";
     constexpr std::string_view z21 = "hardware:z21";
   }

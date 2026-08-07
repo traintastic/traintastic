@@ -36,7 +36,7 @@ package/Apps/*
 *.pro*.user*
 *.hpp~*
 *.cpp~*
-
+*.backup
 .directory
 .build*
 build*

@@ -1,9 +1,8 @@
 /**
- * server/src/lua/eventhandler.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,20 +29,36 @@ namespace Lua {
 
 class EventHandler final : public AbstractEventHandler
 {
-  private:
-    lua_State* m_L;
-    int m_function;
-    int m_userData;
+public:
+  static constexpr char const* metaTableName = "event_handler";
 
-    void release();
+  static EventHandler& check(lua_State* L, int index);
+  static EventHandler* test(lua_State* L, int index);
 
-  public:
-    EventHandler(AbstractEvent& evt, lua_State* L, int functionIndex = 1);
-    ~EventHandler() final;
+  static void push(lua_State* L, EventHandler& value);
 
-    void execute(const Arguments& args) final;
+  static void registerType(lua_State* L);
 
-    bool disconnect() final;
+  EventHandler(AbstractEvent& evt, lua_State* L, int functionIndex = 1);
+  ~EventHandler() final;
+
+  void execute(const Arguments& args) final;
+
+  bool disconnect() final;
+
+private:
+  static int __gc(lua_State* L);
+  static int __index(lua_State* L);
+  static int disconnect(lua_State* L);
+  static int pause(lua_State* L);
+  static int resume(lua_State* L);
+
+  lua_State* m_L;
+  int m_function;
+  int m_userData;
+  bool m_paused = false;
+
+  void release();
 };
 
 }

@@ -1,7 +1,6 @@
 /**
- * server/src/hardware/interface/marklincan/marklincanlocomotivelist.cpp
- *
- * This file is part of the traintastic source code.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) 2023-2025 Reinder Feenstra
  *
@@ -22,7 +21,7 @@
 
 #include "marklincanlocomotivelist.hpp"
 #include "marklincanlocomotivelisttablemodel.hpp"
-#include "../marklincaninterface.hpp"
+#include "marklincaninterface.hpp"
 #include "../../decoder/list/decoderlist.hpp"
 #include "../../input/list/inputlist.hpp"
 #include "../../output/list/outputlist.hpp"

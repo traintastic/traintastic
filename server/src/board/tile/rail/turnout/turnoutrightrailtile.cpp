@@ -26,7 +26,7 @@
 
 static const std::array<TurnoutPosition, 3> positionValues = {TurnoutPosition::Unknown, TurnoutPosition::Straight, TurnoutPosition::Right};
 
-static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
+static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputChannel outputChannel, OutputType outputType, size_t outputIndex)
 {
   if(outputIndex == 0)
   {
@@ -44,14 +44,33 @@ static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition tu
         break;
 
       case OutputType::Aspect:
-        // YaMoRC YD8116 defaults aspects:
-        if(turnoutPosition == TurnoutPosition::Straight)
+        switch(outputChannel)
         {
-          return static_cast<int16_t>(0);
-        }
-        else if(turnoutPosition == TurnoutPosition::Right)
-        {
-          return static_cast<int16_t>(16);
+          case OutputChannel::DCCext:
+            // YaMoRC YD8116 defaults:
+            if(turnoutPosition == TurnoutPosition::Straight)
+            {
+              return static_cast<int16_t>(0);
+            }
+            else if(turnoutPosition == TurnoutPosition::Right)
+            {
+              return static_cast<int16_t>(16);
+            }
+            break;
+
+          case OutputChannel::OC32:
+            if(turnoutPosition == TurnoutPosition::Straight)
+            {
+              return static_cast<int16_t>(0);
+            }
+            else if(turnoutPosition == TurnoutPosition::Right)
+            {
+              return static_cast<int16_t>(1);
+            }
+            break;
+
+          default: [[unlikely]]
+            break;
         }
         break;
 
@@ -63,7 +82,7 @@ static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition tu
 }
 
 TurnoutRightRailTile::TurnoutRightRailTile(World& world, std::string_view _id, TileId tileId_)
-  : TurnoutRailTile(world, _id, tileId_, 3)
+  : TurnoutLinkableRailTile(world, _id, tileId_)
 {
   // Skip Unknown position
   std::span<const TurnoutPosition, 2> setPositionValues = std::span(positionValues).subspan<1>();
@@ -79,6 +98,9 @@ TurnoutRightRailTile::TurnoutRightRailTile(World& world, std::string_view _id, T
 
   Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);
+
+  Attributes::addValues(reservedPosition, positionValues);
+  m_interfaceItems.add(reservedPosition);
 
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);
