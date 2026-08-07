@@ -1,1 +1,10 @@
-{}
+{
+  "send": {
+    "parameters": [
+      {
+        "name": "packet"
+      }
+    ],
+    "return_values": 1
+  }
+}

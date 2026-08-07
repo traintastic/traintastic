@@ -27,8 +27,7 @@
 #include <cstring>
 #include <string>
 #include <traintastic/enum/direction.hpp>
-#include "utils.hpp"
-#include "../../../utils/packed.hpp"
+#include "../xpressnet/utils.hpp"
 #include "../../../utils/endian.hpp"
 #include "../../../utils/byte.hpp"
 
@@ -239,11 +238,6 @@ constexpr std::string_view toString(HardwareType value)
   return {};
 }
 
-enum class CommandStationId : uint8_t
-{
-  Z21 = 0x12,
-};
-
 #define Z21_CENTRALSTATE_EMERGENCYSTOP 0x01 //!< The emergency stop is switched on
 #define Z21_CENTRALSTATE_TRACKVOLTAGEOFF 0x02 //!< The track voltage is switched off
 #define Z21_CENTRALSTATE_SHORTCIRCUIT 0x04 //!< Short circuit
@@ -300,6 +294,35 @@ struct LanX : Message
 
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanX) == 5);
+
+struct LanXLocoBase : LanX
+{
+  uint8_t db0 = 0;
+  uint8_t addressHigh = 0;
+  uint8_t addressLow = 0;
+
+  LanXLocoBase(uint16_t _dataLen, uint8_t _xheader) :
+    LanX(_dataLen, _xheader)
+  {
+  }
+
+  inline uint16_t address() const
+  {
+    return to16(addressLow, addressHigh & 0x3F);
+  }
+
+  inline bool isLongAddress() const
+  {
+    return (addressHigh & 0xC0) == 0xC0;
+  }
+
+  inline void setAddress(uint16_t address, bool longAddress)
+  {
+    addressHigh = longAddress ? (0xC0 | high8(address)) : 0x00;
+    addressLow = longAddress ? low8(address) : address & 0x7F;
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanXLocoBase) == 8);
 
 //=============================================================================
 // Client to Z21
@@ -667,66 +690,29 @@ struct LanXSetStop : LanX
 static_assert(sizeof(LanXSetStop) == 6);
 
 // LAN_X_GET_LOCO_INFO
-struct LanXGetLocoInfo : LanX
+struct LanXGetLocoInfo : LanXLocoBase
 {
-  uint8_t db0 = 0xF0;
-  uint8_t addressHigh;
-  uint8_t addressLow;
   uint8_t checksum;
 
-  LanXGetLocoInfo(uint16_t address, bool longAddress) :
-    LanX(sizeof(LanXGetLocoInfo), LAN_X_GET_LOCO_INFO)
+  LanXGetLocoInfo(uint16_t address_, bool longAddress) :
+    LanXLocoBase(sizeof(LanXGetLocoInfo), LAN_X_GET_LOCO_INFO)
   {
-    setAddress(address, longAddress);
+    db0 = 0xF0;
+    setAddress(address_, longAddress);
     updateChecksum();
-  }
-
-  inline uint16_t address() const
-  {
-    return (static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow;
-  }
-
-  inline bool isLongAddress() const
-  {
-    return (addressHigh & 0xC0) == 0xC0;
-  }
-
-  inline void setAddress(uint16_t address, bool longAddress)
-  {
-    addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
-    addressLow = longAddress ? address & 0xFF : address & 0x7F;
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetLocoInfo) == 9);
 
 // LAN_X_SET_LOCO_DRIVE
-struct LanXSetLocoDrive : LanX
+struct LanXSetLocoDrive : LanXLocoBase
 {
-  uint8_t db0;
-  uint8_t addressHigh;
-  uint8_t addressLow;
   uint8_t speedAndDirection = 0;
   uint8_t checksum;
 
   LanXSetLocoDrive() :
-    LanX(sizeof(LanXSetLocoDrive), LAN_X_SET_LOCO)
+    LanXLocoBase(sizeof(LanXSetLocoDrive), LAN_X_SET_LOCO)
   {
-  }
-
-  inline uint16_t address() const
-  {
-    return (static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow;
-  }
-
-  inline bool isLongAddress() const
-  {
-    return (addressHigh & 0xC0) == 0xC0;
-  }
-
-  inline void setAddress(uint16_t address, bool longAddress)
-  {
-    addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
-    addressLow = longAddress ? address & 0xFF : address & 0x7F;
   }
 
   inline void setSpeedSteps(uint8_t steps)
@@ -760,39 +746,39 @@ struct LanXSetLocoDrive : LanX
 
   inline Direction direction() const
   {
-    return Utils::getDirection(speedAndDirection);
+    return XpressNet::Utils::getDirection(speedAndDirection);
   }
 
   inline void setDirection(Direction value)
   {
     assert(value != Direction::Unknown);
-    Utils::setDirection(speedAndDirection, value);
+    XpressNet::Utils::setDirection(speedAndDirection, value);
   }
 
   inline bool isEmergencyStop() const
   {
-    return Utils::isEmergencyStop(speedAndDirection, speedSteps());
+    return XpressNet::Utils::isEmergencyStop(speedAndDirection, speedSteps());
   }
 
   inline void setEmergencyStop()
   {
-    Utils::setEmergencyStop(speedAndDirection);
+    XpressNet::Utils::setEmergencyStop(speedAndDirection);
   }
 
   inline uint8_t speedStep() const
   {
-    return Utils::getSpeedStep(speedAndDirection, speedSteps());
+    return XpressNet::Utils::getSpeedStep(speedAndDirection, speedSteps());
   }
 
   inline void setSpeedStep(uint8_t value)
   {
-    Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
+    XpressNet::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXSetLocoDrive) == 10);
 
 // LAN_X_SET_LOCO_FUNCTION
-struct LanXSetLocoFunction : LanX
+struct LanXSetLocoFunction : LanXLocoBase
 {
   enum class SwitchType
   {
@@ -807,15 +793,13 @@ struct LanXSetLocoFunction : LanX
   static constexpr uint8_t switchTypeMask = 0xC0;
   static constexpr uint8_t switchTypeShift = 6;
 
-  uint8_t db0 = 0xf8;
-  uint8_t addressHigh;
-  uint8_t addressLow;
   uint8_t db3 = 0;
   uint8_t checksum;
 
   LanXSetLocoFunction() :
-    LanX(sizeof(LanXSetLocoFunction), LAN_X_SET_LOCO)
+    LanXLocoBase(sizeof(LanXSetLocoFunction), LAN_X_SET_LOCO)
   {
+    db0 = 0xF8;
   }
 
   LanXSetLocoFunction(uint16_t address, bool longAddress, uint8_t functionIndex, SwitchType value)
@@ -825,22 +809,6 @@ struct LanXSetLocoFunction : LanX
     setFunctionIndex(functionIndex);
     setSwitchType(value);
     updateChecksum();
-  }
-
-  inline uint16_t address() const
-  {
-    return (static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow;
-  }
-
-  inline bool isLongAddress() const
-  {
-    return (addressHigh & 0xC0) == 0xC0;
-  }
-
-  inline void setAddress(uint16_t address, bool longAddress)
-  {
-    addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
-    addressLow = longAddress ? address & 0xFF : address & 0x7F;
   }
 
   inline SwitchType switchType() const
@@ -1050,15 +1018,15 @@ struct LanLocoNetDetectorTransponderEntersExitsBlock : LanLocoNetDetector
 
   LanLocoNetDetectorTransponderEntersExitsBlock(Type type_, uint16_t feedbackAddress, uint16_t transponderAddress)
     : LanLocoNetDetector(sizeof(LanLocoNetDetectorTransponderEntersExitsBlock), type_, feedbackAddress)
-    , transponderAddressLow(transponderAddress >> 8)
-    , transponderAddressHigh(transponderAddress & 0xFF)
+    , transponderAddressLow(low8(transponderAddress))
+    , transponderAddressHigh(high8(transponderAddress))
   {
     assert(type == Type::TransponderEntersBlock || type == Type::TransponderExitsBlock);
   }
 
   uint16_t transponderAddress() const
   {
-    return (static_cast<uint16_t>(transponderAddressHigh) << 8) | transponderAddressLow;
+    return to16(transponderAddressLow, transponderAddressHigh & 0x3F);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanLocoNetDetectorTransponderEntersExitsBlock) == 9);
@@ -1096,7 +1064,7 @@ struct LanXGetVersionReply : LanX
 {
   uint8_t db0 = 0x21;
   uint8_t xBusVersionBCD;
-  CommandStationId commandStationId;
+  XpressNet::HardwareType commandStationId;
   uint8_t checksum;
 
   LanXGetVersionReply()
@@ -1104,7 +1072,7 @@ struct LanXGetVersionReply : LanX
   {
   }
 
-  LanXGetVersionReply(uint8_t _xBusVersion, CommandStationId _commandStationId)
+  LanXGetVersionReply(uint8_t _xBusVersion, XpressNet::HardwareType _commandStationId)
     : LanXGetVersionReply()
   {
     setXBusVersion(_xBusVersion);
@@ -1114,13 +1082,13 @@ struct LanXGetVersionReply : LanX
 
   inline uint8_t xBusVersion() const
   {
-    return Utils::fromBCD(xBusVersionBCD);
+    return XpressNet::Utils::fromBCD(xBusVersionBCD);
   }
 
   inline void setXBusVersion(uint8_t value)
   {
     assert(value < 100);
-    xBusVersionBCD = Utils::toBCD(value);
+    xBusVersionBCD = XpressNet::Utils::toBCD(value);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetVersionReply) == 9);
@@ -1150,24 +1118,24 @@ struct LanXGetFirmwareVersionReply : LanX
 
   inline uint8_t versionMajor() const
   {
-    return Utils::fromBCD(majorBCD);
+    return XpressNet::Utils::fromBCD(majorBCD);
   }
 
   inline uint8_t versionMinor() const
   {
-    return Utils::fromBCD(minorBCD);
+    return XpressNet::Utils::fromBCD(minorBCD);
   }
 
   inline void setVersionMajor(uint8_t value)
   {
     assert(value < 100);
-    majorBCD = Utils::toBCD(value);
+    majorBCD = XpressNet::Utils::toBCD(value);
   }
 
   inline void setVersionMinor(uint8_t value)
   {
     assert(value < 100);
-    minorBCD = Utils::toBCD(value);
+    minorBCD = XpressNet::Utils::toBCD(value);
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanXGetFirmwareVersionReply) == 9);
@@ -1181,7 +1149,7 @@ struct LanGetHardwareInfoReply : Message
   LanGetHardwareInfoReply(HardwareType _hardwareType, uint8_t _firmwareVersionMajor, uint8_t _firmwareVersionMinor) :
     Message(sizeof(LanGetHardwareInfoReply), LAN_GET_HWINFO),
     hardwareTypeLE{host_to_le(_hardwareType)},
-    firmwareVersionLE{host_to_le(static_cast<uint32_t>(Z21::Utils::toBCD(_firmwareVersionMajor)) << 8 | Z21::Utils::toBCD(_firmwareVersionMinor))}
+    firmwareVersionLE{host_to_le(static_cast<uint32_t>(to16(XpressNet::Utils::toBCD(_firmwareVersionMinor), XpressNet::Utils::toBCD(_firmwareVersionMajor))))}
   {
   }
 
@@ -1192,12 +1160,12 @@ struct LanGetHardwareInfoReply : Message
 
   uint8_t firmwareVersionMajor() const
   {
-    return Utils::fromBCD((le_to_host(firmwareVersionLE) >> 8) & 0xFF);
+    return XpressNet::Utils::fromBCD(high8(le_to_host(firmwareVersionLE)));
   }
 
   uint8_t firmwareVersionMinor() const
   {
-    return Utils::fromBCD(le_to_host(firmwareVersionLE) & 0xFF);
+    return XpressNet::Utils::fromBCD(low8(le_to_host(firmwareVersionLE)));
   }
 } ATTRIBUTE_PACKED;
 static_assert(sizeof(LanGetHardwareInfoReply) == 12);
@@ -1378,7 +1346,7 @@ struct LanXLocoInfo : LanX
 
   inline uint16_t address() const
   {
-    return (static_cast<uint16_t>(addressHigh & 0x3F) << 8) | addressLow;
+    return to16(addressLow, addressHigh & 0x3F);
   }
 
   inline bool isLongAddress() const
@@ -1388,8 +1356,8 @@ struct LanXLocoInfo : LanX
 
   inline void setAddress(uint16_t address, bool longAddress)
   {
-    addressHigh = longAddress ? (0xC0 | (address >> 8)) : 0x00;
-    addressLow = longAddress ? address & 0xFF : address & 0x7F;
+    addressHigh = longAddress ? (0xC0 | high8(address)) : 0x00;
+    addressLow = longAddress ? low8(address) : address & 0x7F;
   }
 
   inline bool isBusy() const
@@ -1431,32 +1399,32 @@ struct LanXLocoInfo : LanX
 
   inline Direction direction() const
   {
-    return Z21::Utils::getDirection(speedAndDirection);
+    return XpressNet::Utils::getDirection(speedAndDirection);
   }
 
   inline void setDirection(Direction value)
   {
-    Z21::Utils::setDirection(speedAndDirection, value);
+    XpressNet::Utils::setDirection(speedAndDirection, value);
   }
 
   inline bool isEmergencyStop() const
   {
-    return Z21::Utils::isEmergencyStop(speedAndDirection, speedSteps());
+    return XpressNet::Utils::isEmergencyStop(speedAndDirection, speedSteps());
   }
 
   inline void setEmergencyStop()
   {
-    Z21::Utils::setEmergencyStop(speedAndDirection);
+    XpressNet::Utils::setEmergencyStop(speedAndDirection);
   }
 
   inline uint8_t speedStep() const
   {
-    return Z21::Utils::getSpeedStep(speedAndDirection, speedSteps());
+    return XpressNet::Utils::getSpeedStep(speedAndDirection, speedSteps());
   }
 
   inline void setSpeedStep(uint8_t value)
   {
-    Z21::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
+    XpressNet::Utils::setSpeedStep(speedAndDirection, speedSteps(), value);
   }
 
   inline bool supportsF29F31() const

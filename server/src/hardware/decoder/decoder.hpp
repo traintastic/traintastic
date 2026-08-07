@@ -43,6 +43,7 @@ class Throttle;
 class Decoder : public IdObject
 {
   friend class DecoderFunction;
+  friend class DecoderFunctions;
 
   private:
     bool m_mute = false;
@@ -74,6 +75,8 @@ class Decoder : public IdObject
     void updateEditable();
     void updateEditable(bool editable);
     void changed(DecoderChangeFlags changes, uint32_t functionNumber = 0);
+    void functionsChanged();
+    void addressChanged(uint16_t oldAddress, uint16_t newAddress);
 
   public:
     CLASS_ID("decoder")
