@@ -30,6 +30,7 @@
 #include <traintastic/enum/turnoutposition.hpp>
 #include "../../../../hardware/input/feedback/turnoutfeedbackmap.hpp"
 #include "../../../../hardware/output/map/turnoutoutputmap.hpp"
+#include "../../../../hardware/trackdriver/turnouttrackdriver.hpp"
 
 class BlockPath;
 
@@ -38,14 +39,9 @@ class TurnoutRailTile : public RailTile
   DEFAULT_ID("turnout")
 
   private:
-    enum class Source
-    {
-      OutputStateMatch,
-      FeedbackMatch,
-    };
-
     Node m_node;
     std::weak_ptr<BlockPath> m_reservedPath;
+    std::weak_ptr<Train> m_reservedTrain;
 
     std::chrono::steady_clock::time_point m_lastRetryStart;
     uint8_t m_retryCount;
@@ -53,13 +49,23 @@ class TurnoutRailTile : public RailTile
     static constexpr std::chrono::steady_clock::duration RETRY_DURATION = std::chrono::minutes(1);
 
   protected:
+    enum class Source
+    {
+      Direct,
+      OutputStateMatch,
+      FeedbackMatch,
+      Link,
+    };
+
     TurnoutRailTile(World& world, std::string_view _id, TileId tileId_, size_t connectors);
 
     void destroying() override;
     void addToWorld() override;
+    void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) override;
+    void worldFeaturesChanged(const WorldFeatures features, WorldFeature changed) override;
 
-    bool isValidPosition(TurnoutPosition value);
+    bool isValidPosition(TurnoutPosition value) const;
     virtual bool doSetPosition(TurnoutPosition value, bool skipAction = false);
 
     bool hasFeedback() const;
@@ -67,6 +73,7 @@ class TurnoutRailTile : public RailTile
     void connectOutputMap();
 
     void updatePosition(Source source, TurnoutPosition value);
+    virtual void newPosition(TurnoutPosition value);
 
     inline auto onFeedbackMatch()
     {
@@ -78,17 +85,17 @@ class TurnoutRailTile : public RailTile
 
     Property<std::string> name;
     Property<TurnoutPosition> position;
+    Property<TurnoutPosition> reservedPosition;
     ObjectProperty<TurnoutOutputMap> outputMap;
     ObjectProperty<TurnoutFeedbackMap> feedbackMap;
+    ObjectProperty<TurnoutTrackDriver> trackDriver;
     Method<bool(TurnoutPosition)> setPosition;
 
     std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
 
-    virtual bool reserve(const std::shared_ptr<BlockPath>& blockPath, TurnoutPosition turnoutPosition, bool dryRun = false);
+    virtual bool reserve(const std::shared_ptr<BlockPath>& blockPath, const std::shared_ptr<Train>& train, bool toeSideEntry, TurnoutPosition turnoutPosition, bool dryRun = false);
     bool release(bool dryRun = false);
-
-    TurnoutPosition getReservedPosition() const;
 };
 
 #endif

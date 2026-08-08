@@ -78,7 +78,7 @@ class OutputMap : public SubObject
     uint32_t getUnusedAddress() const;
     std::shared_ptr<OutputMapOutputAction> createOutputAction(OutputType outputType, size_t index, std::optional<OutputActionValue> actionValue);
 
-    virtual std::optional<OutputActionValue> getDefaultOutputActionValue(const OutputMapItem& item, OutputType outputType, size_t outputIndex) = 0;
+    virtual std::optional<OutputActionValue> getDefaultOutputActionValue(const OutputMapItem& item, OutputChannel outputChannel, OutputType outputType, size_t outputIndex) = 0;
 
     int getMatchingActionOnCurrentState();
 

@@ -147,7 +147,7 @@ void Kernel::busChanged(Bus bus, uint8_t address, uint8_t value)
         EventLoop::call(
           [this, bus, address, value]()
           {
-            Log::log(logId, LogMessage::D2012_CHANGED_SXX_X_X_X, static_cast<uint8_t>(bus), address, toHex(value), value);
+            Log::log(logId, LogMessage::D2013_CHANGED_SXX_X_X_X, static_cast<uint8_t>(bus), address, toHex(value), value);
           });
       }
 
@@ -365,7 +365,7 @@ bool Kernel::write(Bus bus, uint8_t address, uint8_t value)
     EventLoop::call(
       [this, bus, address, value]()
       {
-        Log::log(logId, LogMessage::D2011_WRITE_SXX_X_X_X, static_cast<uint8_t>(bus), address, toHex(value), value);
+        Log::log(logId, LogMessage::D2012_WRITE_SXX_X_X_X, static_cast<uint8_t>(bus), address, toHex(value), value);
       });
   }
 

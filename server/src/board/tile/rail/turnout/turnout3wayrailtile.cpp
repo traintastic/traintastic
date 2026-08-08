@@ -26,7 +26,7 @@
 
 static const std::array<TurnoutPosition, 4> positionValues = {TurnoutPosition::Unknown, TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right};
 
-static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
+static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputChannel /*outputChannel*/, OutputType outputType, size_t outputIndex)
 {
   // FIXME: implement more defaults
   switch(outputType)
@@ -75,6 +75,9 @@ Turnout3WayRailTile::Turnout3WayRailTile(World& world, std::string_view _id)
 
   Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);
+
+  Attributes::addValues(reservedPosition, positionValues);
+  m_interfaceItems.add(reservedPosition);
 
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);

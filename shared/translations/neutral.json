@@ -548,6 +548,18 @@
         "definition": "Uhlenbrock Intellibox II"
     },
     {
+        "term": "class_id:interface.dinamo",
+        "definition": "DINAMO"
+    },
+    {
+        "term": "interface.dinamo:dinamo",
+        "definition": "DINAMO"
+    },
+    {
+        "term": "output_channel:oc32",
+        "definition": "OC32"
+    },
+    {
         "term": "class_id:interface.selectrix",
         "definition": "Selectrix"
     },

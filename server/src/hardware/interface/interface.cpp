@@ -1,9 +1,7 @@
 /**
- * server/src/hardware/interface/interface.cpp
- *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021-2023,2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +33,7 @@ Interface::Interface(World& world, std::string_view _id)
       status->label.setValueInternal(value);
     }}
   , online{this, "online", false, PropertyFlags::ReadWrite | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly,
-      std::bind(&Interface::onlineChanged, this, std::placeholders::_1),
+      std::bind_front(&Interface::onlineChanged, this),
       [this](bool& value)
       {
         return setOnline(value, contains(m_world.state.value(), WorldState::Simulation));

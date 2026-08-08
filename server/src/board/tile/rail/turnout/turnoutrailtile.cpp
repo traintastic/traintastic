@@ -23,6 +23,8 @@
 #include "../../../../core/objectproperty.tpp"
 #include "../../../../core/attributes.hpp"
 #include "../../../../core/method.tpp"
+#include "../../../../hardware/trackdriver/trackdriver.hpp"
+#include "../../../../hardware/trackdriver/trackdrivercontroller.hpp"
 #include "../../../../world/world.hpp"
 #include "../../../../utils/displayname.hpp"
 #include "../../../map/blockpath.hpp"
@@ -30,23 +32,27 @@
 #include "../../../../train/trainblockstatus.hpp"
 #include "../../../../train/train.hpp"
 #include "../../../../log/log.hpp"
+#include "../../../../utils/category.hpp"
 
 TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tileId_, size_t connectors) :
   RailTile(world, _id, tileId_),
   m_node{*this, connectors},
   name{this, "name", std::string(_id), PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   position{this, "position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
+  reservedPosition{this, "reserved_position", TurnoutPosition::Unknown, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly},
   outputMap{this, "output_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
   feedbackMap{this, "feedback_map", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
+  trackDriver{this, "track_driver", {}, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject | PropertyFlags::NoScript},
   setPosition{*this, "set_position", MethodFlags::ScriptCallable, [this](TurnoutPosition value)
     {
-      TurnoutPosition reservedPosition = getReservedPosition();
       if(reservedPosition != TurnoutPosition::Unknown && reservedPosition != value)
         return false; // Turnout is locked by reservation path
       return doSetPosition(value);
     }}
 {
   assert(isRailTurnout(tileId_));
+
+  trackDriver.setValueInternal(std::make_shared<TurnoutTrackDriver>(*this, trackDriver.name()));
 
   const bool editable = contains(m_world.state.value(), WorldState::Edit);
 
@@ -58,25 +64,34 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
   Attributes::addObjectEditor(position, false);
   // position is added by sub class
 
+  Attributes::addObjectEditor(reservedPosition, false);
+  // reservedPosition is added by sub class
+
   Attributes::addDisplayName(outputMap, DisplayName::BoardTile::outputMap);
+  Attributes::addVisible(outputMap, true);
   m_interfaceItems.add(outputMap);
 
   Attributes::addDisplayName(feedbackMap, DisplayName::BoardTile::feedbackMap);
+  Attributes::addVisible(feedbackMap, true);
   m_interfaceItems.add(feedbackMap);
+
+  Attributes::addCategory(trackDriver, Category::trackDriver);
+  Attributes::addDisplayName(trackDriver, DisplayName::Hardware::trackDriver);
+  Attributes::addVisible(trackDriver, world.feature(WorldFeature::TrackDriverSystem));
+  m_interfaceItems.add(trackDriver);
 
   Attributes::addObjectEditor(setPosition, false);
   // setPosition is added by sub class
 }
 
-bool TurnoutRailTile::reserve(const std::shared_ptr<BlockPath> &blockPath, TurnoutPosition turnoutPosition, bool dryRun)
+bool TurnoutRailTile::reserve(const std::shared_ptr<BlockPath> &blockPath, const std::shared_ptr<Train>& train, bool toeSideEntry, TurnoutPosition turnoutPosition, bool dryRun)
 {
   if(!isValidPosition(turnoutPosition))
   {
     return false;
   }
 
-  const TurnoutPosition reservedPos = getReservedPosition();
-  if(reservedPos != TurnoutPosition::Unknown && reservedPos != turnoutPosition)
+  if(reservedPosition != TurnoutPosition::Unknown && reservedPosition != turnoutPosition)
   {
     // TODO: what if 2 path reserve same turnout for same position?
     // Upon release one path it will make turnout free while it's still reserved by second path
@@ -92,8 +107,17 @@ bool TurnoutRailTile::reserve(const std::shared_ptr<BlockPath> &blockPath, Turno
       return false;
     }
 
-    m_reservedPath = blockPath;
+    if(trackDriver)
+    {
+      if(const auto& td = trackDriver->trackDriver())
+      {
+        td->trainAdded(*this, trackDriver->invertPolarity, *train, toeSideEntry ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA);
+      }
+    }
 
+    m_reservedPath = blockPath;
+    m_reservedTrain = train;
+    reservedPosition.setValueInternal(turnoutPosition);
     RailTile::setReservedState(static_cast<uint8_t>(turnoutPosition));
   }
   return true;
@@ -105,8 +129,20 @@ bool TurnoutRailTile::release(bool dryRun)
 
   if(!dryRun)
   {
-    m_reservedPath.reset();
+    if(trackDriver)
+    {
+      if(const auto& td = trackDriver->trackDriver())
+      {
+        if(auto train = m_reservedTrain.lock()) [[likely]]
+        {
+          td->trainRemoved(*this, *train);
+        }
+      }
+    }
 
+    m_reservedPath.reset();
+    m_reservedTrain.reset();
+    reservedPosition.setValueInternal(TurnoutPosition::Unknown);
     RailTile::release();
   }
   return true;
@@ -126,9 +162,10 @@ void TurnoutRailTile::addToWorld()
   RailTile::addToWorld();
 }
 
-TurnoutPosition TurnoutRailTile::getReservedPosition() const
+void TurnoutRailTile::loaded()
 {
-  return static_cast<TurnoutPosition>(RailTile::reservedState());
+  RailTile::loaded();
+  Attributes::setVisible(trackDriver, m_world.feature(WorldFeature::TrackDriverSystem));
 }
 
 void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
@@ -140,7 +177,17 @@ void TurnoutRailTile::worldEvent(WorldState state, WorldEvent event)
   Attributes::setEnabled(name, editable);
 }
 
-bool TurnoutRailTile::isValidPosition(TurnoutPosition value)
+void TurnoutRailTile::worldFeaturesChanged(const WorldFeatures features, WorldFeature changed)
+{
+  RailTile::worldFeaturesChanged(features, changed);
+
+  if(changed == WorldFeature::TrackDriverSystem)
+  {
+    Attributes::setVisible(trackDriver, features[WorldFeature::TrackDriverSystem]);
+  }
+}
+
+bool TurnoutRailTile::isValidPosition(TurnoutPosition value) const
 {
   const auto* values = setPosition.tryGetValuesAttribute(AttributeName::Values);
   assert(values);
@@ -157,8 +204,7 @@ bool TurnoutRailTile::doSetPosition(TurnoutPosition value, bool skipAction)
     (*outputMap)[value]->execute();
   if(!hasFeedback())
   {
-    position.setValueInternal(value);
-    positionChanged(*this, value);
+    updatePosition(Source::Direct, value);
   }
   return true;
 }
@@ -188,10 +234,8 @@ void TurnoutRailTile::updatePosition(Source source, TurnoutPosition pos)
     return; // No change
   }
 
-  position.setValueInternal(pos);
-  positionChanged(*this, pos);
+  newPosition(pos);
 
-  TurnoutPosition reservedPosition = getReservedPosition();
   if(reservedPosition == TurnoutPosition::Unknown || reservedPosition == position.value())
     return; // Not locked
 
@@ -270,4 +314,11 @@ void TurnoutRailTile::updatePosition(Source source, TurnoutPosition pos)
       break;
     }
   }
+}
+
+void TurnoutRailTile::newPosition(TurnoutPosition value)
+{
+  assert(position != value);
+  position.setValueInternal(value);
+  positionChanged(*this, value);
 }

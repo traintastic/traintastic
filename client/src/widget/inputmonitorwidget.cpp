@@ -1,9 +1,8 @@
 /**
- * client/src/widget/inputmonitorwidget.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -80,19 +79,18 @@ InputMonitorWidget::InputMonitorWidget(std::shared_ptr<InputMonitor> object, QWi
   toolbar->addSeparator();
   {
     auto* group = new QActionGroup(this);
-    auto* action = group->addAction("1");
-    action->setCheckable(true);
-    action->setChecked(true);
-    connect(action, &QAction::triggered, [this]() { setGroupBy(1); });
-    toolbar->addAction(action);
-    action = group->addAction("8");
-    action->setCheckable(true);
-    connect(action, &QAction::triggered, [this]() { setGroupBy(8); });
-    toolbar->addAction(action);
-    action = group->addAction("16");
-    action->setCheckable(true);
-    connect(action, &QAction::triggered, [this]() { setGroupBy(16); });
-    toolbar->addAction(action);
+    for(auto groupBy : std::initializer_list<uint32_t>{1, 4, 8, 16})
+    {
+      auto* action = group->addAction(QString::number(groupBy));
+      action->setCheckable(true);
+      connect(action, &QAction::triggered,
+        [this, groupBy]()
+        {
+          setGroupBy(groupBy);
+        });
+      toolbar->addAction(action);
+    }
+    group->actions()[0]->setChecked(true);
   }
 
   QGridLayout* grid = new QGridLayout();

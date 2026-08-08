@@ -1461,7 +1461,7 @@
   },
   {
     "term": "event.parameter.user_data:description",
-    "definition": "optional user-provided value (see [Events](../events.md#user_data))."
+    "definition": "optional user-provided value (see [Events](../events.md#user-data))."
   },
   {
     "term": "object:title",
@@ -2772,6 +2772,14 @@
     "definition": "The name assigned to the block, used for the user interface."
   },
   {
+    "term": "object.blockrailtile.powered:description",
+    "definition": "`true` if track power is available in the block; `false` if track power is unavailable or the assigned booster or track driver has not yet reported its status."
+  },
+  {
+    "term": "object.blockrailtile.short_circuit:description",
+    "definition": "`true` if a short circuit affecting the block has been detected; `false` if no short circuit has been detected or the assigned booster or track driver has not yet reported its status."
+  },
+  {
     "term": "object.blockrailtile.state:description",
     "definition": "The current state of the block, a {ref:enum.block_state|block state} value. Indicates whether the block is free, reserved, occupied, or its state is unknown."
   },
@@ -3223,7 +3231,6 @@
     "term": "object.cbusinterface.send_dcc.warning:description",
     "definition": "These messages bypass Traintastic’s normal handling. You need a solid understanding of DCC to avoid conflicts. Side effects may occur that Traintastic is not aware of or cannot manage."
   },
-
   {
     "term": "object.cbusinterface.send:description",
     "definition": "Send CBUS/VLCB message."
@@ -3243,5 +3250,53 @@
   {
     "term": "object.cbusinterface.send.warning:description",
     "definition": "These messages bypass Traintastic’s normal handling. You need a solid understanding of CBUS/VLCB to avoid conflicts. Side effects may occur that Traintastic is not aware of or cannot manage."
+  },
+  {
+    "term": "object.aspectoutput.on_value_changed.warning:title",
+    "definition": "Deprecated"
+  },
+  {
+    "term": "object.aspectoutput.on_value_changed.warning:description",
+    "definition": "This event will be removed in Traintastic v0.5, use the generic [`on_changed` event](#on_changed)."
+  },
+  {
+    "term": "object.input.on_value_changed.warning:title",
+    "definition": "Deprecated"
+  },
+  {
+    "term": "object.input.on_value_changed.warning:description",
+    "definition": "This event will be removed in Traintastic v0.5, use the generic [`on_changed` event](#on_changed)."
+  },
+  {
+    "term": "object.pairoutput.on_value_changed.warning:title",
+    "definition": "Deprecated"
+  },
+  {
+    "term": "object.pairoutput.on_value_changed.warning:description",
+    "definition": "This event will be removed in Traintastic v0.5, use the generic [`on_changed` event](#on_changed)."
+  },
+  {
+    "term": "object.sensorrailtile.on_state_changed.warning:title",
+    "definition": "Deprecated"
+  },
+  {
+    "term": "object.sensorrailtile.on_state_changed.warning:description",
+    "definition": "This event will be removed in Traintastic v0.5, use the generic [`on_changed` event](#on_changed)."
+  },
+  {
+    "term": "object.signalrailtile.on_aspect_changed.warning:title",
+    "definition": "Deprecated"
+  },
+  {
+    "term": "object.signalrailtile.on_aspect_changed.warning:description",
+    "definition": "This event will be removed in Traintastic v0.5, use the generic [`on_changed` event](#on_changed)."
+  },
+  {
+    "term": "object.singleoutput.on_value_changed.warning:title",
+    "definition": "Deprecated"
+  },
+  {
+    "term": "object.singleoutput.on_value_changed.warning:description",
+    "definition": "This event will be removed in Traintastic v0.5, use the generic [`on_changed` event](#on_changed)."
   }
 ]

@@ -44,6 +44,7 @@ class InputController;
 class OutputController;
 class IdentificationController;
 class LNCVProgrammingController;
+class TrackDriverController;
 class CBUSInterface;
 class LocoNetInterface;
 class InterfaceList;
@@ -56,6 +57,7 @@ class BoardList;
 class ZoneList;
 class BlockRailTileList;
 class LinkRailTileList;
+class TurnoutLinkableRailTileList;
 class NXManager;
 class TrainPathFinder;
 class Clock;
@@ -135,6 +137,7 @@ class World : public Object
     ObjectProperty<ControllerList<OutputController>> outputControllers;
     ObjectProperty<ControllerList<IdentificationController>> identificationControllers;
     ObjectProperty<ControllerList<LNCVProgrammingController>> lncvProgrammingControllers;
+    ObjectProperty<ControllerList<TrackDriverController>> trackDriverControllers;
     ObjectProperty<ControllerList<CBUSInterface>> cbusInterfaces;
     ObjectProperty<ControllerList<LocoNetInterface>> loconetInterfaces;
 
@@ -154,6 +157,7 @@ class World : public Object
 
     ObjectProperty<BlockRailTileList> blockRailTiles;
     ObjectProperty<LinkRailTileList> linkRailTiles;
+    ObjectProperty<TurnoutLinkableRailTileList> turnoutLinkableRailTiles;
     ObjectProperty<NXManager> nxManager;
     ObjectProperty<TrainPathFinder> trainPathFinder;
 

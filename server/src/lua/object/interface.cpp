@@ -163,6 +163,7 @@ int Interface::get_output(lua_State* L)
     case AccessoryMotorola:
     case DCCext:
     case Turnout:
+    case OC32:
     case ShortEvent:
     case AccessorySX0:
     case AccessorySX1:

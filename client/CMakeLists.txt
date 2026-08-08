@@ -117,6 +117,10 @@ if(DEFINED ENV{VCPKG_ROOT})
   include($ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
 endif()
 
+# zlib
+find_package(ZLIB REQUIRED)
+target_link_libraries(traintastic-client PRIVATE ZLIB::ZLIB)
+
 # libarchive
 find_package(LibArchive REQUIRED)
 target_link_libraries(traintastic-client PRIVATE LibArchive::LibArchive)

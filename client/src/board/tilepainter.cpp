@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2025 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "tilepainter.hpp"
 #include <cmath>
 #include <QtMath>
+#include <QIcon>
 #include <QPainterPath>
 #include <traintastic/enum/blocktraindirection.hpp>
 #include "boardcolorscheme.hpp"
@@ -1191,6 +1192,8 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, bool isReser
   const BlockState state = blockTile ? blockTile->getPropertyValueEnum<BlockState>("state", BlockState::Unknown) : BlockState::Unknown;
   std::vector<SensorState> subStates;
   QString label;
+  bool powered = true;
+  bool shortCircuit = false;
 
   if(blockTile)
   {
@@ -1211,24 +1214,30 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, bool isReser
       {
         if(auto* trainBlockStatus = dynamic_cast<TrainBlockStatus*>(block->trains()[0].get())) /*[[likely]]*/
         {
+          auto direction = trainBlockStatus->direction();
+          if(rotate == TileRotate::Deg0)
+          {
+            direction = !direction; // invert for proper drawing
+          }
+
           if(const auto& train = trainBlockStatus->train())
           {
-            if(trainBlockStatus->direction() == BlockTrainDirection::TowardsA)
+            if(direction == BlockTrainDirection::TowardsA)
               label += "< ";
 
             label += train->getPropertyValueString("name");
 
-            if(trainBlockStatus->direction() == BlockTrainDirection::TowardsB)
+            if(direction == BlockTrainDirection::TowardsB)
               label +=  " >";
           }
           else if(auto identification = trainBlockStatus->identification(); !identification.isEmpty())
           {
-            if(trainBlockStatus->direction() == BlockTrainDirection::TowardsA)
+            if(direction == BlockTrainDirection::TowardsA)
               label += "< ";
 
             label += identification;
 
-            if(trainBlockStatus->direction() == BlockTrainDirection::TowardsB)
+            if(direction == BlockTrainDirection::TowardsB)
               label +=  " >";
           }
         }
@@ -1237,7 +1246,12 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, bool isReser
 
     if(label.isEmpty())
       label = blockTile->getPropertyValueString("name");
+
+    powered = blockTile->getPropertyValueBool("powered", powered);
+    shortCircuit = blockTile->getPropertyValueBool("short_circuit", shortCircuit);
   }
+
+  const bool alarm = !powered || shortCircuit;
 
   if(rotate == TileRotate::Deg0)
   {
@@ -1302,6 +1316,22 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, bool isReser
         left += width;
       }
       block.setHeight(block.height() - height);
+    }
+
+    if(alarm)
+    {
+      auto iconRect = block;
+      iconRect.setWidth(block.height());
+      QIcon icon;
+      if(shortCircuit)
+      {
+        icon = QIcon(":/light/block_short_circuit.svg");
+      }
+      else if(!powered)
+      {
+        icon = QIcon(":/light/block_no_power.svg");
+      }
+      m_painter.drawPixmap(iconRect.topLeft(), icon.pixmap(iconRect.size().toSize()));
     }
 
     if(!label.isEmpty())

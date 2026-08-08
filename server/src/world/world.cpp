@@ -62,6 +62,7 @@
 #include "../board/boardlist.hpp"
 #include "../board/list/blockrailtilelist.hpp"
 #include "../board/list/linkrailtilelist.hpp"
+#include "../board/list/turnoutlinkablerailtilelist.hpp"
 #include "../board/nx/nxmanager.hpp"
 #include "../board/pathfinder/trainpathfinder.hpp"
 #include "../board/tile/rail/nxbuttonrailtile.hpp"
@@ -125,6 +126,7 @@ void World::init(World& world)
   world.outputControllers.setValueInternal(std::make_shared<ControllerList<OutputController>>(world, world.outputControllers.name()));
   world.identificationControllers.setValueInternal(std::make_shared<ControllerList<IdentificationController>>(world, world.identificationControllers.name()));
   world.lncvProgrammingControllers.setValueInternal(std::make_shared<ControllerList<LNCVProgrammingController>>(world, world.lncvProgrammingControllers.name()));
+  world.trackDriverControllers.setValueInternal(std::make_shared<ControllerList<TrackDriverController>>(world, world.trackDriverControllers.name()));
   world.cbusInterfaces.setValueInternal(std::make_shared<ControllerList<CBUSInterface>>(world, world.cbusInterfaces.name()));
   world.loconetInterfaces.setValueInternal(std::make_shared<ControllerList<LocoNetInterface>>(world, world.loconetInterfaces.name()));
 
@@ -144,6 +146,7 @@ void World::init(World& world)
 
   world.blockRailTiles.setValueInternal(std::make_shared<BlockRailTileList>(world, world.blockRailTiles.name()));
   world.linkRailTiles.setValueInternal(std::make_shared<LinkRailTileList>(world, world.linkRailTiles.name()));
+  world.turnoutLinkableRailTiles.setValueInternal(std::make_shared<TurnoutLinkableRailTileList>(world, world.turnoutLinkableRailTiles.name()));
   world.nxManager.setValueInternal(std::make_shared<NXManager>(world, world.nxManager.name()));
   world.trainPathFinder.setValueInternal(std::make_shared<TrainPathFinder>(world, world.trainPathFinder.name()));
 
@@ -188,6 +191,7 @@ World::World(Private /*unused*/) :
   outputControllers{this, "output_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   identificationControllers{this, "identification_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   lncvProgrammingControllers{this, "lncv_programming_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  trackDriverControllers{this, "track_driver_controllers", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   cbusInterfaces{this, "cbus_interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   loconetInterfaces{this, "loconet_interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   interfaces{this, "interfaces", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -205,6 +209,7 @@ World::World(Private /*unused*/) :
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   blockRailTiles{this, "block_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   linkRailTiles{this, "link_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
+  turnoutLinkableRailTiles{this, "turnout_linkable_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   nxManager{this, "nx_manager", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   trainPathFinder{this, "train_path_finder", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   statuses(*this, "statuses", {}, PropertyFlags::ReadOnly | PropertyFlags::Store),
@@ -356,6 +361,8 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(identificationControllers);
   Attributes::addObjectEditor(lncvProgrammingControllers, false);
   m_interfaceItems.add(lncvProgrammingControllers);
+  Attributes::addObjectEditor(trackDriverControllers, false);
+  m_interfaceItems.add(trackDriverControllers);
   Attributes::addObjectEditor(cbusInterfaces, false);
   m_interfaceItems.add(cbusInterfaces);
   Attributes::addObjectEditor(loconetInterfaces, false);
@@ -396,6 +403,10 @@ World::World(Private /*unused*/) :
 
   Attributes::addObjectEditor(linkRailTiles, false);
   m_interfaceItems.add(linkRailTiles);
+
+  Attributes::addObjectEditor(turnoutLinkableRailTiles, false);
+  m_interfaceItems.add(turnoutLinkableRailTiles);
+
   Attributes::addObjectEditor(nxManager, false);
   m_interfaceItems.add(nxManager);
   Attributes::addObjectEditor(trainPathFinder, false);

@@ -1,9 +1,7 @@
 /**
- * server/src/hardware/interface/interface.hpp
- *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2021,2023,2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
