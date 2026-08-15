@@ -76,6 +76,13 @@ This project is not affiliated with, endorsed by, or connected to Digitrax.
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/113Bom">
+                    <img src="https://avatars.githubusercontent.com/u/9165015?v=4" width="100;" alt="113Bom"/>
+                    <br />
+                    <sub><b>Goofy</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/DrEVILish">
                     <img src="https://avatars.githubusercontent.com/u/6287003?v=4" width="100;" alt="DrEVILish"/>
                     <br />
@@ -89,20 +96,13 @@ This project is not affiliated with, endorsed by, or connected to Digitrax.
                     <sub><b>Cyril Pawelko</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/kamil00110">
                     <img src="https://avatars.githubusercontent.com/u/68923965?v=4" width="100;" alt="kamil00110"/>
                     <br />
                     <sub><b>kamil00110</b></sub>
-                </a>
-            </td>
-		</tr>
-		<tr>
-            <td align="center">
-                <a href="https://github.com/113Bom">
-                    <img src="https://avatars.githubusercontent.com/u/9165015?v=4" width="100;" alt="113Bom"/>
-                    <br />
-                    <sub><b>Goofy</b></sub>
                 </a>
             </td>
             <td align="center">
