@@ -25,7 +25,7 @@
 
 #include <cstddef>
 #include <vector>
-#include "../messages.hpp"
+#include "../marklincanmessages.hpp"
 
 namespace MarklinCAN {
 

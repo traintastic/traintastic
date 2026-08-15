@@ -19,14 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "kernel.hpp"
+#include "marklincankernel.hpp"
 #include <nlohmann/json.hpp>
 #include <version.hpp>
-#include "messages.hpp"
-#include "message/configdata.hpp"
-#include "message/statusdataconfig.hpp"
-#include "locomotivelist.hpp"
-#include "uid.hpp"
+#include "marklincanmessages.hpp"
+#include "message/marklincanconfigdata.hpp"
+#include "message/marklincanstatusdataconfig.hpp"
+#include "marklincanlocomotivelist.hpp"
+#include "marklincanuid.hpp"
 #include "../dcc/dcc.hpp"
 #include "../motorola/motorola.hpp"
 #include "../../decoder/decoder.hpp"
@@ -79,7 +79,7 @@ void Kernel::setConfig(const Config& config)
 {
   assert(isEventLoopThread());
 
-  boost::asio::post(m_ioContext, 
+  boost::asio::post(m_ioContext,
     [this, newConfig=config]()
     {
       if(m_config.defaultSwitchTime != newConfig.defaultSwitchTime)
@@ -143,7 +143,7 @@ void Kernel::start()
       m_ioContext.run();
     });
 
-  boost::asio::post(m_ioContext, 
+  boost::asio::post(m_ioContext,
     [this]()
     {
       try
@@ -170,7 +170,7 @@ void Kernel::stop()
 {
   assert(isEventLoopThread());
 
-  boost::asio::post(m_ioContext, 
+  boost::asio::post(m_ioContext,
     [this]()
     {
       m_ioHandler->stop();
@@ -546,7 +546,7 @@ void Kernel::receive(const Message& message)
 void Kernel::systemStop()
 {
   assert(isEventLoopThread());
-  boost::asio::post(m_ioContext, 
+  boost::asio::post(m_ioContext,
     [this]()
     {
       send(SystemStop());
@@ -556,7 +556,7 @@ void Kernel::systemStop()
 void Kernel::systemGo()
 {
   assert(isEventLoopThread());
-  boost::asio::post(m_ioContext, 
+  boost::asio::post(m_ioContext,
     [this]()
     {
       send(SystemGo());
@@ -566,7 +566,7 @@ void Kernel::systemGo()
 void Kernel::systemHalt()
 {
   assert(isEventLoopThread());
-  boost::asio::post(m_ioContext, 
+  boost::asio::post(m_ioContext,
     [this]()
     {
         send(SystemHalt());
@@ -576,7 +576,7 @@ void Kernel::systemHalt()
 void Kernel::getLocomotiveList()
 {
   assert(isEventLoopThread());
-  boost::asio::post(m_ioContext, 
+  boost::asio::post(m_ioContext,
     [this]()
     {
       send(ConfigData(m_config.nodeUID, ConfigDataName::loks));
@@ -654,7 +654,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputPairValue 
   assert(isEventLoopThread());
   assert(value == OutputPairValue::First || value == OutputPairValue::Second);
 
-  boost::asio::post(m_ioContext, 
+  boost::asio::post(m_ioContext,
     [this, channel, address, value]()
     {
       uint32_t uid = 0;
@@ -710,7 +710,7 @@ void Kernel::send(const Message& message)
 
 void Kernel::postSend(const Message& message)
 {
-  boost::asio::post(m_ioContext, 
+  boost::asio::post(m_ioContext,
     [this, message]()
     {
       send(message);

@@ -23,9 +23,9 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_NETWORKIOHANDLER_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_NETWORKIOHANDLER_HPP
 
-#include "iohandler.hpp"
+#include "marklincaniohandler.hpp"
 #include <array>
-#include "../messages.hpp"
+#include "../marklincanmessages.hpp"
 #include "../../../../utils/packed.hpp"
 
 namespace MarklinCAN {

@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/marklincan/iohandler/udpiohandler.hpp
+ * server/src/hardware/protocol/marklincan/node.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,33 +20,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_UDPIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_UDPIOHANDLER_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_NODE_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_NODE_HPP
 
-#include "networkiohandler.hpp"
-#include <boost/asio/ip/udp.hpp>
+#include <string>
+#include <cstdint>
+#include "message/marklincanstatusdataconfig.hpp"
 
 namespace MarklinCAN {
 
-class UDPIOHandler final : public NetworkIOHandler
+enum class DeviceId : uint16_t;
+
+struct Node
 {
-  private:
-    static constexpr uint16_t localPort = 15730;
-    static constexpr uint16_t remotePort = 15731;
-
-    boost::asio::ip::udp::socket m_readSocket;
-    boost::asio::ip::udp::endpoint m_readEndpoint;
-    std::array<std::byte, 1500> m_readBuffer;
-    boost::asio::ip::udp::socket m_writeSocket;
-    boost::asio::ip::udp::endpoint m_writeEndpoint;
-
-    void read() final;
-    void write() final;
-
-  public:
-    UDPIOHandler(Kernel& kernel, const std::string& hostname);
-
-    void stop() final;
+  uint32_t uid = 0;
+  uint8_t softwareVersionMajor = 0;
+  uint8_t softwareVersionMinor = 0;
+  DeviceId deviceId = static_cast<DeviceId>(0);
+  uint32_t serialNumber = 0;
+  std::string articleNumber;
+  std::string deviceName;
+  uint8_t numberOfReadings = 0;
+  std::vector<StatusData::ReadingDescription> readings;
+  uint8_t numberOfConfigurationChannels = 0;
+  std::vector<StatusData::ConfigurationDescription> configurations;
 };
 
 }

@@ -30,7 +30,7 @@
 #include "../../decoder/decodercontroller.hpp"
 #include "../../input/inputcontroller.hpp"
 #include "../../output/outputcontroller.hpp"
-#include "../../protocol/marklincan/kernel.hpp"
+#include "../../protocol/marklincan/marklincankernel.hpp"
 #include "../../../core/serialdeviceproperty.hpp"
 #include "../../../enum/serialflowcontrol.hpp"
 

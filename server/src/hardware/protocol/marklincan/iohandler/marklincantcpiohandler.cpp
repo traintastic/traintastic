@@ -20,9 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "tcpiohandler.hpp"
-#include "../kernel.hpp"
-#include "../messages.hpp"
+#include "marklincantcpiohandler.hpp"
+#include "../marklincankernel.hpp"
+#include "../marklincanmessages.hpp"
 #include "../../../../core/eventloop.hpp"
 #include "../../../../log/log.hpp"
 #include "../../../../log/logmessageexception.hpp"

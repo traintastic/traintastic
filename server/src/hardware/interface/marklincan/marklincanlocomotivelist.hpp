@@ -26,7 +26,7 @@
 #include "../../../core/subobject.hpp"
 #include "../../../core/table.hpp"
 #include "../../../core/method.hpp"
-#include "../../protocol/marklincan/locomotivelist.hpp"
+#include "../../protocol/marklincan/marklincanlocomotivelist.hpp"
 #include <memory>
 
 class MarklinCANInterface;

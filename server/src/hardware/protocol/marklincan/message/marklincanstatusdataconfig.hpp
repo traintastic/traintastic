@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_MESSAGE_STATUSDATACONFIG_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_MESSAGE_STATUSDATACONFIG_HPP
 
-#include "../messages.hpp"
+#include "../marklincanmessages.hpp"
 #include <cstddef>
 #include <vector>
 

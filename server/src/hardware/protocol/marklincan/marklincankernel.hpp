@@ -32,10 +32,10 @@
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include <traintastic/enum/outputchannel.hpp>
-#include "config.hpp"
-#include "node.hpp"
-#include "iohandler/iohandler.hpp"
-#include "configdatastreamcollector.hpp"
+#include "marklincanconfig.hpp"
+#include "marklincannode.hpp"
+#include "iohandler/marklincaniohandler.hpp"
+#include "marklincanconfigdatastreamcollector.hpp"
 #include "../dcc/dcc.hpp"
 #include "../motorola/motorola.hpp"
 #include "../../output/outputtypes.hpp"

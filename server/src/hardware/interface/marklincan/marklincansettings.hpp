@@ -24,7 +24,7 @@
 
 #include "../../../core/subobject.hpp"
 #include "../../../core/property.hpp"
-#include "../../protocol/marklincan/config.hpp"
+#include "../../protocol/marklincan/marklincanconfig.hpp"
 
 class MarklinCANSettings final : public SubObject
 {

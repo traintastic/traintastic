@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "messages.hpp"
-#include "uid.hpp"
+#include "marklincanmessages.hpp"
+#include "marklincanuid.hpp"
 #include "../../../utils/tohex.hpp"
 
 namespace MarklinCAN {

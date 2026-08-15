@@ -19,9 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "socketcaniohandler.hpp"
-#include "../kernel.hpp"
-#include "../messages.hpp"
+#include "marklincansocketcaniohandler.hpp"
+#include "../marklincankernel.hpp"
+#include "../marklincanmessages.hpp"
 
 namespace MarklinCAN {
 

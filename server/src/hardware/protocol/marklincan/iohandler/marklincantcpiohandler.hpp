@@ -23,7 +23,7 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_TCPIOHANDLER_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_TCPIOHANDLER_HPP
 
-#include "networkiohandler.hpp"
+#include "marklincannetworkiohandler.hpp"
 #include <boost/asio/ip/tcp.hpp>
 
 namespace MarklinCAN {

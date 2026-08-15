@@ -23,12 +23,12 @@
 #ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_SIMULATIONIOHANDLER_HPP
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_SIMULATIONIOHANDLER_HPP
 
-#include "iohandler.hpp"
+#include "marklincaniohandler.hpp"
 #include <chrono>
 #include <queue>
 #include <set>
 #include <boost/asio/steady_timer.hpp>
-#include "../messages.hpp"
+#include "../marklincanmessages.hpp"
 
 namespace MarklinCAN {
 

@@ -20,7 +20,7 @@
  */
 
 #include "marklincansettings.hpp"
-#include "../../protocol/marklincan/uid.hpp"
+#include "../../protocol/marklincan/marklincanuid.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
 #include "../../../utils/random.hpp"

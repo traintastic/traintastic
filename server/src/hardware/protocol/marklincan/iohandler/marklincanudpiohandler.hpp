@@ -1,5 +1,5 @@
 /**
- * server/src/hardware/protocol/marklincan/iohandler/serialiohandler.hpp
+ * server/src/hardware/protocol/marklincan/iohandler/udpiohandler.hpp
  *
  * This file is part of the traintastic source code.
  *
@@ -20,27 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_SERIALIOHANDLER_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_SERIALIOHANDLER_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_UDPIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_MARKLINCAN_IOHANDLER_UDPIOHANDLER_HPP
 
-#include "networkiohandler.hpp"
-#include <boost/asio/serial_port.hpp>
-#include "../../../../enum/serialflowcontrol.hpp"
+#include "marklincannetworkiohandler.hpp"
+#include <boost/asio/ip/udp.hpp>
 
 namespace MarklinCAN {
 
-class SerialIOHandler final : public NetworkIOHandler
+class UDPIOHandler final : public NetworkIOHandler
 {
   private:
-    boost::asio::serial_port m_serialPort;
+    static constexpr uint16_t localPort = 15730;
+    static constexpr uint16_t remotePort = 15731;
+
+    boost::asio::ip::udp::socket m_readSocket;
+    boost::asio::ip::udp::endpoint m_readEndpoint;
     std::array<std::byte, 1500> m_readBuffer;
-    size_t m_readBufferOffset;
+    boost::asio::ip::udp::socket m_writeSocket;
+    boost::asio::ip::udp::endpoint m_writeEndpoint;
 
     void read() final;
     void write() final;
 
   public:
-    SerialIOHandler(Kernel& kernel, const std::string& device, uint32_t baudrate, SerialFlowControl flowControl);
+    UDPIOHandler(Kernel& kernel, const std::string& hostname);
 
     void stop() final;
 };

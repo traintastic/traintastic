@@ -20,10 +20,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "simulationiohandler.hpp"
+#include "marklincansimulationiohandler.hpp"
 #include <boost/asio/post.hpp>
-#include "../kernel.hpp"
-#include "../message/statusdataconfig.hpp"
+#include "../marklincankernel.hpp"
+#include "../message/marklincanstatusdataconfig.hpp"
 #include "../../../../utils/random.hpp"
 #include "../../../../utils/zlib.hpp"
 
@@ -291,7 +291,7 @@ bool SimulationIOHandler::send(const Message& message)
 void SimulationIOHandler::reply(const Message& message)
 {
   // post the reply, so it has some delay
-  boost::asio::post(m_kernel.ioContext(), 
+  boost::asio::post(m_kernel.ioContext(),
     [this, message]()
     {
       m_kernel.receive(message);
