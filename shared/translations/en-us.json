@@ -1376,6 +1376,10 @@
         "definition": "Network (UDP)"
     },
     {
+        "term": "marklin_can_interface_type:serial",
+        "definition": "Serial"
+    },
+    {
         "term": "marklin_can_interface_type:socket_can",
         "definition": "SocketCAN (Linux only)"
     },
