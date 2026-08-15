@@ -295,7 +295,7 @@ else()
   file(GLOB SOCKET_CAN_SOURCES
     "src/hardware/protocol/can/iohandler/socketcaniohandler.*"
     "src/hardware/protocol/cbus/iohandler/cbussocketcaniohandler.*"
-    "src/hardware/protocol/marklincan/iohandler/socketcaniohandler.*"
+    "src/hardware/protocol/marklincan/iohandler/marklincansocketcaniohandler.*"
   )
   list(REMOVE_ITEM SOURCES ${SOCKET_CAN_SOURCES})
 endif()
