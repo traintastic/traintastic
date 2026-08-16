@@ -316,7 +316,7 @@ std::string toString(const Message& message)
   s.append(" ").append(toHex(message.hash()));
   s.append(" ").append(std::to_string(message.dlc));
   if(message.dlc > 0)
-    s.append(" ").append(toHex(message.data, message.dlc));
+    s.append(" ").append(toHex(message.data, std::min<size_t>(message.dlc, sizeof(message.data))));
   s.append("]");
 
   return s;
