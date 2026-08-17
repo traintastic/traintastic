@@ -23,6 +23,7 @@
 #define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_RCLINK_RCLINKKERNEL_HPP
 
 #include "../kernelbase.hpp"
+#include <array>
 #include <span>
 #include "rclinkconfig.hpp"
 #include "iohandler/rclinkiohandler.hpp"
