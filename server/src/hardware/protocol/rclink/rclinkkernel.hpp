@@ -32,10 +32,10 @@ namespace RCLink {
 class Kernel : public ::KernelBase
 {
 public:
-  static constexpr uint16_t inputAddressMin = 1;
-  static constexpr uint16_t inputAddressMax = 24;
+  static constexpr uint8_t inputAddressMin = 1;
+  static constexpr uint8_t inputAddressMax = 24;
 
-  std::function<void(uint16_t, bool)> onInputChanged;
+  std::function<void(uint8_t, bool, uint16_t, bool)> onDetector;
 
   /**
    * @brief Create kernel and IO handler
@@ -89,6 +89,7 @@ private:
   std::unique_ptr<IOHandler> m_ioHandler;
   const bool m_simulation;
   Config m_config;
+  std::array<uint16_t, 24> m_railcomAddress;
 
   Kernel(std::string logId_, const Config& config, bool simulation);
 

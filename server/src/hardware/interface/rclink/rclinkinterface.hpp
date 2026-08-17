@@ -23,6 +23,8 @@
 #define TRAINTASTIC_SERVER_HARDWARE_INTERFACE_RCLINK_RCLINKINTERFACE_HPP
 
 #include "../interface.hpp"
+#include "../../input/inputcontroller.hpp"
+#include "../../identification/identificationcontroller.hpp"
 #include "../../../core/serialdeviceproperty.hpp"
 #include "../../../core/objectproperty.hpp"
 
@@ -37,6 +39,8 @@ class Kernel;
  */
 class RCLinkInterface final
   : public Interface
+  , public InputController
+  , public IdentificationController
 {
   CLASS_ID("interface.rclink")
   DEFAULT_ID("rclink")
@@ -48,6 +52,13 @@ public:
 
   RCLinkInterface(World& world, std::string_view _id);
   ~RCLinkInterface() final;
+
+  // InputController:
+  std::span<const InputChannel> inputChannels() const final;
+  std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
+
+  // IdentificationController:
+  std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t channel) const final;
 
 protected:
   void addToWorld() final;

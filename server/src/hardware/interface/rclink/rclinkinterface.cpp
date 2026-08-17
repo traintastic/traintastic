@@ -21,6 +21,8 @@
 
 #include "rclinkinterface.hpp"
 #include "rclinksettings.hpp"
+#include "../../input/list/inputlist.hpp"
+#include "../../identification/list/identificationlist.hpp"
 #include "../../protocol/rclink/rclinkkernel.hpp"
 #include "../../protocol/rclink/rclinkmessages.hpp"
 #include "../../protocol/rclink/iohandler/rclinkserialiohandler.hpp"
@@ -31,10 +33,15 @@
 #include "../../../log/logmessageexception.hpp"
 #include "../../../world/world.hpp"
 
+constexpr auto inputListColumns = InputListColumn::Address;
+constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Address;
+
 CREATE_IMPL(RCLinkInterface)
 
 RCLinkInterface::RCLinkInterface(World& world, std::string_view _id)
   : Interface(world, _id)
+  , InputController(static_cast<IdObject&>(*this))
+  , IdentificationController(static_cast<IdObject&>(*this))
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , rcLink{this, "rc_link", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
 {
@@ -45,6 +52,10 @@ RCLinkInterface::RCLinkInterface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(device, notes);
 
   m_interfaceItems.insertBefore(rcLink, notes);
+
+  m_interfaceItems.insertBefore(inputs, notes);
+
+  m_interfaceItems.insertBefore(identifications, notes);
 
   m_rcLinkPropertyChanged = rcLink->propertyChanged.connect(
     [this](BaseProperty& /*property*/)
@@ -59,6 +70,22 @@ RCLinkInterface::RCLinkInterface(World& world, std::string_view _id)
 }
 
 RCLinkInterface::~RCLinkInterface() = default;
+
+std::span<const InputChannel> RCLinkInterface::inputChannels() const
+{
+  static constexpr std::array<InputChannel, 1> values{{InputChannel::Input}};
+  return values;
+}
+
+std::pair<uint32_t, uint32_t> RCLinkInterface::inputAddressMinMax(InputChannel /*channel*/) const
+{
+  return {RCLink::Kernel::inputAddressMin, RCLink::Kernel::inputAddressMax};
+}
+
+std::pair<uint32_t, uint32_t> RCLinkInterface::identificationAddressMinMax(uint32_t /*channel*/) const
+{
+  return {RCLink::Kernel::inputAddressMin, RCLink::Kernel::inputAddressMax};
+}
 
 bool RCLinkInterface::setOnline(bool& value, bool simulation)
 {
@@ -83,6 +110,22 @@ bool RCLinkInterface::setOnline(bool& value, bool simulation)
           setState(InterfaceState::Error);
           online = false; // communication no longer possible
         });
+      m_kernel->onDetector =
+        [this](uint8_t address, bool occupied, uint16_t railcomAddress, bool orientation)
+        {
+          updateInputValue(InputChannel::Input, InputAddress(address), toTriState(occupied));
+
+          if(railcomAddress != 0)
+          {
+            identificationEvent(
+              IdentificationController::defaultIdentificationChannel,
+              address,
+              occupied ? IdentificationEventType::Present : IdentificationEventType::Absent,
+              railcomAddress,
+              orientation ? Direction::Forward : Direction::Reverse,
+              0);
+          }
+        };
       m_kernel->start();
     }
     catch(const LogMessageException& e)
@@ -113,6 +156,8 @@ void RCLinkInterface::onlineChanged(bool /*value*/)
 void RCLinkInterface::addToWorld()
 {
   Interface::addToWorld();
+  InputController::addToWorld(inputListColumns);
+  IdentificationController::addToWorld(identificationListColumns);
 }
 
 void RCLinkInterface::loaded()
@@ -125,6 +170,8 @@ void RCLinkInterface::loaded()
 void RCLinkInterface::destroying()
 {
   m_rcLinkPropertyChanged.disconnect();
+  IdentificationController::destroying();
+  InputController::destroying();
   Interface::destroying();
 }
 

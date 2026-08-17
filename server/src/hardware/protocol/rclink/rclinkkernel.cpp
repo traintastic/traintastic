@@ -24,6 +24,7 @@
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
+#include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
 
 namespace RCLink {
@@ -34,6 +35,8 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
   , m_config{config}
 {
   assert(isEventLoopThread());
+
+  std::fill(m_railcomAddress.begin(), m_railcomAddress.end(), 0);
 }
 
 void Kernel::setConfig(const Config& config)
@@ -116,6 +119,29 @@ void Kernel::receive(std::span<const uint8_t> message)
       [this, msg=toString(message)]()
       {
         Log::log(logId, LogMessage::D2002_RX_X, msg);
+      });
+  }
+
+  if(Detector::check(message))
+  {
+    EventLoop::call(
+      [this, detector=*reinterpret_cast<const Detector*>(message.data())]()
+      {
+        if(onDetector && inRange(detector.address, inputAddressMin, inputAddressMax)) [[likely]]
+        {
+          uint16_t railcomAddress = 0;
+          if(detector.occupied() && detector.hasRailcomAddress())
+          {
+            railcomAddress = detector.railcomAddress();
+            m_railcomAddress[detector.address - inputAddressMin] = railcomAddress;
+          }
+          else if(!detector.occupied())
+          {
+            railcomAddress = m_railcomAddress[detector.address - inputAddressMin];
+            m_railcomAddress[detector.address - inputAddressMin] = 0;
+          }
+          onDetector(detector.address, detector.occupied(), railcomAddress, detector.orientation());
+        }
       });
   }
 }
