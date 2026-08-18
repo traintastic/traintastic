@@ -683,7 +683,7 @@ bool Kernel::setOutput(OutputChannel channel, uint16_t address, OutputPairValue 
 
       MarklinCAN::AccessoryControl cmd(uid);
       cmd.setPosition(value == OutputPairValue::First ? MarklinCAN::AccessoryControl::positionOff : MarklinCAN::AccessoryControl::positionOn);
-      //cmd.setCurrent(value ? 1 : 0);
+      cmd.setCurrent(1);
       send(cmd);
     });
 
