@@ -20,6 +20,7 @@
  */
 
 #include "rclinkkernel.hpp"
+#include "rclinkconst.hpp"
 #include "rclinkmessages.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"

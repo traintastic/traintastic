@@ -23,9 +23,12 @@
 #include "rclinksettings.hpp"
 #include "../../input/list/inputlist.hpp"
 #include "../../identification/list/identificationlist.hpp"
+#include "../../protocol/rclink/rclinkconst.hpp"
 #include "../../protocol/rclink/rclinkkernel.hpp"
 #include "../../protocol/rclink/rclinkmessages.hpp"
 #include "../../protocol/rclink/iohandler/rclinkserialiohandler.hpp"
+#include "../../protocol/rclink/iohandler/rclinksimulationiohandler.hpp"
+#include "../../protocol/rclink/simulator/rclinksimulator.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../core/eventloop.hpp"
 #include "../../../core/objectproperty.tpp"
@@ -79,12 +82,37 @@ std::span<const InputChannel> RCLinkInterface::inputChannels() const
 
 std::pair<uint32_t, uint32_t> RCLinkInterface::inputAddressMinMax(InputChannel /*channel*/) const
 {
-  return {RCLink::Kernel::inputAddressMin, RCLink::Kernel::inputAddressMax};
+  return {RCLink::inputAddressMin, RCLink::inputAddressMax};
+}
+
+void RCLinkInterface::inputSimulateChange(InputChannel /*channel*/, const InputLocation& location, SimulateInputAction action)
+{
+  if(m_simulator) [[likely]]
+  {
+    assert(std::holds_alternative<InputAddress>(location));
+    const auto address = static_cast<uint8_t>(std::get<InputAddress>(location).address);
+    switch(action)
+    {
+      using enum SimulateInputAction;
+
+      case SetFalse:
+        m_simulator->detectorEvent(address, false);
+        break;
+
+      case SetTrue:
+        m_simulator->detectorEvent(address, true);
+        break;
+
+      case Toggle:
+        m_simulator->detectorEventToggle(address);
+        break;
+    }
+  }
 }
 
 std::pair<uint32_t, uint32_t> RCLinkInterface::identificationAddressMinMax(uint32_t /*channel*/) const
 {
-  return {RCLink::Kernel::inputAddressMin, RCLink::Kernel::inputAddressMax};
+  return {RCLink::inputAddressMin, RCLink::inputAddressMax};
 }
 
 bool RCLinkInterface::setOnline(bool& value, bool simulation)
@@ -93,9 +121,15 @@ bool RCLinkInterface::setOnline(bool& value, bool simulation)
   {
     try
     {
-      (void)simulation;
-
-      m_kernel = RCLink::Kernel::create<RCLink::SerialIOHandler>(id.value(), rcLink->config(), device.value());
+      if(simulation)
+      {
+        m_simulator = std::make_unique<RCLink::Simulator>();
+        m_kernel = RCLink::Kernel::create<RCLink::SimulationIOHandler>(id.value(), rcLink->config(), std::ref(*m_simulator));
+      }
+      else
+      {
+        m_kernel = RCLink::Kernel::create<RCLink::SerialIOHandler>(id.value(), rcLink->config(), device.value());
+      }
 
       setState(InterfaceState::Initializing);
 
@@ -139,6 +173,7 @@ bool RCLinkInterface::setOnline(bool& value, bool simulation)
   {
     m_kernel->stop();
     EventLoop::deleteLater(m_kernel.release());
+    EventLoop::deleteLater(m_simulator.release());
 
     if(status->state != InterfaceState::Error)
     {

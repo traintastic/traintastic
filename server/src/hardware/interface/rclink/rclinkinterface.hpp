@@ -32,6 +32,7 @@ class RCLinkSettings;
 
 namespace RCLink {
 class Kernel;
+class Simulator;
 }
 
 /**
@@ -56,6 +57,7 @@ public:
   // InputController:
   std::span<const InputChannel> inputChannels() const final;
   std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
+  void inputSimulateChange(InputChannel /*channel*/, const InputLocation& location, SimulateInputAction action) final;
 
   // IdentificationController:
   std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t channel) const final;
@@ -71,6 +73,7 @@ protected:
 
 private:
   std::unique_ptr<RCLink::Kernel> m_kernel;
+  std::unique_ptr<RCLink::Simulator> m_simulator;
   boost::signals2::connection m_rcLinkPropertyChanged;
 
   void updateEnabled();

@@ -166,6 +166,8 @@ file(GLOB SOURCES
   "src/hardware/protocol/rclink/rclinkmessages.cpp"
   "src/hardware/protocol/rclink/iohandler/rclinkiohandler.cpp"
   "src/hardware/protocol/rclink/iohandler/rclinkserialiohandler.cpp"
+  "src/hardware/protocol/rclink/iohandler/rclinksimulationiohandler.cpp"
+  "src/hardware/protocol/rclink/simulator/rclinksimulator.cpp"
   "src/hardware/protocol/traintasticdiy/*.hpp"
   "src/hardware/protocol/traintasticdiy/*.cpp"
   "src/hardware/protocol/traintasticdiy/iohandler/*.hpp"
