@@ -82,6 +82,10 @@ InputConsumer::InputConsumer(Object& object, const World& world)
       },
       [this](const InputChannel& newValue)
       {
+        if(!interface)
+        {
+          return true;
+        }
         if(auto obj = interface->getInput(newValue, inputLocation(newValue, node, address), m_object))
         {
           setInput(obj);
@@ -93,6 +97,10 @@ InputConsumer::InputConsumer(Object& object, const World& world)
       nullptr,
       [this](uint32_t& newValue)
       {
+        if(!interface)
+        {
+          return true;
+        }
         if(auto obj = interface->getInput(channel, inputLocation(channel, newValue, address), m_object))
         {
           setInput(obj);
@@ -103,6 +111,10 @@ InputConsumer::InputConsumer(Object& object, const World& world)
   , address{&object, "address", 0, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::NoScript, nullptr,
       [this](const uint32_t& newValue)
       {
+        if(!interface)
+        {
+          return true;
+        }
         if(auto obj = interface->getInput(channel, inputLocation(channel, node, newValue), m_object))
         {
           setInput(obj);
