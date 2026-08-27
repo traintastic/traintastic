@@ -86,9 +86,23 @@ TurnoutRailTile::TurnoutRailTile(World& world, std::string_view _id, TileId tile
 
 bool TurnoutRailTile::reserve(const std::shared_ptr<BlockPath> &blockPath, const std::shared_ptr<Train>& train, bool toeSideEntry, TurnoutPosition turnoutPosition, bool dryRun)
 {
+  const auto reservedState = static_cast<uint8_t>(turnoutPosition);
+
   if(!isValidPosition(turnoutPosition))
   {
-    return false;
+    // handle single/double motor slip turnout cases (not ideal to implement here....)
+    if((turnoutPosition == TurnoutPosition::Left || turnoutPosition == TurnoutPosition::Right) && isValidPosition(TurnoutPosition::Diverged))
+    {
+      turnoutPosition = TurnoutPosition::Diverged;
+    }
+    else if((turnoutPosition == TurnoutPosition::DoubleSlipStraightA || turnoutPosition == TurnoutPosition::DoubleSlipStraightB) && isValidPosition(TurnoutPosition::Crossed))
+    {
+      turnoutPosition = TurnoutPosition::Crossed;
+    }
+    else
+    {
+      return false;
+    }
   }
 
   if(reservedPosition != TurnoutPosition::Unknown && reservedPosition != turnoutPosition)
@@ -118,7 +132,7 @@ bool TurnoutRailTile::reserve(const std::shared_ptr<BlockPath> &blockPath, const
     m_reservedPath = blockPath;
     m_reservedTrain = train;
     reservedPosition.setValueInternal(turnoutPosition);
-    RailTile::setReservedState(static_cast<uint8_t>(turnoutPosition));
+    RailTile::setReservedState(reservedState);
   }
   return true;
 }
