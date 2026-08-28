@@ -1,9 +1,8 @@
 /**
- * client/src/widget/propertydoublespinbox.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,18 +20,32 @@
  */
 
 #include "propertydoublespinbox.hpp"
+#include <QToolTip>
 #include "../network/abstractproperty.hpp"
 
-PropertyDoubleSpinBox::PropertyDoubleSpinBox(AbstractProperty& property, QWidget* parent) :
-  QDoubleSpinBox(parent),
-  m_property{property}
+PropertyDoubleSpinBox::PropertyDoubleSpinBox(AbstractProperty& property, QWidget* parent)
+  : QDoubleSpinBox(parent)
+  , m_property{property}
 {
   Q_ASSERT(m_property.type() == ValueType::Float);
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
-  setRange(-std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
+  updateRange();
+  if(auto unit = m_property.getAttributeString(AttributeName::Unit, ""); !unit.isEmpty())
+  {
+    setSuffix(unit.prepend(" "));
+  }
+  setDecimals(m_property.getAttributeInt(AttributeName::Decimals, decimals()));
+  setSingleStep(m_property.getAttributeDouble(AttributeName::Step, singleStep()));
   setValue(m_property.toDouble());
-  connect(&m_property, &AbstractProperty::valueChangedDouble, this, &PropertyDoubleSpinBox::setValue);
+  connect(&m_property, &AbstractProperty::valueChangedDouble, this,
+    [this](double value)
+    {
+      if(!hasFocus())
+      {
+        setValue(value);
+      }
+    });
   connect(&m_property, &AbstractProperty::attributeChanged, this,
     [this](AttributeName name, const QVariant& value)
     {
@@ -46,9 +59,46 @@ PropertyDoubleSpinBox::PropertyDoubleSpinBox(AbstractProperty& property, QWidget
           setVisible(value.toBool());
           break;
 
+        case AttributeName::Decimals:
+          setDecimals(value.toInt());
+          break;
+
+        case AttributeName::Min:
+        case AttributeName::Max:
+          updateRange();
+          break;
+
+        case AttributeName::Step:
+          setSingleStep(value.toDouble());
+          break;
+
+        case AttributeName::Unit:
+          if(auto unit = value.toString(); !unit.isEmpty())
+          {
+            setSuffix(unit.prepend(" "));
+          }
+          else
+          {
+            setSuffix("");
+          }
+          break;
+
         default:
           break;
       }
     });
   connect(this, QOverload<double>::of(&PropertyDoubleSpinBox::valueChanged), &m_property, QOverload<double>::of(&AbstractProperty::setValueDouble));
+}
+
+void PropertyDoubleSpinBox::focusOutEvent(QFocusEvent* event)
+{
+  QDoubleSpinBox::focusOutEvent(event);
+  setValue(m_property.toDouble());
+}
+
+void PropertyDoubleSpinBox::updateRange()
+{
+  setRange(
+    m_property.getAttributeDouble(AttributeName::Min, std::numeric_limits<double>::lowest()),
+    m_property.getAttributeDouble(AttributeName::Max, std::numeric_limits<double>::max()));
 }
