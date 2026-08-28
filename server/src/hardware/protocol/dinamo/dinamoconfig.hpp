@@ -28,6 +28,7 @@ struct Config
 {
   bool setHFILevel;
   uint8_t hfiLevel;
+  uint8_t pm32PulseDuration;
   bool debugLogRXTX;
 };
 

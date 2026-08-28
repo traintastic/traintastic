@@ -536,6 +536,10 @@
         "definition": "DCCext (RCN-213)"
     },
     {
+        "term": "output_channel:pm32",
+        "definition": "PM32"
+    },
+    {
         "term": "loconet_command_station:uhlenbrock_intellibox_ir",
         "definition": "Uhlenbrock Intellibox IR"
     },

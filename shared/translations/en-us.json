@@ -804,6 +804,22 @@
         "definition": "Zone"
     },
     {
+        "term": "dinamo_settings:set_hfi_level",
+        "definition": "Set HFI level"
+    },
+    {
+        "term": "dinamo_settings:hfi_level",
+        "definition": "HFI level"
+    },
+    {
+        "term": "dinamo_settings:pm32_pulse_duration",
+        "definition": "PM32 pulse duration"
+    },
+    {
+        "term": "dinamo_settings:debug_log_train_blocks",
+        "definition": "Log train block linking"
+    },
+    {
         "term": "direction:forward",
         "definition": "Forward"
     },
@@ -1763,7 +1779,6 @@
         "term": "message:E2030",
         "definition": "TCP socket listen failed (%1)"
     },
-
     {
         "term": "message:E2031",
         "definition": "DINAMO protocol version %1 not supported"

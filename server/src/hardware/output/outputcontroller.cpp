@@ -84,6 +84,7 @@ OutputType OutputController::outputType(OutputChannel channel) const
     case OutputChannel::Accessory:
     case OutputChannel::AccessoryDCC:
     case OutputChannel::AccessoryMotorola:
+    case OutputChannel::PM32:
       return OutputType::Pair;
 
     case OutputChannel::DCCext:
@@ -120,6 +121,7 @@ std::pair<uint32_t, uint32_t> OutputController::outputAddressMinMax(OutputChanne
     case OutputChannel::OC32:
     case OutputChannel::LongEvent:
     case OutputChannel::ShortEvent:
+    case OutputChannel::PM32:
       break;
 
     case OutputChannel::ECoSObject:
@@ -153,6 +155,7 @@ bool OutputController::isOutputLocation(OutputChannel channel, const OutputLocat
     case OutputChannel::OC32:
     case OutputChannel::LongEvent:
     case OutputChannel::ShortEvent:
+    case OutputChannel::PM32:
       if(hasNode(channel))
       {
         return inRange(std::get<OutputNodeAddress>(location).address, outputAddressMinMax(channel));

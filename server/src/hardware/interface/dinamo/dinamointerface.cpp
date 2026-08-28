@@ -296,7 +296,7 @@ void DinamoInterface::inputSimulateChange(InputChannel /*channel*/, const InputL
 
 std::span<const OutputChannel> DinamoInterface::outputChannels() const
 {
-  static constexpr auto values = std::array{OutputChannel::OC32};
+  static constexpr auto values = std::array{OutputChannel::OC32, OutputChannel::PM32};
   return values;
 }
 
@@ -307,6 +307,9 @@ std::pair<uint32_t, uint32_t> DinamoInterface::outputAddressMinMax(OutputChannel
     case OutputChannel::OC32:
       return {Dinamo::Kernel::outputOC32AddressMin, Dinamo::Kernel::outputOC32AddressMax};
 
+    case OutputChannel::PM32:
+      return {Dinamo::Kernel::outputPM32AddressMin, Dinamo::Kernel::outputPM32AddressMax};
+
     default: [[unlikely]]
       break;
   }
@@ -315,12 +318,25 @@ std::pair<uint32_t, uint32_t> DinamoInterface::outputAddressMinMax(OutputChannel
 
 bool DinamoInterface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
-  if(m_kernel && channel == OutputChannel::OC32)
+  if(m_kernel)
   {
     assert(std::holds_alternative<OutputAddress>(location));
     const auto address = static_cast<uint16_t>(std::get<OutputAddress>(location).address);
-    m_kernel->setOC32Aspect(address, static_cast<uint8_t>(std::get<int16_t>(value)));
-    return true;
+    switch(channel)
+    {
+      case OutputChannel::OC32:
+        assert(std::holds_alternative<int16_t>(value));
+        m_kernel->setOC32Aspect(address, static_cast<uint8_t>(std::get<int16_t>(value)));
+        return true;
+
+      case OutputChannel::PM32:
+        assert(std::holds_alternative<OutputPairValue>(value));
+        m_kernel->setPM32Output(address, std::get<OutputPairValue>(value) == OutputPairValue::First);
+        return true;
+
+      default: [[unlikely]]
+        break;
+    }
   }
   return false;
 }

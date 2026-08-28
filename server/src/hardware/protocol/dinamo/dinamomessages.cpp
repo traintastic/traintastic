@@ -65,13 +65,18 @@ std::string toString(std::span<const uint8_t> message, bool hold, bool fault)
   }
   else if(SetOutput::check(message))
   {
-    // FIXME: const auto& msg = *reinterpret_cast<const SetOutput*>(message.data());
-    s = std::format("SetOutput");
+    const auto& msg = *reinterpret_cast<const SetOutput*>(message.data());
+    s = std::format("SetOutput address={} coil={} pulse_duration=default",
+      msg.address(),
+      msg.coil() ? "diverging" : "straight");
   }
   else if(SetOutputWithPulseDuration::check(message))
   {
-    // FIXME: const auto& msg = *reinterpret_cast<const SetOutputWithPulseDuration*>(message.data());
-    s = std::format("SetOutputWithPulseDuration");
+    const auto& msg = *reinterpret_cast<const SetOutputWithPulseDuration*>(message.data());
+    s = std::format("SetOutput address={} coil={} pulse_duration={:.0f}ms",
+      msg.address(),
+      msg.coil() ? "diverging" : "straight",
+      msg.duration * (1000.f / 60.f));
   }
   else if(Ox32::check(message))
   {

@@ -25,6 +25,7 @@
 #include "../../../core/eventloop.hpp"
 #include "../../../log/log.hpp"
 #include "../../../log/logmessageexception.hpp"
+#include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
 
 namespace Dinamo {
@@ -241,6 +242,18 @@ void Kernel::setOC32Aspect(uint16_t address, uint8_t aspect)
         send(Ox32((address >> 5) & 0x1F, address & 0x1F, Ox32::Command::SetAspect, aspect));
       });
   }
+}
+
+void Kernel::setPM32Output(uint16_t address, bool coil)
+{
+  assert(isEventLoopThread());
+  assert(inRange(address, outputPM32AddressMin, outputPM32AddressMax));
+
+  m_ioContext.post(
+    [this, address, coil]()
+    {
+      send(SetOutputWithPulseDuration(address, coil, m_config.pm32PulseDuration));
+    });
 }
 
 void Kernel::setBlockAnalog(uint8_t block, bool light, std::optional<Polarity> polarity)

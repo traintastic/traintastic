@@ -39,6 +39,8 @@ public:
   static constexpr uint16_t inputAddressMax = 2047;
   static constexpr uint16_t outputOC32AddressMin = 0;
   static constexpr uint16_t outputOC32AddressMax = (32 * 32) - 1; //!< 32 modules, 32 outputs per module
+  static constexpr uint16_t outputPM32AddressMin = 0;
+  static constexpr uint16_t outputPM32AddressMax = 511;
   static constexpr uint8_t blockAddressMin = 0;
   static constexpr uint8_t blockAddressMax = 255;
 
@@ -101,6 +103,7 @@ public:
   void requestInputState(std::vector<uint16_t> inputAddresses);
 
   void setOC32Aspect(uint16_t address, uint8_t aspect);
+  void setPM32Output(uint16_t address, bool coil);
 
   void setBlockAnalog(uint8_t block, bool light, std::optional<Polarity> polarity = std::nullopt);
   void setBlockAnalogSpeed(uint8_t block, uint8_t speed, std::optional<Dinamo::Polarity> polarity = std::nullopt);

@@ -146,6 +146,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
               case OutputChannel::OC32:
               case OutputChannel::LongEvent:
               case OutputChannel::ShortEvent:
+              case OutputChannel::PM32:
               {
                 const uint32_t address = newValue->getUnusedOutputAddress(channel);
                 addresses.appendInternal(address);
@@ -196,6 +197,7 @@ OutputMap::OutputMap(Object& _parent, std::string_view parentPropertyName)
           case OutputChannel::OC32:
           case OutputChannel::LongEvent:
           case OutputChannel::ShortEvent:
+          case OutputChannel::PM32:
             ecosObject.setValueInternal(0);
             for(uint32_t address : addresses)
             {
@@ -447,6 +449,7 @@ void OutputMap::load(WorldLoader& loader, const nlohmann::json& data)
       case OutputChannel::OC32:
       case OutputChannel::LongEvent:
       case OutputChannel::ShortEvent:
+      case OutputChannel::PM32:
         for(uint32_t address : addresses)
         {
           addOutput(channel, outputLocation(channel, node, address));
@@ -518,6 +521,7 @@ void OutputMap::channelChanged()
       case OutputChannel::OC32:
       case OutputChannel::LongEvent:
       case OutputChannel::ShortEvent:
+      case OutputChannel::PM32:
       {
         Attributes::setVisible(node, hasNode(channel));
         Attributes::setVisible({addresses, addAddress, removeAddress}, true);
@@ -810,6 +814,7 @@ void OutputMap::updateAddressDisplayName()
     case Turnout:
     case ECoSObject:
     case OC32:
+    case PM32:
       Attributes::setDisplayName(addresses, addresses.size() == 1 ? DisplayName::Hardware::address : DisplayName::Hardware::addresses);
       Attributes::setDisplayName(addAddress, DisplayName::OutputMap::addAddress);
       Attributes::setDisplayName(removeAddress, DisplayName::OutputMap::removeAddress);

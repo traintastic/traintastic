@@ -33,6 +33,7 @@ class DinamoSettings final : public SubObject
 public:
   Property<bool> setHFILevel;
   Property<uint8_t> hfiLevel;
+  Property<float> pm32PulseDuration;
   Property<bool> debugLogRXTX;
   Property<bool> debugLogTrainBlocks;
 

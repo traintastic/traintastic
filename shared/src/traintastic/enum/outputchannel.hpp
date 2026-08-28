@@ -38,9 +38,10 @@ enum class OutputChannel : uint16_t
   OC32 = 8, //!< VPEB OC32
   LongEvent = 9,
   ShortEvent = 10,
+  PM32 = 11, //!< VPEB PM32
 };
 
-TRAINTASTIC_ENUM(OutputChannel, "output_channel", 10,
+TRAINTASTIC_ENUM(OutputChannel, "output_channel", 11,
 {
   {OutputChannel::Output, "output"},
   {OutputChannel::Accessory, "accessory"},
@@ -52,9 +53,10 @@ TRAINTASTIC_ENUM(OutputChannel, "output_channel", 10,
   {OutputChannel::OC32, "oc32"},
   {OutputChannel::LongEvent, "long_event"},
   {OutputChannel::ShortEvent, "short_event"},
+  {OutputChannel::PM32, "pm32"},
 });
 
-inline constexpr std::array<OutputChannel, 10> outputChannelValues{{
+inline constexpr std::array<OutputChannel, 11> outputChannelValues{{
   OutputChannel::Output,
   OutputChannel::Accessory,
   OutputChannel::AccessoryDCC,
@@ -65,6 +67,7 @@ inline constexpr std::array<OutputChannel, 10> outputChannelValues{{
   OutputChannel::OC32,
   OutputChannel::LongEvent,
   OutputChannel::ShortEvent,
+  OutputChannel::PM32,
 }};
 
 constexpr bool isAccessory(OutputChannel value)
@@ -72,7 +75,8 @@ constexpr bool isAccessory(OutputChannel value)
   return
     (value == OutputChannel::Accessory) ||
     (value == OutputChannel::AccessoryDCC) ||
-    (value == OutputChannel::AccessoryMotorola);
+    (value == OutputChannel::AccessoryMotorola) ||
+    (value == OutputChannel::PM32);
 }
 
 constexpr bool isAspectChannel(OutputChannel value)

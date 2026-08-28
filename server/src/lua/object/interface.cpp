@@ -165,6 +165,7 @@ int Interface::get_output(lua_State* L)
     case Turnout:
     case OC32:
     case ShortEvent:
+    case PM32:
       checkArguments(L, 2);
       location = OutputAddress(check<uint32_t>(L, 2));
       break;
