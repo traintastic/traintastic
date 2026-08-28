@@ -188,12 +188,28 @@
         "definition": "Reservierung erforderlich"
     },
     {
+        "term": "board_tile.rail.turnout:link_invert",
+        "definition": ""
+    },
+    {
+        "term": "board_tile.rail.turnout:link_turnout",
+        "definition": ""
+    },
+    {
+        "term": "board_tile.rail.turnout:linked",
+        "definition": ""
+    },
+    {
         "term": "board_tile.rail.turnout_slip:dual_motor",
         "definition": "Doppel Motor/Spule"
     },
     {
         "term": "board_tile.turnout:position",
         "definition": "Position"
+    },
+    {
+        "term": "board_tile:feedback_map",
+        "definition": ""
     },
     {
         "term": "board_tile:output_map",
@@ -284,6 +300,10 @@
         "definition": "Status"
     },
     {
+        "term": "category:track_driver",
+        "definition": ""
+    },
+    {
         "term": "category:trains",
         "definition": "Z\u00fcge"
     },
@@ -314,6 +334,10 @@
     {
         "term": "cbus_node_list:version",
         "definition": "Version"
+    },
+    {
+        "term": "cbus_session_list:controlled_by",
+        "definition": ""
     },
     {
         "term": "cbus_session_list:direction",
@@ -780,6 +804,22 @@
         "definition": "Bereich"
     },
     {
+        "term": "dinamo_settings:debug_log_train_blocks",
+        "definition": ""
+    },
+    {
+        "term": "dinamo_settings:hfi_level",
+        "definition": ""
+    },
+    {
+        "term": "dinamo_settings:pm32_pulse_duration",
+        "definition": ""
+    },
+    {
+        "term": "dinamo_settings:set_hfi_level",
+        "definition": ""
+    },
+    {
         "term": "direction:forward",
         "definition": "Vorw\u00e4rts"
     },
@@ -806,6 +846,10 @@
     {
         "term": "ext_output_change_action:poweroff_world",
         "definition": "Anlage ausschalten"
+    },
+    {
+        "term": "feedback_map.turnout:key",
+        "definition": ""
     },
     {
         "term": "function:off",
@@ -876,6 +920,10 @@
         "definition": "Schnittstelle"
     },
     {
+        "term": "hardware:invert_polarity",
+        "definition": ""
+    },
+    {
         "term": "hardware:node",
         "definition": "Node"
     },
@@ -894,6 +942,14 @@
     {
         "term": "hardware:throttles",
         "definition": "Fahrregler"
+    },
+    {
+        "term": "hardware:track_driver",
+        "definition": ""
+    },
+    {
+        "term": "identification:invert_direction",
+        "definition": ""
     },
     {
         "term": "identification:opc_multi_sense_direction",
@@ -926,6 +982,18 @@
     {
         "term": "input_channel:short_event",
         "definition": "kurzes Ereignis"
+    },
+    {
+        "term": "input_condition:dont_care",
+        "definition": ""
+    },
+    {
+        "term": "input_condition:off",
+        "definition": ""
+    },
+    {
+        "term": "input_condition:on",
+        "definition": ""
     },
     {
         "term": "input_list:bus",
@@ -1324,6 +1392,10 @@
         "definition": "Netzwerk (UDP)"
     },
     {
+        "term": "marklin_can_interface_type:serial",
+        "definition": ""
+    },
+    {
         "term": "marklin_can_interface_type:socket_can",
         "definition": "SocketCAN (nur Linux)"
     },
@@ -1502,6 +1574,10 @@
     {
         "term": "message:D2010",
         "definition": "Stelle %1 = Frei"
+    },
+    {
+        "term": "message:D2011",
+        "definition": ""
     },
     {
         "term": "message:D3001",
@@ -1704,6 +1780,22 @@
         "definition": "TCP Socket listen fehlgeschlagen (%1)"
     },
     {
+        "term": "message:E2031",
+        "definition": ""
+    },
+    {
+        "term": "message:E2032",
+        "definition": ""
+    },
+    {
+        "term": "message:E2033",
+        "definition": ""
+    },
+    {
+        "term": "message:E2034",
+        "definition": ""
+    },
+    {
         "term": "message:E3001",
         "definition": "Schienenfahrzeug kann nicht gel\u00f6scht werden, w\u00e4hrend es sich in einem aktiven Zug befindet"
     },
@@ -1744,8 +1836,16 @@
         "definition": "Anlage wurde wegen externer \u00c4nderung der Signalstellung %1 notausgeschaltet."
     },
     {
+        "term": "message:E3011",
+        "definition": ""
+    },
+    {
         "term": "message:E9001",
         "definition": "%1 (W\u00e4hrend der Ausf\u00fchrung von %2 Event-Handler)"
+    },
+    {
+        "term": "message:E9002",
+        "definition": ""
     },
     {
         "term": "message:F1001",
@@ -1808,6 +1908,10 @@
         "definition": "Weltindex aufbauen"
     },
     {
+        "term": "message:I1010",
+        "definition": ""
+    },
+    {
         "term": "message:I2001",
         "definition": "Unbekannte Lokadresse: %1"
     },
@@ -1826,6 +1930,14 @@
     {
         "term": "message:I2007",
         "definition": "Neue Hub Verbindung (%1:%2)"
+    },
+    {
+        "term": "message:I2008",
+        "definition": ""
+    },
+    {
+        "term": "message:I2009",
+        "definition": ""
     },
     {
         "term": "message:I3001",
@@ -2080,6 +2192,10 @@
         "definition": "Lesen der Last von Booster '%1' fehlgeschlagen: %2"
     },
     {
+        "term": "message:W2028",
+        "definition": ""
+    },
+    {
         "term": "message:W3001",
         "definition": "NX-Taste mit zwei Bl\u00f6cken verbunden"
     },
@@ -2224,6 +2340,10 @@
         "definition": "Ausg\u00e4nge vertauschen"
     },
     {
+        "term": "output_map:test",
+        "definition": ""
+    },
+    {
         "term": "output_map:use",
         "definition": "Benutzen"
     },
@@ -2304,6 +2424,30 @@
         "definition": "Benutzername"
     },
     {
+        "term": "qtapp.diagnostic_report_dialog:create_report",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:explanation",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:save_diagnostic_report",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:window_title",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:zip_file",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.dialog:cancel",
+        "definition": ""
+    },
+    {
         "term": "qtapp.error:cant_read_from_file_x",
         "definition": "Kann nicht von Datei lesen: %1"
     },
@@ -2338,6 +2482,10 @@
     {
         "term": "qtapp.mainmenu:connection",
         "definition": "Verbindung"
+    },
+    {
+        "term": "qtapp.mainmenu:diagnostic_report",
+        "definition": ""
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
@@ -2548,6 +2696,26 @@
         "definition": "Abbrechen"
     },
     {
+        "term": "qtapp.world_list_dialog:delete_world",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:delete_world_confirmation",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicate_world",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicate_world_confirmation",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicated_world_name_postfix",
+        "definition": ""
+    },
+    {
         "term": "qtapp.world_list_dialog:load",
         "definition": "Laden"
     },
@@ -2684,6 +2852,10 @@
         "definition": "Herunterfahren des Client-Servers zulassen"
     },
     {
+        "term": "settings:auto_save_interval",
+        "definition": ""
+    },
+    {
         "term": "settings:auto_save_world_on_exit",
         "definition": "Welt beim Beenden automatisch speichern"
     },
@@ -2706,6 +2878,10 @@
     {
         "term": "settings:memory_logger_size",
         "definition": "Gr\u00f6\u00dfe des Speicherloggers"
+    },
+    {
+        "term": "settings:off",
+        "definition": ""
     },
     {
         "term": "settings:port",

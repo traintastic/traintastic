@@ -25,19 +25,19 @@
     },
     {
         "term": "block_state:unknown",
-        "definition": ""
+        "definition": "Ok\u00e4nd"
     },
     {
         "term": "board:delete_tile",
-        "definition": "Ta bort brickan"
+        "definition": "Ta bort "
     },
     {
         "term": "board:move_tile",
-        "definition": "Flytta brickan"
+        "definition": "Flytta"
     },
     {
         "term": "board:resize_tile",
-        "definition": "\u00c4ndra storlek p\u00e5 brickan"
+        "definition": "\u00c4ndra storlek"
     },
     {
         "term": "board:resize_to_contents",
@@ -84,12 +84,32 @@
         "definition": "F\u00e4rg"
     },
     {
+        "term": "board_tile.misc.push_button:text",
+        "definition": "Text"
+    },
+    {
+        "term": "board_tile.misc.push_button:text_color",
+        "definition": "Textf\u00e4rg"
+    },
+    {
         "term": "board_tile.misc.switch:color_off",
         "definition": ""
     },
     {
         "term": "board_tile.misc.switch:color_on",
         "definition": ""
+    },
+    {
+        "term": "board_tile.misc.switch:text",
+        "definition": "Text"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_off",
+        "definition": "Inaktiv textf\u00e4rg"
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_on",
+        "definition": "Akriv textf\u00e4rg"
     },
     {
         "term": "board_tile.misc.switch:value",
@@ -144,8 +164,8 @@
         "definition": "L\u00e4nk"
     },
     {
-        "term": "board_tile.rail.sensor:input",
-        "definition": "Inmatning"
+        "term": "board_tile.rail.nx_button:block",
+        "definition": "Block"
     },
     {
         "term": "board_tile.rail.sensor:invert",
@@ -168,6 +188,18 @@
         "definition": "Kr\u00e4v reservation"
     },
     {
+        "term": "board_tile.rail.turnout:link_invert",
+        "definition": "Invertera l\u00e4nk"
+    },
+    {
+        "term": "board_tile.rail.turnout:link_turnout",
+        "definition": "L\u00e4nka till v\u00e4xel"
+    },
+    {
+        "term": "board_tile.rail.turnout:linked",
+        "definition": "L\u00e4nkad"
+    },
+    {
         "term": "board_tile.rail.turnout_slip:dual_motor",
         "definition": ""
     },
@@ -176,12 +208,56 @@
         "definition": ""
     },
     {
+        "term": "board_tile:feedback_map",
+        "definition": "Feedback"
+    },
+    {
         "term": "board_tile:output_map",
         "definition": "Utg\u00e5ngar"
     },
     {
+        "term": "booster:current",
+        "definition": "Str\u00f6mstyrka"
+    },
+    {
+        "term": "booster:input_voltage",
+        "definition": "Ing\u00e5ngssp\u00e4nning"
+    },
+    {
+        "term": "booster:load",
+        "definition": "Last"
+    },
+    {
+        "term": "booster:temperature",
+        "definition": "Temperatur"
+    },
+    {
+        "term": "booster:type",
+        "definition": "Typ"
+    },
+    {
+        "term": "booster:voltage",
+        "definition": "Sp\u00e4nning"
+    },
+    {
+        "term": "booster_driver:poll_interval",
+        "definition": "Pollningsintervall"
+    },
+    {
+        "term": "category:block",
+        "definition": "Block"
+    },
+    {
         "term": "category:cargo",
         "definition": "Frakt"
+    },
+    {
+        "term": "category:colors",
+        "definition": "F\u00e4rger"
+    },
+    {
+        "term": "category:colors_and_alignment",
+        "definition": "F\u00e4rger && Justering"
     },
     {
         "term": "category:debug",
@@ -192,12 +268,20 @@
         "definition": "Utvecklare"
     },
     {
+        "term": "category:features",
+        "definition": ""
+    },
+    {
         "term": "category:general",
         "definition": "Allm\u00e4nt"
     },
     {
         "term": "category:info",
         "definition": "Info"
+    },
+    {
+        "term": "category:input",
+        "definition": "Ing\u00e5ng"
     },
     {
         "term": "category:log",
@@ -212,7 +296,87 @@
         "definition": ""
     },
     {
+        "term": "category:status",
+        "definition": ""
+    },
+    {
+        "term": "category:track_driver",
+        "definition": ""
+    },
+    {
         "term": "category:trains",
+        "definition": ""
+    },
+    {
+        "term": "cbus_interface_type:socket_can",
+        "definition": ""
+    },
+    {
+        "term": "cbus_node_list:manufacturer",
+        "definition": ""
+    },
+    {
+        "term": "cbus_node_list:mode",
+        "definition": ""
+    },
+    {
+        "term": "cbus_node_list:module",
+        "definition": ""
+    },
+    {
+        "term": "cbus_node_list:node_number",
+        "definition": ""
+    },
+    {
+        "term": "cbus_node_list:type",
+        "definition": ""
+    },
+    {
+        "term": "cbus_node_list:version",
+        "definition": ""
+    },
+    {
+        "term": "cbus_session_list:controlled_by",
+        "definition": "Kontrolleras av"
+    },
+    {
+        "term": "cbus_session_list:direction",
+        "definition": ""
+    },
+    {
+        "term": "cbus_session_list:long",
+        "definition": ""
+    },
+    {
+        "term": "cbus_session_list:session",
+        "definition": ""
+    },
+    {
+        "term": "cbus_session_list:speed",
+        "definition": ""
+    },
+    {
+        "term": "cbus_settings:dcc_accessory_switch_time",
+        "definition": ""
+    },
+    {
+        "term": "cbus_settings:engine_keep_alive",
+        "definition": ""
+    },
+    {
+        "term": "cbus_settings:hub_enabled",
+        "definition": ""
+    },
+    {
+        "term": "cbus_settings:hub_localhost_only",
+        "definition": ""
+    },
+    {
+        "term": "cbus_settings:hub_port",
+        "definition": ""
+    },
+    {
+        "term": "cbus_settings:short_event_node_number",
         "definition": ""
     },
     {
@@ -277,14 +441,6 @@
     },
     {
         "term": "class_id:board_tile.rail.nx_button",
-        "definition": ""
-    },
-    {
-        "term": "class_id:board_tile.rail.nx_button:block",
-        "definition": ""
-    },
-    {
-        "term": "class_id:board_tile.rail.nx_button:input",
         "definition": ""
     },
     {
@@ -477,7 +633,7 @@
     },
     {
         "term": "dccex_channel:turnout",
-        "definition": ""
+        "definition": "V\u00e4xel"
     },
     {
         "term": "dccex_interface_type:network_tcp",
@@ -588,6 +744,82 @@
         "definition": "Inaktiverad"
     },
     {
+        "term": "default_name:block",
+        "definition": "Block"
+    },
+    {
+        "term": "default_name:board",
+        "definition": "Tavla"
+    },
+    {
+        "term": "default_name:decoupler",
+        "definition": "Urkopplare"
+    },
+    {
+        "term": "default_name:direction",
+        "definition": "Riktning"
+    },
+    {
+        "term": "default_name:link",
+        "definition": "L\u00e4nk"
+    },
+    {
+        "term": "default_name:nx_button",
+        "definition": "NX knapp"
+    },
+    {
+        "term": "default_name:push_button",
+        "definition": "Tryckknapp"
+    },
+    {
+        "term": "default_name:script",
+        "definition": "Skript"
+    },
+    {
+        "term": "default_name:sensor",
+        "definition": "Sensor"
+    },
+    {
+        "term": "default_name:signal",
+        "definition": "Signal"
+    },
+    {
+        "term": "default_name:switch",
+        "definition": "V\u00e4xel"
+    },
+    {
+        "term": "default_name:train",
+        "definition": "T\u00e5g"
+    },
+    {
+        "term": "default_name:turnout",
+        "definition": "V\u00e4xel"
+    },
+    {
+        "term": "default_name:vehicle",
+        "definition": "Vagn"
+    },
+    {
+        "term": "default_name:zone",
+        "definition": "Zon"
+    },
+    {
+        "term": "dinamo_settings:debug_log_train_blocks",
+        "definition": ""
+    },
+    {
+        "term": "dinamo_settings:hfi_level",
+        "definition": ""
+    },
+    {
+        "term": "dinamo_settings:pm32_pulse_duration",
+        "definition": ""
+    },
+    {
+        "term": "dinamo_settings:set_hfi_level",
+        "definition": ""
+    },
+    {
         "term": "direction:forward",
         "definition": "Fram\u00e5t"
     },
@@ -616,11 +848,27 @@
         "definition": ""
     },
     {
+        "term": "feedback_map.turnout:key",
+        "definition": "Position"
+    },
+    {
+        "term": "function:off",
+        "definition": ""
+    },
+    {
+        "term": "function:on",
+        "definition": ""
+    },
+    {
         "term": "hardware:address",
         "definition": "Adress"
     },
     {
         "term": "hardware:addresses",
+        "definition": ""
+    },
+    {
+        "term": "hardware:boosters",
         "definition": ""
     },
     {
@@ -648,6 +896,14 @@
         "definition": "Avkodare"
     },
     {
+        "term": "hardware:event",
+        "definition": ""
+    },
+    {
+        "term": "hardware:events",
+        "definition": ""
+    },
+    {
         "term": "hardware:identifications",
         "definition": "Identifikationer"
     },
@@ -662,6 +918,14 @@
     {
         "term": "hardware:interface",
         "definition": "Gr\u00e4nssnitt"
+    },
+    {
+        "term": "hardware:invert_polarity",
+        "definition": ""
+    },
+    {
+        "term": "hardware:node",
+        "definition": ""
     },
     {
         "term": "hardware:output_keyboard",
@@ -680,16 +944,12 @@
         "definition": "Gasreglage"
     },
     {
-        "term": "hsi88:s88_left",
-        "definition": "S88 v\u00e4nster"
+        "term": "hardware:track_driver",
+        "definition": ""
     },
     {
-        "term": "hsi88:s88_middle",
-        "definition": "S88 mitten"
-    },
-    {
-        "term": "hsi88:s88_right",
-        "definition": "S88 h\u00f6ger"
+        "term": "identification:invert_direction",
+        "definition": "Byt riktning"
     },
     {
         "term": "identification:opc_multi_sense_direction",
@@ -697,11 +957,44 @@
     },
     {
         "term": "input:off_delay",
-        "definition": ""
+        "definition": "F\u00f6rdr\u00f6jning f\u00f6r av"
     },
     {
         "term": "input:on_delay",
+        "definition": "F\u00f6rdr\u00f6jning f\u00f6r p\u00e5"
+    },
+    {
+        "term": "input_channel:long_event",
         "definition": ""
+    },
+    {
+        "term": "input_channel:s88_left",
+        "definition": ""
+    },
+    {
+        "term": "input_channel:s88_middle",
+        "definition": ""
+    },
+    {
+        "term": "input_channel:s88_right",
+        "definition": ""
+    },
+    {
+        "term": "input_channel:short_event",
+        "definition": ""
+    },
+    {
+        "term": "input_condition:dont_care",
+        "definition": "--",
+        "fuzzy": 1
+    },
+    {
+        "term": "input_condition:off",
+        "definition": "Av"
+    },
+    {
+        "term": "input_condition:on",
+        "definition": "P\u00e5"
     },
     {
         "term": "input_list:bus",
@@ -722,6 +1015,14 @@
     {
         "term": "input_map_item.block:type",
         "definition": "Typ"
+    },
+    {
+        "term": "interface.cbus:cbus_node_list",
+        "definition": ""
+    },
+    {
+        "term": "interface.cbus:cbus_session_list",
+        "definition": ""
     },
     {
         "term": "interface.ecos:ecos_detector",
@@ -820,6 +1121,11 @@
         "definition": "Hamn"
     },
     {
+        "term": "language:da-dk",
+        "definition": "Krypterat spr\u00e5k",
+        "fuzzy": 1
+    },
+    {
         "term": "language:de-de",
         "definition": "Tysk"
     },
@@ -849,7 +1155,7 @@
     },
     {
         "term": "language:pl-pl",
-        "definition": ""
+        "definition": "Polska"
     },
     {
         "term": "language:sv-se",
@@ -1088,6 +1394,10 @@
         "definition": "N\u00e4tverk (UDP)"
     },
     {
+        "term": "marklin_can_interface_type:serial",
+        "definition": ""
+    },
+    {
         "term": "marklin_can_interface_type:socket_can",
         "definition": "SocketCAN (endast Linux)"
     },
@@ -1200,6 +1510,10 @@
         "definition": "Objekt inte en tabell"
     },
     {
+        "term": "message:C1020",
+        "definition": "Misslyckades att l\u00e4sa settings: %1"
+    },
+    {
         "term": "message:C2001",
         "definition": "Adressen anv\u00e4nds redan p\u00e5 #%1"
     },
@@ -1264,6 +1578,10 @@
         "definition": "Slot %1 = Gratis"
     },
     {
+        "term": "message:D2011",
+        "definition": ""
+    },
+    {
         "term": "message:D3001",
         "definition": ""
     },
@@ -1305,11 +1623,11 @@
     },
     {
         "term": "message:D3024",
-        "definition": ""
+        "definition": "T\u00e5g '%1' l\u00e4mnade zon '%2'"
     },
     {
         "term": "message:D3025",
-        "definition": ""
+        "definition": "T\u00e5g '%1' borttaget fr\u00e5n zon '%2'"
     },
     {
         "term": "message:E1001",
@@ -1440,6 +1758,46 @@
         "definition": "Ok\u00e4nd MFX-UID f\u00f6r lokomotiv: %1"
     },
     {
+        "term": "message:E2025",
+        "definition": ""
+    },
+    {
+        "term": "message:E2026",
+        "definition": ""
+    },
+    {
+        "term": "message:E2027",
+        "definition": ""
+    },
+    {
+        "term": "message:E2028",
+        "definition": ""
+    },
+    {
+        "term": "message:E2029",
+        "definition": ""
+    },
+    {
+        "term": "message:E2030",
+        "definition": "TCP socket misslyckades (%1)"
+    },
+    {
+        "term": "message:E2031",
+        "definition": ""
+    },
+    {
+        "term": "message:E2032",
+        "definition": ""
+    },
+    {
+        "term": "message:E2033",
+        "definition": ""
+    },
+    {
+        "term": "message:E2034",
+        "definition": ""
+    },
+    {
         "term": "message:E3001",
         "definition": "Det g\u00e5r inte att ta bort j\u00e4rnv\u00e4gsfordon n\u00e4r det \u00e4r aktivt t\u00e5g"
     },
@@ -1480,8 +1838,16 @@
         "definition": ""
     },
     {
+        "term": "message:E3011",
+        "definition": "\u00c5terkopplingskonflikt: Flera optioner \u00e4r giltiga"
+    },
+    {
         "term": "message:E9001",
         "definition": "%1 (Under k\u00f6rning av %2 h\u00e4ndelsehanterare)"
+    },
+    {
+        "term": "message:E9002",
+        "definition": "%1 (During execution of %2 on_changed handler)"
     },
     {
         "term": "message:F1001",
@@ -1544,6 +1910,10 @@
         "definition": "Bygga v\u00e4rldsindex"
     },
     {
+        "term": "message:I1010",
+        "definition": "%1 autosparad"
+    },
+    {
         "term": "message:I2001",
         "definition": "Ok\u00e4nd lokadress: %1"
     },
@@ -1554,6 +1924,22 @@
     {
         "term": "message:I2003",
         "definition": "Firmwareversion: %1"
+    },
+    {
+        "term": "message:I2006",
+        "definition": ""
+    },
+    {
+        "term": "message:I2007",
+        "definition": "Ny hub-anslutnung (%1:%2)"
+    },
+    {
+        "term": "message:I2008",
+        "definition": ""
+    },
+    {
+        "term": "message:I2009",
+        "definition": ""
     },
     {
         "term": "message:I3001",
@@ -1712,6 +2098,10 @@
         "definition": "Endast lyssningsl\u00e4ge: avaktiverat"
     },
     {
+        "term": "message:N2008",
+        "definition": "Hub lyssnar p\u00e5 %1:%2"
+    },
+    {
         "term": "message:N3001",
         "definition": "Tilldelade t\u00e5get %1 till blocket %2"
     },
@@ -1752,6 +2142,10 @@
         "definition": "Det gick inte att l\u00e4sa v\u00e4rlden %1 (libarchive error %2: %3)"
     },
     {
+        "term": "message:W1004",
+        "definition": "Settingsfilen \u00e4r tom eller trasig, anv\u00e4nder f\u00f6rvalda v\u00e4rden"
+    },
+    {
         "term": "message:W2001",
         "definition": "Mottagna felaktiga data tappade %1 byte"
     },
@@ -1789,6 +2183,18 @@
     },
     {
         "term": "message:W2020",
+        "definition": ""
+    },
+    {
+        "term": "message:W2026",
+        "definition": ""
+    },
+    {
+        "term": "message:W2027",
+        "definition": ""
+    },
+    {
+        "term": "message:W2028",
         "definition": ""
     },
     {
@@ -1872,12 +2278,20 @@
         "definition": ""
     },
     {
+        "term": "output_channel:long_event",
+        "definition": "L\u00e5ng h\u00e4ndelse"
+    },
+    {
         "term": "output_channel:output",
         "definition": ""
     },
     {
+        "term": "output_channel:short_event",
+        "definition": "Kort h\u00e4ndelse"
+    },
+    {
         "term": "output_channel:turnout",
-        "definition": ""
+        "definition": "V\u00e4xel"
     },
     {
         "term": "output_list:bus",
@@ -1904,6 +2318,10 @@
         "definition": ""
     },
     {
+        "term": "output_map:add_event",
+        "definition": "L\u00e4gg till h\u00e4ndelse"
+    },
+    {
         "term": "output_map:address_x",
         "definition": ""
     },
@@ -1916,8 +2334,16 @@
         "definition": ""
     },
     {
+        "term": "output_map:remove_event",
+        "definition": "Ta bort h\u00e4ndelse"
+    },
+    {
         "term": "output_map:swap_outputs",
         "definition": ""
+    },
+    {
+        "term": "output_map:test",
+        "definition": "Test"
     },
     {
         "term": "output_map:use",
@@ -2000,6 +2426,30 @@
         "definition": "Anv\u00e4ndarnamn"
     },
     {
+        "term": "qtapp.diagnostic_report_dialog:create_report",
+        "definition": "Skapa rapport"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:explanation",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:save_diagnostic_report",
+        "definition": "Spara  diagnostikrapport"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:window_title",
+        "definition": "Skapa diagnostikrapport"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:zip_file",
+        "definition": "Zip-fil"
+    },
+    {
+        "term": "qtapp.dialog:cancel",
+        "definition": "Avbryt"
+    },
+    {
         "term": "qtapp.error:cant_read_from_file_x",
         "definition": "Kan inte l\u00e4sa fr\u00e5n filen: %1"
     },
@@ -2034,6 +2484,10 @@
     {
         "term": "qtapp.mainmenu:connection",
         "definition": "F\u00f6rbindelse"
+    },
+    {
+        "term": "qtapp.mainmenu:diagnostic_report",
+        "definition": "Diagnostikrapport"
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
@@ -2244,6 +2698,26 @@
         "definition": "Annullera"
     },
     {
+        "term": "qtapp.world_list_dialog:delete_world",
+        "definition": "Ta bort V\u00e4rld"
+    },
+    {
+        "term": "qtapp.world_list_dialog:delete_world_confirmation",
+        "definition": "\u00c4r du s\u00e4ker p\u00e5 att du vill ta bort hela <b>%1</b>? Den h\u00e4r \u00e5tg\u00e4rden kan inte reverseras."
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicate_world",
+        "definition": "Kopiera V\u00e4rden"
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicate_world_confirmation",
+        "definition": "\u00c4r du s\u00e4ker p\u00e5 att du vill kopiera <b>%1</b>?"
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicated_world_name_postfix",
+        "definition": "Kopiera"
+    },
+    {
         "term": "qtapp.world_list_dialog:load",
         "definition": "Ladda"
     },
@@ -2380,6 +2854,10 @@
         "definition": "Till\u00e5t avst\u00e4ngning av klientserver"
     },
     {
+        "term": "settings:auto_save_interval",
+        "definition": "Intervall f\u00f6r Autosparar"
+    },
+    {
         "term": "settings:auto_save_world_on_exit",
         "definition": "Spara v\u00e4rlden automatiskt vid utg\u00e5ng"
     },
@@ -2402,6 +2880,10 @@
     {
         "term": "settings:memory_logger_size",
         "definition": "Storlek p\u00e5 minneslogger"
+    },
+    {
+        "term": "settings:off",
+        "definition": "Av"
     },
     {
         "term": "settings:port",
@@ -2552,8 +3034,16 @@
         "definition": ""
     },
     {
+        "term": "throttle.stop",
+        "definition": "Stopp"
+    },
+    {
         "term": "throttle_object_list:throttle",
         "definition": "Strypa"
+    },
+    {
+        "term": "train:acceleration_rate",
+        "definition": "Accelerationniv\u00e5"
     },
     {
         "term": "train:active",
@@ -2562,6 +3052,10 @@
     {
         "term": "train:block",
         "definition": "Block"
+    },
+    {
+        "term": "train:braking_rate",
+        "definition": "Bromskraft"
     },
     {
         "term": "train:length",
@@ -3058,6 +3552,10 @@
     {
         "term": "world:ext_output_change_action",
         "definition": ""
+    },
+    {
+        "term": "world:feature_scripting",
+        "definition": "Skript"
     },
     {
         "term": "world:inputs",
