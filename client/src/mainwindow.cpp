@@ -107,6 +107,32 @@ static SubWindow* createSubWindow(SubWindowType type, Args... args)
   return nullptr;
 }
 
+namespace {
+
+#define IF_ID_RETURN_TR(oid, tid) if(id == oid) { return Locale::tr(tid); }
+
+QString getWindowTitle(const QString& id)
+{
+  IF_ID_RETURN_TR("world", "qtapp.mainmenu:world_properties")
+  IF_ID_RETURN_TR("world.interfaces", "world:interfaces")
+  IF_ID_RETURN_TR("world.decoders", "world:decoders")
+  IF_ID_RETURN_TR("world.inputs", "world:inputs")
+  IF_ID_RETURN_TR("world.outputs", "world:outputs")
+  IF_ID_RETURN_TR("world.identifications", "hardware:identifications")
+  IF_ID_RETURN_TR("world.boosters", "hardware:boosters")
+  IF_ID_RETURN_TR("world.boards", "world:boards")
+  IF_ID_RETURN_TR("world.zones", "world:zones")
+  IF_ID_RETURN_TR("world.boards", "world:boards")
+  IF_ID_RETURN_TR("world.clock", "world:clock")
+  IF_ID_RETURN_TR("world.lua_scripts", "world:lua_scripts")
+  IF_ID_RETURN_TR("traintastic.settings", "qtapp.mainmenu:server_settings")
+  return {};
+}
+
+#undef IF_ID_RETURN_TR
+
+}
+
 MainWindow::MainWindow(QWidget* parent) :
   QMainWindow(parent),
   m_windowTitle{QStringLiteral("Traintastic v" TRAINTASTIC_VERSION_FULL)},
@@ -400,30 +426,30 @@ MainWindow::MainWindow(QWidget* parent) :
       });
     m_worldSimulationAction->setCheckable(true);
     m_menuWorld->addSeparator();
-    m_menuWorld->addAction(Theme::getIcon("world"), Locale::tr("qtapp.mainmenu:world_properties"), [this](){ showObject("world", Locale::tr("qtapp.mainmenu:world_properties")); });
+    m_menuWorld->addAction(Theme::getIcon("world"), Locale::tr("qtapp.mainmenu:world_properties"), [this](){ showObject("world"); });
 
     m_menuObjects = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:objects"));
     menu = m_menuObjects->addMenu(Theme::getIcon("hardware"), Locale::tr("qtapp.mainmenu:hardware"));
-    menu->addAction(Locale::tr("world:interfaces") + "...", [this](){ showObject("world.interfaces", Locale::tr("world:interfaces")); });
-    menu->addAction(Locale::tr("world:decoders") + "...", [this](){ showObject("world.decoders", Locale::tr("world:decoders")); });
-    menu->addAction(Locale::tr("world:inputs") + "...", [this](){ showObject("world.inputs", Locale::tr("world:inputs")); });
-    menu->addAction(Locale::tr("world:outputs") + "...", [this](){ showObject("world.outputs", Locale::tr("world:outputs")); });
-    menu->addAction(Locale::tr("hardware:identifications") + "...", [this](){ showObject("world.identifications", Locale::tr("hardware:identifications")); });
+    menu->addAction(Locale::tr("world:interfaces") + "...", [this](){ showObject("world.interfaces"); });
+    menu->addAction(Locale::tr("world:decoders") + "...", [this](){ showObject("world.decoders"); });
+    menu->addAction(Locale::tr("world:inputs") + "...", [this](){ showObject("world.inputs"); });
+    menu->addAction(Locale::tr("world:outputs") + "...", [this](){ showObject("world.outputs"); });
+    menu->addAction(Locale::tr("hardware:identifications") + "...", [this](){ showObject("world.identifications"); });
     menu->addAction(Locale::tr("hardware:boosters").append("..."),
       [this]()
       {
-        showObject("world.boosters", Locale::tr("hardware:boosters"));
+        showObject("world.boosters");
       });
-    boardsAction = m_menuObjects->addAction(Theme::getIcon("board"), Locale::tr("world:boards") + "...", [this](){ showObject("world.boards", Locale::tr("world:boards")); });
+    boardsAction = m_menuObjects->addAction(Theme::getIcon("board"), Locale::tr("world:boards") + "...", [this](){ showObject("world.boards"); });
     m_menuObjects->addAction(
       Theme::getIcon("zone"),
       Locale::tr("world:zones") + "...",
       [this]()
       {
-        showObject("world.zones", Locale::tr("world:zones"));
+        showObject("world.zones");
       }
     );
-    m_menuObjects->addAction(Theme::getIcon("clock"), Locale::tr("world:clock") + "...", [this](){ showObject("world.clock", Locale::tr("world:clock")); });
+    m_menuObjects->addAction(Theme::getIcon("clock"), Locale::tr("world:clock") + "...", [this](){ showObject("world.clock"); });
     trainsAction = m_menuObjects->addAction(Theme::getIcon("train"), Locale::tr("world:trains") + "...",
       [this]()
       {
@@ -467,7 +493,7 @@ MainWindow::MainWindow(QWidget* parent) :
     m_actionServerSettings = m_menuServer->addAction(Locale::tr("qtapp.mainmenu:server_settings") + "...", this,
       [this]()
       {
-        showObject("traintastic.settings", Locale::tr("qtapp.mainmenu:server_settings"));
+        showObject("traintastic.settings");
       });
     m_menuServer->addSeparator();
     m_actionServerRestart = m_menuServer->addAction(Locale::tr("qtapp.mainmenu:restart_server"), this,
@@ -669,7 +695,7 @@ const ObjectPtr& MainWindow::world() const
 
 void MainWindow::showLuaScriptsList()
 {
-  showObject("world.lua_scripts", Locale::tr("world:lua_scripts"));
+  showObject("world.lua_scripts");
 }
 
 void MainWindow::connectToServer(const QString& url)
@@ -701,6 +727,8 @@ void MainWindow::disconnectFromServer()
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
+  saveWorldWorkspace();
+
   QSettings settings;
   settings.setValue(SETTING_GEOMETRY, saveGeometry());
   settings.setValue(SETTING_WINDOWSTATE, static_cast<int>(windowState()));
@@ -720,7 +748,10 @@ void MainWindow::worldChanged()
   m_wizard.addInterface.reset();
 
   if(m_world)
+  {
+    saveWorldWorkspace();
     m_mdiArea->closeAllSubWindows();
+  }
 
   m_clockAction->setEnabled(false);
   m_clockAction->setChecked(false);
@@ -792,6 +823,27 @@ void MainWindow::worldChanged()
           }
         });
       m_actionLuaScript->setVisible(property->getAttributeBool(AttributeName::Visible, true));
+    }
+
+    // restore workspace:
+    {
+      QSettings s;
+      s.beginGroup(m_world->getPropertyValueString("uuid"));
+
+      if(auto subWindowIds = s.value("sub_windows").toStringList(); !subWindowIds.isEmpty())
+      {
+        for(const auto& subWindowId : subWindowIds)
+        {
+          const auto v = subWindowId.split('/');
+          if(v.size() == 2)
+          {
+            if(auto swt = toSubWindowType(v[0]); swt && !v[1].isEmpty())
+            {
+              showObject(v[1], *swt);
+            }
+          }
+        }
+      }
     }
   }
 
@@ -918,15 +970,19 @@ void MainWindow::showObject(const ObjectPtr& object, SubWindowType type)
     m_mdiArea->setActiveSubWindow(m_subWindows[windowId]);
 }
 
-void MainWindow::showObject(const QString& id, const QString& title, SubWindowType type)
+void MainWindow::showObject(const QString& id, SubWindowType type)
 {
   const QString windowId = SubWindow::windowId(type, id);
   if(!m_subWindows.contains(windowId))
   {
-    SubWindow* window = createSubWindow(type, m_connection, id);
-    if(window && !title.isEmpty())
-      window->setWindowTitle(title);
-    addSubWindow(windowId, window);
+    if(auto* window = createSubWindow(type, m_connection, id))
+    {
+      if(const auto title = getWindowTitle(id); !title.isEmpty())
+      {
+        window->setWindowTitle(title);
+      }
+      addSubWindow(windowId, window);
+    }
   }
   else
     m_mdiArea->setActiveSubWindow(m_subWindows[windowId]);
@@ -968,6 +1024,17 @@ void MainWindow::addSubWindow(const QString& windowId, SubWindow* window)
       });
   }
   window->show();
+}
+
+void MainWindow::saveWorldWorkspace()
+{
+  if(!m_world)
+  {
+    return;
+  }
+  QSettings s;
+  s.beginGroup(m_world->getPropertyValueString("uuid"));
+  s.setValue("sub_windows", m_subWindows.keys());
 }
 
 void MainWindow::showAbout()

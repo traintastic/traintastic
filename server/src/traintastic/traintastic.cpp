@@ -75,24 +75,12 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   about{this, "about", std::string(versionCopyrightAndLicense), PropertyFlags::ReadOnly},
   settings{this, "settings", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   version{this, "version", TRAINTASTIC_VERSION_FULL, PropertyFlags::ReadOnly},
-  world{this, "world", nullptr, PropertyFlags::ReadWrite,
-    [this](const std::shared_ptr<World>& /*newWorld*/)
-    {
-      if(world)
-        world->destroy();
-      return true;
-    }},
+  world{this, "world", nullptr, PropertyFlags::ReadOnly},
   worldList{this, "world_list", nullptr, PropertyFlags::ReadWrite/*ReadOnly*/},
   newWorld{*this, "new_world",
     [this]()
     {
-#ifndef NDEBUG
-      std::weak_ptr<World> weakWorld = world.value();
-#endif
-      world = World::create();
-#ifndef NDEBUG
-      assert(weakWorld.expired());
-#endif
+      setWorld(World::create());
       Log::log(*this, LogMessage::N1002_CREATED_NEW_WORLD);
       world->edit = true;
       settings->lastWorld = "";
@@ -118,13 +106,7 @@ Traintastic::Traintastic(const std::filesystem::path& dataDir) :
   closeWorld{*this, "close_world",
     [this]()
     {
-#ifndef NDEBUG
-      std::weak_ptr<World> weakWorld = world.value();
-#endif
-      world = nullptr;
-#ifndef NDEBUG
-      assert(weakWorld.expired());
-#endif
+      setWorld(nullptr);
       settings->lastWorld = "";
       Log::log(*this, LogMessage::N1028_CLOSED_WORLD);
       m_autoSaveTimer.cancel();
@@ -197,13 +179,7 @@ void Traintastic::importWorld(const std::vector<std::byte>& worldData)
 {
   try
   {
-#ifndef NDEBUG
-    std::weak_ptr<World> weakWorld = world.value();
-#endif
-    world = WorldLoader(worldData).world();
-#ifndef NDEBUG
-    assert(weakWorld.expired());
-#endif
+    setWorld(WorldLoader(worldData).world());
     Log::log(*this, LogMessage::N1026_IMPORTED_WORLD_SUCCESSFULLY);
   }
   catch(const LogMessageException& e)
@@ -314,13 +290,7 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
 {
   try
   {
-#ifndef NDEBUG
-    std::weak_ptr<World> weakWorld = world.value();
-#endif
-    world = WorldLoader(path).world();
-#ifndef NDEBUG
-    assert(weakWorld.expired());
-#endif
+    setWorld(WorldLoader(path).world());
     settings->lastWorld = world->uuid.value();
     Log::log(*this, LogMessage::N1027_LOADED_WORLD_X, world->name.value());
 
@@ -351,6 +321,24 @@ void Traintastic::loadWorldPath(const std::filesystem::path& path)
   {
     Log::log(*this, LogMessage::C1001_LOADING_WORLD_FAILED_X, e.what());
   }
+}
+
+void Traintastic::setWorld(const std::shared_ptr<World>& value)
+{
+  auto worldOld = world.value();
+  world.setValueInternal(nullptr); // emit world changed before destroying the old world, this gives the client time to store its workspace state.
+  if(worldOld)
+  {
+#ifndef NDEBUG
+    std::weak_ptr<World> weak = worldOld;
+#endif
+    worldOld->destroy();
+    worldOld.reset();
+#ifndef NDEBUG
+    assert(weak.expired());
+#endif
+  }
+  world.setValueInternal(value);
 }
 
 void Traintastic::restartAutoSaveTimer()
