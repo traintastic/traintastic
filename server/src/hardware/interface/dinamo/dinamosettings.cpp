@@ -45,7 +45,7 @@ DinamoSettings::DinamoSettings(Object& _parent, std::string_view parentPropertyN
     }}
   , hfiLevel{this, "hfi_level", hfiLevelMin, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , pm32PulseDuration{this, "pm32_pulse_duration", pm32PulseDurationDefault, PropertyFlags::ReadWrite | PropertyFlags::Store, nullptr,
-      [this](float& value)
+      [](float& value)
       {
         value = std::round(value / pm32PulseDurationStep) * pm32PulseDurationStep;
         return true;
