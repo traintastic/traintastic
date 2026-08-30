@@ -1034,7 +1034,7 @@ void MainWindow::saveWorldWorkspace()
   }
   QSettings s;
   s.beginGroup(m_world->getPropertyValueString("uuid"));
-  s.setValue("sub_windows", m_subWindows.keys());
+  s.setValue("sub_windows", QVariant::fromValue(m_subWindows.keys()));
 }
 
 void MainWindow::showAbout()
