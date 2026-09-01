@@ -62,7 +62,7 @@ QVariant ServerLogTableModel::headerData(int section, Qt::Orientation orientatio
 
 QVariant ServerLogTableModel::data(const QModelIndex& index, int role) const
 {
-  if(role == Qt::DisplayRole)
+  if(role == Qt::DisplayRole || role == Qt::ToolTipRole)
   {
     const Log& log = m_logs.at(index.row());
     switch(index.column())

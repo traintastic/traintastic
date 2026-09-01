@@ -1,9 +1,10 @@
 /**
- * server/src/hardware/protocol/z21/utils.hpp
+ * server/src/hardware/protocol/xpressnet/utils.hpp
  *
  * This file is part of the traintastic source code.
  *
  * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2026 Filippo Gentile
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,13 +21,83 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_UTILS_HPP
-#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_Z21_UTILS_HPP
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_UTILS_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_XPRESSNET_UTILS_HPP
 
 #include <cstdint>
 #include <traintastic/enum/direction.hpp>
+#include "../../../utils/packed.hpp"
 
-namespace Z21::Utils {
+namespace XpressNet {
+
+enum class HardwareType : uint8_t
+{
+  HWT_LZ100 = 0x00,
+  HWT_LZ200 = 0x01,
+  HWT_DPC = 0x02,
+  HWT_multiMAUS = 0x10,
+  HWT_Z21 = 0x12,
+  HWT_UNKNOWN = 0xFF
+};
+
+// XpressNet message is in common with LAN_X messages of Z21 protocol
+struct Message;
+
+// implemented in messages.cpp
+uint8_t calcChecksum(const Message& msg, const int dataSize);
+
+void updateChecksum(Message& msg);
+
+bool isChecksumValid(const Message& msg, const int dataSize);
+
+struct Message
+{
+  uint8_t header;
+
+  Message()
+  {
+  }
+
+  Message(uint8_t _header) :
+    header{_header}
+  {
+  }
+
+  constexpr uint8_t identification() const
+  {
+    return header & 0xF0;
+  }
+
+  constexpr uint8_t dataSize() const
+  {
+    return header & 0x0F;
+  }
+
+  constexpr uint8_t size() const
+  {
+    return 2 + dataSize();
+  }
+
+  inline void updateChecksum()
+  {
+    XpressNet::updateChecksum(*this);
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(Message) == 1);
+
+inline uint8_t calcChecksum(const Message& msg)
+{
+  return calcChecksum(msg, msg.dataSize());
+}
+
+inline bool isChecksumValid(const Message& msg)
+{
+  return isChecksumValid(msg, msg.dataSize());
+}
+
+} // XpressNet
+
+namespace XpressNet::Utils {
 
 inline constexpr uint8_t directionFlag = 0x80;
 
@@ -47,10 +118,12 @@ constexpr bool isEmergencyStop(uint8_t db, uint8_t speedSteps)
 {
   switch(speedSteps)
   {
+    case 128:
     case 126:
       return (db & 0x7F) == 0x01;
 
     case 28:
+    case 27:
       return (db & 0x1F) == 0x01 || (db & 0x1F) == 0x11;
 
     case 14:
@@ -71,11 +144,13 @@ constexpr uint8_t getSpeedStep(uint8_t db, uint8_t speedSteps)
 
   switch(speedSteps)
   {
+    case 128:
     case 126:
       db &= 0x7F;
       break;
 
     case 28:
+    case 27:
       db = ((db & 0x0F) << 1) | ((db & 0x10) >> 4); //! @todo check
       if(db >= 3)
           db -= 2;
@@ -97,11 +172,13 @@ constexpr void setSpeedStep(uint8_t& db, uint8_t speedSteps, uint8_t speedStep)
   if(++speedStep > 1)
     switch(speedSteps)
     {
+      case 128:
       case 126:
         db |= speedStep & 0x7F;
         break;
 
       case 28:
+      case 27:
         speedStep += 2;
         db |= ((speedStep >> 1) & 0x0F) | ((speedStep & 0x01) << 4);
         break;
@@ -122,6 +199,31 @@ constexpr uint8_t fromBCD(uint8_t value)
   return ((value >> 4) * 10) + (value & 0x0F);
 }
 
+
+struct PendingQuery
+{
+  enum QueryType : uint8_t
+  {
+    LocoInfoAndF0F12 = 0,
+    FuncInfoF13F28 = 1,
+    FuncInfoF29F68= 2,
+    ROCOCumulativeLocoInfo = 3
+  };
+
+  uint16_t address = 0;
+  QueryType type = QueryType::LocoInfoAndF0F12;
+};
+
+static constexpr uint8_t xbusVersionMajor(uint8_t versionHex)
+{
+  return (versionHex >> 4) & 0x0F;
 }
+
+static constexpr uint8_t xbusVersionMinor(uint8_t versionHex)
+{
+  return versionHex & 0x0F;
+}
+
+} // XpressNet::Utils
 
 #endif

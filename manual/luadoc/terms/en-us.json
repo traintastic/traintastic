@@ -2288,6 +2288,26 @@
     "definition": "Interface for communicating with a XpressNet network."
   },
   {
+    "term": "object.xpressnetinterface.send:description",
+    "definition": "Send XpressNet packet."
+  },
+  {
+    "term": "object.xpressnetinterface.send.parameter.packet:description",
+    "definition": "XpressNet packet bytes, excluding checksum."
+  },
+  {
+    "term": "object.xpressnetinterface.send:return_values",
+    "definition": "`true` if send, `false` otherwise."
+  },
+  {
+    "term": "object.xpressnetinterface.send.warning:title",
+    "definition": "Use this with caution!"
+  },
+  {
+    "term": "object.xpressnetinterface.send.warning:description",
+    "definition": "These messages bypass Traintastic’s normal handling. You need a solid understanding of XpressNet to avoid conflicts. Side effects may occur that Traintastic is not aware of or cannot manage."
+  },
+  {
     "term": "object.z21interface:description",
     "definition": "Interface for communicating with a Z21, z21 or z21 start."
   },
