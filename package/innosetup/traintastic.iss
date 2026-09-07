@@ -62,11 +62,13 @@ Source: "..\..\server\build\{#ServerExeName}"; DestDir: "{app}\server"; Flags: i
 ; Client
 Source: "..\..\client\build\Release\{#ClientExeName}"; DestDir: "{app}\client"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\*.dll"; DestDir: "{app}\client"; Flags: ignoreversion; Check: InstallClient
-Source: "..\..\client\build\Release\bearer\*.dll"; DestDir: "{app}\client\bearer"; Flags: ignoreversion; Check: InstallClient
+Source: "..\..\client\build\Release\generic\*.dll"; DestDir: "{app}\client\generic"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\iconengines\*.dll"; DestDir: "{app}\client\iconengines"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\imageformats\*.dll"; DestDir: "{app}\client\imageformats"; Flags: ignoreversion; Check: InstallClient
+Source: "..\..\client\build\Release\networkinformation\*.dll"; DestDir: "{app}\client\networkinformation"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\platforms\*.dll"; DestDir: "{app}\client\platforms"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\styles\*.dll"; DestDir: "{app}\client\styles"; Flags: ignoreversion; Check: InstallClient
+Source: "..\..\client\build\Release\tls\*.dll"; DestDir: "{app}\client\tls"; Flags: ignoreversion; Check: InstallClient
 ; Shared
 Source: "..\..\shared\translations\*.lang"; DestDir: "{commonappdata}\traintastic\translations"; Flags: ignoreversion;
 ; Manual
@@ -94,6 +96,22 @@ Type: files; Name: "{app}\server\lua53.dll"
 Type: files; Name: "{app}\server\lua54.dll"
 Type: files; Name: "{app}\server\archive.dll"
 Type: files; Name: "{app}\server\zlib1.dll"
+; Delete Qt5 DLLs (TODO: remove in 0.5)
+Type: files; Name: "{app}\client\libEGL.dll"
+Type: files; Name: "{app}\client\libGLESv2.dll"
+Type: files; Name: "{app}\client\Qt5Xml.dll"
+Type: files; Name: "{app}\client\Qt5Core.dll"
+Type: files; Name: "{app}\client\Qt5Gui.dll"
+Type: files; Name: "{app}\client\Qt5Network.dll"
+Type: files; Name: "{app}\client\Qt5Svg.dll"
+Type: files; Name: "{app}\client\Qt5WebSockets.dll"
+Type: files; Name: "{app}\client\Qt5Widgets.dll"
+Type: files; Name: "{app}\client\bearer\qgenericbearer.dll"
+Type: files; Name: "{app}\client\imageformats\qtiff.dll"
+Type: files; Name: "{app}\client\imageformats\qwbmp.dll"
+Type: files; Name: "{app}\client\imageformats\qwebp.dll"
+Type: files; Name: "{app}\client\imageformats\qicns.dll"
+Type: files; Name: "{app}\client\imageformats\qtga.dll"
 
 [UninstallRun]
 Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic server (TCP)"""; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic

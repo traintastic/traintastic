@@ -91,17 +91,9 @@ jobs:
       with:
         submodules: recursive
 
-    # Windows only:
-    - name: Install Qt 5
-      if: startswith(matrix.config.os, 'windows')
-      uses: jurplel/install-qt-action@v4
-      with:
-        cache: true
-        version: 5.15
-
-    # macOS only:
+    # Install Qt:
     - name: Install Qt 6.5
-      if: startswith(matrix.config.os, 'macos')
+      if: startswith(matrix.config.os, 'windows') || startswith(matrix.config.os, 'macos')
       uses: jurplel/install-qt-action@v4
       with:
         cache: true
