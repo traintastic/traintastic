@@ -268,7 +268,7 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
         }
 
         const bool anySide = inputMap->items.size() == 1; // block with one sensor
-        const BlockSide enterSide = (&item == inputMap->items.front().get()) ? BlockSide::A : BlockSide::B;
+        const BlockSide enterSide = (&item == inputMap->items.front().get()) == (rotate == TileRotate::Deg90) ? BlockSide::A : BlockSide::B;
 
         std::shared_ptr<Train> train;
         BlockTrainDirection direction = BlockTrainDirection::Unknown;
