@@ -1255,9 +1255,9 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, bool isReser
 
   if(rotate == TileRotate::Deg0)
   {
-    setTrackPen(isReservedA);
-    m_painter.drawLine(topCenter(r), r.center());
     setTrackPen(isReservedB);
+    m_painter.drawLine(topCenter(r), r.center());
+    setTrackPen(isReservedA);
     m_painter.drawLine(r.center(), bottomCenter(r));
 
     setBlockStateBrush(state);
