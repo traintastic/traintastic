@@ -49,6 +49,17 @@ static bool contains(const std::vector<std::pair<std::weak_ptr<T1>, T2>>& values
   return it != values.end();
 }
 
+template<class T, typename... Ts>
+static bool contains(const std::vector<std::tuple<std::weak_ptr<T>, Ts...>>& values, const std::shared_ptr<T>& value)
+{
+  const auto it = std::find_if(values.begin(), values.end(),
+    [&value](const auto& item)
+    {
+      return std::get<0>(item).lock() == value;
+    });
+  return it != values.end();
+}
+
 template <typename T>
 static inline bool operator ==(const std::weak_ptr<T>& a, const std::weak_ptr<T>& b)
 {
@@ -136,22 +147,26 @@ std::vector<std::shared_ptr<BlockPath>> BlockPath::find(BlockRailTile& startBloc
           todo.pop(); // drop it, can't pass turnout twice
           break;
         }
-        auto links = getTurnoutLinks(*turnout, *current.link);
-        assert(!links.empty());
 
+        //const auto& node = turnout->node()->get();
+        const bool toeSideEntry =
+          (current.node->getLink(0).get() == current.link) ||
+          (isRailTurnoutSlip(tile.tileId.value()) && (current.node->getLink(1).get() == current.link));
+
+        auto links = getTurnoutLinks(*turnout, *current.link);
         if(links.size() > 1)
         {
           for(size_t i = 1; i < links.size(); ++i)
           {
             auto path = std::make_shared<BlockPath>(*current.path); // "fork" path
-            path->m_turnouts.emplace_back(turnout, links[i].turnoutPosition);
+            path->m_turnouts.emplace_back(turnout, links[i].turnoutPosition, toeSideEntry);
             todo.emplace(Position{std::move(path), &nextNode, nextNode.getLink(links[i].linkIndex).get()});
           }
         }
 
         current.node = &nextNode;
         current.link = nextNode.getLink(links[0].linkIndex).get();
-        current.path->m_turnouts.emplace_back(turnout, links[0].turnoutPosition);
+        current.path->m_turnouts.emplace_back(turnout, links[0].turnoutPosition, toeSideEntry);
         break;
       }
       case TileId::RailOneWay:
@@ -370,7 +385,7 @@ bool BlockPath::operator ==(const BlockPath& other) const noexcept
 
 bool BlockPath::isReady() const
 {
-  for(const auto& [turnoutWeak, position] : m_turnouts)
+  for(const auto& [turnoutWeak, position, toeSideEntry] : m_turnouts)
   {
     auto turnout = turnoutWeak.lock();
     if(!turnout) /*[[unlikely]]*/
@@ -422,24 +437,22 @@ bool BlockPath::reserve(const std::shared_ptr<Train>& train, bool dryRun)
     return false;
   }
 
-  if(auto toBlock = m_toBlock.lock()) /*[[likely]]*/
-  {
-    if(!toBlock->reserve(shared_from_this(), train, m_toSide, dryRun))
-    {
-      assert(dryRun);
-      return false;
-    }
-  }
-  else
+  auto toBlock = m_toBlock.lock();
+  if(!toBlock) [[unlikely]]
   {
     return false;
   }
 
-  for(const auto& [turnoutWeak, position] : m_turnouts)
+  if(dryRun && !toBlock->reserve(shared_from_this(), train, m_toSide, dryRun))
+  {
+    return false;
+  }
+
+  for(const auto& [turnoutWeak, position, toeSideEntry] : m_turnouts)
   {
     if(auto turnout = turnoutWeak.lock())
     {
-      if(!turnout->reserve(shared_from_this(), position, dryRun))
+      if(!turnout->reserve(shared_from_this(), train, toeSideEntry, position, dryRun))
       {
         assert(dryRun);
         return false;
@@ -559,7 +572,10 @@ bool BlockPath::reserve(const std::shared_ptr<Train>& train, bool dryRun)
   }
 
   if(!dryRun)
-    m_isReserved = true;
+  {
+    m_isReserved = toBlock->reserve(shared_from_this(), train, m_toSide, dryRun);
+    assert(m_isReserved);
+  }
 
   return true;
 }
@@ -593,9 +609,8 @@ bool BlockPath::release(bool dryRun)
       return false;
   }
 
-  if(!m_fromBlock.release(m_fromSide, dryRun))
+  if(dryRun && !m_fromBlock.release(m_fromSide, dryRun))
   {
-    assert(dryRun);
     return false;
   }
 
@@ -617,7 +632,7 @@ bool BlockPath::release(bool dryRun)
 
   for(const auto& item : m_turnouts)
   {
-    if(auto turnout = item.first.lock())
+    if(auto turnout = std::get<0>(item).lock())
     {
       if(!turnout->release(dryRun))
       {
@@ -695,7 +710,10 @@ bool BlockPath::release(bool dryRun)
   }
 
   if(!dryRun)
-    m_isReserved = false;
+  {
+    m_isReserved = !m_fromBlock.release(m_fromSide, dryRun);
+    assert(!m_isReserved);
+  }
 
   return true;
 }

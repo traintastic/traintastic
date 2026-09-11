@@ -47,11 +47,11 @@ void Kernel::start()
     [this]()
     {
       setThreadName("z21");
-      auto work = std::make_shared<boost::asio::io_context::work>(m_ioContext);
+      boost::asio::executor_work_guard<decltype(m_ioContext.get_executor())> work{m_ioContext.get_executor()};
       m_ioContext.run();
     });
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       try
@@ -81,7 +81,7 @@ void Kernel::start()
 
 void Kernel::stop()
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this]()
     {
       onStop();

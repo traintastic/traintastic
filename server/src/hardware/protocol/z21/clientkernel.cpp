@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/z21/clientkernel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,7 +44,7 @@ ClientKernel::ClientKernel(std::string logId_, const ClientConfig& config, bool 
 
 void ClientKernel::setConfig(const ClientConfig& config)
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, newConfig=config]()
     {
       m_config = newConfig;
@@ -87,7 +86,7 @@ void ClientKernel::receive(const Message& message)
             EventLoop::call(
               [this, address=reply.address(), value]()
               {
-                m_outputController->updateOutputValue(OutputChannel::Accessory, address, value);
+                m_outputController->updateOutputValue(OutputChannel::Accessory, OutputAddress(address), value);
               });
           }
           break;
@@ -101,7 +100,7 @@ void ClientKernel::receive(const Message& message)
               EventLoop::call(
                 [this, address=reply.address(), value=reply.aspect()]()
                 {
-                  m_outputController->updateOutputValue(OutputChannel::DCCext, address, value);
+                  m_outputController->updateOutputValue(OutputChannel::DCCext, OutputAddress(address), value);
                 });
             }
           }
@@ -355,7 +354,7 @@ void ClientKernel::receive(const Message& message)
             EventLoop::call(
               [this, address=rbusAddressMin + index, value]()
               {
-                m_inputController->updateInputValue(InputChannel::RBus, address, value);
+                m_inputController->updateInputValue(InputChannel::RBus, InputAddress(address), value);
               });
           }
         }
@@ -379,7 +378,7 @@ void ClientKernel::receive(const Message& message)
               EventLoop::call(
                 [this, address=loconetAddressMin + index, value]()
                 {
-                  m_inputController->updateInputValue(InputChannel::LocoNet, address, value);
+                  m_inputController->updateInputValue(InputChannel::LocoNet, InputAddress(address), value);
                 });
             }
             break;
@@ -466,7 +465,7 @@ void ClientKernel::trackPowerOn()
 
   if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
   {
-    m_ioContext.post(
+    boost::asio::post(m_ioContext, 
       [this]()
       {
         send(LanXSetTrackPowerOn());
@@ -480,7 +479,7 @@ void ClientKernel::trackPowerOff()
 
   if(m_trackPowerOn != TriState::False || m_emergencyStop != TriState::False)
   {
-    m_ioContext.post(
+    boost::asio::post(m_ioContext, 
       [this]()
       {
         send(LanXSetTrackPowerOff());
@@ -494,7 +493,7 @@ void ClientKernel::emergencyStop()
 
   if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::True)
   {
-    m_ioContext.post(
+    boost::asio::post(m_ioContext, 
       [this]()
       {
         send(LanXSetStop());
@@ -528,7 +527,7 @@ void ClientKernel::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
     return;
   }
 
-  m_ioContext.post([this, address, longAddress, direction, throttle, speedSteps, isEStop, changes, functionNumber, funcVal]()
+  boost::asio::post(m_ioContext, [this, address, longAddress, direction, throttle, speedSteps, isEStop, changes, functionNumber, funcVal]()
     {
       LanXSetLocoDrive cmd;
       cmd.setAddress(address, longAddress);
@@ -601,7 +600,7 @@ bool ClientKernel::setOutput(OutputChannel channel, uint16_t address, OutputValu
 
   if(channel == OutputChannel::Accessory)
   {
-    m_ioContext.post(
+    boost::asio::post(m_ioContext, 
       [this, address, port=std::get<OutputPairValue>(value) == OutputPairValue::Second]()
       {
         send(LanXSetTurnout(address, port, true));
@@ -620,7 +619,7 @@ bool ClientKernel::setOutput(OutputChannel channel, uint16_t address, OutputValu
 
     if(inRange<int16_t>(std::get<int16_t>(value), std::numeric_limits<uint8_t>::min(), std::numeric_limits<uint8_t>::max())) /*[[likely]]*/
     {
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, address, data=static_cast<uint8_t>(std::get<int16_t>(value))]()
         {
           send(LanXSetExtAccessory(address, data));
@@ -636,7 +635,7 @@ void ClientKernel::simulateInputChange(InputChannel channel, uint32_t address, S
   if(!m_simulation)
     return;
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, channel, address, action]()
     {
       (void)address;

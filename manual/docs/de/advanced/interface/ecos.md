@@ -1,0 +1,25 @@
+# ECoS Schnittstellenkonfiguration
+
+Diese Seite beschreibt die Konfiguration einer ESU ECoS-Zentrale in Traintastic.
+
+!!! tip
+    ECoS-Zentralen können über den **Einrichtungsassistenten** hinzugefügt werden, der durch den gesamten Prozess führt.  
+    Siehe [Schnellstart: Zentrale verbinden](../../quickstart/command-station.md) für Details.
+
+## Unterstützte Verbindungsarten
+
+ECoS-Zentralen können ausschließlich über das Netzwerk mit Traintastic verbunden werden.
+
+## Verbindungseinstellungen
+
+- **Hostname** – IP-Adresse oder Hostname der ECoS-Zentrale
+
+## ECoS Einstellungen
+
+### Debugging
+
+- **Debug-Log RX/TX** – Protokolliert die gesamte ECoS-Kommunikation zur Fehlersuche
+
+!!! tip "Hilfe bei Problemen"
+    Bei Problemen mit der Konfiguration oder unerwartetem Verhalten hilft ein Blick ins [Community-Forum](https://discourse.traintastic.org).  
+    Das Teilen von Konfigurationen und Erfahrungen hilft auch anderen und verbessert Traintastic.

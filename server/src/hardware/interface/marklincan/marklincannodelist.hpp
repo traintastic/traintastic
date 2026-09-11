@@ -25,7 +25,7 @@
 
 #include "../../../core/subobject.hpp"
 #include "../../../core/table.hpp"
-#include "../../protocol/marklincan/node.hpp"
+#include "../../protocol/marklincan/marklincannode.hpp"
 
 class MarklinCANInterface;
 class MarklinCANNodeListTableModel;

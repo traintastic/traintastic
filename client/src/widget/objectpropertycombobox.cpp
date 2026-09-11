@@ -1,9 +1,8 @@
 /**
- * client/src/widget/objectpropertycombobox.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,48 +32,18 @@ class ObjectPropertyComboBoxModel final : public QAbstractListModel
     static constexpr int columnId = 0;
     static constexpr int columnName = 1;
 
-    ObjectProperty& m_property;
-    int m_requestId = Connection::invalidRequestId;
-    ObjectPtr m_object;
     TableModelPtr m_model;
 
   public:
-    ObjectPropertyComboBoxModel(ObjectProperty& property, QObject* parent = nullptr)
+    ObjectPropertyComboBoxModel(TableModelPtr model, QObject* parent = nullptr)
       : QAbstractListModel(parent)
-      , m_property{property}
+      , m_model{std::move(model)}
     {
-      m_requestId = m_property.object().connection()->getObject(m_property.getAttributeString(AttributeName::ObjectList, {}),
-        [this](const ObjectPtr& object, std::optional<const Error> /*error*/)
-        {
-          m_requestId = Connection::invalidRequestId;
-          if(object)
-          {
-            m_object = object;
-
-            m_requestId = m_property.object().connection()->getTableModel(m_object,
-              [this](const TableModelPtr& model, std::optional<const Error> /*error*/)
-              {
-                m_requestId = Connection::invalidRequestId;
-                if(model)
-                {
-                  beginResetModel();
-                  m_model = model;
-                  m_model->setRegion(0, columnName, 0, std::numeric_limits<int>::max());
-                  connect(m_model.get(), &TableModel::modelAboutToBeReset, this, &ObjectPropertyComboBoxModel::beginResetModel);
-                  connect(m_model.get(), &TableModel::modelReset, this, &ObjectPropertyComboBoxModel::endResetModel);
-                  endResetModel();
-                }
-              });
-          }
-        });
-    }
-
-    ~ObjectPropertyComboBoxModel() final
-    {
-      if(m_requestId != Connection::invalidRequestId)
-      {
-        m_property.object().connection()->cancelRequest(m_requestId);
-      }
+      beginResetModel();
+      m_model->setRegion(0, columnName, 0, std::numeric_limits<int>::max());
+      connect(m_model.get(), &TableModel::modelAboutToBeReset, this, &ObjectPropertyComboBoxModel::beginResetModel);
+      connect(m_model.get(), &TableModel::modelReset, this, &ObjectPropertyComboBoxModel::endResetModel);
+      endResetModel();
     }
 
     int rowCount(const QModelIndex& /*parent*/ = QModelIndex()) const final
@@ -125,38 +94,57 @@ class ObjectPropertyComboBoxModel final : public QAbstractListModel
 ObjectPropertyComboBox::ObjectPropertyComboBox(ObjectProperty& property, QWidget* parent) :
   QComboBox(parent),
   m_property{property}
+  , m_requestId{Connection::invalidRequestId}
 {
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
 
-  setModel(new ObjectPropertyComboBoxModel(m_property, this));
-  connect(model(), &QAbstractItemModel::modelAboutToBeReset, this,
-    [this]()
+  m_requestId = m_property.object().connection()->getObject(m_property.getAttributeString(AttributeName::ObjectList, {}),
+    [this](const ObjectPtr& objectList, std::optional<const Error> /*error*/)
     {
-      m_modelUpdating = true;
-    });
-  connect(model(), &QAbstractItemModel::modelReset, this,
-    [this]()
-    {
-      m_modelUpdating = false;
-      updateValue();
-    });
+      m_requestId = Connection::invalidRequestId;
+      if(objectList)
+      {
+        m_objectList = objectList;
 
-  connect(this, static_cast<void(ObjectPropertyComboBox::*)(int)>(&ObjectPropertyComboBox::currentIndexChanged),
-    [this](int index)
-    {
-      if(m_modelUpdating)
-      {
-        return; // ignore index changes during update, else the property is changed.
-      }
+        m_requestId = m_property.object().connection()->getTableModel(m_objectList,
+          [this](const TableModelPtr& tableModel, std::optional<const Error> /*error*/)
+          {
+            m_requestId = Connection::invalidRequestId;
+            if(tableModel)
+            {
+              setModel(new ObjectPropertyComboBoxModel(tableModel, this));
+              connect(model(), &QAbstractItemModel::modelAboutToBeReset, this,
+                [this]()
+                {
+                  m_modelUpdating = true;
+                });
+              connect(model(), &QAbstractItemModel::modelReset, this,
+                [this]()
+                {
+                  m_modelUpdating = false;
+                  updateValue();
+                });
 
-      if(index == 0)
-      {
-        m_property.setByObjectId({}); // set empty
-      }
-      else
-      {
-        m_property.setByObjectId(static_cast<ObjectPropertyComboBoxModel*>(model())->getObjectId(index - 1));
+              connect(this, static_cast<void(ObjectPropertyComboBox::*)(int)>(&ObjectPropertyComboBox::currentIndexChanged),
+                [this](int index)
+                {
+                  if(m_modelUpdating)
+                  {
+                    return; // ignore index changes during update, else the property is changed.
+                  }
+
+                  if(index == 0)
+                  {
+                    m_property.setByObjectId({}); // set empty
+                  }
+                  else
+                  {
+                    m_property.setByObjectId(static_cast<ObjectPropertyComboBoxModel*>(model())->getObjectId(index - 1));
+                  }
+                });
+            }
+          });
       }
     });
 
@@ -178,6 +166,14 @@ ObjectPropertyComboBox::ObjectPropertyComboBox(ObjectProperty& property, QWidget
           break;
       }
     });
+}
+
+ObjectPropertyComboBox::~ObjectPropertyComboBox()
+{
+  if(m_requestId != Connection::invalidRequestId)
+  {
+    m_property.object().connection()->cancelRequest(m_requestId);
+  }
 }
 
 void ObjectPropertyComboBox::updateValue()

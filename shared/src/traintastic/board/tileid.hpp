@@ -1,9 +1,8 @@
 /**
- * shared/src/traintastic/board/tileid.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -148,6 +147,20 @@ constexpr bool isRailTurnout(TileId id)
     case TileId::RailTurnoutRightCurved:
     case TileId::RailTurnoutWye:
     case TileId::RailTurnout3Way:
+    case TileId::RailTurnoutSingleSlip:
+    case TileId::RailTurnoutDoubleSlip:
+      return true;
+
+    default:
+      break;
+  }
+  return false;
+}
+
+constexpr bool isRailTurnoutSlip(TileId id)
+{
+  switch(id)
+  {
     case TileId::RailTurnoutSingleSlip:
     case TileId::RailTurnoutDoubleSlip:
       return true;

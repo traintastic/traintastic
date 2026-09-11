@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,7 +45,7 @@ Kernel::Kernel(std::string logId_, const Config& config, bool simulation)
 
 void Kernel::setConfig(const Config& config)
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this, newConfig=config]()
     {
       m_config = newConfig;
@@ -66,11 +66,11 @@ void Kernel::start()
     [this]()
     {
       setThreadName("xpressnet");
-      auto work = std::make_shared<boost::asio::io_context::work>(m_ioContext);
+      boost::asio::executor_work_guard<decltype(m_ioContext.get_executor())> work{m_ioContext.get_executor()};
       m_ioContext.run();
     });
 
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this]()
     {
       try
@@ -96,13 +96,13 @@ void Kernel::start()
 
 void Kernel::stop()
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this]()
     {
       m_ioHandler->stop();
-    });
 
-  m_ioContext.stop();
+      m_ioContext.stop();
+    });
 
   m_thread.join();
 
@@ -167,7 +167,7 @@ void Kernel::receive(const Message& message)
                   EventLoop::call(
                     [this, address=1 + fullAddress, value]()
                     {
-                      m_inputController->updateInputValue(InputChannel::Input, address, value);
+                      m_inputController->updateInputValue(InputChannel::Input, InputAddress(address), value);
                     });
                 }
               }
@@ -241,7 +241,7 @@ void Kernel::resumeOperations()
 
   if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::False)
   {
-    m_ioContext.post(
+    boost::asio::post(m_ioContext,
       [this]()
       {
         send(ResumeOperationsRequest());
@@ -255,7 +255,7 @@ void Kernel::stopOperations()
 
   if(m_trackPowerOn != TriState::False || m_emergencyStop != TriState::False)
   {
-    m_ioContext.post(
+    boost::asio::post(m_ioContext,
       [this]()
       {
         send(StopOperationsRequest());
@@ -269,7 +269,7 @@ void Kernel::stopAllLocomotives()
 
   if(m_trackPowerOn != TriState::True || m_emergencyStop != TriState::True)
   {
-    m_ioContext.post(
+    boost::asio::post(m_ioContext,
       [this]()
       {
         send(StopAllLocomotivesRequest());
@@ -405,7 +405,7 @@ bool Kernel::setOutput(uint16_t address, OutputPairValue value)
   assert(isEventLoopThread());
   assert(address >= accessoryOutputAddressMin && address <= accessoryOutputAddressMax);
   assert(value == OutputPairValue::First || value == OutputPairValue::Second);
-  m_ioContext.post(
+  boost::asio::post(m_ioContext,
     [this, address, value]()
     {
       send(
@@ -415,6 +415,56 @@ bool Kernel::setOutput(uint16_t address, OutputPairValue value)
           true));
     });
   return true;
+}
+
+void Kernel::simulateInputChange(uint16_t address, SimulateInputAction action)
+{
+  if(m_simulation)
+    boost::asio::post(m_ioContext,
+      [this, address, action]()
+      {
+        if((action == SimulateInputAction::SetFalse && m_inputValues[address - 1] == TriState::False) ||
+            (action == SimulateInputAction::SetTrue && m_inputValues[address - 1] == TriState::True))
+          return; // no change
+
+        const uint16_t groupAddress = (address - 1) >> 2;
+        const auto index = static_cast<uint8_t>((address - 1) & 0x0003);
+
+        std::byte message[sizeof(FeedbackBroadcast) + sizeof(FeedbackBroadcast::Pair) + 1];
+        memset(message, 0, sizeof(message));
+        auto* feedbackBroadcast = reinterpret_cast<FeedbackBroadcast*>(&message);
+        feedbackBroadcast->header = idFeedbackBroadcast;
+        feedbackBroadcast->setPairCount(1);
+        auto& pair = feedbackBroadcast->pair(0);
+        pair.setGroupAddress(groupAddress);
+        pair.setType(FeedbackBroadcast::Pair::Type::FeedbackModule);
+        for(uint8_t i = 0; i < 4; i++)
+        {
+          const uint16_t n = (groupAddress << 2) + i;
+          if(i == index)
+          {
+            switch(action)
+            {
+              case SimulateInputAction::SetFalse:
+                pair.setStatus(i, false);
+                break;
+
+              case SimulateInputAction::SetTrue:
+                pair.setStatus(i, true);
+                break;
+
+              case SimulateInputAction::Toggle:
+                pair.setStatus(i, m_inputValues[n] != TriState::True);
+                break;
+            }
+          }
+          else
+            pair.setStatus(i, m_inputValues[n] == TriState::True);
+        }
+        updateChecksum(*feedbackBroadcast);
+
+        receive(*feedbackBroadcast);
+      });
 }
 
 void Kernel::setIOHandler(std::unique_ptr<IOHandler> handler)

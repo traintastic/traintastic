@@ -1,9 +1,8 @@
 /**
- * client/src/board/boardwidget.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2025 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -104,6 +103,16 @@ class BoardWidget : public QWidget
   public:
     BoardWidget(std::shared_ptr<Board> object, QWidget* parent = nullptr);
     ~BoardWidget() override;
+
+    int zoomLevel() const
+    {
+      return m_boardArea->zoomLevel();
+    }
+
+    void setZoomLevel(int value)
+    {
+      m_boardArea->setZoomLevel(value);
+    }
 
     Board& board() { return *m_object; }
 };

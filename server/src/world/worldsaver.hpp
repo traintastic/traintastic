@@ -1,9 +1,8 @@
 /**
- * server/src/world/worldsaver.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +33,13 @@ class CTWWriter;
 
 class WorldSaver
 {
+public:
+  struct Options
+  {
+    bool isAutoSave;
+    bool isExport;
+  };
+
   private:
     nlohmann::json m_states;
     nlohmann::json m_data;
@@ -41,7 +47,7 @@ class WorldSaver
     std::list<std::filesystem::path> m_deleteFiles;
     std::list<std::pair<std::filesystem::path, std::string>> m_writeFiles;
 
-    WorldSaver(const World& world);
+    WorldSaver(const World& world, Options options);
 
     void writeCTW(CTWWriter& ctw);
 
@@ -51,8 +57,8 @@ class WorldSaver
     static void saveToDisk(const std::string& data, const std::filesystem::path& filename);
 
   public:
-    WorldSaver(const World& world, const std::filesystem::path& path);
-    WorldSaver(const World& world, std::vector<std::byte>& memory);
+    WorldSaver(const World& world, const std::filesystem::path& path, Options options);
+    WorldSaver(const World& world, std::vector<std::byte>& memory, Options options);
 
     nlohmann::json saveObject(const ObjectPtr& object);
     nlohmann::json saveStateObject(const std::shared_ptr<StateObject>& object);

@@ -26,6 +26,7 @@
 #include "clientconnection.hpp"
 #include <traintastic/enum/interfaceitemtype.hpp>
 #include <traintastic/enum/attributetype.hpp>
+#include "../compat/stdformat.hpp"
 #ifndef NDEBUG
   #include "../core/eventloop.hpp" // for: isEventLoopThread()
 #endif
@@ -695,6 +696,74 @@ bool Session::processMessage(const Message& message)
           m_connection->sendMessage(message.errorResponse(LogMessage::C1015_UNKNOWN_OBJECT));
         }
         return true;
+      }
+      break;
+
+    case Message::Command::GetDiagnosticReport:
+      if(message.isRequest())
+      {
+        auto response = message.response();
+
+        response->write(Traintastic::getInfo());
+
+        {
+          std::string serverLog;
+          if(auto* memoryLogger = Log::getMemoryLogger())
+          {
+            serverLog.reserve(memoryLogger->size() * 50); // ~50 chars/line
+
+#ifdef HAS_CXX20_TIMEZONES
+            const auto tz = std::chrono::current_zone();
+#endif
+            for(const auto& log : *memoryLogger)
+            {
+#ifdef HAS_CXX20_TIMEZONES
+              const std::chrono::zoned_time zoneTime{tz, log.time};
+              const auto localTime = zoneTime.get_local_time();
+#else
+              const auto localTime = log.time;
+#endif
+              const auto s = std::chrono::floor<std::chrono::seconds>(localTime);
+              const auto us = std::chrono::duration_cast<std::chrono::microseconds>(localTime - s).count();
+
+              serverLog.append(
+                std::format(
+                  "{:%Y-%m-%d;%H:%M:%S}.{:06}"
+#ifdef HAS_CXX20_TIMEZONES
+                  "{:%z}"
+#endif
+                  ";{};{}{:04};",
+                  s,
+                  us,
+#ifdef HAS_CXX20_TIMEZONES
+                  zoneTime,
+#endif
+                  log.objectId,
+                  logMessageChar(log.message),
+                  logMessageNumber(log.message)));
+
+              if(log.args)
+              {
+                serverLog.append(Logger::toString(log.message, *log.args));
+              }
+              else
+              {
+                serverLog.append(Logger::toString(log.message));
+              }
+
+              serverLog.append("\n");
+            }
+          }
+          response->write(serverLog);
+        }
+
+        {
+          std::vector<std::byte> worldData;
+          Traintastic::instance->world->export_(worldData);
+          response->write(worldData);
+        }
+
+        m_connection->sendMessage(std::move(response));
       }
       break;
 

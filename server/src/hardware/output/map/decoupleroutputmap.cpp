@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/map/decoupleroutputmap.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022,2024 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,8 +20,10 @@
  */
 
 #include "decoupleroutputmap.hpp"
+#include "outputmapoutputaction.hpp"
+#include "../../../core/method.tpp"
 
-static std::optional<OutputActionValue> getDefaultActionValue(DecouplerState decouplerState, OutputType outputType, size_t outputIndex)
+static std::optional<OutputActionValue> getDefaultActionValue(DecouplerState decouplerState, OutputChannel /*outputChannel*/, OutputType outputType, size_t outputIndex)
 {
   // FIXME: implement defaults
   (void)decouplerState;

@@ -71,5 +71,7 @@
         <file>highlight_zone.svg</file>
         <file>decoder_function.mute.svg</file>
         <file>decoder_function.sound.svg</file>
+        <file>block_no_power.svg</file>
+        <file>block_short_circuit.svg</file>
     </qresource>
 </RCC>

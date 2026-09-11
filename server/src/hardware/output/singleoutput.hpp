@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/singleoutput.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,7 +41,7 @@ class SingleOutput : public AddressOutput
     Method<bool(bool)> setValue;
     Event<bool, const std::shared_ptr<SingleOutput>&> onValueChanged;
 
-    SingleOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, uint32_t address_);
+    SingleOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, std::optional<uint32_t> node_, uint32_t address_);
 };
 
 #endif

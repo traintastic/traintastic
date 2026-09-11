@@ -4,7 +4,7 @@ Traintastic includes a built-in **Lua scripting engine**.
 Scripts allow you to extend the behavior of your world, automate tasks, and add custom logic that is not available through the standard user interface.
 
 !!! tip
-    If you get stuck or want to see what others have built, visit the [community forum scripting category](https://discourse.traintastic.org/c/lua-scripting).
+    If you get stuck or want to see what others have built, visit the [community forum scripting category](https://discourse.traintastic.org/c/english/lua-scripting/7).
 
 ## What is Lua?
 
@@ -43,5 +43,5 @@ From this dialog you can:
 
 - See the [Lua scripting reference](../appendix/lua/index.md) for available functions and objects.
 - Check the [Lua scripting examples](../appendix/lua/examples.md) for ready-to-use ideas.
-- Join the [community forum scripting category](https://discourse.traintastic.org/c/lua-scripting) to share ideas and ask questions.
+- Join the [community forum scripting category](https://discourse.traintastic.org/c/english/lua-scripting/7) to share ideas and ask questions.
 - Learn more about the Lua language itself at [lua.org](https://www.lua.org).

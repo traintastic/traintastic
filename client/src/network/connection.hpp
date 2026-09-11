@@ -1,9 +1,8 @@
 /**
- * client/src/network/client.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2021,2023-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -162,6 +161,8 @@ class Connection : public QObject, public std::enable_shared_from_this<Connectio
     void setTableModelRegion(TableModel* tableModel, uint32_t columnMin, uint32_t columnMax, uint32_t rowMin, uint32_t rowMax);
 
     [[nodiscard]] int getTileData(Board& object);
+
+    int getServerDiagnosticReport(std::function<void(const QString&, const QString&, const QByteArray&)> callback);
 
   signals:
     void stateChanged();

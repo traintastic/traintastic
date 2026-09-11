@@ -1,0 +1,68 @@
+# Schnellstart: Grundlagen des Zeichnens
+
+In Traintastic werden Schaltpläne auf einem **Stellwerk** gezeichnet. Ein Stellwerk ist eine Zeichenfläche, auf der Gleise, Weichen, Signale und andere Objekte platziert werden, um die reale Modellbahnanlage als Schema darzustellen. Es können mehrere Boards erstellt werden, zum Beispiel eines für die **Hauptanlage** und eines für den **Schattenbahnhof**.
+
+## Schritt 1: Stellwerk-Liste öffnen
+
+1. Sicherstellen, dass der **Bearbeitungsmodus** aktiv ist (![Stift](../../assets/images/icons/light/edit.png#only-light)![Stift](../../assets/images/icons/dark/edit.png#only-dark) oben rechts).  
+2. Die Stellwerk-Liste öffnen:
+    - Über das Hauptmenü: **Objekte → Stellwerke**
+    - Oder über die ![Board](../../assets/images/icons/light/board.png#only-light)![Board](../../assets/images/icons/dark/board.png#only-dark)-Schaltfläche in der Werkzeugleiste
+
+![Leere Board-Liste](../../assets/images/getting-started/board-list-empty.png)
+
+## Schritt 2: Neues Stellwerk erstellen
+
+1. In der Stellwerk-Liste auf die ![Plus](../../assets/images/icons/light/add.png#only-light)![Plus](../../assets/images/icons/dark/add.png#only-dark)-Schaltfläche klicken.
+2. Der **Stellwerk-Einrichtungsassistent** öffnet sich.  
+   Aktuell wird nur ein **Name für das Stellwerk** abgefragt (z. B. *Hauptanlage* oder *Schattenbahnhof*).
+3. Assistent abschließen, um das Stellwerk einzurichten.
+
+Nun kann mit dem Zeichnen begonnen werden.
+
+## Schritt 3: Kacheln platzieren und drehen
+
+1. Eine **Kachel** aus der Werkzeugleiste auswählen (Gerade, Bogen, Weiche usw.).  
+2. Auf das Stellwerk klicken, um sie zu platzieren.  
+3. Zum **Drehen** vor dem Platzieren:
+    - **Rechtsklick** — im Uhrzeigersinn drehen
+    - ++shift++ + **Rechtsklick** — gegen den Uhrzeigersinn drehen
+
+## Schritt 4: Kacheln verschieben
+
+1. In der Werkzeugleiste ![Verschieben](../../assets/images/icons/light/move_tile.png#only-light)![Verschieben](../../assets/images/icons/dark/move_tile.png#only-dark) auswählen.
+2. Auf die Kachel klicken, die verschoben werden soll.  
+   Die Kachel folgt dem Mauszeiger.
+3. Erneut klicken, um sie an der neuen Position abzulegen.
+    - Drehen funktioniert wie beim Platzieren.
+    - Zum Abbrechen ++esc++ drücken.
+
+## Schritt 5: Kacheln skalieren
+
+Einige Kacheln, z. B. Blöcke, können **in der Länge verändert** werden.
+
+1. In der Werkzeugleiste ![Skalieren](../../assets/images/icons/light/resize_tile.png#only-light)![Skalieren](../../assets/images/icons/dark/resize_tile.png#only-dark) auswählen.
+2. Die gewünschte Kachel anklicken.
+3. Die Kante ziehen, um die Länge zu ändern.
+
+## Schritt 6: Kacheln löschen
+
+1. In der Werkzeugleiste ![Papierkorb](../../assets/images/icons/light/delete.png#only-light)![Papierkorb](../../assets/images/icons/dark/delete.png#only-dark) auswählen.
+2. Auf die zu entfernende Kachel klicken.  
+   Sie wird sofort gelöscht.
+
+---
+
+Mit diesen Grundlagen lässt sich eine Anlage Schritt für Schritt aufbauen und anpassen.
+
+!!! tip
+    Bei größeren Anlagen zuerst nur einen **kleinen Abschnitt** zeichnen.  
+    Das erleichtert das Verständnis des Stellwerk-Editors erheblich.
+
+Hier ein **einfaches Beispiel einer Anlage**:
+
+![Beispielanlage](../../assets/images/getting-started/board-example.png)
+
+Dieses Layout wird in den folgenden Kapiteln verwendet, um **Weichensteuerung**, **Blöcke und Sensoren** sowie **Signale** zu erklären.
+
+Weiter: [Weichensteuerung](turnouts.md)

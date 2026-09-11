@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/pairoutput.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,7 +41,7 @@ class PairOutput final : public AddressOutput
     Method<bool(OutputPairValue)> setValue;
     Event<OutputPairValue, const std::shared_ptr<PairOutput>&> onValueChanged;
 
-    PairOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, uint32_t address_);
+    PairOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, std::optional<uint32_t> node_, uint32_t address_);
 };
 
 #endif

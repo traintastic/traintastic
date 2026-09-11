@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -73,6 +73,7 @@ public:
 
   ObjectProperty<InputController> interface;
   Property<InputChannel> channel;
+  Property<uint32_t> node;
   Property<uint32_t> address;
   Property<uint16_t> onDelay;
   Property<uint16_t> offDelay;

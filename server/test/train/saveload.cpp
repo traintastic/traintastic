@@ -64,7 +64,11 @@ TEST_CASE("Train: Save/Load", "[train][train-saveload]")
     INFO("Saving...");
     {
       ctw = std::filesystem::temp_directory_path() / std::string(world->uuid.value()).append(World::dotCTW);
-      WorldSaver saver(*world, ctw);
+      WorldSaver saver(*world, ctw,
+        WorldSaver::Options{
+          .isAutoSave = false,
+          .isExport = false,
+        });
     }
     INFO("Saved");
   }

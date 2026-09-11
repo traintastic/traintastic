@@ -1,9 +1,8 @@
 /**
- * server/src/utils/contains.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022,2024-2025 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,6 +34,11 @@ inline bool contains(const std::array<T, N>& array, T value)
 
 template<class T>
 inline bool contains(const std::vector<T>& vector, T value)
+{
+  return std::find(vector.begin(), vector.end(), value) != vector.end();
+}
+
+inline bool contains(const std::vector<std::string>& vector, std::string_view value)
 {
   return std::find(vector.begin(), vector.end(), value) != vector.end();
 }

@@ -1,9 +1,8 @@
 /**
- * server/src/board/tile/rail/turnout/turnoutsliprailtile.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +27,7 @@
 class TurnoutSlipRailTile : public TurnoutRailTile
 {
 protected:
-  static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex);
+  static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputChannel outputChannel, OutputType outputType, size_t outputIndex);
 
   TurnoutSlipRailTile(World& world, std::string_view _id, TileId tileId_);
 

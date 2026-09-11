@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/keyboard/outputkeyboard.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2021,2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +26,7 @@
 #include <vector>
 #include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/outputtype.hpp>
-#include "../outputvalue.hpp"
+#include "../outputtypes.hpp"
 #include "../../../core/property.hpp"
 #include "../../../core/event.hpp"
 
@@ -57,7 +56,7 @@ class OutputKeyboard : public Object
     std::string getObjectId() const final;
 
     virtual std::vector<OutputInfo> getOutputInfo() const = 0;
-    void fireOutputUsedChanged(uint32_t id, bool used);
+    void fireOutputUsedChanged(uint32_t address, bool used);
     virtual void fireOutputValueChanged(uint32_t address, OutputValue value) = 0;
 };
 

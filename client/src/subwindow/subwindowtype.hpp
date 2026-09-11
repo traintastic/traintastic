@@ -1,9 +1,8 @@
 /**
- * client/src/subwindow/subwindowtype.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +22,7 @@
 #ifndef TRAINTASTIC_CLIENT_SUBWINDOW_SUBWINDOWTYPE_HPP
 #define TRAINTASTIC_CLIENT_SUBWINDOW_SUBWINDOWTYPE_HPP
 
+#include <optional>
 #include <QString>
 
 enum class SubWindowType
@@ -47,6 +47,23 @@ inline QString toString(SubWindowType value)
   }
   Q_ASSERT(false);
   return QString();
+}
+
+inline std::optional<SubWindowType> toSubWindowType(const QString& value)
+{
+  if(value == "object")
+  {
+    return SubWindowType::Object;
+  }
+  if(value == "board")
+  {
+    return SubWindowType::Board;
+  }
+  if(value == "throttle")
+  {
+    return SubWindowType::Throttle;
+  }
+  return std::nullopt;
 }
 
 #endif

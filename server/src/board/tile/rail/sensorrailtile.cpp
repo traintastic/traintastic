@@ -1,9 +1,8 @@
 /**
- * server/src/board/tile/rail/sensorrailtile.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2025 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,7 +55,7 @@ SensorRailTile::SensorRailTile(World& world, std::string_view _id) :
       {
         if(input()) /*[[likely]]*/
         {
-          input()->interface->inputSimulateChange(input()->channel, input()->address, SimulateInputAction::Toggle);
+          input()->interface->inputSimulateChange(input()->channel, input()->location(), SimulateInputAction::Toggle);
         }
       }}
   , onStateChanged{*this, "on_state_changed", EventFlags::Scriptable}

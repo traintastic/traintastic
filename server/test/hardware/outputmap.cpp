@@ -26,7 +26,7 @@
 #include "../../src/core/objectproperty.tpp"
 #include "../../src/world/world.hpp"
 #include "../../src/hardware/interface/interfacelist.hpp"
-#include "../../src/hardware/interface/ecosinterface.hpp"
+#include "../../src/hardware/interface/ecos/ecosinterface.hpp"
 #include "../../src/hardware/interface/loconetinterface.hpp"
 #include "../../src/hardware/interface/xpressnetinterface.hpp"
 #include "../../src/hardware/output/map/outputmappairoutputaction.hpp"

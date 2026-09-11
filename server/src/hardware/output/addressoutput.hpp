@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/addressoutput.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,20 +23,27 @@
 #define TRAINTASTIC_SERVER_HARDWARE_OUTPUT_ADDRESSOUTPUT_HPP
 
 #include "output.hpp"
+#include <optional>
 
 class AddressOutput : public Output
 {
   friend class OutputController;
 
   protected:
-    AddressOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, OutputType type_, uint32_t address_);
+    AddressOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, OutputType type_, std::optional<uint32_t> node_, uint32_t address_);
 
   public:
+    Property<uint32_t> node;
     Property<uint32_t> address;
+    const bool hasNode;
 
-    uint32_t id() const final
+    OutputLocation location() const final
     {
-      return address.value();
+      if(hasNode)
+      {
+        return OutputNodeAddress(node, address);
+      }
+      return OutputAddress(address);
     }
 };
 

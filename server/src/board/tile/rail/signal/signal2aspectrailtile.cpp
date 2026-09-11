@@ -1,9 +1,8 @@
 /**
- * server/src/board/tile/rail/signal/signal2aspectrailtile.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2025 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -65,6 +64,25 @@ namespace
       {
       }
   };
+
+  std::optional<OutputActionValue> getDefaultActionValue(SignalAspect signalAspect, OutputChannel outputChannel, OutputType outputType, size_t outputIndex)
+  {
+    if(outputChannel == OutputChannel::OC32)
+    {
+      switch(signalAspect)
+      {
+        case SignalAspect::Stop:
+          return static_cast<int16_t>(0);
+
+        case SignalAspect::Proceed:
+          return static_cast<int16_t>(1);
+
+        default: [[unlikely]]
+          return std::nullopt;
+      }
+    }
+    return SignalRailTile::getDefaultActionValue(signalAspect, outputChannel, outputType, outputIndex);
+  }
 }
 
 Signal2AspectRailTile::Signal2AspectRailTile(World& world, std::string_view _id) :
@@ -73,7 +91,7 @@ Signal2AspectRailTile::Signal2AspectRailTile(World& world, std::string_view _id)
   // Skip Unknown aspect
   std::span<const SignalAspect, 2> setAspectValues = std::span(aspectValues).subspan<1>();
 
-  outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::Proceed}, getDefaultActionValue));
+  outputMap.setValueInternal(std::make_shared<SignalOutputMap>(*this, outputMap.name(), std::initializer_list<SignalAspect>{SignalAspect::Stop, SignalAspect::Proceed}, ::getDefaultActionValue));
 
   Attributes::addValues(aspect, aspectValues);
   m_interfaceItems.add(aspect);

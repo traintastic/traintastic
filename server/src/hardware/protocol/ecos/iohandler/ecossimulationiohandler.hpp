@@ -1,0 +1,74 @@
+/**
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
+ *
+ * Copyright (C) 2022-2026 Reinder Feenstra
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+#ifndef TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_IOHANDLER_ECOSSIMULATIONIOHANDLER_HPP
+#define TRAINTASTIC_SERVER_HARDWARE_PROTOCOL_ECOS_IOHANDLER_ECOSSIMULATIONIOHANDLER_HPP
+
+#include "ecosiohandler.hpp"
+#include <array>
+#include <cstddef>
+#include "../ecossimulation.hpp"
+#include "../iohandler/ecossimulationiohandler.hpp"
+#include "../../../../simulator/simulatoriohandler.hpp"
+
+namespace ECoS {
+
+class SimulationIOHandler final : public IOHandler
+{
+  private:
+    struct Locomotive
+    {
+      uint8_t dir = 0;
+      uint8_t speedStep = 0;
+    };
+
+    Simulation m_simulation;
+    std::unordered_map<uint16_t, Locomotive> m_locomotives;
+    std::unique_ptr<SimulatorIOHandler> m_simulator;
+    std::unordered_map<uint16_t, bool> m_simulatorS88;
+
+    bool reply(std::string_view message);
+    bool replyOk(std::string_view request);
+    bool replyErrorUnknownOption(std::string_view request, std::string_view option);
+
+    static std::string replyHeader(std::string_view request);
+
+  public:
+    SimulationIOHandler(Kernel& kernel, const Simulation& simulation);
+
+    void setSimulator(std::string hostname, uint16_t port);
+
+    void start() final;
+    void stop() final {}
+
+    bool send(std::string_view message) final;
+};
+
+template<>
+constexpr bool isSimulation<SimulationIOHandler>()
+{
+  return true;
+}
+
+}
+
+#endif
+

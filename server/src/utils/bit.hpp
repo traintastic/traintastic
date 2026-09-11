@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,15 +33,29 @@ constexpr bool getBit(T value)
 
 template<unsigned int N, typename T>
 requires(std::is_integral_v<T> && N < sizeof(T) * 8)
+constexpr void clearBit(T& value)
+{
+  value &= ~(static_cast<T>(1) << N);
+}
+
+template<unsigned int N, typename T>
+requires(std::is_integral_v<T> && N < sizeof(T) * 8)
+constexpr void setBit(T& value)
+{
+  value |= (1 << N);
+}
+
+template<unsigned int N, typename T>
+requires(std::is_integral_v<T> && N < sizeof(T) * 8)
 constexpr void setBit(T& value, bool set)
 {
   if(set)
   {
-    value |= (1 << N);
+    setBit<N>(value);
   }
   else
   {
-    value &= ~(static_cast<T>(1) << N);
+    clearBit<N>(value);
   }
 }
 

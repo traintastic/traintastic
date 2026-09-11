@@ -1,9 +1,8 @@
 /**
- * server/src/utils/readfile.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,4 +35,19 @@ std::optional<std::string> readFile(const std::filesystem::path& filename)
   file.seekg(std::ios::beg);
   file.read(contents.data(), size);
   return contents;
+}
+
+std::optional<nlohmann::json> readFileJSON(const std::filesystem::path& filename)
+{
+  if(auto contents = readFile(filename))
+  {
+    try
+    {
+      return nlohmann::json::parse(*contents);
+    }
+    catch(...)
+    {
+    }
+  }
+  return std::nullopt;
 }

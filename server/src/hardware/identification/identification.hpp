@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/identification/identification.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -68,6 +67,7 @@ class Identification : public IdObject
     ObjectProperty<IdentificationController> interface;
     Property<uint32_t> channel;
     Property<uint32_t> address;
+    Property<bool> invertDirection;
     Property<OPCMultiSenseDirection> opcMultiSenseDirection;
     ObjectVectorProperty<Object> consumers;
     Event<IdentificationEventType, uint16_t, Direction, uint8_t> onEvent;

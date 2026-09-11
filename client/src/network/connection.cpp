@@ -1,9 +1,8 @@
 /**
- * client/src/network/client.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -498,6 +497,27 @@ int Connection::getTileData(Board& object)
     [&object](const std::shared_ptr<Message> message)
     {
       object.getTileDataResponse(*message);
+    });
+  return request->requestId();
+}
+
+int Connection::getServerDiagnosticReport(std::function<void(const QString&, const QString&, const QByteArray&)> callback)
+{
+  std::unique_ptr<Message> request{Message::newRequest(Message::Command::GetDiagnosticReport)};
+  send(request,
+    [cb=std::move(callback)](const std::shared_ptr<Message> message)
+    {
+      if(!message->isError())
+      {
+        const auto info = QString::fromUtf8(message->read<QByteArray>());
+        const auto log = QString::fromUtf8(message->read<QByteArray>());
+        const auto world = message->read<QByteArray>();
+        cb(info, log, world);
+      }
+      else
+      {
+        cb({}, {}, {});
+      }
     });
   return request->requestId();
 }

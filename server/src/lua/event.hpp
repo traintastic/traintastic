@@ -1,9 +1,8 @@
 /**
- * server/src/lua/event.hpp - Lua event wrapper
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,22 +30,19 @@ namespace Lua {
 
 class Event
 {
-  private:
-    static int __index(lua_State* L);
-    static int __call(lua_State* L);
-    static int __gc(lua_State* L);
-    static int connect(lua_State* L);
-    static int disconnect(lua_State* L);
+public:
+  static constexpr char const* metaTableName = "event";
 
-  public:
-    static constexpr char const* metaTableName = "event";
+  static AbstractEvent& check(lua_State* L, int index);
+  static AbstractEvent* test(lua_State* L, int index);
 
-    static AbstractEvent& check(lua_State* L, int index);
-    static AbstractEvent* test(lua_State* L, int index);
+  static void push(lua_State* L, AbstractEvent& value);
 
-    static void push(lua_State* L, AbstractEvent& value);
+  static void registerType(lua_State* L);
 
-    static void registerType(lua_State* L);
+private:
+  static int __call(lua_State* L);
+  static int __gc(lua_State* L);
 };
 
 }

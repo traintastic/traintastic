@@ -2,6 +2,7 @@
   "interface": {},
   "channel": {},
   "address": {},
+  "node": {},
   "value": {},
   "on_value_changed": {
     "parameters": [

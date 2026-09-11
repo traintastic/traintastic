@@ -1,0 +1,11 @@
+﻿[CustomMessages]
+add_firewall_rule_traintastic_client=Tilføj firewallregler for Traintasticklienten
+add_firewall_rule_wlanmaus_z21=Tilføj firewall regel for WLANmaus/Z21
+client_and_server=Klient og server
+client_and_server_desc=Til computeren forbundet til centralen
+client_only=Kun klienten
+client_only_desc=Til styring fra flere computere.
+firewall_allow_traintastic_client=Tillad Traintastic klienten
+firewall_allow_wlanmaus_z21=Tillad WLANmaus/Z21
+windows_firewall=Windows Firewall
+

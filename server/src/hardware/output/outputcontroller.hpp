@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/outputcontroller.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022,2024-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +30,7 @@
 #include <span>
 #include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/outputtype.hpp>
-#include "outputvalue.hpp"
+#include "outputtypes.hpp"
 #include "../../core/objectproperty.hpp"
 
 #ifdef interface
@@ -52,20 +51,26 @@ class OutputController
     struct OutputMapKey
     {
       OutputChannel channel;
-      uint32_t id;
+      OutputLocation location;
 
       inline bool operator ==(const OutputMapKey other) const noexcept
       {
-        return channel == other.channel && id == other.id;
+        return channel == other.channel && location == other.location;
       }
     };
-    static_assert(sizeof(OutputMapKey) == sizeof(uint64_t));
 
     struct OutputMapKeyHash
     {
       std::size_t operator()(const OutputMapKey& value) const noexcept
       {
-        return (static_cast<uint64_t>(value.channel) << (8 * sizeof(value.id))) | value.id;
+        auto hash = std::hash<OutputChannel>{}(value.channel);
+        hash ^= value.location.index();
+        std::visit(
+          [&hash](auto const& v)
+          {
+            hash ^= std::hash<std::decay_t<decltype(v)>>{}(v);
+          }, value.location);
+        return hash;
       }
     };
 
@@ -107,12 +112,14 @@ class OutputController
     /**
      *
      */
-    virtual bool isOutputId(OutputChannel channel, uint32_t id) const;
+    virtual bool isOutputLocation(OutputChannel channel, const OutputLocation& location) const;
 
     /**
      *
      */
     virtual OutputType outputType(OutputChannel channel) const;
+
+    virtual std::pair<uint32_t, uint32_t> outputNodeMinMax(OutputChannel channel) const;
 
     /**
      *
@@ -127,7 +134,7 @@ class OutputController
     /**
      *
      */
-    [[nodiscard]] virtual bool isOutputAvailable(OutputChannel channel, uint32_t id) const;
+    [[nodiscard]] virtual bool isOutputAvailable(OutputChannel channel, const OutputLocation& location) const;
 
     /**
      * \brief Get the next unused output address
@@ -140,18 +147,18 @@ class OutputController
     /**
      * \brief Get an output.
      *
-     * For each channel/id combination an output object is create once,
+     * For each channel/location combination an output object is create once,
      * if an output is requested multiple time they all share the same instance.
      * Once the object the uses the output is no longer using it,
      * it must be released using \ref releaseOutput .
      * The output object will be destroyed when the are zero users.
      *
      * \param[in] channel The output channel.
-     * \param[in] id The output id.
+     * \param[in] location The output location.
      * \param[in] usedBy The object the will use the output.
      * \return An output object if the channel/id combination is valid, \c nullptr otherwise.
      */
-    std::shared_ptr<Output> getOutput(OutputChannel channel, uint32_t id, Object& usedBy);
+    std::shared_ptr<Output> getOutput(OutputChannel channel, const OutputLocation& location, Object& usedBy);
 
     /**
      * \brief Release an output.
@@ -165,7 +172,7 @@ class OutputController
     /**
      * @brief ...
      */
-    [[nodiscard]] virtual bool setOutputValue(OutputChannel /*channel*/, uint32_t /*id*/, OutputValue /*value*/) = 0;
+    [[nodiscard]] virtual bool setOutputValue(OutputChannel /*channel*/, const OutputLocation& /*location*/, OutputValue /*value*/) = 0;
 
     /**
      * @brief Update the output value
@@ -176,7 +183,7 @@ class OutputController
      * @param[in] id Output id
      * @param[in] value New output value
      */
-    void updateOutputValue(OutputChannel channel, uint32_t id, OutputValue value);
+    void updateOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value);
 
     /**
      * \brief Check is there is an output keyboard available for the channel.

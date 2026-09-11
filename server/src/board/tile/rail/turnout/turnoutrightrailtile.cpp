@@ -1,9 +1,8 @@
 /**
- * server/src/board/tile/rail/turnout/turnoutrightrailtile.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2022,2024-2025 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +26,7 @@
 
 static const std::array<TurnoutPosition, 3> positionValues = {TurnoutPosition::Unknown, TurnoutPosition::Straight, TurnoutPosition::Right};
 
-static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
+static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputChannel outputChannel, OutputType outputType, size_t outputIndex)
 {
   if(outputIndex == 0)
   {
@@ -45,14 +44,33 @@ static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition tu
         break;
 
       case OutputType::Aspect:
-        // YaMoRC YD8116 defaults aspects:
-        if(turnoutPosition == TurnoutPosition::Straight)
+        switch(outputChannel)
         {
-          return static_cast<int16_t>(0);
-        }
-        else if(turnoutPosition == TurnoutPosition::Right)
-        {
-          return static_cast<int16_t>(16);
+          case OutputChannel::DCCext:
+            // YaMoRC YD8116 defaults:
+            if(turnoutPosition == TurnoutPosition::Straight)
+            {
+              return static_cast<int16_t>(0);
+            }
+            else if(turnoutPosition == TurnoutPosition::Right)
+            {
+              return static_cast<int16_t>(16);
+            }
+            break;
+
+          case OutputChannel::OC32:
+            if(turnoutPosition == TurnoutPosition::Straight)
+            {
+              return static_cast<int16_t>(0);
+            }
+            else if(turnoutPosition == TurnoutPosition::Right)
+            {
+              return static_cast<int16_t>(1);
+            }
+            break;
+
+          default: [[unlikely]]
+            break;
         }
         break;
 
@@ -64,15 +82,25 @@ static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition tu
 }
 
 TurnoutRightRailTile::TurnoutRightRailTile(World& world, std::string_view _id, TileId tileId_)
-  : TurnoutRailTile(world, _id, tileId_, 3)
+  : TurnoutLinkableRailTile(world, _id, tileId_)
 {
   // Skip Unknown position
   std::span<const TurnoutPosition, 2> setPositionValues = std::span(positionValues).subspan<1>();
 
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Right}, getDefaultActionValue));
 
+  feedbackMap.setValueInternal(
+    std::make_shared<TurnoutFeedbackMap>(
+      *this,
+      feedbackMap.name(),
+      std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Right},
+      onFeedbackMatch()));
+
   Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);
+
+  Attributes::addValues(reservedPosition, positionValues);
+  m_interfaceItems.add(reservedPosition);
 
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);

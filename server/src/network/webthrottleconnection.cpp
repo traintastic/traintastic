@@ -354,7 +354,7 @@ void WebThrottleConnection::sendMessage(const nlohmann::json& message)
 {
   assert(isEventLoopThread());
 
-  ioContext().post(
+  boost::asio::post(ioContext(),
     [this, msg=message.dump()]()
     {
       const bool wasEmpty = m_writeQueue.empty();

@@ -36,7 +36,7 @@ static std::shared_ptr<std::byte[]> copy(const Message& message)
 static void updateActive(SlotReadData& locoSlot)
 {
   locoSlot.setActive(
-    (locoSlot.spd != SPEED_STOP && locoSlot.spd != SPEED_ESTOP) ||
+    (locoSlot.spd != speedStop && locoSlot.spd != speedEStop) ||
     (locoSlot.dirf & (SL_F0 | SL_F4 | SL_F3 | SL_F2 | SL_F1)) != 0 ||
     (locoSlot.snd & (SL_F8 | SL_F7 | SL_F6 | SL_F5)) != 0);
 }
@@ -133,7 +133,7 @@ void SimulationIOHandler::start()
             {
               if(emergencyStop)
               {
-                locoSlot->spd = SPEED_ESTOP;
+                locoSlot->spd = speedEStop;
               }
               else if(speed == 0)
               {
@@ -399,7 +399,7 @@ void SimulationIOHandler::reply(const Message& message)
 {
   // post the reply, so it has some delay
   //! \todo better delay simulation? at least loconet message transfer time?
-  m_kernel.ioContext().post(
+  boost::asio::post(m_kernel.ioContext(),
     [this, data=copy(message)]()
     {
       m_kernel.receive(*reinterpret_cast<const Message*>(data.get()));

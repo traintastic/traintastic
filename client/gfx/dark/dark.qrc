@@ -97,5 +97,6 @@
         <file>highlight_zone.svg</file>
         <file>swap.svg</file>
         <file>circle/add.svg</file>
+        <file>world_duplicate.svg</file>
     </qresource>
 </RCC>

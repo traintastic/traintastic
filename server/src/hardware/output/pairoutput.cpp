@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/pairoutput.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2024 Reinder Feenstra
+ * Copyright (C) 2024-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,16 +25,21 @@
 #include "../../core/method.tpp"
 #include "../../core/objectproperty.tpp"
 
-PairOutput::PairOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, uint32_t address_)
-  : AddressOutput(std::move(outputController), channel_, OutputType::Pair, address_)
+PairOutput::PairOutput(std::shared_ptr<OutputController> outputController, OutputChannel channel_, std::optional<uint32_t> node_, uint32_t address_)
+  : AddressOutput(std::move(outputController), channel_, OutputType::Pair, node_, address_)
   , value{this, "value", OutputPairValue::Undefined, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , setValue{*this, "set_value", MethodFlags::ScriptCallable,
       [this](OutputPairValue newValue)
       {
-        return
-          (newValue != OutputPairValue::Undefined) &&
-          interface &&
-          interface->setOutputValue(channel, address, newValue);
+        if(interface && (newValue != OutputPairValue::Undefined))
+        {
+          if(hasNode)
+          {
+            return interface->setOutputValue(channel, OutputNodeAddress(node, address), newValue);
+          }
+          return interface->setOutputValue(channel, OutputAddress(address), newValue);
+        }
+        return false;
       }}
   , onValueChanged{*this, "on_value_changed", EventFlags::Scriptable}
 {

@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/output/output.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2020,2022,2024-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +26,7 @@
 #include <set>
 #include <traintastic/enum/outputchannel.hpp>
 #include <traintastic/enum/outputtype.hpp>
+#include "outputtypes.hpp"
 #include "../../core/property.hpp"
 #include "../../core/objectproperty.hpp"
 #include "../../core/event.hpp"
@@ -56,11 +56,11 @@ class Output : public NonPersistentObject
     Event<const std::shared_ptr<Output>&> onValueChangedGeneric;
 
     /**
-     * \brief Unique identifier for the output within the channel.
+     * \brief Location for the output within the channel.
      *
-     * \return Unique identifier, can be any number/mask.
+     * \return Location, can be any address, node+addredd or ECoS object.
      */
-    virtual uint32_t id() const = 0;
+    virtual OutputLocation location() const = 0;
 };
 
 #endif

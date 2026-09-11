@@ -8,6 +8,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 POEDITOR_PROJECT_ID = 622757
 LANGUAGES = [
     'en-us',
+    'da-dk',
     'de-de',
     'es-es',
     'fr-fr',

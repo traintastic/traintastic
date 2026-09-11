@@ -1,9 +1,8 @@
 /**
- * server/src/lua/event.cpp - Lua event wrapper
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -84,8 +83,6 @@ void Event::push(lua_State* L, AbstractEvent& value)
 void Event::registerType(lua_State* L)
 {
   luaL_newmetatable(L, metaTableName);
-  lua_pushcfunction(L, __index);
-  lua_setfield(L, -2, "__index");
   lua_pushcfunction(L, __call);
   lua_setfield(L, -2, "__call");
   lua_pushcfunction(L, __gc);
@@ -102,34 +99,14 @@ void Event::registerType(lua_State* L)
   lua_setglobal(L, eventsGlobal);
 }
 
-int Event::__index(lua_State* L)
-{
-  auto& event = check(L, 1);
-  auto name = to<std::string_view>(L, 2);
-
-  if(name == "connect")
-  {
-    push(L, event);
-    lua_pushcclosure(L, connect, 1);
-  }
-  else if(name == "disconnect")
-  {
-    push(L, event);
-    lua_pushcclosure(L, disconnect, 1);
-  }
-  else
-    lua_pushnil(L);
-
-  return 1;
-}
-
 int Event::__call(lua_State* L)
 {
   checkArguments(L, 2, 3);
   auto& event = check(L, 1);
   auto handler = std::make_shared<EventHandler>(event, L, 2);
   event.connect(handler);
-  lua_pushinteger(L, Sandbox::getStateData(L).registerEventHandler(handler));
+  EventHandler::push(L, *handler);
+  Sandbox::getStateData(L).registerEventHandler(std::move(handler));
   return 1;
 }
 
@@ -137,30 +114,6 @@ int Event::__gc(lua_State* L)
 {
   static_cast<EventData*>(lua_touserdata(L, 1))->~EventData();
   return 0;
-}
-
-int Event::connect(lua_State* L)
-{
-  checkArguments(L, 1, 2);
-
-  auto& event = check(L, lua_upvalueindex(1));
-  auto handler = std::make_shared<EventHandler>(event, L);
-  event.connect(handler);
-  lua_pushinteger(L, Sandbox::getStateData(L).registerEventHandler(handler));
-
-  return 1;
-}
-
-int Event::disconnect(lua_State* L)
-{
-  checkArguments(L, 1);
-
-  auto& event = check(L, lua_upvalueindex(1));
-  auto handler = Sandbox::getStateData(L).getEventHandler(luaL_checkinteger(L, 1));
-
-  lua_pushboolean(L, handler && &handler->event() == &event && handler->disconnect());
-
-  return 1;
 }
 
 }

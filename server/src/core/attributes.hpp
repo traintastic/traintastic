@@ -113,6 +113,13 @@ struct Attributes
     property.addAttribute(AttributeName::Custom, value);
   }
 
+  template<typename T>
+  requires(std::is_floating_point_v<T>)
+  static inline void addDecimals(Property<T>& property, int8_t value)
+  {
+    property.addAttribute(AttributeName::Decimals, value);
+  }
+
   static inline void addDisplayName(InterfaceItem& item, std::string_view value)
   {
     item.addAttribute(AttributeName::DisplayName, value);

@@ -32,6 +32,23 @@
 
 using nlohmann::json;
 
+namespace {
+
+constexpr uint8_t autoSaveIntervalDefault = 15;
+
+constexpr std::array<uint8_t, 5> autoSaveIntervalValues{{
+  Settings::autoSaveIntervalOff,
+  5,
+  15,
+  30,
+  60,
+}};
+
+constexpr std::array<uint8_t, 1> autoSaveIntervalAliasKeys{{Settings::autoSaveIntervalOff}};
+constexpr std::array<std::string_view, 1> autoSaveIntervalAliasValues{{"$settings:off$"}};
+
+}
+
 Settings::PreStart Settings::getPreStartSettings(const std::filesystem::path& path)
 {
   std::ifstream file(path / filename);
@@ -64,7 +81,13 @@ Settings::Settings(const std::filesystem::path& path)
   , language{this, "language", std::string{Default::language}, PropertyFlags::ReadWrite | PropertyFlags::Internal, [this](const std::string& /*value*/){ saveToFile(); }}
   , lastWorld{this, "last_world", "", PropertyFlags::ReadWrite | PropertyFlags::Internal, [this](const std::string& /*value*/){ saveToFile(); }}
   , loadLastWorldOnStartup{this, "load_last_world_on_startup", true, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
-  , autoSaveWorldOnExit{this, "auto_save_world_on_exit", false, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
+  , autoSaveWorldOnExit{this, "auto_save_world_on_exit", true, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
+  , autoSaveInterval{this, "auto_save_interval", autoSaveIntervalDefault, PropertyFlags::ReadWrite,
+    [this](const bool& /*value*/)
+    {
+      saveToFile();
+      Traintastic::instance->restartAutoSaveTimer();
+    }}
   , saveWorldUncompressed{this, "save_world_uncompressed", false, PropertyFlags::ReadWrite, [this](const bool& /*value*/){ saveToFile(); }}
   , allowClientServerRestart{this, "allow_client_server_restart", false, PropertyFlags::ReadWrite | PropertyFlags::Internal, [this](const bool& /*value*/){ saveToFile(); }}
   , allowClientServerShutdown{this, "allow_client_server_shutdown", false, PropertyFlags::ReadWrite | PropertyFlags::Internal, [this](const bool& /*value*/){ saveToFile(); }}
@@ -75,6 +98,11 @@ Settings::Settings(const std::filesystem::path& path)
   m_interfaceItems.add(lastWorld);
   m_interfaceItems.add(loadLastWorldOnStartup);
   m_interfaceItems.add(autoSaveWorldOnExit);
+
+  Attributes::addValues(autoSaveInterval, autoSaveIntervalValues);
+  Attributes::addAliases(autoSaveInterval, std::span<const uint8_t>{autoSaveIntervalAliasKeys}, std::span<const std::string_view>{autoSaveIntervalAliasValues});
+  Attributes::addUnit(autoSaveInterval, "min");
+  m_interfaceItems.add(autoSaveInterval);
 
 #ifndef NO_LOCALHOST_ONLY_SETTING
   Attributes::addCategory(localhostOnly, Category::network);

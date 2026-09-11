@@ -24,6 +24,7 @@
 #include <traintastic/locale/locale.hpp>
 #include <traintastic/enum/autoyesno.hpp>
 #include <traintastic/enum/blockstate.hpp>
+#include <traintastic/enum/cbusinterfacetype.hpp>
 #include <traintastic/enum/color.hpp>
 #include <traintastic/enum/dccexinterfacetype.hpp>
 #include <traintastic/enum/decoderfunctionfunction.hpp>
@@ -33,6 +34,7 @@
 #include <traintastic/enum/direction.hpp>
 #include <traintastic/enum/directioncontrolstate.hpp>
 #include <traintastic/enum/externaloutputchangeaction.hpp>
+#include <traintastic/enum/inputcondition.hpp>
 #include <traintastic/enum/inputchannel.hpp>
 #include <traintastic/enum/lengthunit.hpp>
 #include <traintastic/enum/loconetf9f28.hpp>
@@ -98,6 +100,7 @@ QString translateEnum(const QString& enumName, qint64 value)
 {
   TRANSLATE_ENUM(AutoYesNo)
   TRANSLATE_ENUM(BlockState)
+  TRANSLATE_ENUM(CBUSInterfaceType)
   TRANSLATE_ENUM(Color)
   TRANSLATE_ENUM(DCCEXInterfaceType)
   TRANSLATE_ENUM(DecoderFunctionFunction)
@@ -107,6 +110,7 @@ QString translateEnum(const QString& enumName, qint64 value)
   TRANSLATE_ENUM(Direction)
   TRANSLATE_ENUM(DirectionControlState)
   TRANSLATE_ENUM(ExternalOutputChangeAction)
+  TRANSLATE_ENUM(InputCondition)
   TRANSLATE_ENUM(InputChannel)
   TRANSLATE_ENUM(LengthUnit)
   TRANSLATE_ENUM(LocoNetF9F28)

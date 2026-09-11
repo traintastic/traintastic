@@ -150,7 +150,7 @@ void ClientConnection::sendMessage(std::unique_ptr<Message> message)
 {
   assert(isEventLoopThread());
 
-  ioContext().post(
+  boost::asio::post(ioContext(),
     [this, msg=std::make_shared<std::unique_ptr<Message>>(std::move(message))]()
     {
       const bool wasEmpty = m_writeQueue.empty();

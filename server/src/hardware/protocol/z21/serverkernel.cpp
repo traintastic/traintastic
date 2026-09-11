@@ -40,7 +40,7 @@ ServerKernel::ServerKernel(std::string logId_, const ServerConfig& config, std::
 
 void ServerKernel::setConfig(const ServerConfig& config)
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, newConfig=config]()
     {
       m_config = newConfig;
@@ -49,7 +49,7 @@ void ServerKernel::setConfig(const ServerConfig& config)
 
 void ServerKernel::setState(bool trackPowerOn, bool emergencyStop)
 {
-  m_ioContext.post(
+  boost::asio::post(m_ioContext, 
     [this, trackPowerOn, emergencyStop]()
     {
       const auto trackPowerOnTri = toTriState(trackPowerOn);

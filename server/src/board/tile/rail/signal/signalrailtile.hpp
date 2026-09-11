@@ -1,9 +1,8 @@
 /**
- * server/src/board/tile/rail/signal/signalrailtile.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2024 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,7 +63,7 @@ class SignalRailTile : public StraightRailTile
     void connectOutputMap();
 
   public:
-    static std::optional<OutputActionValue> getDefaultActionValue(SignalAspect signalAspect, OutputType outputType, size_t outputIndex);
+    static std::optional<OutputActionValue> getDefaultActionValue(SignalAspect signalAspect, OutputChannel outputChannel, OutputType outputType, size_t outputIndex);
 
     boost::signals2::signal<void (const SignalRailTile&, SignalAspect)> aspectChanged;
 

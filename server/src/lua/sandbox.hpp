@@ -1,9 +1,8 @@
 /**
- * server/src/lua/sandbox.hpp - Lua sandbox
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,6 +42,7 @@ namespace Lua {
 
 class Script;
 class EventHandler;
+class OnChangedHandler;
 
 using SandboxPtr = std::unique_ptr<lua_State, void(*)(lua_State*)>;
 
@@ -65,7 +65,8 @@ class Sandbox
       private:
         Script& m_script;
         lua_Integer m_eventHandlerId;
-        std::map<lua_Integer, std::shared_ptr<EventHandler>> m_eventHandlers;
+        std::vector<std::shared_ptr<EventHandler>> m_eventHandlers;
+        std::vector<std::shared_ptr<OnChangedHandler>> m_onChangedHandlers;
         std::map<
           std::weak_ptr<InputController>,
           std::set<std::weak_ptr<Input>, std::owner_less<std::weak_ptr<Input>>>,
@@ -97,41 +98,11 @@ class Sandbox
           return m_script;
         }
 
-        std::shared_ptr<EventHandler> getEventHandler(lua_Integer id) const
-        {
-          auto it = m_eventHandlers.find(id);
-          if(it != m_eventHandlers.end())
-            return it->second;
-          else
-            return std::shared_ptr<EventHandler>();
-        }
+        void registerEventHandler(std::shared_ptr<EventHandler> handler);
+        void unregisterEventHandler(const std::shared_ptr<EventHandler>& handler);
 
-        inline lua_Integer registerEventHandler(std::shared_ptr<EventHandler> handler)
-        {
-          while(m_eventHandlers.find(m_eventHandlerId) != m_eventHandlers.end())
-          {
-            if(m_eventHandlerId == std::numeric_limits<lua_Integer>::max())
-              m_eventHandlerId = 1;
-            else
-              m_eventHandlerId++;
-          }
-          const lua_Integer id = m_eventHandlerId;
-          m_eventHandlerId++;
-          m_eventHandlers.emplace(id, std::move(handler));
-          return id;
-        }
-
-        inline void unregisterEventHandler(const std::shared_ptr<EventHandler>& handler)
-        {
-          auto it = std::find_if(m_eventHandlers.begin(), m_eventHandlers.end(),
-            [&handler](const auto& elem)
-            {
-              return elem.second == handler;
-            });
-
-          if(it != m_eventHandlers.end())
-            m_eventHandlers.erase(it);
-        }
+        void registerOnChangedHandler(std::shared_ptr<OnChangedHandler> handler);
+        void unregisterOnChangedHandler(const std::shared_ptr<OnChangedHandler>& handler);
 
         void registerInput(std::weak_ptr<InputController> inputController, std::weak_ptr<Input> input)
         {
