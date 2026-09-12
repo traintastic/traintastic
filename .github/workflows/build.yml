@@ -423,7 +423,7 @@ jobs:
       matrix:
         config:
         - name: "windows_x64_msvc"
-          os: windows-latest
+          os: windows-2022
           generator: "Visual Studio 17 2022"
           arch: "-A x64"
           target: traintastic-simulator
