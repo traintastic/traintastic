@@ -31,6 +31,7 @@
 #include "hsi88.hpp"
 #include "loconetinterface.hpp"
 #include "marklincan/marklincaninterface.hpp"
+#include "rclink/rclinkinterface.hpp"
 #include "traintasticdiyinterface.hpp"
 #include "withrottleinterface.hpp"
 #include "wlanmausinterface.hpp"
@@ -47,6 +48,7 @@ std::span<const std::string_view> Interfaces::classList()
     HSI88Interface::classId,
     LocoNetInterface::classId,
     MarklinCANInterface::classId,
+    RCLinkInterface::classId,
     TraintasticDIYInterface::classId,
     WiThrottleInterface::classId,
     WlanMausInterface::classId,
@@ -65,6 +67,7 @@ std::shared_ptr<Interface> Interfaces::create(World& world, std::string_view cla
   IF_CLASSID_CREATE(HSI88Interface)
   IF_CLASSID_CREATE(LocoNetInterface)
   IF_CLASSID_CREATE(MarklinCANInterface)
+  IF_CLASSID_CREATE(RCLinkInterface)
   IF_CLASSID_CREATE(TraintasticDIYInterface)
   IF_CLASSID_CREATE(WiThrottleInterface)
   IF_CLASSID_CREATE(WlanMausInterface)

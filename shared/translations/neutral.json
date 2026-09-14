@@ -36,6 +36,10 @@
         "definition": "LocoNet"
     },
     {
+        "term": "class_id:interface.rclink",
+        "definition": "RC-Link"
+    },
+    {
         "term": "class_id:interface.traintastic_diy",
         "definition": "Traintastic DIY"
     },
@@ -246,6 +250,10 @@
     {
         "term": "interface.ecos:ecos",
         "definition": "ECoS"
+    },
+    {
+        "term": "interface.rclink:rc_link",
+        "definition": "RC-Link"
     },
     {
         "term": "interface.traintastic_diy:traintastic_diy",
