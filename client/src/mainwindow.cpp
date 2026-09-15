@@ -388,6 +388,15 @@ MainWindow::MainWindow(QWidget* parent) :
       });
     m_worldRunAction->setCheckable(true);
     m_menuWorld->addSeparator();
+    m_worldAutomaticAction = m_menuWorld->addAction(Theme::getIcon("automatic"), Locale::tr("world:automatic"),
+      [this](bool checked)
+      {
+        if(m_world) [[likely]]
+        {
+          m_world->setPropertyValue("automatic", checked);
+        }
+      });
+    m_worldAutomaticAction->setCheckable(true);
     m_clockAction = m_menuWorld->addAction(Theme::getIcon("clock"), Locale::tr("world:clock"),
       [this](bool checked)
       {
@@ -625,6 +634,7 @@ MainWindow::MainWindow(QWidget* parent) :
   m_toolbar->addAction(m_worldStopAction);
   m_toolbar->addAction(m_worldRunAction);
   m_toolbar->addSeparator();
+  m_toolbar->addAction(m_worldAutomaticAction);
   m_toolbar->addAction(m_clockAction);
   m_toolbar->addSeparator();
   m_worldMuteToolbarAction = m_toolbar->addAction(Theme::getIcon("unmute", "mute"), Locale::tr("qtapp:toggle_mute"),
@@ -1169,6 +1179,7 @@ void MainWindow::updateActions()
   setMenuEnabled(m_menuWorld, haveWorld);
   m_worldOnlineOfflineToolButton->setEnabled(haveWorld);
   m_worldPowerOnOffToolButton->setEnabled(haveWorld);
+  m_worldAutomaticAction->setChecked(haveWorld);
   m_worldMuteToolbarAction->setEnabled(haveWorld);
   m_worldNoSmokeToolbarAction->setEnabled(haveWorld);
   worldStateChanged(haveWorld ? m_connection->world()->getProperty("state")->toInt64() : 0);
@@ -1202,6 +1213,7 @@ void MainWindow::worldStateChanged(int64_t value)
   m_worldPowerOnOffToolButton->setIcon(powerIcon);
   m_worldStopAction->setChecked(!contains(state, WorldState::Run));
   m_worldRunAction->setChecked(contains(state, WorldState::Run));
+  m_worldAutomaticAction->setChecked(contains(state, WorldState::Automatic));
   m_worldMuteMenuAction->setChecked(contains(state, WorldState::Mute));
   m_worldMuteToolbarAction->setChecked(contains(state, WorldState::Mute));
   m_worldNoSmokeMenuAction->setChecked(contains(state, WorldState::NoSmoke));

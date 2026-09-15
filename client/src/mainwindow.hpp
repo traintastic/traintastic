@@ -94,6 +94,7 @@ class MainWindow final : public QMainWindow
     QAction* m_worldPowerOffAction;
     QAction* m_worldStopAction;
     QAction* m_worldRunAction;
+    QAction* m_worldAutomaticAction;
     QAction* m_clockAction;
     QAction* m_worldMuteMenuAction;
     QAction* m_worldNoSmokeMenuAction;

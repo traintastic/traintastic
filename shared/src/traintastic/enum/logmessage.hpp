@@ -141,6 +141,8 @@ enum class LogMessage : uint32_t
   N1026_IMPORTED_WORLD_SUCCESSFULLY = LogMessageOffset::notice + 1026,
   N1027_LOADED_WORLD_X = LogMessageOffset::notice + 1027,
   N1028_CLOSED_WORLD = LogMessageOffset::notice + 1028,
+  N1029_AUTOMATIC_DISABLED = LogMessageOffset::notice + 1029,
+  N1030_AUTOMATIC_ENABLED = LogMessageOffset::notice + 1030,
   N2001_SIMULATION_NOT_SUPPORTED = LogMessageOffset::notice + 2001,
   N2002_NO_RESPONSE_FROM_LNCV_MODULE_X_WITH_ADDRESS_X = LogMessageOffset::notice + 2002,
   N2003_STOPPED_SENDING_FAST_CLOCK_SYNC = LogMessageOffset::notice + 2003,

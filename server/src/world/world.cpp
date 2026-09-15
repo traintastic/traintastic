@@ -285,6 +285,11 @@ World::World(Private /*unused*/) :
       }
       event(value ? WorldEvent::SimulationEnabled : WorldEvent::SimulationDisabled);
     }},
+  automatic{this, "automatic", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly,
+    [this](bool value)
+    {
+      event(value ? WorldEvent::AutomaticEnabled : WorldEvent::AutomaticDisabled);
+    }},
   simulationStatus{this, "simulation_status", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::Internal},
   save{*this, "save", MethodFlags::NoScript,
     [this]()
@@ -441,6 +446,10 @@ World::World(Private /*unused*/) :
   Attributes::addEnabled(simulation, false);
   Attributes::addObjectEditor(simulation, false);
   m_interfaceItems.add(simulation);
+
+  Attributes::addEnabled(automatic, false);
+  Attributes::addObjectEditor(automatic, false);
+  m_interfaceItems.add(automatic);
 
   m_interfaceItems.add(simulationStatus);
 
@@ -656,6 +665,16 @@ void World::event(const WorldEvent value)
     case WorldEvent::SimulationEnabled:
       Log::log(*this, LogMessage::N1024_SIMULATION_ENABLED);
       state.setValueInternal(state.value() + WorldState::Simulation);
+      break;
+
+    case WorldEvent::AutomaticDisabled:
+      Log::log(*this, LogMessage::N1029_AUTOMATIC_DISABLED);
+      state.setValueInternal(state.value() - WorldState::Automatic);
+      break;
+
+    case WorldEvent::AutomaticEnabled:
+      Log::log(*this, LogMessage::N1030_AUTOMATIC_ENABLED);
+      state.setValueInternal(state.value() + WorldState::Automatic);
       break;
   }
 

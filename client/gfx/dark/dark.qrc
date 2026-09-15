@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/dark">
+        <file>automatic.svg</file>
         <file>run.svg</file>
         <file>stop.svg</file>
         <file>edit.svg</file>

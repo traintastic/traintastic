@@ -1,9 +1,8 @@
 /**
- * shared/src/enum/worldevent.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,9 +41,11 @@ enum class WorldEvent : uint64_t
   Smoke = 11,
   SimulationDisabled = 12,
   SimulationEnabled = 13,
+  AutomaticDisabled = 14,
+  AutomaticEnabled = 15,
 };
 
-TRAINTASTIC_ENUM(WorldEvent, "world_event", 14,
+TRAINTASTIC_ENUM(WorldEvent, "world_event", 16,
 {
   {WorldEvent::EditDisabled, "edit_disabled"},
   {WorldEvent::EditEnabled, "edit_enabled"},
@@ -60,6 +61,8 @@ TRAINTASTIC_ENUM(WorldEvent, "world_event", 14,
   {WorldEvent::Smoke, "smoke"},
   {WorldEvent::SimulationDisabled, "simulation_disabled"},
   {WorldEvent::SimulationEnabled, "simulation_enabled"},
+  {WorldEvent::AutomaticDisabled, "automatic_disabled"},
+  {WorldEvent::AutomaticEnabled, "automatic_enabled"},
 });
 
 #endif

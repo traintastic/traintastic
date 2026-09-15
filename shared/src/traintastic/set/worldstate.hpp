@@ -1,9 +1,8 @@
 /**
- * shared/src/set/set.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2022 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,9 +34,10 @@ enum class WorldState : uint32_t
   Mute = 1 << 4,
   NoSmoke = 1 << 5,
   Simulation = 1 << 6,
+  Automatic = 1 << 7,
 };
 
-TRAINTASTIC_SET(WorldState, "world_state", 7,
+TRAINTASTIC_SET(WorldState, "world_state", 8,
   (
     WorldState::Edit |
     WorldState::Online |
@@ -45,7 +45,8 @@ TRAINTASTIC_SET(WorldState, "world_state", 7,
     WorldState::Run |
     WorldState::Mute |
     WorldState::NoSmoke |
-    WorldState::Simulation
+    WorldState::Simulation |
+    WorldState::Automatic
   ),
   {
     {WorldState::Edit, "edit"},
@@ -54,7 +55,8 @@ TRAINTASTIC_SET(WorldState, "world_state", 7,
     {WorldState::Run, "run"},
     {WorldState::Mute, "mute"},
     {WorldState::NoSmoke, "no_smoke"},
-    {WorldState::Simulation, "simulation"}
+    {WorldState::Simulation, "simulation"},
+    {WorldState::Automatic, "automatic"}
   });
 
 #endif

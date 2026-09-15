@@ -2072,6 +2072,14 @@
         "definition": "Closed world"
     },
     {
+        "term": "message:N1029",
+        "definition": "Automatic: disabled"
+    },
+    {
+        "term": "message:N1030",
+        "definition": "Automatic: enabled"
+    },
+    {
         "term": "message:N2001",
         "definition": "Simulation not supported"
     },

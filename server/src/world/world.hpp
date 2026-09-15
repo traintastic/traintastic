@@ -175,6 +175,7 @@ class World : public Object
     Property<bool> mute;
     Property<bool> noSmoke;
     Property<bool> simulation;
+    Property<bool> automatic;
     ObjectProperty<SimulationStatus> simulationStatus;
 
     Method<void()> save;
