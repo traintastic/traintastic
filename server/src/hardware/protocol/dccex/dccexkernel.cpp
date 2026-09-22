@@ -57,6 +57,10 @@ void Kernel::setConfig(const Config& config)
       if(newConfig.speedSteps != m_config.speedSteps)
         send(Messages::setSpeedSteps(newConfig.speedSteps));
 
+      if(newConfig.railcomCutout != m_config.railcomCutout)
+      {
+        send(Messages::setRailComCutout(newConfig.railcomCutout));
+      }
       m_config = newConfig;
     });
 }
@@ -438,6 +442,12 @@ void Kernel::startupDelayExpired(const boost::system::error_code& ec)
     return;
 
   send(Messages::setSpeedSteps(m_config.speedSteps));
+
+  // NOTE: RailCom cutout
+  // Not supported by all DCC-EX versions, depends on MCU and motor shield.
+  // There is currently no way of detecting if it is supported.
+  // see: https://github.com/DCC-EX/CommandStation-EX/issues/560
+  send(Messages::setRailComCutout(m_config.railcomCutout));
 
   KernelBase::started();
 }

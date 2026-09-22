@@ -644,6 +644,10 @@
         "definition": "Serial"
     },
     {
+        "term": "dccex_settings:railcom_cutout",
+        "definition": "RailCom cutout"
+    },
+    {
         "term": "dccex_settings:startup_delay",
         "definition": "Startup delay"
     },

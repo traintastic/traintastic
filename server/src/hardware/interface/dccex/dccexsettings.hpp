@@ -39,6 +39,7 @@ class DCCEXSettings : public SubObject
     static constexpr std::array<uint8_t, 2> speedStepValues{28, 128};
 
     Property<uint8_t> speedSteps;
+    Property<bool> railcomCutout;
     Property<uint16_t> startupDelay;
     Property<bool> debugLogRXTX;
 

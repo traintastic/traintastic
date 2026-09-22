@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/dccex/messages.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022,2024-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -242,6 +241,13 @@ namespace Messages {
       .append(" ")
       .append(std::to_string(subAddress))
       .append(activate ? " 1" : " 0")
+      .append(">\n");
+  }
+
+  inline std::string setRailComCutout(bool enable)
+  {
+    return std::string("<C RAILCOM ")
+      .append(enable ? "ON" : "OFF")
       .append(">\n");
   }
 

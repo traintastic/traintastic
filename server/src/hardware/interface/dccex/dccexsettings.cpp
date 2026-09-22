@@ -26,6 +26,7 @@
 DCCEXSettings::DCCEXSettings(Object& _parent, std::string_view parentPropertyName)
   : SubObject(_parent, parentPropertyName)
   , speedSteps{this, "speed_steps", 128, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , railcomCutout{this, "railcom_cutout", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , startupDelay{this, "startup_delay", startupDelayDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
@@ -33,6 +34,8 @@ DCCEXSettings::DCCEXSettings(Object& _parent, std::string_view parentPropertyNam
   Attributes::addEnabled(speedSteps, false);
   Attributes::addValues(speedSteps, speedStepValues);
   m_interfaceItems.add(speedSteps);
+
+  m_interfaceItems.add(railcomCutout);
 
   Attributes::addMinMax(startupDelay, startupDelayMin, startupDelayMax);
   m_interfaceItems.add(startupDelay);
@@ -45,6 +48,7 @@ DCCEX::Config DCCEXSettings::config() const
 {
   return DCCEX::Config{
     .speedSteps = speedSteps,
+    .railcomCutout = railcomCutout,
     .startupDelay = startupDelay,
     .debugLogRXTX = debugLogRXTX,
   };
