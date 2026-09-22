@@ -437,6 +437,8 @@ void Kernel::startupDelayExpired(const boost::system::error_code& ec)
   if(ec)
     return;
 
+  send(Messages::setSpeedSteps(m_config.speedSteps));
+
   KernelBase::started();
 }
 
