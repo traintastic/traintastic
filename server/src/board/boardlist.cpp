@@ -1,9 +1,8 @@
 /**
- * server/src/board/boardlist.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2021,2023 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,6 +51,38 @@ BoardList::BoardList(Object& _parent, std::string_view parentPropertyName) :
   m_interfaceItems.add(delete_);
 }
 
+bool BoardList::isAtLeastOneModified() const
+{
+  // due to link tile a change on one board might require an update on another board.
+  // for now update all board if one board is changed (should be improved!)
+  for(auto& board : m_items)
+  {
+    if(board->m_modified)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+void BoardList::rebuildLinks()
+{
+#ifdef ENABLE_LOG_DEBUG
+    const auto start = std::chrono::steady_clock::now();
+#endif
+
+  for(auto& board : m_items)
+  {
+    board->m_modified = true;
+    board->modified();
+  }
+
+#ifdef ENABLE_LOG_DEBUG
+  const auto duration = std::chrono::steady_clock::now() - start;
+  Log::debug("Board modified took", std::chrono::duration_cast<std::chrono::microseconds>(duration).count() / 1e3 , "ms");
+#endif
+}
+
 TableModelPtr BoardList::getModel()
 {
   return std::make_shared<BoardListTableModel>(*this);
@@ -65,39 +96,6 @@ void BoardList::worldEvent(WorldState state, WorldEvent event)
 
   Attributes::setEnabled(create, editable);
   Attributes::setEnabled(delete_, editable);
-
-  // handle board modified:
-  if(event == WorldEvent::EditDisabled || event == WorldEvent::Run)
-  {
-#ifdef ENABLE_LOG_DEBUG
-    const auto start = std::chrono::steady_clock::now();
-#endif
-
-    // due to link tile a change on one board might require an update on another board.
-    // for now update all board if one board is changed (should be improved!)
-    bool boardModified = false;
-    for(auto& board : m_items)
-    {
-      if(board->m_modified)
-      {
-        boardModified = true;
-        break;
-      }
-    }
-    if(boardModified)
-    {
-      for(auto& board : m_items)
-      {
-        board->m_modified = true;
-        board->modified();
-      }
-    }
-
-#ifdef ENABLE_LOG_DEBUG
-  const auto duration = std::chrono::steady_clock::now() - start;
-  Log::debug("Board modified took", std::chrono::duration_cast<std::chrono::microseconds>(duration).count() / 1e3 , "ms");
-#endif
-  }
 }
 
 bool BoardList::isListedProperty(std::string_view name)

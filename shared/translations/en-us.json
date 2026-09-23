@@ -2796,6 +2796,30 @@
         "definition": "Type"
     },
     {
+        "term": "train_route:add_block",
+        "definition": "Add block"
+    },
+    {
+        "term": "train_route:enabled",
+        "definition": "Enabled"
+    },
+    {
+        "term": "train_route_entry:block",
+        "definition": "Block"
+    },
+    {
+        "term": "train_route:remove",
+        "definition": "Remove"
+    },
+    {
+        "term": "train_route_entry:wait_time_min",
+        "definition": "Wait time (min)"
+    },
+    {
+        "term": "train_route_entry:wait_time_max",
+        "definition": "Wait time (max)"
+    },
+    {
         "term": "sensor_state:free",
         "definition": "Free"
     },
@@ -3528,6 +3552,10 @@
         "definition": "Search"
     },
     {
+        "term": "world:automatic",
+        "definition": "Automatic"
+    },
+    {
         "term": "world:boards",
         "definition": "Boards"
     },
@@ -3622,6 +3650,10 @@
     {
         "term": "world:rail_vehicles",
         "definition": "Rail vehicles"
+    },
+    {
+        "term": "world:routes",
+        "definition": "Routes"
     },
     {
         "term": "world:run",

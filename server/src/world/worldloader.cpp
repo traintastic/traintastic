@@ -1,9 +1,8 @@
 /**
- * server/src/world/worldloader.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,8 +44,20 @@
 #include "../vehicle/rail/freightwagon.hpp" //! \todo Remove in v0.4
 #include "../train/train.hpp"
 #include "../train/trainblockstatus.hpp"
+#include "../route/trainroute.hpp"
+#include "../route/trainrouteentry.hpp"
 #include "../lua/script.hpp"
 #include "../zone/zone.hpp"
+
+namespace {
+
+struct LoadedEventOrder
+{
+  static constexpr int board = 0;
+  static constexpr int trainRoute = board + 1; // train route needs board map
+};
+
+}
 
 using nlohmann::json;
 
@@ -329,9 +340,21 @@ void WorldLoader::load()
     if(!it.second.loaded)
       loadObject(it.second);
 
-  // and finally notify loading is completed
-  for(auto& it : m_objects)
-    it.second.object->loaded();
+  // and finally notify loading is completed respecting event order
+  std::vector<const WorldLoader::ObjectData*> objects;
+  objects.reserve(m_objects.size());
+
+  for(const auto& [id, objectData] : m_objects)
+  {
+    objects.push_back(&objectData);
+  }
+
+  std::ranges::sort(objects, {}, &WorldLoader::ObjectData::loadedEventOrder);
+
+  for(const auto* objectData : objects)
+  {
+    objectData->object->loaded();
+  }
 }
 
 void WorldLoader::createObject(ObjectData& objectData)
@@ -370,7 +393,10 @@ void WorldLoader::createObject(ObjectData& objectData)
     objectData.object = Booster::create(*m_world, id);
   }
   else if(classId == Board::classId)
+  {
     objectData.object = Board::create(*m_world, id);
+    objectData.loadedEventOrder = LoadedEventOrder::board;
+  }
   else if(startsWith(classId, Tiles::classIdPrefix))
   {
     if(auto tile = Tiles::create(*m_world, classId, id))
@@ -401,6 +427,23 @@ void WorldLoader::createObject(ObjectData& objectData)
       objectData.json.erase("lob");
     }
     objectData.object = Train::create(*m_world, id);
+  }
+  else if(classId == TrainRoute::classId)
+  {
+    auto route = TrainRoute::create(*m_world, id);
+    const auto& entries = objectData.json["entries"];
+    if(entries.is_array()) [[likely]]
+    {
+      for(const auto& entry : entries)
+      {
+        if(entry.is_object()) [[likely]]
+        {
+          route->entries.appendInternal(std::make_shared<TrainRouteEntry>(*route));
+        }
+      }
+    }
+    objectData.object = std::move(route);
+    objectData.loadedEventOrder = LoadedEventOrder::trainRoute;
   }
   else if(classId == TrainBlockStatus::classId)
   {

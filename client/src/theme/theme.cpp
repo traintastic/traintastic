@@ -1,9 +1,8 @@
 /**
- * client/src/theme/theme.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -70,6 +69,10 @@ QIcon Theme::getIconForClassId(const QString& classId)
     return getIcon("clock");
   else if(classId == "train" || classId == "list.train")
     return getIcon("train");
+  else if(classId == "train_route" || classId == "list.train_route")
+  {
+    return getIcon("route");
+  }
   else if(classId == "zone" || classId == "list.zone")
     return getIcon("zone");
   else

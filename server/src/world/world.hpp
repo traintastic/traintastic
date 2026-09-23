@@ -63,6 +63,7 @@ class TrainPathFinder;
 class Clock;
 class ThrottleList;
 class TrainList;
+class TrainRouteList;
 class RailVehicleList;
 class SimulationStatus;
 
@@ -152,6 +153,7 @@ class World : public Object
     ObjectProperty<Clock> clock;
     ObjectProperty<ThrottleList> throttles;
     ObjectProperty<TrainList> trains;
+    ObjectProperty<TrainRouteList> trainRoutes;
     ObjectProperty<RailVehicleList> railVehicles;
     ObjectProperty<Lua::ScriptList> luaScripts;
 

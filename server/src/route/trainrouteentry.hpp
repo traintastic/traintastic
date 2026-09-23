@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2020-2021,2023 Reinder Feenstra
+ * Copyright (C) 2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,32 +19,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_BOARD_BOARDLIST_HPP
-#define TRAINTASTIC_SERVER_BOARD_BOARDLIST_HPP
+#ifndef TRAINTASTIC_SERVER_ROUTE_TRAINROUTEENTRY_HPP
+#define TRAINTASTIC_SERVER_ROUTE_TRAINROUTEENTRY_HPP
 
-#include "../core/objectlist.hpp"
-#include "../core/method.hpp"
+#include "../core/object.hpp"
+#include "../core/property.hpp"
+#include "../core/objectproperty.hpp"
+#include <traintastic/enum/trainrouteentrysource.hpp>
 
-class Board;
+class BlockRailTile;
+class TrainRoute;
 
-class BoardList : public ObjectList<Board>
+class TrainRouteEntry : public Object
 {
-  protected:
-    void worldEvent(WorldState state, WorldEvent event) final;
-    bool isListedProperty(std::string_view name) final;
+  CLASS_ID("train_route_entry")
 
-  public:
-    CLASS_ID("list.board")
+public:
+  ObjectProperty<BlockRailTile> block;
+  Property<uint16_t> waitTimeMin;
+  Property<uint16_t> waitTimeMax;
+  Property<TrainRouteEntrySource> source;
 
-    Method<std::shared_ptr<Board>()> create;
-    Method<void(const std::shared_ptr<Board>&)> delete_;
+  TrainRouteEntry(TrainRoute& route);
+  TrainRouteEntry(TrainRoute& route, BlockRailTile& block_);
 
-    BoardList(Object& _parent, std::string_view parentPropertyName);
+  std::string getObjectId() const final;
 
-    bool isAtLeastOneModified() const;
-    void rebuildLinks();
+protected:
+  void worldEvent(WorldState state, WorldEvent event) override;
 
-    TableModelPtr getModel() final;
+private:
+  TrainRoute& m_route;
+
+  void updateEnabled();
 };
 
 #endif

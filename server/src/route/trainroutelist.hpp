@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025-2026 Reinder Feenstra
+ * Copyright (C) 2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,25 +19,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_CREATEFORM_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_CREATEFORM_HPP
+#ifndef TRAINTASTIC_SERVER_ROUTE_TRAINROUTELIST_HPP
+#define TRAINTASTIC_SERVER_ROUTE_TRAINROUTELIST_HPP
 
-#include <initializer_list>
-#include <span>
-#include <QString>
+#include "../core/objectlist.hpp"
+#include "../core/method.hpp"
 
-class QLayout;
-class QWidget;
-class Object;
-class InterfaceItem;
+class TrainRoute;
 
-QLayout* createFormLayout(Object& object, QWidget* parent = nullptr);
-QWidget* createFormWidget(Object& object, QWidget* parent = nullptr);
+class TrainRouteList : public ObjectList<TrainRoute>
+{
+public:
+  CLASS_ID("list.train_route")
 
-QLayout* createFormLayout(Object& object, std::initializer_list<QString> items, QWidget* parent = nullptr);
-QWidget* createFormWidget(Object& object, std::initializer_list<QString> items, QWidget* parent = nullptr);
+  Method<std::shared_ptr<TrainRoute>()> create;
+  Method<void(const std::shared_ptr<TrainRoute>&)> delete_;
 
-QLayout* createFormLayout(std::span<InterfaceItem*> items, QWidget* parent = nullptr);
-QWidget* createFormWidget(std::span<InterfaceItem*> items, QWidget* parent = nullptr);
+  TrainRouteList(Object& _parent, std::string_view parentPropertyName);
+
+  void resolve();
+
+  TableModelPtr getModel() final;
+
+protected:
+  bool isListedProperty(std::string_view name) final;
+};
 
 #endif

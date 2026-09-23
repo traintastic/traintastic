@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/light">
         <file>automatic.svg</file>
+        <file>route.svg</file>
         <file>run.svg</file>
         <file>stop.svg</file>
         <file>edit.svg</file>

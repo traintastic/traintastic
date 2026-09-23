@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,9 +21,50 @@
 
 #include "createform.hpp"
 #include <QFormLayout>
+#include "../network/interfaceitem.hpp"
 #include "../network/object.hpp"
 #include "createwidget.hpp"
 #include "interfaceitemnamelabel.hpp"
+
+namespace {
+
+QWidget* toWidget(QLayout* layout, QWidget* parent)
+{
+  if(layout)
+  {
+    auto* w = new QWidget(parent);
+    w->setLayout(layout);
+    return w;
+  }
+  return nullptr;
+}
+
+}
+
+QLayout* createFormLayout(Object& object, QWidget* parent)
+{
+  if(object.interfaceItems().items().empty())
+  {
+    return nullptr;
+  }
+
+  auto* form = new QFormLayout();
+
+  for(auto* item : object.interfaceItems().items())
+  {
+    if(item->getAttributeBool(AttributeName::ObjectEditor, true))
+    {
+      form->addRow(new InterfaceItemNameLabel(*item, parent), createWidget(*item, parent));
+    }
+  }
+
+  return form;
+}
+
+QWidget* createFormWidget(Object& object, QWidget* parent)
+{
+  return toWidget(createFormLayout(object, parent), parent);
+}
 
 QLayout* createFormLayout(Object& object, std::initializer_list<QString> items, QWidget* parent)
 {
@@ -48,13 +89,7 @@ QLayout* createFormLayout(Object& object, std::initializer_list<QString> items, 
 
 QWidget* createFormWidget(Object& object, std::initializer_list<QString> items, QWidget* parent)
 {
-  if(auto* form = createFormLayout(object, items, parent))
-  {
-    auto* w = new QWidget(parent);
-    w->setLayout(form);
-    return w;
-  }
-  return nullptr;
+  return toWidget(createFormLayout(object, items, parent), parent);
 }
 
 QLayout* createFormLayout(std::span<InterfaceItem*> items, QWidget* parent)
@@ -77,11 +112,5 @@ QLayout* createFormLayout(std::span<InterfaceItem*> items, QWidget* parent)
 
 QWidget* createFormWidget(std::span<InterfaceItem*> items, QWidget* parent)
 {
-  if(auto* form = createFormLayout(items, parent))
-  {
-    auto* w = new QWidget(parent);
-    w->setLayout(form);
-    return w;
-  }
-  return nullptr;
+  return toWidget(createFormLayout(items, parent), parent);
 }

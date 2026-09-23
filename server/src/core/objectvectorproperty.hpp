@@ -1,9 +1,8 @@
 /**
- * server/src/core/objectvectorproperty.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021,2023,2025 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +23,7 @@
 #define TRAINTASTIC_SERVER_CORE_OBJECTVECTORPROPERTY_HPP
 
 #include "abstractobjectvectorproperty.hpp"
+#include <ranges>
 #include "to.hpp"
 
 template<class T>
@@ -112,14 +112,30 @@ class ObjectVectorProperty : public AbstractObjectVectorProperty
       changed();
     }
 
-    void removeInternal(const std::shared_ptr<T>& value)
+    void setValuesInternal(const std::vector<std::shared_ptr<T>>& values)
+    {
+      if(!std::ranges::equal(m_values, values))
+      {
+        m_values = values;
+        changed();
+      }
+    }
+
+    inline void setValuesInternal(const ObjectVectorProperty<T>& values)
+    {
+      setValuesInternal(values.m_values);
+    }
+
+    bool removeInternal(const std::shared_ptr<T>& value)
     {
       auto it = std::find(m_values.begin(), m_values.end(), value);
       if(it != m_values.end())
       {
         m_values.erase(it);
         changed();
+        return true;
       }
+      return false;
     }
 
     void moveInternal(const std::shared_ptr<T>& value, intptr_t count)

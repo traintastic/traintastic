@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025-2026 Reinder Feenstra
+ * Copyright (C) 2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,25 +19,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_CREATEFORM_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_CREATEFORM_HPP
+#ifndef TRAINTASTIC_SERVER_ROUTE_TRAINROUTELISTTABLEMODEL_HPP
+#define TRAINTASTIC_SERVER_ROUTE_TRAINROUTELISTTABLEMODEL_HPP
 
-#include <initializer_list>
-#include <span>
-#include <QString>
+#include "../core/objectlisttablemodel.hpp"
 
-class QLayout;
-class QWidget;
-class Object;
-class InterfaceItem;
+class TrainRoute;
+class TrainRouteList;
 
-QLayout* createFormLayout(Object& object, QWidget* parent = nullptr);
-QWidget* createFormWidget(Object& object, QWidget* parent = nullptr);
+class TrainRouteListTableModel : public ObjectListTableModel<TrainRoute>
+{
+  CLASS_ID("train_route_list_table_model")
 
-QLayout* createFormLayout(Object& object, std::initializer_list<QString> items, QWidget* parent = nullptr);
-QWidget* createFormWidget(Object& object, std::initializer_list<QString> items, QWidget* parent = nullptr);
+public:
+  static bool isListedProperty(std::string_view name);
 
-QLayout* createFormLayout(std::span<InterfaceItem*> items, QWidget* parent = nullptr);
-QWidget* createFormWidget(std::span<InterfaceItem*> items, QWidget* parent = nullptr);
+  TrainRouteListTableModel(TrainRouteList& list);
+
+  std::string getText(uint32_t column, uint32_t row) const final;
+
+protected:
+  void propertyChanged(BaseProperty& property, uint32_t row) final;
+};
 
 #endif

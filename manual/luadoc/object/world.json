@@ -20,6 +20,7 @@
   "train_path_finder": {
     "since": "0.4"
   },
+  "train_routes": {},
   "trains": {},
   "rail_vehicles": {},
   "state": {

@@ -1,7 +1,6 @@
 /**
- * server/src/board/map/blockpath.hpp
- *
- * This file is part of the traintastic source code.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) 2023-2026 Reinder Feenstra
  *
@@ -53,6 +52,8 @@ class Train;
  */
 class BlockPath : public Path, public std::enable_shared_from_this<BlockPath>
 {
+  friend class TrainPathFinder;
+
   private:
     BlockRailTile& m_fromBlock;
     const BlockSide m_fromSide;

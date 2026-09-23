@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025-2026 Reinder Feenstra
+ * Copyright (C) 2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,25 +19,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_CLIENT_WIDGET_CREATEFORM_HPP
-#define TRAINTASTIC_CLIENT_WIDGET_CREATEFORM_HPP
+#ifndef TRAINTASTIC_CLIENT_WIDGET_ROUTE_ROUTEWIDGET_HPP
+#define TRAINTASTIC_CLIENT_WIDGET_ROUTE_ROUTEWIDGET_HPP
 
-#include <initializer_list>
-#include <span>
-#include <QString>
+#include <QWidget>
+#include "../../network/objectptr.hpp"
 
-class QLayout;
-class QWidget;
-class Object;
-class InterfaceItem;
+class QTabWidget;
 
-QLayout* createFormLayout(Object& object, QWidget* parent = nullptr);
-QWidget* createFormWidget(Object& object, QWidget* parent = nullptr);
+class RouteWidget : public QWidget
+{
+public:
+  explicit RouteWidget(ObjectPtr object, QWidget* parent = nullptr);
 
-QLayout* createFormLayout(Object& object, std::initializer_list<QString> items, QWidget* parent = nullptr);
-QWidget* createFormWidget(Object& object, std::initializer_list<QString> items, QWidget* parent = nullptr);
-
-QLayout* createFormLayout(std::span<InterfaceItem*> items, QWidget* parent = nullptr);
-QWidget* createFormWidget(std::span<InterfaceItem*> items, QWidget* parent = nullptr);
+protected:
+  ObjectPtr m_object;
+  QTabWidget* m_tabs;
+};
 
 #endif

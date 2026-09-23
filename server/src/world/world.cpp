@@ -73,6 +73,8 @@
 #include "../throttle/list/throttlelist.hpp"
 #include "../train/train.hpp"
 #include "../train/trainlist.hpp"
+#include "../route/trainroute.hpp"
+#include "../route/trainroutelist.hpp"
 #include "../vehicle/rail/railvehiclelist.hpp"
 #include "../lua/scriptlist.hpp"
 #include "../status/simulationstatus.hpp"
@@ -141,6 +143,7 @@ void World::init(World& world)
   world.clock.setValueInternal(std::make_shared<Clock>(world, world.clock.name()));
   world.throttles.setValueInternal(std::make_shared<ThrottleList>(world, world.throttles.name(), throttleListColumns));
   world.trains.setValueInternal(std::make_shared<TrainList>(world, world.trains.name()));
+  world.trainRoutes.setValueInternal(std::make_shared<TrainRouteList>(world, world.trainRoutes.name()));
   world.railVehicles.setValueInternal(std::make_shared<RailVehicleList>(world, world.railVehicles.name()));
   world.luaScripts.setValueInternal(std::make_shared<Lua::ScriptList>(world, world.luaScripts.name()));
 
@@ -205,6 +208,7 @@ World::World(Private /*unused*/) :
   clock{this, "clock", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   throttles{this, "throttles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   trains{this, "trains", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
+  trainRoutes{this, "train_routes", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   railVehicles{this, "rail_vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   luaScripts{this, "lua_scripts", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
   blockRailTiles{this, "block_rail_tiles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject | PropertyFlags::NoStore},
@@ -397,6 +401,8 @@ World::World(Private /*unused*/) :
   m_interfaceItems.add(clock);
   Attributes::addObjectEditor(trains, false);
   m_interfaceItems.add(trains);
+  Attributes::addObjectEditor(trainRoutes, false);
+  m_interfaceItems.add(trainRoutes);
   Attributes::addObjectEditor(railVehicles, false);
   m_interfaceItems.add(railVehicles);
   Attributes::addObjectEditor(luaScripts, false);
@@ -477,6 +483,7 @@ World::~World()
   deleteAll(*zones);
   deleteAll(*throttles);
   deleteAll(*trains);
+  deleteAll(*trainRoutes);
   deleteAll(*railVehicles);
   deleteAll(*luaScripts);
   luaScripts.setValueInternal(nullptr);
@@ -583,6 +590,16 @@ void World::worldEvent(WorldState worldState, WorldEvent worldEvent)
 
   Attributes::setEnabled(scale, editState && !runState);
   Attributes::setEnabled(scaleRatio, editState && !runState);
+
+  if(worldEvent == WorldEvent::EditDisabled || worldEvent == WorldEvent::Run)
+  {
+    // check if boards are modified:
+    if(boards->isAtLeastOneModified())
+    {
+      boards->rebuildLinks();
+      trainRoutes->resolve();
+    }
+  }
 
   fireEvent(onEvent, worldState, worldEvent);
 }

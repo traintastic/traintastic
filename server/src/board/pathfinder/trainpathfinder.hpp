@@ -23,9 +23,12 @@
 #define TRAINTASTIC_SERVER_BOARD_PATHFINDER_TRAINPATHFINDER_HPP
 
 #include "pathfinder.hpp"
+#include <optional>
 #include "../../core/method.hpp"
 
+class BlockPath;
 class BlockRailTile;
+enum class BlockSide : uint8_t;
 enum class BlockTrainDirection : uint8_t;
 
 class TrainPathFinder : public PathFinder
@@ -36,6 +39,11 @@ public:
   Method<bool(const std::shared_ptr<BlockRailTile>&, BlockTrainDirection, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection)> reserve;
 
   TrainPathFinder(Object& parent_, std::string_view parentPropertyName);
+
+  static std::vector<BlockRailTile*> find(BlockRailTile& from, std::optional<BlockSide> fromSide, BlockRailTile& to, std::optional<BlockSide>& toSide);
+
+private:
+  static std::vector<BlockRailTile*> dijkstra(BlockRailTile& from, std::optional<BlockSide> fromSide, BlockRailTile& to, std::optional<BlockSide>& toSide, std::function<uint64_t(const BlockPath&, BlockSide)> getCost);
 };
 
 #endif

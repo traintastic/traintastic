@@ -1,9 +1,8 @@
 /**
- * client/src/network/objectvectorproperty.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021,2023 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -58,6 +57,11 @@ class ObjectVectorProperty : public AbstractVectorProperty
     [[nodiscard]] int getObjects(std::function<void(const std::vector<ObjectPtr>&, std::optional<const Error>)> callback)
     {
       return getObjects(0, size() - 1, std::move(callback));
+    }
+
+    const QStringList& objectIds() const
+    {
+      return m_ids;
     }
 
     const QString& getObjectId(int index) const

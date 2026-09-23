@@ -488,6 +488,11 @@ MainWindow::MainWindow(QWidget* parent) :
           m_mdiArea->setActiveSubWindow(m_trainAndRailVehiclesSubWindow);
         }
       });
+    m_menuObjects->addAction(Theme::getIcon("route"), Locale::tr("world:routes") + "...",
+      [this]()
+      {
+        showObject("world.train_routes");
+      });
     m_actionLuaScript = m_menuObjects->addAction(Theme::getIcon("lua"), Locale::tr("world:lua_scripts") + "...", this, &MainWindow::showLuaScriptsList);
 
     menu = menuBar()->addMenu(Locale::tr("qtapp.mainmenu:tools"));

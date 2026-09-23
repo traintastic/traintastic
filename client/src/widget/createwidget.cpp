@@ -29,6 +29,7 @@
 #include "object/luascripteditwidget.hpp"
 #include "object/objecteditwidget.hpp"
 #include "object/itemseditwidget.hpp"
+#include "route/routewidget.hpp"
 #include "tile/tilewidget.hpp"
 #include "inputmonitorwidget.hpp"
 #include "outputkeyboardwidget.hpp"
@@ -111,6 +112,10 @@ QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
   else if(object->classId() == "booster")
   {
     return new TileWidget(object, parent);
+  }
+  else if(object->classId() == "train_route")
+  {
+    return new RouteWidget(object, parent);
   }
   else
     return new ObjectEditWidget(object, parent);
