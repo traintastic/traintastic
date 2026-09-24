@@ -21,7 +21,6 @@
  */
 
 #include "messages.hpp"
-#include "../xpressnet/messages.hpp"
 #include "../../decoder/decoder.hpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../utils/tohex.hpp"

@@ -49,14 +49,17 @@ DecoderFunctions::DecoderFunctions(Object& _parent, std::string_view parentPrope
         if(number == 0) // F0 is (almost) always the light function
           function->function = DecoderFunctionFunction::Light;
         items.appendInternal(function);
+        decoder.functionsChanged();
       }}
   , delete_{*this, "delete",
       [this](const std::shared_ptr<DecoderFunction>& function)
       {
+        Decoder& decoder = static_cast<Decoder&>(this->parent());
         if(!function)
           return;
         function->destroy();
         items.removeInternal(function);
+        decoder.functionsChanged();
       }}
   , moveUp{*this, "move_up",
       [this](const std::shared_ptr<DecoderFunction>& function)
@@ -92,10 +95,11 @@ DecoderFunctions::DecoderFunctions(Object& _parent, std::string_view parentPrope
 
 void DecoderFunctions::load(WorldLoader& loader, const nlohmann::json& data)
 {
+  Decoder& decoder = static_cast<Decoder&>(this->parent());
+
   nlohmann::json objects = data.value("items", nlohmann::json::array());
   if(!objects.empty())
   {
-    Decoder& decoder = static_cast<Decoder&>(this->parent());
     std::vector<std::shared_ptr<DecoderFunction>> values;
     for(const auto& object : objects.items())
     {
@@ -108,6 +112,8 @@ void DecoderFunctions::load(WorldLoader& loader, const nlohmann::json& data)
     items.load(std::move(values));
   }
   SubObject::load(loader, data);
+
+  decoder.functionsChanged();
 }
 
 void DecoderFunctions::worldEvent(WorldState state, WorldEvent event)
