@@ -25,7 +25,7 @@
 #include <traintastic/locale/locale.hpp>
 #include "../mainwindow.hpp"
 #include "../network/callmethod.hpp"
-#include "../network/object.hpp"
+#include "../network/object.tpp"
 #include "../network/object/blockrailtile.hpp"
 #include "../network/object/trainblockstatus.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
