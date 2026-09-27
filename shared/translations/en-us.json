@@ -508,6 +508,10 @@
         "definition": "Turnout wye"
     },
     {
+        "term": "class_id:train",
+        "definition": "Train"
+    },
+    {
         "term": "class_id:vehicle.rail.freight_wagon",
         "definition": "Freight wagon"
     },
@@ -3074,6 +3078,10 @@
     {
         "term": "throttle_object_list:throttle",
         "definition": "Throttle"
+    },
+    {
+        "term": "tile_menu:properties",
+        "definition": "Properties"
     },
     {
         "term": "train:acceleration_rate",

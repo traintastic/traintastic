@@ -27,11 +27,13 @@
 #include <QApplication>
 #include <QToolTip>
 #include <QDrag>
+#include <QMenu>
 #include <traintastic/locale/locale.hpp>
 #include "boardwidget.hpp"
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
 #include "blockhighlight.hpp"
+#include "tilemenu.hpp"
 #include "../mainwindow.hpp"
 #include "../network/board.hpp"
 #include "../network/callmethod.hpp"
@@ -596,7 +598,20 @@ void BoardAreaWidget::mouseReleaseEvent(QMouseEvent* event)
   {
     m_mouseRightButtonPressed = false;
     if((event->pos() - m_mouseRightButtonPressedPoint).manhattanLength() < 5 || m_mouseMoveTileId != TileId::None)
+    {
       emit rightClicked();
+
+      // action stuff should be in this class, not in BoardWidget,
+      // then BoardAreaWidget can be used without toolbar stuff, e.g. fullscreen :)
+      // We need to refactor this some day...
+      if(m_mouseMoveTileId == TileId::None)
+      {
+        if(auto menu = getTileMenu(m_board->getTileObject(pointToTileLocation(m_mouseRightButtonPressedPoint)), this))
+        {
+          menu->exec(QCursor::pos());
+        }
+      }
+    }
   }
 }
 
