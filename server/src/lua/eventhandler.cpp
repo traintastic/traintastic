@@ -1,9 +1,8 @@
 /**
- * server/src/lua/eventhandler.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +29,120 @@
 #include "../log/log.hpp"
 
 namespace Lua {
+
+constexpr char const* eventHandlerGlobal = "event_handlers";
+
+using EventHandlerData = std::weak_ptr<EventHandler>;
+
+EventHandler& EventHandler::check(lua_State* L, int index)
+{
+  auto& handler = *static_cast<EventHandlerData*>(luaL_checkudata(L, index, metaTableName));
+  if(!handler.expired())
+  {
+    return *handler.lock();
+  }
+  errorDeadObject(L);
+}
+
+EventHandler* EventHandler::test(lua_State* L, int index)
+{
+  auto* handler = static_cast<EventHandlerData*>(luaL_testudata(L, index, metaTableName));
+  if(!handler)
+  {
+    return nullptr;
+  }
+  if(!handler->expired())
+  {
+    return handler->lock().get();
+  }
+  errorDeadObject(L);
+}
+
+void EventHandler::push(lua_State* L, EventHandler& value)
+{
+  lua_getglobal(L, eventHandlerGlobal);
+  lua_rawgetp(L, -1, &value);
+  if(lua_isnil(L, -1)) // method not in table
+  {
+    lua_pop(L, 1); // remove nil
+    new(lua_newuserdata(L, sizeof(EventHandlerData))) EventHandlerData(std::static_pointer_cast<EventHandler>(value.shared_from_this()));
+    luaL_setmetatable(L, metaTableName);
+    lua_pushvalue(L, -1); // copy userdata on stack
+    lua_rawsetp(L, -3, &value); // add method to table
+  }
+  lua_insert(L, lua_gettop(L) - 1); // swap table and userdata
+  lua_pop(L, 1); // remove table
+}
+
+void EventHandler::registerType(lua_State* L)
+{
+  luaL_newmetatable(L, metaTableName);
+  lua_pushcfunction(L, __gc);
+  lua_setfield(L, -2, "__gc");
+  lua_pushcfunction(L, __index);
+  lua_setfield(L, -2, "__index");
+  lua_pop(L, 1);
+
+  // weak table for on_changed userdata:
+  lua_newtable(L);
+  lua_newtable(L); // metatable
+  lua_pushliteral(L, "__mode");
+  lua_pushliteral(L, "v");
+  lua_rawset(L, -3);
+  lua_setmetatable(L, -2);
+  lua_setglobal(L, eventHandlerGlobal);
+}
+
+int EventHandler::__gc(lua_State* L)
+{
+  static_cast<EventHandlerData*>(lua_touserdata(L, 1))->~EventHandlerData();
+  return 0;
+}
+
+int EventHandler::__index(lua_State* L)
+{
+  auto& handler = check(L, 1);
+  const auto key = to<std::string_view>(L, 2);
+
+  if(key == "disconnect")
+  {
+    push(L, handler);
+    lua_pushcclosure(L, disconnect, 1);
+    return 1;
+  }
+  if(key == "pause")
+  {
+    push(L, handler);
+    lua_pushcclosure(L, pause, 1);
+    return 1;
+  }
+  if(key == "resume")
+  {
+    push(L, handler);
+    lua_pushcclosure(L, resume, 1);
+    return 1;
+  }
+  return 0;
+}
+
+int EventHandler::disconnect(lua_State* L)
+{
+  check(L, lua_upvalueindex(1)).disconnect();
+  return 0;
+}
+
+int EventHandler::pause(lua_State* L)
+{
+  check(L, lua_upvalueindex(1)).m_paused = true;
+  return 0;
+}
+
+int EventHandler::resume(lua_State* L)
+{
+  check(L, lua_upvalueindex(1)).m_paused = false;
+  return 0;
+}
+
 
 EventHandler::EventHandler(AbstractEvent& evt, lua_State* L, int functionIndex)
   : AbstractEventHandler(evt)
@@ -58,6 +171,11 @@ EventHandler::~EventHandler()
 
 void EventHandler::execute(const Arguments& args)
 {
+  if(m_paused)
+  {
+    return;
+  }
+
   const auto argumentTypeInfo = m_event.argumentTypeInfo();
   assert(args.size() == argumentTypeInfo.size());
 
@@ -73,7 +191,7 @@ void EventHandler::execute(const Arguments& args)
     switch(argumentTypeInfo[i].type)
     {
       case ValueType::Boolean:
-        push(m_L, std::get<bool>(arg));
+        Lua::push(m_L, std::get<bool>(arg));
         break;
 
       case ValueType::Enum:
@@ -82,19 +200,19 @@ void EventHandler::execute(const Arguments& args)
         break;
 
       case ValueType::Integer:
-        push(m_L, std::get<int64_t>(arg));
+        Lua::push(m_L, std::get<int64_t>(arg));
         break;
 
       case ValueType::Float:
-        push(m_L, std::get<double>(arg));
+        Lua::push(m_L, std::get<double>(arg));
         break;
 
       case ValueType::String:
-        push(m_L, std::get<std::string>(arg));
+        Lua::push(m_L, std::get<std::string>(arg));
         break;
 
       case ValueType::Object:
-        push(m_L, std::get<ObjectPtr>(arg));
+        Lua::push(m_L, std::get<ObjectPtr>(arg));
         break;
 
       case ValueType::Set:

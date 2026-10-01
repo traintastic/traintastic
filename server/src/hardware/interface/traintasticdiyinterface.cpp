@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/traintasticdiyinterface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2022-2025 Reinder Feenstra
+ * Copyright (C) 2022-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -115,8 +114,10 @@ std::pair<uint32_t, uint32_t> TraintasticDIYInterface::inputAddressMinMax(InputC
   return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax};
 }
 
-void TraintasticDIYInterface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
+void TraintasticDIYInterface::inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action)
 {
+  assert(std::holds_alternative<InputAddress>(location));
+  const auto address = std::get<InputAddress>(location).address;
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);
 }
@@ -132,10 +133,11 @@ std::pair<uint32_t, uint32_t> TraintasticDIYInterface::outputAddressMinMax(Outpu
   return {TraintasticDIY::Kernel::ioAddressMin, TraintasticDIY::Kernel::ioAddressMax};
 }
 
-bool TraintasticDIYInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+bool TraintasticDIYInterface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
   assert(isOutputChannel(channel));
   assert(std::get<TriState>(value) == TriState::True || std::get<TriState>(value) == TriState::False);
+  const auto address = std::get<OutputAddress>(location).address;
   return
       m_kernel &&
       inRange(address, outputAddressMinMax(channel)) &&

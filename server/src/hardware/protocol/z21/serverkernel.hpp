@@ -27,6 +27,7 @@
 #include <list>
 #include <map>
 #include <unordered_map>
+#include <boost/asio/post.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/signal.hpp>
 #include <traintastic/enum/tristate.hpp>
@@ -71,7 +72,7 @@ class ServerKernel final : public Kernel
     template<class T>
     void postSendTo(const T& message, IOHandler::ClientId clientId)
     {
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, message, clientId]()
         {
           sendTo(message, clientId);

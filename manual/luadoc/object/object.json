@@ -1,1 +1,15 @@
-{}
+{
+  "on_changed": {
+    "parameters": [
+      {
+        "name": "value"
+      },
+      {
+        "name": "object"
+      },
+      {
+        "name": "name"
+      }
+    ]
+  }
+}

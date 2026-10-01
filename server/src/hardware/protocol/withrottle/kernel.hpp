@@ -25,6 +25,7 @@
 
 #include "../kernelbase.hpp"
 #include <unordered_map>
+#include <boost/asio/post.hpp>
 #include <boost/signals2/connection.hpp>
 #include <traintastic/enum/tristate.hpp>
 #include "config.hpp"
@@ -77,7 +78,7 @@ class Kernel : public ::KernelBase
 
     void postSendTo(std::string message, IOHandler::ClientId clientId)
     {
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, msg=std::move(message), clientId]()
         {
           sendTo(msg, clientId);
@@ -86,7 +87,7 @@ class Kernel : public ::KernelBase
 
     void postSendToAll(std::string message)
     {
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, msg=std::move(message)]()
         {
           sendToAll(msg);

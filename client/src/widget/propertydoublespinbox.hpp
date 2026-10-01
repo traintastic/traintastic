@@ -1,9 +1,8 @@
 /**
- * client/src/widget/propertydoublespinbox.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,11 +28,16 @@ class AbstractProperty;
 
 class PropertyDoubleSpinBox : public QDoubleSpinBox
 {
-  protected:
-    AbstractProperty& m_property;
+public:
+  PropertyDoubleSpinBox(AbstractProperty& property, QWidget* parent = nullptr);
 
-  public:
-    PropertyDoubleSpinBox(AbstractProperty& property, QWidget* parent = nullptr);
+protected:
+  void focusOutEvent(QFocusEvent* event) override;
+
+private:
+  AbstractProperty& m_property;
+
+  void updateRange();
 };
 
 #endif

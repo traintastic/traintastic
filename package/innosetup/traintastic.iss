@@ -11,6 +11,9 @@
 #define ServerExeName "traintastic-server.exe"
 #define ClientExeName "traintastic-client.exe"
 
+#define VC14RedistBinary "vc_redist.x64.exe"
+#define VC14RedistVersion GetFileVersion(VC14RedistBinary)
+
 #define CompanySubKey "SOFTWARE\traintastic.org"
 #define AppSubKey CompanySubKey + "\Traintastic"
 
@@ -43,9 +46,10 @@ Name: en; MessagesFile: "compiler:Default.isl,en-us.isl"
 Name: nl; MessagesFile: "compiler:Languages\Dutch.isl,nl-nl.isl"
 Name: de; MessagesFile: "compiler:Languages\German.isl,de-de.isl"
 Name: it; MessagesFile: "compiler:Languages\Italian.isl,it-it.isl"
-Name: sv; MessagesFile: "Languages\Swedish.isl,sv-se.isl"
+Name: sv; MessagesFile: "compiler:Languages\Swedish.isl,sv-se.isl"
 Name: fr; MessagesFile: "compiler:Languages\French.isl,fr-fr.isl"
 Name: pl; MessagesFile: "compiler:Languages\Polish.isl,pl-pl.isl"
+Name: da; MessagesFile: "compiler:Languages\Danish.isl,da-dk.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -58,11 +62,13 @@ Source: "..\..\server\build\{#ServerExeName}"; DestDir: "{app}\server"; Flags: i
 ; Client
 Source: "..\..\client\build\Release\{#ClientExeName}"; DestDir: "{app}\client"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\*.dll"; DestDir: "{app}\client"; Flags: ignoreversion; Check: InstallClient
-Source: "..\..\client\build\Release\bearer\*.dll"; DestDir: "{app}\client\bearer"; Flags: ignoreversion; Check: InstallClient
+Source: "..\..\client\build\Release\generic\*.dll"; DestDir: "{app}\client\generic"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\iconengines\*.dll"; DestDir: "{app}\client\iconengines"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\imageformats\*.dll"; DestDir: "{app}\client\imageformats"; Flags: ignoreversion; Check: InstallClient
+Source: "..\..\client\build\Release\networkinformation\*.dll"; DestDir: "{app}\client\networkinformation"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\platforms\*.dll"; DestDir: "{app}\client\platforms"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\client\build\Release\styles\*.dll"; DestDir: "{app}\client\styles"; Flags: ignoreversion; Check: InstallClient
+Source: "..\..\client\build\Release\tls\*.dll"; DestDir: "{app}\client\tls"; Flags: ignoreversion; Check: InstallClient
 ; Shared
 Source: "..\..\shared\translations\*.lang"; DestDir: "{commonappdata}\traintastic\translations"; Flags: ignoreversion;
 ; Manual
@@ -70,11 +76,11 @@ Source: "..\..\manual\output\*"; DestDir: "{commonappdata}\traintastic\manual"; 
 ; LNCV XML
 Source: "..\..\shared\data\lncv\xml\*.xml"; DestDir: "{commonappdata}\traintastic\lncv"; Flags: ignoreversion; Check: InstallClient
 Source: "..\..\shared\data\lncv\xml\lncvmodule.xsd"; DestDir: "{commonappdata}\traintastic\lncv"; Flags: ignoreversion; Check: InstallClient
-; VC++ redistributable runtime. Extracted by VC2019RedistNeedsInstall(), if needed.
-Source: "..\..\client\build\Release\vc_redist.x64.exe"; DestDir: {tmp}; Flags: dontcopy
+; VC++ redistributable runtime. Extracted by VC14RedistNeedsInstall(), if needed.
+Source: "{#VC14RedistBinary}"; DestDir: {tmp}; Flags: dontcopy
 
 [Run]
-Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "Installing VC++ redistributables..."; Parameters: "/quiet /norestart"; Check: VC2019RedistNeedsInstall; Flags: waituntilterminated
+Filename: "{tmp}\{#VC14RedistBinary}"; StatusMsg: "Installing VC++ redistributables..."; Parameters: "/quiet /norestart"; Check: VC14RedistNeedsInstall; Flags: waituntilterminated
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (TCP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=TCP localport=5740 action=allow"; StatusMsg: "{cm:add_firewall_rule_traintastic_client} (TCP)"; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (UDP)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=5740 action=allow"; StatusMsg: "{cm:add_firewall_rule_traintastic_client} (UDP)"; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Traintastic server (WLANmaus/Z21)"" dir=in program=""{app}\server\{#ServerExeName}"" protocol=UDP localport=21105 action=allow"; StatusMsg: "{cm:add_firewall_rule_wlanmaus_z21}"; Flags: runhidden; Check: InstallServer; Tasks: firewall_wlanmaus
@@ -90,6 +96,22 @@ Type: files; Name: "{app}\server\lua53.dll"
 Type: files; Name: "{app}\server\lua54.dll"
 Type: files; Name: "{app}\server\archive.dll"
 Type: files; Name: "{app}\server\zlib1.dll"
+; Delete Qt5 DLLs (TODO: remove in 0.5)
+Type: files; Name: "{app}\client\libEGL.dll"
+Type: files; Name: "{app}\client\libGLESv2.dll"
+Type: files; Name: "{app}\client\Qt5Xml.dll"
+Type: files; Name: "{app}\client\Qt5Core.dll"
+Type: files; Name: "{app}\client\Qt5Gui.dll"
+Type: files; Name: "{app}\client\Qt5Network.dll"
+Type: files; Name: "{app}\client\Qt5Svg.dll"
+Type: files; Name: "{app}\client\Qt5WebSockets.dll"
+Type: files; Name: "{app}\client\Qt5Widgets.dll"
+Type: files; Name: "{app}\client\bearer\qgenericbearer.dll"
+Type: files; Name: "{app}\client\imageformats\qtiff.dll"
+Type: files; Name: "{app}\client\imageformats\qwbmp.dll"
+Type: files; Name: "{app}\client\imageformats\qwebp.dll"
+Type: files; Name: "{app}\client\imageformats\qicns.dll"
+Type: files; Name: "{app}\client\imageformats\qtga.dll"
 
 [UninstallRun]
 Filename: {sys}\netsh.exe; Parameters: "advfirewall firewall delete rule name=""Traintastic server (TCP)"""; Flags: runhidden; Check: InstallServer; Tasks: firewall_traintastic
@@ -201,7 +223,7 @@ begin
     Log('Silent install without known Components value, defaulting to: ClientAndServer');
     Components := 'ClientAndServer';
   end;
-    
+
   ComponentsPage := CreateCustomPage(wpSelectComponents, SetupMessage(msgWizardSelectComponents), SetupMessage(msgSelectComponentsDesc));
 
   ClientAndServerRadioButton := TNewRadioButton.Create(ComponentsPage);
@@ -247,6 +269,7 @@ begin
     'sv': Result := 'sv-se';
     'fr': Result := 'fr-fr';
     'pl': Result := 'pl-pl';
+    'da': Result := 'da-dk';
   else
     Result := 'en-us';
   end;
@@ -265,24 +288,22 @@ begin
   end
 end;
 
-function VC2019RedistNeedsInstall: Boolean;
+function VC14RedistNeedsInstall: Boolean;
 var
-  Version: String;
+  Value: String;
+  InstalledVersion, PackedVersion: Int64;
 begin
-  if RegQueryStringValue(HKEY_LOCAL_MACHINE,
-       'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Version', Version) then
-  begin
-    // Is the installed version at least 14.24 ?
-    Log('VC Redist Version check : found ' + Version);
-    Result := (CompareStr(Version, 'v14.24.28127.04')<0);
-  end
-  else
-  begin
-    // Not even an old version installed
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Version', Value) then begin
+    Log('VC14 Redist Version check: found ' + Value);      
+    Result :=
+      not StrToVersion(Copy(Value, 2, MaxInt), InstalledVersion) or
+      not StrToVersion(ExpandConstant('{#VC14RedistVersion}'), PackedVersion) or
+      (ComparePackedVersion(InstalledVersion, PackedVersion) < 0);
+  end else begin
+    Log('VC14 Redist Version check: not found');
     Result := True;
   end;
-  if (Result) then
-  begin
-    ExtractTemporaryFile('vc_redist.x64.exe');
+  if Result then begin
+    ExtractTemporaryFile(ExpandConstant('{#VC14RedistBinary}'));
   end;
 end;

@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2023-2024 Reinder Feenstra
+ * Copyright (C) 2023-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <array>
+#include <tuple>
 #include <vector>
 #include <utility>
 #include <boost/asio/steady_timer.hpp>
@@ -58,7 +59,7 @@ class BlockPath : public Path, public std::enable_shared_from_this<BlockPath>
     std::weak_ptr<BlockRailTile> m_toBlock;
     BlockSide m_toSide;
     std::vector<std::weak_ptr<RailTile>> m_tiles; //!< passive tiles to reserve
-    std::vector<std::pair<std::weak_ptr<TurnoutRailTile>, TurnoutPosition>> m_turnouts; //!< required turnout positions for the path
+    std::vector<std::tuple<std::weak_ptr<TurnoutRailTile>, TurnoutPosition, bool>> m_turnouts; //!< required turnout positions and entry sides for the path
     std::vector<std::pair<std::weak_ptr<DirectionControlRailTile>, DirectionControlState>> m_directionControls; //!< required direction control states for the path
     std::vector<std::pair<std::weak_ptr<CrossRailTile>, CrossState>> m_crossings; //!< required crossing states for the path
     std::vector<std::pair<std::weak_ptr<HiddenCrossOverRailTile>, CrossState>> m_crossOvers; //!< required crossing states for the path

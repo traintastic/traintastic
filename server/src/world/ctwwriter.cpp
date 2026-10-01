@@ -1,9 +1,8 @@
 /**
- * server/src/world/ctwwriter.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -83,13 +82,18 @@ void CTWWriter::writeFile(const std::filesystem::path& filename, const nlohmann:
 
 void CTWWriter::writeFile(const std::filesystem::path& filename, const std::string& text)
 {
+  writeFile(filename, {reinterpret_cast<const std::byte*>(text.c_str()), text.size()});
+}
+
+void CTWWriter::writeFile(const std::filesystem::path& filename, std::span<const std::byte> bytes)
+{
   auto* entry = archive_entry_new();
   archive_entry_set_pathname(entry, filename.string().c_str());
-  archive_entry_set_size(entry, text.size());
+  archive_entry_set_size(entry, bytes.size());
   archive_entry_set_filetype(entry, AE_IFREG);
   archive_entry_set_perm(entry, 0644);
   if(archive_write_header(m_archive.get(), entry) != ARCHIVE_OK)
     throw LibArchiveError(m_archive.get());
-  archive_write_data(m_archive.get(), text.data(), text.size());
+  archive_write_data(m_archive.get(), bytes.data(), bytes.size());
   archive_entry_free(entry);
 }

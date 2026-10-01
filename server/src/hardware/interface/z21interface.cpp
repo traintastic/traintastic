@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/z21interface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -137,8 +136,10 @@ std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(InputChannel chan
   }
 }
 
-void Z21Interface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
+void Z21Interface::inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action)
 {
+  assert(std::holds_alternative<InputAddress>(location));
+  const auto address = std::get<InputAddress>(location).address;
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(channel, address, action);
 }
@@ -158,8 +159,9 @@ std::pair<uint32_t, uint32_t> Z21Interface::outputAddressMinMax(OutputChannel ch
   return OutputController::outputAddressMinMax(channel);
 }
 
-bool Z21Interface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+bool Z21Interface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
+  const auto address = std::get<OutputAddress>(location).address;
   return
       m_kernel &&
       inRange(address, outputAddressMinMax(channel)) &&

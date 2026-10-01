@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/xpressnetinterface.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -213,8 +212,10 @@ std::pair<uint32_t, uint32_t> XpressNetInterface::inputAddressMinMax(InputChanne
   return {XpressNet::Kernel::inputAddressMin, XpressNet::Kernel::inputAddressMax};
 }
 
-void XpressNetInterface::inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action)
+void XpressNetInterface::inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action)
 {
+  assert(std::holds_alternative<InputAddress>(location));
+  const auto address = std::get<InputAddress>(location).address;
   if(m_kernel && inRange(address, inputAddressMinMax(channel)))
     m_kernel->simulateInputChange(address, action);
 }
@@ -230,9 +231,10 @@ std::pair<uint32_t, uint32_t> XpressNetInterface::outputAddressMinMax(OutputChan
   return {XpressNet::Kernel::accessoryOutputAddressMin, XpressNet::Kernel::accessoryOutputAddressMax};
 }
 
-bool XpressNetInterface::setOutputValue(OutputChannel channel, uint32_t address, OutputValue value)
+bool XpressNetInterface::setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
   assert(isOutputChannel(channel));
+  const auto address = std::get<OutputAddress>(location).address;
   return
       m_kernel &&
       inRange(address, outputAddressMinMax(channel)) &&

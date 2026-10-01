@@ -62,11 +62,12 @@
 
 #include "../clock/clock.hpp"
 
-#include "../hardware/interface/dccexinterface.hpp"
-#include "../hardware/interface/ecosinterface.hpp"
+#include "../hardware/interface/cbus/cbusinterface.hpp"
+#include "../hardware/interface/dccex/dccexinterface.hpp"
+#include "../hardware/interface/ecos/ecosinterface.hpp"
 #include "../hardware/interface/hsi88.hpp"
 #include "../hardware/interface/loconetinterface.hpp"
-#include "../hardware/interface/marklincaninterface.hpp"
+#include "../hardware/interface/marklincan/marklincaninterface.hpp"
 #include "../hardware/interface/traintasticdiyinterface.hpp"
 #include "../hardware/interface/withrottleinterface.hpp"
 #include "../hardware/interface/wlanmausinterface.hpp"
@@ -196,6 +197,7 @@ void Class::registerValues(lua_State* L)
   registerValue<Clock>(L, "CLOCK");
 
   // hardware - interface:
+  registerValue<CBUSInterface>(L, "CBUS_INTERFACE");
   registerValue<DCCEXInterface>(L, "DCCEX_INTERFACE");
   registerValue<ECoSInterface>(L, "ECOS_INTERFACE");
   registerValue<HSI88Interface>(L, "HSI88_INTERFACE");

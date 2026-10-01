@@ -390,37 +390,40 @@ void Board::modified()
       {
         if(isIntercardinal(connector.direction)) // check for crossover
         {
-          auto prevTile = getTile(TileLocation{nextTile->x, nextTile->y} + connector.direction);
-          assert(prevTile);
-          auto otherTile1 = getTile({prevTile->x, nextTile->y});
-          auto otherTile2 = getTile({nextTile->x, prevTile->y});
+          auto prevTile = getTile(TileLocation{ nextTile->x, nextTile->y } + connector.direction);
 
-          if(otherTile1 && otherTile2)
+          if(prevTile)
           {
-            const auto perpendicular =
-              (connector.direction == Connector::Direction::NorthEast) || (connector.direction == Connector::Direction::SouthWest)
-              ? ~rotate90cw(connector.direction) : rotate90cw(connector.direction);
+            auto otherTile1 = getTile({prevTile->x, nextTile->y});
+            auto otherTile2 = getTile({nextTile->x, prevTile->y});
 
-            auto otherConnector1 = otherTile1->getConnector(perpendicular);
-            auto otherConnector2 = otherTile2->getConnector(~perpendicular);
-
-            if(otherConnector1 && otherConnector2) // crossover found!
+            if(otherTile1 && otherTile2)
             {
-              const TileLocation topLeft{std::min<int16_t>(prevTile->x, nextTile->x), std::min<int16_t>(prevTile->y, nextTile->y)};
-              auto it = m_railCrossOver.find(topLeft);
-              if(it == m_railCrossOver.end())
-              {
-                it = m_railCrossOver.emplace(topLeft, std::make_shared<HiddenCrossOverRailTile>(world())).first;
-                it->second->x.setValueInternal(topLeft.x);
-                it->second->y.setValueInternal(topLeft.y);
-              }
-              auto& crossOver = it->second;
-              auto crossOverConnector = crossOver->getConnector(connector.direction);
-              assert(crossOverConnector);
+              const auto perpendicular =
+                (connector.direction == Connector::Direction::NorthEast) || (connector.direction == Connector::Direction::SouthWest)
+                ? ~rotate90cw(connector.direction) : rotate90cw(connector.direction);
 
-              auto link = std::make_shared<Link>(std::move(tiles));
-              link->connect(*startTile->node(), startConnector, *crossOver->node(), *crossOverConnector);
-              return;
+              auto otherConnector1 = otherTile1->getConnector(perpendicular);
+              auto otherConnector2 = otherTile2->getConnector(~perpendicular);
+
+              if(otherConnector1 && otherConnector2) // crossover found!
+              {
+                const TileLocation topLeft{ std::min<int16_t>(prevTile->x, nextTile->x), std::min<int16_t>(prevTile->y, nextTile->y) };
+                auto it = m_railCrossOver.find(topLeft);
+                if(it == m_railCrossOver.end())
+                {
+                  it = m_railCrossOver.emplace(topLeft, std::make_shared<HiddenCrossOverRailTile>(world())).first;
+                  it->second->x.setValueInternal(topLeft.x);
+                  it->second->y.setValueInternal(topLeft.y);
+                }
+                auto& crossOver = it->second;
+                auto crossOverConnector = crossOver->getConnector(connector.direction);
+                assert(crossOverConnector);
+
+                auto link = std::make_shared<Link>(std::move(tiles));
+                link->connect(*startTile->node(), startConnector, *crossOver->node(), *crossOverConnector);
+                return;
+              }
             }
           }
         }
@@ -434,15 +437,12 @@ void Board::modified()
         tiles.emplace_back(nextTile);
         connectors.clear();
         nextTile->getConnectors(connectors);
-        if(connectors.size() == 2)
+        if(connectors.size() == 2 && (connectors[0] == connector || connectors[1] == connector))
         {
-          assert(connectors[0] == connector || connectors[1] == connector);
           connector = connectors[connectors[0] == connector ? 1 : 0].opposite();
         }
         else
         {
-          assert(connectors.size() == 1);
-          assert(connectors[0] == connector);
           break;
         }
       }

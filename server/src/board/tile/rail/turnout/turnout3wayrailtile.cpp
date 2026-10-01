@@ -1,9 +1,8 @@
 /**
- * server/src/board/tile/rail/turnout/turnout3wayrailtile.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2022,2024-2025 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +26,7 @@
 
 static const std::array<TurnoutPosition, 4> positionValues = {TurnoutPosition::Unknown, TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right};
 
-static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputType outputType, size_t outputIndex)
+static std::optional<OutputActionValue> getDefaultActionValue(TurnoutPosition turnoutPosition, OutputChannel /*outputChannel*/, OutputType outputType, size_t outputIndex)
 {
   // FIXME: implement more defaults
   switch(outputType)
@@ -67,8 +66,18 @@ Turnout3WayRailTile::Turnout3WayRailTile(World& world, std::string_view _id)
 
   outputMap.setValueInternal(std::make_shared<TurnoutOutputMap>(*this, outputMap.name(), std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right}, getDefaultActionValue));
 
+  feedbackMap.setValueInternal(
+    std::make_shared<TurnoutFeedbackMap>(
+      *this,
+      feedbackMap.name(),
+      std::initializer_list<TurnoutPosition>{TurnoutPosition::Straight, TurnoutPosition::Left, TurnoutPosition::Right},
+      onFeedbackMatch()));
+
   Attributes::addValues(position, positionValues);
   m_interfaceItems.add(position);
+
+  Attributes::addValues(reservedPosition, positionValues);
+  m_interfaceItems.add(reservedPosition);
 
   Attributes::addValues(setPosition, setPositionValues);
   m_interfaceItems.add(setPosition);

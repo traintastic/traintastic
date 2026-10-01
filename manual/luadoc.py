@@ -76,7 +76,7 @@ class LuaDoc:
                     [result, args] = item['cpp_template_type'].rstrip(')').split('(')
                     cpp_types = [result] + [s.strip() for s in args.split(',')]
                 elif item['type'] == 'event':
-                    cpp_types = [s.strip() for s in item['cpp_template_type'].split(',')]
+                    cpp_types = [s.strip() for s in item['cpp_template_type'].split(',')] if 'cpp_template_type' in item else []
 
                 for cpp_type in cpp_types:
                     for enum in self._enums:
@@ -329,6 +329,8 @@ class LuaDoc:
             for file in files:
                 if not file.endswith('.hpp'):
                     continue
+                if '/src/lua/' in root or '/src/hardware/protocol/' in root:
+                    continue
                 filename_hpp = posixpath.join(root, file)
                 hpp = LuaDoc._read_file(filename_hpp)
                 m = re.search(r'class\s*([A-Za-z0-9]+)\s*(final|)\s*(:[^;]+?|){', hpp, flags=re.DOTALL)
@@ -376,7 +378,9 @@ class LuaDoc:
         filename_cpp = os.path.splitext(filename_hpp)[0] + '.cpp'
         hpp = LuaDoc._read_file(filename_hpp)
         cpp = LuaDoc._read_file(filename_cpp) if os.path.exists(filename_cpp) else hpp
-        for cpp_type, cpp_template_type, cpp_item_name in re.findall(r'(Property|VectorProperty|ObjectProperty|ObjectVectorProperty|Method|Event)<(.*?)>\s+([A-Za-z0-9_]+);', hpp):
+        matches = re.findall(r'(Property|VectorProperty|SpeedProperty|ObjectProperty|ObjectVectorProperty|Method|Event)<(.*?)>\s+([A-Za-z0-9_]+);', hpp)
+        matches += re.findall(r'(LengthProperty|PowerProperty|RatioProperty|SerialDeviceProperty|SpeedProperty|VolumeProperty|WeightProperty)(\s+)([A-Za-z0-9_]+);', hpp)
+        for cpp_type, cpp_template_type, cpp_item_name in matches:
             m = re.search(cpp_item_name + r'({|\()\s*[\*]?this\s*,\s*"([a-z0-9_]+)".*?(PropertyFlags::ScriptReadOnly|PropertyFlags::ScriptReadWrite|MethodFlags::ScriptCallable|EventFlags::Scriptable)[^}]*}', cpp)
             if m is None:
                 continue
@@ -389,7 +393,7 @@ class LuaDoc:
                 'term_prefix': term_prefix
                 }
 
-            if cpp_type in ['Property', 'VectorProperty', 'ObjectProperty', 'ObjectVectorProperty']:
+            if cpp_type.endswith('Property'):
                 item['type'] = 'property'
             elif cpp_type == 'Method':
                 item['type'] = 'method'
@@ -409,7 +413,7 @@ class LuaDoc:
                 item = {
                         'lua_name': method_name,
                         'term_prefix': term_prefix,
-                        'type': 'method'
+                        'type': 'event' if method_name.startswith('on_') else 'method'
                         }
                 items.append(item)
 
@@ -662,6 +666,15 @@ class LuaDoc:
 
                 md += '### `' + item['lua_name'] + '`' + os.linesep + os.linesep
                 md += self._get_term(term_prefix + item['lua_name'].lower() + ':description') + os.linesep + os.linesep
+
+                for qualifier in ['warning', 'note', 'tip']:
+                    description = item_term_prefix + item['lua_name'].lower() + '.' + qualifier + ':description'
+                    if description in self._terms:
+                        md += '!!! ' + qualifier
+                        title = item_term_prefix + item['lua_name'].lower() + '.' + qualifier + ':title'
+                        if title in self._terms:
+                            md += ' "' + self._get_term(title) + '"'
+                        md += os.linesep + textwrap.indent(self._get_term(description), ' ' * 4) + os.linesep + os.linesep
 
                 md += '**Handler signature**' + os.linesep + os.linesep + '`function ('
                 for p in item['parameters']:

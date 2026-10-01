@@ -1,7 +1,6 @@
 /**
- * server/src/hardware/protocol/loconet/kernel.hpp
- *
- * This file is part of the traintastic source code.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) 2019-2026 Reinder Feenstra
  *
@@ -28,6 +27,7 @@
 #include <unordered_map>
 #include <filesystem>
 #include <queue>
+#include <boost/asio/post.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/connection.hpp>
 #include <span>
@@ -36,7 +36,7 @@
 #include <traintastic/enum/outputchannel.hpp>
 #include "config.hpp"
 #include "iohandler/iohandler.hpp"
-#include "../../output/outputvalue.hpp"
+#include "../../output/outputtypes.hpp"
 
 class Clock;
 class Decoder;
@@ -230,7 +230,7 @@ class Kernel : public ::KernelBase
     void postSend(const T& message)
     {
       assert(sizeof(message) == message.size());
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, message]()
         {
           send(message);
@@ -240,7 +240,7 @@ class Kernel : public ::KernelBase
     void postSend(const T& message, Priority priority)
     {
       assert(sizeof(message) == message.size());
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, message, priority]()
         {
           send(message, priority);
@@ -255,7 +255,7 @@ class Kernel : public ::KernelBase
     template<class T>
     void postSend(uint16_t address, const T& message)
     {
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, address, message]()
         {
           T msg(message);

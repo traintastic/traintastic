@@ -24,6 +24,7 @@
 
 #include <thread>
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/post.hpp>
 
 class EventLoop
 {
@@ -35,7 +36,7 @@ class EventLoop
     EventLoop& operator =(const EventLoop&) = delete;
 
     inline static std::unique_ptr<boost::asio::io_context> s_ioContext;
-    inline static std::shared_ptr<boost::asio::io_context::work> s_keepAlive;
+    inline static std::shared_ptr<boost::asio::executor_work_guard<decltype(s_ioContext->get_executor())>> s_keepAlive;
 
   public:
 #ifdef TRAINTASTIC_TEST
@@ -60,7 +61,7 @@ class EventLoop
 #ifdef TRAINTASTIC_TEST
       threadId = std::this_thread::get_id();
 #endif
-      s_keepAlive = std::make_shared<boost::asio::io_context::work>(ioContext());
+      s_keepAlive = std::make_shared<boost::asio::executor_work_guard<decltype(ioContext().get_executor())>>(ioContext().get_executor());
       ioContext().run();
       s_keepAlive.reset();
     }
@@ -73,13 +74,13 @@ class EventLoop
     template<typename _Callable, typename... _Args>
     inline static void call(_Callable&& __f, _Args&&... __args)
     {
-      ioContext().post(std::bind(__f, __args...));
+      boost::asio::post(ioContext(), std::bind(__f, __args...));
     }
 
     template<typename T>
     inline static void deleteLater(T* object)
     {
-      ioContext().post(
+      boost::asio::post(ioContext(),
         [object]()
         {
           delete object;

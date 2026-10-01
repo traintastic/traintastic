@@ -22,7 +22,7 @@
 
 #include "marklincanlocomotivelisttablemodel.hpp"
 #include "marklincanlocomotivelist.hpp"
-#include "../../protocol/marklincan/locomotivelist.hpp"
+#include "../../protocol/marklincan/marklincanlocomotivelist.hpp"
 #include "../../../utils/displayname.hpp"
 #include "../../../utils/tohex.hpp"
 

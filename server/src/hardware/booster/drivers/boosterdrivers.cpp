@@ -22,6 +22,7 @@
 #include "boosterdrivers.hpp"
 #include "../../../utils/stripprefix.hpp"
 
+#include "cbusboosterdriver.hpp"
 #include "dr5033boosterdriver.hpp"
 #include "power4boosterdriver.hpp"
 #include "power7boosterdriver.hpp"
@@ -30,6 +31,7 @@
 #include "power70boosterdriver.hpp"
 
 #define BOOSTER_DRIVERS \
+  BOOSTER_DRIVER(CBUSBoosterDriver) \
   BOOSTER_DRIVER(DR5033BoosterDriver) \
   BOOSTER_DRIVER(Power4BoosterDriver) \
   BOOSTER_DRIVER(Power7BoosterDriver) \

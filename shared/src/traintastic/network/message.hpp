@@ -83,6 +83,7 @@ class Message
       ObjectListGetObjects = 47,
       CallMethod = 48,
 
+      GetDiagnosticReport = 254,
       Discover = 255,
     };
 

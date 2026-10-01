@@ -1,9 +1,8 @@
 /**
- * server/src/log/memorylogger.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -58,6 +57,9 @@ class MemoryLogger : public Logger
     boost::signals2::signal<void(const MemoryLogger&, uint32_t added, uint32_t removed)> changed;
 
     MemoryLogger(uint32_t sizeMax);
+
+    auto begin() const { return m_logs.begin(); }
+    auto end() const { return m_logs.end(); }
 
     inline const Log& operator[](uint32_t index) const { return m_logs[index]; }
     inline uint32_t size() const { return static_cast<uint32_t>(m_logs.size()); }

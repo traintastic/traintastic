@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,7 @@
 #include "../src/board/boardlist.hpp"
 #include "../../src/board/tile/rail/blockrailtile.hpp"
 #include "../../src/board/tile/rail/curve45railtile.hpp"
+#include "../../src/board/tile/rail/straightrailtile.hpp"
 #include "../../src/board/tile/rail/turnout/turnoutleft45railtile.hpp"
 #include "../../src/board/tile/rail/turnout/turnoutright45railtile.hpp"
 
@@ -78,6 +79,17 @@ TEST_CASE("Board: Crossover create/modify/destroy", "[board]")
 
   world->run(); // this will update the board network
   REQUIRE(crossoverWeak.expired()); // now the crossover must be gone
+
+  world->stop();
+
+  // add a tile without creating a crossover (see: https://github.com/traintastic/traintastic/issues/239)
+  REQUIRE(boardWeak.lock()->addTile(2, 1, TileRotate::Deg90, StraightRailTile::classId, false));
+
+  world->run(); // this will build the board network
+
+  REQUIRE(boardWeak.lock()->railCrossOver().find({1, 0}) == boardWeak.lock()->railCrossOver().end());
+
+  world->stop();
 
   world.reset();
   REQUIRE(worldWeak.expired());

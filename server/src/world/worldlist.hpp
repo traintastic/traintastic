@@ -1,9 +1,8 @@
 /**
- * server/src/world/worldlist.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2020,2023-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +24,7 @@
 
 #include "../core/object.hpp"
 #include "../core/table.hpp"
+#include "../core/method.hpp"
 #include <traintastic/utils/stdfilesystem.hpp>
 #include <vector>
 #include <boost/uuid/uuid.hpp>
@@ -54,19 +54,28 @@ class WorldList : public Object, public Table
     };
 
   private:
+    void itemsChanged();
     void sort();
 
   protected:
-    static bool readInfo(const nlohmann::json& world, WorldInfo& info);
+    using Items = std::vector<WorldInfo>;
+
+  static bool readInfo(const nlohmann::json& world, WorldInfo& info);
 
     const std::filesystem::path m_path;
-    std::vector<WorldInfo> m_items;
+    Items m_items;
     std::vector<WorldListTableModel*> m_models;
+
+    void add(WorldInfo info);
+    Items::iterator findItem(const boost::uuids::uuid& uuid);
 
   public:
     CLASS_ID("world_list");
 
     static constexpr std::string_view id = classId;
+
+    Method<bool(std::string, std::string)> duplicate;
+    Method<bool(std::string)> delete_;
 
     WorldList(const std::filesystem::path& path);
 

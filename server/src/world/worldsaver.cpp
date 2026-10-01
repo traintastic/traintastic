@@ -1,9 +1,8 @@
 /**
- * server/src/world/worldsaver.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,7 +32,7 @@
 
 using nlohmann::json;
 
-WorldSaver::WorldSaver(const World& world)
+WorldSaver::WorldSaver(const World& world, Options options)
 {
   m_states = json::object();
   m_data = json::object();
@@ -61,6 +60,9 @@ WorldSaver::WorldSaver(const World& world)
   }
 
   m_data["uuid"] = m_state["uuid"] = world.uuid.value();
+
+  m_data["is_auto_save"] = options.isAutoSave;
+  m_data["is_export"] = options.isExport;
 
   // traintastic version info:
   {
@@ -111,8 +113,8 @@ WorldSaver::WorldSaver(const World& world)
   }
 }
 
-WorldSaver::WorldSaver(const World& world, const std::filesystem::path& path)
-  : WorldSaver(world)
+WorldSaver::WorldSaver(const World& world, const std::filesystem::path& path, Options options)
+  : WorldSaver(world, options)
 {
   if(path.extension() == World::dotCTW)
   {
@@ -128,8 +130,8 @@ WorldSaver::WorldSaver(const World& world, const std::filesystem::path& path)
   }
 }
 
-WorldSaver::WorldSaver(const World& world, std::vector<std::byte>& memory)
-  : WorldSaver(world)
+WorldSaver::WorldSaver(const World& world, std::vector<std::byte>& memory, Options options)
+  : WorldSaver(world, options)
 {
   CTWWriter ctw(memory);
   writeCTW(ctw);

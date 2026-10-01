@@ -188,12 +188,28 @@
         "definition": "Reserveren verplicht"
     },
     {
+        "term": "board_tile.rail.turnout:link_invert",
+        "definition": "Koppeling omdraaien"
+    },
+    {
+        "term": "board_tile.rail.turnout:link_turnout",
+        "definition": "Koppelen met wissel"
+    },
+    {
+        "term": "board_tile.rail.turnout:linked",
+        "definition": "Gekoppeld"
+    },
+    {
         "term": "board_tile.rail.turnout_slip:dual_motor",
         "definition": "Dubbel spoel/motor"
     },
     {
         "term": "board_tile.turnout:position",
         "definition": "Positie"
+    },
+    {
+        "term": "board_tile:feedback_map",
+        "definition": "Terugmelding"
     },
     {
         "term": "board_tile:output_map",
@@ -252,6 +268,10 @@
         "definition": "Ontwikkelaar"
     },
     {
+        "term": "category:features",
+        "definition": "Features"
+    },
+    {
         "term": "category:general",
         "definition": "Algemeen"
     },
@@ -280,8 +300,84 @@
         "definition": "Status"
     },
     {
+        "term": "category:track_driver",
+        "definition": "Blok aansturing"
+    },
+    {
         "term": "category:trains",
         "definition": "Treinen"
+    },
+    {
+        "term": "cbus_interface_type:socket_can",
+        "definition": "SocketCAN (Alleen Linux)"
+    },
+    {
+        "term": "cbus_node_list:manufacturer",
+        "definition": "Fabrikant"
+    },
+    {
+        "term": "cbus_node_list:mode",
+        "definition": "Mode"
+    },
+    {
+        "term": "cbus_node_list:module",
+        "definition": "Module"
+    },
+    {
+        "term": "cbus_node_list:node_number",
+        "definition": "Node nummer"
+    },
+    {
+        "term": "cbus_node_list:type",
+        "definition": "Type"
+    },
+    {
+        "term": "cbus_node_list:version",
+        "definition": "Versie"
+    },
+    {
+        "term": "cbus_session_list:controlled_by",
+        "definition": "Bestuurd door"
+    },
+    {
+        "term": "cbus_session_list:direction",
+        "definition": "Richting"
+    },
+    {
+        "term": "cbus_session_list:long",
+        "definition": "Lang"
+    },
+    {
+        "term": "cbus_session_list:session",
+        "definition": "Sessie"
+    },
+    {
+        "term": "cbus_session_list:speed",
+        "definition": "Snelheid"
+    },
+    {
+        "term": "cbus_settings:dcc_accessory_switch_time",
+        "definition": "DCC-accessoire schakeltijd"
+    },
+    {
+        "term": "cbus_settings:engine_keep_alive",
+        "definition": "Locomotief keep alive"
+    },
+    {
+        "term": "cbus_settings:hub_enabled",
+        "definition": "Hub actief"
+    },
+    {
+        "term": "cbus_settings:hub_localhost_only",
+        "definition": "Hub allen op localhost"
+    },
+    {
+        "term": "cbus_settings:hub_port",
+        "definition": "Hub poort"
+    },
+    {
+        "term": "cbus_settings:short_event_node_number",
+        "definition": "Node nummer voor korte events"
     },
     {
         "term": "class_id:board_tile.misc.label",
@@ -708,6 +804,22 @@
         "definition": "Zon"
     },
     {
+        "term": "dinamo_settings:debug_log_train_blocks",
+        "definition": "Log trein blok koppelingen"
+    },
+    {
+        "term": "dinamo_settings:hfi_level",
+        "definition": "HFI niveau"
+    },
+    {
+        "term": "dinamo_settings:pm32_pulse_duration",
+        "definition": "PM32 pulsduur"
+    },
+    {
+        "term": "dinamo_settings:set_hfi_level",
+        "definition": "Stel HFI niveau in"
+    },
+    {
         "term": "direction:forward",
         "definition": "Vooruit"
     },
@@ -734,6 +846,18 @@
     {
         "term": "ext_output_change_action:poweroff_world",
         "definition": "Wereld uitzetten"
+    },
+    {
+        "term": "feedback_map.turnout:key",
+        "definition": "Positie"
+    },
+    {
+        "term": "function:off",
+        "definition": "Uit"
+    },
+    {
+        "term": "function:on",
+        "definition": "Aan"
     },
     {
         "term": "hardware:address",
@@ -772,6 +896,14 @@
         "definition": "Decoders"
     },
     {
+        "term": "hardware:event",
+        "definition": "Event"
+    },
+    {
+        "term": "hardware:events",
+        "definition": "Events"
+    },
+    {
         "term": "hardware:identifications",
         "definition": "Identificatie"
     },
@@ -786,6 +918,14 @@
     {
         "term": "hardware:interface",
         "definition": "Interface"
+    },
+    {
+        "term": "hardware:invert_polarity",
+        "definition": "Polariteit omdraaien"
+    },
+    {
+        "term": "hardware:node",
+        "definition": "Node"
     },
     {
         "term": "hardware:output_keyboard",
@@ -804,16 +944,12 @@
         "definition": "Regelaars"
     },
     {
-        "term": "hsi88:s88_left",
-        "definition": "S88 links"
+        "term": "hardware:track_driver",
+        "definition": "Blok aansturing"
     },
     {
-        "term": "hsi88:s88_middle",
-        "definition": "S88 midden"
-    },
-    {
-        "term": "hsi88:s88_right",
-        "definition": "S88 rechts"
+        "term": "identification:invert_direction",
+        "definition": "Richting omdraaien"
     },
     {
         "term": "identification:opc_multi_sense_direction",
@@ -826,6 +962,38 @@
     {
         "term": "input:on_delay",
         "definition": "Aan vertraging"
+    },
+    {
+        "term": "input_channel:long_event",
+        "definition": "Lang event"
+    },
+    {
+        "term": "input_channel:s88_left",
+        "definition": "S88 links"
+    },
+    {
+        "term": "input_channel:s88_middle",
+        "definition": "S88 midden"
+    },
+    {
+        "term": "input_channel:s88_right",
+        "definition": "S88 rechts"
+    },
+    {
+        "term": "input_channel:short_event",
+        "definition": "Kort event"
+    },
+    {
+        "term": "input_condition:dont_care",
+        "definition": "Maakt niet uit"
+    },
+    {
+        "term": "input_condition:off",
+        "definition": "Uit"
+    },
+    {
+        "term": "input_condition:on",
+        "definition": "Aan"
     },
     {
         "term": "input_list:bus",
@@ -846,6 +1014,14 @@
     {
         "term": "input_map_item.block:type",
         "definition": "Type"
+    },
+    {
+        "term": "interface.cbus:cbus_node_list",
+        "definition": "Nodes"
+    },
+    {
+        "term": "interface.cbus:cbus_session_list",
+        "definition": "Sessies"
     },
     {
         "term": "interface.ecos:ecos_detector",
@@ -942,6 +1118,10 @@
     {
         "term": "ip:port",
         "definition": "Poort"
+    },
+    {
+        "term": "language:da-dk",
+        "definition": "Deens"
     },
     {
         "term": "language:de-de",
@@ -1212,6 +1392,10 @@
         "definition": "Netwerk (UDP)"
     },
     {
+        "term": "marklin_can_interface_type:serial",
+        "definition": "Seri\u00ebl"
+    },
+    {
         "term": "marklin_can_interface_type:socket_can",
         "definition": "SocketCAN (Alleen Linux)"
     },
@@ -1390,6 +1574,10 @@
     {
         "term": "message:D2010",
         "definition": "Slot %1 = Vrij"
+    },
+    {
+        "term": "message:D2011",
+        "definition": "Trein '%1' blokken: %2"
     },
     {
         "term": "message:D3001",
@@ -1580,6 +1768,35 @@
         "definition": "Uitlezen van de belasting van booster '%1' mislukt: %2"
     },
     {
+        "term": "message:E2028",
+        "definition": "Socket setsockopt mislukt (%1)"
+    },
+    {
+        "term": "message:E2029",
+        "definition": "TCP-acceptatiefout (%1)"
+    },
+    {
+        "term": "message:E2030",
+        "definition": "TCP-socket luisteren mislukt (%1)"
+    },
+    {
+        "term": "message:E2031",
+        "definition": "DINAMO protocol versie %1 wordt niet ondersteund",
+        "fuzzy": 1
+    },
+    {
+        "term": "message:E2032",
+        "definition": "DINAMO systeem %1 v%2 wordt niet ondersteund"
+    },
+    {
+        "term": "message:E2033",
+        "definition": "Communicatie verbroken, geen reactie binnen %1 ms"
+    },
+    {
+        "term": "message:E2034",
+        "definition": "DINAMO in fout staat"
+    },
+    {
         "term": "message:E3001",
         "definition": "Kan spoorvoertuig niet verwijderen in actieve trein"
     },
@@ -1620,8 +1837,16 @@
         "definition": "De wereld werd noodgedwongen uitgeschakeld gestopt omdat van sein %1 het beeld extern gewijzigd is"
     },
     {
+        "term": "message:E3011",
+        "definition": "Terugmeld conflict: meerdere opties zijn geldig"
+    },
+    {
         "term": "message:E9001",
         "definition": "%1 (Tijdens de uitvoering van %2 event handler)"
+    },
+    {
+        "term": "message:E9002",
+        "definition": "%1 (Tijdens de uitvoering van %2 on_changed handler)"
     },
     {
         "term": "message:F1001",
@@ -1684,6 +1909,10 @@
         "definition": "Bouw wereld index"
     },
     {
+        "term": "message:I1010",
+        "definition": "Wereld automatische opgeslagen: %1"
+    },
+    {
         "term": "message:I2001",
         "definition": "Onbekend locomotief adres: %1"
     },
@@ -1698,6 +1927,18 @@
     {
         "term": "message:I2006",
         "definition": "Softwareversie booster '%1': %2"
+    },
+    {
+        "term": "message:I2007",
+        "definition": "Nieuwe hub connectie (%1:%2)"
+    },
+    {
+        "term": "message:I2008",
+        "definition": "DINAMO protocol versie %1"
+    },
+    {
+        "term": "message:I2009",
+        "definition": "DINAMO systeem: %1 v%2"
     },
     {
         "term": "message:I3001",
@@ -1856,6 +2097,10 @@
         "definition": "Alleen luisteren modus: gedeactiveerd"
     },
     {
+        "term": "message:N2008",
+        "definition": "Hub luistert op %1:%2"
+    },
+    {
         "term": "message:N3001",
         "definition": "Trein %1 toegewezen aan blok %2"
     },
@@ -1948,6 +2193,10 @@
         "definition": "Uitlezen van de belasting van booster '%1' mislukt: %2"
     },
     {
+        "term": "message:W2028",
+        "definition": "Geen reactie binnen 1 ms, laatste bericht opnieuw verzonden"
+    },
+    {
         "term": "message:W3001",
         "definition": "NX knop is verbonden met twee blokken"
     },
@@ -2028,8 +2277,16 @@
         "definition": "ECoS object"
     },
     {
+        "term": "output_channel:long_event",
+        "definition": "Lang event"
+    },
+    {
         "term": "output_channel:output",
         "definition": "Uitgang"
+    },
+    {
+        "term": "output_channel:short_event",
+        "definition": "Kort event"
     },
     {
         "term": "output_channel:turnout",
@@ -2060,6 +2317,10 @@
         "definition": "Adres toevoegen"
     },
     {
+        "term": "output_map:add_event",
+        "definition": "Event toevoegen"
+    },
+    {
         "term": "output_map:address_x",
         "definition": "Adres %1"
     },
@@ -2072,8 +2333,16 @@
         "definition": "Adres verwijderen"
     },
     {
+        "term": "output_map:remove_event",
+        "definition": "Event verwijderen"
+    },
+    {
         "term": "output_map:swap_outputs",
         "definition": "Uitgangen omwisselen"
+    },
+    {
+        "term": "output_map:test",
+        "definition": "Test"
     },
     {
         "term": "output_map:use",
@@ -2156,6 +2425,30 @@
         "definition": "Gebruikersnaam"
     },
     {
+        "term": "qtapp.diagnostic_report_dialog:create_report",
+        "definition": "Maak rapport"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:explanation",
+        "definition": "Hiermee wordt een diagnostisch rapport gegenereerd om problemen met Traintastic op te lossen.\n\nHet rapport bevat:\n\u2022 Basisgegevens van de client en server (app-versie en besturingssysteem)\n\u2022 Een schermafbeelding van het clienttoepassingsvenster\n\u2022 Het serverlogboek\n\u2022 Een export van uw wereld\n\nAlle gegevens worden opgeslagen in een zipbestand op uw computer. U kunt de inhoud bekijken voordat u het met anderen deelt (bijvoorbeeld op het Traintastic-forum).\n\nEr worden geen gegevens automatisch verzonden."
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:save_diagnostic_report",
+        "definition": "Diagnostisch rapport opslaan"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:window_title",
+        "definition": "Maak diagnostisch rapport"
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:zip_file",
+        "definition": "Zip bestand"
+    },
+    {
+        "term": "qtapp.dialog:cancel",
+        "definition": "Annuleren"
+    },
+    {
         "term": "qtapp.error:cant_read_from_file_x",
         "definition": "Kan niet lezen van bestand: %1"
     },
@@ -2190,6 +2483,10 @@
     {
         "term": "qtapp.mainmenu:connection",
         "definition": "Verbinding"
+    },
+    {
+        "term": "qtapp.mainmenu:diagnostic_report",
+        "definition": "Diagnostisch rapport"
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
@@ -2400,6 +2697,26 @@
         "definition": "Annuleren"
     },
     {
+        "term": "qtapp.world_list_dialog:delete_world",
+        "definition": "Wereld verwijderen"
+    },
+    {
+        "term": "qtapp.world_list_dialog:delete_world_confirmation",
+        "definition": "Weet je zeker dat je de <b>%1</b> wereld wilt verwijderen? Dit kan niet ongedaan worden."
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicate_world",
+        "definition": "Wereld dupliceren"
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicate_world_confirmation",
+        "definition": "Weet je zeker dat je wereld <b>%1</b> wilt dupliceren?"
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicated_world_name_postfix",
+        "definition": "Kopie"
+    },
+    {
         "term": "qtapp.world_list_dialog:load",
         "definition": "Laad"
     },
@@ -2536,6 +2853,10 @@
         "definition": "Afsluiting van de client-server toestaan"
     },
     {
+        "term": "settings:auto_save_interval",
+        "definition": "Automatische opslaan elke"
+    },
+    {
         "term": "settings:auto_save_world_on_exit",
         "definition": "Automatisch wereld opslaan bij afsluiten"
     },
@@ -2558,6 +2879,10 @@
     {
         "term": "settings:memory_logger_size",
         "definition": "Geheugen logger grootte"
+    },
+    {
+        "term": "settings:off",
+        "definition": "Uit"
     },
     {
         "term": "settings:port",
@@ -2708,8 +3033,16 @@
         "definition": "Stelen"
     },
     {
+        "term": "throttle.stop",
+        "definition": "Stop"
+    },
+    {
         "term": "throttle_object_list:throttle",
         "definition": "Regelaar"
+    },
+    {
+        "term": "train:acceleration_rate",
+        "definition": "Versnellingssnelheid"
     },
     {
         "term": "train:active",
@@ -2718,6 +3051,10 @@
     {
         "term": "train:block",
         "definition": "Blok"
+    },
+    {
+        "term": "train:braking_rate",
+        "definition": "Remsnelheid"
     },
     {
         "term": "train:length",
@@ -3214,6 +3551,10 @@
     {
         "term": "world:ext_output_change_action",
         "definition": "Actie voor externe outputwijziging"
+    },
+    {
+        "term": "world:feature_scripting",
+        "definition": "Scripten"
     },
     {
         "term": "world:inputs",

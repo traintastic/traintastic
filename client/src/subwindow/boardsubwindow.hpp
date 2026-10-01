@@ -1,9 +1,8 @@
 /**
- * client/src/subwindow/boardsubwindow.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +29,7 @@ class BoardSubWindow final : public SubWindow
   protected:
     explicit BoardSubWindow(QWidget* parent = nullptr);
     BoardSubWindow(std::shared_ptr<Connection> connection, const QString& id, QWidget* parent = nullptr);
+    ~BoardSubWindow() override;
 
     QWidget* createWidget(const ObjectPtr& object) final;
     QSize defaultSize() const final { return QSize(800, 600); }

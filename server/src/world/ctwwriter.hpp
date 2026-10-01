@@ -1,9 +1,8 @@
 /**
- * server/src/world/ctwwriter.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +23,7 @@
 #define TRAINTASTIC_SERVER_WORLD_CTWWRITER_HPP
 
 #include <memory>
+#include <span>
 #include <vector>
 #include <traintastic/utils/stdfilesystem.hpp>
 #include <nlohmann/json.hpp>
@@ -43,6 +43,7 @@ class CTWWriter
 
     void writeFile(const std::filesystem::path& filename, const nlohmann::json& data);
     void writeFile(const std::filesystem::path& filename, const std::string& text);
+    void writeFile(const std::filesystem::path& filename, std::span<const std::byte> bytes);
 };
 
 #endif
