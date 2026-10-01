@@ -19,7 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
 #include "marklin6050interface.hpp"
 #include "../protocol/marklin6050interface/iohandler/serialiohandler.hpp"
 #include "../protocol/marklin6050interface/iohandler/simulationiohandler.hpp"
@@ -35,6 +34,7 @@
 #include "../../world/world.hpp"
 #include "../../core/attributes.hpp"
 #include "../../core/objectproperty.tpp"
+#include "../../core/method.tpp"
 #include "../../core/eventloop.hpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
@@ -52,11 +52,11 @@ static constexpr std::array<uint32_t, 6> kBaudrateValues{
 
 CREATE_IMPL(Marklin6050Interface)
 
-Marklin6050Interface::Marklin6050Interface(World& world, std::string_view objId)
-  : Interface{world, objId}
-  , DecoderController{*this, decoderListColumns}
-  , InputController{static_cast<IdObject&>(*this)}
-  , OutputController{static_cast<IdObject&>(*this)}
+Marklin6050Interface::Marklin6050Interface(World& world, std::string_view _id)
+  : Interface(world, _id)
+  , DecoderController(*this, decoderListColumns)
+  , InputController(static_cast<IdObject&>(*this))
+  , OutputController(static_cast<IdObject&>(*this))
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , baudrate{this, "baudrate", 2400, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , settings{this, "settings", nullptr, PropertyFlags::ReadOnly | PropertyFlags::SubObject}
@@ -113,11 +113,35 @@ void Marklin6050Interface::worldEvent(WorldState state, WorldEvent event)
     return;
   }
 
+  // This command station has no separate track-power control: STOP powers the
+  // layout off (trains stop), GO powers it on (trains resume). Couple the
+  // world's power and run so the Power and Stop/Go buttons act as one —
+  // implemented purely here from the current state via the existing world
+  // methods (no client or server changes). The coupling state change is
+  // deferred (EventLoop::call) so it runs after the current event finished
+  // dispatching, and guarded on the state so it cannot loop.
   switch(event)
   {
-    case WorldEvent::Stop: m_kernel->sendGlobalStop(); break;
-    case WorldEvent::Run:  m_kernel->sendGlobalGo();  break;
-    default: break;
+    case WorldEvent::PowerOff:
+    case WorldEvent::Stop:
+      m_kernel->sendGlobalStop();
+      if(contains(state, WorldState::PowerOn) || contains(state, WorldState::Run))
+      {
+        EventLoop::call([this](){ m_world.powerOff(); });
+      }
+      break;
+
+    case WorldEvent::PowerOn:
+    case WorldEvent::Run:
+      m_kernel->sendGlobalGo();
+      if(!contains(state, WorldState::PowerOn) || !contains(state, WorldState::Run))
+      {
+        EventLoop::call([this](){ m_world.run(); });
+      }
+      break;
+
+    default:
+      break;
   }
 }
 
@@ -150,6 +174,18 @@ bool Marklin6050Interface::setOnline(bool& value, bool simulation)
         onS88Input(address, state);
       };
 
+      m_kernel->stopWorldCallback =
+        [this]()
+        {
+          // Stop the world fully (track power off). Invoked by the kernel on a
+          // detected command-station crash (CTS low > 10 s) or a command-queue
+          // overflow (> 10 s backlog); the kernel logs the specific message.
+          if(contains(m_world.state.value(), WorldState::PowerOn))
+          {
+            m_world.powerOff();
+          }
+        };
+
       if(cfg.extensions)
       {
         m_kernel->extensionTurnoutCallback =
@@ -157,7 +193,7 @@ bool Marklin6050Interface::setOnline(bool& value, bool simulation)
           {
             const OutputPairValue val =
               green ? OutputPairValue::Second : OutputPairValue::First;
-            updateOutputValue(OutputChannel::Accessory, address, val);
+            updateOutputValue(OutputChannel::Accessory, OutputAddress(address), val);
           };
 
         m_kernel->extensionLocoCallback =
@@ -250,12 +286,14 @@ Marklin6050Interface::inputAddressMinMax(InputChannel channel) const
 }
 
 void Marklin6050Interface::inputSimulateChange(
-  InputChannel channel, uint32_t address, SimulateInputAction action)
+  InputChannel channel, const InputLocation& location, SimulateInputAction action)
 {
   if(channel != InputChannel::S88)
   {
     return;
   }
+
+  const auto address = std::get<InputAddress>(location).address;
 
   switch(action)
   {
@@ -267,7 +305,7 @@ void Marklin6050Interface::inputSimulateChange(
 
 void Marklin6050Interface::onS88Input(uint32_t address, bool state)
 {
-  updateInputValue(InputChannel::S88, address,
+  updateInputValue(InputChannel::S88, InputAddress(address),
                    state ? TriState::True : TriState::False);
 }
 
@@ -288,7 +326,7 @@ Marklin6050Interface::outputAddressMinMax(OutputChannel channel) const
 }
 
 bool Marklin6050Interface::setOutputValue(
-  OutputChannel channel, uint32_t address, OutputValue value)
+  OutputChannel channel, const OutputLocation& location, OutputValue value)
 {
   if(!m_kernel)
   {
@@ -297,6 +335,8 @@ bool Marklin6050Interface::setOutputValue(
 
   if(channel == OutputChannel::Accessory)
   {
+    const auto address = std::get<OutputAddress>(location).address;
+
     const auto [min, max] = outputAddressMinMax(channel);
     if(!inRange(address, min, max)) [[unlikely]]
     {
@@ -307,7 +347,7 @@ bool Marklin6050Interface::setOutputValue(
       m_kernel->setAccessory(address, value, settings->turnouttime.value());
     if(result)
     {
-      updateOutputValue(channel, address, value);
+      updateOutputValue(channel, location, value);
     }
     return result;
   }

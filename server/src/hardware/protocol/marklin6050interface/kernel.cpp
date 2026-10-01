@@ -19,7 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
 #include "kernel.hpp"
 #include "iohandler/iohandler.hpp"
 #include "protocol.hpp"
@@ -34,6 +33,12 @@
 using namespace std::chrono_literals;
 
 namespace Marklin6050 {
+
+// ---------------------------------------------------------------------------
+// Command-queue overflow threshold: warn once the estimated time to drain the
+// queue (pending frames * commandInterval) reaches this. 10 s = "too long".
+// ---------------------------------------------------------------------------
+static constexpr uint64_t kTxOverflowMs = 10000;
 
 // ---------------------------------------------------------------------------
 // Interpreted command logging helpers
@@ -124,6 +129,8 @@ Kernel::Kernel(std::string logId_, const Config& config)
   , m_strand{m_ioContext}
   , m_s88Timer{m_ioContext}
   , m_extensionTimer{m_ioContext}
+  , m_txTimer{m_ioContext}
+  , m_ctsMonitorTimer{m_ioContext}
 {
 }
 
@@ -149,6 +156,11 @@ void Kernel::started()
   {
     scheduleExtensionPoll();
   }
+
+  if(m_config.crashDetection)
+  {
+    scheduleCtsMonitor();
+  }
 }
 
 void Kernel::start()
@@ -166,6 +178,10 @@ void Kernel::stop()
       m_s88Timer.cancel();
       m_extensionTimer.cancel();
       m_redundancyTimers.clear();
+      m_txTimer.cancel();
+      m_ctsMonitorTimer.cancel();
+      m_txTimerArmed = false;
+      m_txQueue.clear();
       if(m_ioHandler)
       {
         m_ioHandler->stop();
@@ -190,7 +206,8 @@ void Kernel::sendGlobalGo()
 
 void Kernel::sendGlobalStop()
 {
-  m_strand.post([this](){ sendWithRedundancy(GlobalStop); });
+  // Stop bypasses the command queue so it is never delayed by backlog.
+  m_strand.post([this](){ sendImmediateWithRedundancy({GlobalStop}); });
 }
 
 void Kernel::setLocoSpeed(uint8_t address, uint8_t speed, bool f0)
@@ -225,6 +242,7 @@ void Kernel::setLocoDirection(uint8_t address, bool f0)
 void Kernel::setLocoEmergencyStop(uint8_t address, bool f0)
 {
   // Double direction-toggle: first stops, second restores direction.
+  // Emergency stop bypasses the command queue (sent immediately).
   m_strand.post(
     [this, address, f0]()
     {
@@ -233,7 +251,7 @@ void Kernel::setLocoEmergencyStop(uint8_t address, bool f0)
       {
         cmd |= LocoF0Bit;
       }
-      sendRaw(cmd, address);
+      writeFrameNow({cmd, address});
 
       auto& t = m_redundancyTimers.emplace_back(m_ioContext);
       t.expires_after(50ms);
@@ -243,7 +261,7 @@ void Kernel::setLocoEmergencyStop(uint8_t address, bool f0)
           {
             if(!ec && m_ioHandler)
             {
-              sendRaw(cmd, address);
+              writeFrameNow({cmd, address});
             }
           }));
     });
@@ -483,33 +501,171 @@ void Kernel::writeError(const boost::system::error_code& ec)
 
 void Kernel::sendRaw(uint8_t b1, uint8_t b2)
 {
-  if(m_ioHandler)
+  if(!m_ioHandler)
   {
-    if(m_config.debugLogRXTX)
-    {
-      char raw[8];
-      std::snprintf(raw, sizeof(raw), "%02X %02X", b1, b2);
-      const std::string interp = interpretTx2(b1, b2);
-      EventLoop::call([this, msg = std::string(raw) + "  [" + interp + "]"]()
-        { Log::log(logId, LogMessage::D2001_TX_X, msg); });
-    }
-    m_ioHandler->send({b1, b2});
+    return;
+  }
+  if(m_config.commandQueue)
+  {
+    enqueueTx({b1, b2}, nullptr);
+  }
+  else
+  {
+    writeFrameNow({b1, b2});
   }
 }
 
 void Kernel::sendRaw(uint8_t b)
 {
-  if(m_ioHandler)
+  if(!m_ioHandler)
   {
-    if(m_config.debugLogRXTX)
+    return;
+  }
+  if(m_config.commandQueue)
+  {
+    enqueueTx({b}, nullptr);
+  }
+  else
+  {
+    writeFrameNow({b});
+  }
+}
+
+// Write a 1- or 2-byte frame to the wire immediately (the unpaced path, and the
+// path the drain timer uses). Must run on m_strand.
+void Kernel::writeFrameNow(const std::vector<uint8_t>& frame)
+{
+  if(!m_ioHandler || frame.empty())
+  {
+    return;
+  }
+
+  if(m_config.debugLogRXTX)
+  {
+    char raw[8];
+    std::string interp;
+    if(frame.size() == 1)
     {
-      char raw[4];
-      std::snprintf(raw, sizeof(raw), "%02X", b);
-      const std::string interp = interpretTx1(b);
-      EventLoop::call([this, msg = std::string(raw) + "  [" + interp + "]"]()
-        { Log::log(logId, LogMessage::D2001_TX_X, msg); });
+      std::snprintf(raw, sizeof(raw), "%02X", frame[0]);
+      interp = interpretTx1(frame[0]);
     }
-    m_ioHandler->send({b});
+    else
+    {
+      std::snprintf(raw, sizeof(raw), "%02X %02X", frame[0], frame[1]);
+      interp = interpretTx2(frame[0], frame[1]);
+    }
+    EventLoop::call([this, msg = std::string(raw) + "  [" + interp + "]"]()
+      { Log::log(logId, LogMessage::D2001_TX_X, msg); });
+  }
+
+  if(frame.size() == 1)
+  {
+    m_ioHandler->send({frame[0]});
+  }
+  else
+  {
+    m_ioHandler->send({frame[0], frame[1]});
+  }
+}
+
+void Kernel::enqueueTx(std::vector<uint8_t> frame, std::function<void()> onSent)
+{
+  // Bound the queue: once the backlog reaches the overflow threshold, drop new
+  // frames so memory cannot grow without bound (e.g. if S88 is polled faster
+  // than commandInterval lets it drain). The overflow response has already run.
+  if(static_cast<uint64_t>(m_txQueue.size()) * m_config.commandInterval >= kTxOverflowMs)
+  {
+    checkTxOverflow();
+    return;
+  }
+
+  // Single FIFO: S88/extension polls and loco/accessory commands share one
+  // line and are sent in enqueue order (the hardware makes no distinction).
+  m_txQueue.push_back(TxItem{std::move(frame), std::move(onSent)});
+  checkTxOverflow();
+  armTxTimer();
+}
+
+void Kernel::armTxTimer()
+{
+  if(m_txTimerArmed || !m_ioHandler)
+  {
+    return;
+  }
+  if(m_txQueue.empty())
+  {
+    return;
+  }
+
+  m_txTimerArmed = true;
+  m_txTimer.expires_after(std::chrono::milliseconds(m_config.commandInterval));
+  m_txTimer.async_wait(
+    m_strand.wrap(
+      [this](const boost::system::error_code& ec)
+      {
+        m_txTimerArmed = false;
+        if(ec || !m_ioHandler) // cancelled (stop) or no handler
+        {
+          return;
+        }
+        drainTx();
+      }));
+}
+
+void Kernel::drainTx()
+{
+  // wait-for-CTS: hold the whole queue until the station asserts CTS (ready).
+  if(m_config.waitForCts && m_ioHandler && !m_ioHandler->getCTS())
+  {
+    armTxTimer(); // retry after commandInterval without consuming a frame
+    return;
+  }
+
+  if(m_txQueue.empty())
+  {
+    return;
+  }
+  TxItem item = std::move(m_txQueue.front());
+  m_txQueue.pop_front();
+
+  writeFrameNow(item.data);
+  if(item.onSent)
+  {
+    item.onSent();
+  }
+
+  checkTxOverflow();
+  armTxTimer(); // keep draining while frames remain
+}
+
+void Kernel::checkTxOverflow()
+{
+  const std::size_t pending = m_txQueue.size();
+  const uint64_t backlogMs =
+    static_cast<uint64_t>(pending) * m_config.commandInterval;
+
+  if(backlogMs >= kTxOverflowMs)
+  {
+    if(!m_txOverflowFired)
+    {
+      m_txOverflowFired = true;
+      EventLoop::call(
+        [this, pending]()
+        {
+          // Always log the critical message; stop the world only when warnings
+          // are not being ignored.
+          Log::log(logId, LogMessage::C2006_COMMAND_QUEUE_OVERFLOWING_X,
+                   static_cast<uint32_t>(pending));
+          if(!m_config.ignoreWarnings && stopWorldCallback)
+          {
+            stopWorldCallback();
+          }
+        });
+    }
+  }
+  else if(backlogMs < kTxOverflowMs / 2)
+  {
+    m_txOverflowFired = false; // hysteresis: allow a fresh trigger later
   }
 }
 
@@ -551,6 +707,27 @@ void Kernel::sendWithRedundancy(uint8_t b1, uint8_t b2)
   }
 }
 
+// Like sendWithRedundancy but writes straight to the wire, bypassing the
+// pacing queue — used for stop commands so they are never delayed by backlog.
+void Kernel::sendImmediateWithRedundancy(std::vector<uint8_t> frame)
+{
+  writeFrameNow(frame);
+  for(unsigned int i = 0; i < m_config.redundancy; ++i)
+  {
+    auto& t = m_redundancyTimers.emplace_back(m_ioContext);
+    t.expires_after(std::chrono::milliseconds(50u * (i + 1)));
+    t.async_wait(
+      m_strand.wrap(
+        [this, frame](const boost::system::error_code& ec)
+        {
+          if(!ec && m_ioHandler)
+          {
+            writeFrameNow(frame);
+          }
+        }));
+  }
+}
+
 // ---------------------------------------------------------------------------
 // S88 polling
 // ---------------------------------------------------------------------------
@@ -574,10 +751,27 @@ void Kernel::scheduleS88Poll()
 void Kernel::doS88Poll()
 {
   const uint8_t cmd = S88Base + static_cast<uint8_t>(m_config.s88amount);
-  sendRaw(cmd);
-  m_s88State  = S88State::ReceivingData;
-  m_s88Expect = m_config.s88amount * 2;
-  m_s88Module = 0;
+
+  // Enter the "receiving module data" state only once the poll byte has
+  // actually gone out (it may wait its turn in the single FIFO behind
+  // commands). The paced drain sends one frame per interval, so only one poll
+  // is ever awaiting its reply at a time.
+  auto onSent = [this]()
+  {
+    m_s88State  = S88State::ReceivingData;
+    m_s88Expect = m_config.s88amount * 2;
+    m_s88Module = 0;
+  };
+
+  if(m_config.commandQueue)
+  {
+    enqueueTx({cmd}, onSent);
+  }
+  else
+  {
+    sendRaw(cmd);
+    onSent();
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -602,10 +796,24 @@ void Kernel::scheduleExtensionPoll()
 
 void Kernel::doExtensionPoll()
 {
-  sendRaw(Extension::PollByte);
-  sendRaw(Extension::PollByte);
-  m_extState      = ExtState::WaitCount;
-  m_extEventsLeft = 0;
+  // Enter the extension-receive state only once the poll bytes are really sent.
+  auto onSent = [this]()
+  {
+    m_extState      = ExtState::WaitCount;
+    m_extEventsLeft = 0;
+  };
+
+  if(m_config.commandQueue)
+  {
+    // Both poll bytes go out as one frame so they stay adjacent on the wire.
+    enqueueTx({Extension::PollByte, Extension::PollByte}, onSent);
+  }
+  else
+  {
+    sendRaw(Extension::PollByte);
+    sendRaw(Extension::PollByte);
+    onSent();
+  }
 }
 
 void Kernel::processExtensionByte(uint8_t byte)
@@ -736,6 +944,58 @@ void Kernel::processExtensionByte(uint8_t byte)
 void Kernel::advanceExtensionEvent()
 {
   m_extState = (--m_extEventsLeft > 0) ? ExtState::WaitType : ExtState::Idle;
+}
+
+// ---------------------------------------------------------------------------
+// Crash detection — poll the serial CTS line once per second. If it stays low
+// for more than 10 s the command station has probably crashed or been
+// disconnected: on the EventLoop thread, log a critical message and invoke
+// stopWorldCallback to power the world off.
+// ---------------------------------------------------------------------------
+
+void Kernel::scheduleCtsMonitor()
+{
+  m_ctsMonitorTimer.expires_after(std::chrono::seconds(1));
+  m_ctsMonitorTimer.async_wait(
+    m_strand.wrap(
+      [this](const boost::system::error_code& ec)
+      {
+        if(ec || !m_ioHandler) // cancelled (stop) or no handler
+        {
+          return;
+        }
+
+        if(m_ioHandler->getCTS())
+        {
+          m_ctsLowSince.reset();
+          m_crashFired = false; // recovered — allow a future detection
+        }
+        else
+        {
+          const auto now = std::chrono::steady_clock::now();
+          if(!m_ctsLowSince)
+          {
+            m_ctsLowSince = now;
+          }
+          else if(!m_crashFired && (now - *m_ctsLowSince) >= std::chrono::seconds(10))
+          {
+            m_crashFired = true;
+            EventLoop::call(
+              [this]()
+              {
+                // Always log the crash; stop the world only when warnings are
+                // not being ignored.
+                Log::log(logId, LogMessage::C2007_COMMAND_STATION_CRASH_DETECTED);
+                if(!m_config.ignoreWarnings && stopWorldCallback)
+                {
+                  stopWorldCallback();
+                }
+              });
+          }
+        }
+
+        scheduleCtsMonitor(); // keep monitoring
+      }));
 }
 
 } // namespace Marklin6050

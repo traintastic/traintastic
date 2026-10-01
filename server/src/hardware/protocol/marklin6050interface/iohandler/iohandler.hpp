@@ -50,6 +50,14 @@ public:
   virtual void start() = 0;
   virtual void stop() = 0;
   virtual void send(std::initializer_list<uint8_t> bytes) = 0;
+
+  /**
+   * @brief Is the serial CTS modem line asserted?
+   *
+   * Additive, non-pure: the base (and the simulation handler) report "healthy"
+   * so existing handlers are untouched; only the real serial handler overrides.
+   */
+  virtual bool getCTS() { return true; }
 };
 
 template<class T>

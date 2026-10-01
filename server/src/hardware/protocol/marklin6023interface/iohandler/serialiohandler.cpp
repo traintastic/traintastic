@@ -82,6 +82,11 @@ void SerialIOHandler::sendString(std::string str)
       }));
 }
 
+bool SerialIOHandler::getCTS()
+{
+  return SerialPort::getCTS(m_serialPort);
+}
+
 void SerialIOHandler::startRead()
 {
   if(!m_serialPort.is_open())

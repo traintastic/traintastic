@@ -24,6 +24,11 @@
 #ifdef __linux__
   #include "../os/linux/setbaudrate.hpp"
 #endif
+#if defined(_WIN32)
+  #include <windows.h>
+#else
+  #include <sys/ioctl.h>
+#endif
 
 namespace SerialPort {
 
@@ -86,6 +91,24 @@ void open(boost::asio::serial_port& serialPort, const std::string& device, uint3
   }
   if(ec)
     throw LogMessageException(LogMessage::E2017_SERIAL_PORT_SET_FLOW_CONTROL_FAILED_X, ec);
+}
+
+bool getCTS(boost::asio::serial_port& serialPort)
+{
+  if(!serialPort.is_open())
+    return true; // treat "no port" as healthy so callers never false-trigger
+
+#if defined(_WIN32)
+  DWORD modemStatus = 0;
+  if(GetCommModemStatus(serialPort.native_handle(), &modemStatus))
+    return (modemStatus & MS_CTS_ON) != 0;
+  return true; // query failed -> assume asserted
+#else
+  int status = 0;
+  if(::ioctl(serialPort.native_handle(), TIOCMGET, &status) == 0)
+    return (status & TIOCM_CTS) != 0;
+  return true; // query failed -> assume asserted
+#endif
 }
 
 }

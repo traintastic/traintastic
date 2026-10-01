@@ -43,7 +43,7 @@
         "term": "class_id:interface.marklin6023",
         "definition": "Märklin 6023/223"
     },
-    {         
+    {
         "term": "class_id:interface.rclink",
         "definition": "RC-Link"
     },

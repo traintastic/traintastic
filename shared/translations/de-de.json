@@ -1524,6 +1524,14 @@
         "definition": "SocketCAN ist nur unter Linux verf\u00fcgbar"
     },
     {
+        "term": "message:C2006",
+        "definition": "Befehlswarteschlange l\u00e4uft \u00fcber: %1 Befehle in der Warteschlange. Die Zentraleinheit kann mit dem eingestellten Sendeintervall nicht mithalten."
+    },
+    {
+        "term": "message:C2007",
+        "definition": "Absturz oder Verbindungsverlust der Zentraleinheit erkannt (CTS-Leitung l\u00e4nger als 10 Sekunden niedrig). Die Welt wird gestoppt."
+    },
+    {
         "term": "message:D1001",
         "definition": "Fortsetzen %1 (Multiplikator: %2)"
     },
@@ -3732,6 +3740,46 @@
         "definition": "Aktiviert den Analogbetrieb. Nur verfügbar für 6027 und 6029. Im Analogbetrieb werden keine Lokfunktionen unterstützt und keine digitalen Adressen verwendet."
     },
     {
+        "term": "marklin6050_settings:command_interval",
+        "definition": "Befehls-Sendeintervall"
+    },
+    {
+        "term": "marklin6050_settings:command_interval.help",
+        "definition": "Mindestabstand zwischen Befehlen, die über die serielle Schnittstelle gesendet werden, wenn die Befehlswarteschlange aktiv ist. Erhöhen Sie den Wert, wenn die Zentraleinheit nicht mithält; höhere Werte verringern die Sendegeschwindigkeit. Taktet auch die S88-Rückmeldeabfrage, die dieselbe Leitung nutzt."
+    },
+    {
+        "term": "marklin6050_settings:command_queue",
+        "definition": "Befehlswarteschlange"
+    },
+    {
+        "term": "marklin6050_settings:command_queue.help",
+        "definition": "Sendet ausgehende Befehle nacheinander im eingestellten Sendeintervall statt alle auf einmal. Aktivieren Sie dies, wenn die Zentraleinheit einfriert oder Befehle verliert, wenn schnell viel gesendet wird."
+    },
+    {
+        "term": "marklin6050_settings:crash_detection",
+        "definition": "Absturzerkennung"
+    },
+    {
+        "term": "marklin6050_settings:crash_detection.help",
+        "definition": "Überwacht die serielle CTS-Leitung. Bleibt sie länger als 10 Sekunden niedrig, ist die Zentraleinheit vermutlich abgestürzt oder getrennt: Es wird eine kritische Warnung protokolliert und die gesamte Anlage gestoppt (Strom aus). Erfordert ein Kabel, das CTS verbindet."
+    },
+    {
+        "term": "marklin6050_settings:wait_for_cts",
+        "definition": "Auf CTS warten"
+    },
+    {
+        "term": "marklin6050_settings:wait_for_cts.help",
+        "definition": "Sendet bei aktivierter Befehlswarteschlange einen Befehl nur, solange die CTS-Leitung aktiv ist (die Zentraleinheit bereit ist). Frames werden zurückgehalten, bis CTS zurückkehrt, sodass nie gesendet wird, während die Zentrale besetzt meldet. Nur verfügbar, wenn die Absturzerkennung aktiviert ist."
+    },
+    {
+        "term": "marklin6050_settings:ignore_warnings",
+        "definition": "Warnungen ignorieren"
+    },
+    {
+        "term": "marklin6050_settings:ignore_warnings.help",
+        "definition": "Ein Überlauf der Befehlswarteschlange (> 10 s Rückstand) und ein erkannter Absturz der Zentraleinheit werden immer als kritische Warnungen protokolliert. Wenn aktiviert, schaltet keiner von beiden die Welt automatisch ab – es wird nur die Warnung protokolliert. Hat keine Auswirkung auf die normale Protokollierung."
+    },
+    {
         "term": "marklin6050_settings:central_unit_version",
         "definition": "Zentraleinheit Version"
     },
@@ -3802,5 +3850,5 @@
     {
         "term": "interface.marklin6023:settings",
         "definition": "Einstellungen"
-    } 
+    }
 ]

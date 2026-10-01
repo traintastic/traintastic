@@ -1532,6 +1532,14 @@
         "definition": "SocketCAN is only available on Linux"
     },
     {
+        "term": "message:C2006",
+        "definition": "Command queue is overflowing: %1 commands queued. The central unit cannot keep up with the configured command send interval."
+    },
+    {
+        "term": "message:C2007",
+        "definition": "Command station crash or disconnection detected (CTS line low for over 10 seconds). Stopping the world."
+    },
+    {
         "term": "message:D1001",
         "definition": "Resume %1 (multiplier: %2)"
     },
@@ -3742,6 +3750,46 @@
     {
         "term": "marklin6050_settings:analog.help",
         "definition": "Enables analog operation. Only available for 6027 and 6029. In analog mode, no locomotive functions are supported and no digital addresses are used."
+    },
+    {
+        "term": "marklin6050_settings:command_interval",
+        "definition": "Command send interval"
+    },
+    {
+        "term": "marklin6050_settings:command_interval.help",
+        "definition": "Minimum time between commands sent over the serial line when the command queue is enabled. Increase it if the central unit cannot keep up; higher values reduce how fast commands are sent. Also paces the S88 feedback polling, which shares the same cable."
+    },
+    {
+        "term": "marklin6050_settings:command_queue",
+        "definition": "Command queue"
+    },
+    {
+        "term": "marklin6050_settings:command_queue.help",
+        "definition": "Queue outgoing commands and send them one at a time, spaced by the command send interval, instead of all at once. Enable this if the central unit freezes or misses commands when a lot is sent quickly."
+    },
+    {
+        "term": "marklin6050_settings:crash_detection",
+        "definition": "Crash detection"
+    },
+    {
+        "term": "marklin6050_settings:crash_detection.help",
+        "definition": "Monitor the serial CTS line. If it stays low for more than 10 seconds the command station has probably crashed or been disconnected: a critical warning is logged and the whole layout is stopped (power off). Requires a cable that wires CTS."
+    },
+    {
+        "term": "marklin6050_settings:wait_for_cts",
+        "definition": "Wait for CTS"
+    },
+    {
+        "term": "marklin6050_settings:wait_for_cts.help",
+        "definition": "When the command queue is enabled, only send a command while the CTS line is asserted (the command station is ready). Frames are held until CTS returns, so commands are never sent while the station signals busy. Only available when crash detection is enabled."
+    },
+    {
+        "term": "marklin6050_settings:ignore_warnings",
+        "definition": "Ignore warnings"
+    },
+    {
+        "term": "marklin6050_settings:ignore_warnings.help",
+        "definition": "A command-queue overflow (> 10 s backlog) and a detected command-station crash are always logged as critical warnings. When this is set, neither one automatically powers off the world — only the warning is logged. Does not affect normal logging."
     },
     {
         "term": "marklin6050_settings:central_unit_version",

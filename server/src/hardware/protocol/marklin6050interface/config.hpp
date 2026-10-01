@@ -36,6 +36,12 @@ struct Config
   unsigned int redundancy         = 0;    ///< extra retransmit count (0 = send once)
   bool         extensions         = false; ///< enable extension event polling
   bool         debugLogRXTX       = false; ///< log every TX/RX byte to debug log
+
+  bool         commandQueue       = false; ///< pace outgoing commands through a FIFO queue
+  unsigned int commandInterval    = 100;   ///< milliseconds between queued command sends (10..500)
+  bool         ignoreWarnings     = false; ///< disable the auto power-off on crash/overflow (still logged)
+  bool         crashDetection     = false; ///< monitor CTS; stop the world if low > 10 s
+  bool         waitForCts         = false; ///< queue only sends while CTS is asserted (needs crashDetection)
 };
 
 } // namespace Marklin6050

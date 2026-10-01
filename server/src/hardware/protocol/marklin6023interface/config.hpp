@@ -28,10 +28,16 @@ namespace Marklin6023 {
 
 struct Config
 {
-    unsigned int s88amount   = 1;   ///< number of S88 modules (max 4 for 6023/6223)
-    unsigned int s88interval = 400; ///< milliseconds between S88 poll cycles
-    unsigned int redundancy  = 0;   ///< extra retransmit count (0 = send once)
-    bool         debugLogRXTX = false; ///< log every TX/RX line to the debug log
+  unsigned int s88amount   = 1;   ///< number of S88 modules (max 4 for 6023/6223)
+  unsigned int s88interval = 400; ///< milliseconds between S88 poll cycles
+  unsigned int redundancy  = 0;   ///< extra retransmit count (0 = send once)
+  bool         debugLogRXTX = false; ///< log every TX/RX line to the debug log
+
+  bool         commandQueue    = false; ///< pace outgoing commands through a FIFO queue
+  unsigned int commandInterval = 100;   ///< milliseconds between queued command sends (10..500)
+  bool         ignoreWarnings  = false; ///< disable the auto power-off on crash/overflow (still logged)
+  bool         crashDetection  = false; ///< monitor CTS; stop the world if low > 10 s
+  bool         waitForCts      = false; ///< queue only sends while CTS is asserted (needs crashDetection)
 };
 
 } // namespace Marklin6023

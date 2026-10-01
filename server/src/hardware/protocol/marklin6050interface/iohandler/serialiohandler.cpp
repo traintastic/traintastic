@@ -82,6 +82,11 @@ void SerialIOHandler::send(std::initializer_list<uint8_t> bytes)
       }));
 }
 
+bool SerialIOHandler::getCTS()
+{
+  return SerialPort::getCTS(m_serialPort);
+}
+
 void SerialIOHandler::startRead()
 {
   if(!m_serialPort.is_open())

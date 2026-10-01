@@ -19,7 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
 #include "kernel.hpp"
 #include "iohandler/iohandler.hpp"
 #include "protocol.hpp"
@@ -28,6 +27,7 @@
 #include "../../../log/logmessageexception.hpp"
 
 #include <chrono>
+#include <cstdio>
 #include <string>
 
 using namespace std::chrono_literals;
@@ -39,6 +39,12 @@ namespace Marklin6023 {
 // we skip the current contact and continue — prevents the cycle hanging.
 // ---------------------------------------------------------------------------
 static constexpr auto kS88ResponseTimeout = std::chrono::milliseconds(1000);
+
+// ---------------------------------------------------------------------------
+// Command-queue overflow threshold: warn once the estimated time to drain the
+// queue (pending frames * commandInterval) reaches this. 10 s = "too long".
+// ---------------------------------------------------------------------------
+static constexpr uint64_t kTxOverflowMs = 10000;
 
 // ---------------------------------------------------------------------------
 // Interpreted command logging helpers
@@ -136,6 +142,8 @@ Kernel::Kernel(std::string logId_, const Config& config)
   , m_strand{m_ioContext}
   , m_s88Timer{m_ioContext}
   , m_s88ResponseTimer{m_ioContext}
+  , m_txTimer{m_ioContext}
+  , m_ctsMonitorTimer{m_ioContext}
 {
 }
 
@@ -156,6 +164,11 @@ void Kernel::started()
   {
     startS88Cycle();
   }
+
+  if(m_config.crashDetection)
+  {
+    scheduleCtsMonitor();
+  }
 }
 
 void Kernel::start()
@@ -173,6 +186,10 @@ void Kernel::stop()
       m_s88Timer.cancel();
       m_s88ResponseTimer.cancel();
       m_redundancyTimers.clear();
+      m_txTimer.cancel();
+      m_txTimerArmed = false;
+      m_txQueue.clear();
+      m_ctsMonitorTimer.cancel();
       if(m_ioHandler)
       {
         m_ioHandler->stop();
@@ -197,7 +214,8 @@ void Kernel::sendGlobalGo()
 
 void Kernel::sendGlobalStop()
 {
-  m_strand.post([this](){ sendCmdWithRedundancy("S"); });
+  // Stop bypasses the command queue so it is never delayed by backlog.
+  m_strand.post([this](){ sendImmediateWithRedundancy("S"); });
 }
 
 void Kernel::setLocoSpeed(uint8_t address, uint8_t speed, bool f0)
@@ -226,8 +244,9 @@ void Kernel::setLocoEmergencyStop(uint8_t address, bool /*f0*/)
   m_strand.post(
     [this, address]()
     {
+      // Loco emergency stop bypasses the command queue (sent immediately).
       const std::string cmd = "L " + std::to_string(address) + " D";
-      sendCmd(cmd);
+      writeCmdNow(cmd);
 
       auto& t = m_redundancyTimers.emplace_back(m_ioContext);
       t.expires_after(50ms);
@@ -237,7 +256,7 @@ void Kernel::setLocoEmergencyStop(uint8_t address, bool /*f0*/)
           {
             if(!ec && m_ioHandler)
             {
-              sendCmd(cmd);
+              writeCmdNow(cmd);
             }
           }));
     });
@@ -333,6 +352,25 @@ void Kernel::sendCmd(std::string cmd)
     return;
   }
 
+  if(m_config.commandQueue)
+  {
+    enqueueCmd(std::move(cmd), nullptr);
+  }
+  else
+  {
+    writeCmdNow(cmd);
+  }
+}
+
+// Write a command to the wire immediately (the unpaced path, and the path the
+// drain timer uses). Must run on m_strand.
+void Kernel::writeCmdNow(const std::string& cmd)
+{
+  if(!m_ioHandler)
+  {
+    return;
+  }
+
   if(m_config.debugLogRXTX)
   {
     const std::string interp = interpretTx(cmd);
@@ -344,7 +382,108 @@ void Kernel::sendCmd(std::string cmd)
       });
   }
 
-  m_ioHandler->sendString(std::move(cmd) + CR);
+  m_ioHandler->sendString(cmd + CR);
+}
+
+void Kernel::enqueueCmd(std::string cmd, std::function<void()> onSent)
+{
+  // Bound the queue: once the backlog reaches the overflow threshold, drop new
+  // frames so memory cannot grow without bound (e.g. if S88 is polled faster
+  // than commandInterval lets it drain). The overflow response has already run.
+  if(static_cast<uint64_t>(m_txQueue.size()) * m_config.commandInterval >= kTxOverflowMs)
+  {
+    checkTxOverflow();
+    return;
+  }
+
+  // Single FIFO: S88 queries and loco/accessory commands share one line and
+  // are sent in enqueue order (the hardware makes no distinction).
+  m_txQueue.push_back(TxItem{std::move(cmd), std::move(onSent)});
+  checkTxOverflow();
+  armTxTimer();
+}
+
+void Kernel::armTxTimer()
+{
+  if(m_txTimerArmed || !m_ioHandler)
+  {
+    return;
+  }
+  if(m_txQueue.empty())
+  {
+    return;
+  }
+
+  m_txTimerArmed = true;
+  m_txTimer.expires_after(std::chrono::milliseconds(m_config.commandInterval));
+  m_txTimer.async_wait(
+    m_strand.wrap(
+      [this](const boost::system::error_code& ec)
+      {
+        m_txTimerArmed = false;
+        if(ec || !m_ioHandler) // cancelled (stop) or no handler
+        {
+          return;
+        }
+        drainTx();
+      }));
+}
+
+void Kernel::drainTx()
+{
+  // wait-for-CTS: hold the whole queue until the station asserts CTS (ready).
+  if(m_config.waitForCts && m_ioHandler && !m_ioHandler->getCTS())
+  {
+    armTxTimer(); // retry after commandInterval without consuming a frame
+    return;
+  }
+
+  if(m_txQueue.empty())
+  {
+    return;
+  }
+  TxItem item = std::move(m_txQueue.front());
+  m_txQueue.pop_front();
+
+  writeCmdNow(item.data);
+  if(item.onSent)
+  {
+    item.onSent();
+  }
+
+  checkTxOverflow();
+  armTxTimer(); // keep draining while frames remain
+}
+
+void Kernel::checkTxOverflow()
+{
+  const std::size_t pending = m_txQueue.size();
+  const uint64_t backlogMs =
+    static_cast<uint64_t>(pending) * m_config.commandInterval;
+
+  if(backlogMs >= kTxOverflowMs)
+  {
+    if(!m_txOverflowFired)
+    {
+      m_txOverflowFired = true;
+      EventLoop::call(
+        [this, pending]()
+        {
+          // Always log the critical message; stop the world only when warnings
+          // are not being ignored.
+          Log::log(logId, LogMessage::C2006_COMMAND_QUEUE_OVERFLOWING_X,
+                   static_cast<uint32_t>(pending));
+          if(!m_config.ignoreWarnings && stopWorldCallback)
+          {
+            stopWorldCallback();
+          }
+        });
+    }
+  }
+  else if(backlogMs < kTxOverflowMs / 2)
+  {
+    m_txOverflowFired = false; // hysteresis: allow a fresh trigger later
+  }
 }
 
 void Kernel::sendCmdWithRedundancy(std::string cmd)
@@ -361,6 +500,27 @@ void Kernel::sendCmdWithRedundancy(std::string cmd)
           if(!ec && m_ioHandler)
           {
             sendCmd(cmd);
+          }
+        }));
+  }
+}
+
+// Like sendCmdWithRedundancy but writes straight to the wire, bypassing the
+// pacing queue — used for stop commands so they are never delayed by backlog.
+void Kernel::sendImmediateWithRedundancy(std::string cmd)
+{
+  writeCmdNow(cmd);
+  for(unsigned int i = 0; i < m_config.redundancy; ++i)
+  {
+    auto& t = m_redundancyTimers.emplace_back(m_ioContext);
+    t.expires_after(std::chrono::milliseconds(50u * (i + 1)));
+    t.async_wait(
+      m_strand.wrap(
+        [this, cmd](const boost::system::error_code& ec)
+        {
+          if(!ec && m_ioHandler)
+          {
+            writeCmdNow(cmd);
           }
         }));
   }
@@ -403,23 +563,43 @@ void Kernel::queryNextContact()
     return;
   }
 
-  m_s88LastQueried  = m_s88NextContact;
-  m_s88WaitingReply = true;
-  sendCmd("C " + std::to_string(m_s88NextContact));
+  m_s88LastQueried = m_s88NextContact;
 
-  // Safety net: if the device doesn't respond within the timeout,
-  // skip this contact and continue — prevents the cycle from hanging.
-  m_s88ResponseTimer.expires_after(kS88ResponseTimeout);
-  m_s88ResponseTimer.async_wait(
-    m_strand.wrap(
-      [this](const boost::system::error_code& ec)
-      {
-        if(ec) // cancelled normally (response arrived)
+  // Mark "waiting for reply" and start the response watchdog only once the
+  // query has actually been written to the wire. When the command queue is
+  // enabled the query may sit behind other frames, so arming the 1 s watchdog
+  // at real send time (not enqueue time) keeps it measuring the device, not
+  // the queue delay.
+  auto onSent = [this]()
+  {
+    m_s88WaitingReply = true;
+
+    // Safety net: if the device doesn't respond within the timeout,
+    // skip this contact and continue — prevents the cycle from hanging.
+    m_s88ResponseTimer.expires_after(kS88ResponseTimeout);
+    m_s88ResponseTimer.async_wait(
+      m_strand.wrap(
+        [this](const boost::system::error_code& ec)
         {
-          return;
-        }
-        onS88ResponseTimeout();
-      }));
+          if(ec) // cancelled normally (response arrived)
+          {
+            return;
+          }
+          onS88ResponseTimeout();
+        }));
+  };
+
+  std::string cmd = "C " + std::to_string(m_s88NextContact);
+  if(m_config.commandQueue)
+  {
+    // S88 queries share the single FIFO with commands (one physical line).
+    enqueueCmd(std::move(cmd), onSent);
+  }
+  else
+  {
+    writeCmdNow(cmd);
+    onSent();
+  }
 }
 
 void Kernel::onS88Response(const std::string& line)
@@ -469,6 +649,58 @@ void Kernel::onS88ResponseTimeout()
   m_s88WaitingReply = false;
   m_s88NextContact++;
   queryNextContact();
+}
+
+// ---------------------------------------------------------------------------
+// Crash detection — poll the serial CTS line once per second. If it stays low
+// for more than 10 s the command station has probably crashed or been
+// disconnected: on the EventLoop thread, log a critical message and invoke
+// stopWorldCallback to power the world off.
+// ---------------------------------------------------------------------------
+
+void Kernel::scheduleCtsMonitor()
+{
+  m_ctsMonitorTimer.expires_after(std::chrono::seconds(1));
+  m_ctsMonitorTimer.async_wait(
+    m_strand.wrap(
+      [this](const boost::system::error_code& ec)
+      {
+        if(ec || !m_ioHandler) // cancelled (stop) or no handler
+        {
+          return;
+        }
+
+        if(m_ioHandler->getCTS())
+        {
+          m_ctsLowSince.reset();
+          m_crashFired = false; // recovered — allow a future detection
+        }
+        else
+        {
+          const auto now = std::chrono::steady_clock::now();
+          if(!m_ctsLowSince)
+          {
+            m_ctsLowSince = now;
+          }
+          else if(!m_crashFired && (now - *m_ctsLowSince) >= std::chrono::seconds(10))
+          {
+            m_crashFired = true;
+            EventLoop::call(
+              [this]()
+              {
+                // Always log the crash; stop the world only when warnings are
+                // not being ignored.
+                Log::log(logId, LogMessage::C2007_COMMAND_STATION_CRASH_DETECTED);
+                if(!m_config.ignoreWarnings && stopWorldCallback)
+                {
+                  stopWorldCallback();
+                }
+              });
+          }
+        }
+
+        scheduleCtsMonitor(); // keep monitoring
+      }));
 }
 
 } // namespace Marklin6023

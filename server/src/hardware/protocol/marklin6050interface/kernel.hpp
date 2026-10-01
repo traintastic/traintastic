@@ -25,12 +25,15 @@
 #include "../kernelbase.hpp"
 #include "config.hpp"
 #include "protocol.hpp"
-#include "../../output/outputvalue.hpp"
+#include "../../output/outputtypes.hpp"
 
 #include <functional>
 #include <memory>
 #include <thread>
 #include <vector>
+#include <deque>
+#include <optional>
+#include <chrono>
 #include <cstdint>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/strand.hpp>
@@ -50,6 +53,7 @@ public:
   std::function<void(uint32_t address, bool green)>                           extensionTurnoutCallback;
   std::function<void(uint8_t address, uint8_t speed, bool f0, bool forward)>  extensionLocoCallback;
   std::function<void(uint8_t address, bool f1, bool f2, bool f3, bool f4)>    extensionFuncCallback;
+  std::function<void()>                                                       stopWorldCallback; //!< power off the world (crash / queue overflow)
 
   /**
    * logId_ is passed to KernelBase (differs from the inherited logId member
@@ -87,19 +91,40 @@ public:
   void writeError(const boost::system::error_code& ec);
 
 private:
+  // One queued serial frame plus an optional action run the moment it is
+  // actually written to the wire (used by S88/extension polls to set their
+  // receive state only once the poll has really been sent, so the queue delay
+  // is correctly accounted for).
+  struct TxItem
+  {
+    std::vector<uint8_t>  data;
+    std::function<void()> onSent;
+  };
+
   void sendRaw(uint8_t b1, uint8_t b2);
   void sendRaw(uint8_t b);
   void sendWithRedundancy(uint8_t b);
   void sendWithRedundancy(uint8_t b1, uint8_t b2);
+  void sendImmediateWithRedundancy(std::vector<uint8_t> frame); //!< stop commands — bypass the queue
+
+  // Command queue (used only when m_config.commandQueue is set).
+  void writeFrameNow(const std::vector<uint8_t>& frame);
+  void enqueueTx(std::vector<uint8_t> frame, std::function<void()> onSent);
+  void armTxTimer();
+  void drainTx();
+  void checkTxOverflow();
 
   void scheduleS88Poll();
   void doS88Poll();
 
+  // Crash detection: poll CTS once per second; if low for > 10 s, stop the world.
+  void scheduleCtsMonitor();
+
   enum class S88State { Idle, ReceivingData };
-  S88State     m_s88State  = S88State::Idle;
-  unsigned int m_s88Expect = 0;
-  unsigned int m_s88Module = 0;
-  uint8_t      m_s88High   = 0;
+  S88State     m_s88State        = S88State::Idle;
+  unsigned int m_s88Expect       = 0;
+  unsigned int m_s88Module       = 0;
+  uint8_t      m_s88High         = 0;
 
   void scheduleExtensionPoll();
   void doExtensionPoll();
@@ -124,6 +149,15 @@ private:
   boost::asio::steady_timer              m_s88Timer;
   boost::asio::steady_timer              m_extensionTimer;
   std::vector<boost::asio::steady_timer> m_redundancyTimers;
+
+  std::deque<TxItem>        m_txQueue;       //!< single FIFO: S88/extension polls + loco/accessory commands
+  boost::asio::steady_timer m_txTimer;
+  bool                      m_txTimerArmed   = false;
+  bool                      m_txOverflowFired = false;
+
+  boost::asio::steady_timer                            m_ctsMonitorTimer;
+  std::optional<std::chrono::steady_clock::time_point> m_ctsLowSince;
+  bool                                                 m_crashFired = false;
 };
 
 } // namespace Marklin6050

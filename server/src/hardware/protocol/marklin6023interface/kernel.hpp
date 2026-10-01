@@ -24,13 +24,16 @@
 
 #include "../kernelbase.hpp"
 #include "config.hpp"
-#include "../../output/outputvalue.hpp"
+#include "../../output/outputtypes.hpp"
 
 #include <functional>
 #include <memory>
 #include <string>
 #include <thread>
 #include <vector>
+#include <deque>
+#include <optional>
+#include <chrono>
 #include <cstdint>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/strand.hpp>
@@ -46,6 +49,7 @@ class Kernel : public KernelBase
 public:
   // Callbacks — set before start(); called on the EventLoop thread.
   std::function<void(uint32_t address, bool state)> s88Callback;
+  std::function<void()>                             stopWorldCallback; //!< power off the world (crash / queue overflow)
 
   /**
    * logId_ is passed to KernelBase (differs from the inherited logId member
@@ -82,13 +86,34 @@ public:
   void writeError(const boost::system::error_code& ec);
 
 private:
+  // One queued serial frame plus an optional action run the moment it is
+  // actually written to the wire (S88 queries use it to set their waiting
+  // state only once the query has really been sent, so queue delay is
+  // accounted for).
+  struct TxItem
+  {
+    std::string           data;
+    std::function<void()> onSent;
+  };
+
   void sendCmd(std::string cmd);
   void sendCmdWithRedundancy(std::string cmd);
+  void sendImmediateWithRedundancy(std::string cmd); //!< stop commands — bypass the queue
+
+  // Command queue (used only when m_config.commandQueue is set).
+  void writeCmdNow(const std::string& cmd);
+  void enqueueCmd(std::string cmd, std::function<void()> onSent);
+  void armTxTimer();
+  void drainTx();
+  void checkTxOverflow();
 
   void startS88Cycle();
   void queryNextContact();
   void onS88Response(const std::string& line);
   void onS88ResponseTimeout();
+
+  // Crash detection: poll CTS once per second; if low for > 10 s, stop the world.
+  void scheduleCtsMonitor();
 
   const Config                           m_config;
   boost::asio::io_context                m_ioContext;
@@ -103,6 +128,15 @@ private:
   boost::asio::steady_timer              m_s88Timer;
   boost::asio::steady_timer              m_s88ResponseTimer;
   std::vector<boost::asio::steady_timer> m_redundancyTimers;
+
+  std::deque<TxItem>        m_txQueue;       //!< single FIFO: S88 queries + loco/accessory commands
+  boost::asio::steady_timer m_txTimer;
+  bool                      m_txTimerArmed  = false;
+  bool                      m_txOverflowFired = false;
+
+  boost::asio::steady_timer                            m_ctsMonitorTimer;
+  std::optional<std::chrono::steady_clock::time_point> m_ctsLowSince;
+  bool                                                 m_crashFired = false;
 };
 
 } // namespace Marklin6023

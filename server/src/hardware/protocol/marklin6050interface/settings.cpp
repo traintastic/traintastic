@@ -22,6 +22,7 @@
 #include "settings.hpp"
 #include "../../../core/attributes.hpp"
 #include "../../../utils/displayname.hpp"
+#include "../../../utils/unit.hpp"
 
 namespace Marklin6050 {
 
@@ -71,6 +72,19 @@ Settings::Settings(Object& parent, std::string_view parentPropertyName)
   , redundancy{this, "redundancy", 0, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , extensions{this, "extensions", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , debugLogRXTX{this, "debug_log_rx_tx", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , commandQueue{this, "command_queue", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
+      [this](bool value)
+      {
+        Attributes::setEnabled(commandInterval, value);
+      }}
+  , commandInterval{this, "command_interval", 100, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , ignoreWarnings{this, "ignore_warnings", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , crashDetection{this, "crash_detection", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
+      [this](bool value)
+      {
+        Attributes::setEnabled(waitForCts, value);
+      }}
+  , waitForCts{this, "wait_for_cts", false, PropertyFlags::ReadWrite | PropertyFlags::Store}
 {
   // centralUnitVersion — disabled when online; toggled by updateEnabled
   Attributes::addCategory(centralUnitVersion, "category:marklin_6050");
@@ -138,7 +152,45 @@ Settings::Settings(Object& parent, std::string_view parentPropertyName)
   Attributes::addEnabled(extensions, true);
   m_interfaceItems.add(extensions);
 
-  // debugLogRXTX — always enabled, no need to add enabled attribute
+  // commandQueue — enable the paced command queue; disabled when online
+  Attributes::addCategory(commandQueue, "category:marklin_6050");
+  Attributes::addDisplayName(commandQueue, DisplayName::Marklin6050::commandQueue);
+  Attributes::addHelp(commandQueue, "marklin6050_settings:command_queue.help");
+  Attributes::addEnabled(commandQueue, true);
+  m_interfaceItems.add(commandQueue);
+
+  // commandInterval — ms between queued sends; only enabled while commandQueue is on
+  Attributes::addCategory(commandInterval, "category:marklin_6050");
+  Attributes::addDisplayName(commandInterval, DisplayName::Marklin6050::commandInterval);
+  Attributes::addHelp(commandInterval, "marklin6050_settings:command_interval.help");
+  Attributes::addEnabled(commandInterval, commandQueue);
+  Attributes::addMinMax(commandInterval, 10u, 500u);
+  Attributes::addStep(commandInterval, 10u);
+  Attributes::addUnit(commandInterval, Unit::milliSeconds);
+  m_interfaceItems.add(commandInterval);
+
+  // ignoreWarnings — disable the auto power-off on crash/overflow (still logged)
+  Attributes::addCategory(ignoreWarnings, "category:marklin_6050");
+  Attributes::addDisplayName(ignoreWarnings, DisplayName::Marklin6050::ignoreWarnings);
+  Attributes::addHelp(ignoreWarnings, "marklin6050_settings:ignore_warnings.help");
+  Attributes::addEnabled(ignoreWarnings, true);
+  m_interfaceItems.add(ignoreWarnings);
+
+  // crashDetection — monitor CTS and stop the world on probable crash/disconnect
+  Attributes::addCategory(crashDetection, "category:marklin_6050");
+  Attributes::addDisplayName(crashDetection, DisplayName::Marklin6050::crashDetection);
+  Attributes::addHelp(crashDetection, "marklin6050_settings:crash_detection.help");
+  Attributes::addEnabled(crashDetection, true);
+  m_interfaceItems.add(crashDetection);
+
+  // waitForCts — queue waits for CTS; only enabled while crash detection is on
+  Attributes::addCategory(waitForCts, "category:marklin_6050");
+  Attributes::addDisplayName(waitForCts, DisplayName::Marklin6050::waitForCts);
+  Attributes::addHelp(waitForCts, "marklin6050_settings:wait_for_cts.help");
+  Attributes::addEnabled(waitForCts, crashDetection);
+  m_interfaceItems.add(waitForCts);
+
+  // debugLogRXTX — "log all communication"; always enabled, shown last
   Attributes::addCategory(debugLogRXTX, "category:marklin_6050");
   Attributes::addDisplayName(debugLogRXTX, DisplayName::Hardware::debugLogRXTX);
   m_interfaceItems.add(debugLogRXTX);
@@ -155,6 +207,11 @@ Config Settings::config() const
   cfg.redundancy         = redundancy;
   cfg.extensions         = extensions;
   cfg.debugLogRXTX       = debugLogRXTX;
+  cfg.commandQueue       = commandQueue;
+  cfg.commandInterval    = commandInterval;
+  cfg.ignoreWarnings     = ignoreWarnings;
+  cfg.crashDetection     = crashDetection;
+  cfg.waitForCts         = waitForCts;
   return cfg;
 }
 
@@ -171,6 +228,11 @@ void Settings::updateEnabled(bool online)
   Attributes::setEnabled(s88interval,        !online);
   Attributes::setEnabled(redundancy,         !online);
   Attributes::setEnabled(extensions,         !online);
+  Attributes::setEnabled(commandQueue,       !online);
+  Attributes::setEnabled(commandInterval,    commandQueue && !online);
+  Attributes::setEnabled(ignoreWarnings,     !online);
+  Attributes::setEnabled(crashDetection,     !online);
+  Attributes::setEnabled(waitForCts,         crashDetection && !online);
 
   const uint16_t ver          = centralUnitVersion;
   const bool     analogSupport = (ver == 6027 || ver == 6029);

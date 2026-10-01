@@ -51,6 +51,14 @@ public:
 
   /** Send a fully-formed command string including the CR terminator. */
   virtual void sendString(std::string str) = 0;
+
+  /**
+   * @brief Is the serial CTS modem line asserted?
+   *
+   * Additive, non-pure: the base (and the simulation handler) report "healthy"
+   * so existing handlers are untouched; only the real serial handler overrides.
+   */
+  virtual bool getCTS() { return true; }
 };
 
 template<class T>

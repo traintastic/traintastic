@@ -30,9 +30,6 @@
 #include "ecos/ecosinterface.hpp"
 #include "hsi88.hpp"
 #include "loconetinterface.hpp"
-#include "marklin6023interface.hpp"
-#include "marklin6050interface.hpp"
-#include "marklincaninterface.hpp"
 #include "marklincan/marklincaninterface.hpp"
 #include "rclink/rclinkinterface.hpp"
 #include "traintasticdiyinterface.hpp"
@@ -40,7 +37,8 @@
 #include "wlanmausinterface.hpp"
 #include "xpressnetinterface.hpp"
 #include "z21interface.hpp"
-
+#include "marklin6050interface.hpp"
+#include "marklin6023interface.hpp"
 
 
 std::span<const std::string_view> Interfaces::classList()
@@ -52,16 +50,15 @@ std::span<const std::string_view> Interfaces::classList()
     ECoSInterface::classId,
     HSI88Interface::classId,
     LocoNetInterface::classId,
-	Marklin6023Interface::classId,
-    Marklin6050Interface::classId,
     MarklinCANInterface::classId,
     RCLinkInterface::classId,
     TraintasticDIYInterface::classId,
     WiThrottleInterface::classId,
     WlanMausInterface::classId,
     XpressNetInterface::classId,
-    Z21Interface::classId
-    
+    Z21Interface::classId,
+    Marklin6050Interface::classId,
+    Marklin6023Interface::classId
   );
   return classes;
 }

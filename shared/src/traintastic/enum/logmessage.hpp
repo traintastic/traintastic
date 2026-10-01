@@ -266,6 +266,8 @@ enum class LogMessage : uint32_t
   C2001_ADDRESS_ALREADY_USED_AT_X = LogMessageOffset::critical + 2001,
   C2004_CANT_GET_FREE_SLOT = LogMessageOffset::critical + 2004,
   C2005_SOCKETCAN_IS_ONLY_AVAILABLE_ON_LINUX = LogMessageOffset::critical + 2005,
+  C2006_COMMAND_QUEUE_OVERFLOWING_X = LogMessageOffset::critical + 2006,
+  C2007_COMMAND_STATION_CRASH_DETECTED = LogMessageOffset::critical + 2007,
   C9999_X = LogMessageOffset::critical + 9999,
 
   // Fatal:

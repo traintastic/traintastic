@@ -97,12 +97,17 @@ namespace DisplayName
     constexpr std::string_view analog = "marklin6050_settings:analog";
     constexpr std::string_view centralUnitVersion = "marklin6050_settings:central_unit_version";
     constexpr std::string_view changeAddress = "marklin6050_settings:change_address";
+    constexpr std::string_view commandInterval = "marklin6050_settings:command_interval";
+    constexpr std::string_view commandQueue = "marklin6050_settings:command_queue";
     constexpr std::string_view commandRedundancy = "marklin6050_settings:command_redundancy";
+    constexpr std::string_view crashDetection = "marklin6050_settings:crash_detection";
     constexpr std::string_view feedbackModule = "marklin6050_settings:feedback_module";
+    constexpr std::string_view ignoreWarnings = "marklin6050_settings:ignore_warnings";
     constexpr std::string_view newLocoAddress = "marklin6050_settings:new_loco_address";
     constexpr std::string_view oldLocoAddress = "marklin6050_settings:old_loco_address";
     constexpr std::string_view s88CallInterval = "marklin6050_settings:s88_call_interval";
     constexpr std::string_view s88ModuleAmount = "marklin6050_settings:s88_module_amount";
+    constexpr std::string_view waitForCts = "marklin6050_settings:wait_for_cts";
     constexpr std::string_view redundancy_off = "marklin6050_settings:redundancy_off";
   }
   namespace Object

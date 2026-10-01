@@ -47,6 +47,11 @@ public:
   Property<unsigned int> redundancy;
   Property<bool>         extensions;
   Property<bool>         debugLogRXTX;
+  Property<bool>         commandQueue;
+  Property<unsigned int> commandInterval;
+  Property<bool>         ignoreWarnings;
+  Property<bool>         crashDetection;
+  Property<bool>         waitForCts;
 
   Settings(Object& parent, std::string_view parentPropertyName);
 
