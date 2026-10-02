@@ -414,6 +414,40 @@ var tm = new function ()
 
   this.init = function ()
   {
+    var fullscreen = document.getElementById('fullscreen');
+    if(fullscreen)
+    {
+      if(!document.documentElement.requestFullscreen)
+      {
+        fullscreen.style.display = 'none';
+      }
+      else
+      {
+        fullscreen.onclick = function ()
+        {
+          if(document.fullscreenElement)
+          {
+            document.exitFullscreen();
+          }
+          else
+          {
+            document.documentElement.requestFullscreen().catch(function () { });
+          }
+        };
+        document.addEventListener('fullscreenchange', function ()
+        {
+          if(document.fullscreenElement)
+          {
+            fullscreen.classList.add('active');
+          }
+          else
+          {
+            fullscreen.classList.remove('active');
+          }
+        });
+      }
+    }
+
     if(localStorage.throttleName)
     {
       document.getElementById('throttle_name').value = localStorage.throttleName;

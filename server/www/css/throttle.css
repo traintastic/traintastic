@@ -143,6 +143,22 @@ header h1 .logo
   cursor: pointer;
 }
 
+#fullscreen
+{
+  width: 2.5rem;
+  height: 2.5rem;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 1.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpolyline%20points='15%203%2021%203%2021%209'/%3E%3Cpolyline%20points='9%2021%203%2021%203%2015'/%3E%3Cline%20x1='21'%20y1='3'%20x2='14'%20y2='10'/%3E%3Cline%20x1='3'%20y1='21'%20x2='10'%20y2='14'/%3E%3C/svg%3E");
+}
+
+#fullscreen.active
+{
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='white'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpolyline%20points='4%2014%2010%2014%2010%2020'/%3E%3Cpolyline%20points='20%2010%2014%2010%2014%204'/%3E%3Cline%20x1='14'%20y1='10'%20x2='21'%20y2='3'/%3E%3Cline%20x1='3'%20y1='21'%20x2='10'%20y2='14'/%3E%3C/svg%3E");
+}
+
 #body
 {
   position: relative;
