@@ -61,31 +61,89 @@ function Throttle(parent, id)
 
   var createTrainSelect = function (className)
   {
-    var e = document.createElement('select');
-    e.className = className;
-    e.setAttribute('throttle-id', id);
-    e.setAttribute('name', 'train_select');
-    e.onchange = function ()
+    var bar = document.createElement('div');
+    bar.className = className + ' train-select';
+    bar.setAttribute('throttle-id', id);
+    var current = document.createElement('span');
+    current.className = 'train-select-current';
+    var list = document.createElement('div');
+    list.className = 'train-select-list hide';
+    bar.appendChild(current);
+    bar.appendChild(list);
+    var value = '';
+
+    var close = function () { list.classList.add('hide'); bar.classList.remove('open'); };
+    var open = function () { list.classList.remove('hide'); bar.classList.add('open'); };
+
+    var refresh = function ()
     {
-      if(this.value != '')
+      var name = '';
+      list.querySelectorAll('.train-select-option').forEach(function (o)
       {
-        tm.send({
-          'throttle_id': parseInt(this.getAttribute('throttle-id')),
-          'action': 'acquire',
-          'train_id': this.value,
-          'steal': false,
-        });
-      }
-      else
-      {
-        tm.send({
-          'throttle_id': parseInt(this.getAttribute('throttle-id')),
-          'action': 'release',
-          'stop': localStorage.throttleStopOnRelease != 'false',
-        });
-      }
+        var sel = o.getAttribute('data-value') === value;
+        addRemoveClass(o, sel, 'selected');
+        if(sel) { name = o.innerText; }
+      });
+      current.innerText = value !== '' ? name : 'Select train';
     };
-    return e;
+
+    bar.onclick = function (ev)
+    {
+      if(ev.target.closest('.train-select-list')) { return; }
+      if(list.classList.contains('hide')) { open(); } else { close(); }
+    };
+
+    document.addEventListener('click', function (ev)
+    {
+      if(!bar.contains(ev.target)) { close(); }
+    });
+
+    bar.setOptions = function (trains)
+    {
+      list.innerHTML = '';
+      var none = document.createElement('div');
+      none.className = 'train-select-option';
+      none.setAttribute('data-value', '');
+      none.innerText = '—';
+      list.appendChild(none);
+      trains.forEach(function (train)
+      {
+        var o = document.createElement('div');
+        o.className = 'train-select-option';
+        o.setAttribute('data-value', train['id']);
+        o.innerText = train['name'];
+        list.appendChild(o);
+      });
+      list.querySelectorAll('.train-select-option').forEach(function (o)
+      {
+        o.onclick = function (ev)
+        {
+          ev.stopPropagation();
+          value = o.getAttribute('data-value');
+          refresh();
+          close();
+          if(value !== '')
+          {
+            tm.send({ 'throttle_id': id, 'action': 'acquire', 'train_id': value, 'steal': false });
+          }
+          else
+          {
+            tm.send({ 'throttle_id': id, 'action': 'release', 'stop': localStorage.throttleStopOnRelease != 'false' });
+          }
+        };
+      });
+      refresh();
+    };
+
+    bar.setValue = function (v)
+    {
+      value = v;
+      refresh();
+    };
+
+    bar.getValue = function () { return value; };
+
+    return bar;
   }
 
   var createSpan = function (id, text = '', className = '')
@@ -113,15 +171,15 @@ function Throttle(parent, id)
   {
     if(unit == 'kmph')
     {
-      return value.toFixed(0) + ' km/h';
+      return value.toFixed(0) + '<span class="unit"> km/h</span>';
     }
     if(unit == 'mph')
     {
-      return value.toFixed(0) + ' mph';
+      return value.toFixed(0) + '<span class="unit"> mph</span>';
     }
     if(unit == 'mps')
     {
-      return value.toFixed(1) + ' m/s';
+      return value.toFixed(1) + '<span class="unit"> m/s</span>';
     }
     return value + ' ' + unit;
   }
@@ -162,17 +220,7 @@ function Throttle(parent, id)
 
   this.setTrainList = function (list)
   {
-    var train_select = throttle.querySelector('select[name=train_select]');
-
-    train_select.innerHTML = '';
-    train_select.appendChild(document.createElement('option'));
-    list.forEach(function (train, _)
-    {
-      var option = document.createElement('option');
-      option.value = train['id'];
-      option.innerText = train['name'];
-      train_select.appendChild(option);
-    });
+    throttle.querySelector('.train-select').setOptions(list);
   };
 
   this.showMessage = function (message)
@@ -180,7 +228,7 @@ function Throttle(parent, id)
     var layout = [];
     if(message.tag == 'can_not_activate_train')
     {
-      throttle.querySelector('select[name=train_select]').value = this.trainId;
+      throttle.querySelector('.train-select').setValue(this.trainId);
     }
 
     text = document.createElement('p');
@@ -192,7 +240,7 @@ function Throttle(parent, id)
       var e = document.createElement('button');
       e.innerText = 'Steal';
       e.setAttribute('throttle-id', id);
-      e.setAttribute('train-id', throttle.querySelector('select[name=train_select]').value);
+      e.setAttribute('train-id', throttle.querySelector('.train-select').getValue());
       e.onclick = function ()
       {
         var throttleId = parseInt(this.getAttribute('throttle-id'));
@@ -272,7 +320,45 @@ function Throttle(parent, id)
       buttons.forEach(function (button) { button.disabled = true; });
       this.trainId = '';
     }
-    throttle.querySelector('select[name=train_select]').value = this.trainId;
+    throttle.querySelector('.train-select').setValue(this.trainId);
+    this.fit();
+  }
+
+  this.fit = function ()
+  {
+    var panel = functions.parentElement;
+    if(!panel)
+    {
+      return;
+    }
+    if(window.innerWidth >= 768)
+    {
+      panel.style.removeProperty('--fn-scale');
+      return;
+    }
+    panel.style.setProperty('--fn-scale', '1');
+    if(panel.scrollHeight <= panel.clientHeight)
+    {
+      return;
+    }
+    var lo = 0.3;
+    var hi = 1;
+    var best = 0.3;
+    for(var i = 0; i < 14; i++)
+    {
+      var mid = (lo + hi) / 2;
+      panel.style.setProperty('--fn-scale', mid.toFixed(3));
+      if(panel.scrollHeight <= panel.clientHeight)
+      {
+        best = mid;
+        lo = mid;
+      }
+      else
+      {
+        hi = mid;
+      }
+    }
+    panel.style.setProperty('--fn-scale', best.toFixed(3));
   }
 
   this.setDirection = function (direction)
@@ -304,12 +390,12 @@ function Throttle(parent, id)
 
   this.setSpeed = function (value, unit)
   {
-    document.getElementById('throttle-' + this.id + '-actual-speed').innerText = formatSpeed(value, unit);
+    document.getElementById('throttle-' + this.id + '-actual-speed').innerHTML = formatSpeed(value, unit);
   }
 
   this.setThrottleSpeed = function (value, unit)
   {
-    document.getElementById('throttle-' + this.id + '-target-speed').innerText = formatSpeed(value, unit);
+    document.getElementById('throttle-' + this.id + '-target-speed').innerHTML = formatSpeed(value, unit);
   }
 
   this.setFunctionValue = function (vehicleId, number, value)
@@ -526,4 +612,15 @@ document.addEventListener("visibilitychange", function ()
   {
     tm.eStopAll();
   }
+});
+
+window.addEventListener("resize", function ()
+{
+  tm.throttles.forEach(function (throttle)
+  {
+    if(throttle)
+    {
+      throttle.fit();
+    }
+  });
 });

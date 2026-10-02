@@ -19,6 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+*,
+*::before,
+*::after
+{
+  box-sizing: border-box;
+}
+
 .flex-column
 {
   display: flex;
@@ -35,6 +42,7 @@
 {
   display: flex;
   flex: 1 1 auto;
+  min-width: 0;
 }
 
 .flex-fixed
@@ -83,7 +91,9 @@ body
 {
   height: 100vh;
   height: 100dvh;
-  width: 100vw;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 html
@@ -113,6 +123,16 @@ header
 header h1
 {
   margin: 0;
+  font-size: clamp(1.25rem, 5vw, 2rem);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+header h1 .logo
+{
+  height: 1.4em;
+  width: auto;
 }
 
 #open_settings
@@ -127,6 +147,9 @@ header h1
 {
   position: relative;
   flex-grow: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 #settings
@@ -136,6 +159,13 @@ header h1
   background-color: #121212;
   width: 100%;
   height: 100%;
+  overflow-y: auto;
+}
+
+#settings > div
+{
+  max-width: 30rem;
+  margin: 0 auto;
 }
 
 #settings div
@@ -149,6 +179,12 @@ header h1
   display: block;
 }
 
+#settings input[type=text]
+{
+  width: 100%;
+  max-width: 100%;
+}
+
 #settings button
 {
   background-color: #bb86fc;
@@ -157,6 +193,8 @@ header h1
   border-radius: 0.5rem;
   display: inline-block;
   padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
 }
 
 #body>div.status
@@ -164,7 +202,280 @@ header h1
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
   height: 100%;
+  padding: 1rem;
+}
+
+#throttles
+{
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+#throttles > div
+{
+  flex: 1 1 18rem;
+  max-width: 26rem;
+  margin: 0 auto;
+  height: calc(100dvh - 4.5rem);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto auto auto auto;
+  grid-template-areas:
+    "sel"
+    "fn"
+    "spd"
+    "pm"
+    "dir"
+    "stop";
+  column-gap: 1rem;
+  row-gap: 0.15rem;
+}
+
+#throttles .flex-row
+{
+  flex-wrap: wrap;
+}
+
+#throttles > div > div.flex-row:nth-of-type(3)
+{
+  display: contents;
+}
+
+#throttles > div > .train-select
+{
+  grid-area: sel;
+}
+
+#throttles > div > div.flex-row:nth-of-type(2)
+{
+  grid-area: spd;
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  justify-content: start;
+  align-items: baseline;
+  column-gap: 0.4rem;
+  row-gap: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  padding: 0.4rem 0.75rem;
+}
+
+#throttles > div > div.flex-row:nth-of-type(2) > span
+{
+  margin: 0;
+  white-space: nowrap;
+}
+
+#throttles > div > div.flex-row:nth-of-type(2) > span:nth-child(1),
+#throttles > div > div.flex-row:nth-of-type(2) > span:nth-child(3)
+{
+  font-size: clamp(0.6rem, 2vw, 0.9rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  font-weight: bold;
+}
+
+#throttles > div > div.flex-row:nth-of-type(2) > span:nth-child(2)
+{
+  font-size: clamp(1.3rem, 6vw, 2.2rem);
+  font-weight: bold;
+  color: #03dac6;
+  line-height: 1.05;
+}
+
+#throttles > div > div.flex-row:nth-of-type(2) > span:nth-child(4)
+{
+  font-size: clamp(1.05rem, 4.5vw, 1.7rem);
+  font-weight: bold;
+  line-height: 1.05;
+}
+
+#throttles > div > div.flex-row:nth-of-type(2) .unit
+{
+  font-size: 1em;
+  font-weight: bold;
+}
+
+#throttles > div > div.flex-row:nth-of-type(3) > .flex-resize:first-child
+{
+  grid-area: fn;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#throttles > div > div.flex-row:nth-of-type(3) > .flex-resize:last-child
+{
+  grid-area: pm;
+  width: 100%;
+}
+
+#throttles > div > div.flex-row:nth-of-type(4)
+{
+  grid-area: dir;
+}
+
+#throttles > div > button.red
+{
+  grid-area: stop;
+}
+
+#throttles fieldset
+{
+  flex: 0 0 auto;
+  gap: calc(0.15rem * var(--fn-scale, 1));
+  margin: calc(0.25rem * var(--fn-scale, 1)) 0;
+}
+
+#throttles fieldset legend
+{
+  font-size: calc(1rem * var(--fn-scale, 1));
+  padding: calc(0.25rem * var(--fn-scale, 1)) calc(0.5rem * var(--fn-scale, 1));
+  border-radius: calc(0.5rem * var(--fn-scale, 1));
+  margin-bottom: calc(0.1rem * var(--fn-scale, 1));
+}
+
+#throttles .flex-row > span
+{
+  white-space: nowrap;
+  margin-right: 0.35rem;
+}
+
+#throttles .flex-row > span.stretch
+{
+  width: auto;
+  flex: 0 1 auto;
+}
+
+@media (min-height: 46rem)
+{
+  #throttles > div > div.flex-row:nth-of-type(2)
+  {
+    grid-template-columns: auto 1fr;
+    column-gap: 0.6rem;
+  }
+}
+
+@media (min-width: 48rem)
+{
+  #throttles
+  {
+    min-height: 100%;
+    padding: 1rem;
+  }
+
+  #throttles > div
+  {
+    flex-basis: auto;
+    width: 100%;
+    max-width: 84rem;
+    height: calc(100dvh - 6rem);
+    grid-template-columns: 1.7fr 1fr;
+    grid-template-rows: auto 1.6fr 1fr auto auto;
+    grid-template-areas:
+      "sel sel"
+      "fn  spd"
+      "fn  pm"
+      "fn  dir"
+      "fn  stop";
+    column-gap: 1.5rem;
+    row-gap: 0.6rem;
+  }
+
+  #throttles > div > .train-select
+  {
+    font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+    min-height: 4rem;
+    background-size: 2.25rem;
+    background-position: right 1.5rem center;
+    padding-right: 3.75rem;
+  }
+
+  .train-select-list
+  {
+    font-size: 1.25rem;
+  }
+
+  #throttles > div > div.flex-row:nth-of-type(2)
+  {
+    grid-template-columns: auto 1fr;
+    align-content: center;
+    align-items: baseline;
+    column-gap: 0.75rem;
+    row-gap: 0.35rem;
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+  }
+
+  #throttles > div > div.flex-row:nth-of-type(2) > span:nth-child(1),
+  #throttles > div > div.flex-row:nth-of-type(2) > span:nth-child(3)
+  {
+    font-size: clamp(0.85rem, 1.3vw, 1.15rem);
+  }
+
+  #throttles > div > div.flex-row:nth-of-type(2) > span:nth-child(2)
+  {
+    font-size: clamp(3.5rem, 8.5vw, 8.5rem);
+  }
+
+  #throttles > div > div.flex-row:nth-of-type(2) > span:nth-child(4)
+  {
+    font-size: clamp(1.6rem, 3.2vw, 3rem);
+  }
+
+  #throttles > div > div.flex-row:nth-of-type(2) .unit
+  {
+    font-size: 0.38em;
+    opacity: 0.8;
+  }
+
+  #throttles > div > div.flex-row:nth-of-type(3) > .flex-resize:first-child
+  {
+    align-self: stretch;
+    height: 100%;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    padding: 0.75rem;
+  }
+
+  #throttles fieldset
+  {
+    flex: 1 1 auto;
+  }
+
+  #throttles > div > div.flex-row:nth-of-type(3) > .flex-resize:last-child
+  {
+    height: 100%;
+  }
+
+  #throttles > div > div.flex-row:nth-of-type(3) > .flex-resize:last-child > .flex-column
+  {
+    height: 100%;
+  }
+
+  #throttles > div > div.flex-row:nth-of-type(3) > .flex-resize:last-child button.control
+  {
+    flex: 1 1 0;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  #throttles > div > div.flex-row:nth-of-type(4) button.control
+  {
+    min-height: 4rem;
+  }
+
+  #throttles > div > button.red
+  {
+    min-height: 4.5rem;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+  }
 }
 
 button.control,
@@ -175,10 +486,12 @@ select.control
   border: none;
   border-radius: 1.5rem;
   cursor: pointer;
-  font-size: 2.5rem;
+  font-size: clamp(1.25rem, 4vw, 2rem);
   font-weight: bold;
   margin: 0.25rem;
-  height: 5rem;
+  min-height: 3.25rem;
+  padding: 0.4rem 0.6rem;
+  line-height: 1;
 }
 
 button.control:disabled
@@ -192,14 +505,114 @@ button.control.active
   background-color: #03dac6;
 }
 
+button:active,
+.train-select:active
+{
+  filter: brightness(0.82);
+}
+
+button:disabled:active
+{
+  filter: none;
+}
+
 button.red
 {
   background-color: #cf6679;
 }
 
-button.square
+.train-select
 {
-  width: 5rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #bb86fc;
+  color: black;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  font-size: clamp(1.25rem, 4vw, 2rem);
+  font-weight: bold;
+  margin: 0.25rem;
+  min-height: 3.25rem;
+  padding: 0.4rem 3rem 0.4rem 1rem;
+  line-height: 1;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='3'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpolyline%20points='5%209%2012%2016%2019%209'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.6rem;
+}
+
+.train-select.open
+{
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+}
+
+.train-select-current
+{
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.train-select-list
+{
+  position: absolute;
+  top: calc(100% + 0.3rem);
+  left: 0;
+  right: 0;
+  z-index: 5;
+  background-color: #241b33;
+  border: 2px solid #bb86fc;
+  border-radius: 1.25rem;
+  padding: 0.35rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  font-size: 1.1rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.6);
+}
+
+.train-select-option
+{
+  padding: 0.6rem 1rem;
+  border-radius: 1rem;
+  color: white;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.train-select-option:hover
+{
+  background-color: rgba(187, 134, 252, 0.25);
+}
+
+.train-select-option.selected
+{
+  background-color: #bb86fc;
+  color: black;
+}
+
+.train-select-option:active
+{
+  filter: brightness(0.9);
+}
+
+button.control.square
+{
+  min-width: calc(3.25rem * var(--fn-scale, 1));
+  width: auto;
+  height: calc(3.25rem * var(--fn-scale, 1));
+  min-height: calc(3.25rem * var(--fn-scale, 1));
+  margin: calc(0.2rem * var(--fn-scale, 1));
+  padding: calc(0.25rem * var(--fn-scale, 1)) calc(0.6rem * var(--fn-scale, 1));
+  font-size: calc(1.05rem * var(--fn-scale, 1));
+  border-radius: calc(0.75rem * var(--fn-scale, 1));
+  white-space: nowrap;
 }
 
 fieldset
@@ -207,12 +620,17 @@ fieldset
   border: none;
   margin: 0.25rem 0;
   padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  align-content: flex-start;
 }
 
 fieldset legend
 {
   background-color: #444;
   width: 100%;
+  flex: 1 0 100%;
   border-radius: 0.5rem;
   padding: 0.25rem 0.5rem;
 }
@@ -229,7 +647,7 @@ input[type=text]
   border-radius: 1.5rem;
   font-size: 150%;
   color: white;
-  padding: 0 0.5rem;
+  padding: 0.25rem 0.5rem;
   margin: 0.5rem 0 1rem 0;
 }
 
@@ -244,6 +662,7 @@ label.toggle_switch
 {
   cursor: pointer;
   width: 3rem;
+  min-width: 3rem;
   height: 1.5rem;
   background: grey;
   display: block;
@@ -294,6 +713,7 @@ div.message
   text-align: center;
   padding: 0.5rem;
   min-width: 50%;
+  max-width: calc(100% - 1rem);
   font-size: 125%;
 }
 
@@ -316,4 +736,15 @@ div.message.error button
   border-radius: 0.5rem;
   display: inline-block;
   padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+@media (max-width: 24rem)
+{
+  button.control,
+  select.control
+  {
+    font-size: clamp(1.1rem, 5vw, 1.5rem);
+    min-height: 3rem;
+  }
 }

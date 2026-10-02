@@ -7,12 +7,20 @@
   <title>Throttle | Traintastic</title>
   <link rel="stylesheet" href="/css/normalize.css">
   <link rel="stylesheet" href="/css/throttle.css">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#121212">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Throttle">
+  <link rel="apple-touch-icon" href="/appicon-256.png">
+  <link rel="icon" type="image/svg+xml" href="/appicon.svg">
 </head>
 
 <body onload="tm.init()">
   <header>
     <div id="open_settings" class="right">&#8942;</div>
-    <h1>Traintastic</h1>
+    <h1><img class="logo" src="/favicon.ico" alt=""> Traintastic</h1>
   </header>
   <div id="body">
     <div id="settings">
@@ -41,6 +49,15 @@
     <div id="throttles" class="flex-row hide"></div>
   </div>
   <script src="/js/throttle.js"></script>
+  <script>
+    if('serviceWorker' in navigator)
+    {
+      window.addEventListener('load', function ()
+      {
+        navigator.serviceWorker.register('/sw.js').catch(function () { });
+      });
+    }
+  </script>
 </body>
 
 </html>
