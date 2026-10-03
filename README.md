@@ -90,19 +90,19 @@ This project is not affiliated with, endorsed by, or connected to Digitrax.
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/cyrilpawelko">
-                    <img src="https://avatars.githubusercontent.com/u/1159809?v=4" width="100;" alt="cyrilpawelko"/>
+                <a href="https://github.com/kamil00110">
+                    <img src="https://avatars.githubusercontent.com/u/68923965?v=4" width="100;" alt="kamil00110"/>
                     <br />
-                    <sub><b>Cyril Pawelko</b></sub>
+                    <sub><b>kamil00110</b></sub>
                 </a>
             </td>
 		</tr>
 		<tr>
             <td align="center">
-                <a href="https://github.com/kamil00110">
-                    <img src="https://avatars.githubusercontent.com/u/68923965?v=4" width="100;" alt="kamil00110"/>
+                <a href="https://github.com/cyrilpawelko">
+                    <img src="https://avatars.githubusercontent.com/u/1159809?v=4" width="100;" alt="cyrilpawelko"/>
                     <br />
-                    <sub><b>kamil00110</b></sub>
+                    <sub><b>Cyril Pawelko</b></sub>
                 </a>
             </td>
             <td align="center">
