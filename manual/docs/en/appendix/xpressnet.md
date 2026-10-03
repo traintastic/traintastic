@@ -46,6 +46,15 @@ This is useful for:
 - Verifying that messages are transmitted and received as expected.
 - Exploring vendor-specific or undocumented extensions of XpressNet.
 
+### Sending raw messages
+
+Through [**Lua scripting**](../advanced/scripting-basics.md), it is also possible to send **raw XpressNet messages**, see [`send()`](lua/object/xpressnetinterface.md#send).
+
+!!! warning "Use this with caution!"
+    - These messages bypass Traintastic’s normal handling.
+    - You need a solid understanding of XpressNet to avoid conflicts.
+    - Side effects may occur that Traintastic is not aware of or cannot manage.
+
 ---
 
 !!! footnote

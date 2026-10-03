@@ -88,6 +88,8 @@ class DecoderController
     const std::shared_ptr<Decoder>& getDecoder(DecoderProtocol protocol, uint16_t address);
 
     virtual void decoderChanged(const Decoder& decoder, DecoderChangeFlags changes, uint32_t functionNumber) = 0;
+    virtual void decoderFunctionsChanged(const Decoder& decoder);
+    virtual void decoderAddressChanged(const Decoder& decoder, uint16_t oldAddress, uint16_t newAddress);
 };
 
 #endif
