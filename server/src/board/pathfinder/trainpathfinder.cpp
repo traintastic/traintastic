@@ -63,7 +63,7 @@ TrainPathFinder::TrainPathFinder(Object& parent_, std::string_view parentPropert
   m_interfaceItems.add(reserve);
 }
 
-std::vector<BlockRailTile*> TrainPathFinder::find(BlockRailTile& from, std::optional<BlockSide> fromSide, BlockRailTile& to, std::optional<BlockSide>& toSide)
+std::vector<std::tuple<BlockRailTile*, BlockTrainDirection>> TrainPathFinder::find(BlockRailTile& from, std::optional<BlockSide> fromSide, BlockRailTile& to, std::optional<BlockSide>& toSide)
 {
   return dijkstra(from, fromSide, to, toSide,
     [](const BlockPath& path, BlockSide enterSide) -> uint64_t
@@ -107,7 +107,7 @@ std::vector<BlockRailTile*> TrainPathFinder::find(BlockRailTile& from, std::opti
     });
 }
 
-std::vector<BlockRailTile*> TrainPathFinder::dijkstra(BlockRailTile& from, std::optional<BlockSide> fromSide, BlockRailTile& to, std::optional<BlockSide>& toSide, std::function<uint64_t(const BlockPath&, BlockSide)> getCost)
+std::vector<std::tuple<BlockRailTile*, BlockTrainDirection>> TrainPathFinder::dijkstra(BlockRailTile& from, std::optional<BlockSide> fromSide, BlockRailTile& to, std::optional<BlockSide>& toSide, std::function<uint64_t(const BlockPath&, BlockSide)> getCost)
 {
   (void)toSide;
 
@@ -216,11 +216,11 @@ std::vector<BlockRailTile*> TrainPathFinder::dijkstra(BlockRailTile& from, std::
   }
 
   // reconstruct path backwards:
-  std::vector<BlockRailTile*> blocks;
+  std::vector<std::tuple<BlockRailTile*, BlockTrainDirection>> blocks;
 
   for(State state = destination;;)
   {
-    blocks.emplace_back(state.block);
+    blocks.emplace_back(std::make_tuple(state.block, state.side == BlockSide::A ? BlockTrainDirection::TowardsB : BlockTrainDirection::TowardsA));
 
     if(state.block == &from && distance[state] == 0)
     {

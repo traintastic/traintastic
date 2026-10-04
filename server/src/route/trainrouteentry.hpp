@@ -25,6 +25,7 @@
 #include "../core/object.hpp"
 #include "../core/property.hpp"
 #include "../core/objectproperty.hpp"
+#include <traintastic/enum/blocktraindirection.hpp>
 #include <traintastic/enum/trainrouteentrysource.hpp>
 
 class BlockRailTile;
@@ -32,6 +33,8 @@ class TrainRoute;
 
 class TrainRouteEntry : public Object
 {
+  friend class TrainRoute;
+
   CLASS_ID("train_route_entry")
 
 public:
@@ -45,11 +48,17 @@ public:
 
   std::string getObjectId() const final;
 
+  BlockTrainDirection blockTrainDirection() const
+  {
+    return m_blockTrainDirection;
+  }
+
 protected:
   void worldEvent(WorldState state, WorldEvent event) override;
 
 private:
   TrainRoute& m_route;
+  BlockTrainDirection m_blockTrainDirection = BlockTrainDirection::Unknown;
 
   void updateEnabled();
 };

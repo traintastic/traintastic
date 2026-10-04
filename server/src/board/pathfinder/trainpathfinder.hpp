@@ -24,6 +24,8 @@
 
 #include "pathfinder.hpp"
 #include <optional>
+#include <tuple>
+#include <traintastic/enum/blocktraindirection.hpp>
 #include "../../core/method.hpp"
 
 class BlockPath;
@@ -40,10 +42,10 @@ public:
 
   TrainPathFinder(Object& parent_, std::string_view parentPropertyName);
 
-  static std::vector<BlockRailTile*> find(BlockRailTile& from, std::optional<BlockSide> fromSide, BlockRailTile& to, std::optional<BlockSide>& toSide);
+  static std::vector<std::tuple<BlockRailTile*, BlockTrainDirection>> find(BlockRailTile& from, std::optional<BlockSide> fromSide, BlockRailTile& to, std::optional<BlockSide>& toSide);
 
 private:
-  static std::vector<BlockRailTile*> dijkstra(BlockRailTile& from, std::optional<BlockSide> fromSide, BlockRailTile& to, std::optional<BlockSide>& toSide, std::function<uint64_t(const BlockPath&, BlockSide)> getCost);
+  static std::vector<std::tuple<BlockRailTile*, BlockTrainDirection>> dijkstra(BlockRailTile& from, std::optional<BlockSide> fromSide, BlockRailTile& to, std::optional<BlockSide>& toSide, std::function<uint64_t(const BlockPath&, BlockSide)> getCost);
 };
 
 #endif

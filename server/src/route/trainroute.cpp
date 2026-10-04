@@ -143,28 +143,33 @@ void TrainRoute::resolve()
   bool invalid = false;
   for(auto it = ++entries.begin(); it != entries.end(); ++it)
   {
-    const auto& from = route.back();
+    auto& from = route.back();
     const auto fromSide = toSide;// ? ~*toSide : toSide;
     const auto& to = *it;
     toSide = std::nullopt;
 
     if(const auto blocks = m_world.trainPathFinder->find(*from->block, fromSide, *to->block, toSide); blocks.size() >= 2)
     {
+      from->m_blockTrainDirection = std::get<1>(blocks.front());
       for(size_t i = 1; i < blocks.size() - 1; ++i)
       {
-        assert(blocks[i]);
+        assert(std::get<0>(blocks[i]));
         // FIXME: recycle existing objects
-        route.emplace_back(std::make_shared<TrainRouteEntry>(*this, *blocks[i]))->source.setValueInternal(TrainRouteEntrySource::Resolver);
+        auto& entry = route.emplace_back(std::make_shared<TrainRouteEntry>(*this, *std::get<0>(blocks[i])));
+        entry->source.setValueInternal(TrainRouteEntrySource::Resolver);
+        entry->m_blockTrainDirection = std::get<1>(blocks[i]);
       }
+      route.emplace_back(to)->m_blockTrainDirection = std::get<1>(blocks.back());
     }
     else // insert dummy item indicating "no path"
     {
       // FIXME: recycle existing objects
-      route.emplace_back(std::make_shared<TrainRouteEntry>(*this))->source.setValueInternal(TrainRouteEntrySource::Resolver);
+      auto& entry = route.emplace_back(std::make_shared<TrainRouteEntry>(*this));
+      entry->source.setValueInternal(TrainRouteEntrySource::Resolver);
+      entry->m_blockTrainDirection = BlockTrainDirection::Unknown;
       invalid = true;
+      route.emplace_back(to)->m_blockTrainDirection = BlockTrainDirection::Unknown;
     }
-
-    route.emplace_back(to);
   }
 
   entriesResolved.setValuesInternal(route);
