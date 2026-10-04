@@ -207,6 +207,7 @@ file(GLOB SOURCES
   "src/throttle/*.cpp"
   "src/throttle/list/*.hpp"
   "src/throttle/list/*.cpp"
+  "src/traffic/*.cpp"
   "src/train/*.hpp"
   "src/train/*.cpp"
   "src/traintastic/*.hpp"

@@ -36,6 +36,8 @@
 #include "../hardware/decoder/decoder.hpp"
 #include "../log/log.hpp"
 #include "../route/trainroute.hpp"
+#include "../traffic/dispatcher.hpp"
+#include "../traffic/traintracking.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
 #include "../utils/unit.hpp"
@@ -135,7 +137,11 @@ Train::Train(World& world, std::string_view _id) :
         m_speedTimer.cancel();
         throttleSpeed.setValueInternal(0);
         speed.setValueInternal(0);
-        isStopped.setValueInternal(true);
+        if(!isStopped)
+        {
+          isStopped.setValueInternal(true);
+          TrainTracking::trainStopped(*this);
+        }
         updateEnabled();
       }
 
@@ -145,6 +151,8 @@ Train::Train(World& world, std::string_view _id) :
         for(const auto& vehicle : m_poweredVehicles)
           vehicle->setEmergencyStop(value);
       }
+
+      Dispatcher::trainEmergencyStopChanged(*this);
     }},
   weight{*this, "weight", 0, WeightUnit::Ton, PropertyFlags::ReadWrite | PropertyFlags::Store},
   overrideWeight{this, "override_weight", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -205,11 +213,20 @@ Train::Train(World& world, std::string_view _id) :
 
         route.setValueInternal(newRoute);
         routePosition.setValueInternal(0);
+        Dispatcher::trainRouteChanged(*this);
 
         auto self = shared_ptr<Train>();
         if(oldRoute)
         {
+          if(m_world.debugTrainEvents)
+          {
+            Log::log(*this, LogMessage::D3027_TRAIN_X_CANCELED_ROUTE_X, name.value(), oldRoute->name.value());
+          }
           fireEvent(onRouteCanceled, self, oldRoute);
+        }
+        if(m_world.debugTrainEvents)
+        {
+          Log::log(*this, LogMessage::D3026_TRAIN_X_ASSIGNED_ROUTE_X, name.value(), newRoute->name.value());
         }
         fireEvent(onRouteAssigned, self, newRoute);
 
@@ -223,6 +240,11 @@ Train::Train(World& world, std::string_view _id) :
           auto oldRoute = route.value();
           route.setValueInternal(nullptr);
           routePosition.setValueInternal(0);
+          Dispatcher::trainRouteChanged(*this);
+          if(m_world.debugTrainEvents)
+          {
+            Log::log(*this, LogMessage::D3027_TRAIN_X_CANCELED_ROUTE_X, name.value(), oldRoute->name.value());
+          }
           fireEvent(onRouteCanceled, shared_ptr<Train>(), oldRoute);
         }
       }}
@@ -541,7 +563,13 @@ void Train::updateSpeed()
   const bool currentValue = isStopped;
   isStopped.setValueInternal(m_speedState == SpeedState::Idle && almostZero(currentSpeed) && almostZero(targetSpeed));
   if(currentValue != isStopped)
+  {
+    if(isStopped)
+    {
+      TrainTracking::trainStopped(*this);
+    }
     updateEnabled();
+  }
 }
 
 void Train::vehiclesChanged()
@@ -707,6 +735,7 @@ std::error_code Train::acquire(Throttle& throttle, bool steal)
   m_throttle = throttle.shared_ptr<Throttle>();
   hasThrottle.setValueInternal(true);
   throttleName.setValueInternal(m_throttle->name);
+  Dispatcher::trainThrottleChanged(*this);
   return {};
 }
 
@@ -719,6 +748,7 @@ std::error_code Train::release(Throttle& throttle)
   m_throttle.reset();
   hasThrottle.setValueInternal(false);
   throttleName.setValueInternal("");
+  Dispatcher::trainThrottleChanged(*this);
   if(isStopped && blocks.empty())
   {
     active = false; // deactive train if it is stopped and not assigned to a block
@@ -745,6 +775,10 @@ std::error_code Train::setSpeed(Throttle& throttle, double value)
   isStopped.setValueInternal(m_speedState == SpeedState::Idle && almostZero(speed.value()) && almostZero(throttleSpeed.value()));
   if(currentValue != isStopped)
   {
+    if(isStopped)
+    {
+      TrainTracking::trainStopped(*this);
+    }
     updateEnabled();
   }
   return {};

@@ -20,14 +20,18 @@
  */
 
 #include "traintracking.hpp"
-#include "train.hpp"
-#include "trainblockstatus.hpp"
+#include "dispatcher.hpp"
+#include "../train/train.hpp"
+#include "../train/trainblockstatus.hpp"
 #include "../board/tile/rail/blockrailtile.hpp"
 #include "../board/map/blockpath.hpp"
 #include "../core/objectproperty.tpp"
 #include "../hardware/trackdriver/blocktrackdriver.hpp"
 #include "../hardware/trackdriver/trackdriver.hpp"
 #include "../hardware/trackdriver/trackdrivercontroller.hpp"
+#include "../log/log.hpp"
+#include "../route/trainroute.hpp"
+#include "../route/trainrouteentry.hpp"
 #include "../zone/blockzonelist.hpp"
 #include "../world/world.hpp"
 
@@ -140,6 +144,15 @@ void TrainTracking::enter(const std::shared_ptr<TrainBlockStatus>& blockStatus)
 
   blockStatus->train->blocks.insertInternal(0, blockStatus); // head of train
 
+  if(const auto& route = train->route.value();
+      route &&
+      train->routePosition < route->entriesResolved.size() - 1 &&
+      route->entriesResolved[train->routePosition + 1]->block.value() == block)
+  {
+    train->routePosition.setValueInternal(train->routePosition + 1);
+  }
+  Dispatcher::trainEnteredBlock(*train, *block);
+
   checkZoneEntering(train, block);
   checkZoneEntered(train, block);
 
@@ -218,6 +231,23 @@ void TrainTracking::removed(const std::shared_ptr<Train>& train, const std::shar
   checkZoneRemoved(train, block);
   train->fireBlockRemoved(block);
   block->fireTrainRemoved(train);
+}
+
+void TrainTracking::trainStopped(Train& train)
+{
+  assert(train.isStopped);
+
+  if(train.route && train.routePosition == train.route->entriesResolved.size() - 1)
+  {
+    auto route = train.route.value();
+    train.route.setValueInternal(nullptr);
+    Dispatcher::trainRouteChanged(train);
+    if(train.world().debugTrainEvents)
+    {
+      Log::log(train, LogMessage::D3028_TRAIN_X_COMPLETED_ROUTE_X, train.name.value(), route->name.value());
+    }
+    train.fireEvent(train.onRouteCompleted, train.shared_ptr<Train>(), route);
+  }
 }
 
 void TrainTracking::checkZoneAssigned(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block)

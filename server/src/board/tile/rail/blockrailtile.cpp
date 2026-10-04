@@ -32,7 +32,7 @@
 #include "../../../log/logmessageexception.hpp"
 #include "../../../train/train.hpp"
 #include "../../../train/trainblockstatus.hpp"
-#include "../../../train/traintracking.hpp"
+#include "../../../traffic/traintracking.hpp"
 #include "../../../utils/category.hpp"
 #include "../../../utils/displayname.hpp"
 #include "../../../zone/blockzonelist.hpp"
@@ -282,7 +282,6 @@ void BlockRailTile::inputItemValueChanged(BlockInputMapItem& item)
             if(isDirectionTowardsSide(status->direction, path->fromSide()) &&
                 status->train &&
                 status->train->powered &&
-                status->train->mode == TrainMode::ManualUnprotected &&
                 !status->train->isStopped)
             {
               if(train) // another train?? then we don't know

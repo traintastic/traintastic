@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TRAINTASTIC_SERVER_TRAIN_TRAINTRACKING_HPP
-#define TRAINTASTIC_SERVER_TRAIN_TRAINTRACKING_HPP
+#ifndef TRAINTASTIC_SERVER_TRAFFIC_TRAINTRACKING_HPP
+#define TRAINTASTIC_SERVER_TRAFFIC_TRAINTRACKING_HPP
 
 #include <memory>
 #include <traintastic/enum/blocktraindirection.hpp>
@@ -56,6 +56,8 @@ public:
   static void enter(const std::shared_ptr<TrainBlockStatus>& blockStatus); // enter reserved block
   static void left(std::shared_ptr<TrainBlockStatus> blockStatus);
   static void removed(const std::shared_ptr<Train>& train, const std::shared_ptr<BlockRailTile>& block);
+
+  static void trainStopped(Train& train);
 };
 
 #endif

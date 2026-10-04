@@ -1636,6 +1636,18 @@
         "definition": "Train '%1' removed from zone '%2'"
     },
     {
+        "term": "message:D3026",
+        "definition": "Train '%1' assigned route '%2'"
+    },
+    {
+        "term": "message:D3027",
+        "definition": "Train '%1' canceled route '%2'"
+    },
+    {
+        "term": "message:D3028",
+        "definition": "Train '%1' completed route '%2'"
+    },
+    {
         "term": "message:E1001",
         "definition": "Invalid world UUID: %1"
     },
@@ -3092,12 +3104,24 @@
         "definition": "Active"
     },
     {
+        "term": "train:assign_route",
+        "definition": "Assign route"
+    },
+    {
+        "term": "train:automatic",
+        "definition": "Automatic"
+    },
+    {
         "term": "train:block",
         "definition": "Block"
     },
     {
         "term": "train:braking_rate",
         "definition": "Braking rate"
+    },
+    {
+        "term": "train:cancel_route",
+        "definition": "Cancel route"
     },
     {
         "term": "train:length",
@@ -3114,6 +3138,10 @@
     {
         "term": "train:override_weight",
         "definition": "Override weight"
+    },
+    {
+        "term": "train:route",
+        "definition": "Route"
     },
     {
         "term": "train:speed_max",

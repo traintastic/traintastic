@@ -83,6 +83,9 @@ enum class LogMessage : uint32_t
   D3023_TRAIN_X_LEAVING_ZONE_X = LogMessageOffset::debug + 3023,
   D3024_TRAIN_X_LEFT_ZONE_X = LogMessageOffset::debug + 3024,
   D3025_TRAIN_X_REMOVED_FROM_ZONE_X = LogMessageOffset::debug + 3025,
+  D3026_TRAIN_X_ASSIGNED_ROUTE_X = LogMessageOffset::debug + 3026,
+  D3027_TRAIN_X_CANCELED_ROUTE_X = LogMessageOffset::debug + 3027,
+  D3028_TRAIN_X_COMPLETED_ROUTE_X = LogMessageOffset::debug + 3028,
   D9999_X = LogMessageOffset::debug + 9999,
 
   // Info:
