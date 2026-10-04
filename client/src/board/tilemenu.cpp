@@ -31,6 +31,7 @@
 #include "../network/object/trainblockstatus.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
 #include "../misc/methodaction.hpp"
+#include "../misc/propertyaction.hpp"
 
 namespace {
 
@@ -67,6 +68,10 @@ void addTrainActions(const ObjectPtr& train, QMenu& menu, QWidget* parent)
       {
         std::make_unique<ObjectSelectListDialog>(*assignRoute, false, parent)->exec();
       }));
+  }
+  if(auto* automatic = train->getProperty("automatic"))
+  {
+    menu.addAction(new PropertyAction(*automatic));
   }
 }
 

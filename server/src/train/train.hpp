@@ -112,6 +112,7 @@ class Train : public IdObject
     ObjectProperty<TrainVehicleList> vehicles;
     Property<bool> powered;
     Property<bool> active;
+    Property<bool> automatic;
     Property<bool> mute;
     Property<bool> noSmoke;
     Property<bool> hasThrottle;

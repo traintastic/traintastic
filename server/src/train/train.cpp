@@ -36,6 +36,7 @@
 #include "../hardware/decoder/decoder.hpp"
 #include "../log/log.hpp"
 #include "../route/trainroute.hpp"
+#include "../throttle/autothrottle.hpp"
 #include "../traffic/dispatcher.hpp"
 #include "../traffic/traintracking.hpp"
 #include "../utils/almostzero.hpp"
@@ -176,6 +177,25 @@ Train::Train(World& world, std::string_view _id) :
       }
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)}
+  , automatic{this, "automatic", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly, nullptr,
+      [this](bool& value)
+      {
+        if(value)
+        {
+          std::error_code ec;
+          AutoThrottle::assign(shared_ptr<Train>(), true, ec);
+          if(ec)
+          {
+            return false;
+          }
+        }
+        else
+        {
+          assert(std::dynamic_pointer_cast<AutoThrottle>(m_throttle));
+          m_throttle->release();
+        }
+        return true;
+      }}
   , mute{this, "mute", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , noSmoke{this, "no_smoke", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , hasThrottle{this, "has_throttle", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
@@ -307,6 +327,8 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addEnabled(active, true);
   m_interfaceItems.add(active);
 
+  Attributes::addObjectEditor(automatic, false);
+  m_interfaceItems.add(automatic);
 
   Attributes::addObjectEditor(mute, false);
   m_interfaceItems.add(mute);
@@ -742,6 +764,7 @@ std::error_code Train::release(Throttle& throttle)
     return make_error_code(ErrorCode::InvalidThrottle);
   }
   m_throttle.reset();
+  automatic.setValueInternal(false);
   hasThrottle.setValueInternal(false);
   throttleName.setValueInternal("");
   Dispatcher::trainThrottleChanged(*this);

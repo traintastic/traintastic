@@ -144,6 +144,8 @@ void Throttle::release(bool stopIt)
     emergencyStop();
   }
 
+  auto keepAlive = shared_from_this();
+
   const auto logMessage = !stopIt && !train->isStopped.value() ? LogMessage::N3006_THROTTLE_X_RELEASED_TRAIN_X_WITHOUT_STOPPING_IT : LogMessage::I3002_THROTTLE_X_RELEASED_TRAIN_X;
   Log::log(m_logId, logMessage, name.value(), train->name.value());
   train->release(*this);
