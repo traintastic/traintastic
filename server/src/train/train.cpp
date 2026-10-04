@@ -1,9 +1,8 @@
 /**
- * server/src/train/train.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,9 +38,24 @@
 #include "../throttle/throttle.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
+#include "../utils/unit.hpp"
 #include "../zone/zone.hpp"
 
 CREATE_IMPL(Train)
+
+namespace {
+
+constexpr double accelerationRateDefault = 1.0;
+constexpr double accelerationRateMin = 0.1;
+constexpr double accelerationRateMax = 10.0;
+constexpr double accelerationRateStep = 0.1;
+
+constexpr double brakingRateDefault = 0.5;
+constexpr double brakingRateMin = 0.1;
+constexpr double brakingRateMax = 10.0;
+constexpr double brakingRateStep = 0.1;
+
+}
 
 static inline bool isPowered(const RailVehicle& vehicle)
 {
@@ -50,7 +64,7 @@ static inline bool isPowered(const RailVehicle& vehicle)
 
 Train::Train(World& world, std::string_view _id) :
   IdObject(world, _id),
-  m_speedTimer{EventLoop::ioContext},
+  m_speedTimer{EventLoop::ioContext()},
   name{this, "name", id, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   length{*this, "length", 0, LengthUnit::MilliMeter, PropertyFlags::ReadWrite | PropertyFlags::Store},
   overrideLength{this, "override_length", false, PropertyFlags::ReadWrite | PropertyFlags::Store,
@@ -78,7 +92,7 @@ Train::Train(World& world, std::string_view _id) :
       return value == Direction::Forward || value == Direction::Reverse;
     }},
   isStopped{this, "is_stopped", true, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
-  speed{*this, "speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore},
+  speed{*this, "speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   speedMax{*this, "speed_max", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   speedLimit{*this, "speed_limit", SpeedLimitProperty::noLimitValue, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   throttleSpeed{*this, "throttle_speed", 0, SpeedUnit::KiloMeterPerHour, PropertyFlags::ReadWrite | PropertyFlags::StoreState,
@@ -140,6 +154,8 @@ Train::Train(World& world, std::string_view _id) :
       if(!value)
         updateWeight();
     }},
+  accelerationRate{this, "acceleration_rate", accelerationRateDefault, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
+  brakingRate{this, "braking_rate", brakingRateDefault, PropertyFlags::ReadWrite | PropertyFlags::Store | PropertyFlags::ScriptReadOnly},
   vehicles{this, "vehicles", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject},
   powered{this, "powered", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly},
   active{this, "active", false, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly,
@@ -212,6 +228,17 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addEnabled(weight, overrideWeight);
   m_interfaceItems.add(weight);
   m_interfaceItems.add(overrideWeight);
+
+  Attributes::addMinMax(accelerationRate, accelerationRateMin, accelerationRateMax);
+  Attributes::addStep(accelerationRate, accelerationRateStep);
+  Attributes::addUnit(accelerationRate, Unit::meterPerSecondSquared);
+  m_interfaceItems.add(accelerationRate);
+
+  Attributes::addMinMax(brakingRate, brakingRateMin, brakingRateMax);
+  Attributes::addStep(brakingRate, brakingRateStep);
+  Attributes::addUnit(brakingRate, Unit::meterPerSecondSquared);
+  m_interfaceItems.add(brakingRate);
+
   m_interfaceItems.add(vehicles);
 
   Attributes::addEnabled(active, true);
@@ -368,6 +395,14 @@ void Train::loaded()
   vehiclesChanged();
   updateMute();
   updateNoSmoke();
+
+  if(active)
+  {
+    for(const auto& vehicle : m_poweredVehicles)
+    {
+      vehicle->setDirection(direction);
+    }
+  }
 }
 
 void Train::worldEvent(WorldState state, WorldEvent event)
@@ -419,12 +454,12 @@ void Train::updateSpeed()
   if(m_speedState == SpeedState::Accelerate)
   {
     //! \todo add realistic acceleration
-    acceleration = 1; // m/s^2
+    acceleration = accelerationRate; // m/s^2
   }
   else if(m_speedState == SpeedState::Braking)
   {
     //! \todo add realistic braking
-    acceleration = -0.5; // m/s^2
+    acceleration = -brakingRate; // m/s^2
   }
   else
     assert(false);

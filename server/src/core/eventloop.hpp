@@ -1,9 +1,8 @@
 /**
- * server/src/core/eventloop.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2020,2022-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +24,7 @@
 
 #include <thread>
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/post.hpp>
 
 class EventLoop
 {
@@ -35,42 +35,52 @@ class EventLoop
     EventLoop(const EventLoop&) = delete;
     EventLoop& operator =(const EventLoop&) = delete;
 
+    inline static std::unique_ptr<boost::asio::io_context> s_ioContext;
+    inline static std::shared_ptr<boost::asio::executor_work_guard<decltype(s_ioContext->get_executor())>> s_keepAlive;
+
   public:
-    inline static boost::asio::io_context ioContext;
 #ifdef TRAINTASTIC_TEST
     inline static std::thread::id threadId;
 #else
     inline static const std::thread::id threadId = std::this_thread::get_id();
 #endif
 
+    static boost::asio::io_context& ioContext()
+    {
+      assert(s_ioContext);
+      return *s_ioContext;
+    }
+
+    static void reset()
+    {
+      s_ioContext = std::make_unique<boost::asio::io_context>();
+    }
+
     static void exec()
     {
 #ifdef TRAINTASTIC_TEST
       threadId = std::this_thread::get_id();
 #endif
-      if(ioContext.stopped())
-      {
-        ioContext.restart();
-      }
-      auto work = std::make_shared<boost::asio::io_context::work>(ioContext);
-      ioContext.run();
+      s_keepAlive = std::make_shared<boost::asio::executor_work_guard<decltype(ioContext().get_executor())>>(ioContext().get_executor());
+      ioContext().run();
+      s_keepAlive.reset();
     }
 
     static void stop()
     {
-      ioContext.stop();
+      s_keepAlive.reset();
     }
 
     template<typename _Callable, typename... _Args>
     inline static void call(_Callable&& __f, _Args&&... __args)
     {
-      ioContext.post(std::bind(__f, __args...));
+      boost::asio::post(ioContext(), std::bind(__f, __args...));
     }
 
     template<typename T>
     inline static void deleteLater(T* object)
     {
-      ioContext.post(
+      boost::asio::post(ioContext(),
         [object]()
         {
           delete object;

@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/ecos/object/ecos.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021-2022,2024 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,8 +21,8 @@
 
 #include "ecos.hpp"
 #include <cassert>
-#include "../kernel.hpp"
-#include "../messages.hpp"
+#include "../ecoskernel.hpp"
+#include "../ecosmessages.hpp"
 #include "../../../../utils/rtrim.hpp"
 #include "../../../../utils/stripprefix.hpp"
 

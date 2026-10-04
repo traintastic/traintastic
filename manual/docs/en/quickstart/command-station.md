@@ -21,7 +21,7 @@ In the wizard, choose your **digital system / command station** from the list of
 
 - The wizard covers the most common systems.
 - Not all command stations are listed, but many other models may still work if you configure them manually from the *Interfaces* menu.
-  See the [Supported hardware appendix](../appendix/supported-hardware.md) for a complete overview of tested systems.
+  See the [Supported hardware appendix](../appendix/supported-hardware/command-stations/index.md) for a complete overview of tested systems.
 
 !!! note
     If your command station is not listed in the wizard, please check the [community forum](https://discourse.traintastic.org).
@@ -59,7 +59,7 @@ If an error occurs:
 
 - Open the **server log** (hotkey ++f12++ or **View → Server log**) to see details.
 - See [Common interface connection errors](../troubleshooting/interface-connection-errors.md) for steps to resolve typical issues.
-- If you’re unsure whether your system is supported, check the [Supported hardware appendix](../appendix/supported-hardware.md).
+- If you’re unsure whether your system is supported, check the [Supported hardware appendix](../appendix/supported-hardware/command-stations/index.md).
 
 When the connection succeeds:
 

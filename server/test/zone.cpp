@@ -22,6 +22,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/catch_approx.hpp>
 #include "../src/core/attributes.hpp"
+#include "../src/core/eventloop.hpp"
 #include "../src/core/method.tpp"
 #include "../src/core/objectproperty.tpp"
 #include "../src/board/board.hpp"
@@ -43,6 +44,8 @@
 
 TEST_CASE("Zone: Assign/remove train to/from muted, no smoke and speed limited zone", "[zone]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -127,6 +130,8 @@ TEST_CASE("Zone: Assign/remove train to/from muted, no smoke and speed limited z
 
 TEST_CASE("Zone: Assign/remove events", "[zone]")
 {
+  EventLoop::reset();
+
   size_t trainZoneAssignedEventCount = 0;
   size_t trainZoneEnteringEventCount = 0;
   size_t trainZoneEnteredEventCount = 0;
@@ -326,6 +331,8 @@ TEST_CASE("Zone: Assign/remove events", "[zone]")
 
 TEST_CASE("Zone: Toggle mute/noSmoke/speedLimit with train in zone", "[zone]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -418,8 +425,9 @@ TEST_CASE("Zone: Toggle mute/noSmoke/speedLimit with train in zone", "[zone]")
 
 TEST_CASE("Zone: Check class id's", "[zone]")
 {
-  // class id's may NOT be changed, it will break saved worlds and might break client stuff.
+  EventLoop::reset();
 
+  // class id's may NOT be changed, it will break saved worlds and might break client stuff.
   REQUIRE(BlockZoneList::classId == "list.block_zone");
   REQUIRE(Zone::classId == "zone");
   REQUIRE(ZoneBlockList::classId == "list.zone_block");
@@ -454,6 +462,8 @@ TEST_CASE("Zone: Check class id's", "[zone]")
 
 TEST_CASE("Zone: Check enabled attribute", "[zone]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -515,6 +525,8 @@ TEST_CASE("Zone: Check enabled attribute", "[zone]")
 
 TEST_CASE("Zone: zone list table model", "[zone]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -564,6 +576,8 @@ TEST_CASE("Zone: zone list table model", "[zone]")
 
 TEST_CASE("Zone: block zone list table model", "[zone]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -619,6 +633,8 @@ TEST_CASE("Zone: block zone list table model", "[zone]")
 
 TEST_CASE("Zone: zone block list table model", "[zone]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -675,6 +691,8 @@ TEST_CASE("Zone: zone block list table model", "[zone]")
 
 TEST_CASE("Zone: delete zone with block assigned", "[zone]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -706,6 +724,8 @@ TEST_CASE("Zone: delete zone with block assigned", "[zone]")
 
 TEST_CASE("Zone: delete block with zone assigned", "[zone]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());
@@ -736,6 +756,8 @@ TEST_CASE("Zone: delete block with zone assigned", "[zone]")
 
 TEST_CASE("Zone: delete board with block with zone assigned", "[zone]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   std::weak_ptr<World> worldWeak = world;
   REQUIRE_FALSE(worldWeak.expired());

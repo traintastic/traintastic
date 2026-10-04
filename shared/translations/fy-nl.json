@@ -45,15 +45,15 @@
     },
     {
         "term": "board_area_grid:dot",
-        "definition": ""
+        "definition": "Stip"
     },
     {
         "term": "board_area_grid:line",
-        "definition": ""
+        "definition": "Rige"
     },
     {
         "term": "board_area_grid:none",
-        "definition": ""
+        "definition": "Gjin"
     },
     {
         "term": "board_settings.color_scheme:dark",
@@ -84,6 +84,14 @@
         "definition": "Kleur"
     },
     {
+        "term": "board_tile.misc.push_button:text",
+        "definition": ""
+    },
+    {
+        "term": "board_tile.misc.push_button:text_color",
+        "definition": ""
+    },
+    {
         "term": "board_tile.misc.switch:color_off",
         "definition": "\u00dat kleur"
     },
@@ -92,8 +100,20 @@
         "definition": "Oan kleur"
     },
     {
-        "term": "board_tile.misc.switch:value",
+        "term": "board_tile.misc.switch:text",
         "definition": ""
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_off",
+        "definition": ""
+    },
+    {
+        "term": "board_tile.misc.switch:text_color_on",
+        "definition": ""
+    },
+    {
+        "term": "board_tile.misc.switch:value",
+        "definition": "Wearde"
     },
     {
         "term": "board_tile.rail.block:assign_train",
@@ -141,11 +161,11 @@
     },
     {
         "term": "board_tile.rail.link:link",
-        "definition": ""
+        "definition": "Ferbining"
     },
     {
-        "term": "board_tile.rail.sensor:input",
-        "definition": "Yngong"
+        "term": "board_tile.rail.nx_button:block",
+        "definition": ""
     },
     {
         "term": "board_tile.rail.sensor:invert",
@@ -153,7 +173,7 @@
     },
     {
         "term": "board_tile.rail.sensor:state",
-        "definition": ""
+        "definition": "Status"
     },
     {
         "term": "board_tile.rail.sensor:type",
@@ -168,11 +188,27 @@
         "definition": "Fereaskje reservearring"
     },
     {
+        "term": "board_tile.rail.turnout:link_invert",
+        "definition": ""
+    },
+    {
+        "term": "board_tile.rail.turnout:link_turnout",
+        "definition": ""
+    },
+    {
+        "term": "board_tile.rail.turnout:linked",
+        "definition": ""
+    },
+    {
         "term": "board_tile.rail.turnout_slip:dual_motor",
         "definition": ""
     },
     {
         "term": "board_tile.turnout:position",
+        "definition": "Posysje"
+    },
+    {
+        "term": "board_tile:feedback_map",
         "definition": ""
     },
     {
@@ -180,8 +216,48 @@
         "definition": "\u00datgongen"
     },
     {
+        "term": "booster:current",
+        "definition": ""
+    },
+    {
+        "term": "booster:input_voltage",
+        "definition": ""
+    },
+    {
+        "term": "booster:load",
+        "definition": ""
+    },
+    {
+        "term": "booster:temperature",
+        "definition": ""
+    },
+    {
+        "term": "booster:type",
+        "definition": ""
+    },
+    {
+        "term": "booster:voltage",
+        "definition": ""
+    },
+    {
+        "term": "booster_driver:poll_interval",
+        "definition": ""
+    },
+    {
+        "term": "category:block",
+        "definition": ""
+    },
+    {
         "term": "category:cargo",
         "definition": "Lading"
+    },
+    {
+        "term": "category:colors",
+        "definition": ""
+    },
+    {
+        "term": "category:colors_and_alignment",
+        "definition": ""
     },
     {
         "term": "category:debug",
@@ -192,12 +268,20 @@
         "definition": "Untwikkelder"
     },
     {
+        "term": "category:features",
+        "definition": ""
+    },
+    {
         "term": "category:general",
         "definition": "Algemien"
     },
     {
         "term": "category:info",
         "definition": "Ynfo"
+    },
+    {
+        "term": "category:input",
+        "definition": ""
     },
     {
         "term": "category:log",
@@ -212,8 +296,88 @@
         "definition": ""
     },
     {
+        "term": "category:status",
+        "definition": ""
+    },
+    {
+        "term": "category:track_driver",
+        "definition": ""
+    },
+    {
         "term": "category:trains",
         "definition": "Treinen"
+    },
+    {
+        "term": "cbus_interface_type:socket_can",
+        "definition": ""
+    },
+    {
+        "term": "cbus_node_list:manufacturer",
+        "definition": ""
+    },
+    {
+        "term": "cbus_node_list:mode",
+        "definition": ""
+    },
+    {
+        "term": "cbus_node_list:module",
+        "definition": ""
+    },
+    {
+        "term": "cbus_node_list:node_number",
+        "definition": ""
+    },
+    {
+        "term": "cbus_node_list:type",
+        "definition": ""
+    },
+    {
+        "term": "cbus_node_list:version",
+        "definition": ""
+    },
+    {
+        "term": "cbus_session_list:controlled_by",
+        "definition": ""
+    },
+    {
+        "term": "cbus_session_list:direction",
+        "definition": ""
+    },
+    {
+        "term": "cbus_session_list:long",
+        "definition": ""
+    },
+    {
+        "term": "cbus_session_list:session",
+        "definition": ""
+    },
+    {
+        "term": "cbus_session_list:speed",
+        "definition": ""
+    },
+    {
+        "term": "cbus_settings:dcc_accessory_switch_time",
+        "definition": ""
+    },
+    {
+        "term": "cbus_settings:engine_keep_alive",
+        "definition": ""
+    },
+    {
+        "term": "cbus_settings:hub_enabled",
+        "definition": ""
+    },
+    {
+        "term": "cbus_settings:hub_localhost_only",
+        "definition": ""
+    },
+    {
+        "term": "cbus_settings:hub_port",
+        "definition": ""
+    },
+    {
+        "term": "cbus_settings:short_event_node_number",
+        "definition": ""
     },
     {
         "term": "class_id:board_tile.misc.label",
@@ -273,19 +437,11 @@
     },
     {
         "term": "class_id:board_tile.rail.link",
-        "definition": ""
+        "definition": "Ferbining"
     },
     {
         "term": "class_id:board_tile.rail.nx_button",
         "definition": "NX knop"
-    },
-    {
-        "term": "class_id:board_tile.rail.nx_button:block",
-        "definition": "Blok"
-    },
-    {
-        "term": "class_id:board_tile.rail.nx_button:input",
-        "definition": "Yngang"
     },
     {
         "term": "class_id:board_tile.rail.one_way",
@@ -473,7 +629,7 @@
     },
     {
         "term": "dccex_channel:output",
-        "definition": ""
+        "definition": "\u00datfier"
     },
     {
         "term": "dccex_channel:turnout",
@@ -588,6 +744,82 @@
         "definition": "Deaktivearre"
     },
     {
+        "term": "default_name:block",
+        "definition": ""
+    },
+    {
+        "term": "default_name:board",
+        "definition": ""
+    },
+    {
+        "term": "default_name:decoupler",
+        "definition": ""
+    },
+    {
+        "term": "default_name:direction",
+        "definition": ""
+    },
+    {
+        "term": "default_name:link",
+        "definition": ""
+    },
+    {
+        "term": "default_name:nx_button",
+        "definition": ""
+    },
+    {
+        "term": "default_name:push_button",
+        "definition": ""
+    },
+    {
+        "term": "default_name:script",
+        "definition": ""
+    },
+    {
+        "term": "default_name:sensor",
+        "definition": ""
+    },
+    {
+        "term": "default_name:signal",
+        "definition": ""
+    },
+    {
+        "term": "default_name:switch",
+        "definition": ""
+    },
+    {
+        "term": "default_name:train",
+        "definition": ""
+    },
+    {
+        "term": "default_name:turnout",
+        "definition": ""
+    },
+    {
+        "term": "default_name:vehicle",
+        "definition": ""
+    },
+    {
+        "term": "default_name:zone",
+        "definition": ""
+    },
+    {
+        "term": "dinamo_settings:debug_log_train_blocks",
+        "definition": ""
+    },
+    {
+        "term": "dinamo_settings:hfi_level",
+        "definition": ""
+    },
+    {
+        "term": "dinamo_settings:pm32_pulse_duration",
+        "definition": ""
+    },
+    {
+        "term": "dinamo_settings:set_hfi_level",
+        "definition": ""
+    },
+    {
         "term": "direction:forward",
         "definition": "Foar\u00fat"
     },
@@ -616,12 +848,28 @@
         "definition": "Wr\u00e2ld \u00fatsette"
     },
     {
+        "term": "feedback_map.turnout:key",
+        "definition": ""
+    },
+    {
+        "term": "function:off",
+        "definition": ""
+    },
+    {
+        "term": "function:on",
+        "definition": ""
+    },
+    {
         "term": "hardware:address",
         "definition": "Adres"
     },
     {
         "term": "hardware:addresses",
         "definition": "Adressen"
+    },
+    {
+        "term": "hardware:boosters",
+        "definition": ""
     },
     {
         "term": "hardware:channel",
@@ -648,6 +896,14 @@
         "definition": ""
     },
     {
+        "term": "hardware:event",
+        "definition": ""
+    },
+    {
+        "term": "hardware:events",
+        "definition": ""
+    },
+    {
         "term": "hardware:identifications",
         "definition": ""
     },
@@ -662,6 +918,14 @@
     {
         "term": "hardware:interface",
         "definition": "Ynterface"
+    },
+    {
+        "term": "hardware:invert_polarity",
+        "definition": ""
+    },
+    {
+        "term": "hardware:node",
+        "definition": ""
     },
     {
         "term": "hardware:output_keyboard",
@@ -680,16 +944,12 @@
         "definition": ""
     },
     {
-        "term": "hsi88:s88_left",
-        "definition": "S88 links"
+        "term": "hardware:track_driver",
+        "definition": ""
     },
     {
-        "term": "hsi88:s88_middle",
-        "definition": "S88 midden"
-    },
-    {
-        "term": "hsi88:s88_right",
-        "definition": "S88 rjochts"
+        "term": "identification:invert_direction",
+        "definition": ""
     },
     {
         "term": "identification:opc_multi_sense_direction",
@@ -701,6 +961,38 @@
     },
     {
         "term": "input:on_delay",
+        "definition": ""
+    },
+    {
+        "term": "input_channel:long_event",
+        "definition": ""
+    },
+    {
+        "term": "input_channel:s88_left",
+        "definition": ""
+    },
+    {
+        "term": "input_channel:s88_middle",
+        "definition": ""
+    },
+    {
+        "term": "input_channel:s88_right",
+        "definition": ""
+    },
+    {
+        "term": "input_channel:short_event",
+        "definition": ""
+    },
+    {
+        "term": "input_condition:dont_care",
+        "definition": ""
+    },
+    {
+        "term": "input_condition:off",
+        "definition": ""
+    },
+    {
+        "term": "input_condition:on",
         "definition": ""
     },
     {
@@ -722,6 +1014,14 @@
     {
         "term": "input_map_item.block:type",
         "definition": "Type"
+    },
+    {
+        "term": "interface.cbus:cbus_node_list",
+        "definition": ""
+    },
+    {
+        "term": "interface.cbus:cbus_session_list",
+        "definition": ""
     },
     {
         "term": "interface.ecos:ecos_detector",
@@ -818,6 +1118,10 @@
     {
         "term": "ip:port",
         "definition": "Poarte"
+    },
+    {
+        "term": "language:da-dk",
+        "definition": ""
     },
     {
         "term": "language:de-de",
@@ -1029,7 +1333,7 @@
     },
     {
         "term": "lua.script:clear_persistent_variables",
-        "definition": ""
+        "definition": "Wiskje oanh\u00e2ldende fariabelen"
     },
     {
         "term": "lua.script:disabled",
@@ -1077,7 +1381,7 @@
     },
     {
         "term": "luadoc:index:title",
-        "definition": ""
+        "definition": "Traintastic Lua-skripting"
     },
     {
         "term": "marklin_can_interface_type:network_tcp",
@@ -1086,6 +1390,10 @@
     {
         "term": "marklin_can_interface_type:network_udp",
         "definition": "Netwurk (UDP)"
+    },
+    {
+        "term": "marklin_can_interface_type:serial",
+        "definition": ""
     },
     {
         "term": "marklin_can_interface_type:socket_can",
@@ -1200,6 +1508,10 @@
         "definition": "Objekt is gjin tabel"
     },
     {
+        "term": "message:C1020",
+        "definition": ""
+    },
+    {
         "term": "message:C2001",
         "definition": "Adres al br\u00fbkt by #%1"
     },
@@ -1217,7 +1529,7 @@
     },
     {
         "term": "message:D1002",
-        "definition": ""
+        "definition": "Tik %1 (fout: %2)"
     },
     {
         "term": "message:D1003",
@@ -1262,6 +1574,10 @@
     {
         "term": "message:D2010",
         "definition": "Slot %1 = Frij"
+    },
+    {
+        "term": "message:D2011",
+        "definition": ""
     },
     {
         "term": "message:D3001",
@@ -1429,7 +1745,7 @@
     },
     {
         "term": "message:E2022",
-        "definition": ""
+        "definition": "Socket oanmeitsjen mislearre (%1)"
     },
     {
         "term": "message:E2023",
@@ -1438,6 +1754,46 @@
     {
         "term": "message:E2024",
         "definition": "Unbekende lokomotyf MFX UID: %1"
+    },
+    {
+        "term": "message:E2025",
+        "definition": ""
+    },
+    {
+        "term": "message:E2026",
+        "definition": ""
+    },
+    {
+        "term": "message:E2027",
+        "definition": ""
+    },
+    {
+        "term": "message:E2028",
+        "definition": ""
+    },
+    {
+        "term": "message:E2029",
+        "definition": ""
+    },
+    {
+        "term": "message:E2030",
+        "definition": ""
+    },
+    {
+        "term": "message:E2031",
+        "definition": ""
+    },
+    {
+        "term": "message:E2032",
+        "definition": ""
+    },
+    {
+        "term": "message:E2033",
+        "definition": ""
+    },
+    {
+        "term": "message:E2034",
+        "definition": ""
     },
     {
         "term": "message:E3001",
@@ -1480,8 +1836,16 @@
         "definition": ""
     },
     {
+        "term": "message:E3011",
+        "definition": ""
+    },
+    {
         "term": "message:E9001",
         "definition": "% 1 (By it \u00fatfieren fan %2 event handler)"
+    },
+    {
+        "term": "message:E9002",
+        "definition": ""
     },
     {
         "term": "message:F1001",
@@ -1544,6 +1908,10 @@
         "definition": ""
     },
     {
+        "term": "message:I1010",
+        "definition": ""
+    },
+    {
         "term": "message:I2001",
         "definition": ""
     },
@@ -1554,6 +1922,22 @@
     {
         "term": "message:I2003",
         "definition": "Firmware ferzje: %1"
+    },
+    {
+        "term": "message:I2006",
+        "definition": ""
+    },
+    {
+        "term": "message:I2007",
+        "definition": ""
+    },
+    {
+        "term": "message:I2008",
+        "definition": ""
+    },
+    {
+        "term": "message:I2009",
+        "definition": ""
     },
     {
         "term": "message:I3001",
@@ -1569,7 +1953,7 @@
     },
     {
         "term": "message:I9003",
-        "definition": ""
+        "definition": "Oanh\u00e2ldende fariabelen wiske"
     },
     {
         "term": "message:N1001",
@@ -1641,11 +2025,11 @@
     },
     {
         "term": "message:N1018",
-        "definition": ""
+        "definition": "Stil: ynskeakele"
     },
     {
         "term": "message:N1019",
-        "definition": ""
+        "definition": "Stil: \u00fatskeakele"
     },
     {
         "term": "message:N1020",
@@ -1657,7 +2041,7 @@
     },
     {
         "term": "message:N1022",
-        "definition": ""
+        "definition": "Wr\u00e2ld bewarre: %1"
     },
     {
         "term": "message:N1023",
@@ -1669,15 +2053,15 @@
     },
     {
         "term": "message:N1025",
-        "definition": ""
+        "definition": "Wr\u00e2ld mei s\u00fakses eksportearre"
     },
     {
         "term": "message:N1026",
-        "definition": ""
+        "definition": "Wr\u00e2ld mei s\u00fakses ymportearre"
     },
     {
         "term": "message:N1027",
-        "definition": ""
+        "definition": "Wr\u00e2ld ynladen: %1"
     },
     {
         "term": "message:N1028",
@@ -1709,6 +2093,10 @@
     },
     {
         "term": "message:N2007",
+        "definition": ""
+    },
+    {
+        "term": "message:N2008",
         "definition": ""
     },
     {
@@ -1752,6 +2140,10 @@
         "definition": "L\u00eazen fan wr\u00e2ld %1 mislearre (libarchive %2: %3)"
     },
     {
+        "term": "message:W1004",
+        "definition": ""
+    },
+    {
         "term": "message:W2001",
         "definition": "Untfongen misfoarme gegevens %1 bytes fuortsmiten"
     },
@@ -1790,6 +2182,18 @@
     {
         "term": "message:W2020",
         "definition": "DCCext (RCN-213) wurdt net stipe"
+    },
+    {
+        "term": "message:W2026",
+        "definition": ""
+    },
+    {
+        "term": "message:W2027",
+        "definition": ""
+    },
+    {
+        "term": "message:W2028",
+        "definition": ""
     },
     {
         "term": "message:W3001",
@@ -1872,7 +2276,15 @@
         "definition": "ECoS objeckt"
     },
     {
+        "term": "output_channel:long_event",
+        "definition": ""
+    },
+    {
         "term": "output_channel:output",
+        "definition": ""
+    },
+    {
+        "term": "output_channel:short_event",
         "definition": ""
     },
     {
@@ -1893,7 +2305,7 @@
     },
     {
         "term": "output_map.switch:key",
-        "definition": ""
+        "definition": "Wearde"
     },
     {
         "term": "output_map.turnout:key",
@@ -1902,6 +2314,10 @@
     {
         "term": "output_map:add_address",
         "definition": "Adres tafoegje"
+    },
+    {
+        "term": "output_map:add_event",
+        "definition": ""
     },
     {
         "term": "output_map:address_x",
@@ -1916,7 +2332,15 @@
         "definition": "Adres fuortsmite"
     },
     {
+        "term": "output_map:remove_event",
+        "definition": ""
+    },
+    {
         "term": "output_map:swap_outputs",
+        "definition": ""
+    },
+    {
+        "term": "output_map:test",
         "definition": ""
     },
     {
@@ -2000,6 +2424,30 @@
         "definition": "Br\u00fbkersnamme"
     },
     {
+        "term": "qtapp.diagnostic_report_dialog:create_report",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:explanation",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:save_diagnostic_report",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:window_title",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.diagnostic_report_dialog:zip_file",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.dialog:cancel",
+        "definition": ""
+    },
+    {
         "term": "qtapp.error:cant_read_from_file_x",
         "definition": "Kin net l\u00eaze fan best\u00e2n: %1"
     },
@@ -2034,6 +2482,10 @@
     {
         "term": "qtapp.mainmenu:connection",
         "definition": "Ferbining"
+    },
+    {
+        "term": "qtapp.mainmenu:diagnostic_report",
+        "definition": ""
     },
     {
         "term": "qtapp.mainmenu:disconnect_from_server",
@@ -2244,6 +2696,26 @@
         "definition": "Ofbrekke"
     },
     {
+        "term": "qtapp.world_list_dialog:delete_world",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:delete_world_confirmation",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicate_world",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicate_world_confirmation",
+        "definition": ""
+    },
+    {
+        "term": "qtapp.world_list_dialog:duplicated_world_name_postfix",
+        "definition": ""
+    },
+    {
         "term": "qtapp.world_list_dialog:load",
         "definition": "Lade"
     },
@@ -2265,7 +2737,7 @@
     },
     {
         "term": "qtapp:grid",
-        "definition": ""
+        "definition": "Raster"
     },
     {
         "term": "qtapp:import_world_failed",
@@ -2281,7 +2753,7 @@
     },
     {
         "term": "qtapp:toggle_mute",
-        "definition": ""
+        "definition": "Stil yn-/\u00fatskeakelje"
     },
     {
         "term": "qtapp:toggle_offline_online",
@@ -2293,7 +2765,7 @@
     },
     {
         "term": "qtapp:toggle_smoke",
-        "definition": ""
+        "definition": "Rook yn-/\u00fatskeakelje"
     },
     {
         "term": "qtapp:traintastic_world",
@@ -2380,6 +2852,10 @@
         "definition": "Tastean dat client tsjinner shutdown"
     },
     {
+        "term": "settings:auto_save_interval",
+        "definition": ""
+    },
+    {
         "term": "settings:auto_save_world_on_exit",
         "definition": "Automatysk bewarje wr\u00e2ld by \u00f4fslute"
     },
@@ -2393,7 +2869,7 @@
     },
     {
         "term": "settings:load_last_world_on_startup",
-        "definition": ""
+        "definition": "Laad de l\u00easte wr\u00e2ld by opstarten"
     },
     {
         "term": "settings:localhost_only",
@@ -2401,6 +2877,10 @@
     },
     {
         "term": "settings:memory_logger_size",
+        "definition": ""
+    },
+    {
+        "term": "settings:off",
         "definition": ""
     },
     {
@@ -2441,11 +2921,11 @@
     },
     {
         "term": "single_output_action:pulse",
-        "definition": ""
+        "definition": "Puls"
     },
     {
         "term": "speed_limit_property:no_limit",
-        "definition": ""
+        "definition": "Gjin limyt"
     },
     {
         "term": "stacked_object_list:back",
@@ -2552,7 +3032,15 @@
         "definition": ""
     },
     {
+        "term": "throttle.stop",
+        "definition": ""
+    },
+    {
         "term": "throttle_object_list:throttle",
+        "definition": ""
+    },
+    {
+        "term": "train:acceleration_rate",
         "definition": ""
     },
     {
@@ -2564,8 +3052,12 @@
         "definition": "Blok"
     },
     {
-        "term": "train:length",
+        "term": "train:braking_rate",
         "definition": ""
+    },
+    {
+        "term": "train:length",
+        "definition": "Lingte"
     },
     {
         "term": "train:mode",
@@ -2589,7 +3081,7 @@
     },
     {
         "term": "train:weight",
-        "definition": ""
+        "definition": "Gewicht"
     },
     {
         "term": "train_mode:automatic",
@@ -2637,11 +3129,11 @@
     },
     {
         "term": "tray_icon.menu:allow_client_to_restart_server",
-        "definition": ""
+        "definition": "Lit kli\u00efnt de tsjinner opnij starte"
     },
     {
         "term": "tray_icon.menu:allow_client_to_shutdown_server",
-        "definition": ""
+        "definition": "Lit kli\u00efnt de tsjinner \u00f4fslute"
     },
     {
         "term": "tray_icon.menu:language",
@@ -2709,15 +3201,15 @@
     },
     {
         "term": "vehicle.rail.freight_wagon:cargo_weight",
-        "definition": ""
+        "definition": "Frachtgewicht"
     },
     {
         "term": "vehicle.rail.tank_wagon:cargo_volume",
-        "definition": ""
+        "definition": "Frachtvolume"
     },
     {
         "term": "vehicle.rail:cargo_capacity",
-        "definition": ""
+        "definition": "Frachtkapasiteit"
     },
     {
         "term": "vehicle.rail:cargo_loaded",
@@ -2729,7 +3221,7 @@
     },
     {
         "term": "vehicle.rail:length",
-        "definition": ""
+        "definition": "Lingte"
     },
     {
         "term": "vehicle.rail:power",
@@ -3060,6 +3552,10 @@
         "definition": ""
     },
     {
+        "term": "world:feature_scripting",
+        "definition": ""
+    },
+    {
         "term": "world:inputs",
         "definition": "Yngangen"
     },
@@ -3073,7 +3569,7 @@
     },
     {
         "term": "world:mute",
-        "definition": ""
+        "definition": "Stil"
     },
     {
         "term": "world:no_smoke",
@@ -3089,7 +3585,7 @@
     },
     {
         "term": "world:online_when_loaded",
-        "definition": ""
+        "definition": "Gean online as it laden is"
     },
     {
         "term": "world:outputs",
@@ -3101,15 +3597,15 @@
     },
     {
         "term": "world:power_off",
-        "definition": ""
+        "definition": "\u00datskeakelje"
     },
     {
         "term": "world:power_on",
-        "definition": ""
+        "definition": "Ynskeakelje"
     },
     {
         "term": "world:power_on_when_loaded",
-        "definition": ""
+        "definition": "Ynskeakelje as it laden is"
     },
     {
         "term": "world:rail_vehicles",
@@ -3149,7 +3645,7 @@
     },
     {
         "term": "world:zones",
-        "definition": ""
+        "definition": "S\u00f4nes"
     },
     {
         "term": "world_scale:custom",

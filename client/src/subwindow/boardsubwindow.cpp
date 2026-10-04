@@ -1,9 +1,8 @@
 /**
- * client/src/subwindow/boardsubwindow.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +20,7 @@
  */
 
 #include "boardsubwindow.hpp"
+#include <QSettings>
 #include "../board/boardwidget.hpp"
 #include "../network/board.hpp"
 
@@ -37,16 +37,30 @@ BoardSubWindow* BoardSubWindow::create(std::shared_ptr<Connection> connection, c
 }
 
 BoardSubWindow::BoardSubWindow(QWidget* parent)
-  : SubWindow(SubWindowType::Throttle, parent)
+  : SubWindow(SubWindowType::Board, parent)
 {
 }
 
 BoardSubWindow::BoardSubWindow(std::shared_ptr<Connection> connection, const QString& id, QWidget* parent)
-  : SubWindow(SubWindowType::Throttle, std::move(connection), id, parent)
+  : SubWindow(SubWindowType::Board, std::move(connection), id, parent)
 {
+}
+
+BoardSubWindow::~BoardSubWindow()
+{
+  if(auto* board = qobject_cast<BoardWidget*>(widget())) [[likely]]
+  {
+    QSettings s;
+    s.beginGroup(settingsGroupName());
+    s.setValue("zoom_level", board->zoomLevel());
+  }
 }
 
 QWidget* BoardSubWindow::createWidget(const ObjectPtr& object)
 {
-  return new BoardWidget(std::dynamic_pointer_cast<Board>(object), this);
+  auto* board = new BoardWidget(std::dynamic_pointer_cast<Board>(object), this);
+  QSettings s;
+  s.beginGroup(settingsGroupName());
+  board->setZoomLevel(s.value("zoom_level", board->zoomLevel()).toInt());
+  return board;
 }

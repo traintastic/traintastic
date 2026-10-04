@@ -20,6 +20,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include "../src/core/eventloop.hpp"
 #include "../src/world/world.hpp"
 #include "../src/world/worldloader.hpp"
 #include "../src/world/worldsaver.hpp"
@@ -34,6 +35,8 @@
 
 TEST_CASE("Train: Save/Load", "[train][train-saveload]")
 {
+  EventLoop::reset();
+
   std::filesystem::path ctw;
   std::string worldUUID;
 
@@ -61,7 +64,11 @@ TEST_CASE("Train: Save/Load", "[train][train-saveload]")
     INFO("Saving...");
     {
       ctw = std::filesystem::temp_directory_path() / std::string(world->uuid.value()).append(World::dotCTW);
-      WorldSaver saver(*world, ctw);
+      WorldSaver saver(*world, ctw,
+        WorldSaver::Options{
+          .isAutoSave = false,
+          .isExport = false,
+        });
     }
     INFO("Saved");
   }

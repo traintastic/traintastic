@@ -83,7 +83,7 @@ PropertySpinBox::PropertySpinBox(Property& property, QWidget* parent) :
           break;
       }
     });
-  connect(this, QOverload<int>::of(&PropertySpinBox::valueChanged),
+  connect(this, QOverload<int>::of(&PropertySpinBox::valueChanged), this,
     [this](int value)
     {
       cancelRequest();

@@ -1,9 +1,8 @@
 /**
- * server/src/board/tile/rail/turnout/turnoutrailtile.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +28,9 @@
 #include "../../../../core/objectproperty.hpp"
 #include "../../../../core/method.hpp"
 #include <traintastic/enum/turnoutposition.hpp>
+#include "../../../../hardware/input/feedback/turnoutfeedbackmap.hpp"
 #include "../../../../hardware/output/map/turnoutoutputmap.hpp"
+#include "../../../../hardware/trackdriver/turnouttrackdriver.hpp"
 
 class BlockPath;
 
@@ -40,6 +41,7 @@ class TurnoutRailTile : public RailTile
   private:
     Node m_node;
     std::weak_ptr<BlockPath> m_reservedPath;
+    std::weak_ptr<Train> m_reservedTrain;
 
     std::chrono::steady_clock::time_point m_lastRetryStart;
     uint8_t m_retryCount;
@@ -47,32 +49,53 @@ class TurnoutRailTile : public RailTile
     static constexpr std::chrono::steady_clock::duration RETRY_DURATION = std::chrono::minutes(1);
 
   protected:
+    enum class Source
+    {
+      Direct,
+      OutputStateMatch,
+      FeedbackMatch,
+      Link,
+    };
+
     TurnoutRailTile(World& world, std::string_view _id, TileId tileId_, size_t connectors);
 
     void destroying() override;
     void addToWorld() override;
+    void loaded() override;
     void worldEvent(WorldState state, WorldEvent event) override;
+    void worldFeaturesChanged(const WorldFeatures features, WorldFeature changed) override;
 
-    bool isValidPosition(TurnoutPosition value);
+    bool isValidPosition(TurnoutPosition value) const;
     virtual bool doSetPosition(TurnoutPosition value, bool skipAction = false);
 
+    bool hasFeedback() const;
+
     void connectOutputMap();
+
+    void updatePosition(Source source, TurnoutPosition value);
+    virtual void newPosition(TurnoutPosition value);
+
+    inline auto onFeedbackMatch()
+    {
+      return std::bind_front(&TurnoutRailTile::updatePosition, this, Source::FeedbackMatch);
+    }
 
   public:
     boost::signals2::signal<void (const TurnoutRailTile&, TurnoutPosition)> positionChanged;
 
     Property<std::string> name;
     Property<TurnoutPosition> position;
+    Property<TurnoutPosition> reservedPosition;
     ObjectProperty<TurnoutOutputMap> outputMap;
+    ObjectProperty<TurnoutFeedbackMap> feedbackMap;
+    ObjectProperty<TurnoutTrackDriver> trackDriver;
     Method<bool(TurnoutPosition)> setPosition;
 
     std::optional<std::reference_wrapper<const Node>> node() const final { return m_node; }
     std::optional<std::reference_wrapper<Node>> node() final { return m_node; }
 
-    virtual bool reserve(const std::shared_ptr<BlockPath>& blockPath, TurnoutPosition turnoutPosition, bool dryRun = false);
+    virtual bool reserve(const std::shared_ptr<BlockPath>& blockPath, const std::shared_ptr<Train>& train, bool toeSideEntry, TurnoutPosition turnoutPosition, bool dryRun = false);
     bool release(bool dryRun = false);
-
-    TurnoutPosition getReservedPosition() const;
 };
 
 #endif

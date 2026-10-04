@@ -1,9 +1,8 @@
 /**
- * shared/src/enum/decoderprotocol.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2023 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,9 +34,10 @@ enum class DecoderProtocol : uint8_t
   Selectrix = 4,
   //FMZ = 5,
   DCCLong = 6,
+  Analog = 7,
 };
 
-TRAINTASTIC_ENUM(DecoderProtocol, "decoder_protocol", 6,
+TRAINTASTIC_ENUM(DecoderProtocol, "decoder_protocol", 7,
 {
   {DecoderProtocol::None, "none"},
   {DecoderProtocol::DCCShort, "dcc_short"},
@@ -45,6 +45,7 @@ TRAINTASTIC_ENUM(DecoderProtocol, "decoder_protocol", 6,
   {DecoderProtocol::MFX, "mfx"},
   {DecoderProtocol::Selectrix, "selectrix"},
   {DecoderProtocol::DCCLong, "dcc_long"},
+  {DecoderProtocol::Analog, "analog"},
 });
 
 constexpr bool hasAddress(DecoderProtocol value)
@@ -59,6 +60,7 @@ constexpr bool hasAddress(DecoderProtocol value)
 
     case DecoderProtocol::None:
     case DecoderProtocol::MFX:
+    case DecoderProtocol::Analog:
       return false;
   }
   return false;

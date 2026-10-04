@@ -1,9 +1,8 @@
 /**
- * client/src/network/callmethod.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2023 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -113,6 +112,34 @@ int callMethodR(Method& method, std::function<void(const R&, std::optional<const
   auto c = method.object().connection();
   c->send(request,
     [c, callback=std::move(callback)](const std::shared_ptr<Message> message)
+    {
+      if(!message->isError())
+      {
+        callback(getResult<R>(*c, *message), {});
+      }
+      else
+      {
+        callback(R(), *message);
+      }
+    });
+
+  return request->requestId();
+}
+
+template<class R, class... A>
+int callMethodR(Connection& connection, std::string_view methodPath, std::function<void(const R&, std::optional<const Error>)> callback, A... args)
+{
+  auto request = Message::newRequest(Message::Command::CallMethod);
+  request->write(methodPath);
+  static_assert(value_type_v<R> != ValueType::Invalid);
+  request->write(value_type_v<R>);
+  request->write<uint8_t>(sizeof...(A)); // N arguments
+
+  if constexpr(sizeof...(A) > 0)
+    writeArguments(*request, args...);
+
+  connection.send(request,
+    [c=&connection, callback=std::move(callback)](const std::shared_ptr<Message> message)
     {
       if(!message->isError())
       {

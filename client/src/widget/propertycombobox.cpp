@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2020-2021 Reinder Feenstra
+ * Copyright (C) 2020-2025 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,7 +36,7 @@ PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
   setEnabled(m_property.getAttributeBool(AttributeName::Enabled, true));
   setVisible(m_property.getAttributeBool(AttributeName::Visible, true));
 
-  setEditable(m_property.type() == ValueType::String); //! \todo add attribute for this
+  setEditable(m_property.getAttributeBool(AttributeName::Custom, m_property.type() == ValueType::String));
   setInsertPolicy(QComboBox::NoInsert);
 
   switch(m_property.type())
@@ -114,13 +114,28 @@ PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
         if(m_internalUpdate == 0)
         {
           const QVariant v = currentData();
-          if(v.canConvert<qint64>())
-            m_property.setValueInt64(v.value<qint64>());
-          else
-            m_property.setValueString(v.toString());
+          switch(m_property.type())
+          {
+            case ValueType::Integer:
+            case ValueType::Enum:
+              m_property.setValueInt64(v.value<qint64>());
+              break;
+
+            case ValueType::String:
+              m_property.setValueString(v.toString());
+              break;
+
+            case ValueType::Invalid:
+            case ValueType::Boolean:
+            case ValueType::Float:
+            case ValueType::Object:
+            case ValueType::Set:
+              assert(false);
+              break;
+          }
         }
       });
-    }
+  }
 
   updateValues();
 }
@@ -174,10 +189,21 @@ void PropertyComboBox::updateValues()
           break;
 
         case ValueType::String:
+        {
+          const QVariantList aliasKeys = m_property.getAttribute(AttributeName::AliasKeys, QVariant()).toList();
+          const QVariantList aliasValues = m_property.getAttribute(AttributeName::AliasValues, QVariant()).toList();
+
           for(QVariant& v : values.toList())
           {
             const QString value = v.toString();
-            addItem(value, value);
+            if(int index = aliasKeys.indexOf(value); index != -1)
+            {
+              addItem(Locale::instance->parse(aliasValues[index].toString()), value);
+            }
+            else
+            {
+              addItem(value, value);
+            }
             if(m_property.toString() == value)
             {
               setCurrentIndex(count() - 1);
@@ -185,7 +211,7 @@ void PropertyComboBox::updateValues()
             }
           }
           break;
-
+        }
         case ValueType::Invalid:
         case ValueType::Boolean:
         case ValueType::Float:

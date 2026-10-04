@@ -26,6 +26,7 @@
 #include "../kernelbase.hpp"
 #include <unordered_map>
 #include <set>
+#include <boost/asio/post.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/signals2/signal.hpp>
 #include <traintastic/enum/tristate.hpp>
@@ -86,7 +87,7 @@ class Kernel : public ::KernelBase
     template<class T>
     void postSend(const T& message)
     {
-      m_ioContext.post(
+      boost::asio::post(m_ioContext, 
         [this, message]()
         {
           send(message);

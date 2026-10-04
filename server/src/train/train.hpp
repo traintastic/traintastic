@@ -1,9 +1,8 @@
 /**
- * server/src/train/train.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -108,6 +107,8 @@ class Train : public IdObject
     Property<bool> emergencyStop;
     WeightProperty weight;
     Property<bool> overrideWeight;
+    Property<double> accelerationRate;
+    Property<double> brakingRate;
     ObjectProperty<TrainVehicleList> vehicles;
     Property<bool> powered;
     Property<bool> active;

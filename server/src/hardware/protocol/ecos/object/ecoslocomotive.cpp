@@ -1,0 +1,143 @@
+/**
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
+ *
+ * Copyright (C) 2021-2026 Reinder Feenstra
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+#include "ecoslocomotive.hpp"
+#include <cassert>
+#include "../ecosmessages.hpp"
+#include "../../../../utils/fromchars.hpp"
+
+namespace ECoS {
+
+const std::initializer_list<std::string_view> Locomotive::options = {Option::addr, Option::protocol};
+
+Locomotive::Locomotive(Kernel& kernel, uint16_t id)
+  : Object(kernel, id)
+{
+  requestView();
+  send(get(m_id, {Option::dir, Option::speedStep, Option::funcset}));
+}
+
+Locomotive::Locomotive(Kernel& kernel, const Line& data)
+  : Locomotive(kernel, data.objectId)
+{
+  const auto values = data.values;
+  if(auto addr = values.find(Option::addr); addr != values.end())
+    fromChars(addr->second, m_address);
+  if(auto protocol = values.find(Option::protocol); protocol != values.end())
+    fromString(protocol->second, m_protocol);
+}
+
+bool Locomotive::receiveReply(const Reply& reply)
+{
+  assert(reply.objectId == m_id);
+
+  if(reply.command == Command::request && !reply.options.empty() && reply.options[0] == Option::control && reply.status == Status::Ok)
+  {
+    m_control = true;
+  }
+
+  return Object::receiveReply(reply);
+}
+
+bool Locomotive::receiveEvent(const Event& event)
+{
+  assert(event.objectId == m_id);
+
+  return Object::receiveEvent(event);
+}
+
+void Locomotive::stop()
+{
+  send(set(m_id, {Option::stop}));
+}
+
+void Locomotive::setSpeedStep(uint8_t value)
+{
+  if(m_speedStep != value)
+  {
+    requestControl();
+    send(set(m_id, Option::speedStep, value));
+  }
+}
+
+void Locomotive::setDirection(Direction value)
+{
+  if(m_direction != value)
+  {
+    requestControl();
+    send(set(m_id, Option::dir, (value == Direction::Reverse) ? 1 : 0));
+  }
+}
+
+TriState Locomotive::getFunctionValue(uint8_t index) const
+{
+  if(auto it = m_functions.find(index); it != m_functions.end())
+    return toTriState(it->second.value);
+  return TriState::Undefined;
+}
+
+void Locomotive::setFunctionValue(uint8_t index, bool value)
+{
+  auto it = m_functions.find(index);
+  if(it == m_functions.end() || it->second.value != value)
+  {
+    requestControl();
+    send(set(m_id, Option::func, index, value ? 1 : 0));
+  }
+}
+
+void Locomotive::update(std::string_view option, std::string_view value)
+{
+  if(option == Option::speedStep)
+  {
+    uint8_t v;
+    if(auto r = fromChars(value, v); r.ec == std::errc())
+      m_speedStep = v;
+  }
+  else if(option == Option::dir)
+  {
+    m_direction = (value == "1") ? Direction::Reverse : Direction::Forward;
+  }
+  else if(option == Option::func)
+  {
+    uint8_t fn;
+    if(auto r = fromChars(value, fn); r.ec == std::errc() && r.ptr < value.data() + value.size() - 1 && *r.ptr == ',')
+    {
+      m_functions[fn].value = *(r.ptr + 1) == '1';
+    }
+  }
+  else if(option == Option::funcset)
+  {
+    const uint8_t count = static_cast<uint8_t>(std::min(m_functions.size(), value.size()));
+    for(uint8_t fn = 0; fn < count; ++fn)
+    {
+      m_functions[fn].value = (value[fn] == '1');
+    }
+  }
+}
+
+void Locomotive::requestControl()
+{
+  if(!m_control)
+    send(request(m_id, {Option::control, Option::force}));
+}
+
+}

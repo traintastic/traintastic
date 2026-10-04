@@ -1,9 +1,8 @@
 /**
- * client/src/board/boardareawidget.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2025 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,11 +26,14 @@
 #include <QtMath>
 #include <QApplication>
 #include <QToolTip>
+#include <QDrag>
+#include <QMenu>
 #include <traintastic/locale/locale.hpp>
 #include "boardwidget.hpp"
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
 #include "blockhighlight.hpp"
+#include "tilemenu.hpp"
 #include "../mainwindow.hpp"
 #include "../network/board.hpp"
 #include "../network/callmethod.hpp"
@@ -367,6 +369,47 @@ TileLocation BoardAreaWidget::pointToTileLocation(const QPoint& p)
   return TileLocation{static_cast<int16_t>(p.x() / pxPerTile + boardLeft()), static_cast<int16_t>(p.y() / pxPerTile + boardTop())};
 }
 
+QRect BoardAreaWidget::tileRect(int x, int y, int width, int height) const
+{
+  const int pxPerTile = getTileSize() - 1;
+  return QRect(
+    (x - boardLeft()) * pxPerTile,
+    (y - boardTop()) * pxPerTile,
+    width * pxPerTile,
+    height * pxPerTile);
+}
+
+QRect BoardAreaWidget::tileRect(const Object& tile) const
+{
+  return tileRect(
+    tile.getPropertyValueInt("x", 0),
+    tile.getPropertyValueInt("y", 0),
+    tile.getPropertyValueInt("width", 1),
+    tile.getPropertyValueInt("height", 1));
+}
+
+BlockTrainDirection BoardAreaWidget::getBlockTrainDirection(const Object& tile, const QPoint& point) const
+{
+  const auto blockRect = tileRect(tile);
+  if(blockRect.contains(point))
+  {
+    const auto r = tile.getPropertyValueEnum<TileRotate>("rotate", TileRotate::Deg0);
+    if(r == TileRotate::Deg0)
+    {
+      return (point.y() - blockRect.y()) >= (blockRect.height() / 2)
+        ? BlockTrainDirection::TowardsA
+        : BlockTrainDirection::TowardsB;
+    }
+    if(r == TileRotate::Deg90)
+    {
+      return (point.x() - blockRect.x()) >= (blockRect.width() / 2)
+        ? BlockTrainDirection::TowardsB
+        : BlockTrainDirection::TowardsA;
+    }
+  }
+  return BlockTrainDirection::Unknown;
+}
+
 QString BoardAreaWidget::getTileToolTip(const TileLocation& l) const
 {
   const auto tileId = m_board->getTileId(l);
@@ -521,6 +564,7 @@ void BoardAreaWidget::mousePressEvent(QMouseEvent* event)
   if(event->button() == Qt::LeftButton)
   {
     m_mouseLeftButtonPressed = true;
+    m_dragStartPosition = event->pos();
     m_mouseLeftButtonPressedTileLocation = pointToTileLocation(event->pos());
   }
   else if(event->button() == Qt::RightButton)
@@ -532,24 +576,67 @@ void BoardAreaWidget::mousePressEvent(QMouseEvent* event)
 
 void BoardAreaWidget::mouseReleaseEvent(QMouseEvent* event)
 {
+  qDebug() << "mouseReleaseEvent";
+
   if(m_mouseLeftButtonPressed && event->button() == Qt::LeftButton)
   {
     m_mouseLeftButtonPressed = false;
-    TileLocation tl = pointToTileLocation(event->pos());
-
-    if(m_mouseLeftButtonPressedTileLocation == tl) // click
-      emit tileClicked(tl.x, tl.y);
+    if(!m_dragStarted)
+    {
+      TileLocation tl = pointToTileLocation(event->pos());
+      if(m_mouseLeftButtonPressedTileLocation == tl) // click
+      {
+        emit tileClicked(tl.x, tl.y);
+      }
+    }
+    else
+    {
+      m_dragStarted = false;
+    }
   }
   else if(m_mouseRightButtonPressed && event->button() == Qt::RightButton)
   {
     m_mouseRightButtonPressed = false;
     if((event->pos() - m_mouseRightButtonPressedPoint).manhattanLength() < 5 || m_mouseMoveTileId != TileId::None)
+    {
       emit rightClicked();
+
+      // action stuff should be in this class, not in BoardWidget,
+      // then BoardAreaWidget can be used without toolbar stuff, e.g. fullscreen :)
+      // We need to refactor this some day...
+      if(m_mouseMoveTileId == TileId::None)
+      {
+        if(auto menu = getTileMenu(m_board->getTileObject(pointToTileLocation(m_mouseRightButtonPressedPoint)), this))
+        {
+          menu->exec(QCursor::pos());
+        }
+      }
+    }
   }
 }
 
 void BoardAreaWidget::mouseMoveEvent(QMouseEvent* event)
 {
+  if(m_dragStarted)
+  {
+    return;
+  }
+
+  if(!m_dragStarted && (event->buttons() & Qt::LeftButton) && (event->pos() - m_dragStartPosition).manhattanLength() >= QApplication::startDragDistance())
+  {
+    const TileLocation l = pointToTileLocation(m_dragStartPosition);
+    if(auto tile = m_board->getTileObject(l); tile && m_board->getTileId(l) == TileId::RailBlock)
+    {
+      if(const auto direction = getBlockTrainDirection(*tile, m_dragStartPosition); direction != BlockTrainDirection::Unknown) [[likely]]
+      {
+        m_dragStarted = true;
+        auto* drag = new QDrag(this);
+        drag->setMimeData(new BlockReservePathMimeData(tile->getPropertyValueString("id"), direction));
+        drag->exec(Qt::LinkAction);
+      }
+    }
+  }
+
   if(hasMouseTracking())
   {
     const TileLocation tl = pointToTileLocation(event->pos());
@@ -868,7 +955,8 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
 void BoardAreaWidget::dragEnterEvent(QDragEnterEvent *event)
 {
-  if(event->mimeData()->hasFormat(AssignTrainMimeData::mimeType))
+  if(event->mimeData()->hasFormat(BlockReservePathMimeData::mimeType) ||
+      event->mimeData()->hasFormat(AssignTrainMimeData::mimeType))
   {
     m_dragMoveTileLocation = TileLocation::invalid;
     event->acceptProposedAction();
@@ -886,6 +974,12 @@ void BoardAreaWidget::dragMoveEvent(QDragMoveEvent* event)
   if(m_dragMoveTileLocation != l)
   {
     m_dragMoveTileLocation = l;
+    if(event->mimeData()->hasFormat(BlockReservePathMimeData::mimeType) &&
+        m_board->getTileId(l) == TileId::RailBlock)
+    {
+      // FIXME: block drag start block
+      return event->accept();
+    }
     if(event->mimeData()->hasFormat(AssignTrainMimeData::mimeType) &&
         m_board->getTileId(l) == TileId::RailBlock)
     {
@@ -898,14 +992,50 @@ void BoardAreaWidget::dragMoveEvent(QDragMoveEvent* event)
 void BoardAreaWidget::dropEvent(QDropEvent* event)
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-  const TileLocation l = pointToTileLocation(event->pos());
+  const auto pos = event->pos();
 #else
-  const TileLocation l = pointToTileLocation(event->position().toPoint());
+  const auto pos = event->position().toPoint();
 #endif
+  const TileLocation l = pointToTileLocation(pos);
 
-  switch(m_board->getTileId(l))
+  if(m_board->getTileId(l) == TileId::RailBlock)
   {
-    case TileId::RailBlock:
+    if(event->mimeData()->hasFormat(BlockReservePathMimeData::mimeType))
+    {
+      m_mouseLeftButtonPressed = false;
+      m_dragStarted = false;
+
+      if(auto* blockReservePath = dynamic_cast<const BlockReservePathMimeData*>(event->mimeData()))
+      {
+        if(auto tile = m_board->getTileObject(l); tile && m_board->getTileId(l) == TileId::RailBlock) [[likely]]
+        {
+          if(const auto toDirection = !getBlockTrainDirection(*tile, pos); toDirection != BlockTrainDirection::Unknown) [[likely]]
+          {
+            const auto [fromBlock, fromDirection] = blockReservePath->values();
+            const auto toBlock = tile->getPropertyValueString("id");
+
+            qDebug()
+              << fromBlock
+              << (fromDirection == BlockTrainDirection::TowardsA ? "A" : "B")
+              << toBlock
+              << (toDirection == BlockTrainDirection::TowardsA ? "A" : "B");
+
+            (void)callMethodR<bool>(
+              *m_board->connection(),
+              "world.train_path_finder.reserve",
+              [](const bool& /*success*/, std::optional<const Error> /*err*/)
+              {
+              },
+              fromBlock,
+              fromDirection,
+              toBlock,
+              toDirection);
+          }
+        }
+      }
+    }
+    else if(event->mimeData()->hasFormat(AssignTrainMimeData::mimeType))
+    {
       if(auto* assignTrain = dynamic_cast<const AssignTrainMimeData*>(event->mimeData()))
       {
         if(auto tile = std::dynamic_pointer_cast<BlockRailTile>(m_board->getTileObject(l)))
@@ -917,10 +1047,7 @@ void BoardAreaWidget::dropEvent(QDropEvent* event)
           }
         }
       }
-      break;
-
-    default:
-      break;
+    }
   }
   event->ignore();
 }

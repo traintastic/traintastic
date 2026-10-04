@@ -7,7 +7,7 @@ This appendix describes Traintastic's XpressNet implementation details.
 ## Supported hardware
 
 Traintastic supports a wide range of command stations and interfaces with XpressNet capability.
-See the [Supported hardware](supported-hardware.md) page for a complete and up-to-date list.
+See the [Supported hardware](supported-hardware/index.md) section for a complete and up-to-date list.
 
 ## Message support
 

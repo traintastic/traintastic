@@ -26,7 +26,6 @@
 #include "../../network/objectptr.hpp"
 
 class QTabWidget;
-class TileImageWidget;
 
 class TileWidget : public QWidget
 {
@@ -35,7 +34,6 @@ class TileWidget : public QWidget
 protected:
   ObjectPtr m_object;
   QTabWidget* m_tabs;
-  TileImageWidget* m_image;
 
 public:
   explicit TileWidget(ObjectPtr object, QWidget* parent = nullptr);

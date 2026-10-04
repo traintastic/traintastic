@@ -21,6 +21,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include "../../src/core/eventloop.hpp"
 #include "../../src/world/world.hpp"
 #include "../../src/core/method.tpp"
 #include "../../src/core/objectproperty.tpp"
@@ -28,6 +29,8 @@
 
 TEST_CASE("Lua script: no code, start/stop, disable", "[lua][lua-script]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
 

@@ -1,9 +1,8 @@
 /**
- * server/src/board/tile/rail/turnout/turnoutwyerailtile.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2022 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,9 +22,9 @@
 #ifndef TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTWYERAILTILE_HPP
 #define TRAINTASTIC_SERVER_BOARD_TILE_RAIL_TURNOUT_TURNOUTWYERAILTILE_HPP
 
-#include "turnoutrailtile.hpp"
+#include "turnoutlinkablerailtile.hpp"
 
-class TurnoutWyeRailTile : public TurnoutRailTile
+class TurnoutWyeRailTile : public TurnoutLinkableRailTile
 {
   CLASS_ID("board_tile.rail.turnout_wye")
   CREATE(TurnoutWyeRailTile)

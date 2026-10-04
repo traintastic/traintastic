@@ -1,9 +1,8 @@
 /**
- * client/src/board/boardareawidget.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2025 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,6 +41,7 @@
 class BoardWidget;
 class BlockHighlight;
 class Board;
+enum class BlockTrainDirection : uint8_t;
 
 class BoardAreaWidget : public QWidget
 {
@@ -79,6 +79,9 @@ class BoardAreaWidget : public QWidget
     bool m_mouseRightButtonPressed;
     QPoint m_mouseRightButtonPressedPoint;
 
+    QPoint m_dragStartPosition;
+    bool m_dragStarted = false;
+
     MouseMoveAction m_mouseMoveAction;
     TileId m_mouseMoveTileId;
     TileLocation m_mouseMoveTileLocation;
@@ -107,6 +110,9 @@ class BoardAreaWidget : public QWidget
     bool getNXButtonEnabled(const TileLocation& l) const;
     bool getNXButtonPressed(const TileLocation& l) const;
     TileLocation pointToTileLocation(const QPoint& p);
+    QRect tileRect(int x, int y, int width, int height) const;
+    QRect tileRect(const Object& tile) const;
+    BlockTrainDirection getBlockTrainDirection(const Object& tile, const QPoint& point) const;
     QString getTileToolTip(const TileLocation& l) const;
 
     bool event(QEvent* event) final;

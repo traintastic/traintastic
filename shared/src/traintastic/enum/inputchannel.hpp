@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,9 +36,11 @@ enum class InputChannel : uint16_t
   S88_Middle = 6,
   S88_Right = 7,
   ECoSDetector = 8,
+  LongEvent = 9,
+  ShortEvent = 10,
 };
 
-TRAINTASTIC_ENUM(InputChannel, "input_channel", 8,
+TRAINTASTIC_ENUM(InputChannel, "input_channel", 10,
 {
   {InputChannel::Input, "input"},
   {InputChannel::LocoNet, "loconet"},
@@ -48,9 +50,11 @@ TRAINTASTIC_ENUM(InputChannel, "input_channel", 8,
   {InputChannel::S88_Middle, "s88_middle"},
   {InputChannel::S88_Right, "s88_right"},
   {InputChannel::ECoSDetector, "ecos_detector"},
+  {InputChannel::LongEvent, "long_event"},
+  {InputChannel::ShortEvent, "short_event"},
 });
 
-inline constexpr std::array<InputChannel, 8> inputChannelValues{{
+inline constexpr std::array<InputChannel, 10> inputChannelValues{{
   InputChannel::Input,
   InputChannel::LocoNet,
   InputChannel::RBus,
@@ -59,6 +63,13 @@ inline constexpr std::array<InputChannel, 8> inputChannelValues{{
   InputChannel::S88_Middle,
   InputChannel::S88_Right,
   InputChannel::ECoSDetector,
+  InputChannel::LongEvent,
+  InputChannel::ShortEvent,
 }};
+
+constexpr bool addressIsEvent(InputChannel channel)
+{
+  return (channel == InputChannel::LongEvent) || (channel == InputChannel::ShortEvent);
+}
 
 #endif

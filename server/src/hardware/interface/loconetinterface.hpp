@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/interface/loconetinterface.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -92,6 +91,8 @@ class LocoNetInterface final
     //! \return \c true if send to command station, \c false otherwise.
     bool immPacket(std::span<uint8_t> dccPacket, uint8_t repeat);
 
+    void readLNCV(uint16_t moduleId, uint16_t address, uint16_t lncv, std::function<void(uint16_t, std::error_code)> callback);
+
     // DecoderController:
     std::span<const DecoderProtocol> decoderProtocols() const final;
     std::pair<uint16_t, uint16_t> decoderAddressMinMax(DecoderProtocol protocol) const final;
@@ -100,12 +101,12 @@ class LocoNetInterface final
     // InputController:
     std::span<const InputChannel> inputChannels() const final;
     std::pair<uint32_t, uint32_t> inputAddressMinMax(InputChannel channel) const final;
-    void inputSimulateChange(InputChannel channel, uint32_t address, SimulateInputAction action) final;
+    void inputSimulateChange(InputChannel channel, const InputLocation& location, SimulateInputAction action) final;
 
     // OutputController:
     std::span<const OutputChannel> outputChannels() const final;
     std::pair<uint32_t, uint32_t> outputAddressMinMax(OutputChannel /*channel*/) const final;
-    [[nodiscard]] bool setOutputValue(OutputChannel channel, uint32_t address, OutputValue value) final;
+    [[nodiscard]] bool setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value) final;
 
     // IdentificationController:
     std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t /*channel*/) const final;

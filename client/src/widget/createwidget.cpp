@@ -1,9 +1,8 @@
 /**
- * client/src/widget/createwidget.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2020-2025 Reinder Feenstra
+ * Copyright (C) 2020-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,13 +32,14 @@
 #include "tile/tilewidget.hpp"
 #include "inputmonitorwidget.hpp"
 #include "outputkeyboardwidget.hpp"
-#include "outputmapwidget.hpp"
+#include "iomapwidget.hpp"
 #include "propertycheckbox.hpp"
 #include "propertycombobox.hpp"
 #include "propertydoublespinbox.hpp"
 #include "propertyspinbox.hpp"
 #include "propertylineedit.hpp"
 #include "propertypairoutputaction.hpp"
+#include "propertyvaluelabel.hpp"
 #include "objectpropertycombobox.hpp"
 #include "objectnamelabel.hpp"
 #include "../board/boardwidget.hpp"
@@ -82,11 +82,13 @@ QWidget* createWidgetIfCustom(const ObjectPtr& object, QWidget* parent)
     return new ObjectListWidget(object, parent);
   else if(classId == "lua.script")
     return new LuaScriptEditWidget(object, parent);
-  else if(classId.startsWith("output_map."))
-    return new OutputMapWidget(object, parent);
+  else if(classId.startsWith("output_map.") || classId.startsWith("feedback_map."))
+  {
+    return new IOMapWidget(object, parent);
+  }
   else if(classId == "input_map.block" || classId == "decoder_functions")
     return new ItemsEditWidget(object, parent);
-  else if(classId == "marklin_can_node_list")
+  else if(classId == "marklin_can_node_list" || classId == "cbus_node_list" || classId == "cbus_session_list")
     return new ListWidget(object, parent);
   else if(classId == "marklin_can_locomotive_list")
     return new MarklinCANLocomotiveListWidget(object, parent);
@@ -103,6 +105,10 @@ QWidget* createWidget(const ObjectPtr& object, QWidget* parent)
   else if(auto outputKeyboard = std::dynamic_pointer_cast<OutputKeyboard>(object))
     return new OutputKeyboardWidget(outputKeyboard, parent);
   else if(object->classId().startsWith("board_tile."))
+  {
+    return new TileWidget(object, parent);
+  }
+  else if(object->classId() == "booster")
   {
     return new TileWidget(object, parent);
   }
@@ -136,6 +142,11 @@ QWidget* createWidget(AbstractProperty& baseProperty, QWidget* parent)
 
 QWidget* createWidget(Property& property, QWidget* parent)
 {
+  if(!property.isWritable()) // read only
+  {
+    return new PropertyValueLabel(property, parent);
+  }
+
   switch(property.type())
   {
     case ValueType::Boolean:

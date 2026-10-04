@@ -1,9 +1,8 @@
 /**
- * server/src/network/webthrottleconnection.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -110,7 +109,7 @@ void WebThrottleConnection::doRead()
         // Socket read failed (The WebSocket stream was gracefully closed at both endpoints)
         EventLoop::call(std::bind(&WebThrottleConnection::connectionLost, this));
       }
-      else
+      else if(ec != boost::asio::error::operation_aborted)
       {
         Log::log(id, LogMessage::E1007_SOCKET_READ_FAILED_X, ec);
         EventLoop::call(std::bind(&WebThrottleConnection::disconnect, this));
@@ -355,7 +354,7 @@ void WebThrottleConnection::sendMessage(const nlohmann::json& message)
 {
   assert(isEventLoopThread());
 
-  ioContext().post(
+  boost::asio::post(ioContext(),
     [this, msg=message.dump()]()
     {
       const bool wasEmpty = m_writeQueue.empty();

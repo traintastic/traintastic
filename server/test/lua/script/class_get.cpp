@@ -22,6 +22,7 @@
 
 #include <catch2/catch_template_test_macros.hpp>
 #include "../../hardware/interfaces.hpp"
+#include "../../../src/core/eventloop.hpp"
 #include "../../../src/core/method.tpp"
 #include "../../../src/core/objectproperty.tpp"
 #include "../../../src/hardware/interface/interfacelist.hpp"
@@ -36,6 +37,8 @@
 
 TEST_CASE("Lua script: class.get() - nil", "[lua][lua-script][lua-script-class-get]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -51,6 +54,8 @@ TEST_CASE("Lua script: class.get() - nil", "[lua][lua-script][lua-script-class-g
 
 TEST_CASE("Lua script: class.get() - false", "[lua][lua-script][lua-script-class-get]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -65,6 +70,8 @@ TEST_CASE("Lua script: class.get() - false", "[lua][lua-script][lua-script-class
 
 TEST_CASE("Lua script: class.get() - true", "[lua][lua-script][lua-script-class-get]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -79,6 +86,8 @@ TEST_CASE("Lua script: class.get() - true", "[lua][lua-script][lua-script-class-
 
 TEST_CASE("Lua script: class.get() - integer", "[lua][lua-script][lua-script-class-get]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -93,6 +102,8 @@ TEST_CASE("Lua script: class.get() - integer", "[lua][lua-script][lua-script-cla
 
 TEST_CASE("Lua script: class.get() - number", "[lua][lua-script][lua-script-class-get]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -107,6 +118,8 @@ TEST_CASE("Lua script: class.get() - number", "[lua][lua-script][lua-script-clas
 
 TEST_CASE("Lua script: class.get() - string", "[lua][lua-script][lua-script-class-get]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -121,6 +134,8 @@ TEST_CASE("Lua script: class.get() - string", "[lua][lua-script][lua-script-clas
 
 TEST_CASE("Lua script: class.get() - table", "[lua][lua-script][lua-script-class-get]")
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -135,6 +150,8 @@ TEST_CASE("Lua script: class.get() - table", "[lua][lua-script][lua-script-class
 
 TEMPLATE_TEST_CASE("Lua script: class.get()", "[lua][lua-script][lua-script-class-get]", LUA_ENUMS)
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -151,6 +168,8 @@ TEMPLATE_TEST_CASE("Lua script: class.get()", "[lua][lua-script][lua-script-clas
 
 TEMPLATE_TEST_CASE("Lua script: class.get()", "[lua][lua-script][lua-script-class-get]", LUA_SETS)
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto script = world->luaScripts->create();
@@ -167,6 +186,8 @@ TEMPLATE_TEST_CASE("Lua script: class.get()", "[lua][lua-script][lua-script-clas
 
 TEMPLATE_TEST_CASE("Lua script: class.get()", "[lua][lua-script][lua-script-class-get]", INTERFACES)
 {
+  EventLoop::reset();
+
   auto world = World::create();
   REQUIRE(world);
   auto interface = world->interfaces->create(TestType::classId);

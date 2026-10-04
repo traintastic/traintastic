@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/input/list/inputlisttablemodel.cpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,6 +42,9 @@ static std::string_view displayName(InputListColumn column)
 
     case InputListColumn::Channel:
       return DisplayName::Hardware::channel;
+
+    case InputListColumn::Node:
+      return DisplayName::Hardware::node;
 
     case InputListColumn::Address:
       return DisplayName::Hardware::address;
@@ -96,6 +98,13 @@ std::string InputListTableModel::getText(uint32_t column, uint32_t row) const
           }
         }
         break;
+
+      case InputListColumn::Node:
+        if(hasNodeAddressLocation(input.channel))
+        {
+          return std::to_string(input.node.value());
+        }
+        return {};
 
       case InputListColumn::Address:
         return std::to_string(input.address.value());

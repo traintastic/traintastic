@@ -17,6 +17,9 @@
   "clock": {
     "since": "0.2"
   },
+  "train_path_finder": {
+    "since": "0.4"
+  },
   "trains": {},
   "rail_vehicles": {},
   "state": {

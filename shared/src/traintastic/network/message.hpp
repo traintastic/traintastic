@@ -1,9 +1,8 @@
 /**
- * shared/src/message.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2025 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -82,7 +81,9 @@ class Message
       ObjectSetVectorProperty = 46,
 
       ObjectListGetObjects = 47,
+      CallMethod = 48,
 
+      GetDiagnosticReport = 254,
       Discover = 255,
     };
 
