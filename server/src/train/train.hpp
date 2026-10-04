@@ -25,7 +25,6 @@
 #include "../core/idobject.hpp"
 #include <boost/asio/steady_timer.hpp>
 #include <traintastic/enum/blocktraindirection.hpp>
-#include <traintastic/enum/trainmode.hpp>
 #include "../core/event.hpp"
 #include "../core/method.hpp"
 #include "../core/objectproperty.hpp"
@@ -113,7 +112,6 @@ class Train : public IdObject
     ObjectProperty<TrainVehicleList> vehicles;
     Property<bool> powered;
     Property<bool> active;
-    Property<TrainMode> mode;
     Property<bool> mute;
     Property<bool> noSmoke;
     Property<bool> hasThrottle;

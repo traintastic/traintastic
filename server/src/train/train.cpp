@@ -176,7 +176,6 @@ Train::Train(World& world, std::string_view _id) :
       }
     },
     std::bind(&Train::setTrainActive, this, std::placeholders::_1)}
-  , mode{this, "mode", TrainMode::ManualUnprotected, PropertyFlags::ReadWrite | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
   , mute{this, "mute", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , noSmoke{this, "no_smoke", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
   , hasThrottle{this, "has_throttle", false, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::ScriptReadOnly}
@@ -308,9 +307,6 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addEnabled(active, true);
   m_interfaceItems.add(active);
 
-  Attributes::addValues(mode, trainModeValues);
-  Attributes::addObjectEditor(mode, false);
-  m_interfaceItems.add(mode);
 
   Attributes::addObjectEditor(mute, false);
   m_interfaceItems.add(mute);
