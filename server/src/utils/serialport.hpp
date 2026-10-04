@@ -43,6 +43,18 @@ constexpr std::array<uint32_t, 14> baudrateValues = {{110, 300, 600, 1'200, 2'40
  */
 void open(boost::asio::serial_port& serialPort, const std::string& device, uint32_t baudrate, uint8_t characterSize, SerialParity parity, SerialStopBits stopBits, SerialFlowControl flowControl);
 
+/**
+ * @brief Read the state of the CTS (Clear To Send) modem-status line.
+ *
+ * Passive, read-only modem-status query via the OS (TIOCMGET on POSIX,
+ * GetCommModemStatus on Windows); it does not touch the existing read/write
+ * paths or flow-control configuration.
+ *
+ * @return true if CTS is asserted (or if the port is closed / the status
+ *         cannot be read — i.e. "healthy", so callers never false-trigger).
+ */
+bool getCTS(boost::asio::serial_port& serialPort);
+
 }
 
 #endif
