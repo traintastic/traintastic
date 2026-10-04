@@ -97,7 +97,7 @@ std::string InputListTableModel::getText(uint32_t column, uint32_t row) const
             return std::string("$").append(EnumName<InputChannel>::value).append(":").append(it->second).append("$");
           }
         }
-        break;
+        return {};
 
       case InputListColumn::Node:
         if(hasNodeAddressLocation(input.channel))
