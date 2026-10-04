@@ -68,6 +68,7 @@ void Dispatcher::trainThrottleChanged(const Train& train)
 void Dispatcher::trainEnteredBlock(const Train& train, const BlockRailTile& block)
 {
   LOG_DEBUG("Dispatcher::trainEnteredBlock", train.name.value(), block.name.value());
+  (void)block;
 
   evaluateTrain(train);
 }
