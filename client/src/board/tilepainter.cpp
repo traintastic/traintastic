@@ -22,6 +22,7 @@
 
 #include "tilepainter.hpp"
 #include <cmath>
+#include <ranges>
 #include <QtMath>
 #include <QIcon>
 #include <QPainterPath>
@@ -1271,7 +1272,7 @@ void TilePainter::drawRailBlock(const QRectF& r, TileRotate rotate, bool isReser
       const qreal height = block.height() / subStates.size();
       const qreal width = qRound(block.width() / 5);
       qreal top = block.top();
-      for(SensorState subState : subStates)
+      for(SensorState subState : subStates | std::views::reverse)
       {
         m_painter.setBrush(sensorStateToColor(subState));
         m_painter.drawRect(QRectF(block.left(), qRound(top) - 0.5, width, qRound(top + height) - qRound(top)));
