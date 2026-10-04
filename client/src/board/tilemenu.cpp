@@ -26,6 +26,7 @@
 #include "../mainwindow.hpp"
 #include "../network/callmethod.hpp"
 #include "../network/object.tpp"
+#include "../network/objectproperty.hpp"
 #include "../network/object/blockrailtile.hpp"
 #include "../network/object/trainblockstatus.hpp"
 #include "../dialog/objectselectlistdialog.hpp"
@@ -45,9 +46,28 @@ void addHeader(QMenu& menu, const QString& title)
 
 void addTrainActions(const ObjectPtr& train, QMenu& menu, QWidget* parent)
 {
-  (void)train;
-  (void)menu;
-  (void)parent;
+  if(auto* route = train->getObjectProperty("route"); route && route->hasObject())
+  {
+    auto* routeMenu = menu.addMenu(route->displayName());
+    // fixme: addHeader(route name)
+    if(auto* cancelRoute = train->getMethod("cancel_route"))
+    {
+      routeMenu->addAction(new MethodAction(*cancelRoute));
+    }
+    routeMenu->addAction(Locale::tr("tile_menu:properties"),
+      [routeId=route->objectId()]()
+      {
+        MainWindow::instance->showObject(routeId, SubWindowType::Object);
+      });
+  }
+  else if(auto* assignRoute = train->getMethod("assign_route"))
+  {
+    menu.addAction(new MethodAction(*assignRoute,
+      [parent, assignRoute]()
+      {
+        std::make_unique<ObjectSelectListDialog>(*assignRoute, false, parent)->exec();
+      }));
+  }
 }
 
 void addBlockActions(const std::shared_ptr<BlockRailTile>& block, QMenu& menu, QWidget* parent)

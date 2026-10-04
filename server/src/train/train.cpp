@@ -35,7 +35,7 @@
 #include "../vehicle/rail/poweredrailvehicle.hpp"
 #include "../hardware/decoder/decoder.hpp"
 #include "../log/log.hpp"
-#include "../throttle/throttle.hpp"
+#include "../route/trainroute.hpp"
 #include "../utils/almostzero.hpp"
 #include "../utils/displayname.hpp"
 #include "../utils/unit.hpp"
@@ -187,6 +187,48 @@ Train::Train(World& world, std::string_view _id) :
   , onZoneLeaving{*this, "on_zone_leaving", EventFlags::Scriptable}
   , onZoneLeft{*this, "on_zone_left", EventFlags::Scriptable}
   , onZoneRemoved{*this, "on_zone_removed", EventFlags::Scriptable}
+  , route{this, "route", nullptr, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
+  , routePosition{this, "route_position", 0, PropertyFlags::ReadOnly | PropertyFlags::StoreState | PropertyFlags::ScriptReadOnly}
+  , assignRoute{*this, "assign_route", MethodFlags::ScriptCallable,
+      [this](const std::shared_ptr<TrainRoute>& newRoute)
+      {
+        if(!newRoute || !newRoute->enabled)
+        {
+          return false;
+        }
+
+        auto oldRoute = route.value();
+        if(oldRoute == newRoute)
+        {
+          return true;
+        }
+
+        route.setValueInternal(newRoute);
+        routePosition.setValueInternal(0);
+
+        auto self = shared_ptr<Train>();
+        if(oldRoute)
+        {
+          fireEvent(onRouteCanceled, self, oldRoute);
+        }
+        fireEvent(onRouteAssigned, self, newRoute);
+
+        return true;
+      }}
+  , cancelRoute{*this, "cancel_route", MethodFlags::ScriptCallable,
+      [this]()
+      {
+        if(route)
+        {
+          auto oldRoute = route.value();
+          route.setValueInternal(nullptr);
+          routePosition.setValueInternal(0);
+          fireEvent(onRouteCanceled, shared_ptr<Train>(), oldRoute);
+        }
+      }}
+  , onRouteAssigned{*this, "on_route_assigned", EventFlags::Scriptable}
+  , onRouteCanceled{*this, "on_route_canceled", EventFlags::Scriptable}
+  , onRouteCompleted{*this, "on_route_completed", EventFlags::Scriptable}
 {
   vehicles.setValueInternal(std::make_shared<TrainVehicleList>(*this, vehicles.name()));
 
@@ -266,6 +308,9 @@ Train::Train(World& world, std::string_view _id) :
   Attributes::addObjectEditor(zones, false);
   m_interfaceItems.add(zones);
 
+  Attributes::addObjectEditor(route, false);
+  m_interfaceItems.add(route);
+
   Attributes::addObjectEditor(powered, false);
   m_interfaceItems.add(powered);
   Attributes::addDisplayName(notes, DisplayName::Object::notes);
@@ -282,6 +327,13 @@ Train::Train(World& world, std::string_view _id) :
   m_interfaceItems.add(onZoneLeaving);
   m_interfaceItems.add(onZoneLeft);
   m_interfaceItems.add(onZoneRemoved);
+
+  Attributes::addObjectList(assignRoute, world.trainRoutes);
+  m_interfaceItems.add(assignRoute);
+  m_interfaceItems.add(cancelRoute);
+  m_interfaceItems.add(onRouteAssigned);
+  m_interfaceItems.add(onRouteCanceled);
+  m_interfaceItems.add(onRouteCompleted);
 
   updateEnabled();
   updateMute();

@@ -17,6 +17,18 @@
   "throttle_name": {},
   "blocks": {},
   "zones": {},
+  "route": {},
+  "route_position": {},
+  "assign_route": {
+    "parameters": [
+      {
+        "name": "route"
+      }
+    ]
+  },
+  "cancel_route": {
+    "parameters": []
+  },
   "on_block_assigned": {
     "parameters": [
       {
@@ -146,5 +158,35 @@
       }
     ],
     "since": "0.3"
+  },
+  "on_route_assigned": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "route"
+      }
+    ]
+  },
+  "on_route_canceled": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "route"
+      }
+    ]
+  },
+  "on_route_completed": {
+    "parameters": [
+      {
+        "name": "train"
+      },
+      {
+        "name": "route"
+      }
+    ]
   }
 }

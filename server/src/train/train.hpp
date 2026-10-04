@@ -38,6 +38,7 @@
 class TrainVehicleList;
 class TrainBlockStatus;
 class TrainZoneStatus;
+class TrainRoute;
 class BlockRailTile;
 class PoweredRailVehicle;
 class Zone;
@@ -135,6 +136,14 @@ class Train : public IdObject
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneLeaving;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneLeft;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<Zone>&> onZoneRemoved;
+
+    ObjectProperty<TrainRoute> route;
+    Property<uint32_t> routePosition;
+    Method<bool(const std::shared_ptr<TrainRoute>&)> assignRoute;
+    Method<void()> cancelRoute;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<TrainRoute>&> onRouteAssigned;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<TrainRoute>&> onRouteCanceled;
+    Event<const std::shared_ptr<Train>&, const std::shared_ptr<TrainRoute>&> onRouteCompleted;
 
     Train(World& world, std::string_view _id);
 
