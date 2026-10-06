@@ -79,7 +79,7 @@ void Dispatcher::evaluateTrain(const Train& train)
 
   auto& world = train.world();
 
-  if(train.emergencyStop || !train.route || (train.automatic && !world.automatic))
+  if(train.emergencyStop || !train.route || !train.route->valid || (train.automatic && !world.automatic))
   {
     return; // don't reserve new paths
   }
