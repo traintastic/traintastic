@@ -488,6 +488,14 @@ void Train::loaded()
   updateMute();
   updateNoSmoke();
 
+  if(automatic)
+  {
+    std::error_code ec;
+    AutoThrottle::assign(shared_ptr<Train>(), true, ec);
+    if(ec)
+      automatic.setValueInternal(false);
+  }
+
   if(active)
   {
     for(const auto& vehicle : m_poweredVehicles)

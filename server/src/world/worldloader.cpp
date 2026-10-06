@@ -55,6 +55,7 @@ struct LoadedEventOrder
 {
   static constexpr int board = 0;
   static constexpr int trainRoute = board + 1; // train route needs board map
+  static constexpr int train = trainRoute + 1; // train needs train route
 };
 
 }
@@ -427,6 +428,7 @@ void WorldLoader::createObject(ObjectData& objectData)
       objectData.json.erase("lob");
     }
     objectData.object = Train::create(*m_world, id);
+    objectData.loadedEventOrder = LoadedEventOrder::train;
   }
   else if(classId == TrainRoute::classId)
   {
