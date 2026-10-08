@@ -741,7 +741,7 @@ std::error_code Train::acquire(Throttle& throttle, bool steal)
     {
       return make_error_code(ErrorCode::AlreadyAcquired);
     }
-    m_throttle->release();
+    m_throttle->release(!steal);
   }
   if(!active)
   {
