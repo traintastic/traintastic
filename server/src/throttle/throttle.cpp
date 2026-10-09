@@ -144,7 +144,7 @@ void Throttle::release(bool stopIt)
     emergencyStop();
   }
 
-  auto keepAlive = shared_from_this();
+  auto self = shared_ptr<Throttle>();
 
   const auto logMessage = !stopIt && !train->isStopped.value() ? LogMessage::N3006_THROTTLE_X_RELEASED_TRAIN_X_WITHOUT_STOPPING_IT : LogMessage::I3002_THROTTLE_X_RELEASED_TRAIN_X;
   Log::log(m_logId, logMessage, name.value(), train->name.value());
@@ -152,7 +152,7 @@ void Throttle::release(bool stopIt)
   train.setValueInternal(nullptr);
 
   trainChanged();
-  fireEvent(onRelease, shared_ptr<Throttle>());
+  fireEvent(onRelease, self);
 }
 
 bool Throttle::emergencyStop()

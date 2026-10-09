@@ -33,26 +33,32 @@ enum class AutoThrottleReason : uint16_t
   WorldStop = 2,
   AutomaticDisabled = 3,
   NoRoute = 4,
-  WaitingForPath = 5,
+  InvalidRoute = 5,
+  WrongDirection = 6,
+  WaitingForPath = 7,
 };
 
-TRAINTASTIC_ENUM(AutoThrottleReason, "auto_throttle_reason", 6,
+TRAINTASTIC_ENUM(AutoThrottleReason, "auto_throttle_reason", 8,
 {
   {AutoThrottleReason::None, "none"},
   {AutoThrottleReason::PowerOff, "power_off"},
   {AutoThrottleReason::WorldStop, "world_stop"},
   {AutoThrottleReason::AutomaticDisabled, "automatic_disabled"},
   {AutoThrottleReason::NoRoute, "no_route"},
+  {AutoThrottleReason::InvalidRoute, "invalid_route"},
+  {AutoThrottleReason::WrongDirection, "wrong_direction"},
   {AutoThrottleReason::WaitingForPath, "waiting_for_path"},
 });
 
-constexpr std::array<AutoThrottleReason, 6> autoThrottleReasonValues
+constexpr std::array<AutoThrottleReason, 8> autoThrottleReasonValues
 {
   AutoThrottleReason::None,
   AutoThrottleReason::PowerOff,
   AutoThrottleReason::WorldStop,
   AutoThrottleReason::AutomaticDisabled,
   AutoThrottleReason::NoRoute,
+  AutoThrottleReason::InvalidRoute,
+  AutoThrottleReason::WrongDirection,
   AutoThrottleReason::WaitingForPath,
 };
 

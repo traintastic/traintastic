@@ -29,16 +29,25 @@
 enum class AutoThrottleState : uint8_t
 {
   Idle = 0,
+  Depart = 1,
+  Drive = 3,
+  Arrive = 4,
 };
 
-TRAINTASTIC_ENUM(AutoThrottleState, "auto_throttle_state", 1,
+TRAINTASTIC_ENUM(AutoThrottleState, "auto_throttle_state", 4,
 {
-  {AutoThrottleState::Idle, "idle"}
+  {AutoThrottleState::Idle, "idle"},
+  {AutoThrottleState::Depart, "depart"},
+  {AutoThrottleState::Drive, "drive"},
+  {AutoThrottleState::Arrive, "arrive"},
 });
 
-constexpr std::array<AutoThrottleState, 1> autoThrottleStateValues
+constexpr std::array<AutoThrottleState, 4> autoThrottleStateValues
 {
   AutoThrottleState::Idle,
+  AutoThrottleState::Depart,
+  AutoThrottleState::Drive,
+  AutoThrottleState::Arrive,
 };
 
 #endif

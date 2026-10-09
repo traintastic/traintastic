@@ -26,6 +26,7 @@
 #include <traintastic/enum/autothrottlereason.hpp>
 #include <traintastic/enum/autothrottlestate.hpp>
 
+class BlockPath;
 class Train;
 
 class AutoThrottle : public Throttle
@@ -41,15 +42,20 @@ public:
 protected:
   AutoThrottle(World& world, std::string_view objectId);
 
-  void worldEvent(WorldState worldState, WorldEvent worldEvent) override;
-
   void trainChanged() override;
 
 private:
-  std::vector<boost::signals2::scoped_connection> m_trainEvents;
+  std::vector<boost::signals2::scoped_connection> m_events;
+
+  void changeState(AutoThrottleState newState, AutoThrottleReason newReason = AutoThrottleReason::None);
 
   void evaluate();
   void evaluateIdle();
+  void evaluateDepart();
+  void evaluateDrive();
+  void evaluateArrive();
+
+  void stop();
 };
 
 #endif
