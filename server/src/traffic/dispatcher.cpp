@@ -28,7 +28,15 @@
 #include "../route/trainroute.hpp"
 #include "../route/trainrouteentry.hpp"
 #include "../train/train.hpp"
+#include "../train/trainblockstatus.hpp"
 #include "../world/world.hpp"
+
+void Dispatcher::trainDirectionChanged(const Train& train)
+{
+  LOG_DEBUG("Dispatcher::trainDirectionChanged", train.name.value());
+
+  evaluateTrain(train);
+}
 
 void Dispatcher::trainEmergencyStopChanged(const Train& train)
 {
@@ -83,6 +91,10 @@ void Dispatcher::evaluateTrain(const Train& train)
   {
     return; // don't reserve new paths
   }
+  if(train.blocks.empty())
+  {
+    return; // no need to reserve, train location is unknown
+  }
 
   const uint32_t routePosition = train.routePosition.value();
   if(routePosition == train.route->entriesResolved.size() - 1)
@@ -91,6 +103,11 @@ void Dispatcher::evaluateTrain(const Train& train)
   }
 
   const auto& currentEntry = *train.route->entriesResolved[routePosition];
+  if(train.blocks[0]->direction != currentEntry.blockTrainDirection())
+  {
+    return; // no need to reserve, train is in wrong direction
+  }
+
   const auto& nextEntry = *train.route->entriesResolved[routePosition + 1];
 
   if(auto path = currentEntry.block->getReservedPath(currentEntry.blockTrainDirection() == BlockTrainDirection::TowardsA ? BlockSide::A : BlockSide::B))

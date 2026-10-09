@@ -29,6 +29,7 @@ class BlockRailTile;
 class Dispatcher final
 {
 public:
+  static void trainDirectionChanged(const Train& train);
   static void trainEmergencyStopChanged(const Train& train);
   static void trainRouteChanged(const Train& train);
   static void trainThrottleChanged(const Train& train);

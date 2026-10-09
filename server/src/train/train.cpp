@@ -87,6 +87,9 @@ Train::Train(World& world, std::string_view _id) :
 
       for(const auto& vehicle : m_poweredVehicles)
         vehicle->setDirection(value);
+
+      Dispatcher::trainDirectionChanged(*this);
+
       updateEnabled();
     },
     [](Direction& value)
