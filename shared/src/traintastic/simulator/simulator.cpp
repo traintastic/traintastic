@@ -896,7 +896,7 @@ bool Simulator::updateVehiclePosition(VehicleState::Face& face, const float spee
     const auto& segment = staticData.trackSegments[face.segmentIndex];
     const auto segmentLength = getSegmentLength(segment, m_stateData);
 
-    if(distance >= segmentLength)
+    if(distance > segmentLength)
     {
       const auto nextSegmentIndex = getNextSegmentIndex(segment, true, m_stateData);
       if(nextSegmentIndex == invalidIndex)
