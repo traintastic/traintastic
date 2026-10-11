@@ -26,26 +26,26 @@
 #include <QIODevice>
 #include <traintastic/enum/blocktraindirection.hpp>
 
-class BlockReservePathMimeData : public QMimeData
+class TrainGotoMimeData : public QMimeData
 {
 public:
-  inline static const auto mimeType = QLatin1String("application/vnd.traintastic.block_reserve_path");
+  inline static const auto mimeType = QLatin1String("application/vnd.traintastic.train_goto");
 
-  explicit BlockReservePathMimeData(const QString& blockId, BlockTrainDirection direction)
+  explicit TrainGotoMimeData(const QString& trainId, BlockTrainDirection direction)
   {
     QByteArray payload;
     QDataStream out(&payload, QIODevice::WriteOnly);
-    out << blockId << static_cast<std::underlying_type_t<BlockTrainDirection>>(direction);
+    out << trainId << static_cast<std::underlying_type_t<BlockTrainDirection>>(direction);
     setData(mimeType, payload);
   }
 
   inline std::tuple<QString, BlockTrainDirection> values() const
   {
-    QString blockId;
+    QString trainId;
     std::underlying_type_t<BlockTrainDirection> directionRaw;
     QDataStream in(data(mimeType));
-    in >> blockId >> directionRaw;
-    return std::make_tuple(blockId, static_cast<BlockTrainDirection>(directionRaw));
+    in >> trainId >> directionRaw;
+    return std::make_tuple(trainId, static_cast<BlockTrainDirection>(directionRaw));
   }
 };
 

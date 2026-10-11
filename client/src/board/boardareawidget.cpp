@@ -38,6 +38,7 @@
 #include "../network/board.hpp"
 #include "../network/callmethod.hpp"
 #include "../network/object.tpp"
+#include "../network/objectproperty.hpp"
 #include "../network/object/blockrailtile.hpp"
 #include "../network/object/nxbuttonrailtile.hpp"
 #include "../network/abstractproperty.hpp"
@@ -625,13 +626,13 @@ void BoardAreaWidget::mouseMoveEvent(QMouseEvent* event)
   if(!m_dragStarted && (event->buttons() & Qt::LeftButton) && (event->pos() - m_dragStartPosition).manhattanLength() >= QApplication::startDragDistance())
   {
     const TileLocation l = pointToTileLocation(m_dragStartPosition);
-    if(auto tile = m_board->getTileObject(l); tile && m_board->getTileId(l) == TileId::RailBlock)
+    if(auto tile = std::dynamic_pointer_cast<BlockRailTile>(m_board->getTileObject(l)); tile && !tile->trains().empty())
     {
       if(const auto direction = getBlockTrainDirection(*tile, m_dragStartPosition); direction != BlockTrainDirection::Unknown) [[likely]]
       {
         m_dragStarted = true;
         auto* drag = new QDrag(this);
-        drag->setMimeData(new BlockReservePathMimeData(tile->getPropertyValueString("id"), direction));
+        drag->setMimeData(new TrainGotoMimeData(tile->trains()[0]->getObjectProperty("train")->objectId(), direction));
         drag->exec(Qt::LinkAction);
       }
     }
@@ -955,7 +956,7 @@ void BoardAreaWidget::paintEvent(QPaintEvent* event)
 
 void BoardAreaWidget::dragEnterEvent(QDragEnterEvent *event)
 {
-  if(event->mimeData()->hasFormat(BlockReservePathMimeData::mimeType) ||
+  if(event->mimeData()->hasFormat(TrainGotoMimeData::mimeType) ||
       event->mimeData()->hasFormat(AssignTrainMimeData::mimeType))
   {
     m_dragMoveTileLocation = TileLocation::invalid;
@@ -974,7 +975,7 @@ void BoardAreaWidget::dragMoveEvent(QDragMoveEvent* event)
   if(m_dragMoveTileLocation != l)
   {
     m_dragMoveTileLocation = l;
-    if(event->mimeData()->hasFormat(BlockReservePathMimeData::mimeType) &&
+    if(event->mimeData()->hasFormat(TrainGotoMimeData::mimeType) &&
         m_board->getTileId(l) == TileId::RailBlock)
     {
       // FIXME: block drag start block
@@ -1000,34 +1001,33 @@ void BoardAreaWidget::dropEvent(QDropEvent* event)
 
   if(m_board->getTileId(l) == TileId::RailBlock)
   {
-    if(event->mimeData()->hasFormat(BlockReservePathMimeData::mimeType))
+    if(event->mimeData()->hasFormat(TrainGotoMimeData::mimeType))
     {
       m_mouseLeftButtonPressed = false;
       m_dragStarted = false;
 
-      if(auto* blockReservePath = dynamic_cast<const BlockReservePathMimeData*>(event->mimeData()))
+      if(auto* trainGoto = dynamic_cast<const TrainGotoMimeData*>(event->mimeData())) [[likely]]
       {
         if(auto tile = m_board->getTileObject(l); tile && m_board->getTileId(l) == TileId::RailBlock) [[likely]]
         {
           if(const auto toDirection = !getBlockTrainDirection(*tile, pos); toDirection != BlockTrainDirection::Unknown) [[likely]]
           {
-            const auto [fromBlock, fromDirection] = blockReservePath->values();
+            const auto [trainId, fromDirection] = trainGoto->values();
             const auto toBlock = tile->getPropertyValueString("id");
+            const auto method = (trainId + ".goto").toStdString();
 
             qDebug()
-              << fromBlock
+              << trainId
               << (fromDirection == BlockTrainDirection::TowardsA ? "A" : "B")
               << toBlock
               << (toDirection == BlockTrainDirection::TowardsA ? "A" : "B");
 
             (void)callMethodR<bool>(
               *m_board->connection(),
-              "world.train_path_finder.reserve",
+              method,
               [](const bool& /*success*/, std::optional<const Error> /*err*/)
               {
               },
-              fromBlock,
-              fromDirection,
               toBlock,
               toDirection);
           }
