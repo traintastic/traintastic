@@ -47,7 +47,7 @@ TrainRouteListTableModel::TrainRouteListTableModel(TrainRouteList& list)
   setColumnHeaders({
     DisplayName::Object::id,
     DisplayName::Object::name,
-    "train_route_list:enabled"
+    "train_route:enabled"
     });
 }
 
@@ -86,5 +86,9 @@ void TrainRouteListTableModel::propertyChanged(BaseProperty& property, uint32_t 
   else if(property.name() == "name")
   {
     changed(row, columnName);
+  }
+  else if(property.name() == "enabled")
+  {
+    changed(row, columnEnabled);
   }
 }
