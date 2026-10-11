@@ -29,6 +29,16 @@
   "cancel_route": {
     "parameters": []
   },
+  "goto": {
+    "parameters": [
+      {
+        "name": "block"
+      },
+      {
+        "name": "direction"
+      }
+    ]
+  },
   "on_block_assigned": {
     "parameters": [
       {

@@ -237,6 +237,11 @@ Train::Train(World& world, std::string_view _id) :
         routePosition.setValueInternal(0);
         Dispatcher::trainRouteChanged(*this);
 
+        if(route->temporary)
+        {
+          route->enabled.setValueInternal(false); // route is intended for one time use
+        }
+
         auto self = shared_ptr<Train>();
         if(oldRoute)
         {
@@ -245,6 +250,10 @@ Train::Train(World& world, std::string_view _id) :
             Log::log(*this, LogMessage::D3027_TRAIN_X_CANCELED_ROUTE_X, name.value(), oldRoute->name.value());
           }
           fireEvent(onRouteCanceled, self, oldRoute);
+          if(oldRoute->temporary)
+          {
+            oldRoute->destroy();
+          }
         }
         if(m_world.debugTrainEvents)
         {
@@ -268,7 +277,20 @@ Train::Train(World& world, std::string_view _id) :
             Log::log(*this, LogMessage::D3027_TRAIN_X_CANCELED_ROUTE_X, name.value(), oldRoute->name.value());
           }
           fireEvent(onRouteCanceled, shared_ptr<Train>(), oldRoute);
+          if(oldRoute->temporary)
+          {
+            oldRoute->destroy();
+          }
         }
+      }}
+  , goto_{*this, "goto", MethodFlags::ScriptCallable,
+      [this](const std::shared_ptr<BlockRailTile>& to, BlockTrainDirection toDir)
+      {
+        if(!to || blocks.empty())
+        {
+          return false;
+        }
+        return assignRoute(TrainRoute::createTemporary(blocks[0]->block.value(), blocks[0]->direction, to, toDir));
       }}
   , onRouteAssigned{*this, "on_route_assigned", EventFlags::Scriptable}
   , onRouteCanceled{*this, "on_route_canceled", EventFlags::Scriptable}
@@ -372,8 +394,12 @@ Train::Train(World& world, std::string_view _id) :
   m_interfaceItems.add(onZoneRemoved);
 
   Attributes::addObjectList(assignRoute, world.trainRoutes);
+  Attributes::addObjectEditor(assignRoute, false);
   m_interfaceItems.add(assignRoute);
+  Attributes::addObjectEditor(cancelRoute, false);
   m_interfaceItems.add(cancelRoute);
+  Attributes::addObjectEditor(goto_, false);
+  m_interfaceItems.add(goto_);
   m_interfaceItems.add(onRouteAssigned);
   m_interfaceItems.add(onRouteCanceled);
   m_interfaceItems.add(onRouteCompleted);

@@ -247,6 +247,10 @@ void TrainTracking::trainStopped(Train& train)
       Log::log(train, LogMessage::D3028_TRAIN_X_COMPLETED_ROUTE_X, train.name.value(), route->name.value());
     }
     train.fireEvent(train.onRouteCompleted, train.shared_ptr<Train>(), route);
+    if(route->temporary)
+    {
+      route->destroy();
+    }
   }
 }
 

@@ -27,6 +27,7 @@
 #include "../core/objectvectorproperty.hpp"
 
 class BlockRailTile;
+enum class BlockTrainDirection : uint8_t;
 class TrainRouteEntry;
 
 class TrainRoute : public IdObject
@@ -35,8 +36,11 @@ class TrainRoute : public IdObject
 
   CLASS_ID("train_route")
   CREATE_DEF(TrainRoute)
+  DEFAULT_ID("train_route")
 
 public:
+  static std::shared_ptr<TrainRoute> createTemporary(const std::shared_ptr<BlockRailTile>& from, BlockTrainDirection fromDir, const std::shared_ptr<BlockRailTile>& to, BlockTrainDirection toDir);
+
   Property<std::string> name;
   Property<bool> enabled;
   Property<bool> temporary;

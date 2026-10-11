@@ -25,6 +25,7 @@
 #include "trainroutelisttablemodel.hpp"
 #include "../board/tile/rail/blockrailtile.hpp"
 #include "../board/pathfinder/trainpathfinder.hpp"
+#include "../compat/stdformat.hpp"
 #include "../core/attributes.hpp"
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
@@ -37,6 +38,47 @@
 #include "../zone/blockzonelist.hpp"
 
 CREATE_IMPL(TrainRoute)
+
+std::shared_ptr<TrainRoute> TrainRoute::createTemporary(const std::shared_ptr<BlockRailTile>& from, BlockTrainDirection fromDir, const std::shared_ptr<BlockRailTile>& to, BlockTrainDirection toDir)
+{
+  if(!from || !to)
+  {
+    return {};
+  }
+
+  auto& world = from->world();
+  auto route = std::make_shared<TrainRoute>(world, world.getUniqueId(TrainRoute::defaultId));
+  route->name.setValueInternal(std::format("{} \u2192 {}", from->name.value(), to->name.value()));
+  route->enabled.setValueInternal(true);
+  route->temporary.setValueInternal(true);
+
+  auto entry = std::make_shared<TrainRouteEntry>(*route, *from);
+  if(isKnown(fromDir))
+  {
+    entry->m_blockTrainDirection = fromDir;
+    entry->m_blockTrainDirectionLock = true;
+  }
+  route->entries.appendInternal(std::move(entry));
+
+  entry = std::make_shared<TrainRouteEntry>(*route, *to);
+  if(isKnown(toDir))
+  {
+    entry->m_blockTrainDirection = toDir;
+    entry->m_blockTrainDirectionLock = true;
+  }
+  route->entries.appendInternal(std::move(entry));
+
+  route->resolve();
+
+  if(!route->valid)
+  {
+    return {};
+  }
+
+  route->addToWorld();
+
+  return route;
+}
 
 TrainRoute::TrainRoute(World& world, std::string_view _id)
   : IdObject(world, _id)
@@ -144,9 +186,16 @@ void TrainRoute::resolve()
   for(auto it = ++entries.begin(); it != entries.end(); ++it)
   {
     auto& from = route.back();
-    const auto fromSide = toSide;// ? ~*toSide : toSide;
+    const auto fromSide = toSide;
     const auto& to = *it;
-    toSide = std::nullopt;
+    if(to->m_blockTrainDirectionLock)
+    {
+      toSide = (to->m_blockTrainDirection == BlockTrainDirection::TowardsA) ? BlockSide::B : BlockSide::A;
+    }
+    else
+    {
+      toSide = std::nullopt;
+    }
 
     if(const auto blocks = m_world.trainPathFinder->find(*from->block, fromSide, *to->block, toSide); blocks.size() >= 2)
     {

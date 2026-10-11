@@ -59,6 +59,7 @@ protected:
 private:
   TrainRoute& m_route;
   BlockTrainDirection m_blockTrainDirection = BlockTrainDirection::Unknown;
+  bool m_blockTrainDirectionLock = false;
 
   void updateEnabled();
 };

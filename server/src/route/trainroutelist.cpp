@@ -38,7 +38,7 @@ TrainRouteList::TrainRouteList(Object& _parent, std::string_view parentPropertyN
       [this]()
       {
         auto& world = getWorld(parent());
-        return TrainRoute::create(world, world.getUniqueId("train_route"));
+        return TrainRoute::create(world, world.getUniqueId(TrainRoute::defaultId));
       }}
   , delete_{*this, "delete",
       [this](const std::shared_ptr<TrainRoute>& route)

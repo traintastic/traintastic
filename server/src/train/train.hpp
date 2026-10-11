@@ -140,6 +140,7 @@ class Train : public IdObject
     Property<uint32_t> routePosition;
     Method<bool(const std::shared_ptr<TrainRoute>&)> assignRoute;
     Method<void()> cancelRoute;
+    Method<bool(const std::shared_ptr<BlockRailTile>&, BlockTrainDirection)> goto_;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<TrainRoute>&> onRouteAssigned;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<TrainRoute>&> onRouteCanceled;
     Event<const std::shared_ptr<Train>&, const std::shared_ptr<TrainRoute>&> onRouteCompleted;
