@@ -171,6 +171,15 @@ void AutoThrottle::trainChanged()
         }
       }));
 
+    m_events.emplace_back(train->propertyChanged.connect(
+      [this](BaseProperty& property)
+      {
+        if(&property == &train->direction || &property == &train->emergencyStop || &property == &train->isStopped)
+        {
+          evaluate();
+        }
+      }));
+
     m_events.emplace_back(train->onBlockEntered.connect(
       [this](const std::shared_ptr<Train>&, const std::shared_ptr<BlockRailTile>&, BlockTrainDirection)
       {
