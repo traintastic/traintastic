@@ -23,6 +23,7 @@
 #include "../board/map/blockpath.hpp"
 #include "../board/tile/rail/blockrailtile.hpp"
 #include "../core/attributes.hpp"
+#include "../core/eventloop.hpp"
 #include "../core/method.tpp"
 #include "../core/objectproperty.tpp"
 #include "../log/log.hpp"
@@ -35,6 +36,25 @@
 namespace {
 
 const std::shared_ptr<TrainRouteEntry> noRouteEntry;
+
+class Guard
+{
+public:
+  Guard(bool& guard)
+    : m_guard{guard}
+  {
+    assert(!m_guard);
+    m_guard = true;
+  }
+
+  ~Guard()
+  {
+    m_guard = false;
+  }
+
+private:
+  bool& m_guard;
+};
 
 constexpr BlockSide entrySide(BlockTrainDirection direction)
 {
@@ -187,27 +207,44 @@ void AutoThrottle::evaluate()
 {
   assert(train);
 
-  switch(state.value())
+  if(!m_evaluateGuard) // prevent recursive calls to evaluate
   {
-    case AutoThrottleState::Idle:
-      LOG_DEBUG(name.value(), "state = Idle");
-      evaluateIdle();
-      break;
+    Guard guard(m_evaluateGuard);
+    switch(state.value())
+    {
+      case AutoThrottleState::Idle:
+        LOG_DEBUG(name.value(), "state = Idle");
+        evaluateIdle();
+        break;
 
-    case AutoThrottleState::Depart:
-      LOG_DEBUG(name.value(), "state = Depart");
-      evaluateDepart();
-      break;
+      case AutoThrottleState::Depart:
+        LOG_DEBUG(name.value(), "state = Depart");
+        evaluateDepart();
+        break;
 
-    case AutoThrottleState::Drive:
-      LOG_DEBUG(name.value(), "state = Drive");
-      evaluateDrive();
-      break;
+      case AutoThrottleState::Drive:
+        LOG_DEBUG(name.value(), "state = Drive");
+        evaluateDrive();
+        break;
 
-    case AutoThrottleState::Arrive:
-      LOG_DEBUG(name.value(), "state = Arrive");
-      evaluateArrive();
-      break;
+      case AutoThrottleState::Arrive:
+        LOG_DEBUG(name.value(), "state = Arrive");
+        evaluateArrive();
+        break;
+    }
+  }
+  else if(!m_evaluateQueued) // only queue one evaluate call
+  {
+    EventLoop::call(
+      [weak=weak_ptr<AutoThrottle>()]()
+      {
+        if(auto self = weak.lock())
+        {
+          self->m_evaluateQueued = false;
+          self->evaluate();
+        }
+      });
+    m_evaluateQueued = true;
   }
 }
 

@@ -46,6 +46,8 @@ protected:
 
 private:
   std::vector<boost::signals2::scoped_connection> m_events;
+  bool m_evaluateGuard = false;
+  bool m_evaluateQueued = false;
 
   void changeState(AutoThrottleState newState, AutoThrottleReason newReason = AutoThrottleReason::None);
 
