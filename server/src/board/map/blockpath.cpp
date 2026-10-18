@@ -666,6 +666,23 @@ bool BlockPath::release(bool dryRun)
     }
   }
 
+  for(const auto& item : m_crossOvers)
+  {
+    if(auto cross = item.first.lock())
+    {
+      if(!cross->release(dryRun))
+      {
+        assert(dryRun);
+        return false;
+      }
+    }
+    else /*[[unlikely]]*/
+    {
+      assert(dryRun);
+      return false;
+    }
+  }
+
   if(!dryRun)
   {
     for(const auto& item : m_directionControls)
