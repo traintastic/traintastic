@@ -1030,6 +1030,8 @@ void BoardAreaWidget::dropEvent(QDropEvent* event)
               },
               toBlock,
               toDirection);
+
+            return event->accept();
           }
         }
       }
