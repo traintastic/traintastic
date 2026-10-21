@@ -633,7 +633,7 @@ void BoardAreaWidget::mouseMoveEvent(QMouseEvent* event)
         m_dragStarted = true;
         auto* drag = new QDrag(this);
         drag->setMimeData(new TrainGotoMimeData(tile->trains()[0]->getObjectProperty("train")->objectId(), direction));
-        drag->exec(Qt::LinkAction);
+        drag->exec(Qt::MoveAction);
       }
     }
   }
