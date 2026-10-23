@@ -62,13 +62,12 @@ class BoardAreaWidget : public QWidget
     const BoardColorScheme* m_colorScheme;
 
   protected:
-    static constexpr int boardMargin = 1; // tile
-
     std::shared_ptr<Board> m_board;
     AbstractProperty* m_boardLeft;
     AbstractProperty* m_boardTop;
     AbstractProperty* m_boardRight;
     AbstractProperty* m_boardBottom;
+    AbstractProperty* m_worldEdit;
     BoardAreaGrid m_grid;
     int m_zoomLevel;
 
@@ -94,10 +93,11 @@ class BoardAreaWidget : public QWidget
 
     TileLocation m_dragMoveTileLocation;
 
-    inline int boardLeft() const { return Q_LIKELY(m_boardLeft) ? m_boardLeft->toInt() - boardMargin : 0; }
-    inline int boardTop() const { return Q_LIKELY(m_boardTop) ? m_boardTop->toInt() - boardMargin: 0; }
-    inline int boardRight() const { return Q_LIKELY(m_boardRight) ? m_boardRight->toInt() + boardMargin: 0; }
-    inline int boardBottom() const { return Q_LIKELY(m_boardBottom) ? m_boardBottom->toInt() + boardMargin: 0; }
+    int boardMargin() const;
+    inline int boardLeft() const { return Q_LIKELY(m_boardLeft) ? m_boardLeft->toInt() - boardMargin() : 0; }
+    inline int boardTop() const { return Q_LIKELY(m_boardTop) ? m_boardTop->toInt() - boardMargin() : 0; }
+    inline int boardRight() const { return Q_LIKELY(m_boardRight) ? m_boardRight->toInt() + boardMargin() : 0; }
+    inline int boardBottom() const { return Q_LIKELY(m_boardBottom) ? m_boardBottom->toInt() + boardMargin() : 0; }
 
     static constexpr int getTileSize(int zoomLevel) { return 25 + zoomLevel * 5; }
     int getTileSize() const { return getTileSize(m_zoomLevel); }
