@@ -490,7 +490,9 @@ jobs:
 
     - name: Build manual
       working-directory: ${{github.workspace}}/manual
-      run: ./build.py
+      run: |
+        source .venv/bin/activate
+        python build.py
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
