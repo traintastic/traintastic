@@ -502,7 +502,24 @@ void Simulator::setTurnoutState(size_t segmentIndex, TurnoutState::State state)
       {
         if(segment.turnout.addresses[0] != invalidAddress)
         {
-          send(SimulatorProtocol::AccessorySetState(0, segment.turnout.addresses[0], turnout.state == State::Thrown ? 1 : 2));
+          send(SimulatorProtocol::AccessorySetState(0, segment.turnout.addresses[0], (turnout.state == State::Thrown) ^ segment.turnout.invertCoils ? 1 : 2));
+
+          // Check for turnout(s) with same address:
+          for(size_t i = 0; i < staticData.trackSegments.size(); ++i)
+          {
+            if((staticData.trackSegments[i].type == Type::Turnout || staticData.trackSegments[i].type == Type::TurnoutCurved) &&
+                segment.turnout.addresses[0] == staticData.trackSegments[i].turnout.addresses[0] && i != segmentIndex)
+            {
+              if(staticData.trackSegments[segmentIndex].turnout.invertCoils != staticData.trackSegments[i].turnout.invertCoils) // inverted coupled
+              {
+                m_stateData.turnouts[staticData.trackSegments[i].turnout.index].state = state == State::Thrown ? State::Closed : State::Thrown;
+              }
+              else // normal coupled
+              {
+                m_stateData.turnouts[staticData.trackSegments[i].turnout.index].state = state;
+              }
+            }
+          }
         }
       }
       else if(segment.type == Type::Turnout3Way)
@@ -614,13 +631,12 @@ void Simulator::receive(const SimulatorProtocol::Message& message, size_t fromCo
           auto& turnoutState = m_stateData.turnouts[segment.turnout.index];
           if(m.state == 1)
           {
-            turnoutState.state = Simulator::TurnoutState::State::Thrown;
+            turnoutState.state = segment.turnout.invertCoils ? Simulator::TurnoutState::State::Closed : Simulator::TurnoutState::State::Thrown;
           }
           else if(m.state == 2)
           {
-            turnoutState.state = Simulator::TurnoutState::State::Closed;
+            turnoutState.state = segment.turnout.invertCoils ? Simulator::TurnoutState::State::Thrown :Simulator::TurnoutState::State::Closed;
           }
-          break;
         }
         else if(segment.type == Simulator::TrackSegment::Type::Turnout3Way && (m.address == segment.turnout.addresses[0] || m.address == segment.turnout.addresses[1]))
         {
@@ -659,7 +675,6 @@ void Simulator::receive(const SimulatorProtocol::Message& message, size_t fromCo
               turnoutState.state = Simulator::TurnoutState::State::ThrownRight;
               break;
           }
-          break;
         }
       }
       break;
@@ -1189,6 +1204,7 @@ Simulator::StaticData Simulator::load(const nlohmann::json& world, StateData& st
         else
         {
           segment.turnout.addresses[0] = obj.value("address", invalidAddress);
+          segment.turnout.invertCoils = obj.value("invert_coils", false);
         }
         segment.turnout.index = stateData.turnouts.size();
         auto& turnoutState = stateData.turnouts.emplace_back(TurnoutState{});

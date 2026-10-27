@@ -2,7 +2,7 @@
  * This file is part of Traintastic,
  * see <https://github.com/traintastic/traintastic>.
  *
- * Copyright (C) 2025 Reinder Feenstra
+ * Copyright (C) 2025-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -104,6 +104,7 @@ public:
     {
       size_t index = invalidIndex;
       std::array<uint16_t, 2> addresses{{invalidAddress, invalidAddress}};
+      bool invertCoils = false;
     } turnout;
 
     Point origin() const
