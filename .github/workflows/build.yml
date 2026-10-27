@@ -616,11 +616,16 @@ jobs:
 
     - name: Install python requirements
       working-directory: ${{github.workspace}}/manual
-      run: sudo pip3 install -r requirements.txt
+      run: |
+        python -m venv .venv
+        source .venv/bin/activate
+        pip3 install -r requirements.txt
 
     - name: Build manual
       working-directory: ${{github.workspace}}/manual
-      run: ./build.py
+      run: |
+        source .venv/bin/activate
+        python build.py
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4

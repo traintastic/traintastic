@@ -32,6 +32,7 @@
 #include "../log/logmessageexception.hpp"
 #include "../utils/datetimestr.hpp"
 #include "../utils/displayname.hpp"
+#include "../utils/unit.hpp"
 #include "../traintastic/traintastic.hpp"
 
 #include "../core/method.tpp"
@@ -337,6 +338,7 @@ World::World(Private /*unused*/) :
   Attributes::addCategory(pathReleaseDelay, Category::trains);
   Attributes::addEnabled(pathReleaseDelay, true);
   Attributes::addMinMax(pathReleaseDelay, {0, 15000}); // Up to 15 seconds
+  Attributes::addUnit(pathReleaseDelay, Unit::milliSeconds);
   m_interfaceItems.add(pathReleaseDelay);
 
   // Features:

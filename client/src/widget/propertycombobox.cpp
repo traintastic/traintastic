@@ -86,6 +86,7 @@ PropertyComboBox::PropertyComboBox(Property& property, QWidget* parent) :
 
         case AttributeName::AliasKeys:
         case AttributeName::AliasValues:
+        case AttributeName::Unit:
         case AttributeName::Values:
           updateValues();
           break;
@@ -159,14 +160,24 @@ void PropertyComboBox::updateValues()
         {
           const QVariantList aliasKeys = m_property.getAttribute(AttributeName::AliasKeys, QVariant()).toList();
           const QVariantList aliasValues = m_property.getAttribute(AttributeName::AliasValues, QVariant()).toList();
+          const auto unit = m_property.getAttributeString(AttributeName::Unit, {});
 
           for(QVariant& v : values.toList())
           {
             const qint64 value = v.toLongLong();
             if(int index = aliasKeys.indexOf(value); index != -1)
+            {
               addItem(Locale::instance->parse(aliasValues[index].toString()), value);
+            }
+            else if(!unit.isEmpty())
+            {
+              addItem(QString("%1 %2").arg(value).arg(unit), value);
+            }
             else
+            {
               addItem(QString::number(value), value);
+            }
+
             if(m_property.toInt64() == value)
             {
               setCurrentIndex(count() - 1);
