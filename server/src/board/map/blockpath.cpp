@@ -33,6 +33,7 @@
 #include "../tile/rail/turnout/turnoutrailtile.hpp"
 #include "../tile/rail/linkrailtile.hpp"
 #include "../tile/rail/nxbuttonrailtile.hpp"
+#include "../../train/train.hpp"
 #include "../../train/trainblockstatus.hpp"
 #include "../../core/eventloop.hpp"
 #include "../../core/objectproperty.tpp"
@@ -616,7 +617,8 @@ bool BlockPath::release(bool dryRun)
 
   if(!dryRun && toBlock->state.value() == BlockState::Reserved)
   {
-    if(toBlock->trains.size() == 1)
+    if(toBlock->trains.size() == 1 &&
+        toBlock->trains[0]->train->blocks.size() > 1) // only if in more than one block, else we lose the train!
     {
       //TODO: this bypasses some checks
       toBlock->removeTrainInternal(toBlock->trains[0]);

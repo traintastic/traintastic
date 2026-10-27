@@ -27,11 +27,13 @@
 #include <QApplication>
 #include <QToolTip>
 #include <QDrag>
+#include <QMenu>
 #include <traintastic/locale/locale.hpp>
 #include "boardwidget.hpp"
 #include "getboardcolorscheme.hpp"
 #include "tilepainter.hpp"
 #include "blockhighlight.hpp"
+#include "tilemenu.hpp"
 #include "../mainwindow.hpp"
 #include "../network/board.hpp"
 #include "../network/callmethod.hpp"
@@ -76,6 +78,7 @@ BoardAreaWidget::BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent) 
   m_boardTop{m_board->getProperty("top")},
   m_boardRight{m_board->getProperty("right")},
   m_boardBottom{m_board->getProperty("bottom")},
+  m_worldEdit{m_board->connection()->world()->getProperty("edit")},
   m_grid{BoardAreaGrid::None},
   m_zoomLevel{0},
   m_blockHighlight{MainWindow::instance->blockHighlight()},
@@ -99,6 +102,10 @@ BoardAreaWidget::BoardAreaWidget(std::shared_ptr<Board> board, QWidget* parent) 
     connect(m_boardRight, &AbstractProperty::valueChanged, this, &BoardAreaWidget::updateMinimumSize);
   if(Q_LIKELY(m_boardBottom))
     connect(m_boardBottom, &AbstractProperty::valueChanged, this, &BoardAreaWidget::updateMinimumSize);
+  if(m_worldEdit)
+  {
+    connect(m_worldEdit, &AbstractProperty::valueChanged, this, qOverload<>(&BoardAreaWidget::update));
+  }
 
   connect(&BoardSettings::instance(), &SettingsBase::changed, this, &BoardAreaWidget::settingsChanged);
 
@@ -293,6 +300,11 @@ void BoardAreaWidget::setMouseMoveTileSizeMax(uint8_t width, uint8_t height)
   m_mouseMoveTileWidthMax = width;
   m_mouseMoveTileHeightMax = height;
   update();
+}
+
+int BoardAreaWidget::boardMargin() const
+{
+  return m_worldEdit->toBool() ? 1 : 0;
 }
 
 TurnoutPosition BoardAreaWidget::getTurnoutPosition(const TileLocation& l) const
@@ -596,7 +608,20 @@ void BoardAreaWidget::mouseReleaseEvent(QMouseEvent* event)
   {
     m_mouseRightButtonPressed = false;
     if((event->pos() - m_mouseRightButtonPressedPoint).manhattanLength() < 5 || m_mouseMoveTileId != TileId::None)
+    {
       emit rightClicked();
+
+      // action stuff should be in this class, not in BoardWidget,
+      // then BoardAreaWidget can be used without toolbar stuff, e.g. fullscreen :)
+      // We need to refactor this some day...
+      if(m_mouseMoveTileId == TileId::None)
+      {
+        if(auto menu = getTileMenu(m_board->getTileObject(pointToTileLocation(m_mouseRightButtonPressedPoint)), this))
+        {
+          menu->exec(QCursor::pos());
+        }
+      }
+    }
   }
 }
 

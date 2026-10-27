@@ -135,14 +135,20 @@ int main(int argc, char* argv[])
     const_cast<Locale*>(Locale::instance.get())->enableMissingLogging();
 
   // Detect light/dark:
-#if QT_VERSION < QT_VERSION_CHECK(6, 5, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+  const auto colorScheme = QGuiApplication::styleHints()->colorScheme();
+  if(colorScheme != Qt::ColorScheme::Unknown)
+  {
+    Theme::setDark(colorScheme == Qt::ColorScheme::Dark);
+  }
+  else
+#endif
+  {
     const QPalette defaultPalette;
     const auto text = defaultPalette.color(QPalette::WindowText);
     const auto window = defaultPalette.color(QPalette::Window);
     Theme::setDark(text.lightness() > window.lightness());
-#else
-    Theme::setDark(QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark);
-#endif
+  }
 
   MainWindow mw;
   if(options.screenShot)

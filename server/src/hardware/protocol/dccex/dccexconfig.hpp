@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/dccex/config.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2021 Reinder Feenstra
+ * Copyright (C) 2021-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +31,7 @@ struct Config
   static constexpr uint32_t functionNumberMax = 56;
 
   uint8_t speedSteps;
+  bool railcomCutout;
   uint16_t startupDelay;
   bool debugLogRXTX;
 };
