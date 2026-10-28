@@ -137,14 +137,8 @@ bool SimulationIOHandler::send(std::string_view message)
     case 't': // LocoSpeedAndDirection
       if(m_simulator)
       {
-        uint8_t one;
-        auto r = fromChars(message.substr(3), one);
-        if(r.ec != std::errc() || one != 1)
-        {
-          break;
-        }
         uint16_t address;
-        r = fromChars(message.substr(r.ptr - message.data() + 1), address);
+        auto r = fromChars(message.substr(3), address);
         if(r.ec != std::errc())
         {
           break;
