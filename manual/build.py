@@ -196,6 +196,7 @@ class TraintasticHelp:
                 {'advanced': [
                     {'advanced/interface': [
                         'advanced/interface/index.md',
+                        {'CBUS/VLCB': 'advanced/interface/cbus.md'},
                         {'DCC-EX': 'advanced/interface/dcc-ex.md'},
                         {'ECoS': 'advanced/interface/ecos.md'},
                         {'HSI-88': 'advanced/interface/hsi-88.md'},
