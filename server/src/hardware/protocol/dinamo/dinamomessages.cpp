@@ -62,6 +62,24 @@ std::string toString(std::span<const uint8_t> message, bool hold, bool fault)
       const auto& msg = *reinterpret_cast<const SystemVersionResponse*>(message.data());
       s = std::format("SystemVersionResponse type={} major={} minor={} subRelease={} bugFix={}", static_cast<uint8_t>(msg.type), msg.major(), msg.minor(), msg.subRelease(), msg.bugFix());
     }
+    else if(SubSystemInfo::check(message))
+    {
+      if(SubSystemInfoRequestTM::check(message))
+      {
+        const auto& msg = *reinterpret_cast<const SubSystemInfoRequestTM*>(message.data());
+        s = std::format("SubSystemInfoRequestTM channel={} address={} subAddress={}",
+          msg.channel(), msg.address(), msg.subAddress());
+      }
+      else if(SubSystemInfoResponseTM::check(message))
+      {
+        const auto& msg = *reinterpret_cast<const SubSystemInfoResponseTM*>(message.data());
+        s = std::format("SubSystemInfoResponseTM channel={} address={} subAddress={} fault={} idle={} active={} type={} major={} minor={} subRelease={} bugFix={}",
+          msg.channel(), msg.address(), msg.subAddress(),
+          msg.fault(), msg.idle(), msg.active(),
+          toString(msg.type()),
+          msg.major(), msg.minor(), msg.subRelease(), msg.bugFix());
+      }
+    }
   }
   else if(SetOutput::check(message))
   {
@@ -234,6 +252,24 @@ std::string toString(std::span<const uint8_t> message, bool hold, bool fault)
     toHex(message.data(), message.size(), true)));
 
   return s;
+}
+
+std::string_view toString(SubSystemInfoResponseTM::Type type)
+{
+  switch(type)
+  {
+    using enum SubSystemInfoResponseTM::Type;
+
+    case TM_H:
+      return "TM-H";
+
+    case TM44:
+      return "TM44";
+
+    case UCCI_S:
+      return "UCCI-s";
+  }
+  return {};
 }
 
 std::string toString(Ox32::Command cmd)
