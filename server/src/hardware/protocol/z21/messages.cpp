@@ -23,6 +23,7 @@
 #include "messages.hpp"
 #include "../xpressnet/messages.hpp"
 #include "../../decoder/decoder.hpp"
+#include "../../../compat/stdformat.hpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../utils/tohex.hpp"
 
@@ -274,6 +275,32 @@ std::string toString(const Message& message)
       s.append(" vccVoltage=").append(std::to_string(systemState.vccVoltage));
       s.append(" centralState=0x").append(toHex(systemState.centralState));
       s.append(" centralStateEx=0x").append(toHex(systemState.centralStateEx));
+      break;
+    }
+    case LAN_LOCONET_DETECTOR:
+    {
+      const auto& loconetDetector = static_cast<const LanLocoNetDetector&>(message);
+      switch(loconetDetector.type)
+      {
+        case LanLocoNetDetector::Type::OccupancyDetector:
+        {
+          const auto& msg = static_cast<const LanLocoNetDetectorOccupancyDetector&>(message);
+          s.append(std::format("Occupancy: feedbackAddress={} {}", msg.feedbackAddress(), msg.isOccupied() ? "occupied" : "free"));
+          break;
+        }
+        case LanLocoNetDetector::Type::TransponderEntersBlock:
+        case LanLocoNetDetector::Type::TransponderExitsBlock:
+        {
+          const auto& msg = static_cast<const LanLocoNetDetectorTransponderEntersExitsBlock&>(message);
+          s.append(std::format("Transponder: feedbackAddress={} transponderAddress={} {}",
+            msg.feedbackAddress(),
+            msg.transponderAddress(),
+            msg.type == LanLocoNetDetector::Type::TransponderEntersBlock ? "enter" : "exit"));
+          break;
+        }
+        default:
+          break;
+      }
       break;
     }
     default:
