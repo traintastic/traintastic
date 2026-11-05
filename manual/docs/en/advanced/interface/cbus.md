@@ -7,7 +7,7 @@ This page describes the configuration of the CBUS/VLCB interface.
 CBUS/VLCB can be connected to Traintastic in three ways:
 
 - **USB** – Direct cable connection using the CANUSB4 module.
-- **Network (TCP/IP)** – Connection via Ethernet or Wi-Fi using the CANEther module.
+- **Network (TCP/IP)** – Connection via Ethernet or Wi-Fi using the CANEther module or e.g. the JMRI CBUS Hub.
 - **SocketCAN** - Connection via a Linux SocketCAN compatible interface.
 
 ## Connection settings
@@ -15,7 +15,7 @@ CBUS/VLCB can be connected to Traintastic in three ways:
 Depending on the connection type, the following options are available:
 
 ### USB connection
-- **Type** – CANUSB
+- **Type** – CANUSB4
 - **Device** – Path to the serial device (e.g., `COM3` on Windows or `/dev/ttyACM0` on Linux).
 
 ### Network connection
@@ -46,7 +46,7 @@ Additional options for fine-tuning behavior:
 
 ### Hub
 
-- **Hub enabled** – Enables a network hub for other programs to access the CBUS device (e.g., JMRI, MMC).
+- **Hub enabled** – Enables a network hub for other programs to access the CBUS device (e.g. JMRI, MMC).
 - **Hub for localhost only** – Restricts the hub to the computer running Traintastic.
 - **Hub port** – Network port. Default value: 5550.
 
