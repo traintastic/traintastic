@@ -3,7 +3,7 @@
  *
  * This file is part of the traintastic source code.
  *
- * Copyright (C) 2019-2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 #include "messages.hpp"
 #include "../xpressnet/messages.hpp"
 #include "../../decoder/decoder.hpp"
+#include "../../../compat/stdformat.hpp"
 #include "../../../core/objectproperty.tpp"
 #include "../../../utils/tohex.hpp"
 
@@ -60,7 +61,7 @@ static std::string_view toString(Header header)
   return {};
 }
 
-std::string toString(const Message& message, bool raw)
+std::string toString(const Message& message)
 {
   std::string s;
   if(std::string_view sv = toString(message.header()); !sv.empty())
@@ -70,11 +71,6 @@ std::string toString(const Message& message, bool raw)
 
   switch(message.header())
   {
-    case LAN_LOGOFF:
-      if(message.dataLen() != sizeof(LanLogoff))
-        raw = true;
-      break;
-
     case LAN_X:
       switch(static_cast<const LanX&>(message).xheader)
       {
@@ -87,8 +83,6 @@ std::string toString(const Message& message, bool raw)
             s = "LAN_X_SET_TRACK_POWER_OFF";
           else if(message == LanXSetTrackPowerOn())
             s = "LAN_X_SET_TRACK_POWER_ON";
-          else
-            raw = true;
           break;
 
         case LAN_X_TURNOUT_INFO:
@@ -155,8 +149,6 @@ std::string toString(const Message& message, bool raw)
             s = "LAN_X_BC_TRACK_SHORT_CIRCUIT";
           else if(message == LanXUnknownCommand())
             s = "LAN_X_UNKNOWN_COMMAND";
-          else
-            raw = true;
           break;
 
         case LAN_X_STATUS_CHANGED:
@@ -168,22 +160,16 @@ std::string toString(const Message& message, bool raw)
             s.append(" short_circuit=").append(statusChanged.db1 & Z21_CENTRALSTATE_SHORTCIRCUIT ? "yes" : "no");
             s.append(" programming_mode_active=").append(statusChanged.db1 & Z21_CENTRALSTATE_PROGRAMMINGMODEACTIVE ? "yes" : "no");
           }
-          else
-            raw = true;
           break;
 
         case LAN_X_SET_STOP:
           if(message == LanXSetStop())
             s = "LAN_X_SET_STOP";
-          else
-            raw = true;
           break;
 
         case LAN_X_BC_STOPPED:
           if(message == LanXBCStopped())
             s = "LAN_X_BC_STOPPED";
-          else
-            raw = true;
           break;
 
         case LAN_X_GET_LOCO_INFO:
@@ -194,8 +180,6 @@ std::string toString(const Message& message, bool raw)
             if(getLocoInfo.isLongAddress())
               s.append(" (long)");
           }
-          else
-            raw = true;
           break;
 
         case LAN_X_SET_LOCO:
@@ -223,8 +207,6 @@ std::string toString(const Message& message, bool raw)
             s.append(" function=").append(std::to_string(setLocoFunction.functionIndex()));
             s.append(" state=").append(toString(setLocoFunction.switchType()));
           }
-          else
-            raw = true;
           break;
 
         case LAN_X_LOCO_INFO:
@@ -250,8 +232,6 @@ std::string toString(const Message& message, bool raw)
         case LAN_X_GET_FIRMWARE_VERSION:
           if(message == LanXGetFirmwareVersion())
             s = "LAN_X_GET_FIRMWARE_VERSION";
-          else
-            raw = true;
           break;
 
         case LAN_X_GET_FIRMWARE_VERSION_REPLY:
@@ -261,12 +241,6 @@ std::string toString(const Message& message, bool raw)
             s = "LAN_X_GET_FIRMWARE_VERSION";
             s.append(" version=").append(std::to_string(getFirmwareVersion.versionMajor())).append(".").append(std::to_string(getFirmwareVersion.versionMinor()));
           }
-          else
-            raw = true;
-          break;
-
-        default:
-          raw = true;
           break;
       }
       break;
@@ -280,8 +254,6 @@ std::string toString(const Message& message, bool raw)
       }
       else if(message == LanGetBroadcastFlags())
         s = "LAN_GET_BROADCASTFLAGS";
-      else
-        raw = true;
       break;
 
     case LAN_SET_BROADCASTFLAGS:
@@ -290,8 +262,6 @@ std::string toString(const Message& message, bool raw)
         s = "LAN_SET_BROADCASTFLAGS";
         s.append(" flags=0x").append(toHex(static_cast<std::underlying_type_t<BroadcastFlags>>(static_cast<const LanSetBroadcastFlags&>(message).broadcastFlags())));
       }
-      else
-        raw = true;
       break;
 
     case LAN_SYSTEMSTATE_DATACHANGED:
@@ -307,23 +277,46 @@ std::string toString(const Message& message, bool raw)
       s.append(" centralStateEx=0x").append(toHex(systemState.centralStateEx));
       break;
     }
+    case LAN_LOCONET_DETECTOR:
+    {
+      const auto& loconetDetector = static_cast<const LanLocoNetDetector&>(message);
+      switch(loconetDetector.type)
+      {
+        case LanLocoNetDetector::Type::OccupancyDetector:
+        {
+          const auto& msg = static_cast<const LanLocoNetDetectorOccupancyDetector&>(message);
+          s.append(std::format("Occupancy: feedbackAddress={} {}", msg.feedbackAddress(), msg.isOccupied() ? "occupied" : "free"));
+          break;
+        }
+        case LanLocoNetDetector::Type::TransponderEntersBlock:
+        case LanLocoNetDetector::Type::TransponderExitsBlock:
+        {
+          const auto& msg = static_cast<const LanLocoNetDetectorTransponderEntersExitsBlock&>(message);
+          s.append(std::format("Transponder: feedbackAddress={} transponderAddress={} {}",
+            msg.feedbackAddress(),
+            msg.transponderAddress(),
+            msg.type == LanLocoNetDetector::Type::TransponderEntersBlock ? "enter" : "exit"));
+          break;
+        }
+        default:
+          break;
+      }
+      break;
+    }
     default:
-      raw = true;
       break;
   }
 
-  if(raw)
+  // Raw data:
+  s.append(" [");
+  const auto* bytes = reinterpret_cast<const uint8_t*>(&message);
+  for(uint16_t i = sizeof(Message); i < message.dataLen(); i++)
   {
-    s.append(" [");
-    const auto* bytes = reinterpret_cast<const uint8_t*>(&message);
-    for(uint16_t i = sizeof(Message); i < message.dataLen(); i++)
-    {
-      if(i != sizeof(Message))
-        s.append(" ");
-      s.append(toHex(bytes[i]));
-    }
-    s.append("]");
+    if(i != sizeof(Message))
+      s.append(" ");
+    s.append(toHex(bytes[i]));
   }
+  s.append("]");
 
   return s;
 }

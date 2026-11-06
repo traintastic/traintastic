@@ -63,7 +63,9 @@ class ClientKernel final : public Kernel
       BroadcastFlags::RBusChanges |
       BroadcastFlags::SystemStatusChanges |
       BroadcastFlags::AllLocoChanges | // seems not to work with DR5000
-      BroadcastFlags::LocoNetDetector;
+      BroadcastFlags::LocoNetDetector |
+      BroadcastFlags::RailComDataChanged |
+      BroadcastFlags::CANDetector;
 
     uint32_t m_serialNumber;
     std::function<void(uint32_t)> m_onSerialNumberChanged;
@@ -163,7 +165,7 @@ class ClientKernel final : public Kernel
     template<class T>
     void postSend(const T& message, bool wantReply = true, uint8_t customRetryCount = 0)
     {
-      boost::asio::post(m_ioContext, 
+      boost::asio::post(m_ioContext,
         [this, message, wantReply, customRetryCount]()
         {
           send(message, wantReply, customRetryCount);

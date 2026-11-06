@@ -108,6 +108,7 @@ enum class LogMessage : uint32_t
   I2007_NEW_HUB_CONNECTION_X_X = LogMessageOffset::info + 2007,
   I2008_DINAMO_PROTOCOL_VERSION_X = LogMessageOffset::info + 2008,
   I2009_DINAMO_SYSTEM_X_VX = LogMessageOffset::info + 2009,
+  I2010_FOUND_X_VX_ON_CHANNEL_X_ADDRESS_X = LogMessageOffset::info + 2010,
   I3001_THROTTLE_X_ACQUIRED_TRAIN_X = LogMessageOffset::info + 3001,
   I3002_THROTTLE_X_RELEASED_TRAIN_X = LogMessageOffset::info + 3002,
   I9001_STOPPED_SCRIPT = LogMessageOffset::info + 9001,

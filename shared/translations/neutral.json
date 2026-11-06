@@ -5,7 +5,7 @@
     },
     {
         "term": "cbus_interface_type:canusb",
-        "definition": "CANUSB"
+        "definition": "CANUSB4"
     },
     {
         "term": "cbus_interface_type:canether",

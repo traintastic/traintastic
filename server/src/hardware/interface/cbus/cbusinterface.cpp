@@ -84,7 +84,7 @@ CBUSInterface::CBUSInterface(World& world, std::string_view _id)
       }}
   , device{this, "device", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
-  , port{this, "port", 0, PropertyFlags::ReadWrite | PropertyFlags::Store}
+  , port{this, "port", 5500, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , interface{this, "interface", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , cbus{this, "cbus", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
   , cbusNodeList{this, "cbus_node_list", nullptr, PropertyFlags::ReadOnly | PropertyFlags::NoStore | PropertyFlags::SubObject}

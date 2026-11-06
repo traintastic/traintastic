@@ -28,6 +28,8 @@
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
 
+using namespace std::literals::string_view_literals;
+
 namespace Dinamo {
 
 namespace
@@ -131,6 +133,36 @@ void Kernel::started()
   if(m_config.setHFILevel)
   {
     send(SetHFILevel(m_config.hfiLevel));
+  }
+
+  // Search for TM44/TM-U/UCCI-s modules:
+  for(uint8_t channel = 0; channel < 2; ++channel)
+  {
+    for(uint8_t address = 0; address < 16; ++address)
+    {
+      for(uint8_t subAddress = 0; subAddress < 2; ++subAddress)
+      {
+        send(SubSystemInfoRequestTM(channel, address, subAddress));
+      }
+    }
+  }
+
+  // Search for OC32 modules:
+  for(uint8_t channel = 0; channel < 2; ++channel)
+  {
+    for(uint8_t address = 0; address < 16; ++address)
+    {
+      send(SubSystemInfoRequestOC32(channel, address));
+    }
+  }
+
+  // Search for PM32 modules:
+  for(uint8_t channel = 0; channel < 2; ++channel)
+  {
+    for(uint8_t address = 0; address < 8; ++address)
+    {
+      send(SubSystemInfoRequestPM32(channel, address));
+    }
   }
 
   ::KernelBase::started();
@@ -576,6 +608,61 @@ void Kernel::handleSystemCommand(std::span<const uint8_t> message)
         {
           Log::log(logId, LogMessage::E2032_DINAMO_PROTOCOL_X_VX_NOT_SUPPORTED, toString(type), version.toString());
           error();
+        });
+    }
+  }
+  else if(SubSystemInfoResponseTM::check(message))
+  {
+    const auto& subSystemInfoResponseTM = *reinterpret_cast<const SubSystemInfoResponseTM*>(message.data());
+
+    if(subSystemInfoResponseTM.active())
+    {
+      EventLoop::call(
+        [this, subSystemInfoResponseTM]()
+        {
+          const auto address = (subSystemInfoResponseTM.type() == Dinamo::SubSystemInfoResponseTM::Type::TM44)
+            ? std::format("{}.{}", subSystemInfoResponseTM.address(), subSystemInfoResponseTM.subAddress())
+            : std::to_string(subSystemInfoResponseTM.address());
+
+          Log::log(logId, LogMessage::I2010_FOUND_X_VX_ON_CHANNEL_X_ADDRESS_X,
+            toString(subSystemInfoResponseTM.type()),
+            subSystemInfoResponseTM.version().toString(),
+            subSystemInfoResponseTM.channel(),
+            address);
+        });
+    }
+  }
+  else if(SubSystemInfoResponseOC32::check(message))
+  {
+    const auto& subSystemInfoResponseOC32 = *reinterpret_cast<const SubSystemInfoResponseOC32*>(message.data());
+
+    if(subSystemInfoResponseOC32.active())
+    {
+      EventLoop::call(
+        [this, subSystemInfoResponseOC32]()
+        {
+          Log::log(logId, LogMessage::I2010_FOUND_X_VX_ON_CHANNEL_X_ADDRESS_X,
+            "OC32"sv,
+            subSystemInfoResponseOC32.version().toString(),
+            subSystemInfoResponseOC32.channel(),
+            subSystemInfoResponseOC32.address());
+        });
+    }
+  }
+  else if(SubSystemInfoResponsePM32::check(message))
+  {
+    const auto& subSystemInfoResponsePM32 = *reinterpret_cast<const SubSystemInfoResponsePM32*>(message.data());
+
+    if(subSystemInfoResponsePM32.active())
+    {
+      EventLoop::call(
+        [this, subSystemInfoResponsePM32]()
+        {
+          Log::log(logId, LogMessage::I2010_FOUND_X_VX_ON_CHANNEL_X_ADDRESS_X,
+            "PM32"sv,
+            subSystemInfoResponsePM32.version().toString(),
+            subSystemInfoResponsePM32.channel(),
+            subSystemInfoResponsePM32.address());
         });
     }
   }

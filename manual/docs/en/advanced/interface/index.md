@@ -12,6 +12,7 @@ The interfaces covered in this section include:
 ### Command Station interfaces
 These allow Traintastic to communicate with the layout's digital system and control locomotives, turnouts, signal and read feedback sensors:
 
+- [CBUS/VLCB](cbus.md)
 - [DCC-EX](dcc-ex.md)
 - [ECoS](ecos.md)
 - [LocoNet](loconet.md) - Digitrax, Digikeijs, Uhlenbrock, YaMoRC

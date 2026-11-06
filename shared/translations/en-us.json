@@ -1960,6 +1960,10 @@
         "definition": "DINAMO system: %1 v%2"
     },
     {
+        "term": "message:I2010",
+        "definition": "Found %1 v%2 on channel %3 address %4"
+    },
+    {
         "term": "message:I3001",
         "definition": "Throttle %1 acquired train %2"
     },
