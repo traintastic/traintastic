@@ -70,6 +70,18 @@ std::string toString(std::span<const uint8_t> message, bool hold, bool fault)
         s = std::format("SubSystemInfoRequestTM channel={} address={} subAddress={}",
           msg.channel(), msg.address(), msg.subAddress());
       }
+      else if(SubSystemInfoRequestOC32::check(message))
+      {
+        const auto& msg = *reinterpret_cast<const SubSystemInfoRequestOC32*>(message.data());
+        s = std::format("SubSystemInfoRequestOC32 channel={} address={}",
+          msg.channel(), msg.address());
+      }
+      else if(SubSystemInfoRequestPM32::check(message))
+      {
+        const auto& msg = *reinterpret_cast<const SubSystemInfoRequestPM32*>(message.data());
+        s = std::format("SubSystemInfoRequestPM32 channel={} address={}",
+          msg.channel(), msg.address());
+      }
       else if(SubSystemInfoResponseTM::check(message))
       {
         const auto& msg = *reinterpret_cast<const SubSystemInfoResponseTM*>(message.data());
@@ -77,6 +89,22 @@ std::string toString(std::span<const uint8_t> message, bool hold, bool fault)
           msg.channel(), msg.address(), msg.subAddress(),
           msg.fault(), msg.idle(), msg.active(),
           toString(msg.type()),
+          msg.major(), msg.minor(), msg.subRelease(), msg.bugFix());
+      }
+      else if(SubSystemInfoResponseOC32::check(message))
+      {
+        const auto& msg = *reinterpret_cast<const SubSystemInfoResponseOC32*>(message.data());
+        s = std::format("SubSystemInfoResponseOC32 channel={} address={} idle={} active={} major={} minor={} subRelease={} bugFix={}",
+          msg.channel(), msg.address(),
+          msg.idle(), msg.active(),
+          msg.major(), msg.minor(), msg.subRelease(), msg.bugFix());
+      }
+      else if(SubSystemInfoResponsePM32::check(message))
+      {
+        const auto& msg = *reinterpret_cast<const SubSystemInfoResponsePM32*>(message.data());
+        s = std::format("SubSystemInfoResponsePM32 channel={} address={} hold={} idle={} active={} major={} minor={} subRelease={} bugFix={}",
+          msg.channel(), msg.address(),
+          msg.hold(), msg.idle(), msg.active(),
           msg.major(), msg.minor(), msg.subRelease(), msg.bugFix());
       }
     }

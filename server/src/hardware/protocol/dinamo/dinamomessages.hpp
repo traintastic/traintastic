@@ -362,6 +362,70 @@ struct SubSystemInfoRequestTM : SubSystemInfo
 };
 static_assert(sizeof(SubSystemInfoRequestTM) == 3);
 
+struct SubSystemInfoRequestOC32 : SubSystemInfo
+{
+  SubSystemInfoRequestOC32(uint8_t channel_, uint8_t address_)
+    : SubSystemInfo(
+      0x60 |
+      ((channel_ & 0x01) << 4) |
+      (address_ & 0x0F))
+  {
+    assert(channel_ <= 1);
+    assert(address_ <= 15);
+  }
+
+  uint8_t channel() const
+  {
+    return ((ttcyyyy >> 4) & 0x01);
+  }
+
+  uint8_t address() const
+  {
+    return (ttcyyyy & 0x0F);
+  }
+
+  static bool check(std::span<const uint8_t> message)
+  {
+    return
+      (message.size() == sizeof(SubSystemInfoRequestOC32)) &&
+      SubSystemInfo::check(message) &&
+      (reinterpret_cast<const SubSystemInfo*>(message.data())->ttcyyyy & 0x60) == 0x60;
+  }
+};
+static_assert(sizeof(SubSystemInfoRequestOC32) == 3);
+
+struct SubSystemInfoRequestPM32 : SubSystemInfo
+{
+  SubSystemInfoRequestPM32(uint8_t channel_, uint8_t address_)
+    : SubSystemInfo(
+      0x40 |
+      ((channel_ & 0x01) << 4) |
+      (address_ & 0x07))
+  {
+    assert(channel_ <= 1);
+    assert(address_ <= 7);
+  }
+
+  uint8_t channel() const
+  {
+    return ((ttcyyyy >> 4) & 0x01);
+  }
+
+  uint8_t address() const
+  {
+    return (ttcyyyy & 0x07);
+  }
+
+  static bool check(std::span<const uint8_t> message)
+  {
+    return
+      (message.size() == sizeof(SubSystemInfoRequestPM32)) &&
+      SubSystemInfo::check(message) &&
+      (reinterpret_cast<const SubSystemInfo*>(message.data())->ttcyyyy & 0x68) == 0x40;
+  }
+};
+static_assert(sizeof(SubSystemInfoRequestPM32) == 3);
+
 struct SubSystemInfoResponse : SubSystemInfo
 {
   uint8_t flags;
@@ -455,6 +519,55 @@ struct SubSystemInfoResponseTM : SubSystemInfoResponse
   }
 };
 static_assert(sizeof(SubSystemInfoResponseTM) == 6);
+
+struct SubSystemInfoResponseOC32 : SubSystemInfoResponse
+{
+  uint8_t channel() const
+  {
+    return ((ttcyyyy >> 4) & 0x01);
+  }
+
+  uint8_t address() const
+  {
+    return (ttcyyyy & 0x0F);
+  }
+
+  static bool check(std::span<const uint8_t> message)
+  {
+    return
+      (message.size() == sizeof(SubSystemInfoResponseOC32)) &&
+      SubSystemInfoResponse::check(message) &&
+      (reinterpret_cast<const SubSystemInfoResponse*>(message.data())->ttcyyyy & 0x60) == 0x60;
+  }
+};
+static_assert(sizeof(SubSystemInfoResponseOC32) == 6);
+
+struct SubSystemInfoResponsePM32 : SubSystemInfoResponse
+{
+  uint8_t channel() const
+  {
+    return ((ttcyyyy >> 4) & 0x01);
+  }
+
+  uint8_t address() const
+  {
+    return (ttcyyyy & 0x07);
+  }
+
+  bool hold() const
+  {
+    return getBit<5>(flags);
+  }
+
+  static bool check(std::span<const uint8_t> message)
+  {
+    return
+      (message.size() == sizeof(SubSystemInfoResponsePM32)) &&
+      SubSystemInfoResponse::check(message) &&
+      (reinterpret_cast<const SubSystemInfoResponse*>(message.data())->ttcyyyy & 0x68) == 0x40;
+  }
+};
+static_assert(sizeof(SubSystemInfoResponsePM32) == 6);
 
 struct SetOutput : Message
 {

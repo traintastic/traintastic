@@ -28,6 +28,8 @@
 #include "../../../utils/inrange.hpp"
 #include "../../../utils/setthreadname.hpp"
 
+using namespace std::literals::string_view_literals;
+
 namespace Dinamo {
 
 namespace
@@ -142,6 +144,24 @@ void Kernel::started()
       {
         send(SubSystemInfoRequestTM(channel, address, subAddress));
       }
+    }
+  }
+
+  // Search for OC32 modules:
+  for(uint8_t channel = 0; channel < 2; ++channel)
+  {
+    for(uint8_t address = 0; address < 16; ++address)
+    {
+      send(SubSystemInfoRequestOC32(channel, address));
+    }
+  }
+
+  // Search for PM32 modules:
+  for(uint8_t channel = 0; channel < 2; ++channel)
+  {
+    for(uint8_t address = 0; address < 8; ++address)
+    {
+      send(SubSystemInfoRequestPM32(channel, address));
     }
   }
 
@@ -609,6 +629,40 @@ void Kernel::handleSystemCommand(std::span<const uint8_t> message)
             subSystemInfoResponseTM.version().toString(),
             subSystemInfoResponseTM.channel(),
             address);
+        });
+    }
+  }
+  else if(SubSystemInfoResponseOC32::check(message))
+  {
+    const auto& subSystemInfoResponseOC32 = *reinterpret_cast<const SubSystemInfoResponseOC32*>(message.data());
+
+    if(subSystemInfoResponseOC32.active())
+    {
+      EventLoop::call(
+        [this, subSystemInfoResponseOC32]()
+        {
+          Log::log(logId, LogMessage::I2010_FOUND_X_VX_ON_CHANNEL_X_ADDRESS_X,
+            "OC32"sv,
+            subSystemInfoResponseOC32.version().toString(),
+            subSystemInfoResponseOC32.channel(),
+            subSystemInfoResponseOC32.address());
+        });
+    }
+  }
+  else if(SubSystemInfoResponsePM32::check(message))
+  {
+    const auto& subSystemInfoResponsePM32 = *reinterpret_cast<const SubSystemInfoResponsePM32*>(message.data());
+
+    if(subSystemInfoResponsePM32.active())
+    {
+      EventLoop::call(
+        [this, subSystemInfoResponsePM32]()
+        {
+          Log::log(logId, LogMessage::I2010_FOUND_X_VX_ON_CHANNEL_X_ADDRESS_X,
+            "PM32"sv,
+            subSystemInfoResponsePM32.version().toString(),
+            subSystemInfoResponsePM32.channel(),
+            subSystemInfoResponsePM32.address());
         });
     }
   }
