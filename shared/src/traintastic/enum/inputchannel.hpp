@@ -38,9 +38,10 @@ enum class InputChannel : uint16_t
   ECoSDetector = 8,
   LongEvent = 9,
   ShortEvent = 10,
+  CAN = 11,
 };
 
-TRAINTASTIC_ENUM(InputChannel, "input_channel", 10,
+TRAINTASTIC_ENUM(InputChannel, "input_channel", 11,
 {
   {InputChannel::Input, "input"},
   {InputChannel::LocoNet, "loconet"},
@@ -52,9 +53,10 @@ TRAINTASTIC_ENUM(InputChannel, "input_channel", 10,
   {InputChannel::ECoSDetector, "ecos_detector"},
   {InputChannel::LongEvent, "long_event"},
   {InputChannel::ShortEvent, "short_event"},
+  {InputChannel::CAN, "can"},
 });
 
-inline constexpr std::array<InputChannel, 10> inputChannelValues{{
+inline constexpr std::array<InputChannel, 11> inputChannelValues{{
   InputChannel::Input,
   InputChannel::LocoNet,
   InputChannel::RBus,
@@ -65,6 +67,7 @@ inline constexpr std::array<InputChannel, 10> inputChannelValues{{
   InputChannel::ECoSDetector,
   InputChannel::LongEvent,
   InputChannel::ShortEvent,
+  InputChannel::CAN,
 }};
 
 constexpr bool addressIsEvent(InputChannel channel)

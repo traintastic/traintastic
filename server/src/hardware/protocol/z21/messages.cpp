@@ -285,14 +285,14 @@ std::string toString(const Message& message)
         case LanLocoNetDetector::Type::OccupancyDetector:
         {
           const auto& msg = static_cast<const LanLocoNetDetectorOccupancyDetector&>(message);
-          s.append(std::format("Occupancy: feedbackAddress={} {}", msg.feedbackAddress(), msg.isOccupied() ? "occupied" : "free"));
+          s.append(std::format(" Occupancy: feedbackAddress={} {}", msg.feedbackAddress(), msg.isOccupied() ? "occupied" : "free"));
           break;
         }
         case LanLocoNetDetector::Type::TransponderEntersBlock:
         case LanLocoNetDetector::Type::TransponderExitsBlock:
         {
           const auto& msg = static_cast<const LanLocoNetDetectorTransponderEntersExitsBlock&>(message);
-          s.append(std::format("Transponder: feedbackAddress={} transponderAddress={} {}",
+          s.append(std::format(" Transponder: feedbackAddress={} transponderAddress={} {}",
             msg.feedbackAddress(),
             msg.transponderAddress(),
             msg.type == LanLocoNetDetector::Type::TransponderEntersBlock ? "enter" : "exit"));

@@ -114,7 +114,7 @@ void Z21Interface::decoderChanged(const Decoder& decoder, DecoderChangeFlags cha
 
 std::span<const InputChannel> Z21Interface::inputChannels() const
 {
-  static const auto values = makeArray(InputChannel::RBus, InputChannel::LocoNet);
+  static const auto values = makeArray(InputChannel::RBus, InputChannel::LocoNet, InputChannel::CAN);
   return values;
 }
 

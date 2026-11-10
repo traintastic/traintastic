@@ -505,6 +505,7 @@ void FeedbackMap::updateAddressDisplayName()
     case S88_Middle:
     case S88_Right:
     case ECoSDetector:
+    case CAN:
       Attributes::setDisplayName(addresses, addresses.size() == 1 ? DisplayName::Hardware::address : DisplayName::Hardware::addresses);
       Attributes::setDisplayName(addAddress, DisplayName::OutputMap::addAddress);
       Attributes::setDisplayName(removeAddress, DisplayName::OutputMap::removeAddress);

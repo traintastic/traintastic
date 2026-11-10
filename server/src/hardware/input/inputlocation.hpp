@@ -55,6 +55,7 @@ constexpr bool hasAddressLocation(InputChannel channel) noexcept
     case S88_Right:
     case ECoSDetector:
     case ShortEvent:
+    case CAN:
       return true;
 
     case LongEvent:
@@ -81,6 +82,7 @@ constexpr bool hasNodeAddressLocation(InputChannel channel) noexcept
     case S88_Right:
     case ECoSDetector:
     case ShortEvent:
+    case CAN:
       return false;
   }
   return false; // this should never happen
