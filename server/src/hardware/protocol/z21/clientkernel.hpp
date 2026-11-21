@@ -24,6 +24,8 @@
 
 #include <unordered_map>
 #include <optional>
+#include <map>
+#include <set>
 
 #include "kernel.hpp"
 #include <boost/asio/post.hpp>
@@ -48,6 +50,13 @@ class ClientKernel final : public Kernel
     static constexpr uint16_t rbusAddressMax = 1000; //!< \todo what is the maximum
     static constexpr uint16_t loconetAddressMin = 1;
     static constexpr uint16_t loconetAddressMax = 4096;
+    static constexpr uint32_t canAddressMin = 1;
+    static constexpr uint32_t canAddressMax = 1 << 19; // 16 bit module address + 3 bit port (problably smaller, but not stated in 10808 manual or Z21 protocol documentation)
+
+    enum class IdentificationChannel : uint32_t
+    {
+      CAN = 1,
+    };
 
   private:
     const bool m_simulation;
@@ -155,6 +164,13 @@ class ClientKernel final : public Kernel
 
     OutputController* m_outputController = nullptr;
 
+    struct CANDetectorRailCom
+    {
+      std::set<uint16_t> previous;
+      std::set<uint16_t> current;
+    };
+    std::map<uint16_t, CANDetectorRailCom> m_canDetectorRailCom;
+
     ClientConfig m_config;
 
     ClientKernel(std::string logId_, const ClientConfig& config, bool simulation);
@@ -189,6 +205,9 @@ class ClientKernel final : public Kernel
     void rescheduleTimedoutRequests();
 
 public:
+    std::function<void(uint32_t, bool)> onCANDetectorOccupied;
+    std::function<void(uint32_t, uint16_t, bool, Direction)> onCANDetectorRailCom;
+
     /**
      * @brief Create kernel and IO handler
      * @param[in] config Z21 client configuration

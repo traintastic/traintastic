@@ -1,9 +1,8 @@
 /**
- * server/src/hardware/protocol/z21/messages.hpp
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
- * This file is part of the traintastic source code.
- *
- * Copyright (C) 2019-2022,2024 Reinder Feenstra
+ * Copyright (C) 2019-2026 Reinder Feenstra
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1064,6 +1063,40 @@ struct LanLocoNetDetectorTransponderEntersExitsBlock : LanLocoNetDetector
 static_assert(sizeof(LanLocoNetDetectorTransponderEntersExitsBlock) == 9);
 
 // LAN_CAN_DETECTOR
+struct LanCanDetector : Message
+{
+  uint8_t canNetworkIdLow;
+  uint8_t canNetworkIdHigh;
+  uint8_t addressLow;
+  uint8_t addressHigh;
+  uint8_t port;
+  uint8_t type;
+  uint8_t value1Low;
+  uint8_t value1High;
+  uint8_t value2Low;
+  uint8_t value2High;
+
+  uint16_t canNetworkId() const
+  {
+    return to16(canNetworkIdLow, canNetworkIdHigh);
+  }
+
+  uint16_t address() const
+  {
+    return to16(addressLow, addressHigh);
+  }
+
+  uint16_t value1() const
+  {
+    return to16(value1Low, value1High);
+  }
+
+  uint16_t value2() const
+  {
+    return to16(value2Low, value2High);
+  }
+} ATTRIBUTE_PACKED;
+static_assert(sizeof(LanCanDetector) == 14);
 
 //=============================================================================
 // Z21 to Client:

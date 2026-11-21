@@ -224,6 +224,10 @@
         "definition": "Z21"
     },
     {
+        "term": "input_channel:can",
+        "definition": "CAN"
+    },
+    {
         "term": "input_channel:loconet",
         "definition": "LocoNet"
     },

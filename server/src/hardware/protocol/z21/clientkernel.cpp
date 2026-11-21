@@ -30,6 +30,49 @@
 #include "../../../log/log.hpp"
 #include "../../../utils/inrange.hpp"
 
+namespace {
+
+constexpr std::optional<bool> canDetectorOccupied(uint16_t value)
+{
+  switch(value)
+  {
+    case 0x0000: // Free, without voltage
+    case 0x0100: // Free, with voltage
+      return false;
+
+    case 0x1000: // Occupied, without voltage
+    case 0x1100: // Occupied, with voltage
+    case 0x1201: // Occupied, Overload 1
+    case 0x1202: // Occupied, Overload 2
+    case 0x1203: // Occupied, Overload 3
+      return true;
+  }
+  return std::nullopt;
+}
+
+constexpr uint16_t canDetectorAddress(uint16_t value)
+{
+  return value & 0x3FFF;
+}
+
+constexpr Direction canDetectorDirection(uint16_t value)
+{
+  switch(value & 0xC000)
+  {
+    case 0x8000:
+      return Direction::Forward;
+
+    case 0xC000:
+      return Direction::Reverse;
+
+    default:
+      return Direction::Unknown;
+  }
+}
+
+
+}
+
 namespace Z21 {
 
 ClientKernel::ClientKernel(std::string logId_, const ClientConfig& config, bool simulation)
@@ -396,6 +439,73 @@ void ClientKernel::receive(const Message& message)
       }
       break;
 
+    case LAN_CAN_DETECTOR:
+      if(message.dataLen() == sizeof(LanCanDetector))
+      {
+        const auto& msg = static_cast<const LanCanDetector&>(message);
+        const uint32_t address = canAddressMin + ((static_cast<uint32_t>(msg.address()) << 3) | (msg.port & 0x07));
+
+        if(msg.type == 0x01) // Occupancy status
+        {
+          if(auto value = canDetectorOccupied(msg.value1()))
+          {
+            EventLoop::call(
+              [this, address, occupied=*value]()
+              {
+                if(onCANDetectorOccupied) [[likely]]
+                {
+                  onCANDetectorOccupied(address, occupied);
+                }
+              });
+          }
+        }
+        else if(msg.type >= 0x11 && msg.type <= 0x1F) // RailCom Loco address(es)
+        {
+          auto& canDetectorRailCom = m_canDetectorRailCom[address];
+          if(msg.value1() != 0)
+          {
+            canDetectorRailCom.current.emplace(msg.value1());
+          }
+          if(msg.value2() != 0)
+          {
+            canDetectorRailCom.current.emplace(msg.value2());
+          }
+          if(msg.value1() == 0 || msg.value2() == 0) // end of list
+          {
+            for(uint16_t value : canDetectorRailCom.previous)
+            {
+              if(!canDetectorRailCom.current.contains(value)) // gone
+              {
+                EventLoop::call(
+                  [this, address, value]()
+                  {
+                    if(onCANDetectorRailCom) [[likely]]
+                    {
+                      onCANDetectorRailCom(address, canDetectorAddress(value), false, canDetectorDirection(value));
+                    }
+                  });
+              }
+            }
+            for(uint16_t value : canDetectorRailCom.current)
+            {
+              if(!canDetectorRailCom.previous.contains(value)) // new
+              {
+                EventLoop::call(
+                  [this, address, value]()
+                  {
+                    if(onCANDetectorRailCom) [[likely]]
+                    {
+                      onCANDetectorRailCom(address, canDetectorAddress(value), true, canDetectorDirection(value));
+                    }
+                  });
+              }
+            }
+            canDetectorRailCom.previous = std::move(canDetectorRailCom.current);
+          }
+        }
+      }
+      break;
+
     case LAN_GET_BROADCASTFLAGS:
       if(message.dataLen() == sizeof(LanGetBroadcastFlagsReply))
       {
@@ -454,7 +564,6 @@ void ClientKernel::receive(const Message& message)
     case LAN_LOCONET_Z21_TX:
     case LAN_LOCONET_FROM_LAN:
     case LAN_LOCONET_DISPATCH_ADDR:
-    case LAN_CAN_DETECTOR:
       break; // not (yet) supported
   }
 }

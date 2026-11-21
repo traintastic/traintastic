@@ -26,6 +26,7 @@
 #include "../decoder/decodercontroller.hpp"
 #include "../input/inputcontroller.hpp"
 #include "../output/outputcontroller.hpp"
+#include "../identification/identificationcontroller.hpp"
 #include "../../core/objectproperty.hpp"
 
 namespace Z21 {
@@ -41,6 +42,7 @@ class Z21Interface final
   , public DecoderController
   , public InputController
   , public OutputController
+  , public IdentificationController
 {
   CLASS_ID("interface.z21")
   DEFAULT_ID("z21")
@@ -84,6 +86,11 @@ class Z21Interface final
     std::span<const OutputChannel> outputChannels() const final;
     std::pair<uint32_t, uint32_t> outputAddressMinMax(OutputChannel /*channel*/) const final;
     [[nodiscard]] bool setOutputValue(OutputChannel channel, const OutputLocation& location, OutputValue value) final;
+
+    // IdentificationController:
+    const std::vector<uint32_t>* identificationChannels() const final;
+    const std::vector<std::string_view>* identificationChannelNames() const final;
+    std::pair<uint32_t, uint32_t> identificationAddressMinMax(uint32_t channel) const final;
 };
 
 #endif

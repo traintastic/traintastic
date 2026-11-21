@@ -23,6 +23,7 @@
 #include "../decoder/list/decoderlist.hpp"
 #include "../input/list/inputlist.hpp"
 #include "../output/list/outputlist.hpp"
+#include "../identification/list/identificationlist.hpp"
 #include "../protocol/dcc/dcc.hpp"
 #include "../protocol/z21/clientkernel.hpp"
 #include "../protocol/z21/clientsettings.hpp"
@@ -44,6 +45,9 @@
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Protocol | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Channel | InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Channel | OutputListColumn::Address;
+constexpr auto identificationListColumns = IdentificationListColumn::Id | IdentificationListColumn::Name | IdentificationListColumn::Interface | IdentificationListColumn::Channel | IdentificationListColumn::Address;
+
+using namespace std::string_view_literals;
 
 CREATE_IMPL(Z21Interface)
 
@@ -52,6 +56,7 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   , DecoderController(*this, decoderListColumns)
   , InputController(static_cast<IdObject&>(*this))
   , OutputController(static_cast<IdObject&>(*this))
+  , IdentificationController(static_cast<IdObject&>(*this))
   , hostname{this, "hostname", "", PropertyFlags::ReadWrite | PropertyFlags::Store}
   , port{this, "port", 21105, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , z21{this, "z21", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
@@ -78,6 +83,8 @@ Z21Interface::Z21Interface(World& world, std::string_view _id)
   m_interfaceItems.insertBefore(inputs, notes);
 
   m_interfaceItems.insertBefore(outputs, notes);
+
+  m_interfaceItems.insertBefore(identifications, notes);
 
   Attributes::addCategory(hardwareType, Category::info);
   m_interfaceItems.insertBefore(hardwareType, notes);
@@ -130,6 +137,9 @@ std::pair<uint32_t, uint32_t> Z21Interface::inputAddressMinMax(InputChannel chan
     case InputChannel::LocoNet:
       return {ClientKernel::loconetAddressMin, ClientKernel::loconetAddressMax};
 
+    case InputChannel::CAN:
+      return {ClientKernel::canAddressMin, ClientKernel::canAddressMax};
+
     default: [[unlikely]]
       assert(false);
       return {0, 0};
@@ -166,6 +176,35 @@ bool Z21Interface::setOutputValue(OutputChannel channel, const OutputLocation& l
       m_kernel &&
       inRange(address, outputAddressMinMax(channel)) &&
       m_kernel->setOutput(channel, static_cast<uint16_t>(address), value);
+}
+
+const std::vector<uint32_t>* Z21Interface::identificationChannels() const
+{
+  static const std::vector<uint32_t> channels{
+    static_cast<uint32_t>(Z21::ClientKernel::IdentificationChannel::CAN),
+  };
+  return &channels;
+}
+
+const std::vector<std::string_view>* Z21Interface::identificationChannelNames() const
+{
+  static const std::vector<std::string_view> channelNames{{
+    "CAN"sv,
+  }};
+  return &channelNames;
+}
+
+std::pair<uint32_t, uint32_t> Z21Interface::identificationAddressMinMax(uint32_t channel) const
+{
+  switch(static_cast<Z21::ClientKernel::IdentificationChannel>(channel))
+  {
+    using enum Z21::ClientKernel::IdentificationChannel;
+
+    case CAN:
+      return {Z21::ClientKernel::canAddressMin, Z21::ClientKernel::canAddressMax};
+
+  }
+  return {0, 0};
 }
 
 bool Z21Interface::setOnline(bool& value, bool simulation)
@@ -252,6 +291,22 @@ bool Z21Interface::setOnline(bool& value, bool simulation)
       m_kernel->setInputController(this);
       m_kernel->setOutputController(this);
 
+      m_kernel->onCANDetectorOccupied =
+        [this](uint16_t address, bool occupied)
+        {
+          updateInputValue(InputChannel::CAN, InputAddress(address), toTriState(occupied));
+        };
+      m_kernel->onCANDetectorRailCom =
+        [this](uint16_t address, uint16_t railcomAddress, bool enter, Direction orientation)
+        {
+          identificationEvent(
+            static_cast<uint32_t>(Z21::ClientKernel::IdentificationChannel::CAN),
+            address,
+            enter ? IdentificationEventType::Present : IdentificationEventType::Absent,
+            railcomAddress,
+            orientation,
+            0);
+        };
       m_kernel->start();
 
       m_z21PropertyChanged = z21->propertyChanged.connect(
@@ -305,10 +360,12 @@ void Z21Interface::addToWorld()
   DecoderController::addToWorld();
   InputController::addToWorld(inputListColumns);
   OutputController::addToWorld(outputListColumns);
+  IdentificationController::addToWorld(identificationListColumns);
 }
 
 void Z21Interface::destroying()
 {
+  IdentificationController::destroying();
   OutputController::destroying();
   InputController::destroying();
   DecoderController::destroying();

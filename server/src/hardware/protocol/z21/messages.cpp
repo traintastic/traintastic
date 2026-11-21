@@ -1,7 +1,6 @@
 /**
- * server/src/hardware/protocol/z21/messages.cpp
- *
- * This file is part of the traintastic source code.
+ * This file is part of Traintastic,
+ * see <https://github.com/traintastic/traintastic>.
  *
  * Copyright (C) 2019-2026 Reinder Feenstra
  *
@@ -303,6 +302,22 @@ std::string toString(const Message& message)
       }
       break;
     }
+    case LAN_CAN_DETECTOR:
+      if(message.dataLen() == sizeof(LanCanDetector))
+      {
+        const auto& msg = static_cast<const LanCanDetector&>(message);
+        s.append(std::format(" canNetworkId={} address={} port={} type=0x{:02X} value1=0x{:04X} ({}) value2=0x{:04X} ({})",
+          msg.canNetworkId(),
+          msg.address(),
+          msg.port,
+          msg.type,
+          msg.value1(),
+          msg.value1(),
+          msg.value2(),
+          msg.value2()));
+      }
+      break;
+
     default:
       break;
   }
