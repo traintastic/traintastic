@@ -9,7 +9,7 @@ def json_to_lang(filename_json, filename_lang):
 
     with open(filename_lang, 'wb') as f:
         for s in strings:
-            if s['definition'] is None:
+            if s['definition'] is None or s['definition'] == '':
                 continue
 
             term = s['term'].encode('utf-8')
