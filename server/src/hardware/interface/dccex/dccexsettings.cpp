@@ -37,6 +37,7 @@ DCCEXSettings::DCCEXSettings(Object& _parent, std::string_view parentPropertyNam
 
   m_interfaceItems.add(railcomCutout);
 
+  Attributes::addHelp(startupDelay, "dccex_settings:startup_delay/help");
   Attributes::addMinMax(startupDelay, startupDelayMin, startupDelayMax);
   m_interfaceItems.add(startupDelay);
 
