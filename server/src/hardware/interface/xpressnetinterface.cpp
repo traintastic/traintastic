@@ -38,6 +38,7 @@
 #include "../../core/objectproperty.tpp"
 #include "../../log/log.hpp"
 #include "../../log/logmessageexception.hpp"
+#include "../../utils/category.hpp"
 #include "../../utils/displayname.hpp"
 #include "../../utils/inrange.hpp"
 #include "../../utils/makearray.hpp"
@@ -46,6 +47,28 @@
 constexpr auto decoderListColumns = DecoderListColumn::Id | DecoderListColumn::Name | DecoderListColumn::Address;
 constexpr auto inputListColumns = InputListColumn::Address;
 constexpr auto outputListColumns = OutputListColumn::Address;
+
+namespace {
+
+inline XpressNet::Kernel::Locomotive::Flags getDecoderFlags(const Decoder &decoder)
+{
+  const uint8_t bothFuncFlags = (XpressNet::Kernel::Locomotive::Flags::HasF13F28 | XpressNet::Kernel::Locomotive::Flags::HasF29F68);
+  uint8_t flags = XpressNet::Kernel::Locomotive::Flags::None;
+  for(const auto& f : *decoder.functions)
+  {
+    if(f->number >= 29)
+      flags |= XpressNet::Kernel::Locomotive::Flags::HasF29F68;
+    else if(f->number >= 13)
+      flags |= XpressNet::Kernel::Locomotive::Flags::HasF13F28;
+
+    if((flags & bothFuncFlags) == bothFuncFlags)
+      break;
+  }
+
+  return XpressNet::Kernel::Locomotive::Flags(flags);
+}
+
+}
 
 CREATE_IMPL(XpressNetInterface)
 
@@ -96,6 +119,8 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
   , s88StartAddress{this, "s88_start_address", XpressNet::RoSoftS88XpressNetLI::S88StartAddress::startAddressDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , s88ModuleCount{this, "s88_module_count", XpressNet::RoSoftS88XpressNetLI::S88ModuleCount::moduleCountDefault, PropertyFlags::ReadWrite | PropertyFlags::Store}
   , xpressnet{this, "xpressnet", nullptr, PropertyFlags::ReadOnly | PropertyFlags::Store | PropertyFlags::SubObject}
+  , xbusVersion{this, "xbus_version", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
+  , commandStationType{this, "command_station_type", "", PropertyFlags::ReadOnly | PropertyFlags::NoStore}
 {
   name = "XpressNet";
   xpressnet.setValueInternal(std::make_shared<XpressNet::Settings>(*this, xpressnet.name()));
@@ -154,6 +179,18 @@ XpressNetInterface::XpressNetInterface(World& world, std::string_view _id)
 
   m_interfaceItems.insertBefore(outputs, notes);
 
+  Attributes::addCategory(xbusVersion, Category::info);
+  m_interfaceItems.insertBefore(xbusVersion, notes);
+
+  Attributes::addCategory(commandStationType, Category::info);
+  m_interfaceItems.insertBefore(commandStationType, notes);
+
+  decoderAddedRemovedConn = std::static_pointer_cast<Object>(decoders.value())->propertyChanged.connect(
+    [this](BaseProperty &)
+    {
+      updateKernelDecoderList();
+    });
+
   updateVisible();
 }
 
@@ -201,6 +238,22 @@ void XpressNetInterface::decoderChanged(const Decoder& decoder, DecoderChangeFla
     m_kernel->decoderChanged(decoder, changes, functionNumber);
 }
 
+void XpressNetInterface::decoderFunctionsChanged(const Decoder &decoder)
+{
+  if(!m_kernel)
+    return;
+
+  m_kernel->updateDecoder(decoder.address, 0, getDecoderFlags(decoder));
+}
+
+void XpressNetInterface::decoderAddressChanged(const Decoder &decoder, uint16_t oldAddress, uint16_t newAddress)
+{
+  if(!m_kernel)
+    return;
+
+  m_kernel->updateDecoder(oldAddress, newAddress, getDecoderFlags(decoder));
+}
+
 std::span<const InputChannel> XpressNetInterface::inputChannels() const
 {
   static const auto values = makeArray(InputChannel::Input);
@@ -235,10 +288,25 @@ bool XpressNetInterface::setOutputValue(OutputChannel channel, const OutputLocat
 {
   assert(isOutputChannel(channel));
   const auto address = std::get<OutputAddress>(location).address;
-  return
-      m_kernel &&
-      inRange(address, outputAddressMinMax(channel)) &&
-      m_kernel->setOutput(static_cast<uint16_t>(address), std::get<OutputPairValue>(value));
+  if(!m_kernel || !inRange(address, outputAddressMinMax(channel)))
+    return false;
+
+  if(m_kernel->getXBusVersion() < XpressNet::Kernel::XNet_3_8 && address > 1024)
+  {
+    // XBus only supports up to 1024 before V3.8
+    Log::log(*this, LogMessage::W3005_XBUS_X_ACCESSORY_X_NOT_IN_1024, xbusVersion.value(), address);
+    return false;
+  }
+  return m_kernel->setOutput(static_cast<uint16_t>(address), std::get<OutputPairValue>(value));
+}
+
+bool XpressNetInterface::send(std::vector<uint8_t> message)
+{
+  if(m_kernel)
+  {
+    return m_kernel->send(std::move(message));
+  }
+  return false;
 }
 
 bool XpressNetInterface::setOnline(bool& value, bool simulation)
@@ -293,12 +361,27 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
         [this]()
         {
           setState(InterfaceState::Online);
+          updateKernelDecoderList();
         });
       m_kernel->setOnError(
         [this]()
         {
           setState(InterfaceState::Error);
           online = false; // communication no longer possible
+        });
+      m_kernel->setOnHardwareInfoChanged(
+        [this](XpressNet::HardwareType hwType, uint8_t versionMajor, uint8_t versionMinor)
+        {
+          commandStationType.setValueInternal(std::string(XpressNet::toString(hwType)));
+          Log::log(*this, LogMessage::I2002_HARDWARE_TYPE_X, commandStationType.value());
+
+          if(versionMajor != 0)
+          {
+            xbusVersion.setValueInternal(std::to_string(versionMajor).append(".").append(std::to_string(versionMinor)));
+            Log::log(*this, LogMessage::I2003_FIRMWARE_VERSION_X, xbusVersion.value());
+          }
+          else
+            xbusVersion.setValueInternal("");
         });
       m_kernel->setOnTrackPowerChanged(
         [this](bool powerOn, bool isStopped)
@@ -375,6 +458,8 @@ bool XpressNetInterface::setOnline(bool& value, bool simulation)
     EventLoop::deleteLater(m_kernel.release());
 
     setState(InterfaceState::Offline);
+    xbusVersion.setValueInternal("");
+    commandStationType.setValueInternal("");
   }
   return true;
 }
@@ -464,4 +549,22 @@ void XpressNetInterface::updateVisible()
   const bool isRoSoftS88XPressNetLI = isSerial && (serialInterfaceType == XpressNetSerialInterfaceType::RoSoftS88XPressNetLI);
   Attributes::setVisible(s88StartAddress, isRoSoftS88XPressNetLI);
   Attributes::setVisible(s88ModuleCount, isRoSoftS88XPressNetLI);
+}
+
+void XpressNetInterface::updateKernelDecoderList()
+{
+  if(!m_kernel)
+    return;
+
+  std::vector<XpressNet::Kernel::Locomotive> locoVec;
+
+  for(const auto& decoder : *decoders.value().get())
+  {
+    XpressNet::Kernel::Locomotive loco;
+    loco.address = decoder->address;
+    loco.flags = getDecoderFlags(*decoder);
+    locoVec.push_back(loco);
+  }
+
+  m_kernel->setDecoderList(locoVec);
 }
