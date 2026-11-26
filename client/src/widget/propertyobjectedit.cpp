@@ -40,6 +40,7 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
   m_changeButton{m_property.isWritable() && m_property.hasAttribute(AttributeName::ObjectList) ? new QToolButton(this) : nullptr},
   m_editButton{new QToolButton(this)}
   , m_editObjectRequestId{Connection::invalidRequestId}
+  , m_getObjectRequestId{Connection::invalidRequestId}
 {
   bool enabled = m_property.getAttributeBool(AttributeName::Enabled, true);
   bool visible = m_property.getAttributeBool(AttributeName::Visible, true);
@@ -67,8 +68,12 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
   connect(&m_property, &ObjectProperty::valueChanged, this,
     [this]()
     {
+      disconnect(m_idChangedConnection);
+
       m_editButton->setEnabled(m_property.hasObject());
       m_lineEdit->setText(m_property.objectId());
+
+      connectToIdChanged();
     });
 
   QHBoxLayout* l = new QHBoxLayout();
@@ -115,10 +120,41 @@ PropertyObjectEdit::PropertyObjectEdit(ObjectProperty& property, QWidget *parent
   l->addWidget(m_editButton);
 
   setLayout(l);
+
+  connectToIdChanged();
 }
 
 PropertyObjectEdit::~PropertyObjectEdit()
 {
   if(m_editObjectRequestId != Connection::invalidRequestId)
     m_property.object().connection()->cancelRequest(m_editObjectRequestId);
+}
+
+void PropertyObjectEdit::connectToIdChanged()
+{
+  if(!m_property.hasObject())
+    return;
+
+  if(m_getObjectRequestId != Connection::invalidRequestId)
+    m_property.object().connection()->cancelRequest(m_getObjectRequestId);
+
+  m_getObjectRequestId = m_property.getObject(
+    [this](const ObjectPtr& object, std::optional<const Error> /*error*/)
+    {
+      m_getObjectRequestId = Connection::invalidRequestId;
+
+      if(!object)
+        return;
+
+      AbstractProperty *idProp = object->getProperty("id");
+      if(!idProp)
+        return;
+
+      m_idChangedConnection = connect(idProp, &AbstractProperty::valueChangedString,
+                                      this,
+        [this](const QString& id)
+        {
+          m_lineEdit->setText(id);
+        });
+    });
 }

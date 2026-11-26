@@ -39,6 +39,11 @@ class PropertyObjectEdit : public QWidget
     QToolButton* m_changeButton;
     QToolButton* m_editButton;
     int m_editObjectRequestId;
+    int m_getObjectRequestId;
+    QMetaObject::Connection m_idChangedConnection;
+
+  protected:
+    void connectToIdChanged();
 
   public:
     explicit PropertyObjectEdit(ObjectProperty& property, QWidget* parent = nullptr);
